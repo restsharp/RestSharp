@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RestSharp.Tests
 {
-	public class Person
+	public class PersonForXml
 	{
 		public string Name { get; set; }
 		public DateTime StartDate { get; set; }
@@ -23,6 +23,26 @@ namespace RestSharp.Tests
 		public string ReadOnlyProxy { get { return ReadOnly; } }
 
 		public FoeList Foes { get; set; }
+	}
+
+	public class PersonForJson
+	{
+		public string Name { get; set; }
+		public DateTime StartDate { get; set; }
+		public int Age { get; set; }
+		public decimal Percent { get; set; }
+		public long BigNumber { get; set; }
+		public bool IsCool { get; set; }
+		public List<Friend> Friends { get; set; }
+		public Friend BestFriend { get; set; }
+
+		protected string Ignore { get; set; }
+		public string IgnoreProxy { get { return Ignore; } }
+
+		protected string ReadOnly { get { return null; } }
+		public string ReadOnlyProxy { get { return ReadOnly; } }
+
+		public Dictionary<string, Foe> Foes { get; set; }
 	}
 
 	public class Friend

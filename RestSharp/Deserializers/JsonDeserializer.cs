@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace RestSharp.Deserializers
 {
@@ -57,19 +58,38 @@ namespace RestSharp.Deserializers
 					prop.SetValue(x, dec, null);
 				}
 				else if (type.IsGenericType) {
-					// TODO: handle Dictionaries
+					var genericTypeDef = type.GetGenericTypeDefinition();
+					if (genericTypeDef == typeof(List<>)) {
+						var t = type.GetGenericArguments()[0];
+						var list = (IList)Activator.CreateInstance(type);
 
-					var t = type.GetGenericArguments()[0];
-					var list = (IList)Activator.CreateInstance(type);
+						var elements = value.Children();
+						foreach (var element in elements) {
+							var item = CreateAndMap(t, element);
+							list.Add(item);
+						}
 
-					var elements = value.Children();
-
-					foreach (var element in elements) {
-						var item = CreateAndMap(t, element);
-						list.Add(item);
+						prop.SetValue(x, list, null);
 					}
+					else if (genericTypeDef == typeof(Dictionary<,>)) {
+						var genericArgs = type.GetGenericArguments();
+						var keyType = genericArgs[0];
 
-					prop.SetValue(x, list, null);
+						// only supports Dict<string, T>()
+						if (keyType == typeof(string)) {
+							var valueType = genericArgs[1];
+
+							var dict = (IDictionary)Activator.CreateInstance(type);
+							var elements = value.Children();
+							foreach (JProperty element in elements) {
+								var key = element.Name;
+								var item = CreateAndMap(valueType, element.Value);
+								dict.Add(key, item);
+							}
+
+							prop.SetValue(x, dict, null);
+						}
+					}
 				}
 				else {
 					// nested property classes

@@ -14,9 +14,8 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_With_Default_Root() {
 			var doc = CreateJson();
-
 			var d = new JsonDeserializer();
-			var p = d.Deserialize<Person>(doc);
+			var p = d.Deserialize<PersonForJson>(doc);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -31,14 +30,28 @@ namespace RestSharp.Tests
 			Assert.NotNull(p.BestFriend);
 			Assert.Equal("The Fonz", p.BestFriend.Name);
 			Assert.Equal(1952, p.BestFriend.Since);
+
+			Assert.NotEmpty(p.Foes);
+			Assert.Equal("Foe 1", p.Foes["dict1"].Nickname);
+			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data() {
+			var doc = CreateJson();
+			var d = new JsonDeserializer();
+			var p = d.Deserialize<PersonForJson>(doc);
+
+			Assert.Null(p.IgnoreProxy);
 		}
 
 		[Fact]
 		public void Ignore_ReadOnly_Property_That_Exists_In_Data() {
+			var doc = CreateJson();
+			var d = new JsonDeserializer();
+			var p = d.Deserialize<PersonForJson>(doc);
+
+			Assert.Null(p.ReadOnlyProxy);
 		}
 
 		[Fact]
@@ -70,6 +83,13 @@ namespace RestSharp.Tests
 			}
 
 			doc["Friends"] = friendsArray;
+
+			var foesArray = new JObject(
+								new JProperty("dict1", new JObject(new JProperty("Nickname", "Foe 1"))),
+								new JProperty("dict2", new JObject(new JProperty("Nickname", "Foe 2")))
+							);
+
+			doc["Foes"] = foesArray;
 
 			return doc.ToString();
 		}

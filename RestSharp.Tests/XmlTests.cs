@@ -15,7 +15,7 @@ namespace RestSharp.Tests
 			var doc = CreateElementsXml();
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<Person>(doc);
+			var p = d.Deserialize<PersonForXml>(doc);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -37,7 +37,7 @@ namespace RestSharp.Tests
 			var doc = CreateAttributesXml();
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<Person>(doc);
+			var p = d.Deserialize<PersonForXml>(doc);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -56,7 +56,7 @@ namespace RestSharp.Tests
 			var doc = CreateElementsXml();
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<Person>(doc);
+			var p = d.Deserialize<PersonForXml>(doc);
 
 			Assert.Null(p.IgnoreProxy);
 		}
@@ -66,7 +66,7 @@ namespace RestSharp.Tests
 			var doc = CreateElementsXml();
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<Person>(doc);
+			var p = d.Deserialize<PersonForXml>(doc);
 
 			Assert.Null(p.ReadOnlyProxy);
 		}
@@ -76,7 +76,7 @@ namespace RestSharp.Tests
 			var doc = CreateUnderscoresXml();
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<Person>(doc);
+			var p = d.Deserialize<PersonForXml>(doc);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
