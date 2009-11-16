@@ -56,4 +56,11 @@ namespace RestSharp
 	{
 
 	}
+
+	public enum ResponseStatus
+	{
+		None,
+		Success,
+		Error
+	}
 }

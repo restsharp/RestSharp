@@ -117,10 +117,14 @@ namespace RestSharp
 						response = _http.Options(request.GetUri(), @params);
 						break;
 				}
+
+				response.ResponseStatus = ResponseStatus.Success;
 			}
 			catch (Exception ex) {
-				// TODO: handle transport errors better
-				response = new RestResponse { Content = ex.Message };
+				response = new RestResponse { 
+								ErrorMessage = ex.Message,
+								ResponseStatus = ResponseStatus.Error
+						   };
 			}
 
 			return response;

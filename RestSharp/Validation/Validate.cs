@@ -13,31 +13,21 @@
 //   limitations under the License.
 
 using System;
-using System.Net;
 
-namespace RestSharp
+namespace RestSharp.Validation
 {
-	public class RestResponse
+	public class Validate
 	{
-		public string ContentType { get; set; }
-		public long ContentLength { get; set; }
-		public string ContentEncoding { get; set; }
-		public string Content { get; set; }
-		public HttpStatusCode StatusCode { get; set; }
-		public string StatusDescription { get; set; }
-		public Uri ResponseUri { get; set; }
-		public string Server { get; set; }
-
-		private ResponseStatus _responseStatus = ResponseStatus.None;
-		public ResponseStatus ResponseStatus {
-			get {
-				return _responseStatus;
-			}
-			set {
-				_responseStatus = value;
+		public static void IsBetween(int value, int min, int max) {
+			if (value < min || value > max) {
+				throw new ArgumentException(string.Format("Value ({0}) is not between {1} and {2}.", value, min, max));
 			}
 		}
 
-		public string ErrorMessage { get; set; }
+		public static void IsValidLength(string value, int maxSize) {
+			if (value.Length > maxSize) {
+				throw new ArgumentException(string.Format("String is longer than max allowed size ({0}).", maxSize));
+			}
+		}
 	}
 }

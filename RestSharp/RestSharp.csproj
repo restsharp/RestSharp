@@ -63,6 +63,7 @@
     <Compile Include="RestClient.cs" />
     <Compile Include="RestRequest.cs" />
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
+    <Compile Include="Validation\Validate.cs" />
     <Compile Include="Validation\Require.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
