@@ -76,10 +76,7 @@ namespace RestSharp.Deserializers
 					var t = type.GetGenericArguments()[0];
 					var list = (IList)Activator.CreateInstance(type);
 
-					var elements = root.Descendants(GetNamespacedName(t.Name));
-
-					// TODO if elements is empty, do search for descendants names that match without underscores
-
+					var elements = root.Descendants().Where(d => d.Name.LocalName.RemoveUnderscores() == t.Name);
 					foreach (var element in elements) {
 						var item = CreateAndMap(t, element);
 						list.Add(item);
@@ -152,6 +149,13 @@ namespace RestSharp.Deserializers
 					var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
 					if (element != null) {
 						val = element.Value;
+					}
+					else {
+						// check attributes that match sanitized name
+						var attribute = root.Attributes().FirstOrDefault(a => a.Name.LocalName.RemoveUnderscores() == name.LocalName);
+						if (attribute != null) {
+							val = attribute.Value;
+						}
 					}
 				}
 			}

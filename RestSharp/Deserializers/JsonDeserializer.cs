@@ -37,6 +37,31 @@ namespace RestSharp.Deserializers
 
 				var name = prop.Name;
 				var value = json[name];
+				var actualName = name;
+
+				if (value == null) {
+					// try camel cased name
+					actualName = name.ToCamelCase();
+					value = json[actualName];
+				}
+
+				if (value == null) {
+					// try lower cased name
+					actualName = name.ToLower();
+					value = json[actualName];
+				}
+
+				if (value == null) {
+					// try name with underscores
+					actualName = name.AddUnderscores();
+					value = json[actualName];
+				}
+
+				if (value == null) {
+					// try name with underscores with lower case
+					actualName = name.AddUnderscores().ToLower();
+					value = json[actualName];
+				}
 
 				if (value == null)
 					continue;
@@ -93,7 +118,7 @@ namespace RestSharp.Deserializers
 				}
 				else {
 					// nested property classes
-					var item = CreateAndMap(type, json[name]);
+					var item = CreateAndMap(type, json[actualName]);
 					prop.SetValue(x, item, null);
 				}
 			}
