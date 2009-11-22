@@ -72,4 +72,9 @@ namespace RestSharp.Tests
 	{
 		public string Team { get; set; }
 	}
+
+	public class Birthdate
+	{
+		public DateTime Value { get; set; }
+	}
 }

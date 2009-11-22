@@ -22,7 +22,7 @@ namespace RestSharp
 	public class RestRequest
 	{
 		public RestRequest() {
-			Initialize();
+			Parameters = new List<Parameter>();
 		}
 
 		public RestRequest(Method verb)
@@ -39,10 +39,6 @@ namespace RestSharp
 			: this() {
 			Action = action;
 			Verb = verb;
-		}
-
-		private void Initialize() {
-			Parameters = new List<Parameter>();
 		}
 
 		public void AddObject(object obj, params string[] whitelist) {

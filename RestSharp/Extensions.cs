@@ -16,6 +16,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace RestSharp
 {
@@ -47,37 +48,73 @@ namespace RestSharp
 		}
 
 		public static DateTime ParseJsonDate(this string input) {
+			input = input.Replace("\n", "");
+			input = input.Replace("\r", "");
+
+			if (input.StartsWith("\"")) {
+				// remove leading/trailing quotes
+				input = input.Substring(1, input.Length - 2); 
+			}
+
 			if (input.Contains("/Date(")) {
-				var regex = new Regex(@"\\/Date\((\d+)(-|\+)?([0-9]{4})?\)\\/");
-				if (regex.IsMatch(input)) {
-					var matches = regex.Matches(input);
-					var match = matches[0];
-					var ms = Convert.ToInt64(match.Groups[1].Value);
-					var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-					var dt = epoch.AddMilliseconds(ms);
-
-					// adjust if time zone modifier present
-					if (match.Groups[3] != null) {
-						var mod = DateTime.ParseExact(match.Groups[3].Value, "hhmm", CultureInfo.InvariantCulture);
-						if (match.Groups[2].Value == "+") {
-							dt = dt.Add(mod.TimeOfDay); 
-						}
-						else {
-							dt = dt.Subtract(mod.TimeOfDay);
-						}
-					}
-
-					return dt;
-				}
+				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/");
 			}
 			else if (input.Contains("new Date(")) {
-				// TODO: implement parsing
+				input = input.Replace(" ", "");
+				// because all whitespace is removed, match against newDate( instead of new Date(
+				return ExtractDate(input, @"newDate\((-?\d+)*\)");
 			}
-			else if (input.Matches(@"([0-9-])*T([0-9\:]*)Z")) {
-				// TODO: implement parsing
+			else if (input.Matches(@"([0-9-])*T([0-9\:]*)Z?")) {
+				return ParseIso8601Date(input);
 			}
 
 			return default(DateTime);
+		}
+
+		private static DateTime ParseIso8601Date(string input) {
+			var formats = new string[] {
+				"u", 
+				"s", 
+				"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", 
+				"yyyy-MM-ddTHH:mm:ssZ", 
+				"yyyy-MM-dd HH:mm:ssZ", 
+				"yyyy-MM-ddTHH:mm:ss", 
+				"yyyy-MM-ddTHH:mm:sszzzzzz"
+			};
+
+			DateTime date;
+			if (DateTime.TryParseExact(input, formats,
+									   CultureInfo.InvariantCulture,
+									   DateTimeStyles.None, out date)) {
+				return date;
+			}
+
+			return default(DateTime);
+		}
+
+		private static DateTime ExtractDate(string input, string pattern) {
+			DateTime dt = DateTime.MinValue;
+			var regex = new Regex(pattern);
+			if (regex.IsMatch(input)) {
+				var matches = regex.Matches(input);
+				var match = matches[0];
+				var ms = Convert.ToInt64(match.Groups[1].Value);
+				var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+				dt = epoch.AddMilliseconds(ms);
+
+				// adjust if time zone modifier present
+				if (match.Groups.Count > 2 && match.Groups[3] != null) {
+					var mod = DateTime.ParseExact(match.Groups[3].Value, "hhmm", CultureInfo.InvariantCulture);
+					if (match.Groups[2].Value == "+") {
+						dt = dt.Add(mod.TimeOfDay);
+					}
+					else {
+						dt = dt.Subtract(mod.TimeOfDay);
+					}
+				}
+
+			}
+			return dt;
 		}
 
 		public static bool Matches(this string input, string pattern) {

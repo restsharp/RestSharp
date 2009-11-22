@@ -16,6 +16,8 @@ using System;
 using Newtonsoft.Json.Linq;
 using RestSharp.Deserializers;
 using Xunit;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace RestSharp.Tests
 {
@@ -90,10 +92,24 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Names_With_Underscores_On_Default_Root() {
+		public void Can_Deserialize_Iso_Json_Dates() {
+			var doc = CreateIsoDateJson();
+			var d = new JsonDeserializer();
+			var bd = d.Deserialize<Birthdate>(doc);
+
+			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value);
 		}
 
-		private static string CreateJsonWithUnderscores() {
+		[Fact]
+		public void Can_Deserialize_JScript_Json_Dates() {
+			var doc = CreateJScriptDateJson();
+			var d = new JsonDeserializer();
+			var bd = d.Deserialize<Birthdate>(doc);
+
+			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value);
+		}
+
+		private string CreateJsonWithUnderscores() {
 			var doc = new JObject();
 			doc["name"] = "John Sheehan";
 			doc["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1);
@@ -129,8 +145,21 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
+		private string CreateIsoDateJson() {
+			var bd = new Birthdate();
+			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
 
-		private static string CreateJson() {
+			return JsonConvert.SerializeObject(bd, new IsoDateTimeConverter());
+		}
+
+		private string CreateJScriptDateJson() {
+			var bd = new Birthdate();
+			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
+
+			return JsonConvert.SerializeObject(bd, new JavaScriptDateTimeConverter());
+		}
+
+		private string CreateJson() {
 			var doc = new JObject();
 			doc["Name"] = "John Sheehan";
 			doc["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1);
