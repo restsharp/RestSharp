@@ -119,7 +119,7 @@ namespace RestSharp.Deserializers
 		}
 
 		private object HandleListDerivative(object x, XElement root, string propName, Type type) {
-			var t = type.BaseType.GetGenericArguments()[0]; // TODO: only works one level down
+			var t = type.BaseType.GetGenericArguments()[0];
 
 			var list = (IList)Activator.CreateInstance(type);
 
