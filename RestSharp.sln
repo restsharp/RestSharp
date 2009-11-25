@@ -1,21 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Example", "Stillwater.Example\RestSharp.Example.csproj", "{31C039A6-0824-494D-9100-E0C55D45D421}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FogBugzApi", "FogBugzApi\FogBugzApi.csproj", "{4B586EC1-3D01-4793-B749-7C50C26E51CB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "RestSharp\RestSharp.csproj", "{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{45F37FD0-BD61-412C-90D5-ED99B1607478}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioApi", "TwilioApi\TwilioApi.csproj", "{894FF9E8-4DBF-4472-8AE2-1A6A988E105B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "RestSharp.Tests\RestSharp.Tests.csproj", "{1464E4AC-18BB-4F23-8A0B-68196F9E1871}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitlyApi", "BitlyApi\BitlyApi.csproj", "{BEC45287-9D00-44BB-AF02-424A5B346BAA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmazonS3Api", "AmazonS3Api\AmazonS3Api.csproj", "{CE77CF97-0D65-48BD-8404-8C2842B86892}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,42 +11,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{31C039A6-0824-494D-9100-E0C55D45D421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31C039A6-0824-494D-9100-E0C55D45D421}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31C039A6-0824-494D-9100-E0C55D45D421}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31C039A6-0824-494D-9100-E0C55D45D421}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B586EC1-3D01-4793-B749-7C50C26E51CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B586EC1-3D01-4793-B749-7C50C26E51CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B586EC1-3D01-4793-B749-7C50C26E51CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B586EC1-3D01-4793-B749-7C50C26E51CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{894FF9E8-4DBF-4472-8AE2-1A6A988E105B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{894FF9E8-4DBF-4472-8AE2-1A6A988E105B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{894FF9E8-4DBF-4472-8AE2-1A6A988E105B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{894FF9E8-4DBF-4472-8AE2-1A6A988E105B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4B586EC1-3D01-4793-B749-7C50C26E51CB} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
-		{894FF9E8-4DBF-4472-8AE2-1A6A988E105B} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
-		{BEC45287-9D00-44BB-AF02-424A5B346BAA} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
-		{CE77CF97-0D65-48BD-8404-8C2842B86892} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
 	EndGlobalSection
 EndGlobal
