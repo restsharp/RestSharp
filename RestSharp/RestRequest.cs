@@ -127,16 +127,6 @@ namespace RestSharp
 			}
 		}
 
-		private RequestFormat _RequestFormat = RequestFormat.Parameters;
-		public RequestFormat RequestFormat {
-			get {
-				return _RequestFormat;
-			}
-			set {
-				_RequestFormat = value;
-			}
-		}
-
 		public string RootElement { get; set; }
 		public string XmlNamespace { get; set; }
 		public ICredentials Credentials { get; set; }

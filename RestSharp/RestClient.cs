@@ -39,18 +39,21 @@ namespace RestSharp
 		public IAuthenticator Authenticator { get; set; }
 
 		public RestResponse Execute(RestRequest request) {
-			Authenticator.Authenticate(request);
+			if (Authenticator != null) {
+				Authenticator.Authenticate(request);
+			}
+
 			var response = GetResponse(request);
 			return response;
 		}
 
 		public X Execute<X>(RestRequest request) where X : new() {
-			Authenticator.Authenticate(request);
+			if (Authenticator != null) {
+				Authenticator.Authenticate(request);
+			}
 
-			// make request
 			var response = GetResponse(request);
 
-			// handle response
 			X returnVal = default(X);
 
 			if (request.ResponseFormat == ResponseFormat.Auto) {
@@ -94,6 +97,7 @@ namespace RestSharp
 
 			var @params = request.Parameters
 									.Where(p => p.Type == ParameterType.GetOrPost)
+									.Where(p => p.Value != null)
 									.ToDictionary(k => k.Name, e => e.Value.ToString());
 
 			var response = new RestResponse();

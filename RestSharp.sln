@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioApi", "TwilioApi\Twil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "RestSharp.Tests\RestSharp.Tests.csproj", "{1464E4AC-18BB-4F23-8A0B-68196F9E1871}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitlyApi", "BitlyApi\BitlyApi.csproj", "{BEC45287-9D00-44BB-AF02-424A5B346BAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmazonS3Api", "AmazonS3Api\AmazonS3Api.csproj", "{CE77CF97-0D65-48BD-8404-8C2842B86892}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEC45287-9D00-44BB-AF02-424A5B346BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE77CF97-0D65-48BD-8404-8C2842B86892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +58,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4B586EC1-3D01-4793-B749-7C50C26E51CB} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
 		{894FF9E8-4DBF-4472-8AE2-1A6A988E105B} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
+		{BEC45287-9D00-44BB-AF02-424A5B346BAA} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
+		{CE77CF97-0D65-48BD-8404-8C2842B86892} = {45F37FD0-BD61-412C-90D5-ED99B1607478}
 	EndGlobalSection
 EndGlobal

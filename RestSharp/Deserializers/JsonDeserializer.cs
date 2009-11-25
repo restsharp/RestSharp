@@ -17,6 +17,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace RestSharp.Deserializers
@@ -43,13 +44,10 @@ namespace RestSharp.Deserializers
 
 		private void Map(object x, JToken json) {
 			var objType = x.GetType();
-			var props = objType.GetProperties();
+			var props = objType.GetProperties().Where(p => p.CanWrite).ToList();
 
 			foreach (var prop in props) {
 				var type = prop.PropertyType;
-
-				if (!type.IsPublic || !prop.CanWrite)
-					continue;
 
 				var name = prop.Name;
 				var value = json[name];
@@ -101,33 +99,15 @@ namespace RestSharp.Deserializers
 				else if (type.IsGenericType) {
 					var genericTypeDef = type.GetGenericTypeDefinition();
 					if (genericTypeDef == typeof(List<>)) {
-						var t = type.GetGenericArguments()[0];
-						var list = (IList)Activator.CreateInstance(type);
-
-						var elements = value.Children();
-						foreach (var element in elements) {
-							var item = CreateAndMap(t, element);
-							list.Add(item);
-						}
-
+						var list = BuildList(type, value.Children());
 						prop.SetValue(x, list, null);
 					}
 					else if (genericTypeDef == typeof(Dictionary<,>)) {
-						var genericArgs = type.GetGenericArguments();
-						var keyType = genericArgs[0];
+						var keyType = type.GetGenericArguments()[0];
 
 						// only supports Dict<string, T>()
 						if (keyType == typeof(string)) {
-							var valueType = genericArgs[1];
-
-							var dict = (IDictionary)Activator.CreateInstance(type);
-							var elements = value.Children();
-							foreach (JProperty element in elements) {
-								var key = element.Name;
-								var item = CreateAndMap(valueType, element.Value);
-								dict.Add(key, item);
-							}
-
+							var dict = BuildDictionary(type, value.Children());
 							prop.SetValue(x, dict, null);
 						}
 					}
@@ -140,11 +120,44 @@ namespace RestSharp.Deserializers
 			}
 		}
 
-		private object CreateAndMap(Type t, JToken element) {
-			var item = Activator.CreateInstance(t);
-			Map(item, element);
-			return item;
+		private object CreateAndMap(Type type, JToken element) {
+			object instance = null;
+			if (type.IsGenericType) {
+				var genericTypeDef = type.GetGenericTypeDefinition();
+				if (genericTypeDef == typeof(Dictionary<,>)) {
+					instance = BuildDictionary(type, element.Children());
+				}
+				else if (genericTypeDef == typeof(List<>)) {
+					instance = BuildList(type, element.Children());
+				}
+			}
+			else {
+				instance = Activator.CreateInstance(type);
+				Map(instance, element);
+			}
+			return instance;
 		}
 
+		private IDictionary BuildDictionary(Type type, JEnumerable<JToken> elements) {
+			var dict = (IDictionary)Activator.CreateInstance(type);
+			var valueType = type.GetGenericArguments()[1];
+			foreach (JProperty child in elements) {
+				var key = child.Name;
+				var item = CreateAndMap(valueType, child.Value);
+				dict.Add(key, item);
+			}
+			return dict;
+		}
+
+		private IList BuildList(Type type, JEnumerable<JToken> elements) {
+			var list = (IList)Activator.CreateInstance(type);
+			var itemType = type.GetGenericArguments()[0];
+
+			foreach (var element in elements) {
+				var item = CreateAndMap(itemType, element);
+				list.Add(item);
+			}
+			return list;
+		}
 	}
 }

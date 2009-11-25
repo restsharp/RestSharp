@@ -27,15 +27,7 @@ namespace RestSharp
 	{
 		Auto,
 		Json,
-		Xml,
-		None
-	}
-
-	public enum RequestFormat
-	{
-		Parameters,
-		Xml,
-		Json
+		Xml
 	}
 
 	public enum Method
