@@ -120,7 +120,7 @@ namespace RestSharp
 			}
 		}
 
-		private static RestResponse GetResponse(HttpWebRequest request) {
+		private RestResponse GetResponse(HttpWebRequest request) {
 			using (var raw = (HttpWebResponse)request.GetResponse()) {
 				var response = new RestResponse();
 				response.ContentType = raw.ContentType;
