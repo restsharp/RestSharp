@@ -47,6 +47,28 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Elements_With_Namespace_Autodetect_Namespace() {
+			var doc = CreateElementsXml();
+
+			var d = new XmlDeserializer();
+			var p = d.Deserialize<PersonForXml>(doc);
+
+			Assert.Equal("John Sheehan", p.Name);
+			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+			Assert.Equal(28, p.Age);
+			Assert.Equal(long.MaxValue, p.BigNumber);
+			Assert.Equal(99.9999m, p.Percent);
+			Assert.Equal(false, p.IsCool);
+
+			Assert.NotNull(p.Friends);
+			Assert.Equal(10, p.Friends.Count);
+
+			Assert.NotNull(p.BestFriend);
+			Assert.Equal("The Fonz", p.BestFriend.Name);
+			Assert.Equal(1952, p.BestFriend.Since);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Attributes_With_Namespace() {
 			var doc = CreateAttributesXml();
 

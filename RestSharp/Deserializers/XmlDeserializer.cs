@@ -29,13 +29,18 @@ namespace RestSharp.Deserializers
 		public DateFormat DateFormat { get; set; }
 
 		public X Deserialize<X>(string content) where X : new() {
-			var x = new X();
-
 			var doc = XDocument.Parse(content);
 			var root = doc.Root;
 			if (RootElement.HasValue())
 				root = doc.Root.Element(GetNamespacedName(RootElement));
 
+			// autodetect xml namespace
+			if (!Namespace.HasValue()) {
+				var xmlnsAtttribute = root.Attribute("xmlns");
+				Namespace = (xmlnsAtttribute != null) ? xmlnsAtttribute.Value : string.Empty;
+			}
+
+			var x = new X();
 			var objType = x.GetType();
 
 			if (objType.IsSubclassOfRawGeneric(typeof(List<>))) {
