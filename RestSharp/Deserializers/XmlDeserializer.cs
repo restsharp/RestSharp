@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
+using RestSharp.Extensions;
+
 namespace RestSharp.Deserializers
 {
 	public class XmlDeserializer : IDeserializer
@@ -32,7 +34,7 @@ namespace RestSharp.Deserializers
 			var doc = XDocument.Parse(content);
 			var root = doc.Root;
 			if (RootElement.HasValue())
-				root = doc.Root.Element(GetNamespacedName(RootElement));
+				root = doc.Root.Element(RootElement.AsNamespaced(Namespace));
 
 			// autodetect xml namespace
 			if (!Namespace.HasValue()) {
@@ -53,15 +55,6 @@ namespace RestSharp.Deserializers
 			return x;
 		}
 
-		private XName GetNamespacedName(string name) {
-			XName xName = name;
-
-			if (Namespace.HasValue())
-				xName = XName.Get(name, Namespace);
-
-			return xName;
-		}
-
 		private void Map(object x, XElement root) {
 			var objType = x.GetType();
 			var props = objType.GetProperties();
@@ -72,7 +65,7 @@ namespace RestSharp.Deserializers
 				if (!type.IsPublic || !prop.CanWrite)
 					continue;
 
-				var name = GetNamespacedName(prop.Name);
+				var name = prop.Name.AsNamespaced(Namespace);
 				var value = GetValueFromXml(root, name);
 
 				if (value == null)
@@ -128,7 +121,7 @@ namespace RestSharp.Deserializers
 
 			var list = (IList)Activator.CreateInstance(type);
 
-			var elements = root.Descendants(GetNamespacedName(t.Name));
+			var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
 
 			foreach (var element in elements) {
 				var item = CreateAndMap(t, element);
@@ -136,7 +129,7 @@ namespace RestSharp.Deserializers
 			}
 
 			// get properties too, not just list items
-			Map(list, root.Element(GetNamespacedName(propName)));
+			Map(list, root.Element(propName.AsNamespaced(Namespace)));
 
 			return list;
 		}
@@ -161,7 +154,7 @@ namespace RestSharp.Deserializers
 				else if (root.Attribute(name) != null) {
 					val = root.Attribute(name).Value;
 				}
-				else if (name == "Data" && root.Value != null) {
+				else if (name == "Value" && root.Value != null) {
 					val = root.Value;
 				}
 				else {

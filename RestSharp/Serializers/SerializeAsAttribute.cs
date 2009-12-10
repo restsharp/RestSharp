@@ -14,22 +14,14 @@
 //   limitations under the License. 
 #endregion
 
-using System.Net;
+using System;
 
-namespace RestSharp
+namespace RestSharp.Serializers
 {
-	public class HttpBasicAuthenticator : IAuthenticator
+	[global::System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class SerializeAsAttribute : Attribute
 	{
-		public string _username { get; set; }
-		public string _password { get; set; }
-
-		public HttpBasicAuthenticator(string username, string password) {
-			_password = password;
-			_username = username;
-		}
-
-		public void Authenticate(RestRequest request) {
-			request.Credentials = new NetworkCredential(_username, _password);
-		}
+		public string Name { get; set; }
+		public bool Attribute { get; set; }
 	}
 }

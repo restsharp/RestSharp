@@ -14,22 +14,15 @@
 //   limitations under the License. 
 #endregion
 
-using System.Net;
+using System;
+using System.Reflection;
 
-namespace RestSharp
+namespace RestSharp.Extensions
 {
-	public class HttpBasicAuthenticator : IAuthenticator
+	public static class ReflectionExtensions
 	{
-		public string _username { get; set; }
-		public string _password { get; set; }
-
-		public HttpBasicAuthenticator(string username, string password) {
-			_password = password;
-			_username = username;
-		}
-
-		public void Authenticate(RestRequest request) {
-			request.Credentials = new NetworkCredential(_username, _password);
+		public static T GetAttribute<T>(this PropertyInfo prop) where T : Attribute {
+			return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
 		}
 	}
 }

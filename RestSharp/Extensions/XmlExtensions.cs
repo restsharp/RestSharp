@@ -14,22 +14,19 @@
 //   limitations under the License. 
 #endregion
 
-using System.Net;
+using System.Xml.Linq;
 
-namespace RestSharp
+namespace RestSharp.Extensions
 {
-	public class HttpBasicAuthenticator : IAuthenticator
+	public static class XmlExtensions
 	{
-		public string _username { get; set; }
-		public string _password { get; set; }
+		public static XName AsNamespaced(this string name, string Namespace) {
+			XName xName = name;
 
-		public HttpBasicAuthenticator(string username, string password) {
-			_password = password;
-			_username = username;
-		}
+			if (Namespace.HasValue())
+				xName = XName.Get(name, Namespace);
 
-		public void Authenticate(RestRequest request) {
-			request.Credentials = new NetworkCredential(_username, _password);
+			return xName;
 		}
 	}
 }

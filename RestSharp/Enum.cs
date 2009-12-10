@@ -14,6 +14,8 @@
 //   limitations under the License. 
 #endregion
 
+using System;
+
 namespace RestSharp
 {
 	public enum ParameterType
@@ -48,7 +50,25 @@ namespace RestSharp
 
 	public enum DateFormat
 	{
+		None,
+		Iso8601,
+		RoundTrip
+	}
 
+	public static class DateFormatExtensions
+	{
+		public static string GetFormatString(this DateFormat format) {
+			switch (format) {
+				case DateFormat.None:
+					return string.Empty;
+				case DateFormat.Iso8601:
+					return "s";
+				case DateFormat.RoundTrip:
+					return "u";
+			}
+
+			throw new ArgumentOutOfRangeException("Unknown DateFormat");
+		}
 	}
 
 	public enum ResponseStatus

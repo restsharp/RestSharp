@@ -57,6 +57,7 @@
     <Compile Include="NamespacedXmlTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleClasses.cs" />
+    <Compile Include="SerializerTests.cs" />
     <Compile Include="XmlTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,8 @@ using System.Net;
 using System.Text;
 using System.Web;
 
+using RestSharp.Extensions;
+
 namespace RestSharp
 {
 	public class Http : IHttp

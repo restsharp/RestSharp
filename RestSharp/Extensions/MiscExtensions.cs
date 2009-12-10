@@ -18,11 +18,10 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
-namespace RestSharp
+namespace RestSharp.Extensions
 {
-	public static class Extensions
+	public static class MiscExtensions
 	{
 		public static bool HasValue(this string input) {
 			return !string.IsNullOrEmpty(input);
