@@ -23,6 +23,7 @@ namespace RestSharp
 	public interface IHttp
 	{
 		ICredentials Credentials { get; set; }
+		IWebProxy Proxy { get; set; }
 		RestResponse Delete(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
 		RestResponse Get(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
 		RestResponse Head(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);

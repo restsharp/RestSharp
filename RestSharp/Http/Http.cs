@@ -29,6 +29,8 @@ namespace RestSharp
 	public class Http : IHttp
 	{
 		public ICredentials Credentials { get; set; }
+		public IWebProxy Proxy { get; set; }
+
 		public IDictionary<string, string> Headers { get; private set; }
 		public Http() {
 			Headers = new Dictionary<string, string>();
@@ -56,6 +58,10 @@ namespace RestSharp
 
 			if (this.Credentials != null) {
 				request.Credentials = this.Credentials;
+			}
+
+			if (this.Proxy != null) {
+				request.Proxy = this.Proxy;
 			}
 
 			if (@params.Count() > 1) {
@@ -108,8 +114,13 @@ namespace RestSharp
 
 			var request = (HttpWebRequest)WebRequest.Create(url);
 			request.Method = method;
+
 			if (this.Credentials != null) {
 				request.Credentials = this.Credentials;
+			}
+
+			if (this.Proxy != null) {
+				request.Proxy = this.Proxy;
 			}
 
 			AppendHeaders(request);

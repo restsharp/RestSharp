@@ -17,6 +17,7 @@
 using System;
 using System.Linq;
 using RestSharp.Deserializers;
+using System.Net;
 
 namespace RestSharp
 {
@@ -37,6 +38,7 @@ namespace RestSharp
 		}
 
 		public IAuthenticator Authenticator { get; set; }
+		public IWebProxy Proxy { get; set; }
 
 		public RestResponse Execute(RestRequest request) {
 			if (Authenticator != null) {
@@ -82,6 +84,9 @@ namespace RestSharp
 		private RestResponse GetResponse(RestRequest request) {
 			if (request.Credentials != null) {
 				_http.Credentials = request.Credentials;
+			}
+			if (this.Proxy != null) {
+				_http.Proxy = this.Proxy;
 			}
 
 			var headers = from p in request.Parameters

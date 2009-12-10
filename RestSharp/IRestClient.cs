@@ -14,11 +14,13 @@
 //   limitations under the License. 
 #endregion
 
+using System.Net;
 namespace RestSharp
 {
 	public interface IRestClient
 	{
 		IAuthenticator Authenticator { get; set; }
+		IWebProxy Proxy { get; set; }
 		X Execute<X>(RestRequest request) where X : new();
 		RestResponse Execute(RestRequest request);
 	}
