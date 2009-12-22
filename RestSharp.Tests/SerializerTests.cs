@@ -32,7 +32,12 @@ namespace RestSharp.Tests
 				Name = "Foo",
 				Age = 50,
 				Price = 19.95m,
-				StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+				StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+				Items = new List<Item> {
+					new Item { Name = "One", Value = 1 },
+					new Item { Name = "Two", Value = 2 },
+					new Item { Name = "Three", Value = 3 }
+				}
 			};
 
 			var xml = new XmlSerializer();
@@ -98,6 +103,13 @@ namespace RestSharp.Tests
 			public int Age { get; set; }
 			public decimal Price { get; set; }
 			public DateTime StartDate { get; set; }
+			public List<Item> Items { get; set; }
+		}
+
+		private class Item
+		{
+			public string Name { get; set; }
+			public int Value { get; set; }
 		}
 
 		private class WackyPerson
@@ -121,6 +133,12 @@ namespace RestSharp.Tests
 					new XElement("Age", 50),
 					new XElement("Price", 19.95m),
 					new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23)));
+
+			var items = new XElement("Items");
+			items.Add(new XElement("One", 1));
+			items.Add(new XElement("Two", 2));
+			items.Add(new XElement("Three", 3));
+			root.Add(items);
 
 			doc.Add(root);
 

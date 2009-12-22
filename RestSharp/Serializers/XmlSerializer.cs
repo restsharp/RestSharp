@@ -47,13 +47,17 @@ namespace RestSharp.Serializers
 		}
 
 		private void AddElementForProperty(XElement parent, object obj, PropertyInfo prop) {
+			var rawValue = prop.GetValue(obj, null);
+			if (rawValue == null)
+				return;
+
+			object value = GetSerializedValue(rawValue);
 
 			// make sure to use Namespaced name
 			var name = prop.Name.AsNamespaced(Namespace);
-			var useAttribute = false;
-			object value = GetValue(prop.GetValue(obj, null));
 
 			// check for [SerializeAs(Name="", Attribute=true)] options
+			var useAttribute = false;
 			var settings = prop.GetAttribute<SerializeAsAttribute>();
 			if (settings != null) {
 				name = settings.Name.HasValue() ? settings.Name : name;
@@ -72,17 +76,25 @@ namespace RestSharp.Serializers
 
 		}
 
-		private object GetValue(object obj) {
+		private object GetSerializedValue(object obj) {
 			object output = obj;
-			if (obj is DateTime) {
+			var type = obj.GetType();
+
+			if (type.IsPrimitive) {
+				return obj;
+			}
+			else if (obj is DateTime) {
 				// check for DateFormat when adding date props
 				if (DateFormat != DateFormat.None) {
 					output = ((DateTime)obj).ToString(DateFormat.GetFormatString());
 				}
 			}
+			else if (obj is object) {
+				// handle List<T>
+
+			}
 			else {
 				// handle nested types (recursively call AddElementForProperty)
-				// handle List<T>
 			}
 
 			return output;
