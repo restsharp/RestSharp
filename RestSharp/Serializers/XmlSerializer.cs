@@ -15,8 +15,8 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
 
@@ -28,12 +28,8 @@ namespace RestSharp.Serializers
 			var doc = new XDocument();
 
 			var t = obj.GetType();
-			var props = t.GetProperties().Where(p => p.CanRead);
 			var root = new XElement(t.Name);
-
-			foreach (var prop in props) {
-				AddElementForProperty(root, obj, prop);
-			}
+			Map(root, obj);
 
 			if (RootElement.HasValue()) {
 				var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
@@ -46,58 +42,69 @@ namespace RestSharp.Serializers
 			return doc;
 		}
 
-		private void AddElementForProperty(XElement parent, object obj, PropertyInfo prop) {
-			var rawValue = prop.GetValue(obj, null);
-			if (rawValue == null)
-				return;
+		private void Map(XElement root, object obj) {
+			var props = obj.GetType().GetProperties().Where(p => p.CanRead && p.CanWrite);
 
-			object value = GetSerializedValue(rawValue);
+			foreach (var prop in props) {
+				var name = prop.Name.AsNamespaced(Namespace);
+				var rawValue = prop.GetValue(obj, null);
 
-			// make sure to use Namespaced name
-			var name = prop.Name.AsNamespaced(Namespace);
-
-			// check for [SerializeAs(Name="", Attribute=true)] options
-			var useAttribute = false;
-			var settings = prop.GetAttribute<SerializeAsAttribute>();
-			if (settings != null) {
-				name = settings.Name.HasValue() ? settings.Name : name;
-				useAttribute = settings.Attribute;
-			}
-
-			if (useAttribute) {
-				if (value is XElement) {
-					throw new InvalidOperationException("You cannot nest objects in properties serialized as attributes.");
+				if (rawValue == null) {
+					continue;
 				}
-				parent.Add(new XAttribute(name, value));
-			}
-			else {
-				parent.Add(new XElement(name, value)); 
-			}
 
+				var value = GetSerializedValue(rawValue);
+				var propType = prop.PropertyType;
+
+				var element = new XElement(name);
+
+				var useAttribute = false;
+				var settings = prop.GetAttribute<SerializeAsAttribute>();
+				if (settings != null) {
+					name = settings.Name.HasValue() ? settings.Name : name;
+					useAttribute = settings.Attribute;
+				}
+
+				if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string)) {
+					if (useAttribute) {
+						root.Add(new XAttribute(name, value));
+						continue;
+					}
+					else {
+						element.Value = value;
+					}
+				}
+				else if (rawValue is IList) {
+					var itemTypeName = "";
+					foreach (var item in (IList)rawValue) {
+						if (itemTypeName == "") {
+							itemTypeName = item.GetType().Name;
+						}
+						var instance = new XElement(itemTypeName);
+						Map(instance, item);
+						element.Add(instance);
+					}
+				}
+				else {
+					Map(element, rawValue);
+				}
+
+				root.Add(element);
+			}
 		}
 
-		private object GetSerializedValue(object obj) {
-			object output = obj;
-			var type = obj.GetType();
+		private string GetSerializedValue(object obj) {
+			var output = obj;
 
-			if (type.IsPrimitive) {
-				return obj;
-			}
-			else if (obj is DateTime) {
+			if (obj is DateTime) {
 				// check for DateFormat when adding date props
 				if (DateFormat != DateFormat.None) {
 					output = ((DateTime)obj).ToString(DateFormat.GetFormatString());
 				}
 			}
-			else if (obj is object) {
-				// handle List<T>
+			// else if... if needed for other types
 
-			}
-			else {
-				// handle nested types (recursively call AddElementForProperty)
-			}
-
-			return output;
+			return output.ToString();
 		}
 
 		public string RootElement { get; set; }

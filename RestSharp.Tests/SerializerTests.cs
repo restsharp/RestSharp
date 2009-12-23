@@ -16,11 +16,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
-using Xunit;
 using RestSharp.Serializers;
+using Xunit;
 
 namespace RestSharp.Tests
 {
@@ -132,12 +130,12 @@ namespace RestSharp.Tests
 			root.Add(new XElement("Name", "Foo"),
 					new XElement("Age", 50),
 					new XElement("Price", 19.95m),
-					new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23)));
+					new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
 
 			var items = new XElement("Items");
-			items.Add(new XElement("One", 1));
-			items.Add(new XElement("Two", 2));
-			items.Add(new XElement("Three", 3));
+			items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
+			items.Add(new XElement("Item", new XElement("Name", "Two"), new XElement("Value", 2)));
+			items.Add(new XElement("Item", new XElement("Name", "Three"), new XElement("Value", 3)));
 			root.Add(items);
 
 			doc.Add(root);
@@ -166,7 +164,7 @@ namespace RestSharp.Tests
 			start.Add(new XElement("Name", "Foo"),
 					new XElement("Age", 50),
 					new XElement("Price", 19.95m),
-					new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23)));
+					new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
 
 			root.Add(start);
 			doc.Add(root);
@@ -180,7 +178,7 @@ namespace RestSharp.Tests
 			root.Add(new XAttribute("WackyName", "Foo"),
 					new XElement("Age", 50),
 					new XAttribute("Price", 19.95m),
-					new XAttribute("start_date", new DateTime(2009, 12, 18, 10, 2, 23)));
+					new XAttribute("start_date", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
 
 			doc.Add(root);
 
