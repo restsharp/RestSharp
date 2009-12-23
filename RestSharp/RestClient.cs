@@ -23,16 +23,14 @@ namespace RestSharp
 {
 	public class RestClient : IRestClient
 	{
-		private readonly IHttp _http;
 		private readonly IDeserializer _jsonDeserializer;
 		private readonly IDeserializer _xmlDeserializer;
 
-		public RestClient() 
-			: this(new Http(), new JsonDeserializer(), new XmlDeserializer()) {
+		public RestClient()
+			: this(new JsonDeserializer(), new XmlDeserializer()) {
 		}
 
-		public RestClient(IHttp http, IDeserializer jsonDeserializer, IDeserializer xmlDeserializer) {
-			_http = http;
+		public RestClient(IDeserializer jsonDeserializer, IDeserializer xmlDeserializer) {
 			_jsonDeserializer = jsonDeserializer;
 			_xmlDeserializer = xmlDeserializer;
 		}
@@ -82,60 +80,75 @@ namespace RestSharp
 		}
 
 		private RestResponse GetResponse(RestRequest request) {
+			IHttp http = new Http();
+			http.Url = request.GetUri();
+
 			if (request.Credentials != null) {
-				_http.Credentials = request.Credentials;
+				http.Credentials = request.Credentials;
 			}
-			if (this.Proxy != null) {
-				_http.Proxy = this.Proxy;
+
+			if (Proxy != null) {
+				http.Proxy = Proxy;
 			}
 
 			var headers = from p in request.Parameters
 						  where p.Type == ParameterType.HttpHeader
-						  select new {
+						  select new HttpHeader {
 							  Name = p.Name,
 							  Value = p.Value.ToString()
 						  };
 
 			foreach (var header in headers) {
-				_http.Headers.Add(header.Name, header.Value);
+				http.Headers.Add(header);
 			}
 
-			var @params = request.Parameters
-									.Where(p => p.Type == ParameterType.GetOrPost)
-									.Where(p => p.Value != null)
-									.ToDictionary(k => k.Name, e => e.Value.ToString());
+			var @params = from p in request.Parameters
+						  where p.Type == ParameterType.GetOrPost
+								&& p.Value != null
+						  select new HttpParameter {
+							  Name = p.Name,
+							  Value = p.Value.ToString()
+						  };
+
+			foreach (var parameter in @params) {
+				http.Parameters.Add(parameter);
+			}
+
+			foreach (var file in request.Files) {
+				http.Files.Add(new HttpFile { ContentType = file.ContentType, Data = file.Data, FileName = file.FileName });
+			}
 
 			var response = new RestResponse();
 
 			try {
 				switch (request.Verb) {
 					case Method.GET:
-						response = _http.Get(request.GetUri(), @params);
+						response = http.Get();
 						break;
 					case Method.POST:
-						response = _http.Post(request.GetUri(), @params);
+						response = http.Post();
 						break;
 					case Method.PUT:
-						response = _http.Put(request.GetUri(), @params);
+						response = http.Put();
 						break;
 					case Method.DELETE:
-						response = _http.Delete(request.GetUri(), @params);
+						response = http.Delete();
 						break;
 					case Method.HEAD:
-						response = _http.Head(request.GetUri(), @params);
+						response = http.Head();
 						break;
 					case Method.OPTIONS:
-						response = _http.Options(request.GetUri(), @params);
+						response = http.Options();
 						break;
 				}
 
 				response.ResponseStatus = ResponseStatus.Success;
 			}
 			catch (Exception ex) {
-				response = new RestResponse { 
-								ErrorMessage = ex.Message,
-								ResponseStatus = ResponseStatus.Error
-						   };
+				response = new RestResponse {
+					ErrorMessage = ex.Message,
+					ResponseStatus = ResponseStatus.Error
+				};
 			}
 
 			return response;

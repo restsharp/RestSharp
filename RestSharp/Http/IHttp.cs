@@ -24,14 +24,17 @@ namespace RestSharp
 	{
 		ICredentials Credentials { get; set; }
 		IWebProxy Proxy { get; set; }
-		RestResponse Delete(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
-		RestResponse Get(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
-		RestResponse Head(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
-		IDictionary<string, string> Headers { get; }
-		RestResponse Options(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
-		RestResponse Post(Uri uri, IEnumerable<KeyValuePair<string, string>> @params, string contentType);
-		RestResponse Post(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
-		RestResponse Put(Uri uri, IEnumerable<KeyValuePair<string, string>> @params);
-		RestResponse Put(Uri uri, IEnumerable<KeyValuePair<string, string>> @params, string contentType);
+		RestResponse Delete();
+		RestResponse Get();
+		RestResponse Head();
+		RestResponse Options();
+		RestResponse Post();
+		RestResponse Put();
+
+		IList<HttpHeader> Headers { get; }
+		IList<HttpParameter> Parameters { get; }
+		IList<HttpFile> Files { get; }
+
+		Uri Url { get; set; }
 	}
 }

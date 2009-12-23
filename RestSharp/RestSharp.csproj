@@ -56,7 +56,11 @@
     <Compile Include="Authenticators\HttpBasicAuthenticator.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="FileParameter.cs" />
     <Compile Include="Http\Http.cs" />
+    <Compile Include="Http\HttpFile.cs" />
+    <Compile Include="Http\HttpHeader.cs" />
+    <Compile Include="Http\HttpParameter.cs" />
     <Compile Include="Http\IHttp.cs" />
     <Compile Include="IRestClient.cs" />
     <Compile Include="RestResponse.cs" />

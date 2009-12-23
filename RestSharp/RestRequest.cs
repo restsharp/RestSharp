@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.IO;
 
 namespace RestSharp
 {
@@ -25,6 +26,7 @@ namespace RestSharp
 	{
 		public RestRequest() {
 			Parameters = new List<Parameter>();
+			Files = new List<FileParameter>();
 		}
 
 		public RestRequest(Method verb)
@@ -41,6 +43,17 @@ namespace RestSharp
 			: this() {
 			Action = action;
 			Verb = verb;
+		}
+
+		public void AddFile(string path) {
+			string fileName = Path.GetFileName(path);
+			var file = File.ReadAllBytes(path);
+
+			AddFile(file, fileName);
+		}
+
+		public void AddFile(byte[] bytes, string fileName) {
+			Files.Add(new FileParameter { Data = bytes, FileName = fileName });
 		}
 
 		public void AddObject(object obj, params string[] whitelist) {
@@ -84,6 +97,7 @@ namespace RestSharp
 		}
 
 		public List<Parameter> Parameters { get; private set; }
+		public List<FileParameter> Files { get; private set; }
 
 		private Method _verb = Method.GET;
 		public Method Verb {

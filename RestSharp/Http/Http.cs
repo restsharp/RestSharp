@@ -28,32 +28,43 @@ namespace RestSharp
 {
 	public class Http : IHttp
 	{
+		protected bool HasParameters {
+			get {
+				return Parameters.Any();
+			}
+		}
+
+		protected bool HasFiles {
+			get {
+				return Files.Any();
+			}
+		}
+	
 		public ICredentials Credentials { get; set; }
+		public IList<HttpFile> Files { get; private set; }
+		public IList<HttpHeader> Headers { get; private set; }
+		public IList<HttpParameter> Parameters { get; private set; }
 		public IWebProxy Proxy { get; set; }
 
-		public IDictionary<string, string> Headers { get; private set; }
+		public Uri Url { get; set; }
+
 		public Http() {
-			Headers = new Dictionary<string, string>();
+			Headers = new List<HttpHeader>();
+			Files = new List<HttpFile>();
+			Parameters = new List<HttpParameter>();
 		}
 
-		public RestResponse Post(Uri uri, IEnumerable<KeyValuePair<string, string>> @params) {
-			return Post(uri, @params, "application/x-www-form-urlencoded");
+		public RestResponse Post() {
+			return PostPutInternal("POST");
 		}
 
-		public RestResponse Post(Uri uri, IEnumerable<KeyValuePair<string, string>> @params, string contentType) {
-			return PostPutInternal(uri, @params, contentType, "POST");
+		public RestResponse Put() {
+			return PostPutInternal("PUT");
 		}
 
-		public RestResponse Put(Uri uri, IEnumerable<KeyValuePair<string, string>> @params) {
-			return Put(uri, @params, "application/x-www-form-urlencoded");
-		}
+		private RestResponse PostPutInternal(string method) {
 
-		public RestResponse Put(Uri uri, IEnumerable<KeyValuePair<string, string>> @params, string contentType) {
-			return PostPutInternal(uri, @params, contentType, "PUT");
-		}
-
-		private RestResponse PostPutInternal(Uri uri, IEnumerable<KeyValuePair<string, string>> @params, string contentType, string method) {
-			var request = (HttpWebRequest)WebRequest.Create(uri);
+			var request = (HttpWebRequest)WebRequest.Create(Url);
 			request.Method = method;
 
 			if (this.Credentials != null) {
@@ -64,14 +75,20 @@ namespace RestSharp
 				request.Proxy = this.Proxy;
 			}
 
-			if (@params.Count() > 1) {
-				var data = EncodeParameters(@params);
-				request.ContentLength = data.Length;
-				request.ContentType = contentType;
+			if (HasFiles) {
+				var contentType = GetMultipartFormContentType();
+				var data = GetMultipartFormData();
+			}
+			else {
+				if (HasParameters) {
+					var data = EncodeParameters();
+					request.ContentLength = data.Length;
+					request.ContentType = "application/x-www-form-urlencoded";
 
-				var requestStream = request.GetRequestStream();
-				using (StreamWriter writer = new StreamWriter(requestStream, Encoding.ASCII)) {
-					writer.Write(data);
+					var requestStream = request.GetRequestStream();
+					using (StreamWriter writer = new StreamWriter(requestStream, Encoding.ASCII)) {
+						writer.Write(data);
+					}
 				}
 			}
 
@@ -79,36 +96,87 @@ namespace RestSharp
 			return GetResponse(request);
 		}
 
-		private string EncodeParameters(IEnumerable<KeyValuePair<string, string>> @params) {
+		private string _formBoundary = "-----------------------------28947758029299";
+		private string GetMultipartFormContentType() {
+			return "multipart/form-data; boundary=" + _formBoundary;
+		}
+
+		private byte[] GetMultipartFormData() {
+			var boundary = _formBoundary;
+			var encoding = Encoding.ASCII;
+			Stream formDataStream = new System.IO.MemoryStream();
+
+			foreach (var file in Files) {
+				var fileName = file.FileName;
+				var data = file.Data;
+				var length = data.Length;
+
+				// Add just the first part of this param, since we will write the file data directly to the Stream
+				string header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{1}\";\r\nContent-Type: {2}\r\n\r\n",
+					boundary,
+					fileName,
+					"application/octet-stream"); // todo: allow this to be specified
+
+				formDataStream.Write(encoding.GetBytes(header), 0, header.Length);
+
+				// Write the file data directly to the Stream, rather than serializing it to a string.
+				formDataStream.Write(data, 0, length);
+				string lineEnding = "\r\n";
+				formDataStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
+			}
+
+			//{
+			//       string postData = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n",
+			//           boundary,
+			//           param.Key,
+			//           param.Value);
+			//       formDataStream.Write(encoding.GetBytes(postData), 0, postData.Length);
+			//   }
+
+			// Add the end of the request
+			string footer = "\r\n--" + boundary + "--\r\n";
+			formDataStream.Write(encoding.GetBytes(footer), 0, footer.Length);
+
+			// Dump the Stream into a byte[]
+			formDataStream.Position = 0;
+			byte[] formData = new byte[formDataStream.Length];
+			formDataStream.Read(formData, 0, formData.Length);
+			formDataStream.Close();
+
+			return formData;
+		}
+
+
+		private string EncodeParameters() {
 			var querystring = new StringBuilder();
-			foreach (var p in @params) {
+			foreach (var p in Parameters) {
 				if (querystring.Length > 1) querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", HttpUtility.UrlEncode(p.Key), HttpUtility.UrlEncode(p.Value));
+				querystring.AppendFormat("{0}={1}", HttpUtility.UrlEncode(p.Name), HttpUtility.UrlEncode(p.Value));
 			}
 
 			return querystring.ToString();
 		}
 
-		public RestResponse Get(Uri uri, IEnumerable<KeyValuePair<string, string>> @params) {
-			return GetStyleVerbInternal(uri, "GET", @params);
+		public RestResponse Get() {
+			return GetStyleVerbInternal("GET");
 		}
 
-		public RestResponse Head(Uri uri, IEnumerable<KeyValuePair<string, string>> @params) {
-			return GetStyleVerbInternal(uri, "HEAD", @params);
+		public RestResponse Head() {
+			return GetStyleVerbInternal("HEAD");
 		}
 
-		public RestResponse Options(Uri uri, IEnumerable<KeyValuePair<string, string>> @params) {
-			return GetStyleVerbInternal(uri, "OPTIONS", @params);
+		public RestResponse Options() {
+			return GetStyleVerbInternal("OPTIONS");
 		}
 
-		public RestResponse Delete(Uri uri, IEnumerable<KeyValuePair<string, string>> @params) {
-			return GetStyleVerbInternal(uri, "DELETE", @params);
+		public RestResponse Delete() {
+			return GetStyleVerbInternal("DELETE");
 		}
 
-		private RestResponse GetStyleVerbInternal(Uri uri, string method, IEnumerable<KeyValuePair<string, string>> @params) {
-			string url = uri.ToString();
-			if (@params.Count() > 1) {
-				var data = EncodeParameters(@params);
+		private RestResponse GetStyleVerbInternal(string method) {
+			string url = Url.ToString();
+			if (HasParameters) {
+				var data = EncodeParameters();
 				url = string.Format("{0}?{1}", url, data);
 			}
 
@@ -129,7 +197,7 @@ namespace RestSharp
 
 		private void AppendHeaders(HttpWebRequest request) {
 			foreach (var header in Headers) {
-				request.Headers[header.Key] = header.Value;
+				request.Headers[header.Name] = header.Value;
 			}
 		}
 
