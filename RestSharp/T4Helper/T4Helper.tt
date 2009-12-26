@@ -142,7 +142,9 @@ public class {0} {{
 	void AddListWithReference(XElement el, System.Text.StringBuilder builder)
 	{
 		var first = el.Elements().First();
-		Deferred.Add(first.Name.ToString(), BuildClass(first));
+		if (!Deferred.ContainsKey(first.Name.ToString())) {
+			Deferred.Add(first.Name.ToString(), BuildClass(first));
+		}
 		builder.AppendFormat("    public List<{0}.{1}> {2} {{ get; set; }}{3}", Namespace, ToPascalCase(first.Name), ToPascalCase(el.Name), Environment.NewLine);
 	}
 	

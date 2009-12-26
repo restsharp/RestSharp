@@ -34,17 +34,24 @@ namespace RestSharp
 			}
 		}
 
+		protected bool HasBody {
+			get {
+				return !string.IsNullOrEmpty(RequestBody);
+			}
+		}
+
 		protected bool HasFiles {
 			get {
 				return Files.Any();
 			}
 		}
-	
+
 		public ICredentials Credentials { get; set; }
 		public IList<HttpFile> Files { get; private set; }
 		public IList<HttpHeader> Headers { get; private set; }
 		public IList<HttpParameter> Parameters { get; private set; }
 		public IWebProxy Proxy { get; set; }
+		public string RequestBody { get; set; }
 
 		public Uri Url { get; set; }
 
@@ -64,93 +71,95 @@ namespace RestSharp
 
 		private RestResponse PostPutInternal(string method) {
 
-			var request = (HttpWebRequest)WebRequest.Create(Url);
-			request.Method = method;
+			var webRequest = (HttpWebRequest)WebRequest.Create(Url);
+			webRequest.Method = method;
 
-			if (this.Credentials != null) {
-				request.Credentials = this.Credentials;
+			if (Credentials != null) {
+				webRequest.Credentials = Credentials;
 			}
 
-			if (this.Proxy != null) {
-				request.Proxy = this.Proxy;
+			if (Proxy != null) {
+				webRequest.Proxy = Proxy;
 			}
 
 			if (HasFiles) {
-				var contentType = GetMultipartFormContentType();
-				var data = GetMultipartFormData();
+				webRequest.ContentType = GetMultipartFormContentType();
+				WriteMultipartFormData(webRequest);
 			}
 			else {
 				if (HasParameters) {
-					var data = EncodeParameters();
-					request.ContentLength = data.Length;
-					request.ContentType = "application/x-www-form-urlencoded";
-
-					var requestStream = request.GetRequestStream();
-					using (StreamWriter writer = new StreamWriter(requestStream, Encoding.ASCII)) {
-						writer.Write(data);
-					}
+					webRequest.ContentType = "application/x-www-form-urlencoded";
+					RequestBody = EncodeParameters();
+				}
+				else if (HasBody) {
+					webRequest.ContentType = "text/xml";
 				}
 			}
 
-			AppendHeaders(request);
-			return GetResponse(request);
+			WriteRequestBody(webRequest);
+			AppendHeaders(webRequest);
+			return GetResponse(webRequest);
+		}
+
+		private void WriteRequestBody(HttpWebRequest webRequest) {
+			if (HasBody) {
+				webRequest.ContentLength = RequestBody.Length;
+
+				var requestStream = webRequest.GetRequestStream();
+				using (StreamWriter writer = new StreamWriter(requestStream, Encoding.ASCII)) {
+					writer.Write(RequestBody);
+				}
+			}
 		}
 
 		private string _formBoundary = "-----------------------------28947758029299";
 		private string GetMultipartFormContentType() {
-			return "multipart/form-data; boundary=" + _formBoundary;
+			return string.Format("multipart/form-data; boundary={0}", _formBoundary);
 		}
 
-		private byte[] GetMultipartFormData() {
+		private void WriteMultipartFormData(HttpWebRequest webRequest) {
 			var boundary = _formBoundary;
 			var encoding = Encoding.ASCII;
-			Stream formDataStream = new System.IO.MemoryStream();
+			using (Stream formDataStream = webRequest.GetRequestStream()) {
+				foreach (var file in Files) {
+					var fileName = file.FileName;
+					var data = file.Data;
+					var length = data.Length;
+					var contentType = file.ContentType;
+					// Add just the first part of this param, since we will write the file data directly to the Stream
+					string header = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\";{3}Content-Type: {2}{3}{3}", 
+													boundary, 
+													fileName, 
+													contentType ?? "application/octet-stream",
+													Environment.NewLine);
 
-			foreach (var file in Files) {
-				var fileName = file.FileName;
-				var data = file.Data;
-				var length = data.Length;
+					formDataStream.Write(encoding.GetBytes(header), 0, header.Length);
+					// Write the file data directly to the Stream, rather than serializing it to a string.
+					formDataStream.Write(data, 0, length);
+					string lineEnding = Environment.NewLine;
+					formDataStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
+				}
 
-				// Add just the first part of this param, since we will write the file data directly to the Stream
-				string header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{1}\";\r\nContent-Type: {2}\r\n\r\n",
-					boundary,
-					fileName,
-					"application/octet-stream"); // todo: allow this to be specified
+				foreach (var param in Parameters) {
+					var postData = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
+													boundary,
+													param.Name,
+													param.Value,
+													Environment.NewLine);
 
-				formDataStream.Write(encoding.GetBytes(header), 0, header.Length);
+					formDataStream.Write(encoding.GetBytes(postData), 0, postData.Length);
+				}
 
-				// Write the file data directly to the Stream, rather than serializing it to a string.
-				formDataStream.Write(data, 0, length);
-				string lineEnding = "\r\n";
-				formDataStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
+				string footer = String.Format("{1}--{0}--{1}", boundary, Environment.NewLine);
+				formDataStream.Write(encoding.GetBytes(footer), 0, footer.Length);
 			}
-
-			//{
-			//       string postData = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n",
-			//           boundary,
-			//           param.Key,
-			//           param.Value);
-			//       formDataStream.Write(encoding.GetBytes(postData), 0, postData.Length);
-			//   }
-
-			// Add the end of the request
-			string footer = "\r\n--" + boundary + "--\r\n";
-			formDataStream.Write(encoding.GetBytes(footer), 0, footer.Length);
-
-			// Dump the Stream into a byte[]
-			formDataStream.Position = 0;
-			byte[] formData = new byte[formDataStream.Length];
-			formDataStream.Read(formData, 0, formData.Length);
-			formDataStream.Close();
-
-			return formData;
 		}
-
 
 		private string EncodeParameters() {
 			var querystring = new StringBuilder();
 			foreach (var p in Parameters) {
-				if (querystring.Length > 1) querystring.Append("&");
+				if (querystring.Length > 1)
+					querystring.Append("&");
 				querystring.AppendFormat("{0}={1}", HttpUtility.UrlEncode(p.Name), HttpUtility.UrlEncode(p.Value));
 			}
 
@@ -180,24 +189,30 @@ namespace RestSharp
 				url = string.Format("{0}?{1}", url, data);
 			}
 
-			var request = (HttpWebRequest)WebRequest.Create(url);
-			request.Method = method;
+			var webRequest = (HttpWebRequest)WebRequest.Create(url);
+			webRequest.Method = method;
 
 			if (this.Credentials != null) {
-				request.Credentials = this.Credentials;
+				webRequest.Credentials = this.Credentials;
 			}
 
 			if (this.Proxy != null) {
-				request.Proxy = this.Proxy;
+				webRequest.Proxy = this.Proxy;
 			}
 
-			AppendHeaders(request);
-			return GetResponse(request);
+			// incompatible with GET, not sure about DELETE, OPTIONS, HEAD
+			//if (HasBody) {
+			//    webRequest.ContentType = "text/xml";
+			//}
+
+			//WriteRequestBody(webRequest);
+			AppendHeaders(webRequest);
+			return GetResponse(webRequest);
 		}
 
-		private void AppendHeaders(HttpWebRequest request) {
+		private void AppendHeaders(HttpWebRequest webRequest) {
 			foreach (var header in Headers) {
-				request.Headers[header.Name] = header.Value;
+				webRequest.Headers[header.Name] = header.Value;
 			}
 		}
 

@@ -31,6 +31,9 @@ namespace RestSharp.Deserializers
 		public DateFormat DateFormat { get; set; }
 
 		public X Deserialize<X>(string content) where X : new() {
+			if (content == null)
+				return default(X);
+
 			var doc = XDocument.Parse(content);
 			var root = doc.Root;
 			if (RootElement.HasValue())
@@ -38,8 +41,7 @@ namespace RestSharp.Deserializers
 
 			// autodetect xml namespace
 			if (!Namespace.HasValue()) {
-				var xmlnsAtttribute = root.Attribute("xmlns");
-				Namespace = (xmlnsAtttribute != null) ? xmlnsAtttribute.Value : string.Empty;
+				RemoveNamespace(doc);
 			}
 
 			var x = new X();
@@ -53,6 +55,17 @@ namespace RestSharp.Deserializers
 			}
 
 			return x;
+		}
+
+		void RemoveNamespace(XDocument xdoc) {
+			foreach (XElement e in xdoc.Root.DescendantsAndSelf()) {
+				if (e.Name.Namespace != XNamespace.None) {
+					e.Name = XNamespace.None.GetName(e.Name.LocalName);
+				}
+				if (e.Attributes().Any(a => a.IsNamespaceDeclaration || a.Name.Namespace != XNamespace.None)) {
+					e.ReplaceAttributes(e.Attributes().Select(a => a.IsNamespaceDeclaration ? null : a.Name.Namespace != XNamespace.None ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value) : a));
+				}
+			}
 		}
 
 		private void Map(object x, XElement root) {
@@ -106,7 +119,7 @@ namespace RestSharp.Deserializers
 				else {
 					// nested property classes
 					if (root != null) {
-						var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+						var element = GetElementByName(root, name);
 						if (element != null) {
 							var item = CreateAndMap(type, element);
 							prop.SetValue(x, item, null);
@@ -148,32 +161,70 @@ namespace RestSharp.Deserializers
 			object val = null;
 
 			if (root != null) {
-				if (root.Element(name) != null) {
-					val = root.Element(name).Value;
-				}
-				else if (root.Attribute(name) != null) {
-					val = root.Attribute(name).Value;
-				}
-				else if (name == "Value" && root.Value != null) {
-					val = root.Value;
+				var element = GetElementByName(root, name);
+				if (element == null) {
+					var attribute = GetAttributeByName(root, name);
+					if (attribute != null) {
+						val = attribute.Value;
+					}
 				}
 				else {
-					// try looking for element that matches sanitized property name
-					var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
-					if (element != null) {
-						val = element.Value;
-					}
-					else {
-						// check attributes that match sanitized name
-						var attribute = root.Attributes().FirstOrDefault(a => a.Name.LocalName.RemoveUnderscores() == name.LocalName);
-						if (attribute != null) {
-							val = attribute.Value;
-						}
-					}
+					val = element.Value;
 				}
 			}
 
 			return val;
+		}
+
+		private XElement GetElementByName(XElement root, XName name) {
+			var lowerName = XName.Get(name.LocalName.ToLower(), name.NamespaceName);
+			var camelName = XName.Get(name.LocalName.ToCamelCase(), name.NamespaceName);
+
+			if (root.Element(name) != null) {
+				return root.Element(name);
+			}
+			else if (root.Element(lowerName) != null) {
+				return root.Element(lowerName);
+			}
+			else if (root.Element(camelName) != null) {
+				return root.Element(camelName);
+			}
+			else if (name == "Value" && root.Value != null) {
+				return root;
+			}
+			else {
+				// try looking for element that matches sanitized property name
+				var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+				if (element != null) {
+					return element;
+				}
+			}
+
+			return null;
+		}
+
+		private XAttribute GetAttributeByName(XElement root, XName name) {
+			var lowerName = XName.Get(name.LocalName.ToLower(), name.NamespaceName);
+			var camelName = XName.Get(name.LocalName.ToCamelCase(), name.NamespaceName);
+
+			if (root.Attribute(name) != null) {
+				return root.Attribute(name);
+			}
+			else if (root.Attribute(lowerName) != null) {
+				return root.Attribute(lowerName);
+			}
+			else if (root.Attribute(camelName) != null) {
+				return root.Attribute(camelName);
+			}
+			else {
+				// try looking for element that matches sanitized property name
+				var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+				if (element != null) {
+					return element;
+				}
+			}
+
+			return null;
 		}
 	}
 }

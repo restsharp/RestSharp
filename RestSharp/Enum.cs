@@ -22,7 +22,8 @@ namespace RestSharp
 	{
 		GetOrPost,
 		UrlSegment,
-		HttpHeader
+		HttpHeader,
+		RequestBody
 	}
 
 	public enum ResponseFormat

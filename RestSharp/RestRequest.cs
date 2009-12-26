@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.IO;
+using RestSharp.Serializers;
 
 namespace RestSharp
 {
@@ -45,18 +46,32 @@ namespace RestSharp
 			Verb = verb;
 		}
 
-		public void AddFile(string path) {
+		public RestRequest AddFile(string path) {
 			string fileName = Path.GetFileName(path);
 			var file = File.ReadAllBytes(path);
 
-			AddFile(file, fileName);
+			return AddFile(file, fileName);
 		}
 
-		public void AddFile(byte[] bytes, string fileName) {
-			Files.Add(new FileParameter { Data = bytes, FileName = fileName });
+		public RestRequest AddFile(byte[] bytes, string fileName) {
+			return AddFile(bytes, fileName, null);
 		}
 
-		public void AddObject(object obj, params string[] whitelist) {
+		public RestRequest AddFile(byte[] bytes, string fileName, string contentType) {
+			Files.Add(new FileParameter { Data = bytes, FileName = fileName, ContentType = contentType });
+			return this;
+		}
+
+		public RestRequest AddBody(object obj, string xmlNamespace) {
+			var xml = new XmlSerializer(xmlNamespace);
+			return AddParameter("", xml.Serialize(obj).ToString(), ParameterType.RequestBody);
+		}
+
+		public RestRequest AddBody(object obj) {
+			return AddBody(obj, "");
+		}
+
+		public RestRequest AddObject(object obj, params string[] whitelist) {
 			// automatically create parameters from object props
 			var type = obj.GetType();
 			var props = type.GetProperties();
@@ -77,10 +92,13 @@ namespace RestSharp
 					}
 				}
 			}
+
+			return this;
 		}
 
-		public void AddObject(object obj) {
+		public RestRequest AddObject(object obj) {
 			AddObject(obj, string.Empty);
+			return this;
 		}
 
 		public RestRequest AddParameter(Parameter p) {

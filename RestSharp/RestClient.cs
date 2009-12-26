@@ -118,6 +118,14 @@ namespace RestSharp
 				http.Files.Add(new HttpFile { ContentType = file.ContentType, Data = file.Data, FileName = file.FileName });
 			}
 
+			var body = (from p in request.Parameters
+						where p.Type == ParameterType.RequestBody
+						select p).FirstOrDefault();
+
+			if (body != null) {
+				http.RequestBody = body.Value.ToString();
+			}
+
 			var response = new RestResponse();
 
 			try {

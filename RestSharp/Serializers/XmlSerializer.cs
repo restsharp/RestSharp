@@ -24,11 +24,19 @@ namespace RestSharp.Serializers
 {
 	public class XmlSerializer : ISerializer
 	{
+		public XmlSerializer() {
+		}
+
+		public XmlSerializer(string @namespace) {
+			Namespace = @namespace;
+		}
+
 		public XDocument Serialize(object obj) {
 			var doc = new XDocument();
 
 			var t = obj.GetType();
-			var root = new XElement(t.Name);
+			var root = new XElement(t.Name.AsNamespaced(Namespace));
+
 			Map(root, obj);
 
 			if (RootElement.HasValue()) {
@@ -46,7 +54,7 @@ namespace RestSharp.Serializers
 			var props = obj.GetType().GetProperties().Where(p => p.CanRead && p.CanWrite);
 
 			foreach (var prop in props) {
-				var name = prop.Name.AsNamespaced(Namespace);
+				var name = prop.Name;
 				var rawValue = prop.GetValue(obj, null);
 
 				if (rawValue == null) {
@@ -56,14 +64,20 @@ namespace RestSharp.Serializers
 				var value = GetSerializedValue(rawValue);
 				var propType = prop.PropertyType;
 
-				var element = new XElement(name);
-
 				var useAttribute = false;
 				var settings = prop.GetAttribute<SerializeAsAttribute>();
 				if (settings != null) {
 					name = settings.Name.HasValue() ? settings.Name : name;
 					useAttribute = settings.Attribute;
 				}
+
+				var transform = prop.GetAttribute<SerializeTransformAttribute>();
+				if (transform != null) {
+					name = transform.Shazam(name);
+				}
+
+				var nsName = name.AsNamespaced(Namespace);
+				var element = new XElement(nsName);
 
 				if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string)) {
 					if (useAttribute) {

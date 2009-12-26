@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "RestSharp\Rest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "RestSharp.Tests\RestSharp.Tests.csproj", "{1464E4AC-18BB-4F23-8A0B-68196F9E1871}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.TestServer", "RestSharp.TestServer\RestSharp.TestServer.csproj", "{1113DBA5-62A7-4352-BE74-7EEE738944AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1113DBA5-62A7-4352-BE74-7EEE738944AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1113DBA5-62A7-4352-BE74-7EEE738944AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1113DBA5-62A7-4352-BE74-7EEE738944AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1113DBA5-62A7-4352-BE74-7EEE738944AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

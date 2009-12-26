@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using RestSharp.Extensions;
 
 namespace RestSharp.Serializers
 {
@@ -23,5 +24,35 @@ namespace RestSharp.Serializers
 	{
 		public string Name { get; set; }
 		public bool Attribute { get; set; }
+	}
+
+	[global::System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class SerializeTransformAttribute : Attribute
+	{
+		public SerializeTransformAttribute(Transform transform) {
+			Transform = transform;
+		}
+
+		public Transform Transform { get; private set; }
+
+		public string Shazam(string input) {
+			switch (Transform) {
+				case Transform.CamelCase:
+					return input.ToCamelCase();
+				case Transform.PascalCase:
+					return input.ToPascalCase();
+				case Transform.LowerCase:
+					return input.ToLower();
+			}
+
+			return input;
+		}
+	}
+
+	public enum Transform
+	{
+		CamelCase,
+		LowerCase,
+		PascalCase
 	}
 }
