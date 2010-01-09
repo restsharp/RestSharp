@@ -59,7 +59,12 @@ namespace RestSharp.Serializers
 
 		private void Map(XElement root, object obj) {
 			var objType = obj.GetType();
-			var props = objType.GetProperties().Where(p => p.CanRead && p.CanWrite);
+
+			var props = from p in objType.GetProperties()
+						let indexAttribute = p.GetAttribute<SerializeIndexAttribute>()
+						where p.CanRead && p.CanWrite
+						orderby indexAttribute == null ? int.MaxValue : indexAttribute.Index
+						select p;
 
 			var globalTransform = objType.GetAttribute<SerializeTransformAttribute>();
 

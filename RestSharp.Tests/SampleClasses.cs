@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using RestSharp.Serializers;
 
 namespace RestSharp.Tests
 {
@@ -78,5 +79,15 @@ namespace RestSharp.Tests
 	public class Birthdate
 	{
 		public DateTime Value { get; set; }
+	}
+
+	public class OrderedProperties
+	{
+		[SerializeIndex(2)]
+		public string Name { get; set; }
+		[SerializeIndex(3)]
+		public int Age { get; set; }
+		[SerializeIndex(1)]
+		public DateTime StartDate { get; set; }
 	}
 }

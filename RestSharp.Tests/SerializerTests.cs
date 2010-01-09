@@ -25,6 +25,21 @@ namespace RestSharp.Tests
 	public class SerializerTests
 	{
 		[Fact]
+		public void Serializes_Properties_In_Specified_Order() {
+			var ordered = new OrderedProperties();
+			ordered.Name = "Name";
+			ordered.Age = 99;
+			ordered.StartDate = new DateTime(2010, 1, 1);
+
+			var xml = new XmlSerializer();
+			var doc = xml.Serialize(ordered);
+
+			var expected = GetSortedPropsXDoc();
+
+			Assert.Equal(expected.ToString(), doc.ToString());
+		}
+
+		[Fact]
 		public void Can_serialize_simple_POCO() {
 			var poco = new Person {
 				Name = "Foo",
@@ -185,5 +200,17 @@ namespace RestSharp.Tests
 			return doc;
 		}
 
+		private XDocument GetSortedPropsXDoc() {
+			var doc = new XDocument();
+			var root = new XElement("OrderedProperties");
+
+			root.Add(new XElement("StartDate", new DateTime(2010, 1, 1).ToString()));
+			root.Add(new XElement("Name", "Name"));
+			root.Add(new XElement("Age", 99));
+
+			doc.Add(root);
+
+			return doc;
+		}
 	}
 }
