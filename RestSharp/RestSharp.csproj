@@ -72,6 +72,7 @@
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\SerializeAsAttribute.cs" />
+    <Compile Include="Serializers\SerializeTransformAttribute.cs" />
     <Compile Include="Serializers\XmlSerializer.cs" />
     <None Include="T4Helper\T4Helper.tt">
       <LastGenOutput>T4Helper.log</LastGenOutput>

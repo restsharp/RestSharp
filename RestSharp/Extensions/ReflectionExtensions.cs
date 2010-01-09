@@ -1,5 +1,5 @@
 ﻿#region License
-//   Copyright 2009 John Sheehan
+//   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ namespace RestSharp.Extensions
 	{
 		public static T GetAttribute<T>(this PropertyInfo prop) where T : Attribute {
 			return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
+		}
+
+		public static T GetAttribute<T>(this Type type) where T : Attribute {
+			return Attribute.GetCustomAttribute(type, typeof(T)) as T;
 		}
 	}
 }

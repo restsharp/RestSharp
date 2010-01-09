@@ -1,5 +1,5 @@
 ﻿#region License
-//   Copyright 2009 John Sheehan
+//   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ namespace RestSharp.Validation
 		}
 
 		public static void IsValidLength(string value, int maxSize) {
+			if (value == null)
+				return;
+
 			if (value.Length > maxSize) {
 				throw new ArgumentException(string.Format("String is longer than max allowed size ({0}).", maxSize));
 			}

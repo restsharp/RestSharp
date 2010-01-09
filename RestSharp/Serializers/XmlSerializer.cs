@@ -1,5 +1,5 @@
 ﻿#region License
-//   Copyright 2009 John Sheehan
+//   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -35,7 +35,14 @@ namespace RestSharp.Serializers
 			var doc = new XDocument();
 
 			var t = obj.GetType();
-			var root = new XElement(t.Name.AsNamespaced(Namespace));
+			var name = t.Name;
+
+			var transform = t.GetAttribute<SerializeTransformAttribute>();
+			if (transform != null) {
+				name = transform.Shazam(name);
+			}
+
+			var root = new XElement(name.AsNamespaced(Namespace));
 
 			Map(root, obj);
 
@@ -51,7 +58,10 @@ namespace RestSharp.Serializers
 		}
 
 		private void Map(XElement root, object obj) {
-			var props = obj.GetType().GetProperties().Where(p => p.CanRead && p.CanWrite);
+			var objType = obj.GetType();
+			var props = objType.GetProperties().Where(p => p.CanRead && p.CanWrite);
+
+			var globalTransform = objType.GetAttribute<SerializeTransformAttribute>();
 
 			foreach (var prop in props) {
 				var name = prop.Name;
@@ -74,6 +84,9 @@ namespace RestSharp.Serializers
 				var transform = prop.GetAttribute<SerializeTransformAttribute>();
 				if (transform != null) {
 					name = transform.Shazam(name);
+				}
+				else if (globalTransform != null) {
+					name = globalTransform.Shazam(name);
 				}
 
 				var nsName = name.AsNamespaced(Namespace);
