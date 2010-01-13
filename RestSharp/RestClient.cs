@@ -128,35 +128,25 @@ namespace RestSharp
 
 			var response = new RestResponse();
 
-			try {
-				switch (request.Verb) {
-					case Method.GET:
-						response = http.Get();
-						break;
-					case Method.POST:
-						response = http.Post();
-						break;
-					case Method.PUT:
-						response = http.Put();
-						break;
-					case Method.DELETE:
-						response = http.Delete();
-						break;
-					case Method.HEAD:
-						response = http.Head();
-						break;
-					case Method.OPTIONS:
-						response = http.Options();
-						break;
-				}
-
-				response.ResponseStatus = ResponseStatus.Success;
-			}
-			catch (Exception ex) {
-				response = new RestResponse {
-					ErrorMessage = ex.Message,
-					ResponseStatus = ResponseStatus.Error
-				};
+			switch (request.Verb) {
+				case Method.GET:
+					response = http.Get();
+					break;
+				case Method.POST:
+					response = http.Post();
+					break;
+				case Method.PUT:
+					response = http.Put();
+					break;
+				case Method.DELETE:
+					response = http.Delete();
+					break;
+				case Method.HEAD:
+					response = http.Head();
+					break;
+				case Method.OPTIONS:
+					response = http.Options();
+					break;
 			}
 
 			return response;

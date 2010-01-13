@@ -12,6 +12,8 @@ namespace RestSharp.TestServer
 		public static void Register(RouteCollection routes) {
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+			routes.MapRoute("StatusCode", "StatusCode/{StatusCode}", new { controller = "StatusCode", action = "Index" });
+
 			routes.MapRoute("Default", "{controller}/{action}",
 				new { controller = "Home", action = "Index" } 
 			);

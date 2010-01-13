@@ -240,21 +240,45 @@ namespace RestSharp
                   };
 
 		private RestResponse GetResponse(HttpWebRequest request) {
-			using (var raw = (HttpWebResponse)request.GetResponse()) {
-				var response = new RestResponse();
-				response.ContentType = raw.ContentType;
-				response.ContentLength = raw.ContentLength;
-				response.ContentEncoding = raw.ContentEncoding;
-				response.Content = raw.GetResponseStream().ReadAsString();
-				response.StatusCode = raw.StatusCode;
-				response.StatusDescription = raw.StatusDescription;
-				response.ResponseUri = raw.ResponseUri;
-				response.Server = raw.Server;
+			var response = new RestResponse();
+			response.ResponseStatus = ResponseStatus.None;
 
-				raw.Close();
+			try {
+				var webResponse = GetRawResponse(request);
+				using (webResponse) {
+					response.ContentType = webResponse.ContentType;
+					response.ContentLength = webResponse.ContentLength;
+					response.ContentEncoding = webResponse.ContentEncoding;
+					response.Content = webResponse.GetResponseStream().ReadAsString();
+					response.StatusCode = webResponse.StatusCode;
+					response.StatusDescription = webResponse.StatusDescription;
+					response.ResponseUri = webResponse.ResponseUri;
+					response.Server = webResponse.Server;
+					response.ResponseStatus = ResponseStatus.Success;
 
-				return response;
+					webResponse.Close();
+				}
 			}
+			catch (Exception ex) {
+				response.ErrorMessage = ex.Message;
+				response.ResponseStatus = ResponseStatus.Error;
+			}
+
+			return response;
+		}
+
+		private HttpWebResponse GetRawResponse(HttpWebRequest request) {
+			HttpWebResponse raw = null;
+			try {
+				raw = (HttpWebResponse)request.GetResponse();
+			}
+			catch (WebException ex) {
+				if (ex.Response is HttpWebResponse) {
+					raw = ex.Response as HttpWebResponse;
+				}
+			}
+
+			return raw;
 		}
 	}
 }
