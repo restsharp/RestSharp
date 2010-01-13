@@ -77,7 +77,7 @@ namespace RestSharp
 			var props = type.GetProperties();
 
 			foreach (var prop in props) {
-				bool isAllowed = whitelist.Length > 0 && whitelist.Contains(prop.Name);
+				bool isAllowed = whitelist.Length == 0 || (whitelist.Length > 0 && whitelist.Contains(prop.Name));
 
 				if (isAllowed) {
 					var propType = prop.PropertyType;
@@ -97,7 +97,7 @@ namespace RestSharp
 		}
 
 		public RestRequest AddObject(object obj) {
-			AddObject(obj, string.Empty);
+			AddObject(obj, new string[]{});
 			return this;
 		}
 
