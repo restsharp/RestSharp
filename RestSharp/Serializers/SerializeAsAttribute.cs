@@ -19,10 +19,38 @@ using RestSharp.Extensions;
 
 namespace RestSharp.Serializers
 {
-	[global::System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	[global::System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 	public sealed class SerializeAsAttribute : Attribute
 	{
+		public SerializeAsAttribute() {
+			NameStyle = NameStyle.AsIs;
+			Index = int.MaxValue;
+		}
+
 		public string Name { get; set; }
 		public bool Attribute { get; set; }
+		public NameStyle NameStyle { get; set; }
+		public int Index { get; set; }
+
+		public string TransformName(string input) {
+			switch (NameStyle) {
+				case NameStyle.CamelCase:
+					return input.ToCamelCase();
+				case NameStyle.PascalCase:
+					return input.ToPascalCase();
+				case NameStyle.LowerCase:
+					return input.ToLower();
+			}
+
+			return input;
+		}
+	}
+
+	public enum NameStyle
+	{
+		AsIs,
+		CamelCase,
+		LowerCase,
+		PascalCase
 	}
 }

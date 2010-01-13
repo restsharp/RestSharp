@@ -83,11 +83,11 @@ namespace RestSharp.Tests
 
 	public class OrderedProperties
 	{
-		[SerializeIndex(2)]
+		[SerializeAs(Index=2)]
 		public string Name { get; set; }
-		[SerializeIndex(3)]
+		[SerializeAs(Index = 3)]
 		public int Age { get; set; }
-		[SerializeIndex(1)]
+		[SerializeAs(Index = 1)]
 		public DateTime StartDate { get; set; }
 	}
 }

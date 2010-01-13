@@ -37,9 +37,9 @@ namespace RestSharp.Serializers
 			var t = obj.GetType();
 			var name = t.Name;
 
-			var transform = t.GetAttribute<SerializeTransformAttribute>();
-			if (transform != null) {
-				name = transform.Shazam(name);
+			var options = t.GetAttribute<SerializeAsAttribute>();
+			if (options != null) {
+				name = options.TransformName(name);
 			}
 
 			var root = new XElement(name.AsNamespaced(Namespace));
@@ -61,12 +61,12 @@ namespace RestSharp.Serializers
 			var objType = obj.GetType();
 
 			var props = from p in objType.GetProperties()
-						let indexAttribute = p.GetAttribute<SerializeIndexAttribute>()
+						let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
 						where p.CanRead && p.CanWrite
 						orderby indexAttribute == null ? int.MaxValue : indexAttribute.Index
 						select p;
 
-			var globalTransform = objType.GetAttribute<SerializeTransformAttribute>();
+			var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
 
 			foreach (var prop in props) {
 				var name = prop.Name;
@@ -86,12 +86,12 @@ namespace RestSharp.Serializers
 					useAttribute = settings.Attribute;
 				}
 
-				var transform = prop.GetAttribute<SerializeTransformAttribute>();
-				if (transform != null) {
-					name = transform.Shazam(name);
+				var options = prop.GetAttribute<SerializeAsAttribute>();
+				if (options != null) {
+					name = options.TransformName(name);
 				}
-				else if (globalTransform != null) {
-					name = globalTransform.Shazam(name);
+				else if (globalOptions != null) {
+					name = globalOptions.TransformName(name);
 				}
 
 				var nsName = name.AsNamespaced(Namespace);
