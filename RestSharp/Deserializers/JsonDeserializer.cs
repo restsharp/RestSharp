@@ -33,13 +33,21 @@ namespace RestSharp.Deserializers
 		public X Deserialize<X>(string content) where X : new() {
 			var x = new X();
 
-			JObject json = JObject.Parse(content);
-			JToken root = json.Root;
 
-			if (RootElement.HasValue())
-				root = json[RootElement];
+			if (x is IList) {
+				var objType = x.GetType();
+				JArray json = JArray.Parse(content);
+				x = (X)BuildList(objType, json.Root.Children());
+			}
+			else {
+				JObject json = JObject.Parse(content);
+				JToken root = json.Root;
 
-			Map(x, root);
+				if (RootElement.HasValue())
+					root = json[RootElement];
+
+				Map(x, root);
+			}
 
 			return x;
 		}

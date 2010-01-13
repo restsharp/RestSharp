@@ -20,11 +20,22 @@ using RestSharp.Deserializers;
 using Xunit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.IO;
+using RestSharp.Tests.SampleClasses;
+using System.Collections.Generic;
 
 namespace RestSharp.Tests
 {
 	public class JsonTests
 	{
+		[Fact]
+		public void Can_Deserialize_Root_Json_Array_To_List() {
+			var data = File.ReadAllText(@"..\..\SampleData\jsonarray.txt");
+			var json = new JsonDeserializer();
+			var output = json.Deserialize<List<status>>(data);
+			Assert.Equal(4, output.Count);
+		}
+
 		[Fact]
 		public void Can_Deserialize_With_Default_Root() {
 			var doc = CreateJson();
