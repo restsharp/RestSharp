@@ -127,9 +127,9 @@ namespace RestSharp
 					var length = data.Length;
 					var contentType = file.ContentType;
 					// Add just the first part of this param, since we will write the file data directly to the Stream
-					string header = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\";{3}Content-Type: {2}{3}{3}", 
-													boundary, 
-													fileName, 
+					string header = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\";{3}Content-Type: {2}{3}{3}",
+													boundary,
+													fileName,
 													contentType ?? "application/octet-stream",
 													Environment.NewLine);
 
@@ -210,11 +210,34 @@ namespace RestSharp
 			return GetResponse(webRequest);
 		}
 
+		// handle restricted headers the .NET way - thanks @dimebrain!
+		// http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
 		private void AppendHeaders(HttpWebRequest webRequest) {
 			foreach (var header in Headers) {
-				webRequest.Headers[header.Name] = header.Value;
+				if (_restrictedHeaderActions.ContainsKey(header.Name)) {
+					_restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
+				}
+				else {
+					webRequest.Headers[header.Name] = header.Value;
+				}
 			}
 		}
+
+		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions
+			= new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase) {
+                      { "Accept",            (r, v) => r.Accept = v },
+                      { "Connection",        (r, v) => r.Connection = v },           
+                      { "Content-Length",    (r, v) => r.ContentLength = Convert.ToInt64(v) },
+                      { "Content-Type",      (r, v) => r.ContentType = v },
+                      { "Expect",            (r, v) => r.Expect = v },
+                      { "Date",              (r, v) => { /* Set by system */ }},
+                      { "Host",              (r, v) => { /* Set by system */ }},
+                      { "If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v) },
+                      { "Range",             (r, v) => { throw new NotImplementedException(/* r.AddRange() */); }},
+                      { "Referer",           (r, v) => r.Referer = v },
+                      { "Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; } },
+                      { "User-Agent",        (r, v) => r.UserAgent = v }             
+                  };
 
 		private RestResponse GetResponse(HttpWebRequest request) {
 			using (var raw = (HttpWebResponse)request.GetResponse()) {
