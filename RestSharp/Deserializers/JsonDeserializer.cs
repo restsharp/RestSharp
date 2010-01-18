@@ -107,28 +107,29 @@ namespace RestSharp.Deserializers
 				else if (type == typeof(Decimal)) {
 					var dec = Decimal.Parse(value.ToString());
 					prop.SetValue(x, dec, null);
-				}
-				else if (type.IsGenericType) {
-					var genericTypeDef = type.GetGenericTypeDefinition();
-					if (genericTypeDef == typeof(List<>)) {
-						var list = BuildList(type, value.Children());
-						prop.SetValue(x, list, null);
-					}
-					else if (genericTypeDef == typeof(Dictionary<,>)) {
-						var keyType = type.GetGenericArguments()[0];
+				} else if (type == typeof(Guid)) {
+          string raw = value.ToString();
+          var guid = new Guid(raw.Substring(1, raw.Length - 2));
+          prop.SetValue(x, guid, null);
+        } else if (type.IsGenericType) {
+          var genericTypeDef = type.GetGenericTypeDefinition();
+          if (genericTypeDef == typeof(List<>)) {
+            var list = BuildList(type, value.Children());
+            prop.SetValue(x, list, null);
+          } else if (genericTypeDef == typeof(Dictionary<,>)) {
+            var keyType = type.GetGenericArguments()[0];
 
-						// only supports Dict<string, T>()
-						if (keyType == typeof(string)) {
-							var dict = BuildDictionary(type, value.Children());
-							prop.SetValue(x, dict, null);
-						}
-					}
-				}
-				else {
-					// nested property classes
-					var item = CreateAndMap(type, json[actualName]);
-					prop.SetValue(x, item, null);
-				}
+            // only supports Dict<string, T>()
+            if (keyType == typeof(string)) {
+              var dict = BuildDictionary(type, value.Children());
+              prop.SetValue(x, dict, null);
+            }
+          }
+        } else {
+          // nested property classes
+          var item = CreateAndMap(type, json[actualName]);
+          prop.SetValue(x, item, null);
+        }
 			}
 		}
 
