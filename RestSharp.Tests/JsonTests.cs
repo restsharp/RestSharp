@@ -37,6 +37,17 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Quoted_Primitive() {
+			var doc = new JObject();
+			doc["Age"] = "28";
+
+			var d = new JsonDeserializer();
+			var p = d.Deserialize<PersonForJson>(doc.ToString());
+
+			Assert.Equal(28, p.Age);
+		}
+
+		[Fact]
 		public void Can_Deserialize_With_Default_Root() {
 			var doc = CreateJson();
 			var d = new JsonDeserializer();

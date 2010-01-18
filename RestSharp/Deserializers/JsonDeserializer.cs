@@ -30,14 +30,13 @@ namespace RestSharp.Deserializers
 		public string Namespace { get; set; }
 		public DateFormat DateFormat { get; set; }
 
-		public X Deserialize<X>(string content) where X : new() {
-			var x = new X();
+		public T Deserialize<T>(string content) where T : new() {
+			var target = new T();
 
-
-			if (x is IList) {
-				var objType = x.GetType();
+			if (target is IList) {
+				var objType = target.GetType();
 				JArray json = JArray.Parse(content);
-				x = (X)BuildList(objType, json.Root.Children());
+				target = (T)BuildList(objType, json.Root.Children());
 			}
 			else {
 				JObject json = JObject.Parse(content);
@@ -46,10 +45,10 @@ namespace RestSharp.Deserializers
 				if (RootElement.HasValue())
 					root = json[RootElement];
 
-				Map(x, root);
+				Map(target, root);
 			}
 
-			return x;
+			return target;
 		}
 
 		private void Map(object x, JToken json) {
@@ -87,11 +86,14 @@ namespace RestSharp.Deserializers
 					value = json[actualName];
 				}
 
-				if (value == null)
+				if (value == null || value.Type == JTokenType.Null)
 					continue;
 
 				if (type.IsPrimitive) {
-					prop.SetValue(x, Convert.ChangeType(value.ToString(), type), null);
+					// no primitives can contain quotes so we can safely remove them
+					// allows converting a json value like {"index": "1"} to an int
+					var tmpVal = value.ToString().Replace("\"", string.Empty);
+					prop.SetValue(x, Convert.ChangeType(tmpVal, type), null);
 				}
 				else if (type == typeof(string)) {
 					string raw = value.ToString();
@@ -99,11 +101,11 @@ namespace RestSharp.Deserializers
 					prop.SetValue(x, raw.Substring(1, raw.Length - 2), null);
 				}
 				else if (type == typeof(DateTime)) {
-					var dt = value != null ? value.ToString().ParseJsonDate() : default(DateTime);
+					var dt = value.ToString().ParseJsonDate();
 					prop.SetValue(x, dt, null);
 				}
 				else if (type == typeof(Decimal)) {
-					var dec = value != null ? Decimal.Parse(value.ToString()) : default(decimal);
+					var dec = Decimal.Parse(value.ToString());
 					prop.SetValue(x, dec, null);
 				}
 				else if (type.IsGenericType) {
