@@ -50,6 +50,7 @@ namespace RestSharp.Tests
 		public bool IsCool { get; set; }
 		public List<Friend> Friends { get; set; }
 		public Friend BestFriend { get; set; }
+    public Guid Guid { get; set; }
 
 		protected string Ignore { get; set; }
 		public string IgnoreProxy { get { return Ignore; } }

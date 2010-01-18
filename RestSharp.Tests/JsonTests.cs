@@ -36,6 +36,17 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.Count);
 		}
 
+    [Fact]
+    public void Can_Deserialize_Guid_String_Fields() {
+      var doc = new JObject();
+      doc["Guid"] = "b1457983-8c5c-4c11-b10e-58585ed646d2";
+
+      var d = new JsonDeserializer();
+      var p = d.Deserialize<PersonForJson>(doc.ToString());
+
+      Assert.Equal(new Guid("b1457983-8c5c-4c11-b10e-58585ed646d2"), p.Guid);
+    }
+
 		[Fact]
 		public void Can_Deserialize_Quoted_Primitive() {
 			var doc = new JObject();
