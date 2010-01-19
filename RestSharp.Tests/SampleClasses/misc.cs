@@ -50,7 +50,7 @@ namespace RestSharp.Tests
 		public bool IsCool { get; set; }
 		public List<Friend> Friends { get; set; }
 		public Friend BestFriend { get; set; }
-    public Guid Guid { get; set; }
+		public Guid Guid { get; set; }
 
 		protected string Ignore { get; set; }
 		public string IgnoreProxy { get { return Ignore; } }
@@ -84,7 +84,7 @@ namespace RestSharp.Tests
 
 	public class OrderedProperties
 	{
-		[SerializeAs(Index=2)]
+		[SerializeAs(Index = 2)]
 		public string Name { get; set; }
 		[SerializeAs(Index = 3)]
 		public int Age { get; set; }
