@@ -185,10 +185,13 @@ namespace RestSharp
 		private RestResponse GetStyleVerbInternal(string method) {
 			string url = Url.ToString();
 			if (HasParameters) {
+                if(url.EndsWith("/")) {
+                    url = url.Substring(0, url.Length - 1);
+                }
 				var data = EncodeParameters();
-				url = string.Format("{0}?{1}", url, data);
+                url = string.Format("{0}?{1}", url, data);
 			}
-
+            
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.Method = method;
 
