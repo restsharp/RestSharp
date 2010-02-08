@@ -204,12 +204,12 @@ namespace RestSharp
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.Method = method;
 
-			if (this.Credentials != null) {
-				webRequest.Credentials = this.Credentials;
+			if (Credentials != null) {
+				webRequest.Credentials = Credentials;
 			}
 
-			if (this.Proxy != null) {
-				webRequest.Proxy = this.Proxy;
+			if (Proxy != null) {
+				webRequest.Proxy = Proxy;
 			}
 
 			// incompatible with GET, not sure about DELETE, OPTIONS, HEAD

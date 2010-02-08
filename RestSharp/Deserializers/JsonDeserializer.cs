@@ -22,7 +22,6 @@ using Newtonsoft.Json.Linq;
 
 using RestSharp.Extensions;
 using System.Globalization;
-using System.Diagnostics;
 
 namespace RestSharp.Deserializers
 {

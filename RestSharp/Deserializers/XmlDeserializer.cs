@@ -31,13 +31,13 @@ namespace RestSharp.Deserializers
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
 
-		public X Deserialize<X>(string content) where X : new() {
+		public T Deserialize<T>(string content) where T : new() {
 			if (content == null)
-				return default(X);
+				return default(T);
 
 			var doc = XDocument.Parse(content);
 			var root = doc.Root;
-			if (RootElement.HasValue()) {
+			if (RootElement.HasValue() && doc.Root != null) {
 				root = doc.Root.Element(RootElement.AsNamespaced(Namespace));
 			}
 
@@ -46,11 +46,11 @@ namespace RestSharp.Deserializers
 				RemoveNamespace(doc);
 			}
 
-			var x = new X();
+			var x = new T();
 			var objType = x.GetType();
 
 			if (objType.IsSubclassOfRawGeneric(typeof(List<>))) {
-				x = (X)HandleListDerivative(x, root, objType.Name, objType);
+				x = (T)HandleListDerivative(x, root, objType.Name, objType);
 			}
 			else {
 				Map(x, root);
@@ -99,13 +99,13 @@ namespace RestSharp.Deserializers
 						value = DateTime.ParseExact(value.ToString(), DateFormat, CultureInfo.CurrentCulture);
 					}
 					else {
-						value = value != null ? DateTime.Parse(value.ToString()) : default(DateTime);
+						value = DateTime.Parse(value.ToString());
 					}
 
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Decimal)) {
-					value = value != null ? Decimal.Parse(value.ToString()) : default(decimal);
+					value = Decimal.Parse(value.ToString());
 					prop.SetValue(x, value, null);
 				}
 				else if (type.IsGenericType) {
@@ -163,10 +163,6 @@ namespace RestSharp.Deserializers
 			return item;
 		}
 
-		private object GetValueFromXml(XElement root, string name) {
-			return GetValueFromXml(root, XName.Get(name));
-		}
-
 		private object GetValueFromXml(XElement root, XName name) {
 			object val = null;
 
@@ -193,21 +189,23 @@ namespace RestSharp.Deserializers
 			if (root.Element(name) != null) {
 				return root.Element(name);
 			}
-			else if (root.Element(lowerName) != null) {
+			
+			if (root.Element(lowerName) != null) {
 				return root.Element(lowerName);
 			}
-			else if (root.Element(camelName) != null) {
+			
+			if (root.Element(camelName) != null) {
 				return root.Element(camelName);
 			}
-			else if (name == "Value" && root.Value != null) {
+			
+			if (name == "Value" && root.Value != null) {
 				return root;
 			}
-			else {
-				// try looking for element that matches sanitized property name
-				var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
-				if (element != null) {
-					return element;
-				}
+
+			// try looking for element that matches sanitized property name
+			var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+			if (element != null) {
+				return element;
 			}
 
 			return null;
@@ -220,18 +218,19 @@ namespace RestSharp.Deserializers
 			if (root.Attribute(name) != null) {
 				return root.Attribute(name);
 			}
-			else if (root.Attribute(lowerName) != null) {
+			
+			if (root.Attribute(lowerName) != null) {
 				return root.Attribute(lowerName);
 			}
-			else if (root.Attribute(camelName) != null) {
+			
+			if (root.Attribute(camelName) != null) {
 				return root.Attribute(camelName);
 			}
-			else {
-				// try looking for element that matches sanitized property name
-				var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
-				if (element != null) {
-					return element;
-				}
+
+			// try looking for element that matches sanitized property name
+			var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+			if (element != null) {
+				return element;
 			}
 
 			return null;

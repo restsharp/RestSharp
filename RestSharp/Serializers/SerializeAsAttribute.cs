@@ -19,7 +19,7 @@ using RestSharp.Extensions;
 
 namespace RestSharp.Serializers
 {
-	[global::System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 	public sealed class SerializeAsAttribute : Attribute
 	{
 		public SerializeAsAttribute() {

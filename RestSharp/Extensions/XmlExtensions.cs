@@ -20,11 +20,11 @@ namespace RestSharp.Extensions
 {
 	public static class XmlExtensions
 	{
-		public static XName AsNamespaced(this string name, string Namespace) {
+		public static XName AsNamespaced(this string name, string @namespace) {
 			XName xName = name;
 
-			if (Namespace.HasValue())
-				xName = XName.Get(name, Namespace);
+			if (@namespace.HasValue())
+				xName = XName.Get(name, @namespace);
 
 			return xName;
 		}

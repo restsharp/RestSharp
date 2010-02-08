@@ -47,14 +47,14 @@ namespace RestSharp
 			return response;
 		}
 
-		public X Execute<X>(RestRequest request) where X : new() {
+		public T Execute<T>(RestRequest request) where T : new() {
 			if (Authenticator != null) {
 				Authenticator.Authenticate(request);
 			}
 
 			var response = GetResponse(request);
 
-			X returnVal = default(X);
+			T returnVal = default(T);
 
 			if (request.ResponseFormat == ResponseFormat.Auto) {
 				switch (request.ContentType) {
@@ -69,10 +69,10 @@ namespace RestSharp
 
 			switch (request.ResponseFormat) {
 				case ResponseFormat.Json:
-					returnVal = DeserializeJsonTo<X>(response.Content, request.DateFormat);
+					returnVal = DeserializeJsonTo<T>(response.Content, request.DateFormat);
 					break;
 				case ResponseFormat.Xml:
-					returnVal = DeserializeXmlTo<X>(response.Content, request.RootElement, request.XmlNamespace, request.DateFormat);
+					returnVal = DeserializeXmlTo<T>(response.Content, request.RootElement, request.XmlNamespace, request.DateFormat);
 					break;
 			}
 
@@ -153,17 +153,16 @@ namespace RestSharp
 			return response;
 		}
 
-		private X DeserializeJsonTo<X>(string content, string dateFormat) where X : new() {
-			var deserializer = new JsonDeserializer();
-			deserializer.DateFormat = dateFormat;
-			return deserializer.Deserialize<X>(content);
+		private T DeserializeJsonTo<T>(string content, string dateFormat) where T : new() {
+			_jsonDeserializer.DateFormat = dateFormat;
+			return _jsonDeserializer.Deserialize<T>(content);
 		}
 
-		private X DeserializeXmlTo<X>(string content, string rootElement, string xmlNamespace, string dateFormat) where X : new() {
+		private T DeserializeXmlTo<T>(string content, string rootElement, string xmlNamespace, string dateFormat) where T : new() {
 			_xmlDeserializer.Namespace = xmlNamespace;
 			_xmlDeserializer.RootElement = rootElement;
 			_xmlDeserializer.DateFormat = dateFormat;
-			return _xmlDeserializer.Deserialize<X>(content);
+			return _xmlDeserializer.Deserialize<T>(content);
 		}
 	}
 }

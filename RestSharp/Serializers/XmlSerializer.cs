@@ -102,9 +102,8 @@ namespace RestSharp.Serializers
 						root.Add(new XAttribute(name, value));
 						continue;
 					}
-					else {
-						element.Value = value;
-					}
+
+					element.Value = value;
 				}
 				else if (rawValue is IList) {
 					var itemTypeName = "";

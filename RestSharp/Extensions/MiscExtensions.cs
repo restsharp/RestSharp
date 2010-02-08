@@ -76,7 +76,7 @@ namespace RestSharp.Extensions
 		}
 
 		private static DateTime ParseFormattedDate(string input) {
-			var formats = new string[] {
+			var formats = new[] {
 				"u", 
 				"s", 
 				"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", 

@@ -142,47 +142,47 @@ namespace RestSharp
 
 		public string Action { get; set; }
 
-		private string _ActionFormat;
+		private string _actionFormat;
 		public string ActionFormat {
 			get {
-				return _ActionFormat;
+				return _actionFormat;
 			}
 			set {
 				UrlMode = UrlMode.ReplaceValues;
-				_ActionFormat = value;
+				_actionFormat = value;
 			}
 		}
 
-		private UrlMode _UrlMode = UrlMode.AsIs;
+		private UrlMode _urlMode = UrlMode.AsIs;
 		private UrlMode UrlMode {
 			get {
-				return _UrlMode;
+				return _urlMode;
 			}
 			set {
-				_UrlMode = value;
+				_urlMode = value;
 			}
 		}
 
 		public string BaseUrl { get; set; }
 		public string ContentType { get; set; }
 
-		private RequestFormat _RequestFormat = RequestFormat.Xml;
+		private RequestFormat _requestFormat = RequestFormat.Xml;
 		public RequestFormat RequestFormat {
 			get {
-				return _RequestFormat;
+				return _requestFormat;
 			}
 			set {
-				_RequestFormat = value;
+				_requestFormat = value;
 			}
 		}
 
-		private ResponseFormat _ResponseFormat = ResponseFormat.Auto;
+		private ResponseFormat _responseFormat = ResponseFormat.Auto;
 		public ResponseFormat ResponseFormat {
 			get {
-				return _ResponseFormat;
+				return _responseFormat;
 			}
 			set {
-				_ResponseFormat = value;
+				_responseFormat = value;
 			}
 		}
 
@@ -199,7 +199,7 @@ namespace RestSharp
 					url = new Uri(string.Format("{0}/{1}", BaseUrl, Action));
 					break;
 				case UrlMode.ReplaceValues:
-					string assembled = this.ActionFormat;
+					string assembled = ActionFormat;
 					var urlParms = Parameters.Where(p => p.Type == ParameterType.UrlSegment);
 					foreach (var p in urlParms) {
 						assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
