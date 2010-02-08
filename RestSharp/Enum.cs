@@ -33,6 +33,11 @@ namespace RestSharp
 		Xml
 	}
 
+	public enum RequestFormat
+	{
+		Json,
+		Xml
+	}
 	public enum Method
 	{
 		GET,

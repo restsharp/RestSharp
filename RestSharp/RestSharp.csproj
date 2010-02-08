@@ -71,6 +71,7 @@
     <Compile Include="RestRequest.cs" />
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
+    <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\SerializeAsAttribute.cs" />
     <Compile Include="Serializers\XmlSerializer.cs" />
     <None Include="T4Helper\T4Helper.tt">

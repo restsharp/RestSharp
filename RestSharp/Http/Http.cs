@@ -52,6 +52,7 @@ namespace RestSharp
 		public IList<HttpParameter> Parameters { get; private set; }
 		public IWebProxy Proxy { get; set; }
 		public string RequestBody { get; set; }
+		public RequestFormat RequestFormat { get; set; }
 
 		public Uri Url { get; set; }
 
@@ -82,6 +83,8 @@ namespace RestSharp
 				webRequest.Proxy = Proxy;
 			}
 
+			AppendHeaders(webRequest);
+
 			if (HasFiles) {
 				webRequest.ContentType = GetMultipartFormContentType();
 				WriteMultipartFormData(webRequest);
@@ -92,12 +95,18 @@ namespace RestSharp
 					RequestBody = EncodeParameters();
 				}
 				else if (HasBody) {
-					webRequest.ContentType = "text/xml";
+					switch (RequestFormat) {
+						case RequestFormat.Xml:
+							webRequest.ContentType = "text/xml";
+							break;
+						case RequestFormat.Json:
+							webRequest.ContentType = "application/json";
+							break;
+					}
 				}
 			}
 
 			WriteRequestBody(webRequest);
-			AppendHeaders(webRequest);
 			return GetResponse(webRequest);
 		}
 
@@ -221,7 +230,7 @@ namespace RestSharp
 					_restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
 				}
 				else {
-					webRequest.Headers[header.Name] = header.Value;
+					webRequest.Headers.Add(header.Name, header.Value);
 				}
 			}
 		}

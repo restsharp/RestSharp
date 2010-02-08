@@ -14,15 +14,13 @@
 //   limitations under the License. 
 #endregion
 
-using System.Xml.Linq;
-
 namespace RestSharp.Serializers
 {
-	public interface ISerializer
+	public interface ISerializer<T>
 	{
-		XDocument Serialize(object obj);
+		T Serialize(object obj);
 		string RootElement { get; set; }
 		string Namespace { get; set; }
-		string DateFormat { get; set; } // Currently unused
+		string DateFormat { get; set; }
 	}
 }

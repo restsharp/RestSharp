@@ -35,6 +35,7 @@ namespace RestSharp
 		IList<HttpParameter> Parameters { get; }
 		IList<HttpFile> Files { get; }
 		string RequestBody { get; set; }
+		RequestFormat RequestFormat { get; set; }
 
 		Uri Url { get; set; }
 	}

@@ -22,7 +22,7 @@ using RestSharp.Extensions;
 
 namespace RestSharp.Serializers
 {
-	public class XmlSerializer : ISerializer
+	public class XmlSerializer : ISerializer<XDocument>
 	{
 		public XmlSerializer() {
 		}

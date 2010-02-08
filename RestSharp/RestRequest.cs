@@ -63,8 +63,25 @@ namespace RestSharp
 		}
 
 		public RestRequest AddBody(object obj, string xmlNamespace) {
-			var xml = new XmlSerializer(xmlNamespace);
-			return AddParameter("", xml.Serialize(obj).ToString(), ParameterType.RequestBody);
+			string serialized;
+
+			switch (RequestFormat) {
+				case RequestFormat.Json:
+					var json = new JsonSerializer();
+					serialized = json.Serialize(obj);
+					break;
+
+				case RequestFormat.Xml:
+					var xml = new XmlSerializer(xmlNamespace);
+					serialized = xml.Serialize(obj).ToString();
+					break;
+
+				default:
+					serialized = "";
+					break;
+			}
+
+			return AddParameter("", serialized, ParameterType.RequestBody);
 		}
 
 		public RestRequest AddBody(object obj) {
@@ -148,6 +165,16 @@ namespace RestSharp
 
 		public string BaseUrl { get; set; }
 		public string ContentType { get; set; }
+
+		private RequestFormat _RequestFormat = RequestFormat.Xml;
+		public RequestFormat RequestFormat {
+			get {
+				return _RequestFormat;
+			}
+			set {
+				_RequestFormat = value;
+			}
+		}
 
 		private ResponseFormat _ResponseFormat = ResponseFormat.Auto;
 		public ResponseFormat ResponseFormat {

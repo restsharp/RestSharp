@@ -124,6 +124,7 @@ namespace RestSharp
 
 			if (body != null) {
 				http.RequestBody = body.Value.ToString();
+				http.RequestFormat = request.RequestFormat;
 			}
 
 			var response = new RestResponse();
