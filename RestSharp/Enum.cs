@@ -49,27 +49,10 @@ namespace RestSharp
 		ReplaceValues
 	}
 
-	public enum DateFormat
+	public struct DateFormats
 	{
-		None,
-		Iso8601,
-		RoundTrip
-	}
-
-	public static class DateFormatExtensions
-	{
-		public static string GetFormatString(this DateFormat format) {
-			switch (format) {
-				case DateFormat.None:
-					return string.Empty;
-				case DateFormat.Iso8601:
-					return "s";
-				case DateFormat.RoundTrip:
-					return "u";
-			}
-
-			throw new ArgumentOutOfRangeException("Unknown DateFormat");
-		}
+		public const string Iso8601 = "s";
+		public const string RoundTrip = "u";
 	}
 
 	public enum ResponseStatus

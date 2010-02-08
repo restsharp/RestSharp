@@ -130,8 +130,8 @@ namespace RestSharp.Serializers
 
 			if (obj is DateTime) {
 				// check for DateFormat when adding date props
-				if (DateFormat != DateFormat.None) {
-					output = ((DateTime)obj).ToString(DateFormat.GetFormatString());
+				if (DateFormat.HasValue()) {
+					output = ((DateTime)obj).ToString(DateFormat);
 				}
 			}
 			// else if... if needed for other types
@@ -141,6 +141,6 @@ namespace RestSharp.Serializers
 
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
-		public DateFormat DateFormat { get; set; } // Currently unused
+		public string DateFormat { get; set; }
 	}
 }

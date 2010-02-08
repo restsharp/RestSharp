@@ -60,19 +60,17 @@ namespace RestSharp.Extensions
 			if (input.Contains("/Date(")) {
 				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/");
 			}
-			else if (input.Contains("new Date(")) {
+			
+			if (input.Contains("new Date(")) {
 				input = input.Replace(" ", "");
 				// because all whitespace is removed, match against newDate( instead of new Date(
 				return ExtractDate(input, @"newDate\((-?\d+)*\)");
 			}
-			else if (input.Matches(@"([0-9-])*T([0-9\:]*)Z?")) {
-				return ParseIso8601Date(input);
-			}
 
-			return default(DateTime);
+			return ParseFormattedDate(input);
 		}
 
-		private static DateTime ParseIso8601Date(string input) {
+		private static DateTime ParseFormattedDate(string input) {
 			var formats = new string[] {
 				"u", 
 				"s", 

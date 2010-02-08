@@ -69,10 +69,10 @@ namespace RestSharp
 
 			switch (request.ResponseFormat) {
 				case ResponseFormat.Json:
-					returnVal = DeserializeJsonTo<X>(response.Content);
+					returnVal = DeserializeJsonTo<X>(response.Content, request.DateFormat);
 					break;
 				case ResponseFormat.Xml:
-					returnVal = DeserializeXmlTo<X>(response.Content, request.RootElement, request.XmlNamespace);
+					returnVal = DeserializeXmlTo<X>(response.Content, request.RootElement, request.XmlNamespace, request.DateFormat);
 					break;
 			}
 
@@ -152,14 +152,16 @@ namespace RestSharp
 			return response;
 		}
 
-		private X DeserializeJsonTo<X>(string content) where X : new() {
+		private X DeserializeJsonTo<X>(string content, string dateFormat) where X : new() {
 			var deserializer = new JsonDeserializer();
+			deserializer.DateFormat = dateFormat;
 			return deserializer.Deserialize<X>(content);
 		}
 
-		private X DeserializeXmlTo<X>(string content, string rootElement, string xmlNamespace) where X : new() {
+		private X DeserializeXmlTo<X>(string content, string rootElement, string xmlNamespace, string dateFormat) where X : new() {
 			_xmlDeserializer.Namespace = xmlNamespace;
 			_xmlDeserializer.RootElement = rootElement;
+			_xmlDeserializer.DateFormat = dateFormat;
 			return _xmlDeserializer.Deserialize<X>(content);
 		}
 	}

@@ -21,6 +21,6 @@ namespace RestSharp.Deserializers
 		X Deserialize<X>(string content) where X : new();
 		string RootElement { get; set; }
 		string Namespace { get; set; }
-		DateFormat DateFormat { get; set; } // Currently unused
+		string DateFormat { get; set; }
 	}
 }

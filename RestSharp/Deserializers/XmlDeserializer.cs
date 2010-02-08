@@ -21,6 +21,7 @@ using System.Linq;
 using System.Xml.Linq;
 
 using RestSharp.Extensions;
+using System.Globalization;
 
 namespace RestSharp.Deserializers
 {
@@ -28,7 +29,7 @@ namespace RestSharp.Deserializers
 	{
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
-		public DateFormat DateFormat { get; set; }
+		public string DateFormat { get; set; }
 
 		public X Deserialize<X>(string content) where X : new() {
 			if (content == null)
@@ -36,8 +37,9 @@ namespace RestSharp.Deserializers
 
 			var doc = XDocument.Parse(content);
 			var root = doc.Root;
-			if (RootElement.HasValue())
+			if (RootElement.HasValue()) {
 				root = doc.Root.Element(RootElement.AsNamespaced(Namespace));
+			}
 
 			// autodetect xml namespace
 			if (!Namespace.HasValue()) {
@@ -81,8 +83,10 @@ namespace RestSharp.Deserializers
 				var name = prop.Name.AsNamespaced(Namespace);
 				var value = GetValueFromXml(root, name);
 
-				if (value == null)
+				if (value == null) {
+					// TODO: if prop type is nullable, set value to null
 					continue;
+				}
 
 				if (type.IsPrimitive) {
 					prop.SetValue(x, Convert.ChangeType(value, type), null);
@@ -91,7 +95,13 @@ namespace RestSharp.Deserializers
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(DateTime)) {
-					value = value != null ? DateTime.Parse(value.ToString()) : default(DateTime);
+					if (DateFormat.HasValue()) {
+						value = DateTime.ParseExact(value.ToString(), DateFormat, CultureInfo.CurrentCulture);
+					}
+					else {
+						value = value != null ? DateTime.Parse(value.ToString()) : default(DateTime);
+					}
+
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Decimal)) {

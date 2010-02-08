@@ -159,6 +159,7 @@ namespace RestSharp
 			}
 		}
 
+		public string DateFormat { get; set; }
 		public string RootElement { get; set; }
 		public string XmlNamespace { get; set; }
 		public ICredentials Credentials { get; set; }

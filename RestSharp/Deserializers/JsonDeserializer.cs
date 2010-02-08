@@ -21,6 +21,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 
 using RestSharp.Extensions;
+using System.Globalization;
 
 namespace RestSharp.Deserializers
 {
@@ -28,7 +29,7 @@ namespace RestSharp.Deserializers
 	{
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
-		public DateFormat DateFormat { get; set; }
+		public string DateFormat { get; set; }
 
 		public T Deserialize<T>(string content) where T : new() {
 			var target = new T();
@@ -86,8 +87,10 @@ namespace RestSharp.Deserializers
 					value = json[actualName];
 				}
 
-				if (value == null || value.Type == JTokenType.Null)
+				if (value == null || value.Type == JTokenType.Null) {
+					// TODO: if prop is nullable set value to null
 					continue;
+				}
 
 				if (type.IsPrimitive) {
 					// no primitives can contain quotes so we can safely remove them
@@ -101,7 +104,15 @@ namespace RestSharp.Deserializers
 					prop.SetValue(x, raw.Substring(1, raw.Length - 2), null);
 				}
 				else if (type == typeof(DateTime)) {
-					var dt = value.ToString().ParseJsonDate();
+					DateTime dt;
+					if (DateFormat.HasValue()) {
+						dt = DateTime.ParseExact(value.ToString(), DateFormat, CultureInfo.CurrentCulture);
+					}
+					else {
+						// try parsing instead
+						dt = value.ToString().ParseJsonDate();
+					}
+
 					prop.SetValue(x, dt, null);
 				}
 				else if (type == typeof(Decimal)) {

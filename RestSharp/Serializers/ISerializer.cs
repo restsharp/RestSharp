@@ -23,6 +23,6 @@ namespace RestSharp.Serializers
 		XDocument Serialize(object obj);
 		string RootElement { get; set; }
 		string Namespace { get; set; }
-		DateFormat DateFormat { get; set; } // Currently unused
+		string DateFormat { get; set; } // Currently unused
 	}
 }
