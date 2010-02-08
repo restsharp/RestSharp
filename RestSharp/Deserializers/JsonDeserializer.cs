@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 
 using RestSharp.Extensions;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace RestSharp.Deserializers
 {
@@ -106,7 +107,8 @@ namespace RestSharp.Deserializers
 				else if (type == typeof(DateTime)) {
 					DateTime dt;
 					if (DateFormat.HasValue()) {
-						dt = DateTime.ParseExact(value.ToString(), DateFormat, CultureInfo.CurrentCulture);
+						var clean = value.ToString().RemoveSurroundingQuotes();
+						dt = DateTime.ParseExact(clean, DateFormat, CultureInfo.InvariantCulture);
 					}
 					else {
 						// try parsing instead

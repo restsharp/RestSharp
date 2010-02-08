@@ -52,10 +52,7 @@ namespace RestSharp.Extensions
 			input = input.Replace("\n", "");
 			input = input.Replace("\r", "");
 
-			if (input.StartsWith("\"")) {
-				// remove leading/trailing quotes
-				input = input.Substring(1, input.Length - 2); 
-			}
+			input = input.RemoveSurroundingQuotes();
 
 			if (input.Contains("/Date(")) {
 				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/");
@@ -68,6 +65,14 @@ namespace RestSharp.Extensions
 			}
 
 			return ParseFormattedDate(input);
+		}
+
+		public static string RemoveSurroundingQuotes(this string input) {
+			if (input.StartsWith("\"") && input.EndsWith("\"")) {
+				// remove leading/trailing quotes
+				input = input.Substring(1, input.Length - 2); 
+			}
+			return input;
 		}
 
 		private static DateTime ParseFormattedDate(string input) {

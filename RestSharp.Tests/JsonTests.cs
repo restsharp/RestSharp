@@ -29,6 +29,24 @@ namespace RestSharp.Tests
 	public class JsonTests
 	{
 		[Fact]
+		public void Can_Deserialize_Custom_Formatted_Date() {
+			var format = "dd yyyy MMM, hh:mm ss tt";
+			var date = new DateTime(2010, 2, 8, 11, 11, 11);
+
+			var formatted = new {
+				StartDate = date.ToString(format)
+			};
+
+			var data = JsonConvert.SerializeObject(formatted);
+
+			var json = new JsonDeserializer { DateFormat = format };
+
+			var output = json.Deserialize<PersonForJson>(data);
+
+			Assert.Equal(date, output.StartDate);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Root_Json_Array_To_List() {
 			var data = File.ReadAllText(@"..\..\SampleData\jsonarray.txt");
 			var json = new JsonDeserializer();

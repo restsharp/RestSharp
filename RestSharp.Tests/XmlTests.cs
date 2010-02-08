@@ -24,6 +24,26 @@ namespace RestSharp.Tests
 	public class XmlTests
 	{
 		[Fact]
+		public void Can_Deserialize_Custom_Formatted_Date() {
+			var format = "dd yyyy MMM, hh:mm ss tt zzz";
+			var date = new DateTime(2010, 2, 8, 11, 11, 11);
+			
+			var doc = new XDocument();
+
+			var root = new XElement("Person");
+			root.Add(new XElement("StartDate", date.ToString(format)));
+
+			doc.Add(root);
+
+			var xml = new XmlDeserializer();
+			xml.DateFormat = format;
+
+			var output = xml.Deserialize<PersonForXml>(doc.ToString());
+
+			Assert.Equal(date, output.StartDate);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Elements_On_Default_Root() {
 			var doc = CreateElementsXml();
 
