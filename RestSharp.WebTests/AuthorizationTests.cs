@@ -14,25 +14,22 @@
 //   limitations under the License. 
 #endregion
 
-namespace RestSharp
+using Xunit;
+
+namespace RestSharp.WebTests
 {
-	public class SimpleAuthenticator : IAuthenticator
+	public class AuthorizationTests
 	{
-		private readonly string _usernameKey;
-		private readonly string _username;
-		private readonly string _passwordKey;
-		private readonly string _password;
+		[Fact]
+		public void Can_Authenticate_With_Basic_Http_Auth() {
+			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Authentication/Basic" };
+			
+			var client = new RestClient();
+			client.Authenticator = new HttpBasicAuthenticator("testuser", "testpassword");
 
-		public SimpleAuthenticator(string usernameKey, string username, string passwordKey, string password) {
-			_usernameKey = usernameKey;
-			_username = username;
-			_passwordKey = passwordKey;
-			_password = password;
-		}
+			var response = client.Execute(request);
 
-		public void Authenticate(RestRequest request) {
-			request.AddParameter(_usernameKey, _username);
-			request.AddParameter(_passwordKey, _password);
+			Assert.Equal("testuser|testpassword", response.Content);
 		}
 	}
 }

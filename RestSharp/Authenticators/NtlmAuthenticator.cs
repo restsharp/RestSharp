@@ -14,12 +14,12 @@
 //   limitations under the License. 
 #endregion
 
-namespace RestSharp.Authenticators
+namespace RestSharp
 {
 	/// <summary>
 	/// Tries to Authenticate with the credentials of the currently logged in user
 	/// </summary>
-	public class NTLMAuthenticator : IAuthenticator
+	public class NtlmAuthenticator : IAuthenticator
 	{
 		public void Authenticate(RestRequest request) {
 			request.Credentials = System.Net.CredentialCache.DefaultCredentials;

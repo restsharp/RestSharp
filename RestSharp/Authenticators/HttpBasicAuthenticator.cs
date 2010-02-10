@@ -14,14 +14,15 @@
 //   limitations under the License. 
 #endregion
 
-using System.Net;
+using System;
+using System.Text;
 
 namespace RestSharp
 {
 	public class HttpBasicAuthenticator : IAuthenticator
 	{
-		public string _username { get; set; }
-		public string _password { get; set; }
+		private readonly string _username;
+		private readonly string _password;
 
 		public HttpBasicAuthenticator(string username, string password) {
 			_password = password;
@@ -29,7 +30,16 @@ namespace RestSharp
 		}
 
 		public void Authenticate(RestRequest request) {
-			request.Credentials = new NetworkCredential(_username, _password);
+			// NetworkCredentials always makes two trips, even if with PreAuthenticate,
+			// it is also unsafe for many partial trust scenarios
+			// request.Credentials = Credentials;
+			// thanks TweetSharp!
+
+			// request.Credentials = new NetworkCredential(_username, _password);
+
+			var token = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _username, _password)));
+			var authHeader = string.Format("Basic {0}", token);
+			request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
 		}
 	}
 }

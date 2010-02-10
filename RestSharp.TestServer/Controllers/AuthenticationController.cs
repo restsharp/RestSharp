@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +14,22 @@
 //   limitations under the License. 
 #endregion
 
-namespace RestSharp
+using System;
+using System.Text;
+using System.Web.Mvc;
+
+namespace RestSharp.TestServer.Controllers
 {
-	public class SimpleAuthenticator : IAuthenticator
+	public class AuthenticationController : Controller
 	{
-		private readonly string _usernameKey;
-		private readonly string _username;
-		private readonly string _passwordKey;
-		private readonly string _password;
+		public string Basic() {
+			var header = Request.Headers["Authorization"];
+			if (string.IsNullOrEmpty(header)) {
+				return "no authorization provided";
+			}
 
-		public SimpleAuthenticator(string usernameKey, string username, string passwordKey, string password) {
-			_usernameKey = usernameKey;
-			_username = username;
-			_passwordKey = passwordKey;
-			_password = password;
-		}
-
-		public void Authenticate(RestRequest request) {
-			request.AddParameter(_usernameKey, _username);
-			request.AddParameter(_passwordKey, _password);
+			var parts = Encoding.ASCII.GetString(Convert.FromBase64String(header.Substring("Basic ".Length))).Split(':');
+			return string.Join("|", parts);
 		}
 	}
 }
