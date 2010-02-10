@@ -14,10 +14,9 @@
 //   limitations under the License. 
 #endregion
 
-using System;
 using System.Linq;
-using RestSharp.Deserializers;
 using System.Net;
+using RestSharp.Deserializers;
 
 namespace RestSharp
 {
@@ -39,22 +38,29 @@ namespace RestSharp
 		public IWebProxy Proxy { get; set; }
 
 		public RestResponse Execute(RestRequest request) {
-			if (Authenticator != null) {
-				Authenticator.Authenticate(request);
-			}
+			AuthenticateIfNeeded(request);
 
 			var response = GetResponse(request);
 			return response;
 		}
 
-		public T Execute<T>(RestRequest request) where T : new() {
+		private void AuthenticateIfNeeded(RestRequest request) {
 			if (Authenticator != null) {
 				Authenticator.Authenticate(request);
 			}
+		}
+
+		public byte[] DownloadData(RestRequest request) {
+			var response = Execute(request);
+			return response.RawBytes;
+		}
+
+		public T Execute<T>(RestRequest request) where T : new() {
+			AuthenticateIfNeeded(request);
 
 			var response = GetResponse(request);
 
-			T returnVal = default(T);
+			var returnVal = default(T);
 
 			if (request.ResponseFormat == ResponseFormat.Auto) {
 				switch (request.ContentType) {

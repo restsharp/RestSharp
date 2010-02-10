@@ -27,6 +27,7 @@ namespace RestSharp
 		public string Content { get; set; }
 		public HttpStatusCode StatusCode { get; set; }
 		public string StatusDescription { get; set; }
+		public byte[] RawBytes { get; set; }
 		public Uri ResponseUri { get; set; }
 		public string Server { get; set; }
 

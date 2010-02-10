@@ -194,13 +194,13 @@ namespace RestSharp
 		private RestResponse GetStyleVerbInternal(string method) {
 			string url = Url.ToString();
 			if (HasParameters) {
-                if(url.EndsWith("/")) {
-                    url = url.Substring(0, url.Length - 1);
-                }
+				if (url.EndsWith("/")) {
+					url = url.Substring(0, url.Length - 1);
+				}
 				var data = EncodeParameters();
-                url = string.Format("{0}?{1}", url, data);
+				url = string.Format("{0}?{1}", url, data);
 			}
-            
+
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.Method = method;
 
@@ -212,12 +212,6 @@ namespace RestSharp
 				webRequest.Proxy = Proxy;
 			}
 
-			// incompatible with GET, not sure about DELETE, OPTIONS, HEAD
-			//if (HasBody) {
-			//    webRequest.ContentType = "text/xml";
-			//}
-
-			//WriteRequestBody(webRequest);
 			AppendHeaders(webRequest);
 			return GetResponse(webRequest);
 		}
@@ -261,7 +255,8 @@ namespace RestSharp
 					response.ContentType = webResponse.ContentType;
 					response.ContentLength = webResponse.ContentLength;
 					response.ContentEncoding = webResponse.ContentEncoding;
-					response.Content = webResponse.GetResponseStream().ReadAsString();
+					response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+					response.Content = response.RawBytes.ReadAsString();
 					response.StatusCode = webResponse.StatusCode;
 					response.StatusDescription = webResponse.StatusDescription;
 					response.ResponseUri = webResponse.ResponseUri;
