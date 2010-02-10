@@ -74,9 +74,13 @@
   <ItemGroup>
     <Compile Include="Application\Application.cs" />
     <Compile Include="Application\BetterJsonResult.cs" />
+    <Compile Include="Application\CompressDeflateAttribute.cs" />
     <Compile Include="Application\ControllerBase.cs" />
+    <Compile Include="Application\CompressGzipAttribute.cs" />
+    <Compile Include="Application\GzipStream.cs" />
     <Compile Include="Application\XmlResult.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
+    <Compile Include="Controllers\CompressionController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\StatusCodeController.cs" />
     <Compile Include="Controllers\UploadController.cs" />

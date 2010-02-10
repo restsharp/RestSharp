@@ -1,0 +1,56 @@
+﻿#region License
+//   Copyright 2010 John Sheehan
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License. 
+#endregion
+
+using Xunit;
+
+namespace RestSharp.WebTests
+{
+	public class CompressionTests
+	{
+		[Fact]
+		public void Can_Handle_Gzip_Compressed_Content() {
+			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Compression/GZip" };
+			
+			var client = new RestClient();
+
+			var response = client.Execute(request);
+
+			Assert.Equal("This content is compressed with GZip!", response.Content);
+		}
+
+		[Fact]
+		public void Can_Handle_Deflate_Compressed_Content() {
+			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Compression/Deflate" };
+
+			var client = new RestClient();
+
+			var response = client.Execute(request);
+
+			Assert.Equal("This content is compressed with Deflate!", response.Content);
+		}
+
+		[Fact]
+		public void Can_Handle_Uncompressed_Content() {
+			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Compression/None" };
+
+			var client = new RestClient();
+
+			var response = client.Execute(request);
+
+			Assert.Equal("This content is uncompressed!", response.Content);
+		}
+	}
+}

@@ -246,6 +246,8 @@ namespace RestSharp
                   };
 
 		private RestResponse GetResponse(HttpWebRequest request) {
+			request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+
 			var response = new RestResponse();
 			response.ResponseStatus = ResponseStatus.None;
 
