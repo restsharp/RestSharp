@@ -15,28 +15,32 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Net;
 
 namespace RestSharp
 {
-	public interface IHttp
+	public class HttpResponse
 	{
-		ICredentials Credentials { get; set; }
-		IWebProxy Proxy { get; set; }
-		HttpResponse Delete();
-		HttpResponse Get();
-		HttpResponse Head();
-		HttpResponse Options();
-		HttpResponse Post();
-		HttpResponse Put();
+		public string ContentType { get; set; }
+		public long ContentLength { get; set; }
+		public string ContentEncoding { get; set; }
+		public string Content { get; set; }
+		public HttpStatusCode StatusCode { get; set; }
+		public string StatusDescription { get; set; }
+		public byte[] RawBytes { get; set; }
+		public Uri ResponseUri { get; set; }
+		public string Server { get; set; }
 
-		IList<HttpHeader> Headers { get; }
-		IList<HttpParameter> Parameters { get; }
-		IList<HttpFile> Files { get; }
-		string RequestBody { get; set; }
-		RequestFormat RequestFormat { get; set; }
+		private ResponseStatus _responseStatus = ResponseStatus.None;
+		public ResponseStatus ResponseStatus {
+			get {
+				return _responseStatus;
+			}
+			set {
+				_responseStatus = value;
+			}
+		}
 
-		Uri Url { get; set; }
+		public string ErrorMessage { get; set; }
 	}
 }

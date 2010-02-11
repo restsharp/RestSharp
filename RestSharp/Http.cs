@@ -62,15 +62,15 @@ namespace RestSharp
 			Parameters = new List<HttpParameter>();
 		}
 
-		public RestResponse Post() {
+		public HttpResponse Post() {
 			return PostPutInternal("POST");
 		}
 
-		public RestResponse Put() {
+		public HttpResponse Put() {
 			return PostPutInternal("PUT");
 		}
 
-		private RestResponse PostPutInternal(string method) {
+		private HttpResponse PostPutInternal(string method) {
 
 			var webRequest = (HttpWebRequest)WebRequest.Create(Url);
 			webRequest.Method = method;
@@ -115,7 +115,7 @@ namespace RestSharp
 				webRequest.ContentLength = RequestBody.Length;
 
 				var requestStream = webRequest.GetRequestStream();
-				using (StreamWriter writer = new StreamWriter(requestStream, Encoding.ASCII)) {
+				using (var writer = new StreamWriter(requestStream, Encoding.ASCII)) {
 					writer.Write(RequestBody);
 				}
 			}
@@ -175,23 +175,23 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
-		public RestResponse Get() {
+		public HttpResponse Get() {
 			return GetStyleVerbInternal("GET");
 		}
 
-		public RestResponse Head() {
+		public HttpResponse Head() {
 			return GetStyleVerbInternal("HEAD");
 		}
 
-		public RestResponse Options() {
+		public HttpResponse Options() {
 			return GetStyleVerbInternal("OPTIONS");
 		}
 
-		public RestResponse Delete() {
+		public HttpResponse Delete() {
 			return GetStyleVerbInternal("DELETE");
 		}
 
-		private RestResponse GetStyleVerbInternal(string method) {
+		private HttpResponse GetStyleVerbInternal(string method) {
 			string url = Url.ToString();
 			if (HasParameters) {
 				if (url.EndsWith("/")) {
@@ -245,10 +245,10 @@ namespace RestSharp
                       { "User-Agent",        (r, v) => r.UserAgent = v }             
                   };
 
-		private RestResponse GetResponse(HttpWebRequest request) {
+		private HttpResponse GetResponse(HttpWebRequest request) {
 			request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
 
-			var response = new RestResponse();
+			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
 
 			try {

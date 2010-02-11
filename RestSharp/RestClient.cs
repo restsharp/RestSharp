@@ -140,30 +140,43 @@ namespace RestSharp
 				http.RequestFormat = request.RequestFormat;
 			}
 
-			var response = new RestResponse();
+			var httpResponse = new HttpResponse();
 
 			switch (request.Verb) {
 				case Method.GET:
-					response = http.Get();
+					httpResponse = http.Get();
 					break;
 				case Method.POST:
-					response = http.Post();
+					httpResponse = http.Post();
 					break;
 				case Method.PUT:
-					response = http.Put();
+					httpResponse = http.Put();
 					break;
 				case Method.DELETE:
-					response = http.Delete();
+					httpResponse = http.Delete();
 					break;
 				case Method.HEAD:
-					response = http.Head();
+					httpResponse = http.Head();
 					break;
 				case Method.OPTIONS:
-					response = http.Options();
+					httpResponse = http.Options();
 					break;
 			}
 
-			return response;
+			var restResponse = new RestResponse();
+			restResponse.Content = httpResponse.Content;
+			restResponse.ContentEncoding = httpResponse.ContentEncoding;
+			restResponse.ContentLength = httpResponse.ContentLength;
+			restResponse.ContentType = httpResponse.ContentType;
+			restResponse.ErrorMessage = httpResponse.ErrorMessage;
+			restResponse.RawBytes = httpResponse.RawBytes;
+			restResponse.ResponseStatus = httpResponse.ResponseStatus;
+			restResponse.ResponseUri = httpResponse.ResponseUri;
+			restResponse.Server = httpResponse.Server;
+			restResponse.StatusCode = httpResponse.StatusCode;
+			restResponse.StatusDescription = httpResponse.StatusDescription;
+
+			return restResponse;
 		}
 
 		private Uri BuildUri(RestRequest request) {
