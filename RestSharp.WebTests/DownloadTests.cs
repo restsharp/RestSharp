@@ -24,8 +24,8 @@ namespace RestSharp.WebTests
 	{
 		[Fact]
 		public void Can_Download_Binary_File_With_ExecuteFile() {
-			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Images/Koala.jpg" };
-			var client = new RestClient();
+			var request = new RestRequest("Images/Koala.jpg");
+			var client = new RestClient("http://localhost:56976");
 			var response = client.DownloadData(request);
 
 			var expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Resources\\Koala.jpg");

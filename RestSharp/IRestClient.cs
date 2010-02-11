@@ -21,6 +21,7 @@ namespace RestSharp
 	{
 		IAuthenticator Authenticator { get; set; }
 		IWebProxy Proxy { get; set; }
+		string BaseUrl { get; set; }
 		T Execute<T>(RestRequest request) where T : new();
 		RestResponse Execute(RestRequest request);
 	}

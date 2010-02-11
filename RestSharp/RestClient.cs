@@ -14,6 +14,7 @@
 //   limitations under the License. 
 #endregion
 
+using System;
 using System.Linq;
 using System.Net;
 using RestSharp.Deserializers;
@@ -29,6 +30,11 @@ namespace RestSharp
 			: this(new JsonDeserializer(), new XmlDeserializer()) {
 		}
 
+		public RestClient(string baseUrl) 
+			: this() {
+			BaseUrl = baseUrl;
+		}
+
 		public RestClient(IDeserializer jsonDeserializer, IDeserializer xmlDeserializer) {
 			_jsonDeserializer = jsonDeserializer;
 			_xmlDeserializer = xmlDeserializer;
@@ -36,6 +42,7 @@ namespace RestSharp
 
 		public IAuthenticator Authenticator { get; set; }
 		public IWebProxy Proxy { get; set; }
+		public string BaseUrl { get; set; }
 
 		public RestResponse Execute(RestRequest request) {
 			AuthenticateIfNeeded(request);
@@ -87,7 +94,7 @@ namespace RestSharp
 
 		private RestResponse GetResponse(RestRequest request) {
 			IHttp http = new Http();
-			http.Url = request.GetUri();
+			http.Url = BuildUri(request);
 
 			if (request.Credentials != null) {
 				http.Credentials = request.Credentials;
@@ -157,6 +164,27 @@ namespace RestSharp
 			}
 
 			return response;
+		}
+
+		private Uri BuildUri(RestRequest request) {
+			Uri url = null;
+
+			switch (request.UrlMode) {
+				case UrlMode.AsIs:
+					url = new Uri(string.Format("{0}/{1}", BaseUrl, request.Action));
+					break;
+				case UrlMode.ReplaceValues:
+					string assembled = request.ActionFormat;
+					var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+					foreach (var p in urlParms) {
+						assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
+					}
+
+					url = new Uri(string.Format("{0}/{1}", BaseUrl, assembled));
+					break;
+			}
+
+			return url;
 		}
 
 		private T DeserializeJsonTo<T>(string content, string dateFormat) where T : new() {

@@ -22,11 +22,10 @@ namespace RestSharp.WebTests
 	{
 		[Fact]
 		public void Can_Authenticate_With_Basic_Http_Auth() {
-			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Authentication/Basic" };
-			
-			var client = new RestClient();
+			var client = new RestClient("http://localhost:56976");
 			client.Authenticator = new HttpBasicAuthenticator("testuser", "testpassword");
 
+			var request = new RestRequest("Authentication/Basic");
 			var response = client.Execute(request);
 
 			Assert.Equal("testuser|testpassword", response.Content);

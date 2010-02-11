@@ -22,9 +22,9 @@ namespace RestSharp.WebTests
 	{
 		[Fact]
 		public void Can_Handle_Gzip_Compressed_Content() {
-			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Compression/GZip" };
+			var request = new RestRequest("Compression/GZip");
 			
-			var client = new RestClient();
+			var client = new RestClient("http://localhost:56976");
 
 			var response = client.Execute(request);
 
@@ -33,9 +33,9 @@ namespace RestSharp.WebTests
 
 		[Fact]
 		public void Can_Handle_Deflate_Compressed_Content() {
-			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Compression/Deflate" };
+			var request = new RestRequest("Compression/Deflate");
 
-			var client = new RestClient();
+			var client = new RestClient("http://localhost:56976");
 
 			var response = client.Execute(request);
 
@@ -44,9 +44,9 @@ namespace RestSharp.WebTests
 
 		[Fact]
 		public void Can_Handle_Uncompressed_Content() {
-			var request = new RestRequest { BaseUrl = "http://localhost:56976", Action = "Compression/None" };
+			var request = new RestRequest("Compression/None");
 
-			var client = new RestClient();
+			var client = new RestClient("http://localhost:56976");
 
 			var response = client.Execute(request);
 

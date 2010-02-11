@@ -148,22 +148,18 @@ namespace RestSharp
 				return _actionFormat;
 			}
 			set {
-				UrlMode = UrlMode.ReplaceValues;
+				_urlMode = UrlMode.ReplaceValues;
 				_actionFormat = value;
 			}
 		}
 
 		private UrlMode _urlMode = UrlMode.AsIs;
-		private UrlMode UrlMode {
+		public UrlMode UrlMode {
 			get {
 				return _urlMode;
 			}
-			set {
-				_urlMode = value;
-			}
 		}
 
-		public string BaseUrl { get; set; }
 		public string ContentType { get; set; }
 
 		private RequestFormat _requestFormat = RequestFormat.Xml;
@@ -190,26 +186,5 @@ namespace RestSharp
 		public string RootElement { get; set; }
 		public string XmlNamespace { get; set; }
 		public ICredentials Credentials { get; set; }
-
-		public Uri GetUri() {
-			Uri url = null;
-
-			switch (UrlMode) {
-				case UrlMode.AsIs:
-					url = new Uri(string.Format("{0}/{1}", BaseUrl, Action));
-					break;
-				case UrlMode.ReplaceValues:
-					string assembled = ActionFormat;
-					var urlParms = Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-					foreach (var p in urlParms) {
-						assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
-					}
-
-					url = new Uri(string.Format("{0}/{1}", BaseUrl, assembled));
-					break;
-			}
-
-			return url;
-		}
 	}
 }

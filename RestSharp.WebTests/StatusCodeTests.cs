@@ -23,11 +23,9 @@ namespace RestSharp.WebTests
 	{
 		[Fact]
 		public void Can_Handle_404() {
-			var client = new RestClient();
+			var client = new RestClient("http://localhost:56976");
 
-			var request = new RestRequest();
-			request.BaseUrl = "http://localhost:56976";
-			request.Action = "StatusCode/404";
+			var request = new RestRequest("StatusCode/404");
 
 			var response = client.Execute(request);
 
@@ -36,11 +34,9 @@ namespace RestSharp.WebTests
 
 		[Fact]
 		public void Can_Handle_Nonexisting_Url_EndPoint() {
-			var client = new RestClient();
+			var client = new RestClient("http://nonexistantdomainimguessing.org");
 
-			var request = new RestRequest();
-			request.BaseUrl = "http://nonexistantdomainimguessing.org";
-			request.Action = "foo";
+			var request = new RestRequest("foo");
 
 			var response = client.Execute(request);
 
