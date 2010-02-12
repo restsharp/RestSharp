@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 namespace RestSharp.Serializers
 {
 	// Doesn't currently use the SerializeAs attribute, defers to Newtonsoft's attributes
-	public class JsonSerializer : ISerializer<string> // wanted JObject
+	public class JsonSerializer : ISerializer
 	{
 		public string Serialize(object obj) {
 			var serializer = new Newtonsoft.Json.JsonSerializer {

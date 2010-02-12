@@ -25,9 +25,14 @@ namespace RestSharp
 {
 	public class RestRequest
 	{
+		public ISerializer XmlSerializer { get; set; }
+		public ISerializer JsonSerializer { get; set; }
+
 		public RestRequest() {
 			Parameters = new List<Parameter>();
 			Files = new List<FileParameter>();
+			XmlSerializer = new XmlSerializer();
+			JsonSerializer = new JsonSerializer();
 		}
 
 		public RestRequest(Method verb)
@@ -67,13 +72,12 @@ namespace RestSharp
 
 			switch (RequestFormat) {
 				case RequestFormat.Json:
-					var json = new JsonSerializer();
-					serialized = json.Serialize(obj);
+					serialized = JsonSerializer.Serialize(obj);
 					break;
 
 				case RequestFormat.Xml:
-					var xml = new XmlSerializer(xmlNamespace);
-					serialized = xml.Serialize(obj).ToString();
+					XmlSerializer.Namespace = xmlNamespace;
+					serialized = XmlSerializer.Serialize(obj);
 					break;
 
 				default:

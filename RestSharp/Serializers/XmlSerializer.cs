@@ -22,7 +22,7 @@ using RestSharp.Extensions;
 
 namespace RestSharp.Serializers
 {
-	public class XmlSerializer : ISerializer<XDocument>
+	public class XmlSerializer : ISerializer
 	{
 		public XmlSerializer() {
 		}
@@ -31,7 +31,7 @@ namespace RestSharp.Serializers
 			Namespace = @namespace;
 		}
 
-		public XDocument Serialize(object obj) {
+		public string Serialize(object obj) {
 			var doc = new XDocument();
 
 			var t = obj.GetType();
@@ -54,7 +54,7 @@ namespace RestSharp.Serializers
 				doc.Add(root);
 			}
 
-			return doc;
+			return doc.ToString();
 		}
 
 		private void Map(XElement root, object obj) {

@@ -23,8 +23,8 @@ namespace RestSharp
 {
 	public class RestClient : IRestClient
 	{
-		private readonly IDeserializer _jsonDeserializer;
-		private readonly IDeserializer _xmlDeserializer;
+		public IDeserializer JsonDeserializer { get; set; }
+		public IDeserializer XmlDeserializer { get; set; }
 
 		public RestClient()
 			: this(new JsonDeserializer(), new XmlDeserializer()) {
@@ -36,8 +36,8 @@ namespace RestSharp
 		}
 
 		public RestClient(IDeserializer jsonDeserializer, IDeserializer xmlDeserializer) {
-			_jsonDeserializer = jsonDeserializer;
-			_xmlDeserializer = xmlDeserializer;
+			JsonDeserializer = jsonDeserializer;
+			XmlDeserializer = xmlDeserializer;
 		}
 
 		public IAuthenticator Authenticator { get; set; }
@@ -201,15 +201,15 @@ namespace RestSharp
 		}
 
 		private T DeserializeJsonTo<T>(string content, string dateFormat) where T : new() {
-			_jsonDeserializer.DateFormat = dateFormat;
-			return _jsonDeserializer.Deserialize<T>(content);
+			JsonDeserializer.DateFormat = dateFormat;
+			return JsonDeserializer.Deserialize<T>(content);
 		}
 
 		private T DeserializeXmlTo<T>(string content, string rootElement, string xmlNamespace, string dateFormat) where T : new() {
-			_xmlDeserializer.Namespace = xmlNamespace;
-			_xmlDeserializer.RootElement = rootElement;
-			_xmlDeserializer.DateFormat = dateFormat;
-			return _xmlDeserializer.Deserialize<T>(content);
+			XmlDeserializer.Namespace = xmlNamespace;
+			XmlDeserializer.RootElement = rootElement;
+			XmlDeserializer.DateFormat = dateFormat;
+			return XmlDeserializer.Deserialize<T>(content);
 		}
 	}
 }

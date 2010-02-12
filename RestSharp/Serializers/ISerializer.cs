@@ -16,9 +16,9 @@
 
 namespace RestSharp.Serializers
 {
-	public interface ISerializer<T>
+	public interface ISerializer
 	{
-		T Serialize(object obj);
+		string Serialize(object obj);
 		string RootElement { get; set; }
 		string Namespace { get; set; }
 		string DateFormat { get; set; }
