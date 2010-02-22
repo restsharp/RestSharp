@@ -31,11 +31,11 @@ namespace RestSharp.Deserializers
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
 
-		public T Deserialize<T>(string content) where T : new() {
-			if (content == null)
+		public T Deserialize<T>(RestResponse response) where T : new() {
+			if (response.Content == null)
 				return default(T);
 
-			var doc = XDocument.Parse(content);
+			var doc = XDocument.Parse(response.Content);
 			var root = doc.Root;
 			if (RootElement.HasValue() && doc.Root != null) {
 				root = doc.Root.Element(RootElement.AsNamespaced(Namespace));
@@ -84,8 +84,12 @@ namespace RestSharp.Deserializers
 				var value = GetValueFromXml(root, name);
 
 				if (value == null) {
-					// TODO: if prop type is nullable, set value to null
 					continue;
+				}
+
+				// check for nullable and extract underlying type
+				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+					type = type.GetGenericArguments()[0];
 				}
 
 				if (type.IsPrimitive) {
@@ -106,6 +110,10 @@ namespace RestSharp.Deserializers
 				}
 				else if (type == typeof(Decimal)) {
 					value = Decimal.Parse(value.ToString());
+					prop.SetValue(x, value, null);
+				}
+				else if (type == typeof(Guid)) {
+					value = new Guid(value.ToString());
 					prop.SetValue(x, value, null);
 				}
 				else if (type.IsGenericType) {
@@ -175,7 +183,9 @@ namespace RestSharp.Deserializers
 					}
 				}
 				else {
-					val = element.Value;
+					if (!element.IsEmpty || element.HasElements || element.HasAttributes) {
+						val = element.Value;
+					}
 				}
 			}
 
@@ -189,15 +199,15 @@ namespace RestSharp.Deserializers
 			if (root.Element(name) != null) {
 				return root.Element(name);
 			}
-			
+
 			if (root.Element(lowerName) != null) {
 				return root.Element(lowerName);
 			}
-			
+
 			if (root.Element(camelName) != null) {
 				return root.Element(camelName);
 			}
-			
+
 			if (name == "Value" && root.Value != null) {
 				return root;
 			}
@@ -218,11 +228,11 @@ namespace RestSharp.Deserializers
 			if (root.Attribute(name) != null) {
 				return root.Attribute(name);
 			}
-			
+
 			if (root.Attribute(lowerName) != null) {
 				return root.Attribute(lowerName);
 			}
-			
+
 			if (root.Attribute(camelName) != null) {
 				return root.Attribute(camelName);
 			}

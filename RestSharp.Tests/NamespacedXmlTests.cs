@@ -23,13 +23,17 @@ namespace RestSharp.Tests
 {
 	public class NamespacedXmlTests
 	{
+		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+
 		[Fact]
 		public void Can_Deserialize_Elements_With_Namespace() {
 			var doc = CreateElementsXml();
 
+			var response = new RestResponse { Content = doc };
+
 			var d = new XmlDeserializer();
 			d.Namespace = "http://restsharp.org";
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -37,6 +41,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -49,9 +54,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Elements_With_Namespace_Autodetect_Namespace() {
 			var doc = CreateElementsXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -59,6 +65,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -71,10 +78,11 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Attributes_With_Namespace() {
 			var doc = CreateAttributesXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
 			d.Namespace = "http://restsharp.org";
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -82,6 +90,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.BestFriend);
 			Assert.Equal("The Fonz", p.BestFriend.Name);
@@ -91,10 +100,11 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data() {
 			var doc = CreateElementsXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
 			d.Namespace = "http://restsharp.org";
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Null(p.IgnoreProxy);
 		}
@@ -102,10 +112,11 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Ignore_ReadOnly_Property_That_Exists_In_Data() {
 			var doc = CreateElementsXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
 			d.Namespace = "http://restsharp.org";
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Null(p.ReadOnlyProxy);
 		}
@@ -113,10 +124,11 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Names_With_Underscores_With_Namespace() {
 			var doc = CreateUnderscoresXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
 			d.Namespace = "http://restsharp.org";
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -124,6 +136,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -149,6 +162,7 @@ namespace RestSharp.Tests
 			root.Add(new XAttribute(ns + "Is_Cool", false));
 			root.Add(new XElement(ns + "Ignore", "dummy"));
 			root.Add(new XAttribute(ns + "Read_Only", "dummy"));
+			root.Add(new XAttribute(ns + "Unique_Id", new Guid(GuidString)));
 
 			root.Add(new XElement(ns + "Best_Friend",
 						new XElement(ns + "Name", "The Fonz"),
@@ -187,6 +201,7 @@ namespace RestSharp.Tests
 			root.Add(new XElement(ns + "IsCool", false));
 			root.Add(new XElement(ns + "Ignore", "dummy"));
 			root.Add(new XElement(ns + "ReadOnly", "dummy"));
+			root.Add(new XElement(ns + "UniqueId", new Guid(GuidString)));
 
 			root.Add(new XElement(ns + "BestFriend",
 						new XElement(ns + "Name", "The Fonz"),
@@ -218,6 +233,7 @@ namespace RestSharp.Tests
 			root.Add(new XAttribute(ns + "IsCool", false));
 			root.Add(new XAttribute(ns + "Ignore", "dummy"));
 			root.Add(new XAttribute(ns + "ReadOnly", "dummy"));
+			root.Add(new XAttribute(ns + "UniqueId", new Guid(GuidString)));
 
 			root.Add(new XElement(ns + "BestFriend",
 						new XAttribute(ns + "Name", "The Fonz"),

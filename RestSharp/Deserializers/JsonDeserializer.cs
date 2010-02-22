@@ -31,16 +31,16 @@ namespace RestSharp.Deserializers
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
 
-		public T Deserialize<T>(string content) where T : new() {
+		public T Deserialize<T>(RestResponse response) where T : new() {
 			var target = new T();
 
 			if (target is IList) {
 				var objType = target.GetType();
-				JArray json = JArray.Parse(content);
+				JArray json = JArray.Parse(response.Content);
 				target = (T)BuildList(objType, json.Root.Children());
 			}
 			else {
-				JObject json = JObject.Parse(content);
+				JObject json = JObject.Parse(response.Content);
 				JToken root = json.Root;
 
 				if (RootElement.HasValue())
@@ -88,8 +88,12 @@ namespace RestSharp.Deserializers
 				}
 
 				if (value == null || value.Type == JTokenType.Null) {
-					// TODO: if prop is nullable set value to null
 					continue;
+				}
+
+				// check for nullable and extract underlying type
+				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+					type = type.GetGenericArguments()[0];
 				}
 
 				if (type.IsPrimitive) {

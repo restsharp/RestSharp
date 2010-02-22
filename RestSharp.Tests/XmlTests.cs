@@ -23,11 +23,41 @@ namespace RestSharp.Tests
 {
 	public class XmlTests
 	{
+		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+
+		[Fact]
+		public void Can_Deserialize_Empty_Elements_to_Nullable_Values() {
+			var doc = CreateXmlWithNullValues();
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+
+			Assert.Null(output.Id);
+			Assert.Null(output.StartDate);
+			Assert.Null(output.UniqueId);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Elements_to_Nullable_Values() {
+			var doc = CreateXmlWithoutEmptyValues();
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+
+			Assert.NotNull(output.Id);
+			Assert.NotNull(output.StartDate);
+			Assert.NotNull(output.UniqueId);
+
+			Assert.Equal(123, output.Id);
+			Assert.Equal(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
+			Assert.Equal(new Guid(GuidString), output.UniqueId);
+		}
+
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date() {
 			var format = "dd yyyy MMM, hh:mm ss tt zzz";
 			var date = new DateTime(2010, 2, 8, 11, 11, 11);
-			
+
 			var doc = new XDocument();
 
 			var root = new XElement("Person");
@@ -38,7 +68,8 @@ namespace RestSharp.Tests
 			var xml = new XmlDeserializer();
 			xml.DateFormat = format;
 
-			var output = xml.Deserialize<PersonForXml>(doc.ToString());
+			var response = new RestResponse { Content = doc.ToString() };
+			var output = xml.Deserialize<PersonForXml>(response);
 
 			Assert.Equal(date, output.StartDate);
 		}
@@ -46,9 +77,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Elements_On_Default_Root() {
 			var doc = CreateElementsXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -56,6 +88,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -68,9 +101,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Attributes_On_Default_Root() {
 			var doc = CreateAttributesXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -78,6 +112,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.BestFriend);
 			Assert.Equal("The Fonz", p.BestFriend.Name);
@@ -87,9 +122,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data() {
 			var doc = CreateElementsXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Null(p.IgnoreProxy);
 		}
@@ -97,9 +133,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Ignore_ReadOnly_Property_That_Exists_In_Data() {
 			var doc = CreateElementsXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Null(p.ReadOnlyProxy);
 		}
@@ -107,9 +144,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Names_With_Underscores_On_Default_Root() {
 			var doc = CreateUnderscoresXml();
+			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
-			var p = d.Deserialize<PersonForXml>(doc);
+			var p = d.Deserialize<PersonForXml>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
 			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -117,6 +155,7 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Guid(GuidString), p.UniqueId);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -141,6 +180,7 @@ namespace RestSharp.Tests
 			root.Add(new XAttribute("Is_Cool", false));
 			root.Add(new XElement("Ignore", "dummy"));
 			root.Add(new XAttribute("Read_Only", "dummy"));
+			root.Add(new XElement("Unique_Id", new Guid(GuidString)));
 
 			root.Add(new XElement("Best_Friend",
 						new XElement("Name", "The Fonz"),
@@ -178,6 +218,7 @@ namespace RestSharp.Tests
 			root.Add(new XElement("IsCool", false));
 			root.Add(new XElement("Ignore", "dummy"));
 			root.Add(new XElement("ReadOnly", "dummy"));
+			root.Add(new XElement("UniqueId", new Guid(GuidString)));
 
 			root.Add(new XElement("BestFriend",
 						new XElement("Name", "The Fonz"),
@@ -208,6 +249,7 @@ namespace RestSharp.Tests
 			root.Add(new XAttribute("IsCool", false));
 			root.Add(new XAttribute("Ignore", "dummy"));
 			root.Add(new XAttribute("ReadOnly", "dummy"));
+			root.Add(new XAttribute("UniqueId", new Guid(GuidString)));
 
 			root.Add(new XElement("BestFriend",
 						new XAttribute("Name", "The Fonz"),
@@ -215,6 +257,34 @@ namespace RestSharp.Tests
 					));
 
 			doc.Add(root);
+			return doc.ToString();
+		}
+
+		private static string CreateXmlWithNullValues() {
+			var doc = new XDocument();
+			var root = new XElement("NullableValues");
+
+			root.Add(new XElement("Id", null),
+					 new XElement("StartDate", null),
+					 new XElement("UniqueId", null)
+				);
+
+			doc.Add(root);
+
+			return doc.ToString();
+		}
+
+		private static string CreateXmlWithoutEmptyValues() {
+			var doc = new XDocument();
+			var root = new XElement("NullableValues");
+
+			root.Add(new XElement("Id", 123),
+					 new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString()),
+					 new XElement("UniqueId", new Guid(GuidString))
+					 );
+
+			doc.Add(root);
+
 			return doc.ToString();
 		}
 	}

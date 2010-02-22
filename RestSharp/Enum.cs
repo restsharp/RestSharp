@@ -28,7 +28,7 @@ namespace RestSharp
 
 	public enum ResponseFormat
 	{
-		Auto,
+		AutoDetect,
 		Json,
 		Xml
 	}

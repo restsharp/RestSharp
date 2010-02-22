@@ -15,29 +15,45 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Xml;
+using System.Xml.Linq;
 using RestSharp.Deserializers;
 
 namespace RestSharp
 {
 	public class RestClient : IRestClient
 	{
-		public IDeserializer JsonDeserializer { get; set; }
-		public IDeserializer XmlDeserializer { get; set; }
+		public RestClient() {
+			ContentHandlers = new Dictionary<string, IDeserializer>();
 
-		public RestClient()
-			: this(new JsonDeserializer(), new XmlDeserializer()) {
+			// register default handlers
+			AddHandler("application/json", new JsonDeserializer());
+			AddHandler("text/xml", new XmlDeserializer());
 		}
 
-		public RestClient(string baseUrl) 
-			: this() {
+		public RestClient(string baseUrl) : this() {
 			BaseUrl = baseUrl;
 		}
 
-		public RestClient(IDeserializer jsonDeserializer, IDeserializer xmlDeserializer) {
-			JsonDeserializer = jsonDeserializer;
-			XmlDeserializer = xmlDeserializer;
+		private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
+
+		public void AddHandler(string contentType, IDeserializer deserializer) {
+			ContentHandlers.Add(contentType, deserializer);
+		}
+
+		public void RemoveHandler(string contentType) {
+			ContentHandlers.Remove(contentType);
+		}
+
+		public void ClearHandlers() {
+			ContentHandlers.Clear();
+		}
+
+		IDeserializer GetHandler(string contentType) {
+			return ContentHandlers[contentType];
 		}
 
 		public IAuthenticator Authenticator { get; set; }
@@ -62,34 +78,42 @@ namespace RestSharp
 			return response.RawBytes;
 		}
 
+		public XDocument ExecuteAsXDocument(RestRequest request) {
+			var response = Execute(request);
+			return XDocument.Parse(response.Content);
+		}
+
+		public XmlDocument ExecuteAsXmlDocument(RestRequest request) {
+			var response = Execute(request);
+			var doc = new XmlDocument();
+			doc.LoadXml(response.Content);
+			return doc;
+		}
+
 		public T Execute<T>(RestRequest request) where T : new() {
 			AuthenticateIfNeeded(request);
 
 			var response = GetResponse(request);
 
-			var returnVal = default(T);
-
-			if (request.ResponseFormat == ResponseFormat.Auto) {
-				switch (request.ContentType) {
-					case "application/json":
-						request.ResponseFormat = ResponseFormat.Json;
-						break;
-					case "text/xml":
-						request.ResponseFormat = ResponseFormat.Xml;
-						break;
-				}
-			}
+			IDeserializer handler = null;
 
 			switch (request.ResponseFormat) {
+				case ResponseFormat.AutoDetect:
+					handler = GetHandler(response.ContentType);
+					break;
 				case ResponseFormat.Json:
-					returnVal = DeserializeJsonTo<T>(response.Content, request.DateFormat);
+					handler = new JsonDeserializer();
+					handler.DateFormat = request.DateFormat;
 					break;
 				case ResponseFormat.Xml:
-					returnVal = DeserializeXmlTo<T>(response.Content, request.RootElement, request.XmlNamespace, request.DateFormat);
+					handler = new XmlDeserializer();
+					handler.RootElement = request.RootElement;
+					handler.Namespace = request.XmlNamespace;
+					handler.DateFormat = request.DateFormat;
 					break;
 			}
 
-			return returnVal;
+			return handler != null ? handler.Deserialize<T>(response) : default(T);
 		}
 
 		private RestResponse GetResponse(RestRequest request) {
@@ -198,18 +222,6 @@ namespace RestSharp
 			}
 
 			return url;
-		}
-
-		private T DeserializeJsonTo<T>(string content, string dateFormat) where T : new() {
-			JsonDeserializer.DateFormat = dateFormat;
-			return JsonDeserializer.Deserialize<T>(content);
-		}
-
-		private T DeserializeXmlTo<T>(string content, string rootElement, string xmlNamespace, string dateFormat) where T : new() {
-			XmlDeserializer.Namespace = xmlNamespace;
-			XmlDeserializer.RootElement = rootElement;
-			XmlDeserializer.DateFormat = dateFormat;
-			return XmlDeserializer.Deserialize<T>(content);
 		}
 	}
 }

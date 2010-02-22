@@ -38,6 +38,8 @@ namespace RestSharp.Tests
 		public string ReadOnlyProxy { get { return ReadOnly; } }
 
 		public FoeList Foes { get; set; }
+
+		public Guid UniqueId { get; set; }
 	}
 
 	public class PersonForJson

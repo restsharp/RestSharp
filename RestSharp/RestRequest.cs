@@ -176,7 +176,7 @@ namespace RestSharp
 			}
 		}
 
-		private ResponseFormat _responseFormat = ResponseFormat.Auto;
+		private ResponseFormat _responseFormat = ResponseFormat.AutoDetect;
 		public ResponseFormat ResponseFormat {
 			get {
 				return _responseFormat;
