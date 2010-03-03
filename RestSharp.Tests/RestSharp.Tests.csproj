@@ -79,6 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleClasses\misc.cs" />
     <Compile Include="SampleClasses\nullables.cs" />
+    <Compile Include="SampleClasses\eventful.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
     <Compile Include="XmlTests.cs" />
@@ -90,7 +91,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SampleData\jsonarray.txt" />
+    <Content Include="SampleData\jsonarray.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\eventful.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

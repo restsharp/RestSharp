@@ -13,15 +13,26 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 #endregion
+#region Acknowledgements
+// Original JsonSerializer contributed by Daniel Crenna (@dimebrain)
+#endregion
 
 using System.IO;
 using Newtonsoft.Json;
 
 namespace RestSharp.Serializers
 {
-	// Doesn't currently use the SerializeAs attribute, defers to Newtonsoft's attributes
+	/// <summary>
+	/// Default JSON serializer for request bodies
+	/// Doesn't currently use the SerializeAs attribute, defers to Newtonsoft's attributes
+	/// </summary>
 	public class JsonSerializer : ISerializer
 	{
+		/// <summary>
+		/// Serialize the object as JSON
+		/// </summary>
+		/// <param name="obj">Object to serialize</param>
+		/// <returns>JSON as String</returns>
 		public string Serialize(object obj) {
 			var serializer = new Newtonsoft.Json.JsonSerializer {
 				MissingMemberHandling = MissingMemberHandling.Ignore,
@@ -42,12 +53,17 @@ namespace RestSharp.Serializers
 			}
 		}
 
-		public string DateFormat { get; set; } // Currently unused
-		public string RootElement { get; set; } // Currently unused
-		public string Namespace { get; set; } // NOT USED FOR JSON
+		/// <summary>
+		/// Unused for JSON Serialization
+		/// </summary>
+		public string DateFormat { get; set; }
+		/// <summary>
+		/// Unused for JSON Serialization
+		/// </summary>
+		public string RootElement { get; set; }
+		/// <summary>
+		/// Unused for JSON Serialization
+		/// </summary>
+		public string Namespace { get; set; }
 	}
 }
-
-#region Acknowledgements
-// Original JsonSerializer contributed by Daniel Crenna (@dimebrain)
-#endregion

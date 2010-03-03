@@ -22,15 +22,30 @@ using RestSharp.Extensions;
 
 namespace RestSharp.Serializers
 {
+	/// <summary>
+	/// Default XML Serializer
+	/// </summary>
 	public class XmlSerializer : ISerializer
 	{
+		/// <summary>
+		/// Default constructor, does not specify namespace
+		/// </summary>
 		public XmlSerializer() {
 		}
 
+		/// <summary>
+		/// Specify the namespaced to be used when serializing
+		/// </summary>
+		/// <param name="namespace">XML namespace</param>
 		public XmlSerializer(string @namespace) {
 			Namespace = @namespace;
 		}
 
+		/// <summary>
+		/// Serialize the object as XML
+		/// </summary>
+		/// <param name="obj">Object to serialize</param>
+		/// <returns>XML as string</returns>
 		public string Serialize(object obj) {
 			var doc = new XDocument();
 
@@ -138,8 +153,17 @@ namespace RestSharp.Serializers
 			return output.ToString();
 		}
 
+		/// <summary>
+		/// Name of the root element to use when serializing
+		/// </summary>
 		public string RootElement { get; set; }
+		/// <summary>
+		/// XML namespace to use when serializing
+		/// </summary>
 		public string Namespace { get; set; }
+		/// <summary>
+		/// Format string to use when serializing dates
+		/// </summary>
 		public string DateFormat { get; set; }
 	}
 }

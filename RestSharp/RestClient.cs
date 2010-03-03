@@ -16,50 +16,103 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
+using System.ServiceModel.Syndication;
 
 namespace RestSharp
 {
+	/// <summary>
+	/// Client to translate RestRequests into Http requests and process response result
+	/// </summary>
 	public class RestClient : IRestClient
 	{
+		/// <summary>
+		/// Default constructor that registers default content handlers
+		/// </summary>
 		public RestClient() {
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 
 			// register default handlers
 			AddHandler("application/json", new JsonDeserializer());
 			AddHandler("text/xml", new XmlDeserializer());
+			AddHandler("application/xml", new XmlDeserializer());
+			AddHandler("*", new XmlDeserializer());
 		}
 
+		/// <summary>
+		/// Sets the BaseUrl property for requests made by this client instance
+		/// </summary>
+		/// <param name="baseUrl"></param>
 		public RestClient(string baseUrl) : this() {
 			BaseUrl = baseUrl;
 		}
 
 		private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
 
+		/// <summary>
+		/// Registers a content handler to process response content
+		/// </summary>
+		/// <param name="contentType">MIME content type of the response content</param>
+		/// <param name="deserializer">Deserializer to use to process content</param>
 		public void AddHandler(string contentType, IDeserializer deserializer) {
 			ContentHandlers.Add(contentType, deserializer);
 		}
 
+		/// <summary>
+		/// Remove a content handler for the specified MIME content type
+		/// </summary>
+		/// <param name="contentType">MIME content type to remove</param>
 		public void RemoveHandler(string contentType) {
 			ContentHandlers.Remove(contentType);
 		}
 
+		/// <summary>
+		/// Remove all content handlers
+		/// </summary>
 		public void ClearHandlers() {
 			ContentHandlers.Clear();
 		}
 
+		/// <summary>
+		/// Retrieve the handler for the specified MIME content type
+		/// </summary>
+		/// <param name="contentType">MIME content type to retrieve</param>
+		/// <returns>IDeserializer instance</returns>
 		IDeserializer GetHandler(string contentType) {
-			return ContentHandlers[contentType];
+			var handler = ContentHandlers[contentType] ?? ContentHandlers["*"];
+			return handler;
 		}
 
+		/// <summary>
+		/// Authenticator to use for requests made by this client instance
+		/// </summary>
 		public IAuthenticator Authenticator { get; set; }
+
+		/// <summary>
+		/// Proxy to use for requests made by this client instance.
+		/// Passed on to underying WebRequest if set.
+		/// </summary>
 		public IWebProxy Proxy { get; set; }
+
+		/// <summary>
+		/// Combined with Request.Action or Request.ActionFormat to construct URL for request
+		/// Should include scheme and domain without trailing slash.
+		/// </summary>
+		/// <example>
+		/// client.BaseUrl = "http://example.com";
+		/// </example>
 		public string BaseUrl { get; set; }
 
+		/// <summary>
+		/// Executes the request and returns a response, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <returns>RestResponse</returns>
 		public RestResponse Execute(RestRequest request) {
 			AuthenticateIfNeeded(request);
 
@@ -73,16 +126,32 @@ namespace RestSharp
 			}
 		}
 
+		/// <summary>
+		/// Executes the specified request and downloads the response data
+		/// </summary>
+		/// <param name="request">Request to execute</param>
+		/// <returns>Response data</returns>
 		public byte[] DownloadData(RestRequest request) {
 			var response = Execute(request);
 			return response.RawBytes;
 		}
 
+
+		/// <summary>
+		/// Executes the specified request and parses the response using LINQ to XML
+		/// </summary>
+		/// <param name="request">Request to execute</param>
+		/// <returns>XDocument</returns>
 		public XDocument ExecuteAsXDocument(RestRequest request) {
 			var response = Execute(request);
 			return XDocument.Parse(response.Content);
 		}
 
+		/// <summary>
+		/// Executes the specified request and parses the response using System.Xml
+		/// </summary>
+		/// <param name="request">Request to execute</param>
+		/// <returns>XmlDocument</returns>
 		public XmlDocument ExecuteAsXmlDocument(RestRequest request) {
 			var response = Execute(request);
 			var doc = new XmlDocument();
@@ -90,29 +159,29 @@ namespace RestSharp
 			return doc;
 		}
 
+		/// <summary>
+		/// Executes the specified request and parses the response using System.ServiceModel.Syndication
+		/// </summary>
+		/// <param name="request">Request to execute</param>
+		/// <returns>SyndicationFeed</returns>
+		public SyndicationFeed ExecuteAsSyndicationFeed(RestRequest request) {
+			var response = GetResponse(request);
+			var textReader = new StringReader(response.Content);
+			var reader = XmlReader.Create(textReader);
+			var feed = SyndicationFeed.Load(reader);
+			return feed;
+		}
+
+		/// <summary>
+		/// Executes the specified request and deserializes the response content using the appropriate content handler
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to execute</param>
+		/// <returns>Instance of T</returns>
 		public T Execute<T>(RestRequest request) where T : new() {
 			AuthenticateIfNeeded(request);
-
 			var response = GetResponse(request);
-
-			IDeserializer handler = null;
-
-			switch (request.ResponseFormat) {
-				case ResponseFormat.AutoDetect:
-					handler = GetHandler(response.ContentType);
-					break;
-				case ResponseFormat.Json:
-					handler = new JsonDeserializer();
-					handler.DateFormat = request.DateFormat;
-					break;
-				case ResponseFormat.Xml:
-					handler = new XmlDeserializer();
-					handler.RootElement = request.RootElement;
-					handler.Namespace = request.XmlNamespace;
-					handler.DateFormat = request.DateFormat;
-					break;
-			}
-
+			IDeserializer handler = GetHandler(response.ContentType);
 			return handler != null ? handler.Deserialize<T>(response) : default(T);
 		}
 
@@ -164,29 +233,28 @@ namespace RestSharp
 				http.RequestFormat = request.RequestFormat;
 			}
 
-			var httpResponse = new HttpResponse();
-
 			switch (request.Verb) {
 				case Method.GET:
-					httpResponse = http.Get();
+					http.Get();
 					break;
 				case Method.POST:
-					httpResponse = http.Post();
+					http.Post();
 					break;
 				case Method.PUT:
-					httpResponse = http.Put();
+					http.Put();
 					break;
 				case Method.DELETE:
-					httpResponse = http.Delete();
+					http.Delete();
 					break;
 				case Method.HEAD:
-					httpResponse = http.Head();
+					http.Head();
 					break;
 				case Method.OPTIONS:
-					httpResponse = http.Options();
+					http.Options();
 					break;
 			}
 
+			var httpResponse = http.Response;
 			var restResponse = new RestResponse();
 			restResponse.Content = httpResponse.Content;
 			restResponse.ContentEncoding = httpResponse.ContentEncoding;
@@ -199,6 +267,8 @@ namespace RestSharp
 			restResponse.Server = httpResponse.Server;
 			restResponse.StatusCode = httpResponse.StatusCode;
 			restResponse.StatusDescription = httpResponse.StatusDescription;
+
+			// TODO: copy httpResponse.Headers to restResponse.Headers
 
 			return restResponse;
 		}

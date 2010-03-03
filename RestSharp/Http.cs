@@ -26,53 +26,106 @@ using RestSharp.Extensions;
 
 namespace RestSharp
 {
+	/// <summary>
+	/// HttpWebRequest wrapper
+	/// </summary>
 	public class Http : IHttp
 	{
+		/// <summary>
+		/// True if this HTTP request has any HTTP parameters
+		/// </summary>
 		protected bool HasParameters {
 			get {
 				return Parameters.Any();
 			}
 		}
 
+		/// <summary>
+		/// True if a request body has been specified
+		/// </summary>
 		protected bool HasBody {
 			get {
 				return !string.IsNullOrEmpty(RequestBody);
 			}
 		}
 
+		/// <summary>
+		/// True if files have been set to be uploaded
+		/// </summary>
 		protected bool HasFiles {
 			get {
 				return Files.Any();
 			}
 		}
 
+		/// <summary>
+		/// System.Net.ICredentials to be sent with request
+		/// </summary>
 		public ICredentials Credentials { get; set; }
+		/// <summary>
+		/// Collection of files to be sent with request
+		/// </summary>
 		public IList<HttpFile> Files { get; private set; }
+		/// <summary>
+		/// HTTP headers to be sent with request
+		/// </summary>
 		public IList<HttpHeader> Headers { get; private set; }
+		/// <summary>
+		/// HTTP parameters (QueryString or Form values) to be sent with request
+		/// </summary>
 		public IList<HttpParameter> Parameters { get; private set; }
+		/// <summary>
+		/// Proxy info to be sent with request
+		/// </summary>
 		public IWebProxy Proxy { get; set; }
+		/// <summary>
+		/// Request body to be sent with request
+		/// </summary>
 		public string RequestBody { get; set; }
+		/// <summary>
+		/// Format of the request body. Used to set correct content type on request.
+		/// </summary>
 		public RequestFormat RequestFormat { get; set; }
-
+		/// <summary>
+		/// Response returned from making this request
+		/// </summary>
+		public HttpResponse Response { get; set; }
+		/// <summary>
+		/// Response stream return from making this request.
+		/// </summary>
+		public Stream ResponseStream { get; set; }
+		/// <summary>
+		/// URL to call for this request
+		/// </summary>
 		public Uri Url { get; set; }
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Http() {
 			Headers = new List<HttpHeader>();
 			Files = new List<HttpFile>();
 			Parameters = new List<HttpParameter>();
 		}
 
-		public HttpResponse Post() {
-			return PostPutInternal("POST");
+		/// <summary>
+		/// Execute a POST request
+		/// </summary>
+		public void Post() {
+			PostPutInternal("POST");
 		}
 
-		public HttpResponse Put() {
-			return PostPutInternal("PUT");
+		/// <summary>
+		/// Execute a PUT request
+		/// </summary>
+		public void Put() {
+			PostPutInternal("PUT");
 		}
 
-		private HttpResponse PostPutInternal(string method) {
+		private void PostPutInternal(string method) {
 
 			var webRequest = (HttpWebRequest)WebRequest.Create(Url);
+			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			webRequest.Method = method;
 
 			if (Credentials != null) {
@@ -107,7 +160,7 @@ namespace RestSharp
 			}
 
 			WriteRequestBody(webRequest);
-			return GetResponse(webRequest);
+			Response = GetResponse(webRequest);
 		}
 
 		private void WriteRequestBody(HttpWebRequest webRequest) {
@@ -175,23 +228,35 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
-		public HttpResponse Get() {
-			return GetStyleVerbInternal("GET");
+		/// <summary>
+		/// Execute a GET request
+		/// </summary>
+		public void Get() {
+			GetStyleVerbInternal("GET");
 		}
 
-		public HttpResponse Head() {
-			return GetStyleVerbInternal("HEAD");
+		/// <summary>
+		/// Execute a HEAD request
+		/// </summary>
+		public void Head() {
+			GetStyleVerbInternal("HEAD");
 		}
 
-		public HttpResponse Options() {
-			return GetStyleVerbInternal("OPTIONS");
+		/// <summary>
+		/// Execute an OPTIONS request
+		/// </summary>
+		public void Options() {
+			GetStyleVerbInternal("OPTIONS");
 		}
 
-		public HttpResponse Delete() {
-			return GetStyleVerbInternal("DELETE");
+		/// <summary>
+		/// Execute a DELETE request
+		/// </summary>
+		public void Delete() {
+			GetStyleVerbInternal("DELETE");
 		}
 
-		private HttpResponse GetStyleVerbInternal(string method) {
+		private void GetStyleVerbInternal(string method) {
 			string url = Url.ToString();
 			if (HasParameters) {
 				if (url.EndsWith("/")) {
@@ -202,6 +267,7 @@ namespace RestSharp
 			}
 
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
+			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			webRequest.Method = method;
 
 			if (Credentials != null) {
@@ -213,7 +279,7 @@ namespace RestSharp
 			}
 
 			AppendHeaders(webRequest);
-			return GetResponse(webRequest);
+			Response = GetResponse(webRequest);
 		}
 
 		// handle restricted headers the .NET way - thanks @dimebrain!
@@ -246,8 +312,6 @@ namespace RestSharp
                   };
 
 		private HttpResponse GetResponse(HttpWebRequest request) {
-			request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
 
@@ -264,6 +328,8 @@ namespace RestSharp
 					response.ResponseUri = webResponse.ResponseUri;
 					response.Server = webResponse.Server;
 					response.ResponseStatus = ResponseStatus.Success;
+
+					// TODO: populate response.Headers from webResponse.Headers
 
 					webResponse.Close();
 				}

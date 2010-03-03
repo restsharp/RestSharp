@@ -18,6 +18,9 @@ using System;
 
 namespace RestSharp
 {
+	///<summary>
+	/// Types of parameters that can be added to requests
+	///</summary>
 	public enum ParameterType
 	{
 		GetOrPost,
@@ -26,18 +29,18 @@ namespace RestSharp
 		RequestBody
 	}
 
-	public enum ResponseFormat
-	{
-		AutoDetect,
-		Json,
-		Xml
-	}
-
+	/// <summary>
+	/// Serialization format to use when making requests
+	/// </summary>
 	public enum RequestFormat
 	{
 		Json,
 		Xml
 	}
+
+	/// <summary>
+	/// HTTP verb to use when making requests
+	/// </summary>
 	public enum Method
 	{
 		GET,
@@ -48,18 +51,33 @@ namespace RestSharp
 		OPTIONS
 	}
 
+	/// <summary>
+	/// Used internally to mark when ActionFormat has been set
+	/// </summary>
 	public enum UrlMode
 	{
 		AsIs,
 		ReplaceValues
 	}
 
+	/// <summary>
+	/// Format strings for commonly-used date formats
+	/// </summary>
 	public struct DateFormats
 	{
+		/// <summary>
+		/// .NET format string for ISO 8601 date format
+		/// </summary>
 		public const string Iso8601 = "s";
+		/// <summary>
+		/// .NET format string for roundtrip date format
+		/// </summary>
 		public const string RoundTrip = "u";
 	}
 
+	/// <summary>
+	/// Status for responses (surprised?)
+	/// </summary>
 	public enum ResponseStatus
 	{
 		None,

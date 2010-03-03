@@ -169,6 +169,18 @@ namespace RestSharp.Tests
 			Assert.Equal("Yankees", p.Foes.Team);
 		}
 
+		[Fact]
+		public void Can_Deserialize_Eventful_Xml() {
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\eventful.xml";
+			var doc = XDocument.Load(xmlpath);
+			var response = new RestResponse { Content = doc.ToString() };
+
+			var d = new XmlDeserializer();
+			var output = d.Deserialize<SampleClasses.VenueSearch>(response);
+
+			Assert.NotEmpty(output.venues);
+		}
+
 		private static string CreateUnderscoresXml() {
 			var doc = new XDocument();
 			var root = new XElement("Person");

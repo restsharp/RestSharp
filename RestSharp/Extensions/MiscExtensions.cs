@@ -22,30 +22,63 @@ using System.Text;
 
 namespace RestSharp.Extensions
 {
+	/// <summary>
+	/// Extension method overload!
+	/// </summary>
 	public static class MiscExtensions
 	{
+		/// <summary>
+		/// Check that a string is not null or empty
+		/// </summary>
+		/// <param name="input">String to check</param>
+		/// <returns>bool</returns>
 		public static bool HasValue(this string input) {
 			return !string.IsNullOrEmpty(input);
 		}
 
+		/// <summary>
+		/// Remove underscores from a string
+		/// </summary>
+		/// <param name="input">String to process</param>
+		/// <returns>string</returns>
 		public static string RemoveUnderscores(this string input) {
 			return input.Replace("_", "");
 		}
 
+		/// <summary>
+		/// Reads a stream into a string
+		/// </summary>
+		/// <param name="stream">Stream to read</param>
+		/// <returns>string</returns>
 		public static string ReadAsString(this Stream stream) {
 			using (var reader = new StreamReader(stream)) {
 				return reader.ReadToEnd();
 			}
 		}
 
+		/// <summary>
+		/// Reads a byte array into a string using ASCII encoding
+		/// </summary>
+		/// <param name="input">Bytes to read</param>
+		/// <returns>string</returns>
 		public static string ReadAsString(this byte[] input) {
 			return Encoding.ASCII.GetString(input);
 		}
 
+		/// <summary>
+		/// Save a byte array to a file
+		/// </summary>
+		/// <param name="input">Bytes to save</param>
+		/// <param name="path">Full path to save file to</param>
 		public static void SaveAs(this byte[] input, string path) {
 			File.WriteAllBytes(path, input);
 		}
 
+		/// <summary>
+		/// Read a stream into a byte array
+		/// </summary>
+		/// <param name="input">Stream to read</param>
+		/// <returns>byte[]</returns>
 		public static byte[] ReadAsBytes(this Stream input) {
 			byte[] buffer = new byte[16 * 1024];
 			using (MemoryStream ms = new MemoryStream()) {
@@ -57,17 +90,11 @@ namespace RestSharp.Extensions
 			}
 		}
 
-		public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic) {
-			while (toCheck != typeof(object)) {
-				var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-				if (generic == cur) {
-					return true;
-				}
-				toCheck = toCheck.BaseType;
-			}
-			return false;
-		}
-
+		/// <summary>
+		/// Parses most common JSON date formats
+		/// </summary>
+		/// <param name="input">JSON value to parse</param>
+		/// <returns>DateTime</returns>
 		public static DateTime ParseJsonDate(this string input) {
 			input = input.Replace("\n", "");
 			input = input.Replace("\r", "");
@@ -87,6 +114,11 @@ namespace RestSharp.Extensions
 			return ParseFormattedDate(input);
 		}
 
+		/// <summary>
+		/// Remove leading and trailing " from a string
+		/// </summary>
+		/// <param name="input">String to parse</param>
+		/// <returns>String</returns>
 		public static string RemoveSurroundingQuotes(this string input) {
 			if (input.StartsWith("\"") && input.EndsWith("\"")) {
 				// remove leading/trailing quotes
@@ -141,14 +173,31 @@ namespace RestSharp.Extensions
 			return dt;
 		}
 
+		/// <summary>
+		/// Checks a string to see if it matches a regex
+		/// </summary>
+		/// <param name="input">String to check</param>
+		/// <param name="pattern">Pattern to match</param>
+		/// <returns>bool</returns>
 		public static bool Matches(this string input, string pattern) {
 			return Regex.IsMatch(input, pattern);
 		}
 
+		/// <summary>
+		/// Converts a string to pascal case
+		/// </summary>
+		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
+		/// <returns>string</returns>
 		public static string ToPascalCase(this string lowercaseAndUnderscoredWord) {
 			return ToPascalCase(lowercaseAndUnderscoredWord, true);
 		}
 
+		/// <summary>
+		/// Converts a string to pascal case with the option to remove underscores
+		/// </summary>
+		/// <param name="text">String to convert</param>
+		/// <param name="removeUnderscores">Option to remove underscores</param>
+		/// <returns></returns>
 		public static string ToPascalCase(this string text, bool removeUnderscores) {
 			if (String.IsNullOrEmpty(text))
 				return text;
@@ -174,18 +223,38 @@ namespace RestSharp.Extensions
 			return String.Concat(words[0].Substring(0, 1).ToUpper(CultureInfo.CurrentUICulture), words[0].Substring(1));
 		}
 
+		/// <summary>
+		/// Converts a string to camel case
+		/// </summary>
+		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
+		/// <returns>String</returns>
 		public static string ToCamelCase(this string lowercaseAndUnderscoredWord) {
 			return MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord));
 		}
 
+		/// <summary>
+		/// Convert the first letter of a string to lower case
+		/// </summary>
+		/// <param name="word">String to convert</param>
+		/// <returns>string</returns>
 		public static string MakeInitialLowerCase(this string word) {
 			return String.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
 		}
 
+		/// <summary>
+		/// Checks to see if a string is all uppper case
+		/// </summary>
+		/// <param name="inputString">String to check</param>
+		/// <returns>bool</returns>
 		public static bool IsUpperCase(this string inputString) {
 			return Regex.IsMatch(inputString, @"^[A-Z]+$");
 		}
 
+		/// <summary>
+		/// Add underscores to a pascal-cased string
+		/// </summary>
+		/// <param name="pascalCasedWord">String to convert</param>
+		/// <returns>string</returns>
 		public static string AddUnderscores(this string pascalCasedWord) {
 			return
 				Regex.Replace(

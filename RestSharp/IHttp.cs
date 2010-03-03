@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.IO;
 
 namespace RestSharp
 {
@@ -24,12 +25,15 @@ namespace RestSharp
 	{
 		ICredentials Credentials { get; set; }
 		IWebProxy Proxy { get; set; }
-		HttpResponse Delete();
-		HttpResponse Get();
-		HttpResponse Head();
-		HttpResponse Options();
-		HttpResponse Post();
-		HttpResponse Put();
+		void Delete();
+		void Get();
+		void Head();
+		void Options();
+		void Post();
+		void Put();
+
+		HttpResponse Response { get; set; }
+		Stream ResponseStream { get; set; }
 
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }
