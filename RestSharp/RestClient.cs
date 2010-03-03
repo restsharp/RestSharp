@@ -39,8 +39,9 @@ namespace RestSharp
 
 			// register default handlers
 			AddHandler("application/json", new JsonDeserializer());
-			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("application/xml", new XmlDeserializer());
+			AddHandler("text/json", new JsonDeserializer());
+			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 		}
 
