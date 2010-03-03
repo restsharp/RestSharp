@@ -46,12 +46,16 @@
     // response.Content : string representation of response
     
     // or automatically deserialize result
-    // return content type is sniffed but can be explicitly set
-    request.ResponseFormat = ResponseFormat.Json;
+    // return content type is sniffed but can be explicitly set via RestClient.AddHandler();
     Person person = client.Execute<Person>(request);
 
     // or download and save file to disk
     client.DownloadData(request).SaveAs(path);
+
+    // shortcuts for parsing xml/feeds
+    client.ExecuteAsXDocument(request);
+    client.ExecuteAsXmlDocument(request);
+    client.ExecuteAsSyndicationFeed(request);
  
   [1]: http://restsharp.org
   [2]: http://twitter.com/RestSharp
