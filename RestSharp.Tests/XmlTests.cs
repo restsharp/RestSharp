@@ -179,6 +179,10 @@ namespace RestSharp.Tests
 			var output = d.Deserialize<SampleClasses.VenueSearch>(response);
 
 			Assert.NotEmpty(output.venues);
+			Assert.Equal(3, output.venues.Count);
+			Assert.Equal("Tivoli", output.venues[0].name);
+			Assert.Equal("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
+			Assert.Equal("V0-001-000266914-3", output.venues[2].id);
 		}
 
 		private static string CreateUnderscoresXml() {

@@ -15,7 +15,7 @@ namespace RestSharp.Tests.SampleClasses
 		public string first_item { get; set; }
 		public string last_item { get; set; }
 		public string search_time { get; set; }
-		public List<venue> venues { get; set; }
+		public List<Venue> venues { get; set; }
 	}
 
 	public class PerformerSearch
@@ -45,10 +45,11 @@ namespace RestSharp.Tests.SampleClasses
 		public ServiceImage image { get; set; }
 	}
 
-	public class venue
+	public class Venue
 	{
 		public string id { get; set; }
 		public string url { get; set; }
+		public string name { get; set; }
 		public string venue_name { get; set; }
 		public string description { get; set; }
 		public string venue_type { get; set; }

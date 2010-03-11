@@ -120,11 +120,11 @@ namespace RestSharp.Deserializers
 					var t = type.GetGenericArguments()[0];
 					var list = (IList)Activator.CreateInstance(type);
 
-					var elements = root.Descendants().Where(d => d.Name.LocalName.RemoveUnderscores() == t.Name);
-					foreach (var element in elements) {
-						var item = CreateAndMap(t, element);
-						list.Add(item);
-					}
+					var container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
+					var first = container.Elements().FirstOrDefault();
+
+					var elements = container.Elements().Where(d => d.Name == first.Name);
+					PopulateListFromElements(t, elements, list);
 
 					prop.SetValue(x, list, null);
 				}
@@ -147,6 +147,13 @@ namespace RestSharp.Deserializers
 			}
 		}
 
+		private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list) {
+			foreach (var element in elements) {
+				var item = CreateAndMap(t, element);
+				list.Add(item);
+			}
+		}
+
 		private object HandleListDerivative(object x, XElement root, string propName, Type type) {
 			var t = type.BaseType.GetGenericArguments()[0];
 
@@ -154,10 +161,7 @@ namespace RestSharp.Deserializers
 
 			var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
 
-			foreach (var element in elements) {
-				var item = CreateAndMap(t, element);
-				list.Add(item);
-			}
+			PopulateListFromElements(t, elements, list);
 
 			// get properties too, not just list items
 			Map(list, root.Element(propName.AsNamespaced(Namespace)));
