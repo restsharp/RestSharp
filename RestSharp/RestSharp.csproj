@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authenticators\NtlmAuthenticator.cs" />
+    <Compile Include="HttpCookie.cs" />
     <Compile Include="HttpResponse.cs" />
     <Compile Include="Deserializers\IDeserializer.cs" />
     <Compile Include="Deserializers\JsonDeserializer.cs" />

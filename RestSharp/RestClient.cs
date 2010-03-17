@@ -49,7 +49,8 @@ namespace RestSharp
 		/// Sets the BaseUrl property for requests made by this client instance
 		/// </summary>
 		/// <param name="baseUrl"></param>
-		public RestClient(string baseUrl) : this() {
+		public RestClient(string baseUrl)
+			: this() {
 			BaseUrl = baseUrl;
 		}
 
@@ -209,6 +210,17 @@ namespace RestSharp
 				http.Headers.Add(header);
 			}
 
+			var cookies = from p in request.Parameters
+						  where p.Type == ParameterType.Cookie
+						  select new HttpCookie {
+							  Name = p.Name,
+							  Value = p.Value.ToString()
+						  };
+
+			foreach (var cookie in cookies) {
+				http.Cookies.Add(cookie);
+			}
+
 			var @params = from p in request.Parameters
 						  where p.Type == ParameterType.GetOrPost
 								&& p.Value != null
@@ -269,7 +281,13 @@ namespace RestSharp
 			restResponse.StatusCode = httpResponse.StatusCode;
 			restResponse.StatusDescription = httpResponse.StatusDescription;
 
-			// TODO: copy httpResponse.Headers to restResponse.Headers
+			foreach (var header in httpResponse.Headers) {
+				restResponse.Headers.Add(new Parameter { Name = header.Name, Value = header.Value, Type = ParameterType.HttpHeader });
+			}
+
+			foreach (var cookie in httpResponse.Cookies) {
+				restResponse.Cookies.Add(new Parameter { Name = cookie.Name, Value = cookie.Value, Type = ParameterType.Cookie });
+			}
 
 			return restResponse;
 		}

@@ -62,6 +62,10 @@ namespace RestSharp
 		/// </summary>
 		public string Server { get; set; }
 		/// <summary>
+		/// Cookies returned by server with the response
+		/// </summary>
+		public IList<Parameter> Cookies { get; private set; }
+		/// <summary>
 		/// Headers returned by server with the response
 		/// </summary>
 		public IList<Parameter> Headers { get; private set; }

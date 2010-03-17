@@ -72,6 +72,10 @@ namespace RestSharp
 		/// Headers returned by server with the response
 		/// </summary>
 		public IList<HttpHeader> Headers { get; private set; }
+		/// <summary>
+		/// Cookies returned by server with the response
+		/// </summary>
+		public IList<HttpCookie> Cookies { get; private set; }
 
 		private ResponseStatus _responseStatus = ResponseStatus.None;
 		/// <summary>

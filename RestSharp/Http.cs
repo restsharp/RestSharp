@@ -41,6 +41,15 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// True if this HTTP request has any HTTP cookies
+		/// </summary>
+		protected bool HasCookies {
+			get {
+				return Cookies.Any();
+			}
+		}
+
+		/// <summary>
 		/// True if a request body has been specified
 		/// </summary>
 		protected bool HasBody {
@@ -75,6 +84,10 @@ namespace RestSharp
 		/// </summary>
 		public IList<HttpParameter> Parameters { get; private set; }
 		/// <summary>
+		/// HTTP cookies to be sent with request
+		/// </summary>
+		public IList<HttpCookie> Cookies { get; private set; }
+		/// <summary>
 		/// Proxy info to be sent with request
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
@@ -106,6 +119,7 @@ namespace RestSharp
 			Headers = new List<HttpHeader>();
 			Files = new List<HttpFile>();
 			Parameters = new List<HttpParameter>();
+			Cookies = new List<HttpCookie>();
 		}
 
 		/// <summary>
@@ -329,7 +343,13 @@ namespace RestSharp
 					response.Server = webResponse.Server;
 					response.ResponseStatus = ResponseStatus.Success;
 
-					// TODO: populate response.Headers from webResponse.Headers
+					foreach (Cookie cookie in webResponse.Cookies) {
+						response.Cookies.Add(new HttpCookie { Name = cookie.Name, Value = cookie.Value });
+					}
+
+					foreach (KeyValuePair<HttpResponseHeader, string> header in webResponse.Headers) {
+						response.Headers.Add(new HttpHeader { Name = header.Key.ToString(), Value = header.Value });
+					}
 
 					webResponse.Close();
 				}
