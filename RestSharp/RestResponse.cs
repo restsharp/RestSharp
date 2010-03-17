@@ -26,6 +26,14 @@ namespace RestSharp
 	public class RestResponse
 	{
 		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public RestResponse() {
+			Headers = new List<Parameter>();
+			Cookies = new List<Parameter>();
+		}
+
+		/// <summary>
 		/// MIME content type of response
 		/// </summary>
 		public string ContentType { get; set; }

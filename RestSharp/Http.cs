@@ -152,6 +152,9 @@ namespace RestSharp
 
 			AppendHeaders(webRequest);
 
+			// initialize cookie container to hold returned cookies
+			webRequest.CookieContainer = new CookieContainer();
+
 			if (HasFiles) {
 				webRequest.ContentType = GetMultipartFormContentType();
 				WriteMultipartFormData(webRequest);
@@ -343,8 +346,10 @@ namespace RestSharp
 					response.Server = webResponse.Server;
 					response.ResponseStatus = ResponseStatus.Success;
 
-					foreach (Cookie cookie in webResponse.Cookies) {
-						response.Cookies.Add(new HttpCookie { Name = cookie.Name, Value = cookie.Value });
+					if (webResponse.Cookies != null) {
+						foreach (Cookie cookie in webResponse.Cookies) {
+							response.Cookies.Add(new HttpCookie { Name = cookie.Name, Value = cookie.Value });
+						}
 					}
 
 					foreach (KeyValuePair<HttpResponseHeader, string> header in webResponse.Headers) {

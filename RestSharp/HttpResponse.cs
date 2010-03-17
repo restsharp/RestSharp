@@ -30,6 +30,7 @@ namespace RestSharp
 		/// </summary>
 		public HttpResponse() {
 			Headers = new List<HttpHeader>();
+			Cookies = new List<HttpCookie>();
 		}
 
 		/// <summary>
