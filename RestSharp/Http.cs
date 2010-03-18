@@ -344,7 +344,7 @@ namespace RestSharp
 					response.StatusDescription = webResponse.StatusDescription;
 					response.ResponseUri = webResponse.ResponseUri;
 					response.Server = webResponse.Server;
-					response.ResponseStatus = ResponseStatus.Success;
+					response.ResponseStatus = ResponseStatus.Completed;
 
 					if (webResponse.Cookies != null) {
 						foreach (Cookie cookie in webResponse.Cookies) {

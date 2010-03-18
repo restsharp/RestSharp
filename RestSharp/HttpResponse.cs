@@ -81,7 +81,7 @@ namespace RestSharp
 		private ResponseStatus _responseStatus = ResponseStatus.None;
 		/// <summary>
 		/// Status of the request. Will return Error for transport errors.
-		/// HTTP errors will still return ResponseStatus = Success, check StatusCode instead
+		/// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 		/// </summary>
 		public ResponseStatus ResponseStatus {
 			get {

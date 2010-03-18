@@ -82,7 +82,7 @@ namespace RestSharp
 	public enum ResponseStatus
 	{
 		None,
-		Success,
+		Completed,
 		Error
 	}
 }
