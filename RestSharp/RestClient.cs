@@ -62,7 +62,7 @@ namespace RestSharp
 		/// <param name="contentType">MIME content type of the response content</param>
 		/// <param name="deserializer">Deserializer to use to process content</param>
 		public void AddHandler(string contentType, IDeserializer deserializer) {
-			ContentHandlers.Add(contentType, deserializer);
+			ContentHandlers[contentType] = deserializer;
 		}
 
 		/// <summary>
