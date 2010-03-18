@@ -17,7 +17,7 @@
 ### Basic Usage
 
     var request = new RestRequest(); // GET by default
-    // request.Verb = Method.GET | Method.POST | Method.PUT | Method.DELETE | Method.HEAD | Method.Options
+    // request.Verb = Method.GET | Method.POST | Method.PUT | Method.DELETE | Method.HEAD | Method.OPTIONS
     request.BaseUrl = "http://example.com";
     request.Action = "resource";
     request.AddParameter("name", "value");
