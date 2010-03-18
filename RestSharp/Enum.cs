@@ -40,7 +40,7 @@ namespace RestSharp
 	}
 
 	/// <summary>
-	/// HTTP verb to use when making requests
+	/// HTTP method to use when making requests
 	/// </summary>
 	public enum Method
 	{

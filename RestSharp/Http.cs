@@ -249,31 +249,31 @@ namespace RestSharp
 		/// Execute a GET request
 		/// </summary>
 		public void Get() {
-			GetStyleVerbInternal("GET");
+			GetStyleMethodInternal("GET");
 		}
 
 		/// <summary>
 		/// Execute a HEAD request
 		/// </summary>
 		public void Head() {
-			GetStyleVerbInternal("HEAD");
+			GetStyleMethodInternal("HEAD");
 		}
 
 		/// <summary>
 		/// Execute an OPTIONS request
 		/// </summary>
 		public void Options() {
-			GetStyleVerbInternal("OPTIONS");
+			GetStyleMethodInternal("OPTIONS");
 		}
 
 		/// <summary>
 		/// Execute a DELETE request
 		/// </summary>
 		public void Delete() {
-			GetStyleVerbInternal("DELETE");
+			GetStyleMethodInternal("DELETE");
 		}
 
-		private void GetStyleVerbInternal(string method) {
+		private void GetStyleMethodInternal(string method) {
 			string url = Url.ToString();
 			if (HasParameters) {
 				if (url.EndsWith("/")) {

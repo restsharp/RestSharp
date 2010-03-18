@@ -246,7 +246,7 @@ namespace RestSharp
 				http.RequestFormat = request.RequestFormat;
 			}
 
-			switch (request.Verb) {
+			switch (request.Method) {
 				case Method.GET:
 					http.Get();
 					break;

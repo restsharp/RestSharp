@@ -48,12 +48,12 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Sets Verb property to value of verb
+		/// Sets Method property to value of method
 		/// </summary>
-		/// <param name="verb">Verb to use for this request</param>
-		public RestRequest(Method verb)
+		/// <param name="method">Method to use for this request</param>
+		public RestRequest(Method method)
 			: this() {
-			Verb = verb;
+			Method = method;
 		}
 
 		/// <summary>
@@ -66,19 +66,19 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Sets Action and Verb properties
+		/// Sets Action and Method properties
 		/// </summary>
 		/// <param name="action">Action to use for this request</param>
-		/// <param name="verb">Verb to use for this request</param>
-		public RestRequest(string action, Method verb)
+		/// <param name="method">Method to use for this request</param>
+		public RestRequest(string action, Method method)
 			: this() {
 			Action = action;
-			Verb = verb;
+			Method = method;
 		}
 
 		/// <summary>
 		/// Adds a file to the Files collection to be included with a POST or PUT request 
-		/// (other verbs do not support file uploads).
+		/// (other methods do not support file uploads).
 		/// </summary>
 		/// <param name="path">Full path to file to upload</param>
 		/// <returns>This request</returns>
@@ -213,7 +213,7 @@ namespace RestSharp
 
 		/// <summary>
 		/// Adds a parameter to the request. There are four types of parameters:
-		///	- GetOrPost: Either a QueryString value or encoded form value based on verb
+		///	- GetOrPost: Either a QueryString value or encoded form value based on method
 		///	- HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
 		///	- UrlSegment: Inserted into URL if ActionFormat is specified
 		///	- RequestBody: Used by AddBody() (not recommended to use directly)
@@ -237,14 +237,14 @@ namespace RestSharp
 		/// </summary>
 		public List<FileParameter> Files { get; private set; }
 
-		private Method _verb = Method.GET;
+		private Method _method = Method.GET;
 		/// <summary>
-		/// Determines what HTTP verb to use for this request. Supported verbs: GET, POST, PUT, DELETE, HEAD, OPTIONS
+		/// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
 		/// Default is GET
 		/// </summary>
-		public Method Verb {
-			get { return _verb; }
-			set { _verb = value; }
+		public Method Method {
+			get { return _method; }
+			set { _method = value; }
 		}
 
 		/// <summary>
