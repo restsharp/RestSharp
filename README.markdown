@@ -15,10 +15,12 @@
 * T4 Helper to generate C# classes from an XML document
 
 ### Basic Usage
-
+    var client = new RestClient();
+	client.BaseUrl = "http://example.com";
+    // client.Authenticator = new BasicAuthenticator(username, password);
+	
     var request = new RestRequest(); // GET by default
     // request.Method = Method.GET | Method.POST | Method.PUT | Method.DELETE | Method.HEAD | Method.OPTIONS
-    request.BaseUrl = "http://example.com";
     request.Resource = "resource";
     request.AddParameter("name", "value");
 
@@ -37,10 +39,7 @@
 
     // add files (only works with compatible verbs)
     request.AddFile(path);
-    
-    var client = new RestClient();
-    // client.Authenticator = new BasicAuthenticator(username, password);
-    
+        
     // get raw response
     RestResponse response = client.Execute(request);
     // response.Content : string representation of response
