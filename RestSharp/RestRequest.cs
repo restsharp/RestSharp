@@ -123,11 +123,11 @@ namespace RestSharp
 			string serialized;
 
 			switch (RequestFormat) {
-				case RequestFormat.Json:
+				case DataFormat.Json:
 					serialized = JsonSerializer.Serialize(obj);
 					break;
 
-				case RequestFormat.Xml:
+				case DataFormat.Xml:
 					XmlSerializer.Namespace = xmlNamespace;
 					serialized = XmlSerializer.Serialize(obj);
 					break;
@@ -141,7 +141,7 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Serializes obj to format specified by RequestFormat and adds it to the request body.
+		/// Serializes obj to data format specified by RequestFormat and adds it to the request body.
 		/// </summary>
 		/// <param name="obj">The object to serialize</param>
 		/// <returns>This request</returns>
@@ -263,12 +263,12 @@ namespace RestSharp
 		/// </example>
 		public string Resource { get; set; }
 
-		private RequestFormat _requestFormat = RequestFormat.Xml;
+		private DataFormat _requestFormat = DataFormat.Xml;
 		/// <summary>
 		/// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
 		/// By default XmlSerializer is used.
 		/// </summary>
-		public RequestFormat RequestFormat {
+		public DataFormat RequestFormat {
 			get {
 				return _requestFormat;
 			}

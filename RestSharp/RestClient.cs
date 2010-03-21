@@ -36,6 +36,7 @@ namespace RestSharp
 		/// </summary>
 		public RestClient() {
 			ContentHandlers = new Dictionary<string, IDeserializer>();
+			AcceptTypes = new List<string>();
 
 			// register default handlers
 			AddHandler("application/json", new JsonDeserializer());
@@ -55,6 +56,7 @@ namespace RestSharp
 		}
 
 		private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
+		private IList<string> AcceptTypes { get; set; }
 
 		/// <summary>
 		/// Registers a content handler to process response content
@@ -63,6 +65,9 @@ namespace RestSharp
 		/// <param name="deserializer">Deserializer to use to process content</param>
 		public void AddHandler(string contentType, IDeserializer deserializer) {
 			ContentHandlers[contentType] = deserializer;
+			if (contentType != "*") {
+				AcceptTypes.Add(contentType);
+			}
 		}
 
 		/// <summary>
@@ -118,6 +123,10 @@ namespace RestSharp
 		public RestResponse Execute(RestRequest request) {
 			AuthenticateIfNeeded(request);
 
+			// add Accept header
+			var accepts = string.Join("; ", AcceptTypes.ToArray());
+			request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
+
 			var response = GetResponse(request);
 			return response;
 		}
@@ -167,7 +176,7 @@ namespace RestSharp
 		/// <param name="request">Request to execute</param>
 		/// <returns>SyndicationFeed</returns>
 		public SyndicationFeed ExecuteAsSyndicationFeed(RestRequest request) {
-			var response = GetResponse(request);
+			var response = Execute(request);
 			var textReader = new StringReader(response.Content);
 			var reader = XmlReader.Create(textReader);
 			var feed = SyndicationFeed.Load(reader);
@@ -181,8 +190,7 @@ namespace RestSharp
 		/// <param name="request">Request to execute</param>
 		/// <returns>Instance of T</returns>
 		public T Execute<T>(RestRequest request) where T : new() {
-			AuthenticateIfNeeded(request);
-			var response = GetResponse(request);
+			var response = Execute(request);
 			IDeserializer handler = GetHandler(response.ContentType);
 			return handler != null ? handler.Deserialize<T>(response) : default(T);
 		}

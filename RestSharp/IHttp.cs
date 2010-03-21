@@ -40,7 +40,7 @@ namespace RestSharp
 		IList<HttpFile> Files { get; }
 		IList<HttpCookie> Cookies { get; }
 		string RequestBody { get; set; }
-		RequestFormat RequestFormat { get; set; }
+		DataFormat RequestFormat { get; set; }
 
 		Uri Url { get; set; }
 	}

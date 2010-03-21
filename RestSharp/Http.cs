@@ -98,7 +98,7 @@ namespace RestSharp
 		/// <summary>
 		/// Format of the request body. Used to set correct content type on request.
 		/// </summary>
-		public RequestFormat RequestFormat { get; set; }
+		public DataFormat RequestFormat { get; set; }
 		/// <summary>
 		/// Response returned from making this request
 		/// </summary>
@@ -164,10 +164,10 @@ namespace RestSharp
 				}
 				else if (HasBody) {
 					switch (RequestFormat) {
-						case RequestFormat.Xml:
+						case DataFormat.Xml:
 							webRequest.ContentType = "text/xml";
 							break;
-						case RequestFormat.Json:
+						case DataFormat.Json:
 							webRequest.ContentType = "application/json";
 							break;
 					}
@@ -314,7 +314,7 @@ namespace RestSharp
 		private void AppendCookies(HttpWebRequest webRequest) {
 			webRequest.CookieContainer = new CookieContainer();
 			foreach (var httpCookie in Cookies) {
-				var cookie = new Cookie() {
+				var cookie = new Cookie {
 					Name = httpCookie.Name,
 					Value = httpCookie.Value,
 					Domain = webRequest.RequestUri.Host

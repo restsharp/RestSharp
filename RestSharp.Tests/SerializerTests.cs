@@ -70,7 +70,7 @@ namespace RestSharp.Tests
 			};
 
 			var xml = new XmlSerializer();
-			xml.DateFormat = DateFormats.Iso8601;
+			xml.DateFormat = DateFormat.Iso8601;
 			var doc = xml.Serialize(poco);
 			var expected = GetSimplePocoXDocWithIsoDate();
 

@@ -31,9 +31,9 @@ namespace RestSharp
 	}
 
 	/// <summary>
-	/// Serialization format to use when making requests
+	/// Data formats
 	/// </summary>
-	public enum RequestFormat
+	public enum DataFormat
 	{
 		Json,
 		Xml
@@ -55,7 +55,7 @@ namespace RestSharp
 	/// <summary>
 	/// Format strings for commonly-used date formats
 	/// </summary>
-	public struct DateFormats
+	public struct DateFormat
 	{
 		/// <summary>
 		/// .NET format string for ISO 8601 date format
