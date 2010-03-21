@@ -14,7 +14,6 @@
 //   limitations under the License. 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -40,6 +39,9 @@ namespace RestSharp
 		/// </summary>
 		public ISerializer XmlSerializer { get; set; }
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public RestRequest() {
 			Parameters = new List<Parameter>();
 			Files = new List<FileParameter>();
@@ -57,22 +59,22 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Sets Action property
+		/// Sets Resource property
 		/// </summary>
-		/// <param name="action">Action to use for this request</param>
-		public RestRequest(string action)
+		/// <param name="resource">Resource to use for this request</param>
+		public RestRequest(string resource)
 			: this() {
-			Action = action;
+			Resource = resource;
 		}
 
 		/// <summary>
-		/// Sets Action and Method properties
+		/// Sets Resource and Method properties
 		/// </summary>
-		/// <param name="action">Action to use for this request</param>
+		/// <param name="resource">Resource to use for this request</param>
 		/// <param name="method">Method to use for this request</param>
-		public RestRequest(string action, Method method)
+		public RestRequest(string resource, Method method)
 			: this() {
-			Action = action;
+			Resource = resource;
 			Method = method;
 		}
 
@@ -215,7 +217,7 @@ namespace RestSharp
 		/// Adds a parameter to the request. There are four types of parameters:
 		///	- GetOrPost: Either a QueryString value or encoded form value based on method
 		///	- HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-		///	- UrlSegment: Inserted into URL if ActionFormat is specified
+		///	- UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
 		///	- RequestBody: Used by AddBody() (not recommended to use directly)
 		/// </summary>
 		/// <param name="name">Name of the parameter</param>
@@ -248,43 +250,18 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// The URL to make the request against. Ignored if ActionFormat is set.
+		/// The Resource URL to make the request against.
+		/// Tokens are substituted with UrlSegment parameters and match by name.
 		/// Should not include the scheme or domain. Do not include leading slash.
 		/// Combined with RestClient.BaseUrl to assemble final URL:
-		/// {BaseUrl}/{Action} (BaseUrl is scheme + domain, e.g. http://example.com)
-		/// </summary>
-		public string Action { get; set; }
-
-		private string _actionFormat;
-		/// <summary>
-		/// URL format to use for requests that require parameters to be set as part of the URL.
-		/// Values are substituted with UrlSegment parameters and match by name.
-		/// Combined with RestClient.BaseUrl to assemble final URL:
-		/// {BaseUrl}/{Action} (BaseUrl is scheme + domain, e.g. http://example.com)
+		/// {BaseUrl}/{Resource} (BaseUrl is scheme + domain, e.g. http://example.com)
 		/// </summary>
 		/// <example>
-		/// request.ActionFormat = "Products/{ProductId}";
+		/// // example for url token replacement
+		/// request.Resource = "Products/{ProductId}";
 		///	request.AddParameter("ProductId", 123, ParameterType.UrlSegment);
 		/// </example>
-		public string ActionFormat {
-			get {
-				return _actionFormat;
-			}
-			set {
-				_urlMode = UrlMode.ReplaceValues;
-				_actionFormat = value;
-			}
-		}
-
-		private UrlMode _urlMode = UrlMode.AsIs;
-		/// <summary>
-		/// When an ActionFormat is set UrlMode is set to UrlMode.ReplaceValues so that URL segment parameters are processed.
-		/// </summary>
-		public UrlMode UrlMode {
-			get {
-				return _urlMode;
-			}
-		}
+		public string Resource { get; set; }
 
 		private RequestFormat _requestFormat = RequestFormat.Xml;
 		/// <summary>

@@ -53,15 +53,6 @@ namespace RestSharp
 	}
 
 	/// <summary>
-	/// Used internally to mark when ActionFormat has been set
-	/// </summary>
-	public enum UrlMode
-	{
-		AsIs,
-		ReplaceValues
-	}
-
-	/// <summary>
 	/// Format strings for commonly-used date formats
 	/// </summary>
 	public struct DateFormats

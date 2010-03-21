@@ -102,7 +102,7 @@ namespace RestSharp
 		public IWebProxy Proxy { get; set; }
 
 		/// <summary>
-		/// Combined with Request.Action or Request.ActionFormat to construct URL for request
+		/// Combined with Request.Resource to construct URL for request
 		/// Should include scheme and domain without trailing slash.
 		/// </summary>
 		/// <example>
@@ -293,24 +293,13 @@ namespace RestSharp
 		}
 
 		private Uri BuildUri(RestRequest request) {
-			Uri url = null;
-
-			switch (request.UrlMode) {
-				case UrlMode.AsIs:
-					url = new Uri(string.Format("{0}/{1}", BaseUrl, request.Action));
-					break;
-				case UrlMode.ReplaceValues:
-					string assembled = request.ActionFormat;
-					var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-					foreach (var p in urlParms) {
-						assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
-					}
-
-					url = new Uri(string.Format("{0}/{1}", BaseUrl, assembled));
-					break;
+			var assembled = request.Resource;
+			var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+			foreach (var p in urlParms) {
+				assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
 			}
 
-			return url;
+			return new Uri(string.Format("{0}/{1}", BaseUrl, assembled));
 		}
 	}
 }
