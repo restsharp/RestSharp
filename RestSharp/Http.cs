@@ -151,9 +151,7 @@ namespace RestSharp
 			}
 
 			AppendHeaders(webRequest);
-
-			// initialize cookie container to hold returned cookies
-			webRequest.CookieContainer = new CookieContainer();
+			AppendCookies(webRequest);
 
 			if (HasFiles) {
 				webRequest.ContentType = GetMultipartFormContentType();
@@ -296,6 +294,7 @@ namespace RestSharp
 			}
 
 			AppendHeaders(webRequest);
+			AppendCookies(webRequest);
 			Response = GetResponse(webRequest);
 		}
 
@@ -309,6 +308,18 @@ namespace RestSharp
 				else {
 					webRequest.Headers.Add(header.Name, header.Value);
 				}
+			}
+		}
+
+		private void AppendCookies(HttpWebRequest webRequest) {
+			webRequest.CookieContainer = new CookieContainer();
+			foreach (var httpCookie in Cookies) {
+				var cookie = new Cookie() {
+					Name = httpCookie.Name,
+					Value = httpCookie.Value,
+					Domain = webRequest.RequestUri.Host
+				};
+				webRequest.CookieContainer.Add(cookie);
 			}
 		}
 
