@@ -83,6 +83,7 @@ namespace RestSharp
 		/// </summary>
 		public void ClearHandlers() {
 			ContentHandlers.Clear();
+			AcceptTypes.Clear();
 		}
 
 		/// <summary>
@@ -91,7 +92,14 @@ namespace RestSharp
 		/// <param name="contentType">MIME content type to retrieve</param>
 		/// <returns>IDeserializer instance</returns>
 		IDeserializer GetHandler(string contentType) {
-			var handler = ContentHandlers[contentType] ?? ContentHandlers["*"];
+			IDeserializer handler = null;
+			if (ContentHandlers.ContainsKey(contentType)) {
+				handler = ContentHandlers[contentType];
+			}
+			else if (ContentHandlers.ContainsKey("*")) {
+				handler = ContentHandlers["*"];
+			}
+
 			return handler;
 		}
 

@@ -363,8 +363,9 @@ namespace RestSharp
 						}
 					}
 
-					foreach (KeyValuePair<HttpResponseHeader, string> header in webResponse.Headers) {
-						response.Headers.Add(new HttpHeader { Name = header.Key.ToString(), Value = header.Value });
+					for (int i = 0; i < webResponse.Headers.Count; i++) {
+						var header = webResponse.Headers[i];
+						response.Headers.Add(new HttpHeader { Name = header, Value = webResponse.Headers[header] });
 					}
 
 					webResponse.Close();
