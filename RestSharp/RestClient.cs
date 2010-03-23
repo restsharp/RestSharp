@@ -132,7 +132,7 @@ namespace RestSharp
 			AuthenticateIfNeeded(request);
 
 			// add Accept header
-			var accepts = string.Join("; ", AcceptTypes.ToArray());
+			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
 
 			var response = GetResponse(request);
