@@ -284,6 +284,16 @@ namespace RestSharp
 		public string RootElement { get; set; }
 
 		/// <summary>
+		/// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
+		/// </summary>
+		public string DateFormat { get; set; }
+
+		/// <summary>
+		/// Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from element names.
+		/// </summary>
+		public string XmlNamespace { get; set; }
+
+		/// <summary>
 		/// In general you would not need to set this directly. Used by the NtlmAuthenticator. 
 		/// </summary>
 		public ICredentials Credentials { get; set; }

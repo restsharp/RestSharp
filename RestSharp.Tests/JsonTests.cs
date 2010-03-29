@@ -31,6 +31,17 @@ namespace RestSharp.Tests
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
+		public void Can_Deserialize_From_Root_Element() {
+			var doc = File.ReadAllText(@"..\..\SampleData\sojson.txt");
+
+			var json = new JsonDeserializer();
+			json.RootElement = "User";
+
+			var output = json.Deserialize<SOUser>(new RestResponse { Content = doc });
+			Assert.Equal("John Sheehan", output.DisplayName);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Empty_Elements_to_Nullable_Values() {
 			var doc = CreateJsonWithNullValues();
 

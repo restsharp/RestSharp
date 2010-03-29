@@ -200,7 +200,10 @@ namespace RestSharp
 		public T Execute<T>(RestRequest request) where T : new() {
 			var response = Execute(request);
 			IDeserializer handler = GetHandler(response.ContentType);
-			return handler != null ? handler.Deserialize<T>(response) : default(T);
+			handler.RootElement = request.RootElement;
+			handler.DateFormat = request.DateFormat;
+			handler.Namespace = request.XmlNamespace;
+			return handler.Deserialize<T>(response);
 		}
 
 		private RestResponse GetResponse(RestRequest request) {
