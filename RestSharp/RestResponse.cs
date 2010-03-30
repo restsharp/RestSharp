@@ -21,14 +21,14 @@ using System.Net;
 namespace RestSharp
 {
 	/// <summary>
-	/// 
+	/// Base class for common properties shared by RestResponse and RestResponse[[T]]
 	/// </summary>
-	public class RestResponse
+	public abstract class RestResponseBase
 	{
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public RestResponse() {
+		public RestResponseBase() {
 			Headers = new List<Parameter>();
 			Cookies = new List<Parameter>();
 		}
@@ -72,11 +72,11 @@ namespace RestSharp
 		/// <summary>
 		/// Cookies returned by server with the response
 		/// </summary>
-		public IList<Parameter> Cookies { get; private set; }
+		public IList<Parameter> Cookies { get; protected set; }
 		/// <summary>
 		/// Headers returned by server with the response
 		/// </summary>
-		public IList<Parameter> Headers { get; private set; }
+		public IList<Parameter> Headers { get; protected set; }
 
 		private ResponseStatus _responseStatus = ResponseStatus.None;
 		/// <summary>
@@ -96,5 +96,43 @@ namespace RestSharp
 		/// Transport or other non-HTTP error generated while attempting request
 		/// </summary>
 		public string ErrorMessage { get; set; }
+	}
+
+	/// <summary>
+	/// Container for data sent back from API including deserialized data
+	/// </summary>
+	/// <typeparam name="T">Type of data to deserialize to</typeparam>
+	public class RestResponse<T> : RestResponseBase
+	{
+		/// <summary>
+		/// Deserialized entity data
+		/// </summary>
+		public T Data { get; set; }
+
+		public static explicit operator RestResponse<T>(RestResponse response) {
+			return new RestResponse<T> {
+				Content = response.Content,
+				ContentEncoding = response.ContentEncoding,
+				ContentLength = response.ContentLength,
+				ContentType = response.ContentType,
+				Cookies = response.Cookies,
+				ErrorMessage = response.ErrorMessage,
+				Headers = response.Headers,
+				RawBytes = response.RawBytes,
+				ResponseStatus = response.ResponseStatus,
+				ResponseUri = response.ResponseUri,
+				Server = response.Server,
+				StatusCode = response.StatusCode,
+				StatusDescription = response.StatusDescription
+			};
+		}
+	}
+
+	/// <summary>
+	/// Container for data sent back from API
+	/// </summary>
+	public class RestResponse : RestResponseBase
+	{
+
 	}
 }

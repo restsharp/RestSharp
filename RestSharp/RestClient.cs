@@ -197,13 +197,18 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to execute</param>
 		/// <returns>Instance of T</returns>
-		public T Execute<T>(RestRequest request) where T : new() {
-			var response = Execute(request);
-			IDeserializer handler = GetHandler(response.ContentType);
+		public RestResponse<T> Execute<T>(RestRequest request) where T : new() {
+			var raw = Execute(request);
+
+			IDeserializer handler = GetHandler(raw.ContentType);
 			handler.RootElement = request.RootElement;
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
-			return handler.Deserialize<T>(response);
+
+			var response = (RestResponse<T>)raw;
+			response.Data = handler.Deserialize<T>(raw);
+
+			return response;
 		}
 
 		private RestResponse GetResponse(RestRequest request) {
