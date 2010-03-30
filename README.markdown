@@ -16,7 +16,7 @@
 
 ### Basic Usage
     var client = new RestClient();
-	client.BaseUrl = "http://example.com";
+    client.BaseUrl = "http://example.com";
     // client.Authenticator = new BasicAuthenticator(username, password);
 	
     var request = new RestRequest(); // GET by default
@@ -46,7 +46,8 @@
     
     // or automatically deserialize result
     // return content type is sniffed but can be explicitly set via RestClient.AddHandler();
-    Person person = client.Execute<Person>(request);
+    RestResponse<Person> response2 = client.Execute<Person>(request);
+    var name = response2.Data.Name;
 
     // or download and save file to disk
     client.DownloadData(request).SaveAs(path);

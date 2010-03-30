@@ -196,7 +196,7 @@ namespace RestSharp
 		/// </summary>
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to execute</param>
-		/// <returns>Instance of T</returns>
+		/// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
 		public RestResponse<T> Execute<T>(RestRequest request) where T : new() {
 			var raw = Execute(request);
 
