@@ -363,9 +363,9 @@ namespace RestSharp
 						}
 					}
 
-					for (int i = 0; i < webResponse.Headers.Count; i++) {
-						var header = webResponse.Headers[i];
-						response.Headers.Add(new HttpHeader { Name = header, Value = webResponse.Headers[header] });
+					foreach (var headerName in webResponse.Headers.AllKeys) {
+						var headerValue = webResponse.Headers[headerName];
+						response.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
 					}
 
 					webResponse.Close();
