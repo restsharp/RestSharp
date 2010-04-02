@@ -5,21 +5,24 @@ using System.Text;
 
 namespace RestSharp
 {
-    public delegate RestResponse RequestExecuteCallback(RestRequest request);
-    public delegate RestResponse<T> RequestExecuteCallback<T>(RestRequest request);
+    public delegate RestResponse RequestExecuteCaller(RestRequest request);
+    public delegate RestResponse<T> RequestExecuteCaller<T>(RestRequest request);
 
+    /// <summary>
+    /// Experimental, not tested on Silverlight or Compact Framework
+    /// </summary>
     public class AsyncRestClient : RestClient, IAsyncRestClient
     {
         public AsyncRestClient() : base()     {    }
         public AsyncRestClient(string baseUrl) : base(baseUrl) {  }
 
 
-        private RequestExecuteCallback callback;
+        private RequestExecuteCaller callback;
         private object genericCallback;
 
         public IAsyncResult BeginExecute(RestRequest request, AsyncCallback callback, object state)
         {
-            this.callback = new RequestExecuteCallback(this.Execute);
+            this.callback = new RequestExecuteCaller(this.Execute);
             return this.callback.BeginInvoke(request, callback, state);
         }
 
@@ -30,14 +33,14 @@ namespace RestSharp
 
         public IAsyncResult BeginExecute<T>(RestRequest request, AsyncCallback callback, object state) where T : new()
         {
-            this.genericCallback = new RequestExecuteCallback<T>(this.Execute<T>);
-            var cb = this.genericCallback as RequestExecuteCallback<T>;
+            this.genericCallback = new RequestExecuteCaller<T>(this.Execute<T>);
+            var cb = this.genericCallback as RequestExecuteCaller<T>;
             return cb.BeginInvoke(request, callback, state);
         }
 
         public RestResponse<T> EndExecute<T>(IAsyncResult asyncResult) where T : new()
         {
-            var cb = this.genericCallback as RequestExecuteCallback<T>;
+            var cb = this.genericCallback as RequestExecuteCaller<T>;
             return cb.EndInvoke(asyncResult);
         }
     }
