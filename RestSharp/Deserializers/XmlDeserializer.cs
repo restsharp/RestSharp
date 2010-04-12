@@ -109,20 +109,13 @@ namespace RestSharp.Deserializers
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Decimal)) {
-                    value = Decimal.Parse(value.ToString());
+					value = Decimal.Parse(value.ToString());
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Guid)) {
 					value = new Guid(value.ToString());
 					prop.SetValue(x, value, null);
-                }
-                else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
-                {
-                    // handles classes that derive from List<T>
-                    // e.g. a collection that also has attributes
-                    var list = HandleListDerivative(x, root, prop.Name, type);
-                    prop.SetValue(x, list, null);
-                }
+				}
 				else if (type.IsGenericType) {
 					var t = type.GetGenericArguments()[0];
 					var list = (IList)Activator.CreateInstance(type);
@@ -133,6 +126,12 @@ namespace RestSharp.Deserializers
 					var elements = container.Elements().Where(d => d.Name == first.Name);
 					PopulateListFromElements(t, elements, list);
 
+					prop.SetValue(x, list, null);
+				}
+				else if (type.IsSubclassOfRawGeneric(typeof(List<>))) {
+					// handles classes that derive from List<T>
+					// e.g. a collection that also has attributes
+					var list = HandleListDerivative(x, root, prop.Name, type);
 					prop.SetValue(x, list, null);
 				}
 				else {
