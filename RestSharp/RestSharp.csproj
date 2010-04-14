@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncRestClient.cs" />
     <Compile Include="Authenticators\NtlmAuthenticator.cs" />
     <Compile Include="HttpCookie.cs" />
     <Compile Include="HttpResponse.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="HttpHeader.cs" />
     <Compile Include="HttpParameter.cs" />
     <Compile Include="IHttp.cs" />
+    <Compile Include="IAsyncRestClient.cs" />
     <Compile Include="IRestClient.cs" />
     <Compile Include="RestResponse.cs" />
     <Compile Include="Authenticators\IAuthenticator.cs" />
