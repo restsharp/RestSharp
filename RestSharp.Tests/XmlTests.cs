@@ -187,6 +187,21 @@ namespace RestSharp.Tests
         }
 
         [Fact]
+        public void Can_Deserialize_Lastfm_Xml()
+        {
+            var xmlpath = Environment.CurrentDirectory + @"\SampleData\Lastfm.xml";
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+
+            var d = new XmlDeserializer();
+            var output = d.Deserialize<SampleClasses.Lastfm.Event>(response);
+
+            //Assert.NotEmpty(output.artists);
+            Assert.Equal("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
+            Assert.Equal("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
+        }
+
+        [Fact]
         public void Can_Deserialize_Google_Weather_Xml()
         {
             var xmlpath = Environment.CurrentDirectory + @"\SampleData\GoogleWeather.xml";

@@ -216,8 +216,8 @@ namespace RestSharp.Deserializers
 				return root;
 			}
 
-			// try looking for element that matches sanitized property name
-			var element = root.Descendants().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+			// try looking for element that matches sanitized property name (Order by depth)
+			var element = root.Descendants().OrderBy(d => d.Ancestors().Count()).FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
 			if (element != null) {
 				return element;
 			}
