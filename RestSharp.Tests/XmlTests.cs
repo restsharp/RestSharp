@@ -169,52 +169,49 @@ namespace RestSharp.Tests
 			Assert.Equal("Yankees", p.Foes.Team);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Eventful_Xml()
-        {
-            var xmlpath = Environment.CurrentDirectory + @"\SampleData\eventful.xml";
-            var doc = XDocument.Load(xmlpath);
-            var response = new RestResponse { Content = doc.ToString() };
+		[Fact]
+		public void Can_Deserialize_Eventful_Xml() {
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\eventful.xml";
+			var doc = XDocument.Load(xmlpath);
+			var response = new RestResponse { Content = doc.ToString() };
 
-            var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.VenueSearch>(response);
+			var d = new XmlDeserializer();
+			var output = d.Deserialize<SampleClasses.VenueSearch>(response);
 
-            Assert.NotEmpty(output.venues);
-            Assert.Equal(3, output.venues.Count);
-            Assert.Equal("Tivoli", output.venues[0].name);
-            Assert.Equal("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
-            Assert.Equal("V0-001-000266914-3", output.venues[2].id);
-        }
+			Assert.NotEmpty(output.venues);
+			Assert.Equal(3, output.venues.Count);
+			Assert.Equal("Tivoli", output.venues[0].name);
+			Assert.Equal("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
+			Assert.Equal("V0-001-000266914-3", output.venues[2].id);
+		}
 
-        [Fact]
-        public void Can_Deserialize_Lastfm_Xml()
-        {
-            var xmlpath = Environment.CurrentDirectory + @"\SampleData\Lastfm.xml";
-            var doc = XDocument.Load(xmlpath);
-            var response = new RestResponse { Content = doc.ToString() };
+		[Fact]
+		public void Can_Deserialize_Lastfm_Xml() {
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\Lastfm.xml";
+			var doc = XDocument.Load(xmlpath);
+			var response = new RestResponse { Content = doc.ToString() };
 
-            var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.Lastfm.Event>(response);
+			var d = new XmlDeserializer();
+			var output = d.Deserialize<SampleClasses.Lastfm.Event>(response);
 
-            //Assert.NotEmpty(output.artists);
-            Assert.Equal("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
-            Assert.Equal("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
-        }
+			//Assert.NotEmpty(output.artists);
+			Assert.Equal("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
+			Assert.Equal("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
+		}
 
-        [Fact]
-        public void Can_Deserialize_Google_Weather_Xml()
-        {
-            var xmlpath = Environment.CurrentDirectory + @"\SampleData\GoogleWeather.xml";
-            var doc = XDocument.Load(xmlpath);
-            var response = new RestResponse { Content = doc.ToString() };
+		[Fact]
+		public void Can_Deserialize_Google_Weather_Xml() {
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\GoogleWeather.xml";
+			var doc = XDocument.Load(xmlpath);
+			var response = new RestResponse { Content = doc.ToString() };
 
-            var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.xml_api_reply>(response);
+			var d = new XmlDeserializer();
+			var output = d.Deserialize<SampleClasses.xml_api_reply>(response);
 
-            Assert.NotEmpty(output.weather);
-            Assert.Equal(4, output.weather.Count);
-            Assert.Equal("Sunny", output.weather[0].condition.data);
-        }
+			Assert.NotEmpty(output.weather);
+			Assert.Equal(4, output.weather.Count);
+			Assert.Equal("Sunny", output.weather[0].condition.data);
+		}
 
 		private static string CreateUnderscoresXml() {
 			var doc = new XDocument();
