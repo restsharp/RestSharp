@@ -54,7 +54,7 @@ namespace RestSharp.Serializers
 
 			var options = t.GetAttribute<SerializeAsAttribute>();
 			if (options != null) {
-				name = options.TransformName(name);
+				name = options.TransformName(options.Name ?? name);
 			}
 
 			var root = new XElement(name.AsNamespaced(Namespace));

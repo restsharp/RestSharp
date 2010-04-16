@@ -125,6 +125,7 @@ namespace RestSharp.Tests
 			public int Value { get; set; }
 		}
 
+		[SerializeAs(Name = "Person")]
 		private class WackyPerson
 		{
 			[SerializeAs(Name = "WackyName", Attribute = true)]
@@ -189,7 +190,7 @@ namespace RestSharp.Tests
 
 		private XDocument GetSimplePocoXDocWackyNames() {
 			var doc = new XDocument();
-			var root = new XElement("WackyPerson");
+			var root = new XElement("Person");
 			root.Add(new XAttribute("WackyName", "Foo"),
 					new XElement("Age", 50),
 					new XAttribute("Price", 19.95m),
