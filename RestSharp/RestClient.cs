@@ -138,6 +138,7 @@ namespace RestSharp
 			request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
 
 			var response = GetResponse(request);
+		    response.Request = request;
 			return response;
 		}
 

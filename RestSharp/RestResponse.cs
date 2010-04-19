@@ -32,7 +32,13 @@ namespace RestSharp
 			Headers = new List<Parameter>();
 			Cookies = new List<Parameter>();
 		}
-
+        /// <summary>
+        /// The RestRequest that was made to get this RestResponse
+        /// </summary>
+        /// <remarks>
+        /// Mainly for debugging if ResponseStatus is not OK
+        /// </remarks> 
+	    public RestRequest Request { get; set; }
 		/// <summary>
 		/// MIME content type of response
 		/// </summary>
