@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Remoting.Messaging;
 
 namespace RestSharp
 {
@@ -13,35 +11,33 @@ namespace RestSharp
     /// </summary>
     public class AsyncRestClient : RestClient, IAsyncRestClient
     {
-        public AsyncRestClient() : base()     {    }
-        public AsyncRestClient(string baseUrl) : base(baseUrl) {  }
-
-
-        private RequestExecuteCaller callback;
-        private object genericCallback;
+        public AsyncRestClient() : base() { }
+        public AsyncRestClient(string baseUrl) : base(baseUrl) { }
 
         public IAsyncResult BeginExecute(RestRequest request, AsyncCallback callback, object state)
         {
-            this.callback = new RequestExecuteCaller(this.Execute);
-            return this.callback.BeginInvoke(request, callback, state);
+            var requestExecuteCaller = new RequestExecuteCaller(this.Execute);
+            return requestExecuteCaller.BeginInvoke(request, callback, state);
         }
 
         public RestResponse EndExecute(IAsyncResult asyncResult)
         {
-            return this.callback.EndInvoke(asyncResult);
+            var res = (AsyncResult)asyncResult;
+            var requestExecuteCaller = (RequestExecuteCaller)res.AsyncDelegate;
+            return requestExecuteCaller.EndInvoke(asyncResult);
         }
 
         public IAsyncResult BeginExecute<T>(RestRequest request, AsyncCallback callback, object state) where T : new()
         {
-            this.genericCallback = new RequestExecuteCaller<T>(this.Execute<T>);
-            var cb = this.genericCallback as RequestExecuteCaller<T>;
-            return cb.BeginInvoke(request, callback, state);
+            var requestExecuteCaller = new RequestExecuteCaller<T>(this.Execute<T>);
+            return requestExecuteCaller.BeginInvoke(request, callback, state);
         }
 
         public RestResponse<T> EndExecute<T>(IAsyncResult asyncResult) where T : new()
         {
-            var cb = this.genericCallback as RequestExecuteCaller<T>;
-            return cb.EndInvoke(asyncResult);
+            var res = (AsyncResult)asyncResult;
+            var requestExecuteCaller = (RequestExecuteCaller<T>)res.AsyncDelegate;
+            return requestExecuteCaller.EndInvoke(asyncResult);
         }
     }
 }
