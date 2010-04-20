@@ -297,5 +297,28 @@ namespace RestSharp
 		/// In general you would not need to set this directly. Used by the NtlmAuthenticator. 
 		/// </summary>
 		public ICredentials Credentials { get; set; }
+
+
+	    private int _attempts;
+
+        /// <summary>
+        /// Internal Method so that RestClient can increase the number of attempts
+        /// </summary>
+        internal void IncreaseNumAttempts()
+        {
+            _attempts++;
+        }
+
+        /// <summary>
+        /// How many attempts were made to send this Request?
+        /// </summary>
+        /// <remarks>
+        /// This Number is incremented each time the RestClient sends the request.
+        /// Useful when using Asynchronous Execution with Callbacks
+        /// </remarks>
+	    public int Attempts
+	    {
+            get { return _attempts; }
+	    }
 	}
 }

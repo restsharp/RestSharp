@@ -139,7 +139,8 @@ namespace RestSharp
 
 			var response = GetResponse(request);
 		    response.Request = request;
-			return response;
+            response.Request.IncreaseNumAttempts();
+            return response;
 		}
 
 		private void AuthenticateIfNeeded(RestRequest request) {
