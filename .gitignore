@@ -27,5 +27,7 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
-deploy.config
 Examples*/
+SerializerTest*/
+*.csproj.user
+*.resharper*
