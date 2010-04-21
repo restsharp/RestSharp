@@ -106,6 +106,16 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// UserAgent to use for requests made by this client instance
+		/// </summary>
+		public string UserAgent { get; set; }
+
+		/// <summary>
+		/// Timeout in milliseconds to use for requests made by this client instance
+		/// </summary>
+		public int Timeout { get; set; }
+		
+		/// <summary>
 		/// Authenticator to use for requests made by this client instance
 		/// </summary>
 		public IAuthenticator Authenticator { get; set; }
@@ -218,6 +228,12 @@ namespace RestSharp
 		private RestResponse GetResponse(RestRequest request) {
 			IHttp http = new Http();
 			http.Url = BuildUri(request);
+
+			if (UserAgent != null) {
+				http.UserAgent = UserAgent;
+			}
+
+			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
 
 			if (request.Credentials != null) {
 				http.Credentials = request.Credentials;

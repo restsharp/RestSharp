@@ -19,6 +19,8 @@ namespace RestSharp
 {
 	public interface IRestClient
 	{
+		string UserAgent { get; set; }
+		int Timeout { get; set; }
 		IAuthenticator Authenticator { get; set; }
 		IWebProxy Proxy { get; set; }
 		string BaseUrl { get; set; }

@@ -68,6 +68,14 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// UserAgent to be sent with request
+		/// </summary>
+		public string UserAgent { get; set; }
+		/// <summary>
+		/// Timeout in milliseconds to be used for the request
+		/// </summary>
+		public int Timeout { get; set; }
+		/// <summary>
 		/// System.Net.ICredentials to be sent with request
 		/// </summary>
 		public ICredentials Credentials { get; set; }
@@ -141,6 +149,14 @@ namespace RestSharp
 			var webRequest = (HttpWebRequest)WebRequest.Create(Url);
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			webRequest.Method = method;
+
+			if (UserAgent.HasValue()) {
+				webRequest.UserAgent = UserAgent;
+			}
+
+			if (Timeout != 0) {
+				webRequest.Timeout = Timeout;
+			}
 
 			if (Credentials != null) {
 				webRequest.Credentials = Credentials;
@@ -284,6 +300,14 @@ namespace RestSharp
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			webRequest.Method = method;
+
+			if (UserAgent.HasValue()) {
+				webRequest.UserAgent = UserAgent;
+			}
+
+			if (Timeout != 0) {
+				webRequest.Timeout = Timeout;
+			}
 
 			if (Credentials != null) {
 				webRequest.Credentials = Credentials;

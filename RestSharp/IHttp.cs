@@ -25,6 +25,9 @@ namespace RestSharp
 	{
 		ICredentials Credentials { get; set; }
 		IWebProxy Proxy { get; set; }
+		string UserAgent { get; set; }
+		int Timeout { get; set; }
+
 		void Delete();
 		void Get();
 		void Head();

@@ -298,6 +298,10 @@ namespace RestSharp
 		/// </summary>
 		public ICredentials Credentials { get; set; }
 
+		/// <summary>
+		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
+		/// </summary>
+		public int Timeout { get; set; }
 
 	    private int _attempts;
 
