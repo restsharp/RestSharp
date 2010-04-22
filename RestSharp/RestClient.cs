@@ -44,6 +44,8 @@ namespace RestSharp
 			AddHandler("text/json", new JsonDeserializer());
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
+
+			UserAgent = string.Concat("RestSharp ", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
 		}
 
 		/// <summary>
