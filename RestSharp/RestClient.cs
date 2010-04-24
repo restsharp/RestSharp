@@ -45,7 +45,7 @@ namespace RestSharp
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 
-			UserAgent = string.Concat("RestSharp ", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+			UserAgent = "RestSharp Release 1";
 		}
 
 		/// <summary>
