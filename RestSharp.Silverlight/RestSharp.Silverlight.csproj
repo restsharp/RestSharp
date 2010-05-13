@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{11F84600-0978-48B9-A28F-63B3781E54B3}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RestSharp.Silverlight</RootNamespace>
+    <AssemblyName>RestSharp.Silverlight</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json.Silverlight">
+      <HintPath>..\References\Newtonsoft.Json.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+    <Reference Include="System.Xml.Linq, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\RestSharp\AsyncRestClient.cs">
+      <Link>AsyncRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\HttpBasicAuthenticator.cs">
+      <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\IAuthenticator.cs">
+      <Link>Authenticators\IAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\NtlmAuthenticator.cs">
+      <Link>Authenticators\NtlmAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\SimpleAuthenticator.cs">
+      <Link>Authenticators\SimpleAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\IDeserializer.cs">
+      <Link>Deserializers\IDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\JsonDeserializer.cs">
+      <Link>Deserializers\JsonDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlDeserializer.cs">
+      <Link>Deserializers\XmlDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Enum.cs">
+      <Link>Enum.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MiscExtensions.cs">
+      <Link>Extensions\MiscExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ReflectionExtensions.cs">
+      <Link>Extensions\ReflectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
+      <Link>Extensions\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\FileParameter.cs">
+      <Link>FileParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.cs">
+      <Link>Http.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpCookie.cs">
+      <Link>HttpCookie.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpFile.cs">
+      <Link>HttpFile.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpHeader.cs">
+      <Link>HttpHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpParameter.cs">
+      <Link>HttpParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpResponse.cs">
+      <Link>HttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IAsyncRestClient.cs">
+      <Link>IAsyncRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttp.cs">
+      <Link>IHttp.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestClient.cs">
+      <Link>IRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Parameter.cs">
+      <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.cs">
+      <Link>RestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequest.cs">
+      <Link>RestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestResponse.cs">
+      <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\ISerializer.cs">
+      <Link>Serializers\ISerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\JsonSerializer.cs">
+      <Link>Serializers\JsonSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
+      <Link>Serializers\SerializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
+      <Link>Serializers\XmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Validation\Require.cs">
+      <Link>Validation\Require.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Validation\Validate.cs">
+      <Link>Validation\Validate.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

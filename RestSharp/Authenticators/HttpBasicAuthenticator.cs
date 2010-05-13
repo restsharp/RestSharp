@@ -37,7 +37,7 @@ namespace RestSharp
 
 			// request.Credentials = new NetworkCredential(_username, _password);
 
-			var token = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _username, _password)));
+			var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", _username, _password)));
 			var authHeader = string.Format("Basic {0}", token);
 			request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
 		}

@@ -20,9 +20,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+
+#if !SILVERLIGHT
 using System.Web;
+#else
+using System.Windows.Browser;
+#endif
 
 using RestSharp.Extensions;
+
+#if !SILVERLIGHT
 
 namespace RestSharp
 {
@@ -95,10 +102,12 @@ namespace RestSharp
 		/// HTTP cookies to be sent with request
 		/// </summary>
 		public IList<HttpCookie> Cookies { get; private set; }
+#if !SILVERLIGHT
 		/// <summary>
 		/// Proxy info to be sent with request
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
+#endif
 		/// <summary>
 		/// Request body to be sent with request
 		/// </summary>
@@ -147,8 +156,10 @@ namespace RestSharp
 		private void PostPutInternal(string method) {
 
 			var webRequest = (HttpWebRequest)WebRequest.Create(Url);
-			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			webRequest.Method = method;
+
+#if !SILVERLIGHT
+			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
 			if (UserAgent.HasValue()) {
 				webRequest.UserAgent = UserAgent;
@@ -158,12 +169,13 @@ namespace RestSharp
 				webRequest.Timeout = Timeout;
 			}
 
+			if (Proxy != null)
+			{
+				webRequest.Proxy = Proxy;
+			}
+#endif
 			if (Credentials != null) {
 				webRequest.Credentials = Credentials;
-			}
-
-			if (Proxy != null) {
-				webRequest.Proxy = Proxy;
 			}
 
 			AppendHeaders(webRequest);
@@ -298,8 +310,10 @@ namespace RestSharp
 			}
 
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
-			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			webRequest.Method = method;
+
+#if !SILVERLIGHT
+			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
 			if (UserAgent.HasValue()) {
 				webRequest.UserAgent = UserAgent;
@@ -308,15 +322,17 @@ namespace RestSharp
 			if (Timeout != 0) {
 				webRequest.Timeout = Timeout;
 			}
+#endif
 
 			if (Credentials != null) {
 				webRequest.Credentials = Credentials;
 			}
 
+#if !SILVERLIGHT
 			if (Proxy != null) {
 				webRequest.Proxy = Proxy;
 			}
-
+#endif
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
 			Response = GetResponse(webRequest);
@@ -418,3 +434,4 @@ namespace RestSharp
 		}
 	}
 }
+#endif

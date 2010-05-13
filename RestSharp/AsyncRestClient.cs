@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !SILVERLIGHT
+
+using System;
 using System.Runtime.Remoting.Messaging;
 
 namespace RestSharp
@@ -41,3 +43,4 @@ namespace RestSharp
         }
     }
 }
+#endif

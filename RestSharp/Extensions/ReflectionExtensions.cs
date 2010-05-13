@@ -60,5 +60,14 @@ namespace RestSharp.Extensions
 			}
 			return false;
 		}
+
+		public static object ChangeType(this object source, Type newType)
+		{
+#if SILVERLIGHT
+			return Convert.ChangeType(source, newType, null);
+#else
+			return Convert.ChangeType(source, newType);
+#endif
+		}
 	}
 }

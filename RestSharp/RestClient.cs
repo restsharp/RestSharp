@@ -22,7 +22,10 @@ using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
+
+#if !SILVERLIGHT
 using System.ServiceModel.Syndication;
+
 
 namespace RestSharp
 {
@@ -349,3 +352,4 @@ namespace RestSharp
 		}
 	}
 }
+#endif

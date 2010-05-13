@@ -100,7 +100,7 @@ namespace RestSharp.Deserializers
 					// no primitives can contain quotes so we can safely remove them
 					// allows converting a json value like {"index": "1"} to an int
 					var tmpVal = value.ToString().Replace("\"", string.Empty);
-					prop.SetValue(x, Convert.ChangeType(tmpVal, type), null);
+					prop.SetValue(x, tmpVal.ChangeType(type), null);
 				}
 				else if (type == typeof(string)) {
 					string raw = value.ToString();

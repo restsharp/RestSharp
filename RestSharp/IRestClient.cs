@@ -22,7 +22,9 @@ namespace RestSharp
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 		IAuthenticator Authenticator { get; set; }
+#if !SILVERLIGHT
 		IWebProxy Proxy { get; set; }
+#endif
 		string BaseUrl { get; set; }
 		RestResponse<T> Execute<T>(RestRequest request) where T : new();
 		RestResponse Execute(RestRequest request);

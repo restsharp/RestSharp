@@ -24,7 +24,9 @@ namespace RestSharp
 	public interface IHttp
 	{
 		ICredentials Credentials { get; set; }
+#if !SILVERLIGHT
 		IWebProxy Proxy { get; set; }
+#endif
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 

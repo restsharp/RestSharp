@@ -57,12 +57,12 @@ namespace RestSharp.Extensions
 		}
 
 		/// <summary>
-		/// Reads a byte array into a string using ASCII encoding
+		/// Reads a byte array into a string using UTF8 encoding
 		/// </summary>
 		/// <param name="input">Bytes to read</param>
 		/// <returns>string</returns>
 		public static string ReadAsString(this byte[] input) {
-			return Encoding.ASCII.GetString(input);
+			return Encoding.UTF8.GetString(input, 0, input.Length);
 		}
 
 		/// <summary>
