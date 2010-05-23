@@ -121,23 +121,30 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public RestRequest AddBody(object obj, string xmlNamespace) {
 			string serialized;
+			string contentType;
 
 			switch (RequestFormat) {
 				case DataFormat.Json:
 					serialized = JsonSerializer.Serialize(obj);
+					contentType = JsonSerializer.ContentType;
 					break;
 
 				case DataFormat.Xml:
 					XmlSerializer.Namespace = xmlNamespace;
 					serialized = XmlSerializer.Serialize(obj);
+					contentType = XmlSerializer.ContentType;
 					break;
 
 				default:
 					serialized = "";
+					contentType = "";
 					break;
 			}
 
-			return AddParameter("", serialized, ParameterType.RequestBody);
+			// passing the content type as the parameter name because there can only be
+			// one parameter with ParameterType.RequestBody so name isn't used otherwise
+			// it's a hack, but it works :)
+			return AddParameter(contentType, serialized, ParameterType.RequestBody);
 		}
 
 		/// <summary>

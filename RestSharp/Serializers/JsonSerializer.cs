@@ -29,6 +29,13 @@ namespace RestSharp.Serializers
 	public class JsonSerializer : ISerializer
 	{
 		/// <summary>
+		/// Default serializer
+		/// </summary>
+		public JsonSerializer() {
+			ContentType = "application/json";
+		}
+
+		/// <summary>
 		/// Serialize the object as JSON
 		/// </summary>
 		/// <param name="obj">Object to serialize</param>
@@ -65,5 +72,9 @@ namespace RestSharp.Serializers
 		/// Unused for JSON Serialization
 		/// </summary>
 		public string Namespace { get; set; }
+		/// <summary>
+		/// Content type for serialized content
+		/// </summary>
+		public string ContentType { get; set; }
 	}
 }

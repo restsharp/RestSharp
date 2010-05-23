@@ -45,7 +45,7 @@ namespace RestSharp
 		IList<HttpFile> Files { get; }
 		IList<HttpCookie> Cookies { get; }
 		string RequestBody { get; set; }
-		DataFormat RequestFormat { get; set; }
+		string RequestContentType { get; set; }
 
 		Uri Url { get; set; }
 	}

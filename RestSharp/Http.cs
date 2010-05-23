@@ -113,9 +113,9 @@ namespace RestSharp
 		/// </summary>
 		public string RequestBody { get; set; }
 		/// <summary>
-		/// Format of the request body. Used to set correct content type on request.
+		/// Content type of the request body.
 		/// </summary>
-		public DataFormat RequestFormat { get; set; }
+		public string RequestContentType { get; set; }
 		/// <summary>
 		/// Response returned from making this request
 		/// </summary>
@@ -169,8 +169,7 @@ namespace RestSharp
 				webRequest.Timeout = Timeout;
 			}
 
-			if (Proxy != null)
-			{
+			if (Proxy != null) {
 				webRequest.Proxy = Proxy;
 			}
 #endif
@@ -191,14 +190,7 @@ namespace RestSharp
 					RequestBody = EncodeParameters();
 				}
 				else if (HasBody) {
-					switch (RequestFormat) {
-						case DataFormat.Xml:
-							webRequest.ContentType = "text/xml";
-							break;
-						case DataFormat.Json:
-							webRequest.ContentType = "application/json";
-							break;
-					}
+					webRequest.ContentType = RequestContentType;
 				}
 			}
 

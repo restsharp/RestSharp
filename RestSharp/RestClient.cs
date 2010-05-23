@@ -292,7 +292,7 @@ namespace RestSharp
 
 			if (body != null) {
 				http.RequestBody = body.Value.ToString();
-				http.RequestFormat = request.RequestFormat;
+				http.RequestContentType = body.Name;
 			}
 
 			switch (request.Method) {

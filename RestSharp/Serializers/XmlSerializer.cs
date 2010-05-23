@@ -31,6 +31,7 @@ namespace RestSharp.Serializers
 		/// Default constructor, does not specify namespace
 		/// </summary>
 		public XmlSerializer() {
+			ContentType = "text/xml";
 		}
 
 		/// <summary>
@@ -39,6 +40,7 @@ namespace RestSharp.Serializers
 		/// <param name="namespace">XML namespace</param>
 		public XmlSerializer(string @namespace) {
 			Namespace = @namespace;
+			ContentType = "text/xml";
 		}
 
 		/// <summary>
@@ -165,5 +167,9 @@ namespace RestSharp.Serializers
 		/// Format string to use when serializing dates
 		/// </summary>
 		public string DateFormat { get; set; }
+		/// <summary>
+		/// Content type for serialized content
+		/// </summary>
+		public string ContentType { get; set; }
 	}
 }
