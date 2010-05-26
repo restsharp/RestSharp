@@ -149,7 +149,7 @@ namespace RestSharp.Deserializers
                     var t = type.GetGenericArguments()[0];
                     var list = (IList)Activator.CreateInstance(type);
 
-                    var container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
+                    var container = GetElementByName(root, name);
                     var first = container.Elements().FirstOrDefault();
 
                     var elements = container.Elements().Where(d => d.Name == first.Name);
@@ -161,7 +161,7 @@ namespace RestSharp.Deserializers
                 {
                     // handles classes that derive from List<T>
                     // e.g. a collection that also has properties
-                    var list = HandleListDerivative(x, root, prop.Name, type);
+                    var list = HandleListDerivative(x, root, name.ToString(), type);
                     prop.SetValue(x, list, null);
                 }
                 else
