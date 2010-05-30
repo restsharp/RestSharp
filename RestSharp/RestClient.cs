@@ -174,42 +174,6 @@ namespace RestSharp
 			return response.RawBytes;
 		}
 
-
-		/// <summary>
-		/// Executes the specified request and parses the response using LINQ to XML
-		/// </summary>
-		/// <param name="request">Request to execute</param>
-		/// <returns>XDocument</returns>
-		public XDocument ExecuteAsXDocument(RestRequest request) {
-			var response = Execute(request);
-			return XDocument.Parse(response.Content);
-		}
-
-		/// <summary>
-		/// Executes the specified request and parses the response using System.Xml
-		/// </summary>
-		/// <param name="request">Request to execute</param>
-		/// <returns>XmlDocument</returns>
-		public XmlDocument ExecuteAsXmlDocument(RestRequest request) {
-			var response = Execute(request);
-			var doc = new XmlDocument();
-			doc.LoadXml(response.Content);
-			return doc;
-		}
-
-		/// <summary>
-		/// Executes the specified request and parses the response using System.ServiceModel.Syndication
-		/// </summary>
-		/// <param name="request">Request to execute</param>
-		/// <returns>SyndicationFeed</returns>
-		public SyndicationFeed ExecuteAsSyndicationFeed(RestRequest request) {
-			var response = Execute(request);
-			var textReader = new StringReader(response.Content);
-			var reader = XmlReader.Create(textReader);
-			var feed = SyndicationFeed.Load(reader);
-			return feed;
-		}
-
 		/// <summary>
 		/// Executes the specified request and deserializes the response content using the appropriate content handler
 		/// </summary>
