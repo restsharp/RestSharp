@@ -141,6 +141,16 @@ namespace RestSharp
 		public string BaseUrl { get; set; }
 
 		/// <summary>
+		/// Executes the specified request and downloads the response data
+		/// </summary>
+		/// <param name="request">Request to execute</param>
+		/// <returns>Response data</returns>
+		public byte[] DownloadData(RestRequest request) {
+			var response = Execute(request);
+			return response.RawBytes;
+		}
+
+		/// <summary>
 		/// Executes the request and returns a response, authenticating if needed
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
@@ -152,26 +162,19 @@ namespace RestSharp
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
 
-			var response = GetResponse(request);
-		    response.Request = request;
-            response.Request.IncreaseNumAttempts();
-            return response;
-		}
+			var response = new RestResponse();
+			try {
+				response = GetResponse(request);
+				response.Request = request;
+				response.Request.IncreaseNumAttempts();
 
-		private void AuthenticateIfNeeded(RestRequest request) {
-			if (Authenticator != null) {
-				Authenticator.Authenticate(request);
 			}
-		}
-
-		/// <summary>
-		/// Executes the specified request and downloads the response data
-		/// </summary>
-		/// <param name="request">Request to execute</param>
-		/// <returns>Response data</returns>
-		public byte[] DownloadData(RestRequest request) {
-			var response = Execute(request);
-			return response.RawBytes;
+			catch (Exception ex) {
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+			}
+			
+			return response;
 		}
 
 		/// <summary>
@@ -188,10 +191,23 @@ namespace RestSharp
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
 
-			var response = (RestResponse<T>)raw;
-			response.Data = handler.Deserialize<T>(raw);
+			var response = new RestResponse<T>();
+			try {
+				response = (RestResponse<T>)raw;
+				response.Data = handler.Deserialize<T>(raw);
+			}
+			catch (Exception ex) {
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+			}
 
 			return response;
+		}
+
+		private void AuthenticateIfNeeded(RestRequest request) {
+			if (Authenticator != null) {
+				Authenticator.Authenticate(request);
+			}
 		}
 
 		private RestResponse GetResponse(RestRequest request) {
