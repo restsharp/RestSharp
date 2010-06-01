@@ -96,5 +96,10 @@ namespace RestSharp
 		/// Transport or other non-HTTP error generated while attempting request
 		/// </summary>
 		public string ErrorMessage { get; set; }
+
+		/// <summary>
+		/// Exception thrown when error is encountered.
+		/// </summary>
+		public Exception ErrorException { get; set; }
 	}
 }

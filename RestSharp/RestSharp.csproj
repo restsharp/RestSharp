@@ -72,10 +72,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsyncRestClient.cs" />
     <Compile Include="Authenticators\NtlmAuthenticator.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
+    <Compile Include="Http.Sync.cs" />
     <Compile Include="HttpCookie.cs" />
     <Compile Include="HttpResponse.cs" />
     <Compile Include="Deserializers\IDeserializer.cs" />
@@ -101,10 +101,13 @@
     <Compile Include="RestClient.cs" />
     <Compile Include="RestRequest.cs" />
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
+    <Compile Include="RestClient.Async.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\SerializeAsAttribute.cs" />
     <Compile Include="Serializers\XmlSerializer.cs" />
+    <Compile Include="Http.Async.cs" />
+    <Compile Include="RestClient.Sync.cs" />
     <None Include="T4Helper\T4Helper.tt">
       <LastGenOutput>T4Helper.log</LastGenOutput>
     </None>

@@ -61,9 +61,6 @@
     <Reference Include="System.Xml.Linq, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\RestSharp\AsyncRestClient.cs">
-      <Link>AsyncRestClient.cs</Link>
-    </Compile>
     <Compile Include="..\RestSharp\Authenticators\HttpBasicAuthenticator.cs">
       <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
     </Compile>
@@ -100,6 +97,9 @@
     <Compile Include="..\RestSharp\FileParameter.cs">
       <Link>FileParameter.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Http.Async.cs">
+      <Link>Http.Async.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Http.cs">
       <Link>Http.cs</Link>
     </Compile>
@@ -118,9 +118,6 @@
     <Compile Include="..\RestSharp\HttpResponse.cs">
       <Link>HttpResponse.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\IAsyncRestClient.cs">
-      <Link>IAsyncRestClient.cs</Link>
-    </Compile>
     <Compile Include="..\RestSharp\IHttp.cs">
       <Link>IHttp.cs</Link>
     </Compile>
@@ -129,6 +126,9 @@
     </Compile>
     <Compile Include="..\RestSharp\Parameter.cs">
       <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Async.cs">
+      <Link>RestClient.Async.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\RestClient.cs">
       <Link>RestClient.cs</Link>

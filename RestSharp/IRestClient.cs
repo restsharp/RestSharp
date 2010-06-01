@@ -14,19 +14,48 @@
 //   limitations under the License. 
 #endregion
 
+using System;
 using System.Net;
+
 namespace RestSharp
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public interface IRestClient
 	{
+		/// <summary>
+		/// 
+		/// </summary>
 		string UserAgent { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		int Timeout { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		IAuthenticator Authenticator { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		string BaseUrl { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request"></param>
+		void ExecuteAsync(RestRequest request, Action<RestResponse> callback);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request"></param>
+		void ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new();
+
 #if !SILVERLIGHT
+		RestResponse Execute(RestRequest request);
+		RestResponse<T> Execute<T>(RestRequest request) where T : new();
+		
 		IWebProxy Proxy { get; set; }
 #endif
-		string BaseUrl { get; set; }
-		RestResponse<T> Execute<T>(RestRequest request) where T : new();
-		RestResponse Execute(RestRequest request);
 	}
 }

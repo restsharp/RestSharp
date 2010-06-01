@@ -24,22 +24,10 @@ namespace RestSharp
 	public interface IHttp
 	{
 		ICredentials Credentials { get; set; }
-#if !SILVERLIGHT
-		IWebProxy Proxy { get; set; }
-#endif
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 
-		void Delete();
-		void Get();
-		void Head();
-		void Options();
-		void Post();
-		void Put();
-
-		HttpResponse Response { get; set; }
-		Stream ResponseStream { get; set; }
-
+		// TODO: move to HttpRequest
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }
 		IList<HttpFile> Files { get; }
@@ -48,5 +36,23 @@ namespace RestSharp
 		string RequestContentType { get; set; }
 
 		Uri Url { get; set; }
+
+		void DeleteAsync(Action<HttpResponse> action);
+		void GetAsync(Action<HttpResponse> action);
+		void HeadAsync(Action<HttpResponse> action);
+		void OptionsAsync(Action<HttpResponse> action);
+		void PostAsync(Action<HttpResponse> action);
+		void PutAsync(Action<HttpResponse> action);
+
+#if !SILVERLIGHT
+		HttpResponse Delete();
+		HttpResponse Get();
+		HttpResponse Head();
+		HttpResponse Options();
+		HttpResponse Post();
+		HttpResponse Put();
+
+		IWebProxy Proxy { get; set; }
+#endif
 	}
 }
