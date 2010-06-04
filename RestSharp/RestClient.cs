@@ -41,6 +41,7 @@ namespace RestSharp
 			AddHandler("application/json", new JsonDeserializer());
 			AddHandler("application/xml", new XmlDeserializer());
 			AddHandler("text/json", new JsonDeserializer());
+			AddHandler("text/x-json", new JsonDeserializer());
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 
