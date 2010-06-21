@@ -150,7 +150,7 @@ namespace RestSharp
 			_restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
 		}
 
-		private HttpResponse GetResponse(WebRequest request)
+		private HttpResponse GetResponse(HttpWebRequest request)
 		{
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
@@ -170,7 +170,7 @@ namespace RestSharp
 			return response;
 		}
 
-		private HttpWebResponse GetRawResponse(WebRequest request)
+		private HttpWebResponse GetRawResponse(HttpWebRequest request)
 		{
 			HttpWebResponse raw = null;
 			try
@@ -209,7 +209,7 @@ namespace RestSharp
 			}
 		}
 
-		private void WriteMultipartFormData(WebRequest webRequest)
+		private void WriteMultipartFormData(HttpWebRequest webRequest)
 		{
 			var encoding = Encoding.UTF8;
 			using (Stream formDataStream = webRequest.GetRequestStream())
@@ -250,16 +250,16 @@ namespace RestSharp
 			}
 		}
 
-		private void WriteRequestBody(WebRequest webRequest)
+		private void WriteRequestBody(HttpWebRequest webRequest)
 		{
 			if (HasBody)
 			{
+				var encoding = Encoding.UTF8;
 				webRequest.ContentLength = RequestBody.Length;
 
-				var requestStream = webRequest.GetRequestStream();
-				using (var writer = new StreamWriter(requestStream, Encoding.UTF8))
+				using (var requestStream = webRequest.GetRequestStream())
 				{
-					writer.Write(RequestBody);
+					requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
 				}
 			}
 		}
