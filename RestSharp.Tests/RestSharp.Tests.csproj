@@ -78,6 +78,7 @@
     <Compile Include="NamespacedXmlTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleClasses\googleweather.cs" />
+    <Compile Include="SampleClasses\ListSamples.cs" />
     <Compile Include="SampleClasses\Lastfm.cs" />
     <Compile Include="SampleClasses\misc.cs" />
     <Compile Include="SampleClasses\nullables.cs" />
@@ -97,10 +98,16 @@
     <Content Include="SampleData\GoogleWeather.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\InlineListSample.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\jsonarray.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\eventful.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\NestedListSample.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\sojson.txt">

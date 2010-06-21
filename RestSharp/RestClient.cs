@@ -94,8 +94,8 @@ namespace RestSharp
 		/// <param name="contentType">MIME content type to retrieve</param>
 		/// <returns>IDeserializer instance</returns>
 		IDeserializer GetHandler(string contentType) {
-            var semicolonIndex = contentType.IndexOf(';');
-            if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
+			var semicolonIndex = contentType.IndexOf(';');
+			if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
 			IDeserializer handler = null;
 			if (ContentHandlers.ContainsKey(contentType)) {
 				handler = ContentHandlers[contentType];
