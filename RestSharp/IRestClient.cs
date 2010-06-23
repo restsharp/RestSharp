@@ -51,7 +51,7 @@ namespace RestSharp
 		/// <param name="request"></param>
 		void ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new();
 
-#if !SILVERLIGHT
+#if FRAMEWORK
 		RestResponse Execute(RestRequest request);
 		RestResponse<T> Execute<T>(RestRequest request) where T : new();
 		

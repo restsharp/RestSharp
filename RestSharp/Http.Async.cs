@@ -25,7 +25,13 @@ using RestSharp.Extensions;
 #if SILVERLIGHT
 using System.Windows.Browser;
 using System.Net.Browser;
-#else
+#endif
+
+#if WINDOWS_PHONE
+
+#endif
+
+#if FRAMEWORK
 using System.Web;
 #endif
 
@@ -100,6 +106,13 @@ namespace RestSharp
 			//PreparePostData(webRequest);
 			//WriteRequestBody(webRequest);
 		}
+
+		partial void AddAsyncHeaderActions()
+		{
+#if SILVERLIGHT
+			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+#endif
+			}
 
 		private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
 		{

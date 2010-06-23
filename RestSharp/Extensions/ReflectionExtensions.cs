@@ -63,10 +63,10 @@ namespace RestSharp.Extensions
 
 		public static object ChangeType(this object source, Type newType)
 		{
-#if SILVERLIGHT
-			return Convert.ChangeType(source, newType, null);
-#else
+#if FRAMEWORK
 			return Convert.ChangeType(source, newType);
+#else
+			return Convert.ChangeType(source, newType, null);
 #endif
 		}
 	}

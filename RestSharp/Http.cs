@@ -25,7 +25,12 @@ using RestSharp.Extensions;
 #if SILVERLIGHT
 using System.Windows.Browser;
 using System.Net.Browser;
-#else
+#endif
+
+#if WINDOWS_PHONE
+#endif
+
+#if FRAMEWORK
 using System.Web;
 #endif
 
@@ -138,10 +143,10 @@ namespace RestSharp
 		}
 
 		partial void AddSyncHeaderActions();
+		partial void AddAsyncHeaderActions();
 		private void AddSharedHeaderActions()
 		{
 			_restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
-			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
 			_restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 			_restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
 			_restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
@@ -188,7 +193,7 @@ namespace RestSharp
 		{
 			using (webResponse)
 			{
-#if !SILVERLIGHT
+#if FRAMEWORK
 				response.ContentEncoding = webResponse.ContentEncoding;
 				response.Server = webResponse.Server;
 #endif

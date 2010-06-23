@@ -44,7 +44,7 @@ namespace RestSharp
 		void PostAsync(Action<HttpResponse> action);
 		void PutAsync(Action<HttpResponse> action);
 
-#if !SILVERLIGHT
+#if FRAMEWORK
 		HttpResponse Delete();
 		HttpResponse Get();
 		HttpResponse Head();

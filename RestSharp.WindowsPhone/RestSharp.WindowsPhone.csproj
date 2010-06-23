@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7BBBDC65-EB84-41E7-8273-573E3065B227}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RestSharp.WindowsPhone</RootNamespace>
+    <AssemblyName>RestSharp.WindowsPhone</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json.Compact">
+      <HintPath>..\References\Newtonsoft.Json.Compact.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
+      <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\IAuthenticator.cs">
+      <Link>Authenticators\IAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\NtlmAuthenticator.cs">
+      <Link>Authenticators\NtlmAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\SimpleAuthenticator.cs">
+      <Link>Authenticators\SimpleAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\IDeserializer.cs">
+      <Link>Deserializers\IDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\JsonDeserializer.cs">
+      <Link>Deserializers\JsonDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\XmlDeserializer.cs">
+      <Link>Deserializers\XmlDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Enum.cs">
+      <Link>Enum.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\extensions\MiscExtensions.cs">
+      <Link>Extensions\MiscExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\extensions\ReflectionExtensions.cs">
+      <Link>Extensions\ReflectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\extensions\XmlExtensions.cs">
+      <Link>Extensions\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\FileParameter.cs">
+      <Link>FileParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Async.cs">
+      <Link>Http.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.cs">
+      <Link>Http.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Sync.cs">
+      <Link>Http.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpCookie.cs">
+      <Link>HttpCookie.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpFile.cs">
+      <Link>HttpFile.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpHeader.cs">
+      <Link>HttpHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpParameter.cs">
+      <Link>HttpParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpResponse.cs">
+      <Link>HttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttp.cs">
+      <Link>IHttp.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestClient.cs">
+      <Link>IRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Parameter.cs">
+      <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Async.cs">
+      <Link>RestClient.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.cs">
+      <Link>RestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Sync.cs">
+      <Link>RestClient.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequest.cs">
+      <Link>RestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestResponse.cs">
+      <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\ISerializer.cs">
+      <Link>Serializers\ISerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\JsonSerializer.cs">
+      <Link>Serializers\JsonSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\SerializeAsAttribute.cs">
+      <Link>Serializers\SerializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\XmlSerializer.cs">
+      <Link>Serializers\XmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\validation\Require.cs">
+      <Link>Validation\Require.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\validation\Validate.cs">
+      <Link>Validation\Validate.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

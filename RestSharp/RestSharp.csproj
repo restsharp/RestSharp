@@ -37,7 +37,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -92,7 +92,6 @@
     <Compile Include="HttpHeader.cs" />
     <Compile Include="HttpParameter.cs" />
     <Compile Include="IHttp.cs" />
-    <Compile Include="IAsyncRestClient.cs" />
     <Compile Include="IRestClient.cs" />
     <Compile Include="RestResponse.cs" />
     <Compile Include="Authenticators\IAuthenticator.cs" />

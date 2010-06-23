@@ -77,7 +77,7 @@ namespace RestSharp
 			Resource = resource;
 			Method = method;
 		}
-
+#if !WINDOWS_PHONE
 		/// <summary>
 		/// Adds a file to the Files collection to be included with a POST or PUT request 
 		/// (other methods do not support file uploads).
@@ -112,6 +112,7 @@ namespace RestSharp
 			Files.Add(new FileParameter { Data = bytes, FileName = fileName, ContentType = contentType });
 			return this;
 		}
+#endif
 
 		/// <summary>
 		/// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
@@ -310,26 +311,26 @@ namespace RestSharp
 		/// </summary>
 		public int Timeout { get; set; }
 
-	    private int _attempts;
+		private int _attempts;
 
-        /// <summary>
-        /// Internal Method so that RestClient can increase the number of attempts
-        /// </summary>
-        internal void IncreaseNumAttempts()
-        {
-            _attempts++;
-        }
+		/// <summary>
+		/// Internal Method so that RestClient can increase the number of attempts
+		/// </summary>
+		internal void IncreaseNumAttempts()
+		{
+			_attempts++;
+		}
 
-        /// <summary>
-        /// How many attempts were made to send this Request?
-        /// </summary>
-        /// <remarks>
-        /// This Number is incremented each time the RestClient sends the request.
-        /// Useful when using Asynchronous Execution with Callbacks
-        /// </remarks>
-	    public int Attempts
-	    {
-            get { return _attempts; }
-	    }
+		/// <summary>
+		/// How many attempts were made to send this Request?
+		/// </summary>
+		/// <remarks>
+		/// This Number is incremented each time the RestClient sends the request.
+		/// Useful when using Asynchronous Execution with Callbacks
+		/// </remarks>
+		public int Attempts
+		{
+			get { return _attempts; }
+		}
 	}
 }

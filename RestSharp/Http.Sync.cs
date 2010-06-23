@@ -14,7 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-#if !SILVERLIGHT
+#if FRAMEWORK
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -143,6 +143,7 @@ namespace RestSharp
 		partial void AddSyncHeaderActions()
 		{
 			_restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
+			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
 			_restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
 			_restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
 			_restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);

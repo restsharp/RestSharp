@@ -14,7 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-#if !SILVERLIGHT
+#if FRAMEWORK
 
 namespace RestSharp
 {
