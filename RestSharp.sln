@@ -9,8 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.IntegrationTests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Silverlight", "RestSharp.Silverlight\RestSharp.Silverlight.csproj", "{11F84600-0978-48B9-A28F-63B3781E54B3}"
 EndProject
+<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.WindowsPhone", "RestSharp.WindowsPhone\RestSharp.WindowsPhone.csproj", "{7BBBDC65-EB84-41E7-8273-573E3065B227}"
 EndProject
+=======
+>>>>>>> 57775dad1b11be4066928584f4ca6ca0624d7bc3
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,10 +36,13 @@ Global
 		{11F84600-0978-48B9-A28F-63B3781E54B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11F84600-0978-48B9-A28F-63B3781E54B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11F84600-0978-48B9-A28F-63B3781E54B3}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 		{7BBBDC65-EB84-41E7-8273-573E3065B227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7BBBDC65-EB84-41E7-8273-573E3065B227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BBBDC65-EB84-41E7-8273-573E3065B227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BBBDC65-EB84-41E7-8273-573E3065B227}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+>>>>>>> 57775dad1b11be4066928584f4ca6ca0624d7bc3
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

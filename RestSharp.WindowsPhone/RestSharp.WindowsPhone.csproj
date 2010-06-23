@@ -95,9 +95,6 @@
     <Compile Include="..\RestSharp\Http.cs">
       <Link>Http.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\Http.Sync.cs">
-      <Link>Http.Sync.cs</Link>
-    </Compile>
     <Compile Include="..\RestSharp\HttpCookie.cs">
       <Link>HttpCookie.cs</Link>
     </Compile>
@@ -127,9 +124,6 @@
     </Compile>
     <Compile Include="..\RestSharp\RestClient.cs">
       <Link>RestClient.cs</Link>
-    </Compile>
-    <Compile Include="..\RestSharp\RestClient.Sync.cs">
-      <Link>RestClient.Sync.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\RestRequest.cs">
       <Link>RestRequest.cs</Link>
