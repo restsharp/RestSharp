@@ -41,8 +41,10 @@ namespace RestSharp
 		/// <summary>
 		/// True if this HTTP request has any HTTP parameters
 		/// </summary>
-		protected bool HasParameters {
-			get {
+		protected bool HasParameters
+		{
+			get
+			{
 				return Parameters.Any();
 			}
 		}
@@ -50,8 +52,10 @@ namespace RestSharp
 		/// <summary>
 		/// True if this HTTP request has any HTTP cookies
 		/// </summary>
-		protected bool HasCookies {
-			get {
+		protected bool HasCookies
+		{
+			get
+			{
 				return Cookies.Any();
 			}
 		}
@@ -59,8 +63,10 @@ namespace RestSharp
 		/// <summary>
 		/// True if a request body has been specified
 		/// </summary>
-		protected bool HasBody {
-			get {
+		protected bool HasBody
+		{
+			get
+			{
 				return !string.IsNullOrEmpty(RequestBody);
 			}
 		}
@@ -68,8 +74,10 @@ namespace RestSharp
 		/// <summary>
 		/// True if files have been set to be uploaded
 		/// </summary>
-		protected bool HasFiles {
-			get {
+		protected bool HasFiles
+		{
+			get
+			{
 				return Files.Any();
 			}
 		}
@@ -132,7 +140,8 @@ namespace RestSharp
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public Http() {
+		public Http()
+		{
 			Headers = new List<HttpHeader>();
 			Files = new List<HttpFile>();
 			Parameters = new List<HttpParameter>();
@@ -142,18 +151,21 @@ namespace RestSharp
 		/// <summary>
 		/// Execute a POST request
 		/// </summary>
-		public void Post() {
+		public void Post()
+		{
 			PostPutInternal("POST");
 		}
 
 		/// <summary>
 		/// Execute a PUT request
 		/// </summary>
-		public void Put() {
+		public void Put()
+		{
 			PostPutInternal("PUT");
 		}
 
-		private void PostPutInternal(string method) {
+		private void PostPutInternal(string method)
+		{
 
 			var webRequest = (HttpWebRequest)WebRequest.Create(Url);
 			webRequest.Method = method;
@@ -161,35 +173,43 @@ namespace RestSharp
 #if !SILVERLIGHT
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
-			if (UserAgent.HasValue()) {
+			if (UserAgent.HasValue())
+			{
 				webRequest.UserAgent = UserAgent;
 			}
 
-			if (Timeout != 0) {
+			if (Timeout != 0)
+			{
 				webRequest.Timeout = Timeout;
 			}
 
-			if (Proxy != null) {
+			if (Proxy != null)
+			{
 				webRequest.Proxy = Proxy;
 			}
 #endif
-			if (Credentials != null) {
+			if (Credentials != null)
+			{
 				webRequest.Credentials = Credentials;
 			}
 
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
 
-			if (HasFiles) {
+			if (HasFiles)
+			{
 				webRequest.ContentType = GetMultipartFormContentType();
 				WriteMultipartFormData(webRequest);
 			}
-			else {
-				if (HasParameters) {
+			else
+			{
+				if (HasParameters)
+				{
 					webRequest.ContentType = "application/x-www-form-urlencoded";
 					RequestBody = EncodeParameters();
 				}
-				else if (HasBody) {
+				else if (HasBody)
+				{
 					webRequest.ContentType = RequestContentType;
 				}
 			}
@@ -198,27 +218,34 @@ namespace RestSharp
 			Response = GetResponse(webRequest);
 		}
 
-		private void WriteRequestBody(HttpWebRequest webRequest) {
-			if (HasBody) {
+		private void WriteRequestBody(HttpWebRequest webRequest)
+		{
+			if (HasBody)
+			{
 				webRequest.ContentLength = RequestBody.Length;
 
 				var requestStream = webRequest.GetRequestStream();
-				using (var writer = new StreamWriter(requestStream, Encoding.ASCII)) {
+				using (var writer = new StreamWriter(requestStream, Encoding.ASCII))
+				{
 					writer.Write(RequestBody);
 				}
 			}
 		}
 
 		private string _formBoundary = "-----------------------------28947758029299";
-		private string GetMultipartFormContentType() {
+		private string GetMultipartFormContentType()
+		{
 			return string.Format("multipart/form-data; boundary={0}", _formBoundary);
 		}
 
-		private void WriteMultipartFormData(HttpWebRequest webRequest) {
+		private void WriteMultipartFormData(HttpWebRequest webRequest)
+		{
 			var boundary = _formBoundary;
 			var encoding = Encoding.ASCII;
-			using (Stream formDataStream = webRequest.GetRequestStream()) {
-				foreach (var file in Files) {
+			using (Stream formDataStream = webRequest.GetRequestStream())
+			{
+				foreach (var file in Files)
+				{
 					var fileName = file.FileName;
 					var data = file.Data;
 					var length = data.Length;
@@ -237,7 +264,8 @@ namespace RestSharp
 					formDataStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
 				}
 
-				foreach (var param in Parameters) {
+				foreach (var param in Parameters)
+				{
 					var postData = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
 													boundary,
 													param.Name,
@@ -252,9 +280,11 @@ namespace RestSharp
 			}
 		}
 
-		private string EncodeParameters() {
+		private string EncodeParameters()
+		{
 			var querystring = new StringBuilder();
-			foreach (var p in Parameters) {
+			foreach (var p in Parameters)
+			{
 				if (querystring.Length > 1)
 					querystring.Append("&");
 				querystring.AppendFormat("{0}={1}", HttpUtility.UrlEncode(p.Name), HttpUtility.UrlEncode(p.Value));
@@ -266,62 +296,74 @@ namespace RestSharp
 		/// <summary>
 		/// Execute a GET request
 		/// </summary>
-		public void Get() {
+		public void Get()
+		{
 			GetStyleMethodInternal("GET");
 		}
 
 		/// <summary>
 		/// Execute a HEAD request
 		/// </summary>
-		public void Head() {
+		public void Head()
+		{
 			GetStyleMethodInternal("HEAD");
 		}
 
 		/// <summary>
 		/// Execute an OPTIONS request
 		/// </summary>
-		public void Options() {
+		public void Options()
+		{
 			GetStyleMethodInternal("OPTIONS");
 		}
 
 		/// <summary>
 		/// Execute a DELETE request
 		/// </summary>
-		public void Delete() {
+		public void Delete()
+		{
 			GetStyleMethodInternal("DELETE");
 		}
 
-		private void GetStyleMethodInternal(string method) {
+		private void GetStyleMethodInternal(string method)
+		{
 			string url = Url.ToString();
-			if (HasParameters) {
-				if (url.EndsWith("/")) {
+			if (HasParameters)
+			{
+				if (url.EndsWith("/"))
+				{
 					url = url.Substring(0, url.Length - 1);
 				}
 				var data = EncodeParameters();
 				url = string.Format("{0}?{1}", url, data);
 			}
 
-			var webRequest = (HttpWebRequest)WebRequest.Create(url);
-			webRequest.Method = method;
+			// Unescape the web address incase the user is encoding values 
+			// if we don't then this will explode when we try to load the url
+			var webRequest = (HttpWebRequest)WebRequest.Create(Uri.UnescapeDataString(url)); webRequest.Method = method;
 
 #if !SILVERLIGHT
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
-			if (UserAgent.HasValue()) {
+			if (UserAgent.HasValue())
+			{
 				webRequest.UserAgent = UserAgent;
 			}
 
-			if (Timeout != 0) {
+			if (Timeout != 0)
+			{
 				webRequest.Timeout = Timeout;
 			}
 #endif
 
-			if (Credentials != null) {
+			if (Credentials != null)
+			{
 				webRequest.Credentials = Credentials;
 			}
 
 #if !SILVERLIGHT
-			if (Proxy != null) {
+			if (Proxy != null)
+			{
 				webRequest.Proxy = Proxy;
 			}
 #endif
@@ -332,21 +374,28 @@ namespace RestSharp
 
 		// handle restricted headers the .NET way - thanks @dimebrain!
 		// http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
-		private void AppendHeaders(HttpWebRequest webRequest) {
-			foreach (var header in Headers) {
-				if (_restrictedHeaderActions.ContainsKey(header.Name)) {
+		private void AppendHeaders(HttpWebRequest webRequest)
+		{
+			foreach (var header in Headers)
+			{
+				if (_restrictedHeaderActions.ContainsKey(header.Name))
+				{
 					_restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
 				}
-				else {
+				else
+				{
 					webRequest.Headers.Add(header.Name, header.Value);
 				}
 			}
 		}
 
-		private void AppendCookies(HttpWebRequest webRequest) {
+		private void AppendCookies(HttpWebRequest webRequest)
+		{
 			webRequest.CookieContainer = new CookieContainer();
-			foreach (var httpCookie in Cookies) {
-				var cookie = new Cookie {
+			foreach (var httpCookie in Cookies)
+			{
+				var cookie = new Cookie
+				{
 					Name = httpCookie.Name,
 					Value = httpCookie.Value,
 					Domain = webRequest.RequestUri.Host
@@ -357,27 +406,30 @@ namespace RestSharp
 
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions
 			= new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase) {
-                      { "Accept",            (r, v) => r.Accept = v },
-                      { "Connection",        (r, v) => r.Connection = v },           
-                      { "Content-Length",    (r, v) => r.ContentLength = Convert.ToInt64(v) },
-                      { "Content-Type",      (r, v) => r.ContentType = v },
-                      { "Expect",            (r, v) => r.Expect = v },
-                      { "Date",              (r, v) => { /* Set by system */ }},
-                      { "Host",              (r, v) => { /* Set by system */ }},
-                      { "If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v) },
-                      { "Range",             (r, v) => { throw new NotImplementedException(/* r.AddRange() */); }},
-                      { "Referer",           (r, v) => r.Referer = v },
-                      { "Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; } },
-                      { "User-Agent",        (r, v) => r.UserAgent = v }             
-                  };
+					  { "Accept",            (r, v) => r.Accept = v },
+					  { "Connection",        (r, v) => r.Connection = v },           
+					  { "Content-Length",    (r, v) => r.ContentLength = Convert.ToInt64(v) },
+					  { "Content-Type",      (r, v) => r.ContentType = v },
+					  { "Expect",            (r, v) => r.Expect = v },
+					  { "Date",              (r, v) => { /* Set by system */ }},
+					  { "Host",              (r, v) => { /* Set by system */ }},
+					  { "If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v) },
+					  { "Range",             (r, v) => { throw new NotImplementedException(/* r.AddRange() */); }},
+					  { "Referer",           (r, v) => r.Referer = v },
+					  { "Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; } },
+					  { "User-Agent",        (r, v) => r.UserAgent = v }             
+				  };
 
-		private HttpResponse GetResponse(HttpWebRequest request) {
+		private HttpResponse GetResponse(HttpWebRequest request)
+		{
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
 
-			try {
+			try
+			{
 				var webResponse = GetRawResponse(request);
-				using (webResponse) {
+				using (webResponse)
+				{
 					response.ContentType = webResponse.ContentType;
 					response.ContentLength = webResponse.ContentLength;
 					response.ContentEncoding = webResponse.ContentEncoding;
@@ -389,13 +441,16 @@ namespace RestSharp
 					response.Server = webResponse.Server;
 					response.ResponseStatus = ResponseStatus.Completed;
 
-					if (webResponse.Cookies != null) {
-						foreach (Cookie cookie in webResponse.Cookies) {
+					if (webResponse.Cookies != null)
+					{
+						foreach (Cookie cookie in webResponse.Cookies)
+						{
 							response.Cookies.Add(new HttpCookie { Name = cookie.Name, Value = cookie.Value });
 						}
 					}
 
-					foreach (var headerName in webResponse.Headers.AllKeys) {
+					foreach (var headerName in webResponse.Headers.AllKeys)
+					{
 						var headerValue = webResponse.Headers[headerName];
 						response.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
 					}
@@ -403,7 +458,8 @@ namespace RestSharp
 					webResponse.Close();
 				}
 			}
-			catch (Exception ex) {
+			catch (Exception ex)
+			{
 				response.ErrorMessage = ex.Message;
 				response.ResponseStatus = ResponseStatus.Error;
 			}
@@ -411,13 +467,17 @@ namespace RestSharp
 			return response;
 		}
 
-		private HttpWebResponse GetRawResponse(HttpWebRequest request) {
+		private HttpWebResponse GetRawResponse(HttpWebRequest request)
+		{
 			HttpWebResponse raw = null;
-			try {
+			try
+			{
 				raw = (HttpWebResponse)request.GetResponse();
 			}
-			catch (WebException ex) {
-				if (ex.Response is HttpWebResponse) {
+			catch (WebException ex)
+			{
+				if (ex.Response is HttpWebResponse)
+				{
 					raw = ex.Response as HttpWebResponse;
 				}
 			}
