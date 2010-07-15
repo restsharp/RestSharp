@@ -198,15 +198,7 @@ namespace RestSharp
 			}
 			else
 			{
-				if (HasParameters)
-				{
-					webRequest.ContentType = "application/x-www-form-urlencoded";
-					RequestBody = EncodeParameters();
-				}
-				else if (HasBody)
-				{
-					webRequest.ContentType = RequestContentType;
-				}
+				PreparePostBody(webRequest);
 			}
 		}
 

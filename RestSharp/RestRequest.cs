@@ -77,7 +77,7 @@ namespace RestSharp
 			Resource = resource;
 			Method = method;
 		}
-#if !WINDOWS_PHONE
+#if FRAMEWORK
 		/// <summary>
 		/// Adds a file to the Files collection to be included with a POST or PUT request 
 		/// (other methods do not support file uploads).

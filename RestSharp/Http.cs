@@ -188,6 +188,19 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
+		private void PreparePostBody(HttpWebRequest webRequest)
+		{
+			if (HasParameters)
+			{
+				webRequest.ContentType = "application/x-www-form-urlencoded";
+				RequestBody = EncodeParameters();
+			}
+			else if (HasBody)
+			{
+				webRequest.ContentType = RequestContentType;
+			}
+		}
+
 		private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
 		{
 			using (webResponse)
@@ -222,6 +235,5 @@ namespace RestSharp
 				webResponse.Close();
 			}
 		}
-
 	}
 }

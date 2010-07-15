@@ -73,10 +73,46 @@ namespace RestSharp
 			PutPostInternalAsync("PUT", action);
 		}
 
-		private void GetStyleMethodInternalAsync(string method, Action<HttpResponse> action)
+		private void GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
 		{
 			var webRequest = ConfigureAsyncWebRequest(method, Url);
-			webRequest.BeginGetResponse(result => ResponseCallback(result, action), webRequest);
+			webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+		}
+
+		private void PutPostInternalAsync(string method, Action<HttpResponse> callback)
+		{
+			var webRequest = ConfigureAsyncWebRequest(method, Url);
+
+			PreparePostBody(webRequest);
+
+			WriteRequestBodyAsync(webRequest, callback);
+
+		}
+
+		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
+		{
+			if (HasBody)
+			{
+				webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback), webRequest);
+			}
+			else
+			{
+				webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+			}
+		}
+
+		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
+		{
+			var webRequest = result.AsyncState as HttpWebRequest;
+
+			// write body to request stream
+			using (var requestStream = webRequest.EndGetRequestStream(result))
+			{
+				var encoding = Encoding.UTF8;
+				requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
+			}
+
+			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
 
 		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
@@ -91,14 +127,7 @@ namespace RestSharp
 
 				ExtractResponseData(response, webResponse);
 
-#if WINDOWS_PHONE
-				var dispatcher = Deployment.Current.Dispatcher;
-				dispatcher.BeginInvoke(() => {
-#endif
-				callback(response);
-#if WINDOWS_PHONE
-				});
-#endif
+				ExecuteCallback(response, callback);
 			}
 			catch (Exception ex)
 			{
@@ -108,11 +137,16 @@ namespace RestSharp
 			}
 		}
 
-		private void PutPostInternalAsync(string method, Action<HttpResponse> action)
+		private void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
-			var webRequest = ConfigureAsyncWebRequest(method, Url);
-			//PreparePostData(webRequest);
-			//WriteRequestBody(webRequest);
+#if WINDOWS_PHONE
+			var dispatcher = Deployment.Current.Dispatcher;
+			dispatcher.BeginInvoke(() => {
+#endif
+			callback(response);
+#if WINDOWS_PHONE
+			});
+#endif
 		}
 
 		partial void AddAsyncHeaderActions()
@@ -120,7 +154,7 @@ namespace RestSharp
 #if SILVERLIGHT
 			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
 #endif
-			}
+		}
 
 		private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
 		{
