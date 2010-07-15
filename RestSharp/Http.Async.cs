@@ -28,7 +28,8 @@ using System.Net.Browser;
 #endif
 
 #if WINDOWS_PHONE
-
+using System.Windows.Threading;
+using System.Windows;
 #endif
 
 #if FRAMEWORK
@@ -90,7 +91,14 @@ namespace RestSharp
 
 				ExtractResponseData(response, webResponse);
 
+#if WINDOWS_PHONE
+				var dispatcher = Deployment.Current.Dispatcher;
+				dispatcher.BeginInvoke(() => {
+#endif
 				callback(response);
+#if WINDOWS_PHONE
+				});
+#endif
 			}
 			catch (Exception ex)
 			{
