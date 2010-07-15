@@ -24,14 +24,13 @@ using RestSharp.Extensions;
 
 #if SILVERLIGHT
 using System.Windows.Browser;
-using System.Net.Browser;
 #endif
 
 #if WINDOWS_PHONE
 #endif
 
 #if FRAMEWORK
-using System.Web;
+using RestSharp.Contrib;
 #endif
 
 namespace RestSharp

@@ -64,7 +64,6 @@
     <Reference Include="System.ServiceModel.Web">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -75,6 +74,9 @@
     <Compile Include="Authenticators\NtlmAuthenticator.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
+    <Compile Include="Extensions\MonoHttp\Helpers.cs" />
+    <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />
+    <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
     <Compile Include="Http.Sync.cs" />
     <Compile Include="HttpCookie.cs" />
     <Compile Include="HttpResponse.cs" />
