@@ -14,10 +14,11 @@
 //   limitations under the License. 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.IO;
 using RestSharp.Serializers;
 
 namespace RestSharp
@@ -42,7 +43,8 @@ namespace RestSharp
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public RestRequest() {
+		public RestRequest()
+		{
 			Parameters = new List<Parameter>();
 			Files = new List<FileParameter>();
 			XmlSerializer = new XmlSerializer();
@@ -54,7 +56,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="method">Method to use for this request</param>
 		public RestRequest(Method method)
-			: this() {
+			: this()
+		{
 			Method = method;
 		}
 
@@ -63,8 +66,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="resource">Resource to use for this request</param>
 		public RestRequest(string resource)
-			: this() {
-			Resource = resource;
+			: this(resource, Method.GET)
+		{
 		}
 
 		/// <summary>
@@ -73,10 +76,34 @@ namespace RestSharp
 		/// <param name="resource">Resource to use for this request</param>
 		/// <param name="method">Method to use for this request</param>
 		public RestRequest(string resource, Method method)
-			: this() {
+			: this()
+		{
 			Resource = resource;
 			Method = method;
 		}
+
+
+		/// <summary>
+		/// Sets Resource property
+		/// </summary>
+		/// <param name="resource">Resource to use for this request</param>
+		public RestRequest(Uri resource)
+			: this(resource, Method.GET)
+		{
+
+		}
+
+		/// <summary>
+		/// Sets Resource and Method properties
+		/// </summary>
+		/// <param name="resource">Resource to use for this request</param>
+		/// <param name="method">Method to use for this request</param>
+		public RestRequest(Uri resource, Method method)
+			: this(resource.IsAbsoluteUri ? resource.AbsolutePath + resource.Query : resource.OriginalString, method)
+		{
+			//resource.PathAndQuery not supported by Silverlight :(
+		}
+
 #if FRAMEWORK
 		/// <summary>
 		/// Adds a file to the Files collection to be included with a POST or PUT request 
@@ -84,7 +111,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="path">Full path to file to upload</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(string path) {
+		public RestRequest AddFile(string path)
+		{
 			var fileName = Path.GetFileName(path);
 			var file = File.ReadAllBytes(path);
 
@@ -97,7 +125,8 @@ namespace RestSharp
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(byte[] bytes, string fileName) {
+		public RestRequest AddFile(byte[] bytes, string fileName)
+		{
 			return AddFile(bytes, fileName, null);
 		}
 
@@ -108,7 +137,8 @@ namespace RestSharp
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(byte[] bytes, string fileName, string contentType) {
+		public RestRequest AddFile(byte[] bytes, string fileName, string contentType)
+		{
 			Files.Add(new FileParameter { Data = bytes, FileName = fileName, ContentType = contentType });
 			return this;
 		}
@@ -120,11 +150,13 @@ namespace RestSharp
 		/// <param name="obj">The object to serialize</param>
 		/// <param name="xmlNamespace">The XML namespace to use when serializing</param>
 		/// <returns>This request</returns>
-		public RestRequest AddBody(object obj, string xmlNamespace) {
+		public RestRequest AddBody(object obj, string xmlNamespace)
+		{
 			string serialized;
 			string contentType;
 
-			switch (RequestFormat) {
+			switch (RequestFormat)
+			{
 				case DataFormat.Json:
 					serialized = JsonSerializer.Serialize(obj);
 					contentType = JsonSerializer.ContentType;
@@ -153,7 +185,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="obj">The object to serialize</param>
 		/// <returns>This request</returns>
-		public RestRequest AddBody(object obj) {
+		public RestRequest AddBody(object obj)
+		{
 			return AddBody(obj, "");
 		}
 
@@ -166,20 +199,25 @@ namespace RestSharp
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <param name="whitelist">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		public RestRequest AddObject(object obj, params string[] whitelist) {
+		public RestRequest AddObject(object obj, params string[] whitelist)
+		{
 			// automatically create parameters from object props
 			var type = obj.GetType();
 			var props = type.GetProperties();
 
-			foreach (var prop in props) {
+			foreach (var prop in props)
+			{
 				bool isAllowed = whitelist.Length == 0 || (whitelist.Length > 0 && whitelist.Contains(prop.Name));
 
-				if (isAllowed) {
+				if (isAllowed)
+				{
 					var propType = prop.PropertyType;
 					var val = prop.GetValue(obj, null);
 
-					if (val != null) {
-						if (propType.IsArray) {
+					if (val != null)
+					{
+						if (propType.IsArray)
+						{
 							val = string.Join(",", (string[])val);
 						}
 
@@ -196,7 +234,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <returns>This request</returns>
-		public RestRequest AddObject(object obj) {
+		public RestRequest AddObject(object obj)
+		{
 			AddObject(obj, new string[] { });
 			return this;
 		}
@@ -206,7 +245,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="p">Parameter to add</param>
 		/// <returns></returns>
-		public RestRequest AddParameter(Parameter p) {
+		public RestRequest AddParameter(Parameter p)
+		{
 			Parameters.Add(p);
 			return this;
 		}
@@ -217,7 +257,8 @@ namespace RestSharp
 		/// <param name="name">Name of the parameter</param>
 		/// <param name="value">Value of the parameter</param>
 		/// <returns>This request</returns>
-		public RestRequest AddParameter(string name, object value) {
+		public RestRequest AddParameter(string name, object value)
+		{
 			return AddParameter(new Parameter { Name = name, Value = value, Type = ParameterType.GetOrPost });
 		}
 
@@ -232,7 +273,8 @@ namespace RestSharp
 		/// <param name="value">Value of the parameter</param>
 		/// <param name="type">The type of parameter to add</param>
 		/// <returns>This request</returns>
-		public RestRequest AddParameter(string name, object value, ParameterType type) {
+		public RestRequest AddParameter(string name, object value, ParameterType type)
+		{
 			return AddParameter(new Parameter { Name = name, Value = value, Type = type });
 		}
 
@@ -252,7 +294,8 @@ namespace RestSharp
 		/// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
 		/// Default is GET
 		/// </summary>
-		public Method Method {
+		public Method Method
+		{
 			get { return _method; }
 			set { _method = value; }
 		}
@@ -276,11 +319,14 @@ namespace RestSharp
 		/// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
 		/// By default XmlSerializer is used.
 		/// </summary>
-		public DataFormat RequestFormat {
-			get {
+		public DataFormat RequestFormat
+		{
+			get
+			{
 				return _requestFormat;
 			}
-			set {
+			set
+			{
 				_requestFormat = value;
 			}
 		}
