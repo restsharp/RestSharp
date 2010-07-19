@@ -146,6 +146,8 @@ namespace RestSharp.Tests
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
 			Assert.Equal(new Guid(GuidString), p.UniqueId);
+			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -171,6 +173,8 @@ namespace RestSharp.Tests
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
 			Assert.Equal(new Guid(GuidString), p.UniqueId);
+			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
 			Assert.NotNull(p.BestFriend);
 			Assert.Equal("The Fonz", p.BestFriend.Name);
@@ -217,6 +221,8 @@ namespace RestSharp.Tests
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
 			Assert.Equal(new Guid(GuidString), p.UniqueId);
+			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -290,6 +296,8 @@ namespace RestSharp.Tests
 			root.Add(new XElement("Ignore", "dummy"));
 			root.Add(new XAttribute("Read_Only", "dummy"));
 			root.Add(new XElement("Unique_Id", new Guid(GuidString)));
+			root.Add(new XElement("Url", "http://example.com"));
+			root.Add(new XElement("Url_Path", "/foo/bar"));
 
 			root.Add(new XElement("Best_Friend",
 						new XElement("Name", "The Fonz"),
@@ -331,6 +339,8 @@ namespace RestSharp.Tests
 			root.Add(new XElement("Ignore", "dummy"));
 			root.Add(new XElement("ReadOnly", "dummy"));
 			root.Add(new XElement("UniqueId", new Guid(GuidString)));
+			root.Add(new XElement("Url", "http://example.com"));
+			root.Add(new XElement("UrlPath", "/foo/bar"));
 
 			root.Add(new XElement("BestFriend",
 						new XElement("Name", "The Fonz"),
@@ -364,6 +374,8 @@ namespace RestSharp.Tests
 			root.Add(new XAttribute("Ignore", "dummy"));
 			root.Add(new XAttribute("ReadOnly", "dummy"));
 			root.Add(new XAttribute("UniqueId", new Guid(GuidString)));
+			root.Add(new XAttribute("Url", "http://example.com"));
+			root.Add(new XAttribute("UrlPath", "/foo/bar"));
 
 			root.Add(new XElement("BestFriend",
 						new XAttribute("Name", "The Fonz"),

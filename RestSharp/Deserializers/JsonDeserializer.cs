@@ -102,6 +102,13 @@ namespace RestSharp.Deserializers
 					var tmpVal = value.ToString().Replace("\"", string.Empty);
 					prop.SetValue(x, tmpVal.ChangeType(type), null);
 				}
+				else if (type == typeof(Uri))
+				{
+					string raw = value.ToString();
+					// remove leading and trailing "
+					var uri = new Uri(raw.Substring(1, raw.Length - 2), UriKind.RelativeOrAbsolute);
+					prop.SetValue(x, uri, null);
+				}
 				else if (type == typeof(string)) {
 					string raw = value.ToString();
 					// remove leading and trailing "

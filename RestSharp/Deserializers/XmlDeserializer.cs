@@ -111,6 +111,11 @@ namespace RestSharp.Deserializers
 				if (type.IsPrimitive) {
 					prop.SetValue(x, value.ChangeType(type), null);
 				}
+				else if (type == typeof(Uri))
+				{
+					var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+					prop.SetValue(x, uri, null);
+				}
 				else if (type == typeof(string)) {
 					prop.SetValue(x, value, null);
 				}

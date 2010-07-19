@@ -40,6 +40,8 @@ namespace RestSharp.Tests
 		public FoeList Foes { get; set; }
 
 		public Guid UniqueId { get; set; }
+		public Uri Url { get; set; }
+		public Uri UrlPath { get; set; }
 	}
 
 	public class PersonForJson
@@ -53,6 +55,8 @@ namespace RestSharp.Tests
 		public List<Friend> Friends { get; set; }
 		public Friend BestFriend { get; set; }
 		public Guid Guid { get; set; }
+		public Uri Url { get; set; }
+		public Uri UrlPath { get; set; }
 
 		protected string Ignore { get; set; }
 		public string IgnoreProxy { get { return Ignore; } }

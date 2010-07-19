@@ -134,6 +134,8 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -160,6 +162,8 @@ namespace RestSharp.Tests
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
 			Assert.Equal(false, p.IsCool);
+			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -223,6 +227,8 @@ namespace RestSharp.Tests
 			doc["is_cool"] = false;
 			doc["ignore"] = "dummy";
 			doc["read_only"] = "dummy";
+			doc["url"] = "http://example.com";
+			doc["url_path"] = "/foo/bar";
 
 			doc["best_friend"] = new JObject(
 									new JProperty("name", "The Fonz"),
@@ -273,6 +279,8 @@ namespace RestSharp.Tests
 			doc["IsCool"] = false;
 			doc["Ignore"] = "dummy";
 			doc["ReadOnly"] = "dummy";
+			doc["Url"] = "http://example.com";
+			doc["UrlPath"] = "/foo/bar";
 
 			doc["BestFriend"] = new JObject(
 									new JProperty("Name", "The Fonz"),
