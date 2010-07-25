@@ -96,6 +96,20 @@ namespace RestSharp.Deserializers
 					value = json[actualName];
 				}
 
+				if (value == null)
+				{
+					// try name with underscores
+					actualName = name.AddDashes();
+					value = json[actualName];
+				}
+
+				if (value == null)
+				{
+					// try name with underscores with lower case
+					actualName = name.AddDashes().ToLower();
+					value = json[actualName];
+				}
+
 				if (value == null || value.Type == JTokenType.Null)
 				{
 					continue;

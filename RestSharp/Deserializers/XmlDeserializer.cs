@@ -238,7 +238,9 @@ namespace RestSharp.Deserializers
 			}
 
 			// try looking for element that matches sanitized property name (Order by depth)
-			var element = root.Descendants().OrderBy(d => d.Ancestors().Count()).FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+			var element = root.Descendants()
+								.OrderBy(d => d.Ancestors().Count())
+								.FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName);
 			if (element != null) {
 				return element;
 			}
@@ -263,7 +265,7 @@ namespace RestSharp.Deserializers
 			}
 
 			// try looking for element that matches sanitized property name
-			var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscores() == name.LocalName);
+			var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName);
 			if (element != null) {
 				return element;
 			}
