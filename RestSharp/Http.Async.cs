@@ -75,18 +75,37 @@ namespace RestSharp
 
 		private void GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
 		{
-			var webRequest = ConfigureAsyncWebRequest(method, Url);
-			webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+			try
+			{
+				var webRequest = ConfigureAsyncWebRequest(method, Url);
+				webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+			}
+			catch (Exception ex)
+			{
+				var response = new HttpResponse();
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+				response.ResponseStatus = ResponseStatus.Error;
+				callback(response);
+			}
 		}
 
 		private void PutPostInternalAsync(string method, Action<HttpResponse> callback)
 		{
-			var webRequest = ConfigureAsyncWebRequest(method, Url);
-
-			PreparePostBody(webRequest);
-
-			WriteRequestBodyAsync(webRequest, callback);
-
+			try
+			{
+				var webRequest = ConfigureAsyncWebRequest(method, Url);
+				PreparePostBody(webRequest);
+				WriteRequestBodyAsync(webRequest, callback);
+			}
+			catch (Exception ex)
+			{
+				var response = new HttpResponse();
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+				response.ResponseStatus = ResponseStatus.Error;
+				callback(response);
+			}
 		}
 
 		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
