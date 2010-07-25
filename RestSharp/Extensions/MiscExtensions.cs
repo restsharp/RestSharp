@@ -19,6 +19,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace RestSharp.Extensions
 {
@@ -242,6 +243,11 @@ namespace RestSharp.Extensions
 				Regex.Replace(
 					Regex.Replace(Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
 						"$1_$2"), @"[-\s]", "_").ToLower();
+		}
+
+		public static string AsString(this JToken token)
+		{
+			return (string)token;
 		}
 	}
 }

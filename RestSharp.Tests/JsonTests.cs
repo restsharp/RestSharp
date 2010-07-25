@@ -15,14 +15,14 @@
 #endregion
 
 using System;
-using Newtonsoft.Json.Linq;
-using RestSharp.Deserializers;
-using Xunit;
+using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.IO;
+using Newtonsoft.Json.Linq;
+using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
-using System.Collections.Generic;
+using Xunit;
 
 namespace RestSharp.Tests
 {
@@ -31,8 +31,21 @@ namespace RestSharp.Tests
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
-		public void Can_Deserialize_From_Root_Element() {
-			var doc = File.ReadAllText(@"..\..\SampleData\sojson.txt");
+		public void Can_Deserialize_Lists_of_Simple_Types()
+		{
+			var doc = File.ReadAllText(@"SampleData\jsonlists.txt");
+			var json = new JsonDeserializer();
+
+			var output = json.Deserialize<JsonLists>(new RestResponse { Content = doc });
+
+			Assert.NotEmpty(output.Names);
+			Assert.NotEmpty(output.Numbers);
+		}
+
+		[Fact]
+		public void Can_Deserialize_From_Root_Element()
+		{
+			var doc = File.ReadAllText(@"SampleData\sojson.txt");
 
 			var json = new JsonDeserializer();
 			json.RootElement = "User";
@@ -42,7 +55,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Empty_Elements_to_Nullable_Values() {
+		public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
+		{
 			var doc = CreateJsonWithNullValues();
 
 			var json = new JsonDeserializer();
@@ -54,7 +68,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Elements_to_Nullable_Values() {
+		public void Can_Deserialize_Elements_to_Nullable_Values()
+		{
 			var doc = CreateJsonWithoutEmptyValues();
 
 			var json = new JsonDeserializer();
@@ -70,11 +85,13 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Custom_Formatted_Date() {
+		public void Can_Deserialize_Custom_Formatted_Date()
+		{
 			var format = "dd yyyy MMM, hh:mm ss tt";
 			var date = new DateTime(2010, 2, 8, 11, 11, 11);
 
-			var formatted = new {
+			var formatted = new
+			{
 				StartDate = date.ToString(format)
 			};
 
@@ -89,8 +106,9 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Root_Json_Array_To_List() {
-			var data = File.ReadAllText(@"..\..\SampleData\jsonarray.txt");
+		public void Can_Deserialize_Root_Json_Array_To_List()
+		{
+			var data = File.ReadAllText(@"SampleData\jsonarray.txt");
 			var response = new RestResponse { Content = data };
 			var json = new JsonDeserializer();
 			var output = json.Deserialize<List<status>>(response);
@@ -98,7 +116,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Guid_String_Fields() {
+		public void Can_Deserialize_Guid_String_Fields()
+		{
 			var doc = new JObject();
 			doc["Guid"] = GuidString;
 
@@ -110,7 +129,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Quoted_Primitive() {
+		public void Can_Deserialize_Quoted_Primitive()
+		{
 			var doc = new JObject();
 			doc["Age"] = "28";
 
@@ -122,7 +142,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_With_Default_Root() {
+		public void Can_Deserialize_With_Default_Root()
+		{
 			var doc = CreateJson();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
@@ -150,7 +171,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Names_With_Underscores_With_Default_Root() {
+		public void Can_Deserialize_Names_With_Underscores_With_Default_Root()
+		{
 			var doc = CreateJsonWithUnderscores();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
@@ -178,7 +200,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Ignore_Protected_Property_That_Exists_In_Data() {
+		public void Ignore_Protected_Property_That_Exists_In_Data()
+		{
 			var doc = CreateJson();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
@@ -188,7 +211,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Ignore_ReadOnly_Property_That_Exists_In_Data() {
+		public void Ignore_ReadOnly_Property_That_Exists_In_Data()
+		{
 			var doc = CreateJson();
 			var response = new RestResponse { Content = doc };
 			var d = new JsonDeserializer();
@@ -198,7 +222,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Iso_Json_Dates() {
+		public void Can_Deserialize_Iso_Json_Dates()
+		{
 			var doc = CreateIsoDateJson();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
@@ -208,7 +233,8 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_JScript_Json_Dates() {
+		public void Can_Deserialize_JScript_Json_Dates()
+		{
 			var doc = CreateJScriptDateJson();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
@@ -217,7 +243,8 @@ namespace RestSharp.Tests
 			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value);
 		}
 
-		private string CreateJsonWithUnderscores() {
+		private string CreateJsonWithUnderscores()
+		{
 			var doc = new JObject();
 			doc["name"] = "John Sheehan";
 			doc["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1);
@@ -236,7 +263,8 @@ namespace RestSharp.Tests
 								);
 
 			var friendsArray = new JArray();
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10; i++)
+			{
 				friendsArray.Add(new JObject(
 									new JProperty("name", "Friend" + i),
 									new JProperty("since", DateTime.Now.Year - i)
@@ -255,21 +283,24 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-		private string CreateIsoDateJson() {
+		private string CreateIsoDateJson()
+		{
 			var bd = new Birthdate();
 			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
 
 			return JsonConvert.SerializeObject(bd, new IsoDateTimeConverter());
 		}
 
-		private string CreateJScriptDateJson() {
+		private string CreateJScriptDateJson()
+		{
 			var bd = new Birthdate();
 			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
 
 			return JsonConvert.SerializeObject(bd, new JavaScriptDateTimeConverter());
 		}
 
-		private string CreateJson() {
+		private string CreateJson()
+		{
 			var doc = new JObject();
 			doc["Name"] = "John Sheehan";
 			doc["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1);
@@ -288,7 +319,8 @@ namespace RestSharp.Tests
 								);
 
 			var friendsArray = new JArray();
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10; i++)
+			{
 				friendsArray.Add(new JObject(
 									new JProperty("Name", "Friend" + i),
 									new JProperty("Since", DateTime.Now.Year - i)
@@ -307,7 +339,8 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-		private string CreateJsonWithNullValues() {
+		private string CreateJsonWithNullValues()
+		{
 			var doc = new JObject();
 			doc["Id"] = null;
 			doc["StartDate"] = null;
@@ -316,7 +349,8 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-		private string CreateJsonWithoutEmptyValues() {
+		private string CreateJsonWithoutEmptyValues()
+		{
 			var doc = new JObject();
 			doc["Id"] = 123;
 			doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00);

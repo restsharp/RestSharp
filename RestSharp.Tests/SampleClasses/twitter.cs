@@ -49,8 +49,8 @@ namespace RestSharp.Tests.SampleClasses
 		public string name { get; set; }
 		public string time_zone { get; set; }
 		public string profile_sidebar_border_color { get; set; }
-		public string id { get; set; }
-		//public string utc_offset { get; set; }
+		public long id { get; set; }
+		public int utc_offset { get; set; }
 
 	}
 }
