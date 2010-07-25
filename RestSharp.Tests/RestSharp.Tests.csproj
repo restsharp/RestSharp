@@ -74,6 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fakes\NullHttp.cs" />
     <Compile Include="JsonTests.cs" />
     <Compile Include="NamespacedXmlTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
