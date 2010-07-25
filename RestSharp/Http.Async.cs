@@ -86,7 +86,7 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
-				callback(response);
+				ExecuteCallback(response, callback);
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
-				callback(response);
+				ExecuteCallback(response, callback);
 			}
 		}
 
@@ -153,7 +153,7 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
-				callback(response);
+				ExecuteCallback(response, callback);
 			}
 		}
 
