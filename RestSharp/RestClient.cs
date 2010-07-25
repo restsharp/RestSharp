@@ -33,7 +33,8 @@ namespace RestSharp
 		/// <summary>
 		/// Default constructor that registers default content handlers
 		/// </summary>
-		public RestClient() {
+		public RestClient()
+		{
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
 
@@ -53,7 +54,8 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="baseUrl"></param>
 		public RestClient(string baseUrl)
-			: this() {
+			: this()
+		{
 			BaseUrl = baseUrl;
 		}
 
@@ -65,9 +67,11 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="contentType">MIME content type of the response content</param>
 		/// <param name="deserializer">Deserializer to use to process content</param>
-		public void AddHandler(string contentType, IDeserializer deserializer) {
+		public void AddHandler(string contentType, IDeserializer deserializer)
+		{
 			ContentHandlers[contentType] = deserializer;
-			if (contentType != "*") {
+			if (contentType != "*")
+			{
 				AcceptTypes.Add(contentType);
 			}
 		}
@@ -76,14 +80,16 @@ namespace RestSharp
 		/// Remove a content handler for the specified MIME content type
 		/// </summary>
 		/// <param name="contentType">MIME content type to remove</param>
-		public void RemoveHandler(string contentType) {
+		public void RemoveHandler(string contentType)
+		{
 			ContentHandlers.Remove(contentType);
 		}
 
 		/// <summary>
 		/// Remove all content handlers
 		/// </summary>
-		public void ClearHandlers() {
+		public void ClearHandlers()
+		{
 			ContentHandlers.Clear();
 			AcceptTypes.Clear();
 		}
@@ -93,14 +99,17 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="contentType">MIME content type to retrieve</param>
 		/// <returns>IDeserializer instance</returns>
-		IDeserializer GetHandler(string contentType) {
+		IDeserializer GetHandler(string contentType)
+		{
 			var semicolonIndex = contentType.IndexOf(';');
 			if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
 			IDeserializer handler = null;
-			if (ContentHandlers.ContainsKey(contentType)) {
+			if (ContentHandlers.ContainsKey(contentType))
+			{
 				handler = ContentHandlers[contentType];
 			}
-			else if (ContentHandlers.ContainsKey("*")) {
+			else if (ContentHandlers.ContainsKey("*"))
+			{
 				handler = ContentHandlers["*"];
 			}
 
@@ -116,12 +125,13 @@ namespace RestSharp
 		/// Timeout in milliseconds to use for requests made by this client instance
 		/// </summary>
 		public int Timeout { get; set; }
-		
+
 		/// <summary>
 		/// Authenticator to use for requests made by this client instance
 		/// </summary>
 		public IAuthenticator Authenticator { get; set; }
 
+		private string _baseUrl;
 		/// <summary>
 		/// Combined with Request.Resource to construct URL for request
 		/// Should include scheme and domain without trailing slash.
@@ -129,19 +139,47 @@ namespace RestSharp
 		/// <example>
 		/// client.BaseUrl = "http://example.com";
 		/// </example>
-		public string BaseUrl { get; set; }
+		public string BaseUrl
+		{
+			get
+			{
+				return _baseUrl;
+			}
+			set
+			{
+				_baseUrl = value;
+				if (_baseUrl.EndsWith("/"))
+				{
+					_baseUrl = _baseUrl.Substring(0, _baseUrl.Length - 1);
+				}
+			}
+		}
 
-		private void AuthenticateIfNeeded(RestRequest request) {
-			if (Authenticator != null) {
+		private void AuthenticateIfNeeded(RestRequest request)
+		{
+			if (Authenticator != null)
+			{
 				Authenticator.Authenticate(request);
 			}
 		}
 
-		private Uri BuildUri(RestRequest request) {
+		/// <summary>
+		/// Assembles URL to call based on parameters, method and resource
+		/// </summary>
+		/// <param name="request">RestRequest to execute</param>
+		/// <returns>Assembled System.Uri</returns>
+		public Uri BuildUri(RestRequest request)
+		{
 			var assembled = request.Resource;
 			var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-			foreach (var p in urlParms) {
+			foreach (var p in urlParms)
+			{
 				assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
+			}
+
+			if (assembled.StartsWith("/"))
+			{
+				assembled = assembled.Substring(1);
 			}
 
 			return new Uri(string.Format("{0}/{1}", BaseUrl, assembled));

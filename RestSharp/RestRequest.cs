@@ -279,6 +279,28 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// Shortcut to AddParameter(name, value, HttpHeader) overload
+		/// </summary>
+		/// <param name="name">Name of the header to add</param>
+		/// <param name="value">Value of the header to add</param>
+		/// <returns></returns>
+		public RestRequest AddHeader(string name, string value)
+		{
+			return AddParameter(name, value, ParameterType.HttpHeader);
+		}
+
+		/// <summary>
+		/// Shortcut to AddParameter(name, value, UrlSegment) overload
+		/// </summary>
+		/// <param name="name">Name of the segment to add</param>
+		/// <param name="value">Value of the segment to add</param>
+		/// <returns></returns>
+		public RestRequest AddUrlSegment(string name, string value)
+		{
+			return AddParameter(name, value, ParameterType.UrlSegment);
+		}
+
+		/// <summary>
 		/// Container of all HTTP parameters to be passed with the request. 
 		/// See AddParameter() for explanation of the types of parameters that can be passed
 		/// </summary>
