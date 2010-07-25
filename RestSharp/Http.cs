@@ -160,6 +160,47 @@ namespace RestSharp
 
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
 
+		// handle restricted headers the .NET way - thanks @dimebrain!
+		// http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
+		private void AppendHeaders(HttpWebRequest webRequest)
+		{
+			foreach (var header in Headers)
+			{
+				if (_restrictedHeaderActions.ContainsKey(header.Name))
+				{
+					_restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
+				}
+				else
+				{
+#if FRAMEWORK
+					webRequest.Headers.Add(header.Name, header.Value);
+#else
+					webRequest.Headers[header.Name] = header.Value;
+#endif
+				}
+			}
+		}
+
+		private void AppendCookies(HttpWebRequest webRequest)
+		{
+			webRequest.CookieContainer = new CookieContainer();
+			foreach (var httpCookie in Cookies)
+			{
+				var cookie = new Cookie
+				{
+					Name = httpCookie.Name,
+					Value = httpCookie.Value,
+					Domain = webRequest.RequestUri.Host
+				};
+#if FRAMEWORK
+				webRequest.CookieContainer.Add(cookie);
+#else
+				var uri = webRequest.RequestUri;
+				webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
+#endif
+			}
+		}
+
 		private Uri AssembleUrl()
 		{
 			string url = Url.ToString();

@@ -163,6 +163,10 @@ namespace RestSharp
 			WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
+
+			AppendHeaders(webRequest);
+			AppendCookies(webRequest);
+
 			webRequest.Method = method;
 
 			if (Credentials != null)

@@ -84,55 +84,17 @@ namespace RestSharp
 			return GetStyleMethodInternal("DELETE");
 		}
 
-		// handle restricted headers the .NET way - thanks @dimebrain!
-		// http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
-		private void AppendHeaders(HttpWebRequest webRequest)
-		{
-			foreach (var header in Headers)
-			{
-				if (_restrictedHeaderActions.ContainsKey(header.Name))
-				{
-					_restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
-				}
-				else
-				{
-					webRequest.Headers.Add(header.Name, header.Value);
-				}
-			}
-		}
-
-		private void AppendCookies(HttpWebRequest webRequest)
-		{
-			webRequest.CookieContainer = new CookieContainer();
-			foreach (var httpCookie in Cookies)
-			{
-				var cookie = new Cookie
-				{
-					Name = httpCookie.Name,
-					Value = httpCookie.Value,
-					Domain = webRequest.RequestUri.Host
-				};
-				webRequest.CookieContainer.Add(cookie);
-			}
-		}
-
-
 		private HttpResponse GetStyleMethodInternal(string method)
 		{
 			var url = AssembleUrl();
 			var webRequest = ConfigureWebRequest(method, url);
 
-			AppendHeaders(webRequest);
-			AppendCookies(webRequest);
 			return GetResponse(webRequest);
 		}
 
 		private HttpResponse PostPutInternal(string method)
 		{
 			var webRequest = ConfigureWebRequest(method, Url);
-
-			AppendHeaders(webRequest);
-			AppendCookies(webRequest);
 
 			PreparePostData(webRequest);
 
@@ -260,6 +222,10 @@ namespace RestSharp
 		private HttpWebRequest ConfigureWebRequest(string method, Uri url)
 		{
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
+
+			AppendHeaders(webRequest);
+			AppendCookies(webRequest);
+
 			webRequest.Method = method;
 
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
