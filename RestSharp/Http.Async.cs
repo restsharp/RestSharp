@@ -153,6 +153,7 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
+				callback(response);
 			}
 		}
 
