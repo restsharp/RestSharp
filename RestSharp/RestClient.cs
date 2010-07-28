@@ -177,7 +177,7 @@ namespace RestSharp
 				assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
 			}
 
-			if (assembled.StartsWith("/"))
+			if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
 			{
 				assembled = assembled.Substring(1);
 			}
