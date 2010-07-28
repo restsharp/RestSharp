@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</ProjectGuid>
+    <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RestSharp.MonoTouch</RootNamespace>
+    <AssemblyName>RestSharpMonoTouch</AssemblyName>
+    <MtouchSdkVersion>3.2</MtouchSdkVersion>
+    <MtouchMinimumOS>3.0</MtouchMinimumOS>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;MONOTOUCH</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>True</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>False</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <DefineConstants>MONOTOUCH</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;MONOTOUCH</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>True</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>False</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <DefineConstants>MONOTOUCH</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties InternalTargetFrameworkVersion="IPhone" />
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Compile Include="..\RestSharp\Enum.cs">
+      <Link>Enum.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\FileParameter.cs">
+      <Link>FileParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Async.cs">
+      <Link>Http.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.cs">
+      <Link>Http.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Sync.cs">
+      <Link>Http.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpCookie.cs">
+      <Link>HttpCookie.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpFile.cs">
+      <Link>HttpFile.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpHeader.cs">
+      <Link>HttpHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpParameter.cs">
+      <Link>HttpParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpResponse.cs">
+      <Link>HttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttp.cs">
+      <Link>IHttp.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestClient.cs">
+      <Link>IRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Parameter.cs">
+      <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Async.cs">
+      <Link>RestClient.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.cs">
+      <Link>RestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Sync.cs">
+      <Link>RestClient.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequest.cs">
+      <Link>RestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestResponse.cs">
+      <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Validation\Require.cs">
+      <Link>Validation\Require.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Validation\Validate.cs">
+      <Link>Validation\Validate.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\ISerializer.cs">
+      <Link>Serializers\ISerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\JsonSerializer.cs">
+      <Link>Serializers\JsonSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
+      <Link>Serializers\SerializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
+      <Link>Serializers\XmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MiscExtensions.cs">
+      <Link>Extensions\MiscExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ReflectionExtensions.cs">
+      <Link>Extensions\ReflectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
+      <Link>Extensions\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\DeserializeAsAttribute.cs">
+      <Link>Deserializers\DeserializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\IDeserializer.cs">
+      <Link>Deserializers\IDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\JsonDeserializer.cs">
+      <Link>Deserializers\JsonDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlAttributeDeserializer.cs">
+      <Link>Deserializers\XmlAttributeDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlDeserializer.cs">
+      <Link>Deserializers\XmlDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\HttpBasicAuthenticator.cs">
+      <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\IAuthenticator.cs">
+      <Link>Authenticators\IAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\NtlmAuthenticator.cs">
+      <Link>Authenticators\NtlmAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\SimpleAuthenticator.cs">
+      <Link>Authenticators\SimpleAuthenticator.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Authenticators\" />
+    <Folder Include="Deserializers\" />
+    <Folder Include="Serializers\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Validation\" />
+  </ItemGroup>
+</Project>
