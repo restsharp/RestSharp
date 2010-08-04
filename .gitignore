@@ -31,3 +31,6 @@ Examples*/
 SerializerTest*/
 *.csproj.user
 *.resharper*
+#Ignore files from MonoDevelop
+*.pidb
+*.userprefs
