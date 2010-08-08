@@ -77,7 +77,8 @@ namespace RestSharp
 		{
 			try
 			{
-				var webRequest = ConfigureAsyncWebRequest(method, Url);
+				var url = AssembleUrl();
+				var webRequest = ConfigureAsyncWebRequest(method, url);
 				webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
 			}
 			catch (Exception ex)
@@ -160,12 +161,12 @@ namespace RestSharp
 		private void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
 #if WINDOWS_PHONE
-			var dispatcher = Deployment.Current.Dispatcher;
-			dispatcher.BeginInvoke(() => {
+			//var dispatcher = Deployment.Current.Dispatcher;
+			//dispatcher.BeginInvoke(() => {
 #endif
 			callback(response);
 #if WINDOWS_PHONE
-			});
+			//});
 #endif
 		}
 
