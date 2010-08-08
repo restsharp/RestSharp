@@ -86,6 +86,9 @@
     <Compile Include="..\restsharp\extensions\ReflectionExtensions.cs">
       <Link>Extensions\ReflectionExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\StringExtensions.cs">
+      <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\extensions\XmlExtensions.cs">
       <Link>Extensions\XmlExtensions.cs</Link>
     </Compile>

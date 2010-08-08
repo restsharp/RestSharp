@@ -79,6 +79,7 @@
     <Compile Include="Extensions\MonoHttp\Helpers.cs" />
     <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />
     <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Http.Sync.cs" />
     <Compile Include="HttpCookie.cs" />
     <Compile Include="HttpResponse.cs" />

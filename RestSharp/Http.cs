@@ -22,17 +22,6 @@ using System.Net;
 using System.Text;
 using RestSharp.Extensions;
 
-#if SILVERLIGHT
-using System.Windows.Browser;
-#endif
-
-#if WINDOWS_PHONE
-#endif
-
-#if FRAMEWORK
-using RestSharp.Contrib;
-#endif
-
 namespace RestSharp
 {
 	/// <summary>
@@ -223,7 +212,7 @@ namespace RestSharp
 			{
 				if (querystring.Length > 1)
 					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", HttpUtility.UrlEncode(p.Name), HttpUtility.UrlEncode(p.Value));
+				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
 			}
 
 			return querystring.ToString();
