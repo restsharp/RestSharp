@@ -70,6 +70,9 @@
     <Compile Include="..\RestSharp\Authenticators\NtlmAuthenticator.cs">
       <Link>Authenticators\NtlmAuthenticator.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth2Authenticator.cs">
+      <Link>Authenticators\OAuth2Authenticator.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Authenticators\SimpleAuthenticator.cs">
       <Link>Authenticators\SimpleAuthenticator.cs</Link>
     </Compile>
