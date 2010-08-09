@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -92,7 +93,7 @@ namespace RestSharp.Tests
 
 			var formatted = new
 			{
-				StartDate = date.ToString(format)
+				StartDate = date.ToString(format, CultureInfo.InvariantCulture)
 			};
 
 			var data = JsonConvert.SerializeObject(formatted);
