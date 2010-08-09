@@ -165,7 +165,7 @@ namespace RestSharp.Extensions
 				// adjust if time zone modifier present
 				if (match.Groups.Count > 2 && !String.IsNullOrEmpty(match.Groups[3].Value))
 				{
-					var mod = DateTime.ParseExact(match.Groups[3].Value, "hhmm", CultureInfo.InvariantCulture);
+					var mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", CultureInfo.InvariantCulture);
 					if (match.Groups[2].Value == "+")
 					{
 						dt = dt.Add(mod.TimeOfDay);
