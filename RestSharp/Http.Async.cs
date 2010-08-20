@@ -135,6 +135,29 @@ namespace RestSharp
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
 
+        private void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+        {
+            var response = new HttpResponse();
+            response.ResponseStatus = ResponseStatus.None;
+
+            HttpWebResponse raw = null;
+
+            try
+            {
+                var webRequest = (HttpWebRequest)result.AsyncState;
+                raw = webRequest.EndGetResponse(result) as HttpWebResponse;
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response is HttpWebResponse)
+                {
+                    raw = ex.Response as HttpWebResponse;
+                }
+            }
+
+            callback(raw);
+        }
+
 		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
 			var response = new HttpResponse();
@@ -142,12 +165,11 @@ namespace RestSharp
 
 			try
 			{
-				var webRequest = result.AsyncState as HttpWebRequest;
-				var webResponse = webRequest.EndGetResponse(result) as HttpWebResponse;
-
-				ExtractResponseData(response, webResponse);
-
-				ExecuteCallback(response, callback);
+			    GetRawResponseAsync(result, webResponse =>
+			                                    {
+			                                        ExtractResponseData(response, webResponse);
+			                                        ExecuteCallback(response, callback);
+			                                    });
 			}
 			catch (Exception ex)
 			{
