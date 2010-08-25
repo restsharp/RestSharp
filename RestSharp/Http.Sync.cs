@@ -176,7 +176,7 @@ namespace RestSharp
 					var length = data.Length;
 					var contentType = file.ContentType;
 					// Add just the first part of this param, since we will write the file data directly to the Stream
-					string header = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\";{3}Content-Type: {2}{3}{3}",
+					string header = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\"{3}Content-Type: {2}{3}{3}",
 													FormBoundary,
 													fileName,
 													contentType ?? "application/octet-stream",

@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -104,7 +105,7 @@ namespace RestSharp.Tests
 
 			var formatted = new
 			{
-				StartDate = date.ToString(format)
+				StartDate = date.ToString(format, CultureInfo.InvariantCulture)
 			};
 
 			var data = JsonConvert.SerializeObject(formatted);
@@ -162,7 +163,7 @@ namespace RestSharp.Tests
 			var p = d.Deserialize<PersonForJson>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
-			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc), p.StartDate);
 			Assert.Equal(28, p.Age);
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
@@ -220,7 +221,7 @@ namespace RestSharp.Tests
 			var p = d.Deserialize<PersonForJson>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
-			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc), p.StartDate);
 			Assert.Equal(28, p.Age);
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
@@ -288,7 +289,7 @@ namespace RestSharp.Tests
 		{
 			var doc = new JObject();
 			doc["name"] = "John Sheehan";
-			doc["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1);
+			doc["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
 			doc["age"] = 28;
 			doc["percent"] = 99.9999m;
 			doc["big_number"] = long.MaxValue;
@@ -328,7 +329,7 @@ namespace RestSharp.Tests
 		{
 			var doc = new JObject();
 			doc["name"] = "John Sheehan";
-			doc["start-date"] = new DateTime(2009, 9, 25, 0, 6, 1);
+			doc["start-date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
 			doc["age"] = 28;
 			doc["percent"] = 99.9999m;
 			doc["big-number"] = long.MaxValue;
@@ -384,7 +385,7 @@ namespace RestSharp.Tests
 		{
 			var doc = new JObject();
 			doc["Name"] = "John Sheehan";
-			doc["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1);
+			doc["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
 			doc["Age"] = 28;
 			doc["Percent"] = 99.9999m;
 			doc["BigNumber"] = long.MaxValue;
