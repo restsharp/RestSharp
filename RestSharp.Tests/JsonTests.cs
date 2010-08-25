@@ -43,6 +43,18 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Generic_List_of_Simple_Types()
+		{
+			var githubfollowing = "{\"users\":[\"johnsheehan\",\"jagregory\",\"drusellers\",\"structuremap\"]}";
+			var json = new JsonDeserializer();
+		    json.RootElement = "users";
+
+            var output = json.Deserialize<List<string>>(new RestResponse { Content = githubfollowing });
+
+            Assert.NotEmpty(output);
+		}
+
+		[Fact]
 		public void Can_Deserialize_From_Root_Element()
 		{
 			var doc = File.ReadAllText(@"SampleData\sojson.txt");

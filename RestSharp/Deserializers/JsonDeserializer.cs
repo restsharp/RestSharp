@@ -34,25 +34,41 @@ namespace RestSharp.Deserializers
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
 			var target = new T();
+			var objType = target.GetType();
 
 			if (target is IList)
 			{
-				var objType = target.GetType();
-				JArray json = JArray.Parse(response.Content);
-				target = (T)BuildList(objType, json.Root.Children());
+				if (RootElement.HasValue())
+				{
+				    var root = FindRoot(response.Content);
+					target = (T)BuildList(objType, root.Children());
+				}
+				else
+				{
+					JArray json = JArray.Parse(response.Content);
+					target = (T)BuildList(objType, json.Root.Children());
+				}
+
 			}
 			else
 			{
-				JObject json = JObject.Parse(response.Content);
-				JToken root = json.Root;
-
-				if (RootElement.HasValue())
-					root = json[RootElement];
+				var root = FindRoot(response.Content);
 
 				Map(target, root);
 			}
 
 			return target;
+		}
+
+		private JToken FindRoot(string content)
+		{
+			var json = JObject.Parse(content);
+			var root = json.Root;
+
+			if (RootElement.HasValue())
+				root = json[RootElement];
+
+			return root;
 		}
 
 		private void Map(object x, JToken json)
