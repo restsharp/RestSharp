@@ -48,11 +48,11 @@ namespace RestSharp.Tests
 		{
 			var githubfollowing = "{\"users\":[\"johnsheehan\",\"jagregory\",\"drusellers\",\"structuremap\"]}";
 			var json = new JsonDeserializer();
-		    json.RootElement = "users";
+			json.RootElement = "users";
 
-            var output = json.Deserialize<List<string>>(new RestResponse { Content = githubfollowing });
+			var output = json.Deserialize<List<string>>(new RestResponse { Content = githubfollowing });
 
-            Assert.NotEmpty(output);
+			Assert.NotEmpty(output);
 		}
 
 		[Fact]
