@@ -43,6 +43,17 @@ namespace RestSharp.Tests
 			Assert.NotEmpty(output.Numbers);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Simple_Generic_List_of_Simple_Types()
+        {
+            const string content = "{\"users\":[\"johnsheehan\",\"jagregory\",\"drusellers\",\"structuremap\"]}";
+            var json = new JsonDeserializer {RootElement = "users"};
+
+        	var output = json.Deserialize<List<string>>(new RestResponse {Content = content});
+
+            Assert.NotEmpty(output);
+        }
+
 		[Fact]
 		public void Can_Deserialize_From_Root_Element()
 		{
