@@ -228,6 +228,9 @@ namespace RestSharp
 
 			webRequest.Method = method;
 
+			// make sure Content-Length header is always sent since default is -1
+			webRequest.ContentLength = 0;
+
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
 			if (UserAgent.HasValue())
