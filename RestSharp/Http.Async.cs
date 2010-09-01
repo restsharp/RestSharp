@@ -197,6 +197,9 @@ namespace RestSharp
 #if SILVERLIGHT
 			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
 #endif
+#if WINDOWS_PHONE
+			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.Headers[HttpRequestHeader.ContentLength] = v);
+#endif
 		}
 
 		private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
