@@ -198,7 +198,9 @@ namespace RestSharp
 			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
 #endif
 #if WINDOWS_PHONE
-			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.Headers[HttpRequestHeader.ContentLength] = v);
+			// WP7 doesn't as of Beta doesn't support a way to set Content-Length either directly
+			// or indirectly
+			_restrictedHeaderActions.Add("Content-Length", (r, v) => { });
 #endif
 		}
 
@@ -216,10 +218,9 @@ namespace RestSharp
 			webRequest.Method = method;
 
 			// make sure Content-Length header is always sent since default is -1
-#if WINDOWS_PHONE
-			// workaround for possible WP7 beta bug
-			webRequest.Headers[HttpRequestHeader.ContentLength] = "0";
-#else
+#if !WINDOWS_PHONE
+			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
+			// or indirectly
 			webRequest.ContentLength = 0;
 #endif
 			if (Credentials != null)
