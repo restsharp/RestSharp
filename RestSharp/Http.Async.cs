@@ -125,16 +125,16 @@ namespace RestSharp
 		{
 			var webRequest = result.AsyncState as HttpWebRequest;
 
+#if !WINDOWS_PHONE
+			webRequest.ContentLength = RequestBody.Length;
+#endif
+
 			// write body to request stream
 			using (var requestStream = webRequest.EndGetRequestStream(result))
 			{
 				var encoding = Encoding.UTF8;
 				requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
 			}
-
-#if !WINDOWS_PHONE
-			webRequest.ContentLength = RequestBody.Length;
-#endif
 
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
