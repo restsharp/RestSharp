@@ -13,6 +13,30 @@ namespace RestSharp
 	/// </remarks>
 	public abstract class OAuth2Authenticator : IAuthenticator
 	{
+	    /// <summary>
+        /// Access token to be used when authenticating.
+	    /// </summary>
+	    private readonly string _accessToken;
+
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="OAuth2Authenticator"/> class.
+	    /// </summary>
+	    /// <param name="accessToken">
+	    /// The access token.
+	    /// </param>
+	    public OAuth2Authenticator(string accessToken)
+        {
+            _accessToken = accessToken;
+        }
+
+	    /// <summary>
+	    /// Gets the access token.
+	    /// </summary>
+	    public string AccessToken
+        {
+            get { return _accessToken; }
+        }
+
 		public abstract void Authenticate(RestRequest request);
 	}
 
@@ -25,24 +49,19 @@ namespace RestSharp
 	public class OAuth2UriQueryParameterAuthenticator : OAuth2Authenticator
 	{
 		/// <summary>
-		/// Access token to be used when authenticating.
-		/// </summary>
-		private readonly string _accessToken;
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="OAuth2UriQueryParameterAuthenticator"/> class.
 		/// </summary>
 		/// <param name="accessToken">
 		/// The access token.
 		/// </param>
 		public OAuth2UriQueryParameterAuthenticator(string accessToken)
+            : base(accessToken)
 		{
-			_accessToken = accessToken;
 		}
 
 		public override void Authenticate(RestRequest request)
 		{
-			request.AddParameter("oauth_token", _accessToken, ParameterType.GetOrPost);
+			request.AddParameter("oauth_token", AccessToken, ParameterType.GetOrPost);
 		}
 	}
 }
