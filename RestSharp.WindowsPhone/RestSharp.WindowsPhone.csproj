@@ -42,8 +42,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json.Compact">
-      <HintPath>..\References\Newtonsoft.Json.Compact.dll</HintPath>
+    <Reference Include="Newtonsoft.Json.Silverlight">
+      <HintPath>..\References\Newtonsoft.Json.Silverlight.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
