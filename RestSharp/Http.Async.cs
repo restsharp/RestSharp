@@ -132,6 +132,10 @@ namespace RestSharp
 				requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
 			}
 
+#if !WINDOWS_PHONE
+			webRequest.ContentLength = RequestBody.Length;
+#endif
+
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
 
