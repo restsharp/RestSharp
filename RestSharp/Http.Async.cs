@@ -113,6 +113,10 @@ namespace RestSharp
 		{
 			if (HasBody)
 			{
+#if !WINDOWS_PHONE
+				webRequest.ContentLength = RequestBody.Length;
+#endif
+
 				webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback), webRequest);
 			}
 			else
@@ -124,10 +128,6 @@ namespace RestSharp
 		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
 			var webRequest = result.AsyncState as HttpWebRequest;
-
-#if !WINDOWS_PHONE
-			webRequest.ContentLength = RequestBody.Length;
-#endif
 
 			// write body to request stream
 			using (var requestStream = webRequest.EndGetRequestStream(result))
