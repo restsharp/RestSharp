@@ -150,6 +150,8 @@ namespace RestSharp.Tests
 			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
 			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
+			Assert.Equal(Order.Third, p.Order);
+
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
 
@@ -493,6 +495,7 @@ namespace RestSharp.Tests
 			root.Add(new XElement("UniqueId", new Guid(GuidString)));
 			root.Add(new XElement("Url", "http://example.com"));
 			root.Add(new XElement("UrlPath", "/foo/bar"));
+			root.Add(new XElement("Order", "Third"));
 
 			root.Add(new XElement("BestFriend",
 						new XElement("Name", "The Fonz"),

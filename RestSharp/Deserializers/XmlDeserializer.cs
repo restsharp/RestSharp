@@ -111,6 +111,11 @@ namespace RestSharp.Deserializers
 				if (type.IsPrimitive) {
 					prop.SetValue(x, value.ChangeType(type), null);
 				}
+				else if (type.IsEnum)
+				{
+					var converted = Enum.Parse(type, value.ToString(), false);
+					prop.SetValue(x, converted, null);
+				}
 				else if (type == typeof(Uri))
 				{
 					var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);

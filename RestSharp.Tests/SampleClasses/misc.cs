@@ -42,6 +42,8 @@ namespace RestSharp.Tests
 		public Guid UniqueId { get; set; }
 		public Uri Url { get; set; }
 		public Uri UrlPath { get; set; }
+
+		public Order Order { get; set; }
 	}
 
 	public class PersonForJson
@@ -65,6 +67,14 @@ namespace RestSharp.Tests
 		public string ReadOnlyProxy { get { return ReadOnly; } }
 
 		public Dictionary<string, Foe> Foes { get; set; }
+
+		public Order Order { get; set; }
+	}
+
+	public enum Order { 
+		First,
+		Second,
+		Third
 	}
 
 	public class Friend

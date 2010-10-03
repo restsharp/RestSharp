@@ -47,12 +47,12 @@ namespace RestSharp.Deserializers
 				else
 				{
 					JArray json = JArray.Parse(response.Content);
-					target = (T) BuildList(objType, json.Root.Children());
+					target = (T)BuildList(objType, json.Root.Children());
 				}
 			}
 			else
 			{
-			    var root = FindRoot(response.Content);
+				var root = FindRoot(response.Content);
 
 				Map(target, root);
 			}
@@ -60,16 +60,16 @@ namespace RestSharp.Deserializers
 			return target;
 		}
 
-        private JToken FindRoot(string content)
-        {
-            JObject json = JObject.Parse(content);
-            JToken root = json.Root;
+		private JToken FindRoot(string content)
+		{
+			JObject json = JObject.Parse(content);
+			JToken root = json.Root;
 
-            if (RootElement.HasValue())
-                root = json[RootElement];
+			if (RootElement.HasValue())
+				root = json[RootElement];
 
-            return root;
-        }
+			return root;
+		}
 
 		private void Map(object x, JToken json)
 		{
@@ -143,6 +143,12 @@ namespace RestSharp.Deserializers
 					// allows converting a json value like {"index": "1"} to an int
 					var tmpVal = value.ToString().Replace("\"", string.Empty);
 					prop.SetValue(x, tmpVal.ChangeType(type), null);
+				}
+				else if (type.IsEnum)
+				{
+					string raw = value.AsString();
+					var converted = Enum.Parse(type, raw, false);
+					prop.SetValue(x, converted, null);
 				}
 				else if (type == typeof(Uri))
 				{
@@ -244,7 +250,7 @@ namespace RestSharp.Deserializers
 				var item = CreateAndMap(valueType, child.Value);
 				dict.Add(key, item);
 			}
-			
+
 			return dict;
 		}
 
