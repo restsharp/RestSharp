@@ -303,6 +303,7 @@ namespace RestSharp
 			{
 				response.ResponseStatus = ResponseStatus.Error;
 				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
 			}
 
 			return response;

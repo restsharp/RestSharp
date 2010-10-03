@@ -28,17 +28,18 @@ namespace RestSharp
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public RestResponseBase() {
+		public RestResponseBase()
+		{
 			Headers = new List<Parameter>();
 			Cookies = new List<Parameter>();
 		}
-        /// <summary>
-        /// The RestRequest that was made to get this RestResponse
-        /// </summary>
-        /// <remarks>
-        /// Mainly for debugging if ResponseStatus is not OK
-        /// </remarks> 
-	    public RestRequest Request { get; set; }
+		/// <summary>
+		/// The RestRequest that was made to get this RestResponse
+		/// </summary>
+		/// <remarks>
+		/// Mainly for debugging if ResponseStatus is not OK
+		/// </remarks> 
+		public RestRequest Request { get; set; }
 		/// <summary>
 		/// MIME content type of response
 		/// </summary>
@@ -89,11 +90,14 @@ namespace RestSharp
 		/// Status of the request. Will return Error for transport errors.
 		/// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 		/// </summary>
-		public ResponseStatus ResponseStatus {
-			get {
+		public ResponseStatus ResponseStatus
+		{
+			get
+			{
 				return _responseStatus;
 			}
-			set {
+			set
+			{
 				_responseStatus = value;
 			}
 		}
@@ -102,6 +106,11 @@ namespace RestSharp
 		/// Transport or other non-HTTP error generated while attempting request
 		/// </summary>
 		public string ErrorMessage { get; set; }
+
+		/// <summary>
+		/// The exception thrown during the request, if any
+		/// </summary>
+		public Exception ErrorException { get; set; }
 	}
 
 	/// <summary>
@@ -115,8 +124,10 @@ namespace RestSharp
 		/// </summary>
 		public T Data { get; set; }
 
-		public static explicit operator RestResponse<T>(RestResponse response) {
-			return new RestResponse<T> {
+		public static explicit operator RestResponse<T>(RestResponse response)
+		{
+			return new RestResponse<T>
+			{
 				Content = response.Content,
 				ContentEncoding = response.ContentEncoding,
 				ContentLength = response.ContentLength,
