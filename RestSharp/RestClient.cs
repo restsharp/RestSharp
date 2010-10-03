@@ -265,6 +265,7 @@ namespace RestSharp
 			restResponse.ContentEncoding = httpResponse.ContentEncoding;
 			restResponse.ContentLength = httpResponse.ContentLength;
 			restResponse.ContentType = httpResponse.ContentType;
+			restResponse.ErrorException = httpResponse.ErrorException;
 			restResponse.ErrorMessage = httpResponse.ErrorMessage;
 			restResponse.RawBytes = httpResponse.RawBytes;
 			restResponse.ResponseStatus = httpResponse.ResponseStatus;
