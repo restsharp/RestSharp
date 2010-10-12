@@ -107,11 +107,16 @@ namespace RestSharp.Deserializers
 					continue;
 				}
 
-				// check for nullable and extract underlying type
-				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-				{
-					type = type.GetGenericArguments()[0];
-				}
+                // check for nullable and extract underlying type
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    type = type.GetGenericArguments()[0];
+
+                    if (string.IsNullOrEmpty(value.ToString()))
+                    {
+                        continue;
+                    }
+                }
 
 				if (type.IsPrimitive)
 				{
