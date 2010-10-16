@@ -77,7 +77,7 @@ namespace RestSharp
     public class OAuth2AuthorizationRequestHeaderAuthenticator : OAuth2Authenticator
     {
         /// <summary>
-        /// Stores the Authoriztion header value as "OAuth accessToken". used for performance.
+        /// Stores the Authorization header value as "OAuth accessToken". used for performance.
         /// </summary>
         private readonly string _authorizationValue;
 
@@ -90,7 +90,7 @@ namespace RestSharp
         public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken)
             : base(accessToken)
         {
-            // Conatenate during constructor so that it is only done once. can improve performance.
+            // Concatenate during constructor so that it is only done once. can improve performance.
             _authorizationValue = "OAuth " + accessToken;
         }
 
