@@ -66,7 +66,7 @@ namespace RestSharp.Deserializers
 			JToken root = json.Root;
 
 			if (RootElement.HasValue())
-				root = json[RootElement];
+				root = json.SelectToken(RootElement);
 
 			return root;
 		}
