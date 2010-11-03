@@ -185,7 +185,8 @@ namespace RestSharp.Deserializers
 				else if (type == typeof(Guid))
 				{
 					string raw = value.ToString();
-					var guid = new Guid(raw.Substring(1, raw.Length - 2));
+					raw = raw.Substring(1, raw.Length - 2);
+					var guid = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(raw);
 					prop.SetValue(x, guid, null);
 				}
 				else if (type.IsGenericType)

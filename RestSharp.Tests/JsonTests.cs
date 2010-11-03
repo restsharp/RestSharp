@@ -170,6 +170,9 @@ namespace RestSharp.Tests
 			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
 			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
 
+			Assert.Equal(Guid.Empty, p.EmptyGuid);
+			Assert.Equal(new Guid(GuidString), p.Guid);
+
 			Assert.Equal(Order.Third, p.Order);
 
 			Assert.NotNull(p.Friends);
@@ -396,6 +399,9 @@ namespace RestSharp.Tests
 			doc["Url"] = "http://example.com";
 			doc["UrlPath"] = "/foo/bar";
 			doc["Order"] = "Third";
+
+			doc["Guid"] = new Guid(GuidString).ToString();
+			doc["EmptyGuid"] = "";
 
 			doc["BestFriend"] = new JObject(
 									new JProperty("Name", "The Fonz"),

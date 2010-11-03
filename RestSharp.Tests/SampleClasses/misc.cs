@@ -40,12 +40,13 @@ namespace RestSharp.Tests
 		public FoeList Foes { get; set; }
 
 		public Guid UniqueId { get; set; }
+		public Guid EmptyGuid { get; set; }
+
 		public Uri Url { get; set; }
 		public Uri UrlPath { get; set; }
 
 		public Order Order { get; set; }
 
-		public Guid EmptyGuid { get; set; }
 	}
 
 	public class PersonForJson
@@ -59,6 +60,7 @@ namespace RestSharp.Tests
 		public List<Friend> Friends { get; set; }
 		public Friend BestFriend { get; set; }
 		public Guid Guid { get; set; }
+		public Guid EmptyGuid { get; set; }
 		public Uri Url { get; set; }
 		public Uri UrlPath { get; set; }
 
@@ -71,6 +73,7 @@ namespace RestSharp.Tests
 		public Dictionary<string, Foe> Foes { get; set; }
 
 		public Order Order { get; set; }
+
 	}
 
 	public enum Order { 
