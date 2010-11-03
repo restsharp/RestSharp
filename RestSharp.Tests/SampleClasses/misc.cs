@@ -44,6 +44,8 @@ namespace RestSharp.Tests
 		public Uri UrlPath { get; set; }
 
 		public Order Order { get; set; }
+
+		public Guid EmptyGuid { get; set; }
 	}
 
 	public class PersonForJson
