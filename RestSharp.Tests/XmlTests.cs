@@ -20,12 +20,26 @@ using System.Xml.Linq;
 using RestSharp.Deserializers;
 using Xunit;
 using RestSharp.Tests.SampleClasses;
+using System.Collections.Generic;
 
 namespace RestSharp.Tests
 {
 	public class XmlTests
 	{
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+
+		[Fact]
+		public void Can_Deserialize_Directly_To_Lists_Off_Root_Element()
+		{
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\directlists.xml";
+			var doc = XDocument.Load(xmlpath);
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<List<Database>>(new RestResponse { Content = doc.ToString() });
+
+			Assert.NotEmpty(output);
+			Assert.Equal(2, output.Count);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name()

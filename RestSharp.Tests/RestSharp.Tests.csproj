@@ -95,6 +95,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SampleData\directlists.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\GoogleWeather.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

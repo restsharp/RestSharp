@@ -112,4 +112,15 @@ namespace RestSharp.Tests
 		[SerializeAs(Index = 1)]
 		public DateTime StartDate { get; set; }
 	}
+
+	public class DatabaseCollection : List<Database>
+	{
+	}
+
+	public class Database
+	{
+		public string Name { get; set; }
+		public string InitialCatalog { get; set; }
+		public string DataSource { get; set; }
+	}
 }

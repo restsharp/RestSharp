@@ -210,7 +210,18 @@ namespace RestSharp.Deserializers
 
 		private object HandleListDerivative(object x, XElement root, string propName, Type type)
 		{
-			var t = type.BaseType.GetGenericArguments()[0];
+			Type t;
+			Type[] genericArgs = type.GetGenericArguments();
+
+			if (type.IsGenericType)
+			{
+				t = type.GetGenericArguments()[0];
+			}
+			else
+			{
+				t = type.BaseType.GetGenericArguments()[0];
+			}
+
 
 			var list = (IList)Activator.CreateInstance(type);
 
@@ -219,7 +230,11 @@ namespace RestSharp.Deserializers
 			PopulateListFromElements(t, elements, list);
 
 			// get properties too, not just list items
-			Map(list, root.Element(propName.AsNamespaced(Namespace)));
+			// only if this isn't a generic type
+			if (!type.IsGenericType)
+			{
+				Map(list, root.Element(propName.AsNamespaced(Namespace))); 
+			}
 
 			return list;
 		}
