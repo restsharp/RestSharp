@@ -232,6 +232,13 @@ namespace RestSharp
 				webRequest.Credentials = Credentials;
 			}
 
+#if FRAMEWORK
+			if (Proxy != null)
+			{
+				webRequest.Proxy = Proxy;
+			}
+#endif
+
 			return webRequest;
 		}
 	}

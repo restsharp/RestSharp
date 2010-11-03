@@ -114,6 +114,13 @@ namespace RestSharp
 		/// </summary>
 		public Uri Url { get; set; }
 
+#if FRAMEWORK
+		/// <summary>
+		/// Proxy info to be sent with request
+		/// </summary>
+		public IWebProxy Proxy { get; set; }
+#endif
+
 		/// <summary>
 		/// Default constructor
 		/// </summary>

@@ -32,11 +32,6 @@ namespace RestSharp
 	public partial class Http
 	{
 		/// <summary>
-		/// Proxy info to be sent with request
-		/// </summary>
-		public IWebProxy Proxy { get; set; }
-
-		/// <summary>
 		/// Execute a POST request
 		/// </summary>
 		public HttpResponse Post()
