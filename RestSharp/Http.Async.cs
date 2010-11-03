@@ -113,6 +113,10 @@ namespace RestSharp
 		{
 			if (HasBody)
 			{
+#if !WINDOWS_PHONE
+				webRequest.ContentLength = RequestBody.Length;
+#endif
+
 				webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback), webRequest);
 			}
 			else
@@ -135,28 +139,28 @@ namespace RestSharp
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
 
-        private void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
-        {
-            var response = new HttpResponse();
-            response.ResponseStatus = ResponseStatus.None;
+		private void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+		{
+			var response = new HttpResponse();
+			response.ResponseStatus = ResponseStatus.None;
 
-            HttpWebResponse raw = null;
+			HttpWebResponse raw = null;
 
-            try
-            {
-                var webRequest = (HttpWebRequest)result.AsyncState;
-                raw = webRequest.EndGetResponse(result) as HttpWebResponse;
-            }
-            catch (WebException ex)
-            {
-                if (ex.Response is HttpWebResponse)
-                {
-                    raw = ex.Response as HttpWebResponse;
-                }
-            }
+			try
+			{
+				var webRequest = (HttpWebRequest)result.AsyncState;
+				raw = webRequest.EndGetResponse(result) as HttpWebResponse;
+			}
+			catch (WebException ex)
+			{
+				if (ex.Response is HttpWebResponse)
+				{
+					raw = ex.Response as HttpWebResponse;
+				}
+			}
 
-            callback(raw);
-        }
+			callback(raw);
+		}
 
 		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
@@ -165,11 +169,11 @@ namespace RestSharp
 
 			try
 			{
-			    GetRawResponseAsync(result, webResponse =>
-			                                    {
-			                                        ExtractResponseData(response, webResponse);
-			                                        ExecuteCallback(response, callback);
-			                                    });
+				GetRawResponseAsync(result, webResponse =>
+												{
+													ExtractResponseData(response, webResponse);
+													ExecuteCallback(response, callback);
+												});
 			}
 			catch (Exception ex)
 			{
@@ -183,12 +187,12 @@ namespace RestSharp
 		private void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
 #if WINDOWS_PHONE
-			//var dispatcher = Deployment.Current.Dispatcher;
-			//dispatcher.BeginInvoke(() => {
+			var dispatcher = Deployment.Current.Dispatcher;
+			dispatcher.BeginInvoke(() => {
 #endif
 			callback(response);
 #if WINDOWS_PHONE
-			//});
+			});
 #endif
 		}
 
@@ -196,6 +200,11 @@ namespace RestSharp
 		{
 #if SILVERLIGHT
 			_restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+#endif
+#if WINDOWS_PHONE
+			// WP7 doesn't as of Beta doesn't support a way to set Content-Length either directly
+			// or indirectly
+			_restrictedHeaderActions.Add("Content-Length", (r, v) => { });
 #endif
 		}
 
@@ -212,10 +221,23 @@ namespace RestSharp
 
 			webRequest.Method = method;
 
+			// make sure Content-Length header is always sent since default is -1
+#if !WINDOWS_PHONE
+			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
+			// or indirectly
+			webRequest.ContentLength = 0;
+#endif
 			if (Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
 			}
+
+#if FRAMEWORK
+			if (Proxy != null)
+			{
+				webRequest.Proxy = Proxy;
+			}
+#endif
 
 			return webRequest;
 		}

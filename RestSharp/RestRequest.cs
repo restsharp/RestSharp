@@ -360,6 +360,17 @@ namespace RestSharp
 		public string RootElement { get; set; }
 
 		/// <summary>
+		/// If the response returns a different root element on errors and ErrorCondition returns true, use this for
+		/// starting point while deserializing
+		/// </summary>
+		public string ErrorRootElement { get; set; }
+
+		/// <summary>
+		/// The condition to use to determine if ErrorRootElement should be used instead of RootElement
+		/// </summary>
+		public Func<RestResponse, bool> ErrorCondition { get; set; }
+
+		/// <summary>
 		/// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
 		/// </summary>
 		public string DateFormat { get; set; }

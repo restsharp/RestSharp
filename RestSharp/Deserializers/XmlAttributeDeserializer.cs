@@ -107,15 +107,25 @@ namespace RestSharp.Deserializers
 					continue;
 				}
 
-				// check for nullable and extract underlying type
-				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-				{
-					type = type.GetGenericArguments()[0];
-				}
+                // check for nullable and extract underlying type
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    type = type.GetGenericArguments()[0];
+
+                    if (string.IsNullOrEmpty(value.ToString()))
+                    {
+                        continue;
+                    }
+                }
 
 				if (type.IsPrimitive)
 				{
 					prop.SetValue(x, Convert.ChangeType(value, type), null);
+				}
+				else if (type.IsEnum)
+				{
+					var converted = Enum.Parse(type, value.ToString(), false);
+					prop.SetValue(x, converted, null);
 				}
 				else if (type == typeof(Uri))
 				{

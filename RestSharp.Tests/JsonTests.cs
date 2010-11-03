@@ -44,13 +44,12 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Generic_List_of_Simple_Types()
+		public void Can_Deserialize_Simple_Generic_List_of_Simple_Types()
 		{
-			var githubfollowing = "{\"users\":[\"johnsheehan\",\"jagregory\",\"drusellers\",\"structuremap\"]}";
-			var json = new JsonDeserializer();
-			json.RootElement = "users";
+			const string content = "{\"users\":[\"johnsheehan\",\"jagregory\",\"drusellers\",\"structuremap\"]}";
+			var json = new JsonDeserializer {RootElement = "users"};
 
-			var output = json.Deserialize<List<string>>(new RestResponse { Content = githubfollowing });
+			var output = json.Deserialize<List<string>>(new RestResponse {Content = content});
 
 			Assert.NotEmpty(output);
 		}
@@ -170,6 +169,11 @@ namespace RestSharp.Tests
 			Assert.Equal(false, p.IsCool);
 			Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
 			Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+
+			Assert.Equal(Guid.Empty, p.EmptyGuid);
+			Assert.Equal(new Guid(GuidString), p.Guid);
+
+			Assert.Equal(Order.Third, p.Order);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -394,6 +398,10 @@ namespace RestSharp.Tests
 			doc["ReadOnly"] = "dummy";
 			doc["Url"] = "http://example.com";
 			doc["UrlPath"] = "/foo/bar";
+			doc["Order"] = "Third";
+
+			doc["Guid"] = new Guid(GuidString).ToString();
+			doc["EmptyGuid"] = "";
 
 			doc["BestFriend"] = new JObject(
 									new JProperty("Name", "The Fonz"),

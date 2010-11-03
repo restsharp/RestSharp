@@ -32,11 +32,6 @@ namespace RestSharp
 	public partial class Http
 	{
 		/// <summary>
-		/// Proxy info to be sent with request
-		/// </summary>
-		public IWebProxy Proxy { get; set; }
-
-		/// <summary>
 		/// Execute a POST request
 		/// </summary>
 		public HttpResponse Post()
@@ -227,6 +222,9 @@ namespace RestSharp
 			AppendCookies(webRequest);
 
 			webRequest.Method = method;
+
+			// make sure Content-Length header is always sent since default is -1
+			webRequest.ContentLength = 0;
 
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 

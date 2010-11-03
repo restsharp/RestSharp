@@ -40,8 +40,13 @@ namespace RestSharp.Tests
 		public FoeList Foes { get; set; }
 
 		public Guid UniqueId { get; set; }
+		public Guid EmptyGuid { get; set; }
+
 		public Uri Url { get; set; }
 		public Uri UrlPath { get; set; }
+
+		public Order Order { get; set; }
+
 	}
 
 	public class PersonForJson
@@ -55,6 +60,7 @@ namespace RestSharp.Tests
 		public List<Friend> Friends { get; set; }
 		public Friend BestFriend { get; set; }
 		public Guid Guid { get; set; }
+		public Guid EmptyGuid { get; set; }
 		public Uri Url { get; set; }
 		public Uri UrlPath { get; set; }
 
@@ -65,6 +71,15 @@ namespace RestSharp.Tests
 		public string ReadOnlyProxy { get { return ReadOnly; } }
 
 		public Dictionary<string, Foe> Foes { get; set; }
+
+		public Order Order { get; set; }
+
+	}
+
+	public enum Order { 
+		First,
+		Second,
+		Third
 	}
 
 	public class Friend
@@ -96,5 +111,16 @@ namespace RestSharp.Tests
 		public int Age { get; set; }
 		[SerializeAs(Index = 1)]
 		public DateTime StartDate { get; set; }
+	}
+
+	public class DatabaseCollection : List<Database>
+	{
+	}
+
+	public class Database
+	{
+		public string Name { get; set; }
+		public string InitialCatalog { get; set; }
+		public string DataSource { get; set; }
 	}
 }

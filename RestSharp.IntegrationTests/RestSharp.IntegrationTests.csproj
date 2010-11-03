@@ -83,6 +83,7 @@
     <Compile Include="Services\CompressionService.cs" />
     <Compile Include="CompressionTests.cs" />
     <Compile Include="Services\DumpService.cs" />
+    <Compile Include="Services\ErrorHandlingService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="StatusCodeTests.cs" />
     <Compile Include="Services\StatusCodeService.cs" />
@@ -95,7 +96,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Error.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Koala.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Success.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

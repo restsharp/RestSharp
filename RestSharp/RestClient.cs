@@ -102,6 +102,11 @@ namespace RestSharp
 		/// <returns>IDeserializer instance</returns>
 		IDeserializer GetHandler(string contentType)
 		{
+			if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
+			{
+				return ContentHandlers["*"];
+			}
+
 			var semicolonIndex = contentType.IndexOf(';');
 			if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
 			IDeserializer handler = null;
@@ -265,6 +270,7 @@ namespace RestSharp
 			restResponse.ContentEncoding = httpResponse.ContentEncoding;
 			restResponse.ContentLength = httpResponse.ContentLength;
 			restResponse.ContentType = httpResponse.ContentType;
+			restResponse.ErrorException = httpResponse.ErrorException;
 			restResponse.ErrorMessage = httpResponse.ErrorMessage;
 			restResponse.RawBytes = httpResponse.RawBytes;
 			restResponse.ResponseStatus = httpResponse.ResponseStatus;
@@ -289,7 +295,7 @@ namespace RestSharp
 		private RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) where T : new()
 		{
 			IDeserializer handler = GetHandler(raw.ContentType);
-			handler.RootElement = request.RootElement;
+			handler.RootElement = GetRootElement(request, raw);
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
 
@@ -303,10 +309,21 @@ namespace RestSharp
 			{
 				response.ResponseStatus = ResponseStatus.Error;
 				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
 			}
 
 			return response;
 		}
 
+		private string GetRootElement(RestRequest request, RestResponse raw)
+		{
+			var isError = request.ErrorCondition(raw);
+			if (isError)
+			{
+				return request.ErrorRootElement;
+			}
+
+			return request.RootElement;
+		}
 	}
 }

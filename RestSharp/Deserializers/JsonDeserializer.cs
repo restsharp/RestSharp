@@ -34,13 +34,14 @@ namespace RestSharp.Deserializers
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
 			var target = new T();
-			var objType = target.GetType();
 
 			if (target is IList)
 			{
+				var objType = target.GetType();
+
 				if (RootElement.HasValue())
 				{
-				    var root = FindRoot(response.Content);
+					var root = FindRoot(response.Content);
 					target = (T)BuildList(objType, root.Children());
 				}
 				else
@@ -48,7 +49,6 @@ namespace RestSharp.Deserializers
 					JArray json = JArray.Parse(response.Content);
 					target = (T)BuildList(objType, json.Root.Children());
 				}
-
 			}
 			else
 			{
@@ -62,11 +62,11 @@ namespace RestSharp.Deserializers
 
 		private JToken FindRoot(string content)
 		{
-			var json = JObject.Parse(content);
-			var root = json.Root;
+			JObject json = JObject.Parse(content);
+			JToken root = json.Root;
 
 			if (RootElement.HasValue())
-				root = json[RootElement];
+				root = json.SelectToken(RootElement);
 
 			return root;
 		}
@@ -144,6 +144,12 @@ namespace RestSharp.Deserializers
 					var tmpVal = value.ToString().Replace("\"", string.Empty);
 					prop.SetValue(x, tmpVal.ChangeType(type), null);
 				}
+				else if (type.IsEnum)
+				{
+					string raw = value.AsString();
+					var converted = Enum.Parse(type, raw, false);
+					prop.SetValue(x, converted, null);
+				}
 				else if (type == typeof(Uri))
 				{
 					string raw = value.AsString();
@@ -179,7 +185,8 @@ namespace RestSharp.Deserializers
 				else if (type == typeof(Guid))
 				{
 					string raw = value.ToString();
-					var guid = new Guid(raw.Substring(1, raw.Length - 2));
+					raw = raw.Substring(1, raw.Length - 2);
+					var guid = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(raw);
 					prop.SetValue(x, guid, null);
 				}
 				else if (type.IsGenericType)
@@ -244,7 +251,7 @@ namespace RestSharp.Deserializers
 				var item = CreateAndMap(valueType, child.Value);
 				dict.Add(key, item);
 			}
-			
+
 			return dict;
 		}
 
