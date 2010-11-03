@@ -187,12 +187,12 @@ namespace RestSharp
 		private void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
 #if WINDOWS_PHONE
-			//var dispatcher = Deployment.Current.Dispatcher;
-			//dispatcher.BeginInvoke(() => {
+			var dispatcher = Deployment.Current.Dispatcher;
+			dispatcher.BeginInvoke(() => {
 #endif
 			callback(response);
 #if WINDOWS_PHONE
-			//});
+			});
 #endif
 		}
 
