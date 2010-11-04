@@ -49,6 +49,8 @@ namespace RestSharp
 			Files = new List<FileParameter>();
 			XmlSerializer = new XmlSerializer();
 			JsonSerializer = new JsonSerializer();
+
+			ErrorCondition = resp => { return false; };
 		}
 
 		/// <summary>
