@@ -29,10 +29,12 @@ namespace RestSharp.IntegrationTests
 			var client = new RestClient(BaseUrl);
 			var request = new RestRequest("ErrorHandling/NotFound");
 			request.RootElement = "Success";
-			request.ErrorRootElement = "Error";
-			request.ErrorCondition = resp =>
+			request.OnBeforeDeserialization = resp =>
 			{
-				return resp.StatusCode == HttpStatusCode.BadRequest;
+				if (resp.StatusCode == HttpStatusCode.BadRequest)
+				{
+					request.RootElement = "Error";
+				}
 			};
 
 			var response = client.Execute<Response>(request);
@@ -47,10 +49,12 @@ namespace RestSharp.IntegrationTests
 			var client = new RestClient(BaseUrl);
 			var request = new RestRequest("ErrorHandling/Success");
 			request.RootElement = "Success";
-			request.ErrorRootElement = "Error";
-			request.ErrorCondition = resp =>
+			request.OnBeforeDeserialization = resp =>
 			{
-				return resp.StatusCode == HttpStatusCode.NotFound;
+				if (resp.StatusCode == HttpStatusCode.NotFound)
+				{
+					request.RootElement = "Error";
+				}
 			};
 
 			var response = client.Execute<Response>(request);

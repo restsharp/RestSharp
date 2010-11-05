@@ -50,7 +50,7 @@ namespace RestSharp
 			XmlSerializer = new XmlSerializer();
 			JsonSerializer = new JsonSerializer();
 
-			ErrorCondition = resp => { return false; };
+			OnBeforeDeserialization = r => { };
 		}
 
 		/// <summary>
@@ -362,15 +362,9 @@ namespace RestSharp
 		public string RootElement { get; set; }
 
 		/// <summary>
-		/// If the response returns a different root element on errors and ErrorCondition returns true, use this for
-		/// starting point while deserializing
+		/// A function to run prior to deserializing starting (e.g. change settings if error encountered)
 		/// </summary>
-		public string ErrorRootElement { get; set; }
-
-		/// <summary>
-		/// The condition to use to determine if ErrorRootElement should be used instead of RootElement
-		/// </summary>
-		public Func<RestResponse, bool> ErrorCondition { get; set; }
+		public Action<RestResponse> OnBeforeDeserialization { get; set; }
 
 		/// <summary>
 		/// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
