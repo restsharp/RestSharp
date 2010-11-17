@@ -295,7 +295,7 @@ namespace RestSharp
 		private RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) where T : new()
 		{
 			IDeserializer handler = GetHandler(raw.ContentType);
-			handler.RootElement = GetRootElement(request, raw);
+			handler.RootElement = request.RootElement;
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
 
@@ -313,17 +313,6 @@ namespace RestSharp
 			}
 
 			return response;
-		}
-
-		private string GetRootElement(RestRequest request, RestResponse raw)
-		{
-			var isError = request.ErrorCondition(raw);
-			if (isError)
-			{
-				return request.ErrorRootElement;
-			}
-
-			return request.RootElement;
 		}
 	}
 }
