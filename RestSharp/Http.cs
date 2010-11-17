@@ -114,13 +114,6 @@ namespace RestSharp
 		/// </summary>
 		public Uri Url { get; set; }
 
-#if FRAMEWORK
-		/// <summary>
-		/// Proxy info to be sent with request
-		/// </summary>
-		public IWebProxy Proxy { get; set; }
-#endif
-
 		/// <summary>
 		/// Default constructor
 		/// </summary>
@@ -219,7 +212,7 @@ namespace RestSharp
 			{
 				if (querystring.Length > 1)
 					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
+				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), ((string)p.Value).UrlEncode());
 			}
 
 			return querystring.ToString();
