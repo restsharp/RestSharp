@@ -26,7 +26,7 @@ namespace RestSharp
 	/// <summary>
 	/// Container for data used to make requests
 	/// </summary>
-	public class RestRequest
+	public class RestRequest : IRestRequest
 	{
 		/// <summary>
 		/// Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.

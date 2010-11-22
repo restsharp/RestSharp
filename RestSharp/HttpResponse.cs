@@ -23,7 +23,7 @@ namespace RestSharp
 	/// <summary>
 	/// HTTP response data
 	/// </summary>
-	public class HttpResponse
+	public class HttpResponse : IHttpResponse
 	{
 		/// <summary>
 		/// Default constructor

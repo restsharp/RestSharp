@@ -117,7 +117,7 @@ namespace RestSharp
 	/// Container for data sent back from API including deserialized data
 	/// </summary>
 	/// <typeparam name="T">Type of data to deserialize to</typeparam>
-	public class RestResponse<T> : RestResponseBase
+	public class RestResponse<T> : RestResponseBase, IRestResponse<T>
 	{
 		/// <summary>
 		/// Deserialized entity data
@@ -148,7 +148,7 @@ namespace RestSharp
 	/// <summary>
 	/// Container for data sent back from API
 	/// </summary>
-	public class RestResponse : RestResponseBase
+	public class RestResponse : RestResponseBase, IRestResponse
 	{
 
 	}

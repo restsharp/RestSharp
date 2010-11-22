@@ -100,7 +100,10 @@
     <Compile Include="HttpHeader.cs" />
     <Compile Include="HttpParameter.cs" />
     <Compile Include="IHttp.cs" />
+    <Compile Include="IHttpResponse.cs" />
     <Compile Include="IRestClient.cs" />
+    <Compile Include="IRestRequest.cs" />
+    <Compile Include="IRestResponse.cs" />
     <Compile Include="RestResponse.cs" />
     <Compile Include="Authenticators\IAuthenticator.cs" />
     <Compile Include="Parameter.cs" />
