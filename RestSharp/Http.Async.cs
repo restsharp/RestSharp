@@ -232,7 +232,17 @@ namespace RestSharp
 				webRequest.Credentials = Credentials;
 			}
 
+			if (UserAgent.HasValue())
+			{
+				webRequest.UserAgent = UserAgent;
+			}
+
 #if FRAMEWORK
+			if (Timeout != 0)
+			{
+				webRequest.Timeout = Timeout;
+			}
+
 			if (Proxy != null)
 			{
 				webRequest.Proxy = Proxy;
