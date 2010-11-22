@@ -119,8 +119,17 @@
     <Compile Include="..\RestSharp\IHttp.cs">
       <Link>IHttp.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\IHttpResponse.cs">
+      <Link>IHttpResponse.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\IRestClient.cs">
       <Link>IRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestRequest.cs">
+      <Link>IRestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestResponse.cs">
+      <Link>IRestResponse.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Parameter.cs">
       <Link>Parameter.cs</Link>
