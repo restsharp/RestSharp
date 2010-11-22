@@ -39,7 +39,7 @@ namespace RestSharp
 
 			// add Accept header
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
-			request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
+			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 
 			var response = new RestResponse();
 			try

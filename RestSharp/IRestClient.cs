@@ -16,6 +16,7 @@
 
 using System;
 using System.Net;
+using System.Collections.Generic;
 
 namespace RestSharp
 {
@@ -40,6 +41,10 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		string BaseUrl { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		IList<Parameter> DefaultParameters { get; }
 		/// <summary>
 		/// 
 		/// </summary>

@@ -37,6 +37,7 @@ namespace RestSharp
 		{
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
+			DefaultParameters = new List<Parameter>();
 
 			// register default handlers
 			AddHandler("application/json", new JsonDeserializer());
@@ -62,6 +63,77 @@ namespace RestSharp
 
 		private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
 		private IList<string> AcceptTypes { get; set; }
+
+		/// <summary>
+		/// Parameters included with every request made with this instance of RestClient
+		/// If specified in both client and request, the request wins
+		/// </summary>
+		public IList<Parameter> DefaultParameters { get; private set; }
+
+		/// <summary>
+		/// Add a parameter to use on every request made with this client instance
+		/// </summary>
+		/// <param name="p">Parameter to add</param>
+		/// <returns></returns>
+		public void AddDefaultParameter(Parameter p)
+		{
+			if (p.Type == ParameterType.RequestBody)
+			{
+				throw new NotSupportedException("Cannot set request body from default headers. Use Request.AddBody() instead.");
+			}
+
+			DefaultParameters.Add(p);
+		}
+
+		/// <summary>
+		/// Adds a HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+		/// Used on every request made by this client instance
+		/// </summary>
+		/// <param name="name">Name of the parameter</param>
+		/// <param name="value">Value of the parameter</param>
+		/// <returns>This request</returns>
+		public void AddDefaultParameter(string name, object value)
+		{
+			AddDefaultParameter(new Parameter { Name = name, Value = value, Type = ParameterType.GetOrPost });
+		}
+
+		/// <summary>
+		/// Adds a parameter to the request. There are four types of parameters:
+		///	- GetOrPost: Either a QueryString value or encoded form value based on method
+		///	- HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+		///	- UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+		///	- RequestBody: Used by AddBody() (not recommended to use directly)
+		/// </summary>
+		/// <param name="name">Name of the parameter</param>
+		/// <param name="value">Value of the parameter</param>
+		/// <param name="type">The type of parameter to add</param>
+		/// <returns>This request</returns>
+		public void AddDefaultParameter(string name, object value, ParameterType type)
+		{
+			AddDefaultParameter(new Parameter { Name = name, Value = value, Type = type });
+		}
+
+		/// <summary>
+		/// Shortcut to AddDefaultParameter(name, value, HttpHeader) overload
+		/// </summary>
+		/// <param name="name">Name of the header to add</param>
+		/// <param name="value">Value of the header to add</param>
+		/// <returns></returns>
+		public void AddDefaultHeader(string name, string value)
+		{
+			AddDefaultParameter(name, value, ParameterType.HttpHeader);
+		}
+
+		/// <summary>
+		/// Shortcut to AddDefaultParameter(name, value, UrlSegment) overload
+		/// </summary>
+		/// <param name="name">Name of the segment to add</param>
+		/// <param name="value">Value of the segment to add</param>
+		/// <returns></returns>
+		public void AddDefaultUrlSegment(string name, string value)
+		{
+			AddDefaultParameter(name, value, ParameterType.UrlSegment);
+		}
 
 		/// <summary>
 		/// Registers a content handler to process response content
@@ -193,6 +265,17 @@ namespace RestSharp
 
 		private void ConfigureHttp(RestRequest request, IHttp http)
 		{
+			// move RestClient.DefaultParameters into Request.Parameters
+			foreach (var p in DefaultParameters)
+			{
+				if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
+				{
+					continue;
+				}
+
+				request.AddParameter(p);
+			}
+
 			http.Url = BuildUri(request);
 
 			if (UserAgent != null)
@@ -294,8 +377,10 @@ namespace RestSharp
 
 		private RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) where T : new()
 		{
+			request.OnBeforeDeserialization(raw);
+
 			IDeserializer handler = GetHandler(raw.ContentType);
-			handler.RootElement = GetRootElement(request, raw);
+			handler.RootElement = request.RootElement;
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
 
@@ -313,17 +398,6 @@ namespace RestSharp
 			}
 
 			return response;
-		}
-
-		private string GetRootElement(RestRequest request, RestResponse raw)
-		{
-			var isError = request.ErrorCondition(raw);
-			if (isError)
-			{
-				return request.ErrorRootElement;
-			}
-
-			return request.RootElement;
 		}
 	}
 }
