@@ -201,6 +201,15 @@
     <Compile Include="..\RestSharp\Extensions\MonoHttp\Helpers.cs">
       <Link>Extensions\Helpers.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\IHttpResponse.cs">
+      <Link>IHttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestResponse.cs">
+      <Link>IRestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestRequest.cs">
+      <Link>IRestRequest.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Authenticators\" />
