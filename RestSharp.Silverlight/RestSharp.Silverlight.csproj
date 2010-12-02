@@ -76,11 +76,17 @@
     <Compile Include="..\RestSharp\Authenticators\SimpleAuthenticator.cs">
       <Link>Authenticators\SimpleAuthenticator.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Deserializers\DeserializeAsAttribute.cs">
+      <Link>Deserializers\DeserializeAsAttribute.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Deserializers\IDeserializer.cs">
       <Link>Deserializers\IDeserializer.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Deserializers\JsonDeserializer.cs">
       <Link>Deserializers\JsonDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlAttributeDeserializer.cs">
+      <Link>Deserializers\XmlAttributeDeserializer.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Deserializers\XmlDeserializer.cs">
       <Link>Deserializers\XmlDeserializer.cs</Link>

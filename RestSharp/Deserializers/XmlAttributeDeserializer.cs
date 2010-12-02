@@ -120,7 +120,7 @@ namespace RestSharp.Deserializers
 
 				if (type.IsPrimitive)
 				{
-					prop.SetValue(x, Convert.ChangeType(value, type), null);
+					prop.SetValue(x, value.ChangeType(type), null);
 				}
 				else if (type.IsEnum)
 				{
