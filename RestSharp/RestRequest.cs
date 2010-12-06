@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using RestSharp.Extensions;
 using RestSharp.Serializers;
 
 namespace RestSharp
@@ -115,10 +116,17 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public RestRequest AddFile(string path)
 		{
-			var fileName = Path.GetFileName(path);
-			var file = File.ReadAllBytes(path);
-
-			return AddFile(file, fileName);
+			return AddFile(new FileParameter
+			{
+				FileName = Path.GetFileName(path),
+				Writer = s =>
+				{
+					using(var file = new StreamReader(path))
+					{
+						file.BaseStream.CopyTo(s);
+					}
+				}
+			});
 		}
 
 		/// <summary>
@@ -129,7 +137,7 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public RestRequest AddFile(byte[] bytes, string fileName)
 		{
-			return AddFile(bytes, fileName, null);
+			return AddFile(FileParameter.Create(bytes, fileName));
 		}
 
 		/// <summary>
@@ -141,7 +149,35 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public RestRequest AddFile(byte[] bytes, string fileName, string contentType)
 		{
-			Files.Add(new FileParameter { Data = bytes, FileName = fileName, ContentType = contentType });
+			return AddFile(FileParameter.Create(bytes, fileName, contentType));
+		}
+
+		/// <summary>
+		/// Adds the bytes to the Files collection with the specified file name and content type
+		/// </summary>
+		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+		/// <param name="fileName">The file name to use for the uploaded file</param>
+		/// <returns>This request</returns>
+		public RestRequest AddFile(Action<Stream> writer, string fileName)
+		{
+			return AddFile(writer, fileName, null);
+		}
+
+		/// <summary>
+		/// Adds the bytes to the Files collection with the specified file name and content type
+		/// </summary>
+		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+		/// <param name="fileName">The file name to use for the uploaded file</param>
+		/// <param name="contentType">The MIME type of the file to upload</param>
+		/// <returns>This request</returns>
+		public RestRequest AddFile(Action<Stream> writer, string fileName, string contentType)
+		{
+			return AddFile(new FileParameter { Writer = writer, FileName = fileName, ContentType = contentType });
+		}
+
+		private RestRequest AddFile(FileParameter file)
+		{
+			Files.Add(file);
 			return this;
 		}
 #endif

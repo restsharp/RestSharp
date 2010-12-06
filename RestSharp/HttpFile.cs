@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 
 namespace RestSharp
 {
@@ -11,9 +9,9 @@ namespace RestSharp
 	public class HttpFile
 	{
 		/// <summary>
-		/// Raw data for file
+		/// Provides raw data for file
 		/// </summary>
-		public byte[] Data { get; set; }
+		public Action<Stream> Writer { get; set; }
 		/// <summary>
 		/// Name of the file to use when uploading
 		/// </summary>

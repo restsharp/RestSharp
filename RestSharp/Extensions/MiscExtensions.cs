@@ -56,6 +56,22 @@ namespace RestSharp.Extensions
 		}
 
 		/// <summary>
+		/// Copies bytes from one stream to another
+		/// </summary>
+		/// <param name="input">The input stream.</param>
+		/// <param name="output">The output stream.</param>
+		public static void CopyTo(this Stream input, Stream output)
+		{
+			var buffer = new byte[32768];
+			while(true)
+			{
+				var read = input.Read(buffer, 0, buffer.Length);
+				if(read <= 0)
+					return;
+				output.Write(buffer, 0, read);
+			}
+		}
+		/// <summary>
 		/// Gets string value from JToken
 		/// </summary>
 		/// <param name="token"></param>
