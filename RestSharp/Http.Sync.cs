@@ -195,7 +195,7 @@ namespace RestSharp
 					formDataStream.Write(encoding.GetBytes(postData), 0, postData.Length);
 				}
 
-				string footer = String.Format("{1}--{0}--{1}", FormBoundary, Environment.NewLine);
+				string footer = String.Format("--{0}--{1}", FormBoundary, Environment.NewLine);
 				formDataStream.Write(encoding.GetBytes(footer), 0, footer.Length);
 			}
 		}
