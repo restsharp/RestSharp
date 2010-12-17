@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using RestSharp.Authenticators.OAuth;
+using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Contrib;
 
 namespace RestSharp.Authenticators
 {
     public class OAuth1Authenticator : IAuthenticator
     {
+        public virtual string Realm { get; set; }
         public virtual OAuthParameterHandling ParameterHandling { get; set; }
         public virtual OAuthSignatureMethod SignatureMethod { get; set; }
         public virtual OAuthSignatureTreatment SignatureTreatment { get; set; }
@@ -162,11 +166,48 @@ namespace RestSharp.Authenticators
                     throw new ArgumentOutOfRangeException();
             }
 
-            foreach(var parameter in parameters)
+            parameters.Add("oauth_signature", HttpUtility.UrlDecode(oauth.Signature));
+            
+            switch(ParameterHandling)
             {
-                request.AddParameter(parameter.Name, parameter.Value);
+                case OAuthParameterHandling.HttpAuthorizationHeader:
+                    request.AddParameter("Authorization", GetAuthorizationHeader(parameters));
+                    break;
+                case OAuthParameterHandling.UrlOrPostParameters:
+                    foreach(var parameter in parameters)
+                    {
+                        request.AddParameter(parameter.Name, parameter.Value);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            request.AddParameter("oauth_signature", HttpUtility.UrlDecode(oauth.Signature));
+        }
+
+        private string GetAuthorizationHeader(WebPairCollection parameters)
+        {
+            var sb = new StringBuilder("OAuth ");
+            if (!Realm.IsNullOrBlank())
+            {
+                sb.Append("realm=\"{0}\",".FormatWith(OAuthTools.UrlEncodeRelaxed(Realm)));
+            }
+
+            parameters.Sort((l, r) => l.Name.CompareTo(r.Name));
+
+            var parameterCount = 0;
+            foreach (var parameter in parameters.Where(parameter =>
+                                                       !parameter.Name.IsNullOrBlank() &&
+                                                       !parameter.Value.IsNullOrBlank() &&
+                                                        parameter.Name.StartsWith("oauth_")
+                                                       ))
+            {
+                parameterCount++;
+                var format = parameterCount < parameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
+                sb.Append(format.FormatWith(parameter.Name, parameter.Value));
+            }
+
+            var authorization = sb.ToString();
+            return authorization;
         }
     }
 }
