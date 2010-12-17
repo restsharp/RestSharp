@@ -40,7 +40,7 @@ namespace RestSharp
             get { return _accessToken; }
         }
 
-		public abstract void Authenticate(RestRequest request);
+        public abstract void Authenticate(RestClient client, RestRequest request);
 	}
 
 	/// <summary>
@@ -62,7 +62,7 @@ namespace RestSharp
 		{
 		}
 
-		public override void Authenticate(RestRequest request)
+        public override void Authenticate(RestClient client, RestRequest request)
 		{
 			request.AddParameter("oauth_token", AccessToken, ParameterType.GetOrPost);
 		}
@@ -94,7 +94,7 @@ namespace RestSharp
             _authorizationValue = "OAuth " + accessToken;
         }
 
-        public override void Authenticate(RestRequest request)
+        public override void Authenticate(RestClient client, RestRequest request)
         {
             // only add the Authorization parameter if it hasn't been added.
             if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.InvariantCultureIgnoreCase)))

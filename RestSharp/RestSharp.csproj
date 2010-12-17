@@ -76,7 +76,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authenticators\NtlmAuthenticator.cs" />
+    <Compile Include="Authenticators\OAuth1Authenticator.cs" />
     <Compile Include="Authenticators\OAuth2Authenticator.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\OAuthExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\StringExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\TimeExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\HttpPostParameter.cs" />
+    <Compile Include="Authenticators\OAuth\HttpPostParameterType.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthParameterHandling.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthSignatureMethod.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthSignatureTreatment.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthTools.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthType.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthWebQueryInfo.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthWorkflow.cs" />
+    <Compile Include="Authenticators\OAuth\WebPair.cs" />
+    <Compile Include="Authenticators\OAuth\WebPairCollection.cs" />
+    <Compile Include="Authenticators\OAuth\WebParameter.cs" />
+    <Compile Include="Authenticators\OAuth\WebParameterCollection.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
     <Compile Include="Extensions\MonoHttp\Helpers.cs" />

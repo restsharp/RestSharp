@@ -30,7 +30,8 @@ namespace RestSharp
 			_password = password;
 		}
 
-		public void Authenticate(RestRequest request) {
+        public void Authenticate(RestClient client, RestRequest request)
+        {
 			request.AddParameter(_usernameKey, _username);
 			request.AddParameter(_passwordKey, _password);
 		}

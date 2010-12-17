@@ -18,6 +18,6 @@ namespace RestSharp
 {
 	public interface IAuthenticator
 	{
-		void Authenticate(RestRequest request);
+        void Authenticate(RestClient client, RestRequest request);
 	}
 }

@@ -26,7 +26,7 @@ namespace RestSharp
 	{
 		public void ExecuteAsync(RestRequest request, Action<RestResponse> callback)
 		{
-			AuthenticateIfNeeded(request);
+			AuthenticateIfNeeded(this, request);
 
 			var http = new Http();
 			ConfigureHttp(request, http);

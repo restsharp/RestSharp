@@ -35,7 +35,7 @@ namespace RestSharp
 		/// <returns>RestResponse</returns>
 		public RestResponse Execute(RestRequest request)
 		{
-			AuthenticateIfNeeded(request);
+			AuthenticateIfNeeded(this, request);
 
 			// add Accept header
 			var accepts = string.Join(", ", AcceptTypes.ToArray());

@@ -233,11 +233,11 @@ namespace RestSharp
 			}
 		}
 
-		private void AuthenticateIfNeeded(RestRequest request)
+		private void AuthenticateIfNeeded(RestClient client, RestRequest request)
 		{
 			if (Authenticator != null)
 			{
-				Authenticator.Authenticate(request);
+				Authenticator.Authenticate(client, request);
 			}
 		}
 
