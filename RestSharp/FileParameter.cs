@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 
 namespace RestSharp
 {
@@ -10,10 +8,38 @@ namespace RestSharp
 	/// </summary>
 	public class FileParameter
 	{
+		///<summary>
+		/// Creates a file parameter from an array of bytes.
+		///</summary>
+		///<param name="data">The data to use as the file's contents.</param>
+		///<param name="filename">The filename to use in the request.</param>
+		///<param name="contentType">The content type to use in the request.</param>
+		///<returns>The <see cref="FileParameter"/></returns>
+		public static FileParameter Create(byte[] data, string filename, string contentType)
+		{
+			return new FileParameter
+			{
+				Writer = s => s.Write(data, 0, data.Length),
+				FileName = filename,
+				ContentType = contentType
+			};
+		}
+
+		///<summary>
+		/// Creates a file parameter from an array of bytes.
+		///</summary>
+		///<param name="data">The data to use as the file's contents.</param>
+		///<param name="filename">The filename to use in the request.</param>
+		///<returns>The <see cref="FileParameter"/> using the default content type.</returns>
+		public static FileParameter Create(byte[] data, string filename)
+		{
+			return Create(data, filename, null);
+		}
+
 		/// <summary>
-		/// Raw data for file
+		/// Provides raw data for file
 		/// </summary>
-		public byte[] Data { get; set; }
+		public Action<Stream> Writer { get; set; }
 		/// <summary>
 		/// Name of the file to use when uploading
 		/// </summary>
