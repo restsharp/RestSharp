@@ -111,12 +111,11 @@ namespace RestSharp
 
 		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
 		{
-			if (HasBody)
+			if (HasBody || HasFiles)
 			{
 #if !WINDOWS_PHONE
-				webRequest.ContentLength = RequestBody.Length;
+				webRequest.ContentLength = CalculateContentLength();
 #endif
-
 				webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback), webRequest);
 			}
 			else
@@ -125,15 +124,70 @@ namespace RestSharp
 			}
 		}
 
-		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
+		private long CalculateContentLength ()
+		{
+			if (!HasFiles)
+			{
+				return RequestBody.Length;
+			}
+			
+			// calculate length for multipart form
+			long length = 0;
+			foreach (var file in Files) {
+				length += GetMultipartFileHeader (file).Length;
+				length += file.ContentLength;
+				length += Environment.NewLine.Length;
+			}
+			
+			foreach (var param in Parameters) {
+				length += GetMultipartFormData (param).Length;
+			}
+			
+			length += GetMultipartFooter().Length;
+			return length;
+		}
+
+		private void WriteMultipartFormDataAsync (Stream requestStream)
+		{
+			var encoding = Encoding.UTF8;
+			foreach (var file in Files)
+			{
+				// Add just the first part of this param, since we will write the file data directly to the Stream
+				var header = GetMultipartFileHeader (file);
+				requestStream.Write (encoding.GetBytes (header), 0, header.Length);
+				
+				// Write the file data directly to the Stream, rather than serializing it to a string.
+				file.Writer (requestStream);
+				var lineEnding = Environment.NewLine;
+				requestStream.Write (encoding.GetBytes (lineEnding), 0, lineEnding.Length);
+			}
+			
+			foreach (var param in Parameters)
+			{
+				var postData = GetMultipartFormData (param);
+				requestStream.Write (encoding.GetBytes (postData), 0, postData.Length);
+			}
+			
+			var footer = GetMultipartFooter ();
+			requestStream.Write (encoding.GetBytes (footer), 0, footer.Length);
+		}
+		
+		private void RequestStreamCallback (IAsyncResult result, Action<HttpResponse> callback)
 		{
 			var webRequest = result.AsyncState as HttpWebRequest;
 
 			// write body to request stream
-			using (var requestStream = webRequest.EndGetRequestStream(result))
+			using (var requestStream = webRequest.EndGetRequestStream (result))
 			{
-				var encoding = Encoding.UTF8;
-				requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
+				if (HasFiles)
+				{
+					WriteMultipartFormDataAsync (requestStream);
+				}
+				else
+				{
+					var encoding = Encoding.UTF8;
+					requestStream.Write (encoding.GetBytes (RequestBody), 0, RequestBody.Length);
+				}
 			}
 
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
@@ -225,7 +279,10 @@ namespace RestSharp
 #if !WINDOWS_PHONE
 			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
 			// or indirectly
-			webRequest.ContentLength = 0;
+			if (!HasFiles)
+			{
+				webRequest.ContentLength = 0;
+			}
 #endif
 			if (Credentials != null)
 			{
