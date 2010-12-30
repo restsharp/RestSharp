@@ -107,7 +107,6 @@ namespace RestSharp
 			//resource.PathAndQuery not supported by Silverlight :(
 		}
 
-#if FRAMEWORK
 		/// <summary>
 		/// Adds a file to the Files collection to be included with a POST or PUT request 
 		/// (other methods do not support file uploads).
@@ -180,7 +179,6 @@ namespace RestSharp
 			Files.Add(file);
 			return this;
 		}
-#endif
 
 		/// <summary>
 		/// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
