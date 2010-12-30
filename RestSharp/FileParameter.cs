@@ -17,12 +17,17 @@ namespace RestSharp
 		///<returns>The <see cref="FileParameter"/></returns>
 		public static FileParameter Create(byte[] data, string filename, string contentType)
 		{
+#if FRAMEWORK
+			var length = data.LongLength;
+#else
+			var length = (long)data.Length;
+#endif
 			return new FileParameter
 			{
 				Writer = s => s.Write(data, 0, data.Length),
 				FileName = filename,
 				ContentType = contentType,
-				ContentLength = data.LongLength
+				ContentLength = length
 			};
 		}
 
