@@ -238,6 +238,13 @@ namespace RestSharp
 			{
 				webRequest.Proxy = Proxy;
 			}
+
+			webRequest.AllowAutoRedirect = FollowRedirects;
+			if (FollowRedirects && MaxRedirects.HasValue)
+			{
+				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value; 
+			}
+
 			return webRequest;
 		}
 	}

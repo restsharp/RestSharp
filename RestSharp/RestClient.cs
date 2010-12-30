@@ -50,6 +50,7 @@ namespace RestSharp
 			AddHandler("*", new XmlDeserializer());
 
 			UserAgent = "RestSharp Release 1";
+			FollowRedirects = true;
 		}
 
 		/// <summary>
@@ -196,6 +197,17 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// Default is true. Determine whether or not requests that result in 
+		/// HTTP status codes of 3xx should follow returned redirect
+		/// </summary>
+		public bool FollowRedirects { get; set; }
+
+		/// <summary>
+		/// Maximum number of redirects to follow if FollowRedirects is true
+		/// </summary>
+		public int? MaxRedirects { get; set; }
+
+		/// <summary>
 		/// UserAgent to use for requests made by this client instance
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -285,6 +297,9 @@ namespace RestSharp
 			}
 
 			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
+
+			http.FollowRedirects = FollowRedirects;
+			http.MaxRedirects = MaxRedirects;
 
 			if (request.Credentials != null)
 			{

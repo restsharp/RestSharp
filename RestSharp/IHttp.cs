@@ -26,8 +26,9 @@ namespace RestSharp
 		ICredentials Credentials { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
+		bool FollowRedirects { get; set; }
+		int? MaxRedirects { get; set; }
 
-		// TODO: move to HttpRequest
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }
 		IList<HttpFile> Files { get; }

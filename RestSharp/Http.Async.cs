@@ -306,7 +306,14 @@ namespace RestSharp
 			{
 				webRequest.Proxy = Proxy;
 			}
+
+			if (FollowRedirects && MaxRedirects.HasValue)
+			{
+				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value; 
+			}
 #endif
+
+			webRequest.AllowAutoRedirect = FollowRedirects;
 
 			return webRequest;
 		}
