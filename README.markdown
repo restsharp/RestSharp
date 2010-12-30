@@ -1,28 +1,29 @@
-# RestSharp - .NET REST Client That (Hopefully) Doesn't Suck  
-## [http://restsharp.org][1] - [@RestSharp][2]  
+# RestSharp - Simple .NET REST Client
 
-## License: Apache License 2.0  
+### [Official Site/Blog][1] - [@RestSharp][2]  
+### Please use the [Google Group][3] for feature requests and troubleshooting usage.
+### License: Apache License 2.0  
 
-### Key Features
+### Features
 
+* Supports .NET 3.5+, Silverlight 4, Windows Phone 7, Mono, MonoTouch
 * Automatic XML and JSON deserialization
-* Fuzzy name matching ('product_id' in XML/JSON will match property named 'ProductId')
+* Supports custom serialization and deserialization via ISerializer and IDeserializer
+* Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
 * GET, POST, PUT, HEAD, OPTIONS, DELETE supported
-* Basic, NTLM and Parameter-based Authenticators included
-* Supports custom authentication schemes
+* oAuth 1, oAuth 2, Basic, NTLM and Parameter-based Authenticators included
+* Supports custom authentication schemes via IAuthenticator
 * Multi-part form/file uploads
 * T4 Helper to generate C# classes from an XML document
 
 ### Basic Usage
-    var client = new RestClient();
-    client.BaseUrl = "http://example.com";
-    // client.Authenticator = new BasicAuthenticator(username, password);
+    var client = new RestClient("http://example.com");
+    // client.Authenticator = new HttpBasicAuthenticator(username, password);
 	
-    var request = new RestRequest(); // GET by default
-    // request.Method = Method.GET | Method.POST | Method.PUT | Method.DELETE | Method.HEAD | Method.OPTIONS
-    request.Resource = "resource";
-    request.AddParameter("name", "value");
+    var request = new RestRequest("resource/{id}", Method.POST);
+    request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
+    request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
 
     // add parameters for all properties on an object
     request.AddObject(object);
@@ -31,19 +32,15 @@
     request.AddObject(object, "PersonId", "Name", ...);
     
     // easily add HTTP Headers
-    request.AddParameter("header", "value", ParameterType.HttpHeader);
+    request.AddHeader("header", "value");
 
-    // supports XML/JSON request bodies
-    request.RequestFormat = RequestFormat.Xml;
-    request.AddBody(object);
-
-    // add files (only works with compatible verbs)
+    // add files to upload (works with compatible verbs)
     request.AddFile(path);
         
-    // get raw response
+    // execute the request
     RestResponse response = client.Execute(request);
-    // response.Content : string representation of response
-    
+    var content = response.Content; // raw content as string
+	    
     // or automatically deserialize result
     // return content type is sniffed but can be explicitly set via RestClient.AddHandler();
     RestResponse<Person> response2 = client.Execute<Person>(request);
@@ -52,10 +49,16 @@
     // or download and save file to disk
     client.DownloadData(request).SaveAs(path);
 
-    // shortcuts for parsing xml/feeds
-    client.ExecuteAsXDocument(request);
-    client.ExecuteAsXmlDocument(request);
-    client.ExecuteAsSyndicationFeed(request);
+	// easy async support
+    client.ExecuteAsync(request, response => {
+        Console.WriteLine(response.Content);
+    });
+
+	// async with deserialization
+	client.ExecuteAsync<Person>(request, response => {
+        Console.WriteLine(response.Data.Name);
+    });
  
   [1]: http://restsharp.org
   [2]: http://twitter.com/RestSharp
+  [3]: http://groups.google.com/group/RestSharp
