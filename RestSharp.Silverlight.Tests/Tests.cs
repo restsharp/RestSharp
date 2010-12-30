@@ -20,16 +20,14 @@ namespace RestSharp.Silverlight.Tests
 		[TestMethod]
 		public void TestMethod1()
 		{
-			//var client = new RestClient("https://api.twilio.com");
-			//client.Authenticator = new HttpBasicAuthenticator("ACec243f00aaaa1b67fa32ae88178ebc2c", "09772adb6b86ba9341168d5277d18fb2");
-			
-			//var request = new RestRequest("2010-10-01/Accounts/ACec243f00aaaa1b67fa32ae88178ebc2c");
+			var client = new RestClient("https://api.twilio.com");
+			client.UserAgent = "foo";
+			client.Authenticator = new HttpBasicAuthenticator("ACec243f00aaaa1b67fa32ae88178ebc2c", "09772adb6b86ba9341168d5277d18fb2");
 
-			var client = new RestClient("http://bing.com");
+			var request = new RestRequest("2010-10-01/Accounts/ACec243f00aaaa1b67fa32ae88178ebc2c");
 
-			var request = new RestRequest();
-
-			client.ExecuteAsync(request, r => {
+			client.ExecuteAsync(request, r =>
+			{
 				Debug.WriteLine(r.Content);
 			});
 		}

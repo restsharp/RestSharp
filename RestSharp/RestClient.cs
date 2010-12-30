@@ -22,6 +22,7 @@ using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
+using RestSharp.Extensions;
 
 namespace RestSharp
 {
@@ -278,7 +279,7 @@ namespace RestSharp
 
 			http.Url = BuildUri(request);
 
-			if (UserAgent != null)
+			if (UserAgent.HasValue())
 			{
 				http.UserAgent = UserAgent;
 			}

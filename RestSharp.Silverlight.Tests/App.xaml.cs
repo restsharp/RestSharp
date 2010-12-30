@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Microsoft.Silverlight.Testing;
+using System.Diagnostics;
 
 namespace RestSharp.Silverlight.Tests
 {
@@ -11,14 +12,15 @@ namespace RestSharp.Silverlight.Tests
 		{
 			this.Startup += this.Application_Startup;
 			this.Exit += this.Application_Exit;
-			this.UnhandledException += this.Application_UnhandledException;
+			//this.UnhandledException += this.Application_UnhandledException;
 
 			InitializeComponent();
 		}
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			RootVisual = UnitTestSystem.CreateTestPage();
+			//RootVisual = UnitTestSystem.CreateTestPage();
+			RootVisual = new Scratch();
 		}
 
 		private void Application_Exit(object sender, EventArgs e)
@@ -39,6 +41,12 @@ namespace RestSharp.Silverlight.Tests
 				// report the error to the website and stop the application.
 				e.Handled = true;
 				Deployment.Current.Dispatcher.BeginInvoke(delegate { ReportErrorToDOM(e); });
+			}
+			else
+			{
+				Debugger.Break();
+				e.Handled = true;
+				return;
 			}
 		}
 		private void ReportErrorToDOM(ApplicationUnhandledExceptionEventArgs e)

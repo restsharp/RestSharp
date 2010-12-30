@@ -232,10 +232,12 @@ namespace RestSharp
 				webRequest.Credentials = Credentials;
 			}
 
+#if !SILVERLIGHT
 			if (UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
 			}
+#endif
 
 #if FRAMEWORK
 			if (Timeout != 0)
