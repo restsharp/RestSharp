@@ -15,8 +15,8 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Can_Authenticate_With_OAuth()
 		{
-			const string consumerKey = "fKGg2R7jINCYgGLMerhrg";
-			const string consumerSecret = "DIGd6nBx3jchwwbMClmHshh8Ky24lq3pNJragxTg";
+			const string consumerKey = "";
+			const string consumerSecret = "";
 
 			var baseUrl = "https://api.twitter.com";
 			var client = new RestClient(baseUrl);
