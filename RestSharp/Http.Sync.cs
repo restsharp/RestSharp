@@ -150,7 +150,6 @@ namespace RestSharp
 		{
 			if (HasFiles)
 			{
-				webRequest.ContentType = GetMultipartFormContentType();
 				WriteMultipartFormData(webRequest);
 			}
 			else
@@ -169,11 +168,7 @@ namespace RestSharp
 					var fileName = file.FileName;
 					var contentType = file.ContentType;
 					// Add just the first part of this param, since we will write the file data directly to the Stream
-					string header = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\"{3}Content-Type: {2}{3}{3}",
-													FormBoundary,
-													fileName,
-													contentType ?? "application/octet-stream",
-													Environment.NewLine);
+					string header = GetMultipartFileHeader (file);
 
 					formDataStream.Write(encoding.GetBytes(header), 0, header.Length);
 					// Write the file data directly to the Stream, rather than serializing it to a string.
@@ -184,16 +179,11 @@ namespace RestSharp
 
 				foreach (var param in Parameters)
 				{
-					var postData = string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
-													FormBoundary,
-													param.Name,
-													param.Value,
-													Environment.NewLine);
-
+					var postData = GetMultipartFormData (param);
 					formDataStream.Write(encoding.GetBytes(postData), 0, postData.Length);
 				}
 
-				string footer = String.Format("{1}--{0}--{1}", FormBoundary, Environment.NewLine);
+				string footer = GetMultipartFooter();
 				formDataStream.Write(encoding.GetBytes(footer), 0, footer.Length);
 			}
 		}

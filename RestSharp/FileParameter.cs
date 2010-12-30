@@ -21,7 +21,8 @@ namespace RestSharp
 			{
 				Writer = s => s.Write(data, 0, data.Length),
 				FileName = filename,
-				ContentType = contentType
+				ContentType = contentType,
+				ContentLength = data.LongLength
 			};
 		}
 
@@ -35,7 +36,11 @@ namespace RestSharp
 		{
 			return Create(data, filename, null);
 		}
-
+		
+		/// <summary>
+		/// The length of data to be sent
+		/// </summary>
+		public long ContentLength { get; set; }
 		/// <summary>
 		/// Provides raw data for file
 		/// </summary>

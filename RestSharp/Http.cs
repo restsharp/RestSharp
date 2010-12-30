@@ -153,7 +153,24 @@ namespace RestSharp
 		{
 			return string.Format("multipart/form-data; boundary={0}", FormBoundary);
 		}
-
+		
+		private string GetMultipartFileHeader (HttpFile file)
+		{
+			return string.Format ("--{0}{3}Content-Disposition: form-data; name=\"{1}\"; filename=\"{1}\"{3}Content-Type: {2}{3}{3}", 
+				FormBoundary, file.FileName, file.ContentType ?? "application/octet-stream", Environment.NewLine);			
+		}
+		
+		private string GetMultipartFormData (HttpParameter param)
+		{
+			return string.Format ("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
+				FormBoundary, param.Name, param.Value, Environment.NewLine);
+		}
+		
+		private string GetMultipartFooter ()
+		{
+			return string.Format ("{1}--{0}--{1}", FormBoundary, Environment.NewLine);
+		}
+		
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
 
 		// handle restricted headers the .NET way - thanks @dimebrain!
@@ -225,9 +242,13 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
-		private void PreparePostBody(HttpWebRequest webRequest)
+		private void PreparePostBody (HttpWebRequest webRequest)
 		{
-			if (HasParameters)
+			if (HasFiles)
+			{
+				webRequest.ContentType = GetMultipartFormContentType ();
+			}
+			else if (HasParameters)
 			{
 				webRequest.ContentType = "application/x-www-form-urlencoded";
 				RequestBody = EncodeParameters();
