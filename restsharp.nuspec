@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>RestSharp</id>
+		<version>100.0</version>
+		<authors>John Sheehan, RestSharp Community</authors>
+		<owners>John Sheehan</owners>
+		<description>Simple REST and HTTP API Client</description>
+		<language>en-US</language>
+		<projectUrl>http://restsharp.org</projectUrl>
+		<licenseUrl>https://github.com/johnsheehan/RestSharp/blob/master/LICENSE.txt</licenseUrl>
+		<dependencies>
+			<dependency id="Newtonsoft.Json" />
+		</dependencies>
+		<tags>REST HTTP API</tags>
+	</metadata>
+</package>
