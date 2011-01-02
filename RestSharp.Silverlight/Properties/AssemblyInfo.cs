@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("RestSharp.Silverlight")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Simple REST and HTTP API Client")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("restsharp.org")]
 [assembly: AssemblyProduct("RestSharp.Silverlight")]
-[assembly: AssemblyCopyright("Copyright © RestSharp Project 2010")]
+[assembly: AssemblyCopyright("Copyright © RestSharp Project 2009-2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("100.0.0.0")]
+[assembly: AssemblyFileVersion("100.0.0.0")]
