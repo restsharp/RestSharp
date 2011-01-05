@@ -158,6 +158,7 @@ namespace RestSharp
 		public void RemoveHandler(string contentType)
 		{
 			ContentHandlers.Remove(contentType);
+			AcceptTypes.Remove(contentType);
 		}
 
 		/// <summary>
