@@ -222,21 +222,6 @@ namespace RestSharp
 			}
 		}
 
-		private Uri AssembleUrl()
-		{
-			string url = Url.ToString();
-			if (HasParameters)
-			{
-				if (url.EndsWith("/"))
-				{
-					url = url.Substring(0, url.Length - 1);
-				}
-				var data = EncodeParameters();
-				url = string.Format("{0}?{1}", url, data);
-			}
-			return new Uri(url);
-		}
-
 		private string EncodeParameters()
 		{
 			var querystring = new StringBuilder();

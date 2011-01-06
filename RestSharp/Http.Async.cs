@@ -77,7 +77,7 @@ namespace RestSharp
 		{
 			try
 			{
-				var url = AssembleUrl();
+				var url = Url;
 				var webRequest = ConfigureAsyncWebRequest(method, url);
 				webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
 			}

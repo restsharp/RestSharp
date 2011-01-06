@@ -81,8 +81,7 @@ namespace RestSharp
 
 		private HttpResponse GetStyleMethodInternal(string method)
 		{
-			var url = AssembleUrl();
-			var webRequest = ConfigureWebRequest(method, url);
+			var webRequest = ConfigureWebRequest(method, Url);
 
 			return GetResponse(webRequest);
 		}

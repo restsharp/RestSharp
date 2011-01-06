@@ -23,6 +23,7 @@ using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
+using System.Text;
 
 namespace RestSharp
 {
@@ -274,7 +275,37 @@ namespace RestSharp
 				assembled = assembled.Substring(1);
 			}
 
-			return new Uri(string.Format("{0}/{1}", BaseUrl, assembled));
+			assembled = string.Format("{0}/{1}", BaseUrl, assembled);
+
+			if (request.Method != Method.POST && request.Method != Method.PUT)
+			{
+				// build and attach querystring if this is a get-style request
+				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))
+				{
+					if (assembled.EndsWith("/"))
+					{
+						assembled = assembled.Substring(0, assembled.Length - 1);
+					}
+
+					var data = EncodeParameters(request);
+					assembled = string.Format("{0}?{1}", assembled, data);
+				}
+			}
+
+			return new Uri(assembled);
+		}
+
+		private string EncodeParameters(RestRequest request)
+		{
+			var querystring = new StringBuilder();
+			foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
+			{
+				if (querystring.Length > 1)
+					querystring.Append("&");
+				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), ((string)p.Value).UrlEncode());
+			}
+
+			return querystring.ToString();
 		}
 
 		private void ConfigureHttp(RestRequest request, IHttp http)
