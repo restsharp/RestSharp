@@ -81,7 +81,7 @@ namespace RestSharp
         /// <summary>
         /// Cookies returned by server with the response
         /// </summary>
-        IList<Parameter> Cookies { get; }
+        IList<RestResponseCookie> Cookies { get; }
 
         /// <summary>
         /// Headers returned by server with the response
