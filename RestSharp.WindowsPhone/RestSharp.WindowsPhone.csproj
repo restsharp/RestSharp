@@ -170,6 +170,9 @@
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\RestResponseCookie.cs">
+      <Link>RestResponseCookie.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
