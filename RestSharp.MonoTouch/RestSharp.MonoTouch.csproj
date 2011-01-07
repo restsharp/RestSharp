@@ -210,7 +210,9 @@
     <Compile Include="..\RestSharp\IRestRequest.cs">
       <Link>IRestRequest.cs</Link>
     </Compile>
-    <Compile Include="RestResponseCookie.cs" />
+    <Compile Include="..\RestSharp\RestResponseCookie.cs">
+      <Link>RestResponseCookie.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Authenticators\" />
