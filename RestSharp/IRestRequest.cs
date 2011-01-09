@@ -112,26 +112,29 @@ namespace RestSharp
         /// Adds a file to the Files collection to be included with a POST or PUT request 
         /// (other methods do not support file uploads).
         /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
         /// <param name="path">Full path to file to upload</param>
         /// <returns>This request</returns>
-        RestRequest AddFile(string path);
+        RestRequest AddFile(string name, string path);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name
         /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
         /// <param name="bytes">The file data</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <returns>This request</returns>
-        RestRequest AddFile(byte[] bytes, string fileName);
+        RestRequest AddFile(string name, byte[] bytes, string fileName);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
         /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
         /// <param name="bytes">The file data</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        RestRequest AddFile(byte[] bytes, string fileName, string contentType);
+        RestRequest AddFile(string name, byte[] bytes, string fileName, string contentType);
 #endif
 
         /// <summary>

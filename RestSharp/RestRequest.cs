@@ -107,16 +107,18 @@ namespace RestSharp
 			//resource.PathAndQuery not supported by Silverlight :(
 		}
 
-		/// <summary>
-		/// Adds a file to the Files collection to be included with a POST or PUT request 
-		/// (other methods do not support file uploads).
-		/// </summary>
-		/// <param name="path">Full path to file to upload</param>
-		/// <returns>This request</returns>
-		public RestRequest AddFile(string path)
+	    /// <summary>
+	    /// Adds a file to the Files collection to be included with a POST or PUT request 
+	    /// (other methods do not support file uploads).
+	    /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+	    /// <param name="path">Full path to file to upload</param>
+	    /// <returns>This request</returns>
+	    public RestRequest AddFile(string name, string path)
 		{
 			return AddFile(new FileParameter
 			{
+                Name = name,
 				FileName = Path.GetFileName(path),
 				Writer = s =>
 				{
@@ -131,47 +133,51 @@ namespace RestSharp
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name
 		/// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(byte[] bytes, string fileName)
+		public RestRequest AddFile(string name, byte[] bytes, string fileName)
 		{
-			return AddFile(FileParameter.Create(bytes, fileName));
+			return AddFile(FileParameter.Create(name, bytes, fileName));
 		}
 
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
 		/// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(byte[] bytes, string fileName, string contentType)
+		public RestRequest AddFile(string name, byte[] bytes, string fileName, string contentType)
 		{
-			return AddFile(FileParameter.Create(bytes, fileName, contentType));
+			return AddFile(FileParameter.Create(name, bytes, fileName, contentType));
 		}
 
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
 		/// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
 		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(Action<Stream> writer, string fileName)
+		public RestRequest AddFile(string name, Action<Stream> writer, string fileName)
 		{
-			return AddFile(writer, fileName, null);
+			return AddFile(name, writer, fileName, null);
 		}
 
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
 		/// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
 		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(Action<Stream> writer, string fileName, string contentType)
+		public RestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType)
 		{
-			return AddFile(new FileParameter { Writer = writer, FileName = fileName, ContentType = contentType });
+			return AddFile(new FileParameter { Name = name, Writer = writer, FileName = fileName, ContentType = contentType });
 		}
 
 		private RestRequest AddFile(FileParameter file)
