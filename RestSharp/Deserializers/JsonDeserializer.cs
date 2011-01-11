@@ -31,6 +31,12 @@ namespace RestSharp.Deserializers
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
 
+		public object Deserialize(RestResponse response)
+		{
+			var root = FindRoot(response.Content);
+			return root;
+		}
+
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
 			var target = new T();

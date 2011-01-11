@@ -11,7 +11,7 @@
 		<licenseUrl>https://github.com/johnsheehan/RestSharp/blob/master/LICENSE.txt</licenseUrl>
 		<iconUrl>http://restsharp.org/wp-content/uploads/restsharp-icon-32.png</iconUrl>
 		<dependencies>
-			<dependency id="Newtonsoft.Json" version="3.5.8" />
+			<dependency id="Newtonsoft.Json" version="4.0.0" />
 		</dependencies>
 		<tags>REST HTTP API</tags>
 	</metadata>

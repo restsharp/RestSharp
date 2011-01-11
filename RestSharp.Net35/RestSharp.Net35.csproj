@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{13B75B6C-5EE1-4934-B6FE-D3903CEE7E09}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RestSharp.Net35</RootNamespace>
+    <AssemblyName>RestSharp.Net35</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FRAMEWORK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\RestSharp.Net35.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;FRAMEWORK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json.Net35">
+      <HintPath>..\References\Newtonsoft.Json.Net35.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel.Web">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\RestSharp\Authenticators\HttpBasicAuthenticator.cs">
+      <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\IAuthenticator.cs">
+      <Link>Authenticators\IAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\NtlmAuthenticator.cs">
+      <Link>Authenticators\NtlmAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth2Authenticator.cs">
+      <Link>Authenticators\OAuth2Authenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\SimpleAuthenticator.cs">
+      <Link>Authenticators\SimpleAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\DeserializeAsAttribute.cs">
+      <Link>Deserializers\DeserializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\IDeserializer.cs">
+      <Link>Deserializers\IDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\JsonDeserializer.cs">
+      <Link>Deserializers\JsonDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlAttributeDeserializer.cs">
+      <Link>Deserializers\XmlAttributeDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlDeserializer.cs">
+      <Link>Deserializers\XmlDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Enum.cs">
+      <Link>Enum.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MiscExtensions.cs">
+      <Link>Extensions\MiscExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MonoHttp\Helpers.cs">
+      <Link>Extensions\MonoHttp\Helpers.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MonoHttp\HtmlEncoder.cs">
+      <Link>Extensions\MonoHttp\HtmlEncoder.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MonoHttp\HttpUtility.cs">
+      <Link>Extensions\MonoHttp\HttpUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ReflectionExtensions.cs">
+      <Link>Extensions\ReflectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\StringExtensions.cs">
+      <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
+      <Link>Extensions\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\FileParameter.cs">
+      <Link>FileParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Async.cs">
+      <Link>Http.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.cs">
+      <Link>Http.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Sync.cs">
+      <Link>Http.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpCookie.cs">
+      <Link>HttpCookie.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpFile.cs">
+      <Link>HttpFile.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpHeader.cs">
+      <Link>HttpHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpParameter.cs">
+      <Link>HttpParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpResponse.cs">
+      <Link>HttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttp.cs">
+      <Link>IHttp.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttpResponse.cs">
+      <Link>IHttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestClient.cs">
+      <Link>IRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestRequest.cs">
+      <Link>IRestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestResponse.cs">
+      <Link>IRestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Parameter.cs">
+      <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Async.cs">
+      <Link>RestClient.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.cs">
+      <Link>RestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Sync.cs">
+      <Link>RestClient.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequest.cs">
+      <Link>RestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestResponse.cs">
+      <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\ISerializer.cs">
+      <Link>Serializers\ISerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\JsonSerializer.cs">
+      <Link>Serializers\JsonSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
+      <Link>Serializers\SerializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
+      <Link>Serializers\XmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Validation\Require.cs">
+      <Link>Validation\Require.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Validation\Validate.cs">
+      <Link>Validation\Validate.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

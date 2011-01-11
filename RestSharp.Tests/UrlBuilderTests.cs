@@ -42,7 +42,7 @@ namespace RestSharp.Tests
 			request.AddParameter("foo", "bar");
 			var client = new RestClient("http://example.com/");
 
-			var expected = new Uri("http://example.com/resource");
+			var expected = new Uri("http://example.com/resource?foo=bar");
 			var output = client.BuildUri(request);
 
 			Assert.Equal(expected, output);
