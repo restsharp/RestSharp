@@ -211,7 +211,6 @@ namespace RestSharp.Deserializers
 		private object HandleListDerivative(object x, XElement root, string propName, Type type)
 		{
 			Type t;
-			Type[] genericArgs = type.GetGenericArguments();
 
 			if (type.IsGenericType)
 			{

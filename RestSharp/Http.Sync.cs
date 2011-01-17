@@ -164,8 +164,6 @@ namespace RestSharp
 			{
 				foreach (var file in Files)
 				{
-					var fileName = file.FileName;
-					var contentType = file.ContentType;
 					// Add just the first part of this param, since we will write the file data directly to the Stream
 					string header = GetMultipartFileHeader (file);
 

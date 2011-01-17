@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "RestSharp\RestSharp.csproj", "{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "RestSharp.Tests\RestSharp.Tests.csproj", "{1464E4AC-18BB-4F23-8A0B-68196F9E1871}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{E709A928-A45C-4622-A35C-CCD8EE44CA80}"
+	ProjectSection(SolutionItems) = preProject
+		restsharp.nuspec = restsharp.nuspec
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1464E4AC-18BB-4F23-8A0B-68196F9E1871}.Release|x86.ActiveCfg = Release|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = RestSharp\RestSharp.csproj
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
