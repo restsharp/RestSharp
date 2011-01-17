@@ -176,7 +176,7 @@ namespace RestSharp
 		
 		private string GetMultipartFooter ()
 		{
-			return string.Format ("{1}--{0}--{1}", FormBoundary, Environment.NewLine);
+			return string.Format ("--{0}--{1}", FormBoundary, Environment.NewLine);
 		}
 		
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
