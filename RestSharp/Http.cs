@@ -156,7 +156,7 @@ namespace RestSharp
 			_restrictedHeaderActions.Add("Range", (r, v) => { /* Ignore */ });
 		}
 
-		private const string FormBoundary = "-----------------------------28947758029299";
+		public const string FormBoundary = "-----------------------------28947758029299";
 		private string GetMultipartFormContentType()
 		{
 			return string.Format("multipart/form-data; boundary={0}", FormBoundary);

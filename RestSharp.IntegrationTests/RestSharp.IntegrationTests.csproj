@@ -78,7 +78,9 @@
   <ItemGroup>
     <Compile Include="AuthenticationTests.cs" />
     <Compile Include="BugReportTests.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="FileTests.cs" />
+    <Compile Include="MultipartFormTests.cs" />
     <Compile Include="oAuth1Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Services\DumpService.cs" />
     <Compile Include="Services\ErrorHandlingService.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="SimpleWebServer.cs" />
     <Compile Include="StatusCodeTests.cs" />
     <Compile Include="Services\StatusCodeService.cs" />
     <Compile Include="TestBase.cs" />
