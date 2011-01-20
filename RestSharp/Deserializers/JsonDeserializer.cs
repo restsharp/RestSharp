@@ -114,14 +114,14 @@ namespace RestSharp.Deserializers
 
 				if (value == null)
 				{
-					// try name with underscores
+					// try name with dashes
 					actualName = name.AddDashes();
 					value = json[actualName];
 				}
 
 				if (value == null)
 				{
-					// try name with underscores with lower case
+					// try name with dashes with lower case
 					actualName = name.AddDashes().ToLower();
 					value = json[actualName];
 				}

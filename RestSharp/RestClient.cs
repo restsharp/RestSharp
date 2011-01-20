@@ -302,7 +302,7 @@ namespace RestSharp
 			{
 				if (querystring.Length > 1)
 					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), ((string)p.Value).UrlEncode());
+				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
 			}
 
 			return querystring.ToString();
