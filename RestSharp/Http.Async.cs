@@ -313,8 +313,9 @@ namespace RestSharp
 			}
 #endif
 
+#if !SILVERLIGHT
 			webRequest.AllowAutoRedirect = FollowRedirects;
-
+#endif
 			return webRequest;
 		}
 	}

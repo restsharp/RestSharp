@@ -89,14 +89,18 @@ namespace RestSharp
 		/// Collection of files to be sent with request
 		/// </summary>
 		public IList<HttpFile> Files { get; private set; }
+#if !SILVERLIGHT
 		/// <summary>
 		/// Whether or not HTTP 3xx response redirects should be automatically followed
 		/// </summary>
 		public bool FollowRedirects { get; set; }
+#endif
+#if FRAMEWORK
 		/// <summary>
 		/// Maximum number of automatic redirects to follow if FollowRedirects is true
 		/// </summary>
 		public int? MaxRedirects { get; set; }
+#endif
 		/// <summary>
 		/// HTTP headers to be sent with request
 		/// </summary>

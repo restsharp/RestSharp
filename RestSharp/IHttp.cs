@@ -26,8 +26,12 @@ namespace RestSharp
 		ICredentials Credentials { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
+#if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
+#endif
+#if FRAMEWORK
 		int? MaxRedirects { get; set; }
+#endif
 
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }

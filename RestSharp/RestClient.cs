@@ -330,8 +330,12 @@ namespace RestSharp
 
 			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
 
+#if !SILVERLIGHT
 			http.FollowRedirects = FollowRedirects;
+#endif
+#if FRAMEWORK
 			http.MaxRedirects = MaxRedirects;
+#endif
 
 			if (request.Credentials != null)
 			{
