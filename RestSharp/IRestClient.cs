@@ -25,7 +25,11 @@ namespace RestSharp
 	/// </summary>
 	public interface IRestClient
 	{
-		/// <summary>
+        /// <summary>
+        /// 
+        /// </summary>
+        System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }
+        /// <summary>
 		/// 
 		/// </summary>
 		string UserAgent { get; set; }

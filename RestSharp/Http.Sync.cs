@@ -216,6 +216,11 @@ namespace RestSharp
 
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
+            if (ClientCertificates != null)
+            {
+                webRequest.ClientCertificates = ClientCertificates;
+            }
+
 			if (UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;

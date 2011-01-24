@@ -289,6 +289,11 @@ namespace RestSharp
 				webRequest.Credentials = Credentials;
 			}
 
+            if (ClientCertificates != null)
+            {
+                webRequest.ClientCertificates = ClientCertificates;
+            }
+
 #if !SILVERLIGHT
 			if (UserAgent.HasValue())
 			{
@@ -316,6 +321,7 @@ namespace RestSharp
 #if !SILVERLIGHT
 			webRequest.AllowAutoRedirect = FollowRedirects;
 #endif
+
 			return webRequest;
 		}
 	}

@@ -73,6 +73,10 @@ namespace RestSharp
 			}
 		}
 
+        /// <summary>
+        /// System.Security.Cryptography.X509Certificates.X509CertificateCollection to be sent with request
+        /// </summary>
+        public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }
 		/// <summary>
 		/// UserAgent to be sent with request
 		/// </summary>

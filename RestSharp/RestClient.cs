@@ -50,6 +50,7 @@ namespace RestSharp
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 
+            ClientCertificates = null;
 			UserAgent = "RestSharp Release 1";
 			FollowRedirects = true;
 		}
@@ -209,7 +210,12 @@ namespace RestSharp
 		/// </summary>
 		public int? MaxRedirects { get; set; }
 
-		/// <summary>
+        /// <summary>
+        /// ClientCertificates to use for requests made by this client instance
+        /// </summary>
+        public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }
+
+        /// <summary>
 		/// UserAgent to use for requests made by this client instance
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -322,6 +328,11 @@ namespace RestSharp
 			}
 
 			http.Url = BuildUri(request);
+
+            if (ClientCertificates != null)
+            {
+                http.ClientCertificates = ClientCertificates;
+            }
 
 			if (UserAgent.HasValue())
 			{

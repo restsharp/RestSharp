@@ -24,6 +24,7 @@ namespace RestSharp
 	public interface IHttp
 	{
 		ICredentials Credentials { get; set; }
+        System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 #if !SILVERLIGHT
