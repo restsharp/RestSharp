@@ -129,20 +129,18 @@ namespace RestSharp
 
 		private HttpWebResponse GetRawResponse(HttpWebRequest request)
 		{
-			HttpWebResponse raw = null;
 			try
 			{
-				raw = (HttpWebResponse)request.GetResponse();
+				return (HttpWebResponse)request.GetResponse();
 			}
 			catch (WebException ex)
 			{
 				if (ex.Response is HttpWebResponse)
 				{
-					raw = ex.Response as HttpWebResponse;
+					return ex.Response as HttpWebResponse;
 				}
+                throw;
 			}
-
-			return raw;
 		}
 
 		private void PreparePostData(HttpWebRequest webRequest)
