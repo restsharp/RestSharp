@@ -149,6 +149,7 @@ namespace RestSharp
 		{
 			if (HasFiles)
 			{
+				webRequest.ContentType = GetMultipartFormContentType();
 				WriteMultipartFormData(webRequest);
 			}
 			else

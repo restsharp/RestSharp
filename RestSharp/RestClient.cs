@@ -50,7 +50,7 @@ namespace RestSharp
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 
-			UserAgent = "RestSharp Release 1";
+			UserAgent = "RestSharp 100.3";
 			FollowRedirects = true;
 		}
 
