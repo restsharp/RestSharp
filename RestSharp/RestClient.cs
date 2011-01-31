@@ -24,6 +24,7 @@ using System.Xml.Linq;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using System.Text;
+using System.Reflection;
 
 namespace RestSharp
 {
@@ -50,7 +51,12 @@ namespace RestSharp
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 
-			UserAgent = "RestSharp 100.3";
+			// silverlight friendly way to get current version
+			var assembly = Assembly.GetExecutingAssembly();
+			AssemblyName assemblyName = new AssemblyName(assembly.FullName);
+			var version = assemblyName.Version;
+
+			UserAgent = "RestSharp " + version.ToString();
 			FollowRedirects = true;
 		}
 
