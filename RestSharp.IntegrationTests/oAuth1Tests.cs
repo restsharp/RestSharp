@@ -8,7 +8,7 @@ namespace RestSharp.IntegrationTests
 {
 	public class oAuth1Tests
 	{
-		[Fact]
+		//[Fact]
 		public void Can_Authenticate_With_OAuth()
 		{
 			const string consumerKey = "";
