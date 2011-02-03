@@ -38,14 +38,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Kayak, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Kayak.dll</HintPath>
-    </Reference>
-    <Reference Include="Kayak.Framework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Kayak.Framework.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
@@ -77,19 +69,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthenticationTests.cs" />
-    <Compile Include="BugReportTests.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="FileTests.cs" />
+    <Compile Include="Helpers\Handlers.cs" />
     <Compile Include="oAuth1Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AuthenticationService.cs" />
-    <Compile Include="Services\CompressionService.cs" />
     <Compile Include="CompressionTests.cs" />
-    <Compile Include="Services\DumpService.cs" />
-    <Compile Include="Services\ErrorHandlingService.cs" />
-    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Helpers\SimpleServer.cs" />
     <Compile Include="StatusCodeTests.cs" />
-    <Compile Include="Services\StatusCodeService.cs" />
-    <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RestSharp\RestSharp.csproj">
@@ -98,13 +85,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Error.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\Koala.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Success.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
