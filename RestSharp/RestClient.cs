@@ -273,7 +273,7 @@ namespace RestSharp
 			var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
 			foreach (var p in urlParms)
 			{
-				assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString());
+				assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
 			}
 
 			if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
