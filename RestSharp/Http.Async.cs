@@ -269,7 +269,8 @@ namespace RestSharp
 			WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
-
+			webRequest.UseDefaultCredentials = false;
+						
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
 
@@ -297,6 +298,8 @@ namespace RestSharp
 #endif
 
 #if FRAMEWORK
+			ServicePointManager.Expect100Continue = false;
+
 			if (Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;

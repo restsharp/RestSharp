@@ -203,6 +203,8 @@ namespace RestSharp
 		private HttpWebRequest ConfigureWebRequest(string method, Uri url)
 		{
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
+			webRequest.UseDefaultCredentials = false;
+			ServicePointManager.Expect100Continue = false;
 
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
