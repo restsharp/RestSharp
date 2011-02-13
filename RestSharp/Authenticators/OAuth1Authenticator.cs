@@ -34,7 +34,8 @@ namespace RestSharp.Authenticators
 										SignatureMethod = OAuthSignatureMethod.HmacSha1,
 										SignatureTreatment = OAuthSignatureTreatment.Escaped,
 										ConsumerKey = consumerKey,
-										ConsumerSecret = consumerSecret
+										ConsumerSecret = consumerSecret,
+                                        Type = OAuthType.RequestToken
 									};
 			return authenticator;
 		}
@@ -56,7 +57,8 @@ namespace RestSharp.Authenticators
 										ConsumerKey = consumerKey,
 										ConsumerSecret = consumerSecret,
 										Token = token,
-										TokenSecret = tokenSecret
+										TokenSecret = tokenSecret,
+                                        Type = OAuthType.AccessToken
 									};
 			return authenticator;
 		}
@@ -93,7 +95,8 @@ namespace RestSharp.Authenticators
 				ConsumerKey = consumerKey,
 				ConsumerSecret = consumerSecret,
 				ClientUsername = username,
-				ClientPassword = password
+				ClientPassword = password,
+                Type = OAuthType.ClientAuthentication
 			};
 			return authenticator;
 		}
