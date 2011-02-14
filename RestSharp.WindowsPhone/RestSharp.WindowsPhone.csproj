@@ -42,8 +42,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json.Silverlight">
-      <HintPath>..\References\Newtonsoft.Json.Silverlight.dll</HintPath>
+    <Reference Include="Newtonsoft.Json.WindowsPhone">
+      <HintPath>..\References\Newtonsoft.Json.WindowsPhone.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -163,6 +163,9 @@
     </Compile>
     <Compile Include="..\restsharp\serializers\XmlSerializer.cs">
       <Link>Serializers\XmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\restsharp\validation\Require.cs">
       <Link>Validation\Require.cs</Link>

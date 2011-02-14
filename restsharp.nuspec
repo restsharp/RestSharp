@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>100.3</version>
+		<version>100.4</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
@@ -11,7 +11,7 @@
 		<licenseUrl>https://github.com/johnsheehan/RestSharp/blob/master/LICENSE.txt</licenseUrl>
 		<iconUrl>http://restsharp.org/wp-content/uploads/restsharp-icon-32.png</iconUrl>
 		<dependencies>
-			<dependency id="Newtonsoft.Json" version="3.5.8" />
+			<dependency id="Newtonsoft.Json" />
 		</dependencies>
 		<tags>REST HTTP API</tags>
 	</metadata>
