@@ -68,6 +68,18 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_With_Additional_Property()
+		{
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var doc = XDocument.Load(xmlpath);
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
+
+			Assert.Equal(4, output.Count);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Nested_List_Items_Without_Matching_Class_Name()
 		{
 			var xmlpath = Environment.CurrentDirectory + @"\SampleData\NestedListSample.xml";
