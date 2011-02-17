@@ -189,11 +189,13 @@ namespace RestSharp
 			if (HasBody)
 			{
 				var encoding = Encoding.UTF8;
-				webRequest.ContentLength = RequestBody.Length;
+				var bytes = encoding.GetBytes(RequestBody);
+
+				webRequest.ContentLength = bytes.Length;
 
 				using (var requestStream = webRequest.GetRequestStream())
 				{
-					requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
+					requestStream.Write(bytes, 0, bytes.Length);
 				}
 			}
 		}
