@@ -104,7 +104,23 @@ namespace RestSharp.Deserializers
 
 				if (value == null)
 				{
-					continue;
+                    // special case for inline list items
+                    if (type.IsGenericType)
+                    {
+                        var genericType = type.GetGenericArguments()[0];
+
+                        var first = GetElementByName(root, genericType.Name);
+                        if (first != null)
+                        {
+                            var elements = root.Elements(first.Name);
+
+                            var list = (IList)Activator.CreateInstance(type);
+                            PopulateListFromElements(genericType, elements, list);
+                            prop.SetValue(x, list, null);
+
+                        }
+                    }
+                    continue;
 				}
 
                 // check for nullable and extract underlying type
