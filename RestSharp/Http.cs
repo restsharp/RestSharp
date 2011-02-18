@@ -277,7 +277,22 @@ namespace RestSharp
 				{
 					foreach (Cookie cookie in webResponse.Cookies)
 					{
-						response.Cookies.Add(new HttpCookie { Name = cookie.Name, Value = cookie.Value });
+						response.Cookies.Add(new HttpCookie {
+							Comment = cookie.Comment,
+							CommentUri = cookie.CommentUri,
+							Discard = cookie.Discard,
+							Domain = cookie.Domain,
+							Expired = cookie.Expired,
+							Expires = cookie.Expires,
+							HttpOnly = cookie.HttpOnly,
+							Name = cookie.Name,
+							Path = cookie.Path,
+							Port = cookie.Port,
+							Secure = cookie.Secure,
+							TimeStamp = cookie.TimeStamp,
+							Value = cookie.Value,
+							Version = cookie.Version
+						});
 					}
 				}
 

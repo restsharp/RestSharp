@@ -427,7 +427,22 @@ namespace RestSharp
 
 			foreach (var cookie in httpResponse.Cookies)
 			{
-				restResponse.Cookies.Add(new Parameter { Name = cookie.Name, Value = cookie.Value, Type = ParameterType.Cookie });
+				restResponse.Cookies.Add(new RestResponseCookie {
+					Comment = cookie.Comment,
+					CommentUri = cookie.CommentUri,
+					Discard = cookie.Discard,
+					Domain = cookie.Domain,
+					Expired = cookie.Expired,
+					Expires = cookie.Expires,
+					HttpOnly = cookie.HttpOnly,
+					Name = cookie.Name,
+					Path = cookie.Path,
+					Port = cookie.Port,
+					Secure = cookie.Secure,
+					TimeStamp = cookie.TimeStamp,
+					Value = cookie.Value,
+					Version = cookie.Version
+				});
 			}
 
 			return restResponse;

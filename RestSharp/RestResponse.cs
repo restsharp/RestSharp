@@ -31,7 +31,7 @@ namespace RestSharp
 		public RestResponseBase()
 		{
 			Headers = new List<Parameter>();
-			Cookies = new List<Parameter>();
+			Cookies = new List<RestResponseCookie>();
 		}
 		/// <summary>
 		/// The RestRequest that was made to get this RestResponse
@@ -79,7 +79,7 @@ namespace RestSharp
 		/// <summary>
 		/// Cookies returned by server with the response
 		/// </summary>
-		public IList<Parameter> Cookies { get; protected set; }
+		public IList<RestResponseCookie> Cookies { get; protected set; }
 		/// <summary>
 		/// Headers returned by server with the response
 		/// </summary>

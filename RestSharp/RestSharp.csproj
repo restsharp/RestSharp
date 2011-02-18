@@ -124,6 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestClient.cs" />
     <Compile Include="RestRequest.cs" />
+    <Compile Include="RestResponseCookie.cs" />
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
     <Compile Include="RestClient.Async.cs" />
     <Compile Include="Serializers\ISerializer.cs" />

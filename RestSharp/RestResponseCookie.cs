@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+using System;
 namespace RestSharp
 {
-	/// <summary>
-	/// Representation of an HTTP cookie
-	/// </summary>
-	public class HttpCookie
+	public class RestResponseCookie
 	{
 		/// <summary>
 		/// Comment of the cookie
@@ -68,3 +61,4 @@ namespace RestSharp
 		public int Version { get; set; }
 	}
 }
+
