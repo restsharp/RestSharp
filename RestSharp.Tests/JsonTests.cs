@@ -67,6 +67,16 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Generic_Members()
+		{
+			var doc = File.ReadAllText(@"SampleData\GenericWithList.txt");
+			var json = new JsonDeserializer();
+
+			var output = json.Deserialize<Generic<GenericWithList<Foe>>>(new RestResponse { Content = doc });
+			Assert.Equal("Foe sho", output.Data.Items[0].Nickname);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
 		{
 			var doc = CreateJsonWithNullValues();

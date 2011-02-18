@@ -208,6 +208,12 @@ namespace RestSharp.Deserializers
 							prop.SetValue(x, dict, null);
 						}
 					}
+					else
+					{
+						// nested property classes
+						var item = CreateAndMap(type, json[actualName]);
+						prop.SetValue(x, item, null);
+					}
 				}
 				else
 				{
@@ -231,6 +237,11 @@ namespace RestSharp.Deserializers
 				else if (genericTypeDef == typeof(List<>))
 				{
 					instance = BuildList(type, element.Children());
+				}
+				else
+				{
+					instance = Activator.CreateInstance(type);
+					Map(instance, element);
 				}
 			}
 			else

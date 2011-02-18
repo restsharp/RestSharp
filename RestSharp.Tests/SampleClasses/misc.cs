@@ -123,4 +123,14 @@ namespace RestSharp.Tests
 		public string InitialCatalog { get; set; }
 		public string DataSource { get; set; }
 	}
+
+	public class Generic<T>
+	{
+		public T Data { get; set; }
+	}
+
+	public class GenericWithList<T>
+	{
+		public List<T> Items { get; set; }
+	}
 }
