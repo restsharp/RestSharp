@@ -150,10 +150,8 @@ namespace RestSharp
 				webRequest.ContentType = GetMultipartFormContentType();
 				WriteMultipartFormData(webRequest);
 			}
-			else
-			{
-				PreparePostBody(webRequest);
-			}
+
+            PreparePostBody(webRequest);
 		}
 
 		private void WriteMultipartFormData(HttpWebRequest webRequest)

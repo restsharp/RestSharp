@@ -25,5 +25,9 @@ namespace RestSharp
 		/// MIME content type of file
 		/// </summary>
 		public string ContentType { get; set; }
+        /// <summary>
+        /// Name of the parameter
+        /// </summary>
+        public string Name { get; set; }
 	}
 }

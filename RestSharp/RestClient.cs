@@ -390,7 +390,7 @@ namespace RestSharp
 
 			foreach (var file in request.Files)
 			{
-				http.Files.Add(new HttpFile { ContentType = file.ContentType, Writer = file.Writer, FileName = file.FileName, ContentLength = file.ContentLength });
+				http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Writer = file.Writer, FileName = file.FileName, ContentLength = file.ContentLength });
 			}
 
 			var body = (from p in request.Parameters
