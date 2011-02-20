@@ -19,7 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-
+using RestSharp.Contrib;
 using RestSharp.Extensions;
 using System.Globalization;
 
@@ -30,6 +30,7 @@ namespace RestSharp.Deserializers
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
+        public bool HtmlDecodeStrings { get; set; }
 
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
@@ -137,7 +138,7 @@ namespace RestSharp.Deserializers
 				}
 				else if (type == typeof(string))
 				{
-					prop.SetValue(x, value, null);
+					prop.SetValue(x, HtmlDecodeStrings ? HttpUtility.HtmlDecode(value.ToString()) : value, null);
 				}
 				else if (type == typeof(DateTime))
 				{

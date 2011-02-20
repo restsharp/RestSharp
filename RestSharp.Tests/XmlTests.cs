@@ -21,6 +21,7 @@ using RestSharp.Deserializers;
 using Xunit;
 using RestSharp.Tests.SampleClasses;
 using System.Collections.Generic;
+using RestSharp.Contrib;
 
 namespace RestSharp.Tests
 {
@@ -431,6 +432,32 @@ namespace RestSharp.Tests
 			Assert.Equal("Sunny", output.weather[0].condition.data);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Html_Encoded_Strings()
+        {
+            var doc = CreateHtmlEncodedFriendXml("Fisherman&#39;s Friend");
+            var response = new RestResponse { Content = doc };
+
+            var d = new XmlDeserializer();
+            d.HtmlDecodeStrings = true;
+            var p = d.Deserialize<PersonForXml>(response);
+
+            Assert.Equal("Fisherman's Friend", p.Name);
+        }
+
+        [Fact]
+        public void Can_Deserialize_Html_Encoded_Strings_Using_XmlAttributeDeserializer()
+        {
+            var doc = CreateHtmlEncodedFriendXml("Fisherman&#39;s Friend");
+            var response = new RestResponse { Content = doc };
+
+            var d = new XmlAttributeDeserializer();
+            d.HtmlDecodeStrings = true;
+            var p = d.Deserialize<PersonForXml>(response);
+
+            Assert.Equal("Fisherman's Friend", p.Name);
+        }
+
 		private static string CreateUnderscoresXml()
 		{
 			var doc = new XDocument();
@@ -654,5 +681,15 @@ namespace RestSharp.Tests
 
 			return doc.ToString();
 		}
+
+        private static string CreateHtmlEncodedFriendXml(string friendName)
+        {
+            var doc = new XDocument();
+            var root = new XElement("Friend");
+            root.Add(new XElement("Name", friendName));
+            doc.Add(root);
+
+            return doc.ToString();
+        }
 	}
 }
