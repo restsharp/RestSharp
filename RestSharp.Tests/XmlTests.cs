@@ -105,7 +105,20 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.Count);
 		}
 
-		[Fact]
+        [Fact]
+        public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Item_Name_Mapping_Using_XmlAttributeDeserializer()
+        {
+            var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+            var doc = XDocument.Load(xmlpath);
+
+            var xml = new XmlAttributeDeserializer();
+            var output = xml.Deserialize<InlineListChildNameMapingSample>(new RestResponse { Content = doc.ToString() });
+
+            Assert.NotEmpty(output.Images);
+            Assert.Equal(4, output.Images.Count);
+        }
+
+        [Fact]
 		public void Can_Deserialize_Nested_List_Items_Without_Matching_Class_Name()
 		{
 			var xmlpath = Environment.CurrentDirectory + @"\SampleData\NestedListSample.xml";
@@ -117,7 +130,6 @@ namespace RestSharp.Tests
 			Assert.NotEmpty(output.Images);
 			Assert.Equal(4, output.Images.Count);
 		}
-
 
 		[Fact]
 		public void Can_Deserialize_Nested_List_Items_With_Matching_Class_Name()
@@ -131,6 +143,19 @@ namespace RestSharp.Tests
 			Assert.NotEmpty(output.images);
 			Assert.Equal(4, output.images.Count);
 		}
+
+        [Fact]
+        public void Can_Deserialize_Nested_List_Items_With_Item_Name_Mapping_Using_XmlAttributeDeserializer()
+        {
+            var xmlpath = Environment.CurrentDirectory + @"\SampleData\NestedListSample.xml";
+            var doc = XDocument.Load(xmlpath);
+
+            var xml = new XmlAttributeDeserializer();
+            var output = xml.Deserialize<InlineListChildNameMapingSample>(new RestResponse { Content = doc.ToString() });
+
+            Assert.NotEmpty(output.Images);
+            Assert.Equal(4, output.Images.Count);
+        }
 
 		[Fact]
 		public void Can_Deserialize_Empty_Elements_to_Nullable_Values()

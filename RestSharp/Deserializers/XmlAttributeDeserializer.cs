@@ -108,8 +108,9 @@ namespace RestSharp.Deserializers
                     if (type.IsGenericType)
                     {
                         var genericType = type.GetGenericArguments()[0];
+                        var childName = options != null ? (options.CollectionItemName ?? genericType.Name) : genericType.Name;
 
-                        var first = GetElementByName(root, genericType.Name);
+                        var first = GetElementByName(root, childName);
                         if (first != null)
                         {
                             var elements = root.Elements(first.Name);

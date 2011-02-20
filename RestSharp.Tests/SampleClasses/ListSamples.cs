@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RestSharp.Deserializers;
 
 namespace RestSharp.Tests.SampleClasses
 {
@@ -11,6 +12,13 @@ namespace RestSharp.Tests.SampleClasses
 		public List<image> images { get; set; }
 		public List<Image> Images { get; set; }
 	}
+
+    public class InlineListChildNameMapingSample
+    {
+        public int Count { get; set; }
+        [DeserializeAs(CollectionItemName = "image")]
+        public List<NamedImage> Images { get; set; }
+    }
 
 	public class NestedListSample
 	{
@@ -29,4 +37,10 @@ namespace RestSharp.Tests.SampleClasses
 		public string Src { get; set; }
 		public string Value { get; set; }
 	}
+
+    public class NamedImage
+    {
+        public string Src { get; set; }
+        public string Value { get; set; }
+    }
 }

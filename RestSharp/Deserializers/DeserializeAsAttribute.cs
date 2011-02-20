@@ -34,6 +34,11 @@ namespace RestSharp.Deserializers
         /// Sets if the property to Deserialize is an Attribute or Element (Default: false)
         /// </summary>
         public bool Attribute { get; set; }
+
+        /// <summary>
+        /// The name to use for each serialized child element, if this is a collection
+        /// </summary>
+        public string CollectionItemName { get; set; }
     }
 
 }
