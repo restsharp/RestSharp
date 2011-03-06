@@ -33,7 +33,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <returns>RestResponse</returns>
-		public RestResponse Execute(RestRequest request)
+		public virtual RestResponse Execute(RestRequest request)
 		{
 			AuthenticateIfNeeded(this, request);
 
@@ -65,7 +65,7 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to execute</param>
 		/// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
-		public RestResponse<T> Execute<T>(RestRequest request) where T : new()
+		public virtual RestResponse<T> Execute<T>(RestRequest request) where T : new()
 		{
 			var raw = Execute(request);
 			return Deserialize<T>(request, raw);
