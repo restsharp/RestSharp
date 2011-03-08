@@ -216,6 +216,7 @@ namespace RestSharp
 
 		private void TimeoutCallback(object state, bool timedOut)
 		{
+			Console.WriteLine("Timed out: " + timedOut.ToString());
 			if(timedOut)
 			{
 				TimeOutState timeoutState = state as TimeOutState;
@@ -237,11 +238,8 @@ namespace RestSharp
 			}
 		}
 
-		private void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+		private void GetRawResponseAsync(IAsyncResult result, HttpResponse response, Action<HttpWebResponse> callback)
 		{
-			var response = new HttpResponse();
-			response.ResponseStatus = ResponseStatus.None;
-			
 			HttpWebResponse raw = null;
 			
 			try
@@ -251,9 +249,13 @@ namespace RestSharp
 			}
 			catch(WebException ex)
 			{
-				if(ex.Response is HttpWebResponse)
+				raw = ex.Response as HttpWebResponse;
+				
+				if(ex.Status == WebExceptionStatus.ConnectFailure || 
+					ex.Status == WebExceptionStatus.NameResolutionFailure ||
+					ex.Status == WebExceptionStatus.ProxyNameResolutionFailure)
 				{
-					raw = ex.Response as HttpWebResponse;
+					response.ResponseStatus = ResponseStatus.NoConnectivity;
 				}
 			}
 			
@@ -275,9 +277,12 @@ namespace RestSharp
 					return;
 				}
 				
-				GetRawResponseAsync(result, webResponse =>
+				GetRawResponseAsync(result, response, webResponse =>
 				{
-					ExtractResponseData(response, webResponse);
+					if(response.ResponseStatus == ResponseStatus.None)
+					{
+						ExtractResponseData(response, webResponse);
+					}
 					ExecuteCallback(response, callback);
 				});
 			}
