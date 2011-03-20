@@ -300,19 +300,19 @@ namespace RestSharp.Tests
 			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value);
 		}
 
-        [Fact]
-        public void Can_Deserialize_To_Dictionary_String_String()
-        {
-            var doc = CreateJsonStringDictionary();
-            var d = new JsonDeserializer();
-            var response = new RestResponse { Content = doc };
-            var bd = d.Deserialize<Dictionary<string,string>>(response);
+		[Fact]
+		public void Can_Deserialize_To_Dictionary_String_String()
+		{
+			var doc = CreateJsonStringDictionary();
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var bd = d.Deserialize<Dictionary<string,string>>(response);
 
-            Assert.Equal(bd["Thing1"], "Thing1");
-            Assert.Equal(bd["Thing2"], "Thing2");
-            Assert.Equal(bd["ThingRed"], "ThingRed");
-            Assert.Equal(bd["ThingBlue"], "ThingBlue");
-        }
+			Assert.Equal(bd["Thing1"], "Thing1");
+			Assert.Equal(bd["Thing2"], "Thing2");
+			Assert.Equal(bd["ThingRed"], "ThingRed");
+			Assert.Equal(bd["ThingBlue"], "ThingBlue");
+		}
 
 		private string CreateJsonWithUnderscores()
 		{
@@ -474,14 +474,14 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-        public string CreateJsonStringDictionary()
-        {
-            var doc = new JObject();
-            doc["Thing1"] = "Thing1";
-            doc["Thing2"] = "Thing2";
-            doc["ThingRed"] = "ThingRed";
-            doc["ThingBlue"] = "ThingBlue";
-            return doc.ToString();
-        }
+		public string CreateJsonStringDictionary()
+		{
+			var doc = new JObject();
+			doc["Thing1"] = "Thing1";
+			doc["Thing2"] = "Thing2";
+			doc["ThingRed"] = "ThingRed";
+			doc["ThingBlue"] = "ThingBlue";
+			return doc.ToString();
+		}
 	}
 }

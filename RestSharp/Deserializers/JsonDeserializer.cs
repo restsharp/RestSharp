@@ -50,16 +50,16 @@ namespace RestSharp.Deserializers
 					target = (T)BuildList(objType, json.Root.Children());
 				}
 			}
-            else if (target is IDictionary)
-            {
-                var root = FindRoot(response.Content);
-                target = (T)BuildDictionary(target.GetType(), root.Children()); 
-            }
-            else
-            {
-                var root = FindRoot(response.Content);
-                Map(target, root);
-            }
+			else if (target is IDictionary)
+			{
+				var root = FindRoot(response.Content);
+				target = (T)BuildDictionary(target.GetType(), root.Children()); 
+			}
+			else
+			{
+				var root = FindRoot(response.Content);
+				Map(target, root);
+			}
 
 			return target;
 		}
@@ -242,20 +242,20 @@ namespace RestSharp.Deserializers
 				{
 					instance = BuildList(type, element.Children());
 				}
-                else if (type == typeof(string))
-                {
-                    instance = (string)element;
-                }
+				else if (type == typeof(string))
+				{
+					instance = (string)element;
+				}
 				else
 				{
 					instance = Activator.CreateInstance(type);
 					Map(instance, element);
 				}
 			}
-            else if (type == typeof(string))
-            {
-                instance = (string)element;
-            }
+			else if (type == typeof(string))
+			{
+				instance = (string)element;
+			}
 			else
 			{
 				instance = Activator.CreateInstance(type);
