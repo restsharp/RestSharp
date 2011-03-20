@@ -225,6 +225,24 @@ namespace RestSharp.Deserializers
 			var list = (IList)Activator.CreateInstance(type);
 
 			var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
+			
+			var name = t.Name;
+			if (!elements.Any())
+			{
+				var lowerName = name.ToLower().AsNamespaced(Namespace);
+				elements = root.Descendants(lowerName);
+			}
+
+			if (!elements.Any())
+			{
+				var camelName = name.ToCamelCase().AsNamespaced(Namespace);
+				elements = root.Descendants(camelName);
+			}
+
+			if (!elements.Any())
+			{
+				elements = root.Descendants().Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == name);
+			}
 
 			PopulateListFromElements(t, elements, list);
 
@@ -274,8 +292,8 @@ namespace RestSharp.Deserializers
 
 		private XElement GetElementByName(XElement root, XName name)
 		{
-			var lowerName = XName.Get(name.LocalName.ToLower(), name.NamespaceName);
-			var camelName = XName.Get(name.LocalName.ToCamelCase(), name.NamespaceName);
+			var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
+			var camelName = name.LocalName.ToCamelCase().AsNamespaced(name.NamespaceName);
 
 			if (root.Element(name) != null)
 			{
@@ -297,15 +315,15 @@ namespace RestSharp.Deserializers
 				return root;
 			}
 
-            // try looking for element that matches sanitized property name (Order by depth)
-            var element = root.Descendants()
-                              .OrderBy(d => d.Ancestors().Count())
-                              .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) 
-                              ?? root.Descendants()
-                              .OrderBy(d => d.Ancestors().Count())
-                              .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
+			// try looking for element that matches sanitized property name (Order by depth)
+			var element = root.Descendants()
+							  .OrderBy(d => d.Ancestors().Count())
+							  .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) 
+							  ?? root.Descendants()
+							  .OrderBy(d => d.Ancestors().Count())
+							  .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
 
-		    if (element != null)
+			if (element != null)
 			{
 				return element;
 			}
@@ -315,8 +333,8 @@ namespace RestSharp.Deserializers
 
 		private XAttribute GetAttributeByName(XElement root, XName name)
 		{
-			var lowerName = XName.Get(name.LocalName.ToLower(), name.NamespaceName);
-			var camelName = XName.Get(name.LocalName.ToCamelCase(), name.NamespaceName);
+			var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
+			var camelName = name.LocalName.ToCamelCase().AsNamespaced(name.NamespaceName);
 
 			if (root.Attribute(name) != null)
 			{

@@ -29,6 +29,32 @@ namespace RestSharp.Tests
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
+		public void Can_Deserialize_To_Standalone_List_Without_Matching_Class_Case()
+		{
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var doc = XDocument.Load(xmlpath);
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<List<Image>>(new RestResponse { Content = doc.ToString() });
+
+			Assert.NotEmpty(output);
+			Assert.Equal(4, output.Count);
+		}
+
+		[Fact]
+		public void Can_Deserialize_To_Standalone_List_With_Matching_Class_Case()
+		{
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var doc = XDocument.Load(xmlpath);
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<List<image>>(new RestResponse { Content = doc.ToString() });
+
+			Assert.NotEmpty(output);
+			Assert.Equal(4, output.Count);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Directly_To_Lists_Off_Root_Element()
 		{
 			var xmlpath = Environment.CurrentDirectory + @"\SampleData\directlists.xml";
@@ -54,18 +80,18 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.Images.Count);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name_Using_XmlAttributeDeserializer()
-        {
-            var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
-            var doc = XDocument.Load(xmlpath);
+		[Fact]
+		public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name_Using_XmlAttributeDeserializer()
+		{
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var doc = XDocument.Load(xmlpath);
 
-            var xml = new XmlAttributeDeserializer();
-            var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
+			var xml = new XmlAttributeDeserializer();
+			var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.Images);
-            Assert.Equal(4, output.Images.Count);
-        }
+			Assert.NotEmpty(output.Images);
+			Assert.Equal(4, output.Images.Count);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name()
@@ -80,18 +106,18 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.images.Count);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_Using_XmlAttributeDeserializer()
-        {
-            var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
-            var doc = XDocument.Load(xmlpath);
+		[Fact]
+		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_Using_XmlAttributeDeserializer()
+		{
+			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var doc = XDocument.Load(xmlpath);
 
-            var xml = new XmlAttributeDeserializer();
-            var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
+			var xml = new XmlAttributeDeserializer();
+			var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.images);
-            Assert.Equal(4, output.images.Count);
-        }
+			Assert.NotEmpty(output.images);
+			Assert.Equal(4, output.images.Count);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_With_Additional_Property()
