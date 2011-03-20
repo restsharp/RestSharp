@@ -24,7 +24,12 @@ namespace RestSharp
 {
 	public partial class RestClient
 	{
-		public void ExecuteAsync(RestRequest request, Action<RestResponse> callback)
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="callback">Callback function to be executed upon completion</param>
+		public virtual void ExecuteAsync(RestRequest request, Action<RestResponse> callback)
 		{
 			AuthenticateIfNeeded(this, request);
 
@@ -60,7 +65,13 @@ namespace RestSharp
 			callback(restResponse);
 		}
 
-		public void ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="callback">Callback function to be executed upon completion</param>
+		public virtual void ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
 		{
 			ExecuteAsync(request, response =>
 				{
