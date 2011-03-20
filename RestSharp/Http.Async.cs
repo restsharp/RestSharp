@@ -86,7 +86,7 @@ namespace RestSharp
 				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
 				SetTimeout(asyncResult, webRequest, timeoutState);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				var response = new HttpResponse();
 				response.ErrorMessage = ex.Message;
@@ -104,7 +104,7 @@ namespace RestSharp
 				PreparePostBody(webRequest);
 				WriteRequestBodyAsync(webRequest, callback);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				var response = new HttpResponse();
 				response.ErrorMessage = ex.Message;
@@ -118,8 +118,8 @@ namespace RestSharp
 		{
 			IAsyncResult asyncResult;
 			timeoutState = new TimeOutState { Request = webRequest };
-			
-			if(HasBody || HasFiles)
+
+			if (HasBody || HasFiles)
 			{
 #if !WINDOWS_PHONE
 				webRequest.ContentLength = CalculateContentLength();
@@ -131,31 +131,31 @@ namespace RestSharp
 			{
 				asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 			}
-			
+
 			SetTimeout(asyncResult, webRequest, timeoutState);
 		}
 
 		private long CalculateContentLength()
 		{
-			if(!HasFiles)
+			if (!HasFiles)
 			{
 				return RequestBody.Length;
 			}
-			
+
 			// calculate length for multipart form
 			long length = 0;
-			foreach(var file in Files)
+			foreach (var file in Files)
 			{
 				length += GetMultipartFileHeader(file).Length;
 				length += file.ContentLength;
 				length += Environment.NewLine.Length;
 			}
-			
-			foreach(var param in Parameters)
+
+			foreach (var param in Parameters)
 			{
 				length += GetMultipartFormData(param).Length;
 			}
-			
+
 			length += GetMultipartFooter().Length;
 			return length;
 		}
@@ -163,24 +163,24 @@ namespace RestSharp
 		private void WriteMultipartFormDataAsync(Stream requestStream)
 		{
 			var encoding = Encoding.UTF8;
-			foreach(var file in Files)
+			foreach (var file in Files)
 			{
 				// Add just the first part of this param, since we will write the file data directly to the Stream
 				var header = GetMultipartFileHeader(file);
 				requestStream.Write(encoding.GetBytes(header), 0, header.Length);
-				
+
 				// Write the file data directly to the Stream, rather than serializing it to a string.
 				file.Writer(requestStream);
 				var lineEnding = Environment.NewLine;
 				requestStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
 			}
-			
-			foreach(var param in Parameters)
+
+			foreach (var param in Parameters)
 			{
 				var postData = GetMultipartFormData(param);
 				requestStream.Write(encoding.GetBytes(postData), 0, postData.Length);
 			}
-			
+
 			var footer = GetMultipartFooter();
 			requestStream.Write(encoding.GetBytes(footer), 0, footer.Length);
 		}
@@ -188,24 +188,24 @@ namespace RestSharp
 		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
 			var webRequest = result.AsyncState as HttpWebRequest;
-			
+
 			// write body to request stream
-			using(var requestStream = webRequest.EndGetRequestStream(result))
+			using (var requestStream = webRequest.EndGetRequestStream(result))
 			{
-				if(HasFiles)
+				if (HasFiles)
 				{
 					WriteMultipartFormDataAsync(requestStream);
 				}
 
-				
-				
+
+
 				else
 				{
 					var encoding = Encoding.UTF8;
 					requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
 				}
 			}
-			
+
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
 
@@ -216,21 +216,21 @@ namespace RestSharp
 
 		private void TimeoutCallback(object state, bool timedOut)
 		{
-			if(timedOut)
+			if (timedOut)
 			{
 				TimeOutState timeoutState = state as TimeOutState;
-				
-				if(timeoutState == null)
+
+				if (timeoutState == null)
 				{
 					return;
 				}
-				
-				lock(timeoutState)
+
+				lock (timeoutState)
 				{
 					timeoutState.TimedOut = timedOut;
 				}
-				
-				if(timeoutState.Request != null)
+
+				if (timeoutState.Request != null)
 				{
 					timeoutState.Request.Abort();
 				}
@@ -241,22 +241,22 @@ namespace RestSharp
 		{
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
-			
+
 			HttpWebResponse raw = null;
-			
+
 			try
 			{
 				var webRequest = (HttpWebRequest)result.AsyncState;
 				raw = webRequest.EndGetResponse(result) as HttpWebResponse;
 			}
-			catch(WebException ex)
+			catch (WebException ex)
 			{
-				if(ex.Response is HttpWebResponse)
+				if (ex.Response is HttpWebResponse)
 				{
 					raw = ex.Response as HttpWebResponse;
 				}
 			}
-			
+
 			callback(raw);
 			raw.Close();
 		}
@@ -265,23 +265,23 @@ namespace RestSharp
 		{
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
-			
+
 			try
 			{
-				if(timeoutState.TimedOut)
+				if (timeoutState.TimedOut)
 				{
 					response.ResponseStatus = ResponseStatus.TimedOut;
 					ExecuteCallback(response, callback);
 					return;
 				}
-				
+
 				GetRawResponseAsync(result, webResponse =>
 				{
 					ExtractResponseData(response, webResponse);
 					ExecuteCallback(response, callback);
 				});
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
@@ -321,52 +321,52 @@ namespace RestSharp
 #endif
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.UseDefaultCredentials = false;
-			
+
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
-			
+
 			webRequest.Method = method;
-			
+
 			// make sure Content-Length header is always sent since default is -1
 #if !WINDOWS_PHONE
 			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
 			// or indirectly
-			if(!HasFiles)
+			if (!HasFiles)
 			{
 				webRequest.ContentLength = 0;
 			}
 #endif
-			if(Credentials != null)
+			if (Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
 			}
-			
+
 #if !SILVERLIGHT
-			if(UserAgent.HasValue())
+			if (UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
 			}
 #endif
-			
+
 #if FRAMEWORK
 			ServicePointManager.Expect100Continue = false;
-			
-			if(Timeout != 0)
+
+			if (Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;
 			}
-			
-			if(Proxy != null)
+
+			if (Proxy != null)
 			{
 				webRequest.Proxy = Proxy;
 			}
-			
-			if(FollowRedirects && MaxRedirects.HasValue)
+
+			if (FollowRedirects && MaxRedirects.HasValue)
 			{
 				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
 			}
 #endif
-			
+
 #if !SILVERLIGHT
 			webRequest.AllowAutoRedirect = FollowRedirects;
 #endif

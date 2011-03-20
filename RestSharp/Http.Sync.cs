@@ -139,7 +139,7 @@ namespace RestSharp
 				{
 					return ex.Response as HttpWebResponse;
 				}
-                throw;
+				throw;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace RestSharp
 				WriteMultipartFormData(webRequest);
 			}
 
-            PreparePostBody(webRequest);
+			PreparePostBody(webRequest);
 		}
 
 		private void WriteMultipartFormData(HttpWebRequest webRequest)
