@@ -74,6 +74,7 @@ namespace RestSharp
 	{
 		None,
 		Completed,
-		Error
+		Error,
+		TimedOut
 	}
 }
