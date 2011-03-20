@@ -33,28 +33,27 @@ namespace RestSharp
 		{
 			AuthenticateIfNeeded(this, request);
 
-			var http = new Http();
-			ConfigureHttp(request, http);
+			ConfigureHttp(request, Http);
 
 			switch (request.Method)
 			{
 				case Method.GET:
-					http.GetAsync(r => ProcessResponse(r, callback));
+					Http.GetAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.POST:
-					http.PostAsync(r => ProcessResponse(r, callback));
+					Http.PostAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.PUT:
-					http.PutAsync(r => ProcessResponse(r, callback));
+					Http.PutAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.DELETE:
-					http.DeleteAsync(r => ProcessResponse(r, callback));
+					Http.DeleteAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.HEAD:
-					http.HeadAsync(r => ProcessResponse(r, callback));
+					Http.HeadAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.OPTIONS:
-					http.OptionsAsync(r => ProcessResponse(r, callback));
+					Http.OptionsAsync(r => ProcessResponse(r, callback));
 					break;
 			}
 		}

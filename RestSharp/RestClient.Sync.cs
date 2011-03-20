@@ -73,30 +73,29 @@ namespace RestSharp
 		
 		private RestResponse GetResponse(RestRequest request)
 		{
-			IHttp http = new Http();
-			ConfigureHttp(request, http);
-			ConfigureProxy(http);
+			ConfigureHttp(request, Http);
+			ConfigureProxy(Http);
 
 			var httpResponse = new HttpResponse();
 
 			switch (request.Method) {
 				case Method.GET:
-					httpResponse = http.Get();
+					httpResponse = Http.Get();
 					break;
 				case Method.POST:
-					httpResponse = http.Post();
+					httpResponse = Http.Post();
 					break;
 				case Method.PUT:
-					httpResponse = http.Put();
+					httpResponse = Http.Put();
 					break;
 				case Method.DELETE:
-					httpResponse = http.Delete();
+					httpResponse = Http.Delete();
 					break;
 				case Method.HEAD:
-					httpResponse = http.Head();
+					httpResponse = Http.Head();
 					break;
 				case Method.OPTIONS:
-					httpResponse = http.Options();
+					httpResponse = Http.Options();
 					break;
 			}
 
