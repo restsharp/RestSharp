@@ -30,6 +30,12 @@ namespace RestSharp.Deserializers
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
+		public CultureInfo Culture { get; set; }
+
+		public JsonDeserializer()
+		{
+			Culture = CultureInfo.InvariantCulture;
+		}
 
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
@@ -91,7 +97,7 @@ namespace RestSharp.Deserializers
 				if (value == null)
 				{
 					// try camel cased name
-					actualName = name.ToCamelCase();
+					actualName = name.ToCamelCase(Culture);
 					value = json[actualName];
 				}
 
@@ -171,19 +177,19 @@ namespace RestSharp.Deserializers
 					if (DateFormat.HasValue())
 					{
 						var clean = value.ToString().RemoveSurroundingQuotes();
-						dt = DateTime.ParseExact(clean, DateFormat, CultureInfo.InvariantCulture);
+						dt = DateTime.ParseExact(clean, DateFormat, Culture);
 					}
 					else
 					{
 						// try parsing instead
-						dt = value.ToString().ParseJsonDate();
+						dt = value.ToString().ParseJsonDate(Culture);
 					}
 
 					prop.SetValue(x, dt, null);
 				}
 				else if (type == typeof(Decimal))
 				{
-					var dec = Decimal.Parse(value.ToString());
+					var dec = Decimal.Parse(value.ToString(), Culture);
 					prop.SetValue(x, dec, null);
 				}
 				else if (type == typeof(Guid))

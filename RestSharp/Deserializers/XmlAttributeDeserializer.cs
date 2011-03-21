@@ -29,6 +29,12 @@ namespace RestSharp.Deserializers
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
+		public CultureInfo Culture { get; set; }
+
+		public XmlAttributeDeserializer()
+		{
+			Culture = CultureInfo.InvariantCulture;
+		}
 
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
@@ -104,35 +110,35 @@ namespace RestSharp.Deserializers
 
 				if (value == null)
 				{
-                    // special case for inline list items
-                    if (type.IsGenericType)
-                    {
-                        var genericType = type.GetGenericArguments()[0];
+					// special case for inline list items
+					if (type.IsGenericType)
+					{
+						var genericType = type.GetGenericArguments()[0];
 
-                        var first = GetElementByName(root, genericType.Name);
-                        if (first != null)
-                        {
-                            var elements = root.Elements(first.Name);
+						var first = GetElementByName(root, genericType.Name);
+						if (first != null)
+						{
+							var elements = root.Elements(first.Name);
 
-                            var list = (IList)Activator.CreateInstance(type);
-                            PopulateListFromElements(genericType, elements, list);
-                            prop.SetValue(x, list, null);
+							var list = (IList)Activator.CreateInstance(type);
+							PopulateListFromElements(genericType, elements, list);
+							prop.SetValue(x, list, null);
 
-                        }
-                    }
-                    continue;
+						}
+					}
+					continue;
 				}
 
-                // check for nullable and extract underlying type
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    type = type.GetGenericArguments()[0];
+				// check for nullable and extract underlying type
+				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+				{
+					type = type.GetGenericArguments()[0];
 
-                    if (string.IsNullOrEmpty(value.ToString()))
-                    {
-                        continue;
-                    }
-                }
+					if (string.IsNullOrEmpty(value.ToString()))
+					{
+						continue;
+					}
+				}
 
 				if (type.IsPrimitive)
 				{
@@ -156,7 +162,7 @@ namespace RestSharp.Deserializers
 				{
 					if (DateFormat.HasValue())
 					{
-						value = DateTime.ParseExact(value.ToString(), DateFormat, CultureInfo.CurrentCulture);
+						value = DateTime.ParseExact(value.ToString(), DateFormat, Culture);
 					}
 					else
 					{
@@ -233,7 +239,7 @@ namespace RestSharp.Deserializers
 			}
 
 			var lowerName = name.ToLower();
-			var camelName = name.ToCamelCase();
+			var camelName = name.ToCamelCase(Culture);
 
 			var list = (IList)Activator.CreateInstance(type);
 
@@ -311,7 +317,7 @@ namespace RestSharp.Deserializers
 		private XElement GetElementByName(XElement root, XName name)
 		{
 			var lowerName = XName.Get(name.LocalName.ToLower(), name.NamespaceName);
-			var camelName = XName.Get(name.LocalName.ToCamelCase(), name.NamespaceName);
+			var camelName = XName.Get(name.LocalName.ToCamelCase(Culture), name.NamespaceName);
 
 			if (root.Element(name) != null)
 			{
@@ -346,7 +352,7 @@ namespace RestSharp.Deserializers
 		private XAttribute GetAttributeByName(XElement root, XName name)
 		{
 			var lowerName = XName.Get(name.LocalName.ToLower(), name.NamespaceName);
-			var camelName = XName.Get(name.LocalName.ToCamelCase(), name.NamespaceName);
+			var camelName = XName.Get(name.LocalName.ToCamelCase(Culture), name.NamespaceName);
 
 			if (root.Attribute(name) != null)
 			{

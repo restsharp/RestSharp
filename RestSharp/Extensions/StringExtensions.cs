@@ -94,7 +94,7 @@ namespace RestSharp.Extensions
 		/// </summary>
 		/// <param name="input">JSON value to parse</param>
 		/// <returns>DateTime</returns>
-		public static DateTime ParseJsonDate(this string input)
+		public static DateTime ParseJsonDate(this string input, CultureInfo culture)
 		{
 			input = input.Replace("\n", "");
 			input = input.Replace("\r", "");
@@ -103,17 +103,17 @@ namespace RestSharp.Extensions
 
 			if (input.Contains("/Date("))
 			{
-				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/");
+				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/", culture);
 			}
 
 			if (input.Contains("new Date("))
 			{
 				input = input.Replace(" ", "");
 				// because all whitespace is removed, match against newDate( instead of new Date(
-				return ExtractDate(input, @"newDate\((-?\d+)*\)");
+				return ExtractDate(input, @"newDate\((-?\d+)*\)", culture);
 			}
 
-			return ParseFormattedDate(input);
+			return ParseFormattedDate(input, culture);
 		}
 
 		/// <summary>
@@ -131,7 +131,7 @@ namespace RestSharp.Extensions
 			return input;
 		}
 
-		private static DateTime ParseFormattedDate(string input)
+		private static DateTime ParseFormattedDate(string input, CultureInfo culture)
 		{
 			var formats = new[] {
 				"u", 
@@ -144,9 +144,7 @@ namespace RestSharp.Extensions
 			};
 
 			DateTime date;
-			if (DateTime.TryParseExact(input, formats,
-									   CultureInfo.InvariantCulture,
-									   DateTimeStyles.None, out date))
+			if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.None, out date))
 			{
 				return date;
 			}
@@ -154,7 +152,7 @@ namespace RestSharp.Extensions
 			return default(DateTime);
 		}
 
-		private static DateTime ExtractDate(string input, string pattern)
+		private static DateTime ExtractDate(string input, string pattern, CultureInfo culture)
 		{
 			DateTime dt = DateTime.MinValue;
 			var regex = new Regex(pattern);
@@ -169,7 +167,7 @@ namespace RestSharp.Extensions
 				// adjust if time zone modifier present
 				if (match.Groups.Count > 2 && !String.IsNullOrEmpty(match.Groups[3].Value))
 				{
-					var mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", CultureInfo.InvariantCulture);
+					var mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
 					if (match.Groups[2].Value == "+")
 					{
 						dt = dt.Add(mod.TimeOfDay);
@@ -200,9 +198,9 @@ namespace RestSharp.Extensions
 		/// </summary>
 		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
 		/// <returns>string</returns>
-		public static string ToPascalCase(this string lowercaseAndUnderscoredWord)
+		public static string ToPascalCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
 		{
-			return ToPascalCase(lowercaseAndUnderscoredWord, true);
+			return ToPascalCase(lowercaseAndUnderscoredWord, true, culture);
 		}
 
 		/// <summary>
@@ -211,7 +209,7 @@ namespace RestSharp.Extensions
 		/// <param name="text">String to convert</param>
 		/// <param name="removeUnderscores">Option to remove underscores</param>
 		/// <returns></returns>
-		public static string ToPascalCase(this string text, bool removeUnderscores)
+		public static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture)
 		{
 			if (String.IsNullOrEmpty(text))
 				return text;
@@ -229,15 +227,15 @@ namespace RestSharp.Extensions
 						string restOfWord = word.Substring(1);
 
 						if (restOfWord.IsUpperCase())
-							restOfWord = restOfWord.ToLower(CultureInfo.CurrentUICulture);
+							restOfWord = restOfWord.ToLower(culture);
 
-						char firstChar = char.ToUpper(word[0], CultureInfo.CurrentUICulture);
+						char firstChar = char.ToUpper(word[0], culture);
 						words[i] = String.Concat(firstChar, restOfWord);
 					}
 				}
 				return String.Join(joinString, words);
 			}
-			return String.Concat(words[0].Substring(0, 1).ToUpper(CultureInfo.CurrentUICulture), words[0].Substring(1));
+			return String.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
 		}
 
 		/// <summary>
@@ -245,9 +243,9 @@ namespace RestSharp.Extensions
 		/// </summary>
 		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
 		/// <returns>String</returns>
-		public static string ToCamelCase(this string lowercaseAndUnderscoredWord)
+		public static string ToCamelCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
 		{
-			return MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord));
+			return MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord, culture));
 		}
 
 		/// <summary>

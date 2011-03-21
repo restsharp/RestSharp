@@ -30,6 +30,12 @@ namespace RestSharp.Deserializers
 		public string RootElement { get; set; }
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
+		public CultureInfo Culture { get; set; }
+
+		public XmlDeserializer()
+		{
+			Culture = CultureInfo.InvariantCulture;
+		}
 
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
@@ -143,18 +149,18 @@ namespace RestSharp.Deserializers
 				{
 					if (DateFormat.HasValue())
 					{
-						value = DateTime.ParseExact(value.ToString(), DateFormat, CultureInfo.CurrentCulture);
+						value = DateTime.ParseExact(value.ToString(), DateFormat, Culture);
 					}
 					else
 					{
-						value = DateTime.Parse(value.ToString());
+						value = DateTime.Parse(value.ToString(), Culture);
 					}
 
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Decimal))
 				{
-					value = Decimal.Parse(value.ToString());
+					value = Decimal.Parse(value.ToString(), Culture);
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Guid))
@@ -235,7 +241,7 @@ namespace RestSharp.Deserializers
 
 			if (!elements.Any())
 			{
-				var camelName = name.ToCamelCase().AsNamespaced(Namespace);
+				var camelName = name.ToCamelCase(Culture).AsNamespaced(Namespace);
 				elements = root.Descendants(camelName);
 			}
 
@@ -293,7 +299,7 @@ namespace RestSharp.Deserializers
 		private XElement GetElementByName(XElement root, XName name)
 		{
 			var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
-			var camelName = name.LocalName.ToCamelCase().AsNamespaced(name.NamespaceName);
+			var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
 			if (root.Element(name) != null)
 			{
@@ -334,7 +340,7 @@ namespace RestSharp.Deserializers
 		private XAttribute GetAttributeByName(XElement root, XName name)
 		{
 			var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
-			var camelName = name.LocalName.ToCamelCase().AsNamespaced(name.NamespaceName);
+			var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
 			if (root.Attribute(name) != null)
 			{

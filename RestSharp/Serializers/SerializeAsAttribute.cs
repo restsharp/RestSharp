@@ -16,6 +16,7 @@
 
 using System;
 using RestSharp.Extensions;
+using System.Globalization;
 
 namespace RestSharp.Serializers
 {
@@ -30,6 +31,7 @@ namespace RestSharp.Serializers
 		public SerializeAsAttribute() {
 			NameStyle = NameStyle.AsIs;
 			Index = int.MaxValue;
+			Culture = CultureInfo.InvariantCulture;
 		}
 
 		/// <summary>
@@ -41,6 +43,11 @@ namespace RestSharp.Serializers
 		/// Sets the value to be serialized as an Attribute instead of an Element
 		/// </summary>
 		public bool Attribute { get; set; }
+
+		/// <summary>
+		/// The culture to use when serializing
+		/// </summary>
+		public CultureInfo Culture { get; set; }
 
 		/// <summary>
 		/// Transforms the casing of the name based on the selected value.
@@ -61,9 +68,9 @@ namespace RestSharp.Serializers
 			var name = Name ?? input;
 			switch (NameStyle) {
 				case NameStyle.CamelCase:
-					return name.ToCamelCase();
+					return name.ToCamelCase(Culture);
 				case NameStyle.PascalCase:
-					return name.ToPascalCase();
+					return name.ToPascalCase(Culture);
 				case NameStyle.LowerCase:
 					return name.ToLower();
 			}

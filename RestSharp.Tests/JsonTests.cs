@@ -115,7 +115,7 @@ namespace RestSharp.Tests
 
 			var formatted = new
 			{
-				StartDate = date.ToString(format, CultureInfo.InvariantCulture)
+				StartDate = date.ToString(format)
 			};
 
 			var data = JsonConvert.SerializeObject(formatted);
