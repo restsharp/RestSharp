@@ -474,10 +474,5 @@ namespace RestSharp
 
 			return response;
 		}
-
-		protected virtual IHttp CreateHttpInstance()
-		{
-			return new Http();
-		}
 	}
 }
