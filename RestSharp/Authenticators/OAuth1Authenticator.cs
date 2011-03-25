@@ -148,6 +148,15 @@ namespace RestSharp.Authenticators
 
 			var parameters = new WebParameterCollection();
 
+			// for non-GET style requests make sure params are part of oauth signature
+			if (request.Method != Method.GET && request.Method != Method.DELETE)
+			{
+				foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
+				{
+					parameters.Add(new WebPair(p.Name, p.Value.ToString()));
+				}
+			}
+
 			switch (Type)
 			{
 				case OAuthType.RequestToken:

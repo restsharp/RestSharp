@@ -31,29 +31,30 @@ namespace RestSharp
 		/// <param name="callback">Callback function to be executed upon completion</param>
 		public virtual void ExecuteAsync(RestRequest request, Action<RestResponse> callback)
 		{
+			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
 
-			ConfigureHttp(request, Http);
+			ConfigureHttp(request, http);
 
 			switch (request.Method)
 			{
 				case Method.GET:
-					Http.GetAsync(r => ProcessResponse(r, callback));
+					http.GetAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.POST:
-					Http.PostAsync(r => ProcessResponse(r, callback));
+					http.PostAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.PUT:
-					Http.PutAsync(r => ProcessResponse(r, callback));
+					http.PutAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.DELETE:
-					Http.DeleteAsync(r => ProcessResponse(r, callback));
+					http.DeleteAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.HEAD:
-					Http.HeadAsync(r => ProcessResponse(r, callback));
+					http.HeadAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.OPTIONS:
-					Http.OptionsAsync(r => ProcessResponse(r, callback));
+					http.OptionsAsync(r => ProcessResponse(r, callback));
 					break;
 			}
 		}

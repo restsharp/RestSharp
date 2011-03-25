@@ -114,6 +114,7 @@
     <Compile Include="HttpHeader.cs" />
     <Compile Include="HttpParameter.cs" />
     <Compile Include="IHttp.cs" />
+    <Compile Include="IHttpFactory.cs" />
     <Compile Include="IHttpResponse.cs" />
     <Compile Include="IRestClient.cs" />
     <Compile Include="IRestRequest.cs" />

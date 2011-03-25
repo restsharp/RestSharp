@@ -5,18 +5,19 @@ using System.Net;
 using RestSharp.Contrib;
 using RestSharp.Authenticators;
 using System.Diagnostics;
+using System;
 
 namespace RestSharp.IntegrationTests
 {
 	public class oAuth1Tests
 	{
-		//[Fact]
+		[Fact]
 		public void Can_Authenticate_With_OAuth()
 		{
 			const string consumerKey = "";
 			const string consumerSecret = "";
 
-			var baseUrl = "https://api.twitter.com";
+			var baseUrl = "http://api.twitter.com";
 			var client = new RestClient(baseUrl);
 			client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
 			var request = new RestRequest("oauth/request_token", Method.POST);
@@ -37,7 +38,7 @@ namespace RestSharp.IntegrationTests
 			Process.Start(url);
 
 			var verifier = "123456"; // <-- Breakpoint here (set verifier in debugger)
-			request = new RestRequest("oauth/access_token");
+			request = new RestRequest("oauth/access_token", Method.POST);
 			client.Authenticator = OAuth1Authenticator.ForAccessToken(
 				consumerKey, consumerSecret, oauth_token, oauth_token_secret, verifier
 			);
@@ -61,6 +62,17 @@ namespace RestSharp.IntegrationTests
 
 			Assert.NotNull(response);
 			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+			//request = new RestRequest("statuses/update.json", Method.POST);
+			//request.AddParameter("status", "Hello world! " + DateTime.Now.Ticks.ToString());
+			//client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+			//    consumerKey, consumerSecret, oauth_token, oauth_token_secret
+			//);
+
+			//response = client.Execute(request);
+
+			//Assert.NotNull(response);
+			//Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 		}
 
 		#region Netflix test classes

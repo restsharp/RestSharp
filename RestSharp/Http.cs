@@ -27,8 +27,13 @@ namespace RestSharp
 	/// <summary>
 	/// HttpWebRequest wrapper
 	/// </summary>
-	public partial class Http : IHttp
+	public partial class Http : IHttp, IHttpFactory
 	{
+		public IHttp Create()
+		{
+			return new Http();
+		}
+
 		/// <summary>
 		/// True if this HTTP request has any HTTP parameters
 		/// </summary>

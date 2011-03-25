@@ -33,18 +33,13 @@ namespace RestSharp
 	/// </summary>
 	public partial class RestClient : IRestClient
 	{
-		/// <summary>
-		/// The HTTP implementation to use to execute requests
-		/// </summary>
-		public IHttp Http { get; set; }
+		public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
 		/// <summary>
 		/// Default constructor that registers default content handlers
 		/// </summary>
 		public RestClient()
 		{
-			Http = new Http();
-
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
 			DefaultParameters = new List<Parameter>();
@@ -478,6 +473,11 @@ namespace RestSharp
 			}
 
 			return response;
+		}
+
+		protected virtual IHttp CreateHttpInstance()
+		{
+			return new Http();
 		}
 	}
 }
