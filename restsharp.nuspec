@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>100.4</version>
+		<version>101.0</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
