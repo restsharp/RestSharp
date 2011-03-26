@@ -211,7 +211,9 @@ namespace RestSharp
 
 		private void SetTimeout(IAsyncResult asyncResult, HttpWebRequest request, TimeOutState timeOutState)
 		{
-			ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true);
+#if FRAMEWORK
+			ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true); 
+#endif		
 		}
 
 		private void TimeoutCallback(object state, bool timedOut)
@@ -294,10 +296,12 @@ namespace RestSharp
 		{
 #if WINDOWS_PHONE
 			var dispatcher = Deployment.Current.Dispatcher;
+			dispatcher.BeginInvoke(() =>
+			{
 #endif
 			callback(response);
 #if WINDOWS_PHONE
-			dispatcher.BeginInvoke(() => { callback(response); });
+			});
 #endif
 		}
 
