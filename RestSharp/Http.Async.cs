@@ -212,7 +212,10 @@ namespace RestSharp
 		private void SetTimeout(IAsyncResult asyncResult, HttpWebRequest request, TimeOutState timeOutState)
 		{
 #if FRAMEWORK
-			ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true); 
+			if (Timeout != 0)
+			{
+				ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true);
+			} 
 #endif		
 		}
 
