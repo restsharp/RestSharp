@@ -7,6 +7,6 @@ copy LICENSE.txt Download
 
 copy RestSharp\bin\Release\RestSharp.dll Download\Package\lib\3.5\
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll Download\Package\lib\SL4\
-copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\WP7\
+copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\SL3-WP\
 
 tools\nuget.exe pack restsharp.nuspec -b Download\Package -o Download
