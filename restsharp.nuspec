@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>101.0</version>
+		<version>101.1</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
@@ -13,6 +13,6 @@
 		<dependencies>
 			<dependency id="Newtonsoft.Json" />
 		</dependencies>
-		<tags>REST HTTP API</tags>
+		<tags>REST HTTP API JSON XML</tags>
 	</metadata>
 </package>
