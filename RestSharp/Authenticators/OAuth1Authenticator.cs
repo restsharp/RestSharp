@@ -207,14 +207,15 @@ namespace RestSharp.Authenticators
 			parameters.Sort((l, r) => l.Name.CompareTo(r.Name));
 
 			var parameterCount = 0;
-			foreach (var parameter in parameters.Where(parameter =>
+            var oathParameters = parameters.Where(parameter =>
 													   !parameter.Name.IsNullOrBlank() &&
 													   !parameter.Value.IsNullOrBlank() &&
 														parameter.Name.StartsWith("oauth_")
-													   ))
+													   ).ToList();
+			foreach (var parameter in oathParameters)
 			{
 				parameterCount++;
-				var format = parameterCount < parameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
+                var format = parameterCount < oathParameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
 				sb.Append(format.FormatWith(parameter.Name, parameter.Value));
 			}
 
