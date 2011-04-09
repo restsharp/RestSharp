@@ -142,7 +142,7 @@ namespace RestSharp.Authenticators.OAuth
 
             copy.RemoveAll(exclusions);
             copy.ForEach(p => p.Value = UrlEncodeStrict(p.Value));
-            copy.Sort((x, y) => x.Name.Equals(y.Name) ? x.Value.CompareTo(y.Value) : x.Name.CompareTo(y.Name));
+            copy.Sort((x, y) => string.CompareOrdinal(x.Name, y.Name) != 0 ? string.CompareOrdinal(x.Name, y.Name) : string.CompareOrdinal(x.Value, y.Value));
             return copy;
         }
 
