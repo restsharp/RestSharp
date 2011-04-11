@@ -256,7 +256,7 @@ namespace RestSharp.Deserializers
 			// only if this isn't a generic type
 			if (!type.IsGenericType)
 			{
-				Map(list, root.Element(propName.AsNamespaced(Namespace))); 
+				Map(list, root.ElementIgnoreCase(propName.AsNamespaced(Namespace))); 
 			}
 
 			return list;
@@ -358,7 +358,7 @@ namespace RestSharp.Deserializers
 			}
 
 			// try looking for element that matches sanitized property name
-			var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName);
+			var element = root.Attributes().FirstOrDefault(d => string.Compare(d.Name.LocalName.RemoveUnderscoresAndDashes(), name.LocalName, StringComparison.CurrentCultureIgnoreCase) == 0);
 			if (element != null)
 			{
 				return element;

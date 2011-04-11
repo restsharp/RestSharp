@@ -266,6 +266,37 @@ namespace RestSharp.Tests
 			Assert.Equal(1952, p.BestFriend.Since);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Attributes_Without_Matching_Case_On_Default_Root()
+        {
+            var doc = CreateLowercaseDashesXml();
+            var response = new RestResponse { Content = doc };
+
+            var d = new XmlDeserializer();
+            var p = d.Deserialize<PersonForXml>(response);
+
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GuidString), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+
+            Assert.NotNull(p.Friends);
+            Assert.Equal(10, p.Friends.Count);
+
+            Assert.NotNull(p.BestFriend);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
+
+            Assert.NotNull(p.Foes);
+            Assert.Equal(5, p.Foes.Count);
+            Assert.Equal("Yankees", p.Foes.Team);
+        }
+
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data()
 		{
@@ -561,6 +592,49 @@ namespace RestSharp.Tests
 			doc.Add(root);
 			return doc.ToString();
 		}
+
+        private static string CreateLowercaseDashesXml()
+        {
+            var doc = new XDocument();
+            var root = new XElement("person");
+            root.Add(new XElement("name", "John Sheehan"));
+            root.Add(new XElement("start-date", new DateTime(2009, 9, 25, 0, 6, 1)));
+            root.Add(new XAttribute("age", 28));
+            root.Add(new XElement("percent", 99.9999m));
+            root.Add(new XElement("big-number", long.MaxValue));
+            root.Add(new XAttribute("is-cool", false));
+            root.Add(new XElement("ignore", "dummy"));
+            root.Add(new XAttribute("read-only", "dummy"));
+            root.Add(new XElement("unique-id", new Guid(GuidString)));
+            root.Add(new XElement("url", "http://example.com"));
+            root.Add(new XElement("url-path", "/foo/bar"));
+
+            root.Add(new XElement("best-friend",
+                        new XElement("name", "The Fonz"),
+                        new XAttribute("since", 1952)
+                    ));
+
+            var friends = new XElement("friends");
+            for (int i = 0; i < 10; i++)
+            {
+                friends.Add(new XElement("friend",
+                                new XElement("name", "Friend" + i),
+                                new XAttribute("since", DateTime.Now.Year - i)
+                            ));
+            }
+            root.Add(friends);
+
+            var foes = new XElement("foes");
+            foes.Add(new XAttribute("team", "Yankees"));
+            for (int i = 0; i < 5; i++)
+            {
+                foes.Add(new XElement("foe", new XElement("nickname", "Foe" + i)));
+            }
+            root.Add(foes);
+
+            doc.Add(root);
+            return doc.ToString();
+        }
 
 		private static string CreateElementsXml()
 		{

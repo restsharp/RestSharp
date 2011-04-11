@@ -14,7 +14,9 @@
 //   limitations under the License. 
 #endregion
 
+using System.Linq;
 using System.Xml.Linq;
+using System;
 
 namespace RestSharp.Extensions
 {
@@ -37,5 +39,22 @@ namespace RestSharp.Extensions
 
 			return xName;
 		}
+
+        /// <summary>
+        /// Returns the XML element with specified name ignoring underscores, dashes and case
+        /// </summary>
+        /// <param name="element">XML element</param>
+        /// <param name="name">Name of XML element or attribute</param>
+        /// <returns></returns>
+        public static XElement ElementIgnoreCase(this XElement element, XName name)
+        {
+            var el = element.Element(name);
+            if (el != null)
+                return el;
+
+            el = element.Elements().FirstOrDefault(d => string.Compare(d.Name.LocalName.RemoveUnderscoresAndDashes(), name.LocalName, StringComparison.CurrentCultureIgnoreCase) == 0);
+
+            return el;
+        }
 	}
 }
