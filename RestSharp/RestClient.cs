@@ -212,6 +212,17 @@ namespace RestSharp
 		/// </summary>
 		public bool FollowRedirects { get; set; }
 
+#if WINDOWS_PHONE
+        /// <summary>
+        /// Whether or not to force callbacks to be invoked on the UI thread
+        /// </summary>
+        private bool _ensureCallbacksOnUI = true;
+        public bool EnsureCallbacksOnUI
+        {
+            get { return _ensureCallbacksOnUI; }
+            set { _ensureCallbacksOnUI = value; }
+        }
+#endif
 		/// <summary>
 		/// Maximum number of redirects to follow if FollowRedirects is true
 		/// </summary>
@@ -340,6 +351,9 @@ namespace RestSharp
 
 #if !SILVERLIGHT
 			http.FollowRedirects = FollowRedirects;
+#endif
+#if WINDOWS_PHONE
+		    http.EnsureCallbacksOnUI = EnsureCallbacksOnUI;
 #endif
 #if FRAMEWORK
 			http.MaxRedirects = MaxRedirects;
