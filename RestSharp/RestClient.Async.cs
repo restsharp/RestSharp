@@ -36,6 +36,10 @@ namespace RestSharp
 
 			ConfigureHttp(request, http);
 
+			// add Accept header based on registered deserializers
+			var accepts = string.Join(", ", AcceptTypes.ToArray());
+			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+
 			switch (request.Method)
 			{
 				case Method.GET:
