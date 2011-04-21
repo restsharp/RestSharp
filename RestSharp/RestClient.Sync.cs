@@ -37,7 +37,7 @@ namespace RestSharp
 		{
 			AuthenticateIfNeeded(this, request);
 
-			// add Accept header
+			// add Accept header based on registered deserializers
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 
