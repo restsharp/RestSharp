@@ -34,7 +34,9 @@ using System.Windows;
 #endif
 
 #if FRAMEWORK
+	#if !MONOTOUCH
 using System.Web;
+	#endif
 #endif
 
 namespace RestSharp
