@@ -33,10 +33,8 @@ using System.Windows.Threading;
 using System.Windows;
 #endif
 
-#if FRAMEWORK
-	#if !MONOTOUCH
+#if (FRAMEWORK && !MONOTOUCH)
 using System.Web;
-	#endif
 #endif
 
 namespace RestSharp
