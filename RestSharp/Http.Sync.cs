@@ -21,7 +21,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+
+#if !MONOTOUCH
 using System.Web;
+#endif
+
 using RestSharp.Extensions;
 
 namespace RestSharp
