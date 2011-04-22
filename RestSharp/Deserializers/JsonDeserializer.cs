@@ -151,7 +151,7 @@ namespace RestSharp.Deserializers
 				{
 					// no primitives can contain quotes so we can safely remove them
 					// allows converting a json value like {"index": "1"} to an int
-					var tmpVal = value.ToString().Replace("\"", string.Empty);
+					var tmpVal = value.AsString().Replace("\"", string.Empty);
 					prop.SetValue(x, tmpVal.ChangeType(type), null);
 				}
 				else if (type.IsEnum)
@@ -176,26 +176,25 @@ namespace RestSharp.Deserializers
 					DateTime dt;
 					if (DateFormat.HasValue())
 					{
-						var clean = value.ToString().RemoveSurroundingQuotes();
+						var clean = value.AsString().RemoveSurroundingQuotes();
 						dt = DateTime.ParseExact(clean, DateFormat, Culture);
 					}
 					else
 					{
 						// try parsing instead
-						dt = value.ToString().ParseJsonDate(Culture);
+						dt = value.AsString().ParseJsonDate(Culture);
 					}
 
 					prop.SetValue(x, dt, null);
 				}
 				else if (type == typeof(Decimal))
 				{
-					var dec = Decimal.Parse(value.ToString(), Culture);
+					var dec = Decimal.Parse(value.AsString(), Culture);
 					prop.SetValue(x, dec, null);
 				}
 				else if (type == typeof(Guid))
 				{
-					string raw = value.ToString();
-					raw = raw.Substring(1, raw.Length - 2);
+					string raw = value.AsString();
 					var guid = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(raw);
 					prop.SetValue(x, guid, null);
 				}

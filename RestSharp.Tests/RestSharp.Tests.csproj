@@ -72,6 +72,12 @@
     <Reference Include="xunit.extensions">
       <HintPath>..\packages\xunit.extensions.1.8.0.1545\lib\xunit.extensions.dll</HintPath>
     </Reference>
+    <Reference Include="xunit.runner.tdnet">
+      <HintPath>..\..\xunit-1.8\xunit.runner.tdnet.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.runner.utility">
+      <HintPath>..\..\xunit-1.8\xunit.runner.utility.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\NullHttp.cs" />

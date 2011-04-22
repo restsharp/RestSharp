@@ -140,7 +140,8 @@ namespace RestSharp.Extensions
 				"yyyy-MM-ddTHH:mm:ssZ", 
 				"yyyy-MM-dd HH:mm:ssZ", 
 				"yyyy-MM-ddTHH:mm:ss", 
-				"yyyy-MM-ddTHH:mm:sszzzzzz"
+				"yyyy-MM-ddTHH:mm:sszzzzzz",
+				"M/d/yyyy h:mm:ss tt" // default format for invariant culture
 			};
 
 			DateTime date;
