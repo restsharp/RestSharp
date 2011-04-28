@@ -176,7 +176,7 @@ namespace RestSharp.Deserializers
 					DateTime dt;
 					if (DateFormat.HasValue())
 					{
-						var clean = value.AsString().RemoveSurroundingQuotes();
+						var clean = value.AsString();
 						dt = DateTime.ParseExact(clean, DateFormat, Culture);
 					}
 					else

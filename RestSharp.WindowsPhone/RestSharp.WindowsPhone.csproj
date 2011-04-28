@@ -43,7 +43,6 @@
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json.WindowsPhone, Version=4.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\sl3-wp\Newtonsoft.Json.WindowsPhone.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />

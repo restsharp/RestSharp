@@ -33,15 +33,22 @@ namespace RestSharp.Tests
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
+		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
+		{
+			var doc = File.ReadAllText(@"SampleData\4sq.txt");
+
+			var json = new JsonDeserializer();
+			json.RootElement = "response";
+
+			var output = json.Deserialize<VenuesResponse>(new RestResponse { Content = doc });
+
+			Assert.NotEmpty(output.Groups);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Lists_of_Simple_Types()
 		{
 			var doc = File.ReadAllText(@"SampleData\jsonlists.txt");
-			var json = new JsonDeserializer();
-
-			var output = json.Deserialize<JsonLists>(new RestResponse { Content = doc });
-
-			Assert.NotEmpty(output.Names);
-			Assert.NotEmpty(output.Numbers);
 		}
 
 		[Fact]
