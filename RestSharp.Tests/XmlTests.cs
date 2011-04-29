@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
@@ -27,11 +28,17 @@ namespace RestSharp.Tests
 	public class XmlTests
 	{
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+		private string SampleDataPath = Path.Combine(Environment.CurrentDirectory, "SampleData");
+		
+		private string PathFor(string sampleFile)
+		{
+			return Path.Combine(SampleDataPath, sampleFile);
+		}
 
 		[Fact]
 		public void Can_Deserialize_To_Standalone_List_Without_Matching_Class_Case()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -44,7 +51,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_To_Standalone_List_With_Matching_Class_Case()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -57,7 +64,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Directly_To_Lists_Off_Root_Element()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\directlists.xml";
+			var xmlpath = PathFor("directlists.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -70,7 +77,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -83,7 +90,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name_Using_XmlAttributeDeserializer()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlAttributeDeserializer();
@@ -96,7 +103,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -109,7 +116,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_Using_XmlAttributeDeserializer()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlAttributeDeserializer();
@@ -122,7 +129,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_With_Additional_Property()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\InlineListSample.xml";
+			var xmlpath = PathFor("InlineListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -134,7 +141,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Nested_List_Items_Without_Matching_Class_Name()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\NestedListSample.xml";
+			var xmlpath = PathFor("NestedListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -148,7 +155,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Nested_List_Items_With_Matching_Class_Name()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\NestedListSample.xml";
+			var xmlpath = PathFor("NestedListSample.xml");
 			var doc = XDocument.Load(xmlpath);
 
 			var xml = new XmlDeserializer();
@@ -388,7 +395,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Eventful_Xml()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\eventful.xml";
+			var xmlpath = PathFor("eventful.xml");
 			var doc = XDocument.Load(xmlpath);
 			var response = new RestResponse { Content = doc.ToString() };
 
@@ -405,7 +412,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Lastfm_Xml()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\Lastfm.xml";
+			var xmlpath = PathFor("Lastfm.xml");
 			var doc = XDocument.Load(xmlpath);
 			var response = new RestResponse { Content = doc.ToString() };
 
@@ -420,7 +427,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Google_Weather_Xml()
 		{
-			var xmlpath = Environment.CurrentDirectory + @"\SampleData\GoogleWeather.xml";
+			var xmlpath = PathFor("GoogleWeather.xml");
 			var doc = XDocument.Load(xmlpath);
 			var response = new RestResponse { Content = doc.ToString() };
 

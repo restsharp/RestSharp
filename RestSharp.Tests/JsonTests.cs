@@ -35,7 +35,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
 		{
-			var doc = File.ReadAllText(@"SampleData\4sq.txt");
+			var doc = File.ReadAllText(Path.Combine("SampleData", "4sq.txt"));
 
 			var json = new JsonDeserializer();
 			json.RootElement = "response";
@@ -48,7 +48,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Lists_of_Simple_Types()
 		{
-			var doc = File.ReadAllText(@"SampleData\jsonlists.txt");
+			var doc = File.ReadAllText(Path.Combine("SampleData", "jsonlists.txt"));
 		}
 
 		[Fact]
@@ -65,7 +65,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_From_Root_Element()
 		{
-			var doc = File.ReadAllText(@"SampleData\sojson.txt");
+			var doc = File.ReadAllText(Path.Combine("SampleData", "sojson.txt"));
 
 			var json = new JsonDeserializer();
 			json.RootElement = "User";
@@ -77,7 +77,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Generic_Members()
 		{
-			var doc = File.ReadAllText(@"SampleData\GenericWithList.txt");
+			var doc = File.ReadAllText(Path.Combine("SampleData", "GenericWithList.txt"));
 			var json = new JsonDeserializer();
 
 			var output = json.Deserialize<Generic<GenericWithList<Foe>>>(new RestResponse { Content = doc });
@@ -138,7 +138,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Root_Json_Array_To_List()
 		{
-			var data = File.ReadAllText(@"SampleData\jsonarray.txt");
+			var data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
 			var response = new RestResponse { Content = data };
 			var json = new JsonDeserializer();
 			var output = json.Deserialize<List<status>>(response);
