@@ -422,6 +422,12 @@ namespace RestSharp
 		public ICredentials Credentials { get; set; }
 
 		/// <summary>
+		/// Gets or sets a user-defined state object that contains information about a request and which can be later 
+		/// retrieved when the request completes.
+		/// </summary>
+		public object State { get; set; }
+
+		/// <summary>
 		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 		/// </summary>
 		public int Timeout { get; set; }
