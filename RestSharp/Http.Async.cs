@@ -33,7 +33,7 @@ using System.Windows.Threading;
 using System.Windows;
 #endif
 
-#if (FRAMEWORK && !MONOTOUCH)
+#if (FRAMEWORK && !MONOTOUCH && !__ANDROID__)
 using System.Web;
 #endif
 
