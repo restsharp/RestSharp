@@ -22,6 +22,7 @@ using System.Xml.Linq;
 
 using RestSharp.Extensions;
 using System.Globalization;
+using System.Xml;
 
 namespace RestSharp.Deserializers
 {
@@ -127,7 +128,13 @@ namespace RestSharp.Deserializers
 					type = type.GetGenericArguments()[0];
 				}
 
-				if (type.IsPrimitive)
+                if (type == typeof(bool))
+                {
+                    string toConvert = value.ToString().ToLower();
+
+                    prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
+                }
+                else if (type.IsPrimitive)
 				{
 					prop.SetValue(x, value.ChangeType(type), null);
 				}
