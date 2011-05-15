@@ -283,7 +283,8 @@ namespace RestSharp
 				assembled = assembled.Substring(1);
 			}
 
-			assembled = string.Format("{0}/{1}", BaseUrl, assembled);
+			if(!string.IsNullOrEmpty(BaseUrl))
+				assembled = string.Format("{0}/{1}", BaseUrl, assembled);
 
 			if (request.Method != Method.POST && request.Method != Method.PUT)
 			{
