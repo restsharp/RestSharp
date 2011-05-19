@@ -97,7 +97,6 @@
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
     <Compile Include="UrlBuilderTests.cs" />
-    <Compile Include="XmlListAttributeTests.cs" />
     <Compile Include="XmlTests.cs" />
   </ItemGroup>
   <ItemGroup>
