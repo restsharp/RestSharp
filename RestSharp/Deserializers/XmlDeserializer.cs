@@ -256,7 +256,7 @@ namespace RestSharp.Deserializers
 			// only if this isn't a generic type
 			if (!type.IsGenericType)
 			{
-				Map(list, root.Element(propName.AsNamespaced(Namespace))); 
+				Map(list, root.Element(propName.AsNamespaced(Namespace)) ?? root); // when using RootElement, the heirarchy is different
 			}
 
 			return list;

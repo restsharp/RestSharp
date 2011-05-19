@@ -93,9 +93,11 @@
     <Compile Include="SampleClasses\nullables.cs" />
     <Compile Include="SampleClasses\eventful.cs" />
     <Compile Include="SampleClasses\SOUser.cs" />
+    <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
     <Compile Include="UrlBuilderTests.cs" />
+    <Compile Include="XmlListAttributeTests.cs" />
     <Compile Include="XmlTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +124,9 @@
     </Content>
     <Content Include="SampleData\jsonlists.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ListWithAttributes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\NestedListSample.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
