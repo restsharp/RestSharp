@@ -4,9 +4,9 @@ tools\ilmerge.exe /lib:RestSharp.Silverlight\bin\Release /internalize /ndebug /t
 copy RestSharp.WindowsPhone\bin\Release\*.dll Download\WindowsPhone\
 copy LICENSE.txt Download
 
-
-copy RestSharp\bin\Release\RestSharp.dll Download\Package\lib\3.5\
-copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll Download\Package\lib\SL4\
-copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\SL3-WP\
+copy RestSharp\bin\Release\RestSharp.dll Download\Package\lib\net35\
+copy RestSharp\bin\Release\RestSharp.dll Download\Package\lib\net35-client\
+copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll Download\Package\lib\sl4\
+copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\sl3-wp\
 
 tools\nuget.exe pack restsharp.nuspec -b Download\Package -o Download
