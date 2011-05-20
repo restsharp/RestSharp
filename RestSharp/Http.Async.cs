@@ -343,6 +343,7 @@ namespace RestSharp
 				webRequest.ContentLength = 0;
 			}
 #endif
+	
 			if (Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
@@ -356,6 +357,7 @@ namespace RestSharp
 #endif
 
 #if FRAMEWORK
+			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			ServicePointManager.Expect100Continue = false;
 
 			if (Timeout != 0)
