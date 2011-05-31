@@ -36,6 +36,21 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_To_List_Inheritor_From_Custom_Root_With_Attributes()
+		{
+			var xmlpath = PathFor("ListWithAttributes.xml");
+			var doc = XDocument.Load(xmlpath);
+
+			var xml = new XmlDeserializer();
+			xml.RootElement = "Calls";
+			var output = xml.Deserialize<TwilioCallList>(new RestResponse { Content = doc.ToString() });
+
+			Assert.Equal(3, output.NumPages);
+			Assert.NotEmpty(output);
+			Assert.Equal(2, output.Count);
+		}
+
+		[Fact]
 		public void Can_Deserialize_To_Standalone_List_Without_Matching_Class_Case()
 		{
 			var xmlpath = PathFor("InlineListSample.xml");
