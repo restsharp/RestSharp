@@ -101,7 +101,8 @@ namespace RestSharp.Deserializers
                     if (0 < attrs.Length)
                     {
                         var attr = (Newtonsoft.Json.JsonPropertyAttribute) attrs[0];
-                        value = json[attr.PropertyName];
+                        actualName = attr.PropertyName;
+                        value = json[actualName];
                     }
                 }
 

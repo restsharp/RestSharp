@@ -18,5 +18,8 @@ namespace RestSharp.Tests.SampleClasses
             NullValueHandling = NullValueHandling.Ignore)]
         public double HourlyRate { get; set; }
 
+        [JsonProperty(PropertyName = "nestedThing")]
+        public NestedClassSample NestedClass { get; set; }
+
     }
 }

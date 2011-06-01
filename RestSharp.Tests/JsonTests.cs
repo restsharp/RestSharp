@@ -40,12 +40,13 @@ namespace RestSharp.Tests
 
 	        var json = new JsonDeserializer {RootElement = "data"};
 
-	        var output = json.Deserialize<JsonWithAttributesSample>(new RestResponse {Content = doc});
+	        var output = json.Deserialize<List<JsonWithAttributesSample>>(new RestResponse {Content = doc});
 
-            Assert.True(output.GetType() == typeof(JsonWithAttributesSample));
-            Assert.Equal(123456, output.ClientId);
-            Assert.Equal("sampleClient", output.ClientName);
-            Assert.Equal(50.0, output.HourlyRate);
+            Assert.True(output.GetType() == typeof(List<JsonWithAttributesSample>));
+            Assert.Equal(123456, output[0].ClientId);
+            Assert.Equal("sampleClient", output[0].ClientName);
+            Assert.Equal(50.0, output[0].HourlyRate);
+            Assert.Equal(7654, output[0].NestedClass.Id);
 	    }
 
 		[Fact]
