@@ -1,0 +1,8 @@
+﻿{
+	"related_data_updated_at":"2011-06-01T09:11:13-06:00",
+	"data": {
+		"hourly_rate":50.0,
+		"name":"sampleClient",
+		"id":123456
+	}
+}

@@ -93,6 +93,7 @@
     <Compile Include="SampleClasses\nullables.cs" />
     <Compile Include="SampleClasses\eventful.cs" />
     <Compile Include="SampleClasses\SOUser.cs" />
+    <Compile Include="SampleClasses\JsonWithAttributesSample.cs" />
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
@@ -101,6 +102,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleData\4sq.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\jsonWithAttributesSample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\directlists.xml">
