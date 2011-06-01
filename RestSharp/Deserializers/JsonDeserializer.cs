@@ -94,6 +94,18 @@ namespace RestSharp.Deserializers
 				var value = json[name];
 				var actualName = name;
 
+                if (value == null)
+                {
+                    // try Json.Net's JsonPropertyAttribute
+                    var attrs = prop.GetCustomAttributes(typeof (Newtonsoft.Json.JsonPropertyAttribute), false);
+                    if (0 < attrs.Length)
+                    {
+                        var attr = (Newtonsoft.Json.JsonPropertyAttribute) attrs[0];
+                        actualName = attr.PropertyName;
+                        value = json[actualName];
+                    }
+                }
+
 				if (value == null)
 				{
 					// try camel cased name

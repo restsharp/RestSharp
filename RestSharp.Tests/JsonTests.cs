@@ -32,6 +32,23 @@ namespace RestSharp.Tests
 	{
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
+	    [Fact]
+	    public void Can_Deserialize_Json_With_JsonNet_Attributes_On_Model()
+	    {
+	        
+	        var doc = File.ReadAllText(Path.Combine("SampleData", "jsonWithAttributesSample.txt"));
+
+	        var json = new JsonDeserializer {RootElement = "data"};
+
+	        var output = json.Deserialize<List<JsonWithAttributesSample>>(new RestResponse {Content = doc});
+
+            Assert.True(output.GetType() == typeof(List<JsonWithAttributesSample>));
+            Assert.Equal(123456, output[0].ClientId);
+            Assert.Equal("sampleClient", output[0].ClientName);
+            Assert.Equal(50.0, output[0].HourlyRate);
+            Assert.Equal(7654, output[0].NestedClass.Id);
+	    }
+
 		[Fact]
 		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
 		{
