@@ -316,7 +316,7 @@ namespace RestSharp.Deserializers
 				return root.Element(camelName);
 			}
 
-			if (name == "Value" && root.Value != null)
+			if (name == "Value".AsNamespaced(name.NamespaceName) && root.Value != null)
 			{
 				return root;
 			}
