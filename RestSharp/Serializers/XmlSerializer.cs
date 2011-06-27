@@ -61,7 +61,28 @@ namespace RestSharp.Serializers
 
 			var root = new XElement(name.AsNamespaced(Namespace));
 
-			Map(root, obj);
+            if (obj is IList)
+            {
+                var itemTypeName = "";
+                foreach (var item in (IList)obj)
+                {
+                    var type = item.GetType();
+                    var opts = type.GetAttribute<SerializeAsAttribute>();
+                    if (opts != null)
+                    {
+                        itemTypeName = opts.TransformName(opts.Name ?? name);
+                    }
+                    if (itemTypeName == "")
+                    {
+                        itemTypeName = type.Name;
+                    }
+                    var instance = new XElement(itemTypeName);
+                    Map(instance, item);
+                    root.Add(instance);
+                }
+            }
+            else
+                Map(root, obj);
 
 			if (RootElement.HasValue()) {
 				var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
