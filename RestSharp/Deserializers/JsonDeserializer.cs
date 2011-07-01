@@ -171,7 +171,7 @@ namespace RestSharp.Deserializers
 					string raw = value.AsString();
 					prop.SetValue(x, raw, null);
 				}
-				else if (type == typeof(DateTime))
+				else if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
 				{
 					DateTime dt;
 					if (DateFormat.HasValue())
@@ -189,7 +189,10 @@ namespace RestSharp.Deserializers
 						dt = value.AsString().ParseJsonDate(Culture);
 					}
 
-					prop.SetValue(x, dt, null);
+					if (type == typeof(DateTime))
+						prop.SetValue(x, dt, null);
+					else if (type == typeof(DateTimeOffset))
+						prop.SetValue(x, (DateTimeOffset)dt, null);
 				}
 				else if (type == typeof(Decimal))
 				{
