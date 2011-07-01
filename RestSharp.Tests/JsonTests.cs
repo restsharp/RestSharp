@@ -110,7 +110,10 @@ namespace RestSharp.Tests
 			Assert.NotNull(output.UniqueId);
 
 			Assert.Equal(123, output.Id);
-			Assert.Equal(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
+			Assert.NotNull(output.StartDate);
+			Assert.Equal(
+				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc).ToString("u"),
+				output.StartDate.Value.ToString("u"));
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
@@ -488,7 +491,7 @@ namespace RestSharp.Tests
 		{
 			var doc = new JObject();
 			doc["Id"] = 123;
-			doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00);
+			doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc);
 			doc["UniqueId"] = new Guid(GuidString).ToString();
 
 			return doc.ToString();
