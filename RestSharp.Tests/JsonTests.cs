@@ -315,7 +315,9 @@ namespace RestSharp.Tests
 			var response = new RestResponse { Content = doc };
 			var person = d.Deserialize<PersonForJson>(response);
 
-			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), person.StartDate);
+			Assert.Equal(
+				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
+				person.StartDate.ToString("u"));
 		}
 
 		[Fact]

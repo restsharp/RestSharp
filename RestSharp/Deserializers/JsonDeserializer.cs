@@ -179,6 +179,10 @@ namespace RestSharp.Deserializers
 						var clean = value.AsString();
 						dt = DateTime.ParseExact(clean, DateFormat, Culture);
 					}
+					else if (value.Type == JTokenType.Date)
+					{
+						dt = value.Value<DateTime>().ToUniversalTime();
+					}
 					else
 					{
 						// try parsing instead
