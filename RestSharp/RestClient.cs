@@ -300,7 +300,7 @@ namespace RestSharp
 				}
 			}
 
-			return new Uri(assembled);
+			return new Uri(Uri.UnescapeDataString(assembled));
 		}
 
 		private string EncodeParameters(RestRequest request)
