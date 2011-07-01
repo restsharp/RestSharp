@@ -308,6 +308,17 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_JsonNet_Dates()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "person.json.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var person = d.Deserialize<PersonForJson>(response);
+
+			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), person.StartDate);
+		}
+
+		[Fact]
 		public void Can_Deserialize_To_Dictionary_String_String()
 		{
 			var doc = CreateJsonStringDictionary();

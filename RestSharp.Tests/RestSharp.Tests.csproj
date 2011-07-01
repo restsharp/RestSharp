@@ -103,6 +103,9 @@
     <Content Include="SampleData\4sq.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\person.json.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\directlists.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
