@@ -181,6 +181,9 @@
     <Compile Include="..\RestSharp\RestResponseCookie.cs">
       <Link>RestResponseCookie.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
+      <Link>RestRequestAsyncHandle.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
