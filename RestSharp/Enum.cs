@@ -75,6 +75,7 @@ namespace RestSharp
 		None,
 		Completed,
 		Error,
-		TimedOut
+		TimedOut,
+		Aborted
 	}
 }
