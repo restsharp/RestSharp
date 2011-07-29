@@ -42,12 +42,12 @@ namespace RestSharp
 
 		Uri Url { get; set; }
 
-		void DeleteAsync(Action<HttpResponse> action);
-		void GetAsync(Action<HttpResponse> action);
-		void HeadAsync(Action<HttpResponse> action);
-		void OptionsAsync(Action<HttpResponse> action);
-		void PostAsync(Action<HttpResponse> action);
-		void PutAsync(Action<HttpResponse> action);
+		HttpWebRequest DeleteAsync(Action<HttpResponse> action);
+		HttpWebRequest GetAsync(Action<HttpResponse> action);
+		HttpWebRequest HeadAsync(Action<HttpResponse> action);
+		HttpWebRequest OptionsAsync(Action<HttpResponse> action);
+		HttpWebRequest PostAsync(Action<HttpResponse> action);
+		HttpWebRequest PutAsync(Action<HttpResponse> action);
 
 #if FRAMEWORK
 		HttpResponse Delete();
