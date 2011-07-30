@@ -173,19 +173,19 @@ namespace RestSharp
 		
 		private string GetMultipartFileHeader (HttpFile file)
 		{
-			return string.Format ("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}", 
-				FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", Environment.NewLine);
+			return string.Format ("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
+				FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", "\r\n");
 		}
 		
 		private string GetMultipartFormData (HttpParameter param)
 		{
 			return string.Format ("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
-				FormBoundary, param.Name, param.Value, Environment.NewLine);
+				FormBoundary, param.Name, param.Value, "\r\n");
 		}
 		
 		private string GetMultipartFooter ()
 		{
-			return string.Format ("--{0}--{1}", FormBoundary, Environment.NewLine);
+			return string.Format ("--{0}--{1}", FormBoundary, "\r\n");
 		}
 		
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;

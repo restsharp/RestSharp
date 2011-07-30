@@ -172,7 +172,7 @@ namespace RestSharp
 					formDataStream.Write(headerBytes, 0, headerBytes.Length);
 					// Write the file data directly to the Stream, rather than serializing it to a string.
 					file.Writer(formDataStream);
-					string lineEnding = Environment.NewLine;
+					const string lineEnding = "\r\n";
 					formDataStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
 				}
 

@@ -148,7 +148,7 @@ namespace RestSharp
 			{
 				length += GetMultipartFileHeader(file).Length;
 				length += file.ContentLength;
-				length += Environment.NewLine.Length;
+				length += "\r\n".Length;
 			}
 
 			foreach (var param in Parameters)
@@ -171,7 +171,7 @@ namespace RestSharp
 
 				// Write the file data directly to the Stream, rather than serializing it to a string.
 				file.Writer(requestStream);
-				var lineEnding = Environment.NewLine;
+				var lineEnding = "\r\n";
 				requestStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
 			}
 
