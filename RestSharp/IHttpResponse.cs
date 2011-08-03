@@ -43,7 +43,7 @@ namespace RestSharp
         /// <summary>
         /// String representation of response content
         /// </summary>
-        string Content { get; set; }
+        string Content { get; }
 
         /// <summary>
         /// HTTP response status code

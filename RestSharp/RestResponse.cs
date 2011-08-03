@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using RestSharp.Extensions;
 
 namespace RestSharp
 {
@@ -25,6 +26,8 @@ namespace RestSharp
 	/// </summary>
 	public abstract class RestResponseBase
 	{
+		private string _content;
+
 		/// <summary>
 		/// Default constructor
 		/// </summary>
@@ -55,7 +58,21 @@ namespace RestSharp
 		/// <summary>
 		/// String representation of response content
 		/// </summary>
-		public string Content { get; set; }
+		public string Content
+		{
+			get
+			{
+				if (_content == null)
+				{
+					_content = RawBytes.AsString();
+				}
+				return _content;
+			}
+			set
+			{
+				_content = value;
+			}
+		}
 		/// <summary>
 		/// HTTP response status code
 		/// </summary>
@@ -128,7 +145,6 @@ namespace RestSharp
 		{
 			return new RestResponse<T>
 			{
-				Content = response.Content,
 				ContentEncoding = response.ContentEncoding,
 				ContentLength = response.ContentLength,
 				ContentType = response.ContentType,

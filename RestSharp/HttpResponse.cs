@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using RestSharp.Extensions;
 
 namespace RestSharp
 {
@@ -25,10 +26,13 @@ namespace RestSharp
 	/// </summary>
 	public class HttpResponse : IHttpResponse
 	{
+		private string _content;
+
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public HttpResponse() {
+		public HttpResponse()
+		{
 			Headers = new List<HttpHeader>();
 			Cookies = new List<HttpCookie>();
 		}
@@ -46,9 +50,19 @@ namespace RestSharp
 		/// </summary>
 		public string ContentEncoding { get; set; }
 		/// <summary>
-		/// String representation of response content
+		/// Lazy-loaded string representation of response content
 		/// </summary>
-		public string Content { get; set; }
+		public string Content
+		{
+			get
+			{
+				if (_content == null)
+				{
+					_content = RawBytes.AsString();
+				}
+				return _content;
+			}
+		}
 		/// <summary>
 		/// HTTP response status code
 		/// </summary>
@@ -83,11 +97,14 @@ namespace RestSharp
 		/// Status of the request. Will return Error for transport errors.
 		/// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 		/// </summary>
-		public ResponseStatus ResponseStatus {
-			get {
+		public ResponseStatus ResponseStatus
+		{
+			get
+			{
 				return _responseStatus;
 			}
-			set {
+			set
+			{
 				_responseStatus = value;
 			}
 		}
