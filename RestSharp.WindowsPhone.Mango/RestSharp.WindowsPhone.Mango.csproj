@@ -181,6 +181,9 @@
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
+      <Link>RestRequestAsyncHandle.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />

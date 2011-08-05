@@ -241,6 +241,9 @@
     <Compile Include="..\RestSharp\Validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
+      <Link>RestRequestAsyncHandle.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

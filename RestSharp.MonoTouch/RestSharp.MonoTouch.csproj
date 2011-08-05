@@ -11,7 +11,7 @@
     <RootNamespace>RestSharp.MonoTouch</RootNamespace>
     <MtouchSdkVersion>3.2</MtouchSdkVersion>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
-    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <AssemblyName>RestSharp.MonoTouch</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
@@ -280,6 +280,8 @@
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\TimeExtensions.cs">
       <Link>Authenticators\Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
+    <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
+      <Link>RestRequestAsyncHandle.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -289,4 +291,9 @@
     <Folder Include="Extensions\" />
     <Folder Include="Validation\" />
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties InternalTargetFrameworkVersion="IPhone" />
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

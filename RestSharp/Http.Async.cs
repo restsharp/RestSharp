@@ -46,47 +46,48 @@ namespace RestSharp
 	{
 		private TimeOutState timeoutState = null;
 
-		public void DeleteAsync(Action<HttpResponse> action)
+		public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
 		{
-			GetStyleMethodInternalAsync("DELETE", action);
+			return GetStyleMethodInternalAsync("DELETE", action);
 		}
 
-		public void GetAsync(Action<HttpResponse> action)
+		public HttpWebRequest GetAsync(Action<HttpResponse> action)
 		{
-			GetStyleMethodInternalAsync("GET", action);
+			return GetStyleMethodInternalAsync("GET", action);
 		}
 
-		public void HeadAsync(Action<HttpResponse> action)
+		public HttpWebRequest HeadAsync(Action<HttpResponse> action)
 		{
-			GetStyleMethodInternalAsync("HEAD", action);
+			return GetStyleMethodInternalAsync("HEAD", action);
 		}
 
-		public void OptionsAsync(Action<HttpResponse> action)
+		public HttpWebRequest OptionsAsync(Action<HttpResponse> action)
 		{
-			GetStyleMethodInternalAsync("OPTIONS", action);
+			return GetStyleMethodInternalAsync("OPTIONS", action);
 		}
 
-		public void PostAsync(Action<HttpResponse> action)
+		public HttpWebRequest PostAsync(Action<HttpResponse> action)
 		{
-			PutPostInternalAsync("POST", action);
+			return PutPostInternalAsync("POST", action);
 		}
 
-		public void PutAsync(Action<HttpResponse> action)
+		public HttpWebRequest PutAsync(Action<HttpResponse> action)
 		{
-			PutPostInternalAsync("PUT", action);
+			return PutPostInternalAsync("PUT", action);
 		}
 
-		private void GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+		private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
 		{
+			HttpWebRequest webRequest = null;
 			try
 			{
 				var url = Url;
-				var webRequest = ConfigureAsyncWebRequest(method, url);
+				webRequest = ConfigureAsyncWebRequest(method, url);
 				timeoutState = new TimeOutState { Request = webRequest };
 				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
 				SetTimeout(asyncResult, webRequest, timeoutState);
 			}
-			catch (Exception ex)
+			catch(Exception ex)
 			{
 				var response = new HttpResponse();
 				response.ErrorMessage = ex.Message;
@@ -94,17 +95,19 @@ namespace RestSharp
 				response.ResponseStatus = ResponseStatus.Error;
 				ExecuteCallback(response, callback);
 			}
+			return webRequest;
 		}
 
-		private void PutPostInternalAsync(string method, Action<HttpResponse> callback)
+		private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
 		{
+			HttpWebRequest webRequest = null;
 			try
 			{
-				var webRequest = ConfigureAsyncWebRequest(method, Url);
+				webRequest = ConfigureAsyncWebRequest(method, Url);
 				PreparePostBody(webRequest);
 				WriteRequestBodyAsync(webRequest, callback);
 			}
-			catch (Exception ex)
+			catch(Exception ex)
 			{
 				var response = new HttpResponse();
 				response.ErrorMessage = ex.Message;
@@ -112,6 +115,8 @@ namespace RestSharp
 				response.ResponseStatus = ResponseStatus.Error;
 				ExecuteCallback(response, callback);
 			}
+			
+			return webRequest;
 		}
 
 		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
@@ -245,8 +250,13 @@ namespace RestSharp
 				var webRequest = (HttpWebRequest)result.AsyncState;
 				raw = webRequest.EndGetResponse(result) as HttpWebResponse;
 			}
-			catch (WebException ex)
+			catch(WebException ex)
 			{
+				if(ex.Status == WebExceptionStatus.RequestCanceled)
+				{
+					throw ex;
+				}
+				
 				if (ex.Response is HttpWebResponse)
 				{
 					raw = ex.Response as HttpWebResponse;
@@ -264,7 +274,7 @@ namespace RestSharp
 
 			try
 			{
-				if (timeoutState.TimedOut)
+				if(timeoutState.TimedOut)
 				{
 					response.ResponseStatus = ResponseStatus.TimedOut;
 					ExecuteCallback(response, callback);
@@ -277,7 +287,16 @@ namespace RestSharp
 					ExecuteCallback(response, callback);
 				});
 			}
-			catch (Exception ex)
+			catch(WebException ex)
+			{
+				if(ex.Status == WebExceptionStatus.RequestCanceled)
+				{
+					response.ResponseStatus = ResponseStatus.Aborted;
+					ExecuteCallback(response, callback);
+					return;
+				}
+			}
+			catch(Exception ex)
 			{
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;

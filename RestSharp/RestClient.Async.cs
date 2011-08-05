@@ -29,7 +29,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual void ExecuteAsync(RestRequest request, Action<RestResponse> callback)
+		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse> callback)
 		{
 			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
@@ -39,28 +39,31 @@ namespace RestSharp
 			// add Accept header based on registered deserializers
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-
-			switch (request.Method)
+			HttpWebRequest webRequest = null;
+			
+			switch(request.Method)
 			{
 				case Method.GET:
-					http.GetAsync(r => ProcessResponse(r, callback));
+					webRequest = http.GetAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.POST:
-					http.PostAsync(r => ProcessResponse(r, callback));
+					webRequest = http.PostAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.PUT:
-					http.PutAsync(r => ProcessResponse(r, callback));
+					webRequest = http.PutAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.DELETE:
-					http.DeleteAsync(r => ProcessResponse(r, callback));
+					webRequest = http.DeleteAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.HEAD:
-					http.HeadAsync(r => ProcessResponse(r, callback));
+					webRequest = http.HeadAsync(r => ProcessResponse(r, callback));
 					break;
 				case Method.OPTIONS:
-					http.OptionsAsync(r => ProcessResponse(r, callback));
+					webRequest = http.OptionsAsync(r => ProcessResponse(r, callback));
 					break;
 			}
+			
+			return new RestRequestAsyncHandle(webRequest);
 		}
 
 		void ProcessResponse(HttpResponse httpResponse, Action<RestResponse> callback)
@@ -75,9 +78,9 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual void ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
+		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
 		{
-			ExecuteAsync(request, response =>
+			return ExecuteAsync(request, response =>
 				{
 					var restResponse = Deserialize<T>(request, response);
 					callback(restResponse);
