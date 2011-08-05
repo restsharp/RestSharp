@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Security.Cryptography.X509Certificates;
 using RestSharp.Extensions;
 
 namespace RestSharp
@@ -78,6 +79,10 @@ namespace RestSharp
 			}
 		}
 
+		/// <summary>
+		/// X509CertificateCollection to be sent with request
+		/// </summary>
+		public X509CertificateCollection ClientCertificates { get; set; }
 		/// <summary>
 		/// UserAgent to be sent with request
 		/// </summary>

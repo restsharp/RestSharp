@@ -18,12 +18,14 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RestSharp
 {
 	public interface IHttp
 	{
 		ICredentials Credentials { get; set; }
+		X509CertificateCollection ClientCertificates { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 #if !SILVERLIGHT

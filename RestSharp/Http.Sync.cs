@@ -210,35 +210,40 @@ namespace RestSharp
 			webRequest.Method = method;
 
 			// make sure Content-Length header is always sent since default is -1
-			if (!HasFiles)
+			if(!HasFiles)
 			{
 				webRequest.ContentLength = 0;
 			}
 
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
-			if (UserAgent.HasValue())
+			if(ClientCertificates != null)
+			{
+				webRequest.ClientCertificates = ClientCertificates;
+			}
+
+			if(UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
 			}
 
-			if (Timeout != 0)
+			if(Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;
 			}
 
-			if (Credentials != null)
+			if(Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
 			}
 
-			if (Proxy != null)
+			if(Proxy != null)
 			{
 				webRequest.Proxy = Proxy;
 			}
 
 			webRequest.AllowAutoRedirect = FollowRedirects;
-			if (FollowRedirects && MaxRedirects.HasValue)
+			if(FollowRedirects && MaxRedirects.HasValue)
 			{
 				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value; 
 			}

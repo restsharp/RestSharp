@@ -17,6 +17,7 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RestSharp
 {
@@ -25,6 +26,10 @@ namespace RestSharp
 	/// </summary>
 	public interface IRestClient
 	{
+		/// <summary>
+		/// X509CertificateCollection to be sent with request
+		/// </summary>
+		X509CertificateCollection ClientCertificates { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>

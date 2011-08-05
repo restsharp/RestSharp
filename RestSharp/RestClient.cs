@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Xml;
 using System.Xml.Linq;
+using System.Security.Cryptography.X509Certificates;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using System.Text;
@@ -218,6 +219,11 @@ namespace RestSharp
 		public int? MaxRedirects { get; set; }
 
 		/// <summary>
+		/// X509CertificateCollection to be sent with request
+		/// </summary>
+		public X509CertificateCollection ClientCertificates { get; set; }
+
+		/// <summary>
 		/// UserAgent to use for requests made by this client instance
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -319,9 +325,9 @@ namespace RestSharp
 		private void ConfigureHttp(RestRequest request, IHttp http)
 		{
 			// move RestClient.DefaultParameters into Request.Parameters
-			foreach (var p in DefaultParameters)
+			foreach(var p in DefaultParameters)
 			{
-				if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
+				if(request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
 				{
 					continue;
 				}
@@ -330,8 +336,13 @@ namespace RestSharp
 			}
 
 			http.Url = BuildUri(request);
-
-			if (UserAgent.HasValue())
+			
+			if(ClientCertificates != null)
+			{
+				http.ClientCertificates = ClientCertificates;
+			}
+			
+			if(UserAgent.HasValue())
 			{
 				http.UserAgent = UserAgent;
 			}
@@ -345,7 +356,7 @@ namespace RestSharp
 			http.MaxRedirects = MaxRedirects;
 #endif
 
-			if (request.Credentials != null)
+			if(request.Credentials != null)
 			{
 				http.Credentials = request.Credentials;
 			}
@@ -358,7 +369,7 @@ namespace RestSharp
 							  Value = p.Value.ToString()
 						  };
 
-			foreach (var header in headers)
+			foreach(var header in headers)
 			{
 				http.Headers.Add(header);
 			}
@@ -371,7 +382,7 @@ namespace RestSharp
 							  Value = p.Value.ToString()
 						  };
 
-			foreach (var cookie in cookies)
+			foreach(var cookie in cookies)
 			{
 				http.Cookies.Add(cookie);
 			}
@@ -385,12 +396,12 @@ namespace RestSharp
 							  Value = p.Value.ToString()
 						  };
 
-			foreach (var parameter in @params)
+			foreach(var parameter in @params)
 			{
 				http.Parameters.Add(parameter);
 			}
 
-			foreach (var file in request.Files)
+			foreach(var file in request.Files)
 			{
 				http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Writer = file.Writer, FileName = file.FileName, ContentLength = file.ContentLength });
 			}
@@ -399,7 +410,7 @@ namespace RestSharp
 						where p.Type == ParameterType.RequestBody
 						select p).FirstOrDefault();
 
-			if (body != null)
+			if(body != null)
 			{
 				http.RequestBody = body.Value.ToString();
 				http.RequestContentType = body.Name;

@@ -329,19 +329,24 @@ namespace RestSharp
 #if !WINDOWS_PHONE
 			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
 			// or indirectly
-			if (!HasFiles)
+			if(!HasFiles)
 			{
 				webRequest.ContentLength = 0;
 			}
 #endif
 	
-			if (Credentials != null)
+			if(Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
 			}
-
+			
+			if(ClientCertificates != null)
+			{
+				webRequest.ClientCertificates = ClientCertificates;
+			}
+			
 #if !SILVERLIGHT
-			if (UserAgent.HasValue())
+			if(UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
 			}
