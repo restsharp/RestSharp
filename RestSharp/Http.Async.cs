@@ -162,27 +162,22 @@ namespace RestSharp
 
 		private void WriteMultipartFormDataAsync(Stream requestStream)
 		{
-			var encoding = Encoding.UTF8;
-			foreach (var file in Files)
+			foreach(var file in Files)
 			{
 				// Add just the first part of this param, since we will write the file data directly to the Stream
-				var header = GetMultipartFileHeader(file);
-				requestStream.Write(encoding.GetBytes(header), 0, header.Length);
+				WriteStringTo(requestStream, GetMultipartFileHeader(file));
 
 				// Write the file data directly to the Stream, rather than serializing it to a string.
 				file.Writer(requestStream);
-				var lineEnding = Environment.NewLine;
-				requestStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
+				WriteStringTo(requestStream, Environment.NewLine);
 			}
 
-			foreach (var param in Parameters)
+			foreach(var param in Parameters)
 			{
-				var postData = GetMultipartFormData(param);
-				requestStream.Write(encoding.GetBytes(postData), 0, postData.Length);
+				WriteStringTo(requestStream, GetMultipartFormData(param));
 			}
-
-			var footer = GetMultipartFooter();
-			requestStream.Write(encoding.GetBytes(footer), 0, footer.Length);
+			
+			WriteStringTo(requestStream, GetMultipartFooter());
 		}
 
 		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
@@ -190,19 +185,15 @@ namespace RestSharp
 			var webRequest = result.AsyncState as HttpWebRequest;
 
 			// write body to request stream
-			using (var requestStream = webRequest.EndGetRequestStream(result))
+			using(var requestStream = webRequest.EndGetRequestStream(result))
 			{
-				if (HasFiles)
+				if(HasFiles)
 				{
 					WriteMultipartFormDataAsync(requestStream);
 				}
-
-
-
 				else
 				{
-					var encoding = Encoding.UTF8;
-					requestStream.Write(encoding.GetBytes(RequestBody), 0, RequestBody.Length);
+					WriteStringTo(requestStream, RequestBody);
 				}
 			}
 

@@ -161,31 +161,24 @@ namespace RestSharp
 		private void WriteMultipartFormData(HttpWebRequest webRequest)
 		{
 			var encoding = Encoding.UTF8;
-			using (Stream formDataStream = webRequest.GetRequestStream())
+			using(var requestStream = webRequest.GetRequestStream())
 			{
-				foreach (var file in Files)
+				foreach(var file in Files)
 				{
 					// Add just the first part of this param, since we will write the file data directly to the Stream
-					string header = GetMultipartFileHeader (file);
-					var headerBytes = encoding.GetBytes(header);
-
-					formDataStream.Write(headerBytes, 0, headerBytes.Length);
+					WriteStringTo(requestStream, GetMultipartFileHeader(file));
+					
 					// Write the file data directly to the Stream, rather than serializing it to a string.
-					file.Writer(formDataStream);
-					string lineEnding = Environment.NewLine;
-					formDataStream.Write(encoding.GetBytes(lineEnding), 0, lineEnding.Length);
+					file.Writer(requestStream);
+					WriteStringTo(requestStream, Environment.NewLine);
 				}
 
-				foreach (var param in Parameters)
+				foreach(var param in Parameters)
 				{
-					var postData = GetMultipartFormData (param);
-					var postDataBytes = encoding.GetBytes(postData);
-					formDataStream.Write(postDataBytes, 0, postDataBytes.Length);
+					WriteStringTo(requestStream, GetMultipartFormData(param));
 				}
-
-				string footer = GetMultipartFooter();
-				var footerBytes = encoding.GetBytes(footer);
-				formDataStream.Write(footerBytes, 0, footerBytes.Length);
+				
+				WriteStringTo(requestStream, GetMultipartFooter());
 			}
 		}
 

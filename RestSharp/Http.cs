@@ -244,21 +244,24 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
-		private void PreparePostBody (HttpWebRequest webRequest)
+		private void PreparePostBody(HttpWebRequest webRequest)
 		{
-			if (HasFiles)
-			{
+			if(HasFiles) {
 				webRequest.ContentType = GetMultipartFormContentType();
 			}
-			else if (HasParameters)
-			{
+			else if(HasParameters) {
 				webRequest.ContentType = "application/x-www-form-urlencoded";
 				RequestBody = EncodeParameters();
 			}
-			else if (HasBody)
-			{
+			else if(HasBody) {
 				webRequest.ContentType = RequestContentType;
 			}
+		}
+		
+		private static void WriteStringTo(Stream stream, string toWrite)
+		{
+			var bytes = Encoding.UTF8.GetBytes(toWrite);
+			stream.Write(bytes, 0, bytes.Length);
 		}
 
 		private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
