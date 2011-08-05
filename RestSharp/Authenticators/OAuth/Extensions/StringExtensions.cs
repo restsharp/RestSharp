@@ -116,7 +116,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         }
 
         private const RegexOptions Options =
-#if !SILVERLIGHT
+#if SILVERLIGHT
             RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #else
             RegexOptions.IgnoreCase;
