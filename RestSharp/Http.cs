@@ -246,14 +246,17 @@ namespace RestSharp
 
 		private void PreparePostBody(HttpWebRequest webRequest)
 		{
-			if(HasFiles) {
+			if(HasFiles)
+			{
 				webRequest.ContentType = GetMultipartFormContentType();
 			}
-			else if(HasParameters) {
+			else if(HasParameters)
+			{
 				webRequest.ContentType = "application/x-www-form-urlencoded";
 				RequestBody = EncodeParameters();
 			}
-			else if(HasBody) {
+			else if(HasBody)
+			{
 				webRequest.ContentType = RequestContentType;
 			}
 		}
