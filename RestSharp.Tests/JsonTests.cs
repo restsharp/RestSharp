@@ -110,7 +110,10 @@ namespace RestSharp.Tests
 			Assert.NotNull(output.UniqueId);
 
 			Assert.Equal(123, output.Id);
-			Assert.Equal(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
+			Assert.NotNull(output.StartDate);
+			Assert.Equal(
+				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc).ToString("u"),
+				output.StartDate.Value.ToString("u"));
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
@@ -308,6 +311,95 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_JsonNet_Dates()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "person.json.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var person = d.Deserialize<PersonForJson>(response);
+
+			Assert.Equal(
+				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
+				person.StartDate.ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_DateTime()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+
+			Assert.Equal(
+				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
+				payload.DateTime.ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nullable_DateTime_With_Value()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+
+			Assert.NotNull(payload.NullableDateTimeWithValue);
+			Assert.Equal(
+				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
+				payload.NullableDateTimeWithValue.Value.ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nullable_DateTime_With_Null()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+
+			Assert.Null(payload.NullableDateTimeWithNull);
+		}
+
+		[Fact]
+		public void Can_Deserialize_DateTimeOffset()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+
+			Assert.Equal(
+				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
+				payload.DateTimeOffset.ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nullable_DateTimeOffset_With_Value()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+
+			Assert.NotNull(payload.NullableDateTimeOffsetWithValue);
+			Assert.Equal(
+				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
+				payload.NullableDateTimeOffsetWithValue.Value.ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nullable_DateTimeOffset_With_Null()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+
+			Assert.Null(payload.NullableDateTimeOffsetWithNull);
+		}
+
+		[Fact]
 		public void Can_Deserialize_To_Dictionary_String_String()
 		{
 			var doc = CreateJsonStringDictionary();
@@ -475,7 +567,7 @@ namespace RestSharp.Tests
 		{
 			var doc = new JObject();
 			doc["Id"] = 123;
-			doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00);
+			doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc);
 			doc["UniqueId"] = new Guid(GuidString).ToString();
 
 			return doc.ToString();
