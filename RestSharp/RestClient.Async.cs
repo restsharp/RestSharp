@@ -81,11 +81,15 @@ namespace RestSharp
 		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
 		{
 			return ExecuteAsync(request, response =>
+			{
+				var restResponse = (RestResponse<T>)response;
+				if(response.ResponseStatus != ResponseStatus.Aborted)
 				{
-					var restResponse = Deserialize<T>(request, response);
-					callback(restResponse);
+					restResponse = Deserialize<T>(request, response);
 				}
-			);
+
+				callback(restResponse);
+			});
 		}
 	}
 }
