@@ -105,6 +105,12 @@ namespace RestSharp
 		/// </summary>
 		public bool FollowRedirects { get; set; }
 #endif
+#if WINDOWS_PHONE
+        /// <summary>
+        /// Whether or not to force callbacks to be invoked on the UI thread
+        /// </summary>
+        public bool EnsureCallbacksOnUI { get; set; }
+#endif
 #if FRAMEWORK
 		/// <summary>
 		/// Maximum number of automatic redirects to follow if FollowRedirects is true

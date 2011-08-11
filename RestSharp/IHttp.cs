@@ -31,6 +31,9 @@ namespace RestSharp
 #if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
 #endif
+#if WINDOWS_PHONE
+        bool EnsureCallbacksOnUI { get; set; }
+#endif
 #if FRAMEWORK
 		int? MaxRedirects { get; set; }
 #endif
