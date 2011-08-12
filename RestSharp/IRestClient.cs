@@ -26,10 +26,13 @@ namespace RestSharp
 	/// </summary>
 	public interface IRestClient
 	{
+#if !SILVERLIGHT
 		/// <summary>
 		/// X509CertificateCollection to be sent with request
 		/// </summary>
 		X509CertificateCollection ClientCertificates { get; set; }
+#endif
+
 		/// <summary>
 		/// 
 		/// </summary>

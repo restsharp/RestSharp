@@ -358,13 +358,13 @@ namespace RestSharp
 			{
 				webRequest.Credentials = Credentials;
 			}
-			
+
+#if !SILVERLIGHT
 			if(ClientCertificates != null)
 			{
 				webRequest.ClientCertificates = ClientCertificates;
 			}
 			
-#if !SILVERLIGHT
 			if(UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;

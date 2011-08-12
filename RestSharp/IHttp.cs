@@ -25,11 +25,11 @@ namespace RestSharp
 	public interface IHttp
 	{
 		ICredentials Credentials { get; set; }
-		X509CertificateCollection ClientCertificates { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 #if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
+		X509CertificateCollection ClientCertificates { get; set; }
 #endif
 #if FRAMEWORK
 		int? MaxRedirects { get; set; }

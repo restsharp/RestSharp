@@ -208,20 +208,22 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Default is true. Determine whether or not requests that result in 
-		/// HTTP status codes of 3xx should follow returned redirect
-		/// </summary>
-		public bool FollowRedirects { get; set; }
-
-		/// <summary>
 		/// Maximum number of redirects to follow if FollowRedirects is true
 		/// </summary>
 		public int? MaxRedirects { get; set; }
 
+#if !SILVERLIGHT
 		/// <summary>
 		/// X509CertificateCollection to be sent with request
 		/// </summary>
 		public X509CertificateCollection ClientCertificates { get; set; }
+#endif
+
+		/// <summary>
+		/// Default is true. Determine whether or not requests that result in 
+		/// HTTP status codes of 3xx should follow returned redirect
+		/// </summary>
+		public bool FollowRedirects { get; set; }
 
 		/// <summary>
 		/// UserAgent to use for requests made by this client instance
@@ -338,11 +340,6 @@ namespace RestSharp
 
 			http.Url = BuildUri(request);
 			
-			if(ClientCertificates != null)
-			{
-				http.ClientCertificates = ClientCertificates;
-			}
-			
 			if(UserAgent.HasValue())
 			{
 				http.UserAgent = UserAgent;
@@ -351,6 +348,11 @@ namespace RestSharp
 			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
 
 #if !SILVERLIGHT
+			if (ClientCertificates != null)
+			{
+				http.ClientCertificates = ClientCertificates;
+			}
+
 			http.FollowRedirects = FollowRedirects;
 #endif
 #if FRAMEWORK

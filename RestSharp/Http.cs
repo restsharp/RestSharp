@@ -80,10 +80,6 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// X509CertificateCollection to be sent with request
-		/// </summary>
-		public X509CertificateCollection ClientCertificates { get; set; }
-		/// <summary>
 		/// UserAgent to be sent with request
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -100,6 +96,10 @@ namespace RestSharp
 		/// </summary>
 		public IList<HttpFile> Files { get; private set; }
 #if !SILVERLIGHT
+		/// <summary>
+		/// X509CertificateCollection to be sent with request
+		/// </summary>
+		public X509CertificateCollection ClientCertificates { get; set; }
 		/// <summary>
 		/// Whether or not HTTP 3xx response redirects should be automatically followed
 		/// </summary>
