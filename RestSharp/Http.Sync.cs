@@ -22,7 +22,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !__ANDROID__
 using System.Web;
 #endif
 
