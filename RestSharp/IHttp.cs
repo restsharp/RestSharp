@@ -29,9 +29,9 @@ namespace RestSharp
 		int Timeout { get; set; }
 #if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
-		X509CertificateCollection ClientCertificates { get; set; }
 #endif
 #if FRAMEWORK
+		X509CertificateCollection ClientCertificates { get; set; }
 		int? MaxRedirects { get; set; }
 #endif
 

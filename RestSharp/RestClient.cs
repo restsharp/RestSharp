@@ -212,7 +212,7 @@ namespace RestSharp
 		/// </summary>
 		public int? MaxRedirects { get; set; }
 
-#if !SILVERLIGHT
+#if FRAMEWORK
 		/// <summary>
 		/// X509CertificateCollection to be sent with request
 		/// </summary>
@@ -348,14 +348,14 @@ namespace RestSharp
 			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
 
 #if !SILVERLIGHT
+			http.FollowRedirects = FollowRedirects;
+#endif
+#if FRAMEWORK
 			if (ClientCertificates != null)
 			{
 				http.ClientCertificates = ClientCertificates;
 			}
 
-			http.FollowRedirects = FollowRedirects;
-#endif
-#if FRAMEWORK
 			http.MaxRedirects = MaxRedirects;
 #endif
 

@@ -26,13 +26,6 @@ namespace RestSharp
 	/// </summary>
 	public interface IRestClient
 	{
-#if !SILVERLIGHT
-		/// <summary>
-		/// X509CertificateCollection to be sent with request
-		/// </summary>
-		X509CertificateCollection ClientCertificates { get; set; }
-#endif
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -65,6 +58,10 @@ namespace RestSharp
 		RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new();
 
 #if FRAMEWORK
+		/// <summary>
+		/// X509CertificateCollection to be sent with request
+		/// </summary>
+		X509CertificateCollection ClientCertificates { get; set; }
 		RestResponse Execute(RestRequest request);
 		RestResponse<T> Execute<T>(RestRequest request) where T : new();
 		

@@ -360,11 +360,6 @@ namespace RestSharp
 			}
 
 #if !SILVERLIGHT
-			if(ClientCertificates != null)
-			{
-				webRequest.ClientCertificates = ClientCertificates;
-			}
-			
 			if(UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
@@ -372,6 +367,11 @@ namespace RestSharp
 #endif
 
 #if FRAMEWORK
+			if(ClientCertificates != null)
+			{
+				webRequest.ClientCertificates = ClientCertificates;
+			}
+			
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			ServicePointManager.Expect100Continue = false;
 
