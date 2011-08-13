@@ -447,12 +447,38 @@ namespace RestSharp.Tests
 			var response = new RestResponse { Content = doc.ToString() };
 
 			var d = new XmlDeserializer();
-			var output = d.Deserialize<SampleClasses.xml_api_reply>(response);
+            var output = d.Deserialize<SampleClasses.xml_api_reply>(response);
 
 			Assert.NotEmpty(output.weather);
 			Assert.Equal(4, output.weather.Count);
 			Assert.Equal("Sunny", output.weather[0].condition.data);
 		}
+
+        [Fact]
+        public void Can_Deserialize_Boolean_From_Number()
+        {
+            var xmlpath = PathFor("boolean_from_number.xml");
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+
+            var d = new XmlDeserializer();
+            var output = d.Deserialize<SampleClasses.BooleanTest>(response);
+
+            Assert.True(output.Value);
+        }
+
+        [Fact]
+        public void Can_Deserialize_Boolean_From_String()
+        {
+            var xmlpath = PathFor("boolean_from_string.xml");
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+
+            var d = new XmlDeserializer();
+            var output = d.Deserialize<SampleClasses.BooleanTest>(response);
+
+            Assert.True(output.Value);
+        }
 
 		private static string CreateUnderscoresXml()
 		{
