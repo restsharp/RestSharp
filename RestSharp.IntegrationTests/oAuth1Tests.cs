@@ -11,7 +11,7 @@ namespace RestSharp.IntegrationTests
 {
 	public class oAuth1Tests
 	{
-		[Fact]
+		[Fact(Skip = "Provide your own consumer key/secret before running")]
 		public void Can_Authenticate_With_OAuth()
 		{
 			const string consumerKey = "";
