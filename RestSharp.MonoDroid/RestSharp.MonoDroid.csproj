@@ -42,9 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
@@ -180,8 +177,67 @@
     <Compile Include="..\RestSharp\IHttpFactory.cs">
       <Link>IHttpFactory.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth1Authenticator.cs">
+      <Link>Authenticators\Authenticators\OAuth1Authenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth2Authenticator.cs">
+      <Link>Authenticators\Authenticators\OAuth2Authenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameter.cs">
+      <Link>Authenticators\Authenticators\OAuth\HttpPostParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameterType.cs">
+      <Link>Authenticators\Authenticators\OAuth\HttpPostParameterType.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthParameterHandling.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthParameterHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureMethod.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthSignatureMethod.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureTreatment.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthSignatureTreatment.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthTools.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthTools.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthType.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthType.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWebQueryInfo.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthWebQueryInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWorkflow.cs">
+      <Link>Authenticators\Authenticators\OAuth\OAuthWorkflow.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebPair.cs">
+      <Link>Authenticators\Authenticators\OAuth\WebPair.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebPairCollection.cs">
+      <Link>Authenticators\Authenticators\OAuth\WebPairCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameter.cs">
+      <Link>Authenticators\Authenticators\OAuth\WebParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameterCollection.cs">
+      <Link>Authenticators\Authenticators\OAuth\WebParameterCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\CollectionExtensions.cs">
+      <Link>Authenticators\Authenticators\OAuth\Extensions\CollectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\OAuthExtensions.cs">
+      <Link>Authenticators\Authenticators\OAuth\Extensions\OAuthExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\StringExtensions.cs">
+      <Link>Authenticators\Authenticators\OAuth\Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\TimeExtensions.cs">
+      <Link>Authenticators\Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
+      <Link>RestRequestAsyncHandle.cs</Link>
+    </Compile>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
