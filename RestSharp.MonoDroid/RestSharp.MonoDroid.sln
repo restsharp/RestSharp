@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Android", "RestSharp.Android.csproj", "{1B662C38-984F-4B6A-89B5-AFF7FCBE43A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.MonoDroid", "RestSharp.MonoDroid.csproj", "{1B662C38-984F-4B6A-89B5-AFF7FCBE43A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
