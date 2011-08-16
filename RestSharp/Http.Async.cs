@@ -44,7 +44,7 @@ namespace RestSharp
 	/// </summary>
 	public partial class Http
 	{
-		private TimeOutState timeoutState = null;
+		private TimeOutState timeoutState;
 
 		public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
 		{
@@ -85,7 +85,7 @@ namespace RestSharp
 				webRequest = ConfigureAsyncWebRequest(method, url);
 				timeoutState = new TimeOutState { Request = webRequest };
 				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
-				SetTimeout(asyncResult, webRequest, timeoutState);
+				SetTimeout(asyncResult, timeoutState);
 			}
 			catch(Exception ex)
 			{
@@ -137,7 +137,7 @@ namespace RestSharp
 				asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 			}
 
-			SetTimeout(asyncResult, webRequest, timeoutState);
+			SetTimeout(asyncResult, timeoutState);
 		}
 
 		private long CalculateContentLength()
@@ -187,7 +187,7 @@ namespace RestSharp
 
 		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
-			var webRequest = result.AsyncState as HttpWebRequest;
+			var webRequest = (HttpWebRequest)result.AsyncState;
 
 			// write body to request stream
 			using(var requestStream = webRequest.EndGetRequestStream(result))
@@ -205,7 +205,7 @@ namespace RestSharp
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 		}
 
-		private void SetTimeout(IAsyncResult asyncResult, HttpWebRequest request, TimeOutState timeOutState)
+		private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
 		{
 #if FRAMEWORK
 			if (Timeout != 0)
@@ -215,30 +215,30 @@ namespace RestSharp
 #endif		
 		}
 
-		private void TimeoutCallback(object state, bool timedOut)
+		private static void TimeoutCallback(object state, bool timedOut)
 		{
-			if (timedOut)
+			if (!timedOut)
+				return;
+
+			var timeoutState = state as TimeOutState;
+
+			if (timeoutState == null)
 			{
-				TimeOutState timeoutState = state as TimeOutState;
+				return;
+			}
 
-				if (timeoutState == null)
-				{
-					return;
-				}
+			lock (timeoutState)
+			{
+				timeoutState.TimedOut = true;
+			}
 
-				lock (timeoutState)
-				{
-					timeoutState.TimedOut = timedOut;
-				}
-
-				if (timeoutState.Request != null)
-				{
-					timeoutState.Request.Abort();
-				}
+			if (timeoutState.Request != null)
+			{
+				timeoutState.Request.Abort();
 			}
 		}
 
-		private void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+		private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
 		{
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
@@ -305,7 +305,7 @@ namespace RestSharp
 			}
 		}
 
-		private void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
+		private static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
 #if WINDOWS_PHONE
 			var dispatcher = Deployment.Current.Dispatcher;

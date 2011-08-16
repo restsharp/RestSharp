@@ -131,7 +131,7 @@ namespace RestSharp
 			return response;
 		}
 
-		private HttpWebResponse GetRawResponse(HttpWebRequest request)
+		private static HttpWebResponse GetRawResponse(HttpWebRequest request)
 		{
 			try
 			{
