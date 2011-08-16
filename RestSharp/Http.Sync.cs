@@ -152,33 +152,28 @@ namespace RestSharp
 			if (HasFiles)
 			{
 				webRequest.ContentType = GetMultipartFormContentType();
-				WriteMultipartFormData(webRequest);
+				using (var requestStream = webRequest.GetRequestStream())
+				{
+					WriteMultipartFormData(requestStream);
+				}
 			}
 
 			PreparePostBody(webRequest);
 		}
 
-		private void WriteMultipartFormData(HttpWebRequest webRequest)
-		{
-			using(var requestStream = webRequest.GetRequestStream())
-			{
-				WriteMultipartFormData(requestStream);
-			}
-		}
-
 		private void WriteRequestBody(HttpWebRequest webRequest)
 		{
-			if (HasBody)
+			if (!HasBody)
+				return;
+
+			var encoding = Encoding.UTF8;
+			var bytes = encoding.GetBytes(RequestBody);
+
+			webRequest.ContentLength = bytes.Length;
+
+			using (var requestStream = webRequest.GetRequestStream())
 			{
-				var encoding = Encoding.UTF8;
-				var bytes = encoding.GetBytes(RequestBody);
-
-				webRequest.ContentLength = bytes.Length;
-
-				using (var requestStream = webRequest.GetRequestStream())
-				{
-					requestStream.Write(bytes, 0, bytes.Length);
-				}
+				requestStream.Write(bytes, 0, bytes.Length);
 			}
 		}
 
