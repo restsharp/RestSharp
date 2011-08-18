@@ -30,6 +30,8 @@ namespace RestSharp
 	/// </summary>
 	public partial class Http : IHttp, IHttpFactory
 	{
+		private const string _lineBreak = "\r\n";
+
 		///<summary>
 		/// Creates an IHttp
 		///</summary>
@@ -182,19 +184,19 @@ namespace RestSharp
 		
 		private static string GetMultipartFileHeader (HttpFile file)
 		{
-			return string.Format ("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}", 
-				FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", Environment.NewLine);
+			return string.Format ("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
+				FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", _lineBreak);
 		}
 		
 		private static string GetMultipartFormData (HttpParameter param)
 		{
 			return string.Format ("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
-				FormBoundary, param.Name, param.Value, Environment.NewLine);
+				FormBoundary, param.Name, param.Value, _lineBreak);
 		}
 		
 		private static string GetMultipartFooter ()
 		{
-			return string.Format ("--{0}--{1}", FormBoundary, Environment.NewLine);
+			return string.Format ("--{0}--{1}", FormBoundary, _lineBreak);
 		}
 		
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
@@ -290,7 +292,7 @@ namespace RestSharp
 
 				// Write the file data directly to the Stream, rather than serializing it to a string.
 				file.Writer(requestStream);
-				WriteStringTo(requestStream, Environment.NewLine);
+				WriteStringTo(requestStream, _lineBreak);
 			}
 
 			WriteStringTo(requestStream, GetMultipartFooter());

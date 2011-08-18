@@ -44,7 +44,7 @@ namespace RestSharp
 	/// </summary>
 	public partial class Http
 	{
-		private TimeOutState timeoutState;
+		private TimeOutState _timeoutState;
 
 		public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
 		{
@@ -83,9 +83,9 @@ namespace RestSharp
 			{
 				var url = Url;
 				webRequest = ConfigureAsyncWebRequest(method, url);
-				timeoutState = new TimeOutState { Request = webRequest };
+				_timeoutState = new TimeOutState { Request = webRequest };
 				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
-				SetTimeout(asyncResult, timeoutState);
+				SetTimeout(asyncResult, _timeoutState);
 			}
 			catch(Exception ex)
 			{
@@ -122,7 +122,7 @@ namespace RestSharp
 		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
 		{
 			IAsyncResult asyncResult;
-			timeoutState = new TimeOutState { Request = webRequest };
+			_timeoutState = new TimeOutState { Request = webRequest };
 
 			if (HasBody || HasFiles)
 			{
@@ -137,7 +137,7 @@ namespace RestSharp
 				asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
 			}
 
-			SetTimeout(asyncResult, timeoutState);
+			SetTimeout(asyncResult, _timeoutState);
 		}
 
 		private long CalculateContentLength()
@@ -153,7 +153,7 @@ namespace RestSharp
 			{
 				length += GetMultipartFileHeader(file).Length;
 				length += file.ContentLength;
-				length += Environment.NewLine.Length;
+				length += _lineBreak.Length;
 			}
 
 			foreach (var param in Parameters)
@@ -254,7 +254,7 @@ namespace RestSharp
 
 			try
 			{
-				if(timeoutState.TimedOut)
+				if(_timeoutState.TimedOut)
 				{
 					response.ResponseStatus = ResponseStatus.TimedOut;
 					ExecuteCallback(response, callback);
