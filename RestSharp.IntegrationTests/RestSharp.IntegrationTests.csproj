@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="FileTests.cs" />
