@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -130,6 +130,7 @@
     <Compile Include="RestResponseCookie.cs" />
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
     <Compile Include="RestClient.Async.cs" />
+    <Compile Include="Serializers\DotNetXmlSerializer.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\SerializeAsAttribute.cs" />
