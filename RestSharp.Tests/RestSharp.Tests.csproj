@@ -107,6 +107,12 @@
     <Content Include="SampleData\boolean_from_number.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\datetimes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\person.json.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\directlists.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
