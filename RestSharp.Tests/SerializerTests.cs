@@ -181,19 +181,20 @@ namespace RestSharp.Tests
 			public DateTime StartDate { get; set; }
 		}
 
-        [SerializeAs(Name = "People")]
-        private class PersonList : List<Person>
-        {
-            
-        }
+		[SerializeAs(Name = "People")]
+		private class PersonList : List<Person>
+		{
 
-		private XDocument GetSimplePocoXDoc() {
+		}
+
+		private XDocument GetSimplePocoXDoc()
+		{
 			var doc = new XDocument();
 			var root = new XElement("Person");
 			root.Add(new XElement("Name", "Foo"),
-					new XElement("Age", 50),
-					new XElement("Price", 19.95m),
-					new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+			         new XElement("Age", 50),
+			         new XElement("Price", 19.95m),
+			         new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
 
 			var items = new XElement("Items");
 			items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
