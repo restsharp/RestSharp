@@ -270,7 +270,7 @@ namespace RestSharp.Deserializers
 			}
 			else
 			{
-				instance = Activator.CreateInstance(type);
+                                instance = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
 				Map(instance, element);
 			}
 			return instance;
