@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using RestSharp.Serializers;
+using RestSharp.Tests.SampleClasses;
 using Xunit;
 
 namespace RestSharp.Tests
@@ -108,6 +109,40 @@ namespace RestSharp.Tests
 			var expected = GetSimplePocoXDocWackyNames();
 
 			Assert.Equal(expected.ToString(), doc.ToString());
+		}
+
+		[Fact]
+		public void Can_serialize_firewall()
+		{
+			VShieldEdgeConfig vsec = new VShieldEdgeConfig();
+			FirewallConfig fwconf = new FirewallConfig();
+			FirewallRule fwrule = new FirewallRule();
+
+			PortInfo dpi = new PortInfo();
+			PortInfo spi = new PortInfo();
+			IpInfo dip = new IpInfo();
+			IpInfo sip = new IpInfo();
+
+			dpi.port = "445";
+			dip.ipAddress = "10.53.2.123";
+			spi.port = "any";
+			sip.ipAddress = "*";
+
+			fwrule.action = "allow";
+			fwrule.destinationIpAddress = dip;
+			fwrule.destinationPort = dpi;
+			fwrule.direction = "both";
+			fwrule.protocol = "tcp";
+			fwrule.ruleId = 0;
+			fwrule.sourceIpAddress = sip;
+			fwrule.sourcePort = spi;
+
+			fwconf.Add(fwrule);
+			vsec.FirewallConfig = fwconf;
+
+			var xml = new XmlSerializer();
+			var doc = xml.Serialize(vsec);
+			Console.WriteLine(doc);
 		}
 
 		private class Person

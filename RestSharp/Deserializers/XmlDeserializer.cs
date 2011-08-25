@@ -128,13 +128,12 @@ namespace RestSharp.Deserializers
 					type = type.GetGenericArguments()[0];
 				}
 
-                if (type == typeof(bool))
-                {
-                    string toConvert = value.ToString().ToLower();
-
-                    prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
-                }
-                else if (type.IsPrimitive)
+				if (type == typeof(bool))
+				{
+					var toConvert = value.ToString().ToLower();
+					prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
+				}
+				else if (type.IsPrimitive)
 				{
 					prop.SetValue(x, value.ChangeType(type), null);
 				}
@@ -323,7 +322,7 @@ namespace RestSharp.Deserializers
 				return root.Element(camelName);
 			}
 
-			if (name == "Value" && root.Value != null)
+			if (name == "Value".AsNamespaced(name.NamespaceName))
 			{
 				return root;
 			}

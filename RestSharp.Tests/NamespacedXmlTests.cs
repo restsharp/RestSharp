@@ -15,8 +15,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
+using RestSharp.Tests.SampleClasses.Lastfm;
 using Xunit;
 
 namespace RestSharp.Tests
@@ -156,6 +158,30 @@ namespace RestSharp.Tests
 			Assert.NotNull(p.Foes);
 			Assert.Equal(5, p.Foes.Count);
 			Assert.Equal("Yankees", p.Foes.Team);
+		}
+
+		[Fact]
+		public void Can_Deserialize_List_Of_Primitives_With_Namespace() {
+			var doc = CreateListOfPrimitivesXml();
+			var response = new RestResponse { Content = doc };
+
+			var d = new XmlDeserializer();
+			d.Namespace = "http://restsharp.org";
+			var a = d.Deserialize<List<artist>>(response);
+
+			Assert.Equal(2, a.Count);
+			Assert.Equal("first", a[0].Value);
+			Assert.Equal("second", a[1].Value);
+		}
+
+		private static string CreateListOfPrimitivesXml() {
+			var doc = new XDocument();
+			var ns = XNamespace.Get("http://restsharp.org");
+			var root = new XElement(ns + "artists");
+			root.Add(new XElement(ns + "artist", "first"));
+			root.Add(new XElement(ns + "artist", "second"));
+			doc.Add(root);
+			return doc.ToString();
 		}
 
 		private static string CreateUnderscoresXml() {
