@@ -112,37 +112,43 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_serialize_firewall()
+		public void Can_serialize_a_list_which_is_the_root_element()
 		{
-			VShieldEdgeConfig vsec = new VShieldEdgeConfig();
-			FirewallConfig fwconf = new FirewallConfig();
-			FirewallRule fwrule = new FirewallRule();
-
-			PortInfo dpi = new PortInfo();
-			PortInfo spi = new PortInfo();
-			IpInfo dip = new IpInfo();
-			IpInfo sip = new IpInfo();
-
-			dpi.port = "445";
-			dip.ipAddress = "10.53.2.123";
-			spi.port = "any";
-			sip.ipAddress = "*";
-
-			fwrule.action = "allow";
-			fwrule.destinationIpAddress = dip;
-			fwrule.destinationPort = dpi;
-			fwrule.direction = "both";
-			fwrule.protocol = "tcp";
-			fwrule.ruleId = 0;
-			fwrule.sourceIpAddress = sip;
-			fwrule.sourcePort = spi;
-
-			fwconf.Add(fwrule);
-			vsec.FirewallConfig = fwconf;
+			var pocoList = new PersonList
+			               {
+			               	new Person
+			               	{
+			               		Name = "Foo",
+			               		Age = 50,
+			               		Price = 19.95m,
+			               		StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+			               		Items = new List<Item>
+			               		        {
+			               		        	new Item {Name = "One", Value = 1},
+			               		        	new Item {Name = "Two", Value = 2},
+			               		        	new Item {Name = "Three", Value = 3}
+			               		        }
+			               	},
+			               	new Person
+			               	{
+			               		Name = "Bar",
+			               		Age = 23,
+			               		Price = 23.23m,
+			               		StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
+			               		Items = new List<Item>
+			               		        {
+			               		        	new Item {Name = "One", Value = 1},
+			               		        	new Item {Name = "Two", Value = 2},
+			               		        	new Item {Name = "Three", Value = 3}
+			               		        }
+			               	}
+			               };
 
 			var xml = new XmlSerializer();
-			var doc = xml.Serialize(vsec);
-			Console.WriteLine(doc);
+			var doc = xml.Serialize(pocoList);
+			var expected = GetPeopleXDoc();
+
+			Assert.Equal(expected.ToString(), doc);
 		}
 
 		private class Person
@@ -174,6 +180,12 @@ namespace RestSharp.Tests
 			[SerializeAs(Name = "start_date", Attribute = true)]
 			public DateTime StartDate { get; set; }
 		}
+
+        [SerializeAs(Name = "People")]
+        private class PersonList : List<Person>
+        {
+            
+        }
 
 		private XDocument GetSimplePocoXDoc() {
 			var doc = new XDocument();
@@ -248,5 +260,41 @@ namespace RestSharp.Tests
 
 			return doc;
 		}
+
+        private XDocument GetPeopleXDoc()
+        {
+            var doc = new XDocument();
+            var root = new XElement("People");
+            var element = new XElement("Person");
+
+            var items = new XElement("Items");
+            items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
+            items.Add(new XElement("Item", new XElement("Name", "Two"), new XElement("Value", 2)));
+            items.Add(new XElement("Item", new XElement("Name", "Three"), new XElement("Value", 3)));
+            
+
+            element.Add(new XElement("Name", "Foo"),
+                    new XElement("Age", 50),
+                    new XElement("Price", 19.95m),
+                    new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+
+            element.Add(items);
+
+            root.Add(element);
+
+            element = new XElement("Person");
+
+            element.Add(new XElement("Name", "Bar"),
+                   new XElement("Age", 23),
+                   new XElement("Price", 23.23m),
+                   new XElement("StartDate", new DateTime(2009, 12, 23, 10, 23, 23).ToString()));
+
+            element.Add(items);
+            
+            root.Add(element);
+            doc.Add(root);
+
+            return doc;
+        }
 	}
 }
