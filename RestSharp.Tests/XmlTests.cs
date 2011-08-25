@@ -180,6 +180,19 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.images.Count);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Nil_Elements_to_Nullable_Values()
+        {
+            var doc = CreateXmlWithNilValues();
+
+            var xml = new XmlDeserializer();
+            var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+
+            Assert.Null(output.Id);
+            Assert.Null(output.StartDate);
+            Assert.Null(output.UniqueId);
+        }
+
 		[Fact]
 		public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
 		{
@@ -674,7 +687,8 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-		private static string CreateXmlWithNullValues()
+        
+	    private static string CreateXmlWithNullValues()
 		{
 			var doc = new XDocument();
 			var root = new XElement("NullableValues");
@@ -688,6 +702,26 @@ namespace RestSharp.Tests
 
 			return doc.ToString();
 		}
+
+        private static string CreateXmlWithNilValues()
+        {
+            var doc = new XDocument();
+            
+            var root = new XElement("NullableValues");
+            root.Add(new XAttribute(XNamespace.Xmlns + "xsi", "http://www.w3.org/2001/XMLSchema-instance"));
+
+            XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
+            var nil = new XAttribute(xsi + "nil", true);
+
+            root.Add(new XElement("Id", nil),
+                     new XElement("StartDate", nil),
+                     new XElement("UniqueId", nil)
+                );
+
+            doc.Add(root);
+
+            return doc.ToString();
+        }
 
 		private static string CreateXmlWithoutEmptyValues()
 		{
