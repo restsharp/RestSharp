@@ -144,24 +144,24 @@ namespace RestSharp
 		{
 			if (!HasFiles)
 			{
-				return RequestBody.Length;
+				return _defaultEncoding.GetByteCount(RequestBody);
 			}
 
 			// calculate length for multipart form
 			long length = 0;
 			foreach (var file in Files)
 			{
-				length += GetMultipartFileHeader(file).Length;
+				length += _defaultEncoding.GetByteCount(GetMultipartFileHeader(file));
 				length += file.ContentLength;
-				length += _lineBreak.Length;
+				length += _defaultEncoding.GetByteCount(_lineBreak);
 			}
 
 			foreach (var param in Parameters)
 			{
-				length += GetMultipartFormData(param).Length;
+				length += _defaultEncoding.GetByteCount(GetMultipartFormData(param));
 			}
 
-			length += GetMultipartFooter().Length;
+			length += _defaultEncoding.GetByteCount(GetMultipartFooter());
 			return length;
 		}
 

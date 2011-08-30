@@ -31,6 +31,7 @@ namespace RestSharp
 	public partial class Http : IHttp, IHttpFactory
 	{
 		private const string _lineBreak = "\r\n";
+		private static readonly Encoding _defaultEncoding = Encoding.UTF8;
 
 		///<summary>
 		/// Creates an IHttp
@@ -274,10 +275,10 @@ namespace RestSharp
 		
 		private static void WriteStringTo(Stream stream, string toWrite)
 		{
-			var bytes = Encoding.UTF8.GetBytes(toWrite);
+			var bytes = _defaultEncoding.GetBytes(toWrite);
 			stream.Write(bytes, 0, bytes.Length);
 		}
-
+		
 		private void WriteMultipartFormData(Stream requestStream)
 		{
 			foreach (var param in Parameters)
