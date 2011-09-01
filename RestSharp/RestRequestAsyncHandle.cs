@@ -4,7 +4,7 @@ namespace RestSharp
 {
 	public class RestRequestAsyncHandle
 	{
-		public HttpWebRequest _webRequest;
+		public HttpWebRequest WebRequest;
 		
 		public RestRequestAsyncHandle()
 		{
@@ -12,13 +12,13 @@ namespace RestSharp
 		
 		public RestRequestAsyncHandle(HttpWebRequest webRequest)
 		{
-			_webRequest = webRequest;
+			WebRequest = webRequest;
 		}
 		
 		public void Abort()
 		{
-			if (_webRequest != null)
-				_webRequest.Abort();
+			if (WebRequest != null)
+				WebRequest.Abort();
 		}
 	}
 }

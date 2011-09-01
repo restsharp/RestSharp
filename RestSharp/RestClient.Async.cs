@@ -40,7 +40,7 @@ namespace RestSharp
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 			HttpWebRequest webRequest = null;
-			RestRequestAsyncHandle asyncHandle = new RestRequestAsyncHandle();
+			var asyncHandle = new RestRequestAsyncHandle();
 			
 			switch(request.Method)
 			{
@@ -64,7 +64,7 @@ namespace RestSharp
 					break;
 			}
 			
-			asyncHandle._webRequest = webRequest;
+			asyncHandle.WebRequest = webRequest;
 			return asyncHandle;
 		}
 
