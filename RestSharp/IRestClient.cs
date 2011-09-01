@@ -50,12 +50,12 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
-		RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse> callback);
+		RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestRequestAsyncHandle, RestResponse> callback);
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
-		RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new();
+		RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestRequestAsyncHandle, RestResponse<T>> callback) where T : new();
 
 #if FRAMEWORK
 		/// <summary>

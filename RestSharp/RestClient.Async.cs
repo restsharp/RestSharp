@@ -29,7 +29,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse> callback)
+		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestRequestAsyncHandle, RestResponse> callback)
 		{
 			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
@@ -40,36 +40,38 @@ namespace RestSharp
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 			HttpWebRequest webRequest = null;
+			RestRequestAsyncHandle asyncHandle = new RestRequestAsyncHandle();
 			
 			switch(request.Method)
 			{
 				case Method.GET:
-					webRequest = http.GetAsync(r => ProcessResponse(r, callback));
+					webRequest = http.GetAsync(r => ProcessResponse(r, asyncHandle, callback));
 					break;
 				case Method.POST:
-					webRequest = http.PostAsync(r => ProcessResponse(r, callback));
+					webRequest = http.PostAsync(r => ProcessResponse(r, asyncHandle, callback));
 					break;
 				case Method.PUT:
-					webRequest = http.PutAsync(r => ProcessResponse(r, callback));
+					webRequest = http.PutAsync(r => ProcessResponse(r, asyncHandle, callback));
 					break;
 				case Method.DELETE:
-					webRequest = http.DeleteAsync(r => ProcessResponse(r, callback));
+					webRequest = http.DeleteAsync(r => ProcessResponse(r, asyncHandle, callback));
 					break;
 				case Method.HEAD:
-					webRequest = http.HeadAsync(r => ProcessResponse(r, callback));
+					webRequest = http.HeadAsync(r => ProcessResponse(r, asyncHandle, callback));
 					break;
 				case Method.OPTIONS:
-					webRequest = http.OptionsAsync(r => ProcessResponse(r, callback));
+					webRequest = http.OptionsAsync(r => ProcessResponse(r, asyncHandle, callback));
 					break;
 			}
 			
-			return new RestRequestAsyncHandle(webRequest);
+			asyncHandle._webRequest = webRequest;
+			return asyncHandle;
 		}
 
-		void ProcessResponse(HttpResponse httpResponse, Action<RestResponse> callback)
+		void ProcessResponse(HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle, Action<RestRequestAsyncHandle, RestResponse> callback)
 		{
 			var restResponse = ConvertToRestResponse(httpResponse);
-			callback(restResponse);
+			callback(asyncHandle, restResponse);
 		}
 
 		/// <summary>
@@ -78,9 +80,9 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
+		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestRequestAsyncHandle, RestResponse<T>> callback) where T : new()
 		{
-			return ExecuteAsync(request, response =>
+			return ExecuteAsync(request, (asyncHandle, response) =>
 			{
 				var restResponse = (RestResponse<T>)response;
 				if(response.ResponseStatus != ResponseStatus.Aborted)
@@ -88,7 +90,7 @@ namespace RestSharp
 					restResponse = Deserialize<T>(request, response);
 				}
 
-				callback(restResponse);
+				callback(asyncHandle, restResponse);
 			});
 		}
 	}
