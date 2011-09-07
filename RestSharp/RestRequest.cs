@@ -51,7 +51,7 @@ namespace RestSharp
 			XmlSerializer = new XmlSerializer();
 			JsonSerializer = new JsonSerializer();
 
-			OnBeforeDeserialization = r => { };
+			OnBeforeDeserialization = r => { return true; };
 		}
 
 		/// <summary>
@@ -404,8 +404,8 @@ namespace RestSharp
 		/// <summary>
 		/// A function to run prior to deserializing starting (e.g. change settings if error encountered)
 		/// </summary>
-		public Action<RestResponse> OnBeforeDeserialization { get; set; }
-
+		public Func<RestResponse, bool> OnBeforeDeserialization { get; set; }
+					
 		/// <summary>
 		/// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
 		/// </summary>

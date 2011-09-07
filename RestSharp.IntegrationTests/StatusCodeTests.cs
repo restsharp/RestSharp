@@ -50,12 +50,34 @@ namespace RestSharp.IntegrationTests
 					{
 						request.RootElement = "Error";
 					}
+					return true;
 				};
 
 				var response = client.Execute<Response>(request);
 
 				Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 				Assert.Equal("Not found!", response.Data.Message);
+			}
+		}
+
+		[Fact]
+		public void Can_Elect_Out_Of_Deserialization()
+		{
+			const string baseUrl = "http://localhost:8080/";
+			using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+			{
+				var client = new RestClient(baseUrl);
+				var request = new RestRequest("error");
+				request.RootElement = "Success";
+				request.OnBeforeDeserialization = resp =>
+				{
+					return false;
+				};
+
+				var response = client.Execute<Response>(request);
+					
+				Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+				Assert.Null(response.Data);
 			}
 		}
 
@@ -74,6 +96,7 @@ namespace RestSharp.IntegrationTests
 					{
 						request.RootElement = "Error";
 					}
+					return true;
 				};
 
 				var response = client.Execute<Response>(request);
@@ -108,6 +131,15 @@ namespace RestSharp.IntegrationTests
 	</Success>
 </Response>");
 		}
+	}
+
+	public class Foo
+	{
+	}
+
+	public class Foo<T> : Foo
+	{
+		public T SomeVal { get; set; }
 	}
 
 	public class Response

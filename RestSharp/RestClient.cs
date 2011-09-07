@@ -466,14 +466,17 @@ namespace RestSharp
 
 		private RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) where T : new()
 		{
-			request.OnBeforeDeserialization(raw);
+			if(request.OnBeforeDeserialization != null && !request.OnBeforeDeserialization(raw))
+			{
+				return (RestResponse<T>)raw;
+			}
 
 			IDeserializer handler = GetHandler(raw.ContentType);
 			handler.RootElement = request.RootElement;
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
 
-			var response = new RestResponse<T>();
+			RestResponse<T> response;
 			try
 			{
 				response = (RestResponse<T>)raw;
@@ -481,9 +484,12 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-				response.ResponseStatus = ResponseStatus.Error;
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
+				response = new RestResponse<T>
+				{
+					ResponseStatus = ResponseStatus.Error,
+					ErrorMessage = ex.Message,
+					ErrorException = ex
+				};
 			}
 
 			return response;
