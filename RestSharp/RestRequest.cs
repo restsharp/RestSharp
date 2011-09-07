@@ -107,18 +107,18 @@ namespace RestSharp
 			//resource.PathAndQuery not supported by Silverlight :(
 		}
 
-	    /// <summary>
-	    /// Adds a file to the Files collection to be included with a POST or PUT request 
-	    /// (other methods do not support file uploads).
-	    /// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
-	    /// <param name="path">Full path to file to upload</param>
-	    /// <returns>This request</returns>
-	    public RestRequest AddFile(string name, string path)
+			/// <summary>
+			/// Adds a file to the Files collection to be included with a POST or PUT request 
+			/// (other methods do not support file uploads).
+			/// </summary>
+			/// <param name="name">The parameter name to use in the request</param>
+			/// <param name="path">Full path to file to upload</param>
+			/// <returns>This request</returns>
+		public RestRequest AddFile(string name, string path)
 		{
 			return AddFile(new FileParameter
 			{
-                Name = name,
+				Name = name,
 				FileName = Path.GetFileName(path),
 				Writer = s =>
 				{
@@ -133,7 +133,7 @@ namespace RestSharp
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name
 		/// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
+		/// <param name="name">The parameter name to use in the request</param>
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
@@ -145,7 +145,7 @@ namespace RestSharp
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
 		/// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
+		/// <param name="name">The parameter name to use in the request</param>
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
@@ -158,7 +158,7 @@ namespace RestSharp
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
 		/// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
+		/// <param name="name">The parameter name to use in the request</param>
 		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
@@ -170,7 +170,7 @@ namespace RestSharp
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
 		/// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
+		/// <param name="name">The parameter name to use in the request</param>
 		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
