@@ -169,17 +169,47 @@ namespace RestSharp
 		{
 			var webRequest = (HttpWebRequest)result.AsyncState;
 
-			// write body to request stream
-			using(var requestStream = webRequest.EndGetRequestStream(result))
+			if (_timeoutState.TimedOut)
 			{
-				if(HasFiles)
+				var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+				ExecuteCallback(response, callback);
+				return;
+			}
+
+			// write body to request stream
+			try
+			{
+				using(var requestStream = webRequest.EndGetRequestStream(result))
 				{
-					WriteMultipartFormData(requestStream);
+					if(HasFiles)
+					{
+						WriteMultipartFormData(requestStream);
+					}
+					else
+					{
+						WriteStringTo(requestStream, RequestBody);
+					}
 				}
-				else
+			}
+			catch (WebException ex)
+			{
+				if (ex.Status == WebExceptionStatus.RequestCanceled)
 				{
-					WriteStringTo(requestStream, RequestBody);
+					var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+					ExecuteCallback(response, callback);
+					return;
 				}
+			}
+			catch (Exception ex)
+			{
+				var response = new HttpResponse
+				{
+					ErrorMessage = ex.Message,
+					ErrorException = ex,
+					ResponseStatus = ResponseStatus.Error
+				};
+				ExecuteCallback(response, callback);
+				return;
 			}
 
 			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
@@ -249,8 +279,7 @@ namespace RestSharp
 
 		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
-			var response = new HttpResponse();
-			response.ResponseStatus = ResponseStatus.None;
+			var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
 
 			try
 			{
