@@ -104,7 +104,7 @@ namespace RestSharp.Deserializers
 				if (value == null)
 				{
 					// try lower cased name
-					actualName = name.ToLower();
+					actualName = name.ToLower(Culture);
 					value = json[actualName];
 				}
 
@@ -118,7 +118,7 @@ namespace RestSharp.Deserializers
 				if (value == null)
 				{
 					// try name with underscores with lower case
-					actualName = name.AddUnderscores().ToLower();
+					actualName = name.AddUnderscores().ToLower(Culture);
 					value = json[actualName];
 				}
 
@@ -132,7 +132,7 @@ namespace RestSharp.Deserializers
 				if (value == null)
 				{
 					// try name with dashes with lower case
-					actualName = name.AddDashes().ToLower();
+					actualName = name.AddDashes().ToLower(Culture);
 					value = json[actualName];
 				}
 
