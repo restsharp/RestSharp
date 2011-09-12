@@ -9,7 +9,7 @@
 		<language>en-US</language>
 		<projectUrl>http://restsharp.org</projectUrl>
 		<licenseUrl>https://github.com/johnsheehan/RestSharp/blob/master/LICENSE.txt</licenseUrl>
-		<iconUrl>http://restsharp.org/wp-content/uploads/restsharp-icon-32.png</iconUrl>
+		<iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
 		<dependencies>
 			<dependency id="Newtonsoft.Json" />
 		</dependencies>
