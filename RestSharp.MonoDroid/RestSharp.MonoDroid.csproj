@@ -111,6 +111,9 @@
     <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
       <Link>Serializers\SerializeAsAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
+      <Link>Serializers\DotNetXmlSerializer.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
       <Link>Serializers\XmlSerializer.cs</Link>
     </Compile>
