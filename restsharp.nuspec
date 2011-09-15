@@ -2,14 +2,14 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>101.4</version>
+		<version>102.0</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
 		<language>en-US</language>
 		<projectUrl>http://restsharp.org</projectUrl>
 		<licenseUrl>https://github.com/johnsheehan/RestSharp/blob/master/LICENSE.txt</licenseUrl>
-		<iconUrl>http://restsharp.org/wp-content/uploads/restsharp-icon-32.png</iconUrl>
+		<iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
 		<dependencies>
 			<dependency id="Newtonsoft.Json" />
 		</dependencies>

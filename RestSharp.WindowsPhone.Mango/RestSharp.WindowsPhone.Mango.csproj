@@ -9,8 +9,8 @@
     <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RestSharp.WindowsPhone.Mango</RootNamespace>
-    <AssemblyName>RestSharp.WindowsPhone.Mango</AssemblyName>
+    <RootNamespace>RestSharp.WindowsPhone</RootNamespace>
+    <AssemblyName>RestSharp.WindowsPhone</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
     <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
@@ -29,7 +29,7 @@
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Bin\Debug\RestSharp.WindowsPhone.Mango.xml</DocumentationFile>
+    <DocumentationFile>Bin\Debug\RestSharp.WindowsPhone.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,7 +40,7 @@
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Bin\Release\RestSharp.WindowsPhone.Mango.xml</DocumentationFile>
+    <DocumentationFile>Bin\Release\RestSharp.WindowsPhone.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json.WindowsPhone">
