@@ -32,7 +32,7 @@ namespace RestSharp
 		/// <param name="callback">Callback function to be executed upon completion</param>
 		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse> callback)
 		{
-			return ExecuteAsync(request, (handle, response) => callback(response));
+			return ExecuteAsync(request, (response, handle) => callback(response));
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestRequestAsyncHandle, RestResponse> callback)
+		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
 		{
 			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
@@ -79,10 +79,10 @@ namespace RestSharp
 			return asyncHandle;
 		}
 
-		private void ProcessResponse(HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle, Action<RestRequestAsyncHandle, RestResponse> callback)
+		private void ProcessResponse(HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle, Action<RestResponse, RestRequestAsyncHandle> callback)
 		{
 			var restResponse = ConvertToRestResponse(httpResponse);
-			callback(asyncHandle, restResponse);
+			callback(restResponse, asyncHandle);
 		}
 
 		/// <summary>
@@ -91,9 +91,9 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestRequestAsyncHandle, RestResponse<T>> callback) where T : new()
+		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
 		{
-			return ExecuteAsync(request, (asyncHandle, response) =>
+			return ExecuteAsync(request, (response, asyncHandle) =>
 			{
 				var restResponse = (RestResponse<T>)response;
 				if (response.ResponseStatus != ResponseStatus.Aborted)
@@ -101,7 +101,7 @@ namespace RestSharp
 					restResponse = Deserialize<T>(request, response);
 				}
 
-				callback(asyncHandle, restResponse);
+				callback(restResponse, asyncHandle);
 			});
 		}
 
@@ -113,7 +113,7 @@ namespace RestSharp
 		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle</param>
 		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
 		{
-			return ExecuteAsync<T>(request, (asyncHandle, response) => callback(response));
+			return ExecuteAsync<T>(request, (response, asyncHandle) => callback(response));
 		}
 	}
 }

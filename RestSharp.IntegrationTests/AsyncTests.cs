@@ -21,7 +21,7 @@ namespace RestSharp.IntegrationTests
 				var client = new RestClient(baseUrl);
 				var request = new RestRequest("");
 
-				client.ExecuteAsync(request, (asyncHandle, response) =>
+				client.ExecuteAsync(request, (response, asyncHandle) =>
 				{
 					Assert.NotNull(response.Content);
 					Assert.Equal(val, response.Content);
