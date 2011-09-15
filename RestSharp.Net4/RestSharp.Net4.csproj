@@ -220,6 +220,9 @@
     <Compile Include="..\RestSharp\RestResponseCookie.cs">
       <Link>RestResponseCookie.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
+      <Link>Serializers\DotNetXmlSerializer.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Serializers\ISerializer.cs">
       <Link>Serializers\ISerializer.cs</Link>
     </Compile>

@@ -61,6 +61,7 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Browser" />
     <Reference Include="System.Xml.Linq, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Serialization, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\RestSharp\Authenticators\HttpBasicAuthenticator.cs">
@@ -164,6 +165,9 @@
     </Compile>
     <Compile Include="..\RestSharp\RestResponse.cs">
       <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
+      <Link>Serializers\DotNetXmlSerializer.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Serializers\ISerializer.cs">
       <Link>Serializers\ISerializer.cs</Link>

@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
@@ -156,6 +157,9 @@
     </Compile>
     <Compile Include="..\RestSharp\RestResponse.cs">
       <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
+      <Link>Serializers\DotNetXmlSerializer.cs</Link>
     </Compile>
     <Compile Include="..\restsharp\serializers\ISerializer.cs">
       <Link>Serializers\ISerializer.cs</Link>
