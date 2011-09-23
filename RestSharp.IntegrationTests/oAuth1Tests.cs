@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
+using RestSharp.Authenticators.OAuth;
 using Xunit;
 using System.Net;
 using RestSharp.Contrib;
@@ -160,5 +162,14 @@ namespace RestSharp.IntegrationTests
 			Assert.NotNull(queueResponse.Data);
 			Assert.Equal(2, queueResponse.Data.Items.Count);
 		}
+
+        [Fact]
+        public void Properly_Encodes_Parameter_Names()
+        {
+            var postData = new WebParameterCollection { { "name[first]", "Chuck" }, { "name[last]", "Testa" }};
+            var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
+
+            Assert.Equal("name%5Bfirst%5D", sortedParams[0].Name);
+        }
 	}
 }
