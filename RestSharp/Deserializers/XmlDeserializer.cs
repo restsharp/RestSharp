@@ -107,17 +107,16 @@ namespace RestSharp.Deserializers
 					if (type.IsGenericType)
 					{
 						var genericType = type.GetGenericArguments()[0];
-
 						var first = GetElementByName(root, genericType.Name);
+						var list = (IList)Activator.CreateInstance(type);
+
 						if (first != null)
 						{
 							var elements = root.Elements(first.Name);
-
-							var list = (IList)Activator.CreateInstance(type);
 							PopulateListFromElements(genericType, elements, list);
-							prop.SetValue(x, list, null);
-
 						}
+
+						prop.SetValue(x, list, null);
 					}
 					continue;
 				}
@@ -181,10 +180,13 @@ namespace RestSharp.Deserializers
 					var list = (IList)Activator.CreateInstance(type);
 
 					var container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
-					var first = container.Elements().FirstOrDefault();
 
-					var elements = container.Elements(first.Name);
-					PopulateListFromElements(t, elements, list);
+					if (container.HasElements)
+					{
+						var first = container.Elements().FirstOrDefault();
+						var elements = container.Elements(first.Name);
+						PopulateListFromElements(t, elements, list);
+					}
 
 					prop.SetValue(x, list, null);
 				}

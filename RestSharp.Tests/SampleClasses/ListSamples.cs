@@ -18,6 +18,12 @@ namespace RestSharp.Tests.SampleClasses
 		public List<Image> Images { get; set; }
 	}
 
+	public class EmptyListSample
+	{
+		public List<image> images { get; set; }
+		public List<Image> Images { get; set; }
+	}
+
 	public class Image
 	{
 		public string Src { get; set; }
