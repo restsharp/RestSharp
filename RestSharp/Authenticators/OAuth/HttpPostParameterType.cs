@@ -2,7 +2,7 @@ using System;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_PHONE
     [Serializable]
 #endif
     internal enum HttpPostParameterType
