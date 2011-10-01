@@ -55,6 +55,8 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
+#if !WINDOWS_PHONE
+
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {
             foreach(string key in range.AllKeys)
@@ -85,6 +87,8 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
             return sb.ToString();
         }
+
+#endif
 
         public static string Concatenate(this WebParameterCollection collection, string separator, string spacer)
         {

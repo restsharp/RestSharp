@@ -2,7 +2,7 @@
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_PHONE
     [Serializable]
 #endif
     public enum OAuthSignatureTreatment
