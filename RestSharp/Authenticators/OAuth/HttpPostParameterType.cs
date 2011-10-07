@@ -3,11 +3,11 @@ using System;
 namespace RestSharp.Authenticators.OAuth
 {
 #if !SILVERLIGHT && !WINDOWS_PHONE
-    [Serializable]
+	[Serializable]
 #endif
-    internal enum HttpPostParameterType
-    {
-        Field,
-        File
-    }
+	internal enum HttpPostParameterType
+	{
+		Field,
+		File
+	}
 }
