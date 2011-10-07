@@ -16,10 +16,11 @@ namespace RestSharp.Authenticators.OAuth
         {
 
         }
-
+#if !WINDOWS_PHONE
         public WebParameterCollection(NameValueCollection collection) : base(collection)
         {
         }
+#endif
 
         public WebParameterCollection()
         {

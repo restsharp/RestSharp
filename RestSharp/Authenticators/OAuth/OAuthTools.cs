@@ -6,7 +6,7 @@ using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_PHONE
     [Serializable]
 #endif
     internal static class OAuthTools
@@ -20,13 +20,13 @@ namespace RestSharp.Authenticators.OAuth
         private static readonly Random _random;
         private static readonly object _randomLock = new object();
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_PHONE
         private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
 #endif
 
         static OAuthTools()
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_PHONE
             var bytes = new byte[4];
             _rng.GetNonZeroBytes(bytes);
             _random = new Random(BitConverter.ToInt32(bytes, 0));
@@ -141,7 +141,7 @@ namespace RestSharp.Authenticators.OAuth
             var exclusions = copy.Where(n => n.Name.EqualsIgnoreCase("oauth_signature"));
 
             copy.RemoveAll(exclusions);
-            copy.ForEach(p => { p.Name = UrlEncodeStrict(p.Name); p.Value = UrlEncodeStrict(p.Value); });
+            copy.ForEach(p => p.Value = UrlEncodeStrict(p.Value));
             copy.Sort((x, y) => string.CompareOrdinal(x.Name, y.Name) != 0 ? string.CompareOrdinal(x.Name, y.Name) : string.CompareOrdinal(x.Value, y.Value));
             return copy;
         }
