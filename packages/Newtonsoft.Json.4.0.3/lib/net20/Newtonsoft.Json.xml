@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Newtonsoft.Json.Net20</name>
+        <name>Newtonsoft.Json</name>
     </assembly>
     <members>
         <member name="T:Newtonsoft.Json.Bson.BsonObjectId">
@@ -474,6 +474,18 @@
             </summary>
             <param name="value">The <see cref="T:System.DateTime"/> value to write.</param>
         </member>
+        <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Guid)">
+            <summary>
+            Writes a <see cref="T:System.Guid"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Guid"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.TimeSpan)">
+            <summary>
+            Writes a <see cref="T:System.TimeSpan"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.TimeSpan"/> value to write.</param>
+        </member>
         <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Nullable{System.Int32})">
             <summary>
             Writes a <see cref="T:System.Nullable`1"/> value.
@@ -558,11 +570,29 @@
             </summary>
             <param name="value">The <see cref="T:System.Nullable`1"/> value to write.</param>
         </member>
+        <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Nullable{System.Guid})">
+            <summary>
+            Writes a <see cref="T:System.Nullable`1"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Nullable`1"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Nullable{System.TimeSpan})">
+            <summary>
+            Writes a <see cref="T:System.Nullable`1"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Nullable`1"/> value to write.</param>
+        </member>
         <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Byte[])">
             <summary>
             Writes a <see cref="T:Byte[]"/> value.
             </summary>
             <param name="value">The <see cref="T:Byte[]"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Uri)">
+            <summary>
+            Writes a <see cref="T:System.Uri"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Uri"/> value to write.</param>
         </member>
         <member name="M:Newtonsoft.Json.JsonWriter.WriteValue(System.Object)">
             <summary>
@@ -776,6 +806,24 @@
             Writes a <see cref="T:Byte[]"/> value.
             </summary>
             <param name="value">The <see cref="T:Byte[]"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Bson.BsonWriter.WriteValue(System.Guid)">
+            <summary>
+            Writes a <see cref="T:System.Guid"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Guid"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Bson.BsonWriter.WriteValue(System.TimeSpan)">
+            <summary>
+            Writes a <see cref="T:System.TimeSpan"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.TimeSpan"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Bson.BsonWriter.WriteValue(System.Uri)">
+            <summary>
+            Writes a <see cref="T:System.Uri"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Uri"/> value to write.</param>
         </member>
         <member name="M:Newtonsoft.Json.Bson.BsonWriter.WriteObjectId(System.Byte[])">
             <summary>
@@ -1169,19 +1217,1087 @@
             Instructs the <see cref="T:Newtonsoft.Json.JsonSerializer"/> not to serialize the public field or public read/write property value.
             </summary>
         </member>
-        <member name="T:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor">
+        <member name="T:System.Linq.Enumerable">
+            <summary>
+            Provides a set of static (Shared in Visual Basic) methods for 
+            querying objects that implement <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.AsEnumerable``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the input typed as <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Empty``1">
+            <summary>
+            Returns an empty <see cref="T:System.Collections.Generic.IEnumerable`1"/> that has the 
+            specified type argument.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Cast``1(System.Collections.IEnumerable)">
+            <summary>
+            Converts the elements of an <see cref="T:System.Collections.IEnumerable"/> to the 
+            specified type.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)">
+            <summary>
+            Filters the elements of an <see cref="T:System.Collections.IEnumerable"/> based on a specified type.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Range(System.Int32,System.Int32)">
+            <summary>
+            Generates a sequence of integral numbers within a specified range.
+            </summary>
+            <param name="start">The value of the first integer in the sequence.</param>
+            <param name="count">The number of sequential integers to generate.</param>
+        </member>
+        <member name="M:System.Linq.Enumerable.Repeat``1(``0,System.Int32)">
+            <summary>
+            Generates a sequence that contains one repeated value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Where``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Filters a sequence of values based on a predicate.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Where``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,System.Boolean})">
+            <summary>
+            Filters a sequence of values based on a predicate. 
+            Each element's index is used in the logic of the predicate function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Select``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Projects each element of a sequence into a new form.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Select``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,``1})">
+            <summary>
+            Projects each element of a sequence into a new form by 
+            incorporating the element's index.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SelectMany``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Collections.Generic.IEnumerable{``1}})">
+            <summary>
+            Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1"/> 
+            and flattens the resulting sequences into one sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SelectMany``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,System.Collections.Generic.IEnumerable{``1}})">
+            <summary>
+            Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1"/>, 
+            and flattens the resulting sequences into one sequence. The 
+            index of each source element is used in the projected form of 
+            that element.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SelectMany``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Collections.Generic.IEnumerable{``1}},System.Func{``0,``1,``2})">
+            <summary>
+            Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1"/>, 
+            flattens the resulting sequences into one sequence, and invokes 
+            a result selector function on each element therein.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SelectMany``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,System.Collections.Generic.IEnumerable{``1}},System.Func{``0,``1,``2})">
+            <summary>
+            Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1"/>, 
+            flattens the resulting sequences into one sequence, and invokes 
+            a result selector function on each element therein. The index of 
+            each source element is used in the intermediate projected form 
+            of that element.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.TakeWhile``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns elements from a sequence as long as a specified condition is true.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.TakeWhile``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,System.Boolean})">
+            <summary>
+            Returns elements from a sequence as long as a specified condition is true.
+            The element's index is used in the logic of the predicate function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.FirstImpl``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0})">
+            <summary>
+            Base implementation of First operator.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.First``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the first element of a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.First``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the first element in a sequence that satisfies a specified condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.FirstOrDefault``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the first element of a sequence, or a default value if 
+            the sequence contains no elements.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.FirstOrDefault``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the first element of the sequence that satisfies a 
+            condition or a default value if no such element is found.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.LastImpl``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0})">
+            <summary>
+            Base implementation of Last operator.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Last``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the last element of a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Last``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the last element of a sequence that satisfies a 
+            specified condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.LastOrDefault``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the last element of a sequence, or a default value if 
+            the sequence contains no elements.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.LastOrDefault``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the last element of a sequence that satisfies a 
+            condition or a default value if no such element is found.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SingleImpl``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0})">
+            <summary>
+            Base implementation of Single operator.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Single``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the only element of a sequence, and throws an exception 
+            if there is not exactly one element in the sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Single``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the only element of a sequence that satisfies a 
+            specified condition, and throws an exception if more than one 
+            such element exists.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SingleOrDefault``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the only element of a sequence, or a default value if 
+            the sequence is empty; this method throws an exception if there 
+            is more than one element in the sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SingleOrDefault``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the only element of a sequence that satisfies a 
+            specified condition or a default value if no such element 
+            exists; this method throws an exception if more than one element 
+            satisfies the condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ElementAt``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Returns the element at a specified index in a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ElementAtOrDefault``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Returns the element at a specified index in a sequence or a 
+            default value if the index is out of range.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Reverse``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Inverts the order of the elements in a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Take``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Returns a specified number of contiguous elements from the start 
+            of a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Skip``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Bypasses a specified number of elements in a sequence and then 
+            returns the remaining elements.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SkipWhile``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Bypasses elements in a sequence as long as a specified condition 
+            is true and then returns the remaining elements.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SkipWhile``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,System.Boolean})">
+            <summary>
+            Bypasses elements in a sequence as long as a specified condition 
+            is true and then returns the remaining elements. The element's 
+            index is used in the logic of the predicate function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Count``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the number of elements in a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Count``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns a number that represents how many elements in the 
+            specified sequence satisfy a condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.LongCount``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns an <see cref="T:System.Int64"/> that represents the total number 
+            of elements in a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.LongCount``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns an <see cref="T:System.Int64"/> that represents how many elements 
+            in a sequence satisfy a condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Concat``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Concatenates two sequences.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToList``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Creates a <see cref="T:System.Collections.Generic.List`1"/> from an <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToArray``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Creates an array from an <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Distinct``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns distinct elements from a sequence by using the default 
+            equality comparer to compare values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Distinct``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Returns distinct elements from a sequence by using a specified 
+            <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> to compare values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToLookup``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Creates a <see cref="T:System.Linq.Lookup`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to a specified key 
+            selector function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToLookup``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Creates a <see cref="T:System.Linq.Lookup`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to a specified key 
+            selector function and a key comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToLookup``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2})">
+            <summary>
+            Creates a <see cref="T:System.Linq.Lookup`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to specified key 
+            and element selector functions.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToLookup``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Creates a <see cref="T:System.Linq.Lookup`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to a specified key 
+            selector function, a comparer and an element selector function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function and compares the keys by using a specified 
+            comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function and projects the elements for each group by 
+            using a specified function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function and creates a result value from each group and 
+            its key.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``1,System.Collections.Generic.IEnumerable{``0},``2})">
+            <summary>
+            Groups the elements of a sequence according to a key selector 
+            function. The keys are compared by using a comparer and each 
+            group's elements are projected by using a specified function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``1,System.Collections.Generic.IEnumerable{``0},``2},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function and creates a result value from each group and 
+            its key. The elements of each group are projected by using a 
+            specified function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``4(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Func{``1,System.Collections.Generic.IEnumerable{``2},``3})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function and creates a result value from each group and 
+            its key. The keys are compared by using a specified comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupBy``4(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Func{``1,System.Collections.Generic.IEnumerable{``2},``3},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Groups the elements of a sequence according to a specified key 
+            selector function and creates a result value from each group and 
+            its key. Key values are compared by using a specified comparer, 
+            and the elements of each group are projected by using a 
+            specified function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Aggregate``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``0,``0})">
+            <summary>
+            Applies an accumulator function over a sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})">
+            <summary>
+            Applies an accumulator function over a sequence. The specified 
+            seed value is used as the initial accumulator value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Aggregate``3(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1},System.Func{``1,``2})">
+            <summary>
+            Applies an accumulator function over a sequence. The specified 
+            seed value is used as the initial accumulator value, and the 
+            specified function is used to select the result value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Union``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Produces the set union of two sequences by using the default 
+            equality comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Union``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Produces the set union of two sequences by using a specified 
+            <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.DefaultIfEmpty``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the elements of the specified sequence or the type 
+            parameter's default value in a singleton collection if the 
+            sequence is empty.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.DefaultIfEmpty``1(System.Collections.Generic.IEnumerable{``0},``0)">
+            <summary>
+            Returns the elements of the specified sequence or the specified 
+            value in a singleton collection if the sequence is empty.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.All``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Determines whether all elements of a sequence satisfy a condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Any``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determines whether a sequence contains any elements.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Any``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Determines whether any element of a sequence satisfies a 
+            condition.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Contains``1(System.Collections.Generic.IEnumerable{``0},``0)">
+            <summary>
+            Determines whether a sequence contains a specified element by 
+            using the default equality comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Contains``1(System.Collections.Generic.IEnumerable{``0},``0,System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Determines whether a sequence contains a specified element by 
+            using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SequenceEqual``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determines whether two sequences are equal by comparing the 
+            elements by using the default equality comparer for their type.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.SequenceEqual``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Determines whether two sequences are equal by comparing their 
+            elements by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.MinMaxImpl``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``0,System.Boolean})">
+            <summary>
+            Base implementation for Min/Max operator.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.MinMaxImpl``1(System.Collections.Generic.IEnumerable{System.Nullable{``0}},System.Nullable{``0},System.Func{System.Nullable{``0},System.Nullable{``0},System.Boolean})">
+            <summary>
+            Base implementation for Min/Max operator for nullable types.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the minimum value in a generic sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Invokes a transform function on each element of a generic 
+            sequence and returns the minimum resulting value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the maximum value in a generic sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Invokes a transform function on each element of a generic 
+            sequence and returns the maximum resulting value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Renumerable``1(System.Collections.Generic.IEnumerator{``0})">
+            <summary>
+            Makes an enumerator seen as enumerable once more.
+            </summary>
+            <remarks>
+            The supplied enumerator must have been started. The first element
+            returned is the element the enumerator was on when passed in.
+            DO NOT use this method if the caller must be a generator. It is
+            mostly safe among aggregate operations.
+            </remarks>
+        </member>
+        <member name="M:System.Linq.Enumerable.OrderBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Sorts the elements of a sequence in ascending order according to a key.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.OrderBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IComparer{``1})">
+            <summary>
+            Sorts the elements of a sequence in ascending order by using a 
+            specified comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.OrderByDescending``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Sorts the elements of a sequence in descending order according to a key.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.OrderByDescending``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IComparer{``1})">
+            <summary>
+             Sorts the elements of a sequence in descending order by using a 
+            specified comparer. 
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ThenBy``2(System.Linq.IOrderedEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Performs a subsequent ordering of the elements in a sequence in 
+            ascending order according to a key.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ThenBy``2(System.Linq.IOrderedEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IComparer{``1})">
+            <summary>
+            Performs a subsequent ordering of the elements in a sequence in 
+            ascending order by using a specified comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ThenByDescending``2(System.Linq.IOrderedEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Performs a subsequent ordering of the elements in a sequence in 
+            descending order, according to a key.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ThenByDescending``2(System.Linq.IOrderedEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IComparer{``1})">
+            <summary>
+            Performs a subsequent ordering of the elements in a sequence in 
+            descending order by using a specified comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.IntersectExceptImpl``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0},System.Boolean)">
+            <summary>
+            Base implementation for Intersect and Except operators.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Intersect``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Produces the set intersection of two sequences by using the 
+            default equality comparer to compare values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Intersect``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Produces the set intersection of two sequences by using the 
+            specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> to compare values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Except``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Produces the set difference of two sequences by using the 
+            default equality comparer to compare values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Except``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Produces the set difference of two sequences by using the 
+            specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> to compare values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToDictionary``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Creates a <see cref="T:System.Collections.Generic.Dictionary`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to a specified key 
+            selector function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToDictionary``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Creates a <see cref="T:System.Collections.Generic.Dictionary`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to a specified key 
+            selector function and key comparer.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToDictionary``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2})">
+            <summary>
+            Creates a <see cref="T:System.Collections.Generic.Dictionary`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to specified key 
+            selector and element selector functions.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.ToDictionary``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Creates a <see cref="T:System.Collections.Generic.Dictionary`2"/> from an 
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> according to a specified key 
+            selector function, a comparer, and an element selector function.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Join``4(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``2},System.Func{``1,``2},System.Func{``0,``1,``3})">
+            <summary>
+            Correlates the elements of two sequences based on matching keys. 
+            The default equality comparer is used to compare keys.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Join``4(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``2},System.Func{``1,``2},System.Func{``0,``1,``3},System.Collections.Generic.IEqualityComparer{``2})">
+            <summary>
+            Correlates the elements of two sequences based on matching keys. 
+            The default equality comparer is used to compare keys. A 
+            specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> is used to compare keys.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupJoin``4(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``2},System.Func{``1,``2},System.Func{``0,System.Collections.Generic.IEnumerable{``1},``3})">
+            <summary>
+            Correlates the elements of two sequences based on equality of 
+            keys and groups the results. The default equality comparer is 
+            used to compare keys.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.GroupJoin``4(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``2},System.Func{``1,``2},System.Func{``0,System.Collections.Generic.IEnumerable{``1},``3},System.Collections.Generic.IEqualityComparer{``2})">
+            <summary>
+            Correlates the elements of two sequences based on equality of 
+            keys and groups the results. The default equality comparer is 
+            used to compare keys. A specified <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> 
+            is used to compare keys.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Int32"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Int32"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Int32"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Int32"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Nullable{System.Int32}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Int32"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int32}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Int32"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Nullable{System.Int32}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Int32"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int32}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Int32"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min(System.Collections.Generic.IEnumerable{System.Nullable{System.Int32}})">
+            <summary>
+            Returns the minimum value in a sequence of nullable 
+            <see cref="T:System.Int32"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int32}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the minimum nullable <see cref="T:System.Int32"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max(System.Collections.Generic.IEnumerable{System.Nullable{System.Int32}})">
+            <summary>
+            Returns the maximum value in a sequence of nullable 
+            <see cref="T:System.Int32"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int32}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the maximum nullable <see cref="T:System.Int32"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Int64})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Int64"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int64})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Int64"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Int64})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Int64"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int64})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Int64"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Nullable{System.Int64}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Int64"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int64}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Int64"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Nullable{System.Int64}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Int64"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int64}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Int64"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min(System.Collections.Generic.IEnumerable{System.Nullable{System.Int64}})">
+            <summary>
+            Returns the minimum value in a sequence of nullable 
+            <see cref="T:System.Int64"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int64}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the minimum nullable <see cref="T:System.Int64"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max(System.Collections.Generic.IEnumerable{System.Nullable{System.Int64}})">
+            <summary>
+            Returns the maximum value in a sequence of nullable 
+            <see cref="T:System.Int64"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Int64}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the maximum nullable <see cref="T:System.Int64"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Single})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Single"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Single})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Single"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Single})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Single"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Single})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Single"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Nullable{System.Single}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Single"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Single}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Single"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Nullable{System.Single}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Single"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Single}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Single"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min(System.Collections.Generic.IEnumerable{System.Nullable{System.Single}})">
+            <summary>
+            Returns the minimum value in a sequence of nullable 
+            <see cref="T:System.Single"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Single}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the minimum nullable <see cref="T:System.Single"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max(System.Collections.Generic.IEnumerable{System.Nullable{System.Single}})">
+            <summary>
+            Returns the maximum value in a sequence of nullable 
+            <see cref="T:System.Single"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Single}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the maximum nullable <see cref="T:System.Single"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Double})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Double"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Double})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Double"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Double})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Double"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Double})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Double"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Nullable{System.Double}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Double"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Double}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Double"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Nullable{System.Double}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Double"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Double}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Double"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min(System.Collections.Generic.IEnumerable{System.Nullable{System.Double}})">
+            <summary>
+            Returns the minimum value in a sequence of nullable 
+            <see cref="T:System.Double"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Double}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the minimum nullable <see cref="T:System.Double"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max(System.Collections.Generic.IEnumerable{System.Nullable{System.Double}})">
+            <summary>
+            Returns the maximum value in a sequence of nullable 
+            <see cref="T:System.Double"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Double}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the maximum nullable <see cref="T:System.Double"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Decimal})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Decimal"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Decimal})">
+            <summary>
+            Computes the sum of a sequence of nullable <see cref="T:System.Decimal"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Decimal})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Decimal"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Decimal})">
+            <summary>
+            Computes the average of a sequence of nullable <see cref="T:System.Decimal"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum(System.Collections.Generic.IEnumerable{System.Nullable{System.Decimal}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Decimal"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Sum``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Decimal}})">
+            <summary>
+            Computes the sum of a sequence of <see cref="T:System.Decimal"/> 
+            values that are obtained by invoking a transform function on 
+            each element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average(System.Collections.Generic.IEnumerable{System.Nullable{System.Decimal}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Decimal"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Average``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Decimal}})">
+            <summary>
+            Computes the average of a sequence of <see cref="T:System.Decimal"/> values 
+            that are obtained by invoking a transform function on each 
+            element of the input sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min(System.Collections.Generic.IEnumerable{System.Nullable{System.Decimal}})">
+            <summary>
+            Returns the minimum value in a sequence of nullable 
+            <see cref="T:System.Decimal"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Min``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Decimal}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the minimum nullable <see cref="T:System.Decimal"/> value.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max(System.Collections.Generic.IEnumerable{System.Nullable{System.Decimal}})">
+            <summary>
+            Returns the maximum value in a sequence of nullable 
+            <see cref="T:System.Decimal"/> values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Enumerable.Max``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Nullable{System.Decimal}})">
+            <summary>
+            Invokes a transform function on each element of a sequence and 
+            returns the maximum nullable <see cref="T:System.Decimal"/> value.
+            </summary>
+        </member>
+        <member name="T:System.Linq.IGrouping`2">
+            <summary>
+            Represents a collection of objects that have a common key.
+            </summary>
+        </member>
+        <member name="P:System.Linq.IGrouping`2.Key">
+            <summary>
+            Gets the key of the <see cref="T:System.Linq.IGrouping`2"/>.
+            </summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.ExtensionAttribute">
+            <remarks>
+            This attribute allows us to define extension methods without 
+            requiring .NET Framework 3.5. For more information, see the section,
+            <a href="http://msdn.microsoft.com/en-us/magazine/cc163317.aspx#S7">Extension Methods in .NET Framework 2.0 Apps</a>,
+            of <a href="http://msdn.microsoft.com/en-us/magazine/cc163317.aspx">Basic Instincts: Extension Methods</a>
+            column in <a href="http://msdn.microsoft.com/msdnmag/">MSDN Magazine</a>, 
+            issue <a href="http://msdn.microsoft.com/en-us/magazine/cc135410.aspx">Nov 2007</a>.
+            </remarks>
+        </member>
+        <member name="T:System.Linq.ILookup`2">
+            <summary>
+            Defines an indexer, size property, and Boolean search method for 
+            data structures that map keys to <see cref="T:System.Collections.Generic.IEnumerable`1"/> 
+            sequences of values.
+            </summary>
+        </member>
+        <member name="T:System.Linq.IOrderedEnumerable`1">
+            <summary>
+            Represents a sorted sequence.
+            </summary>
+        </member>
+        <member name="M:System.Linq.IOrderedEnumerable`1.CreateOrderedEnumerable``1(System.Func{`0,``0},System.Collections.Generic.IComparer{``0},System.Boolean)">
+            <summary>
+            Performs a subsequent ordering on the elements of an 
+            <see cref="T:System.Linq.IOrderedEnumerable`1"/> according to a key.
+            </summary>
+        </member>
+        <member name="T:System.Linq.Lookup`2">
+            <summary>
+            Represents a collection of keys each mapped to one or more values.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Lookup`2.Contains(`0)">
+            <summary>
+            Determines whether a specified key is in the <see cref="T:System.Linq.Lookup`2"/>.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Lookup`2.ApplyResultSelector``1(System.Func{`0,System.Collections.Generic.IEnumerable{`1},``0})">
+            <summary>
+            Applies a transform function to each key and its associated 
+            values and returns the results.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Lookup`2.GetEnumerator">
+            <summary>
+            Returns a generic enumerator that iterates through the <see cref="T:System.Linq.Lookup`2"/>.
+            </summary>
+        </member>
+        <member name="P:System.Linq.Lookup`2.Count">
+            <summary>
+            Gets the number of key/value collection pairs in the <see cref="T:System.Linq.Lookup`2"/>.
+            </summary>
+        </member>
+        <member name="P:System.Linq.Lookup`2.Item(`0)">
+            <summary>
+            Gets the collection of values indexed by the specified key.
+            </summary>
+        </member>
+        <member name="M:LinqBridge.OrderedEnumerable`2.TagPosition(`0,System.Int32)">
+            <remarks>
+            See <a href="http://code.google.com/p/linqbridge/issues/detail?id=11">issue #11</a>
+            for why this method is needed and cannot be expressed as a 
+            lambda at the call site.
+            </remarks>
+        </member>
+        <member name="M:LinqBridge.OrderedEnumerable`2.GetFirst(LinqBridge.Tuple{`0,System.Int32})">
+            <remarks>
+            See <a href="http://code.google.com/p/linqbridge/issues/detail?id=11">issue #11</a>
+            for why this method is needed and cannot be expressed as a 
+            lambda at the call site.
+            </remarks>
+        </member>
+        <member name="T:Newtonsoft.Json.Linq.JPropertyDescriptor">
             <summary>
             Represents a view of a <see cref="T:Newtonsoft.Json.Linq.JProperty"/>.
             </summary>
         </member>
-        <member name="M:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.#ctor(System.String,System.Type)">
+        <member name="M:Newtonsoft.Json.Linq.JPropertyDescriptor.#ctor(System.String,System.Type)">
             <summary>
-            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor"/> class.
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JPropertyDescriptor"/> class.
             </summary>
             <param name="name">The name.</param>
             <param name="propertyType">Type of the property.</param>
         </member>
-        <member name="M:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.CanResetValue(System.Object)">
+        <member name="M:Newtonsoft.Json.Linq.JPropertyDescriptor.CanResetValue(System.Object)">
             <summary>
             When overridden in a derived class, returns whether resetting an object changes its value.
             </summary>
@@ -1191,7 +2307,7 @@
             <param name="component">The component to test for reset capability. 
                             </param>
         </member>
-        <member name="M:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.GetValue(System.Object)">
+        <member name="M:Newtonsoft.Json.Linq.JPropertyDescriptor.GetValue(System.Object)">
             <summary>
             When overridden in a derived class, gets the current value of the property on a component.
             </summary>
@@ -1201,14 +2317,14 @@
             <param name="component">The component with the property for which to retrieve the value. 
                             </param>
         </member>
-        <member name="M:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.ResetValue(System.Object)">
+        <member name="M:Newtonsoft.Json.Linq.JPropertyDescriptor.ResetValue(System.Object)">
             <summary>
             When overridden in a derived class, resets the value for this property of the component to the default value.
             </summary>
             <param name="component">The component with the property value that is to be reset to the default value. 
                             </param>
         </member>
-        <member name="M:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.SetValue(System.Object,System.Object)">
+        <member name="M:Newtonsoft.Json.Linq.JPropertyDescriptor.SetValue(System.Object,System.Object)">
             <summary>
             When overridden in a derived class, sets the value of the component to a different value.
             </summary>
@@ -1216,7 +2332,7 @@
                             </param><param name="value">The new value. 
                             </param>
         </member>
-        <member name="M:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.ShouldSerializeValue(System.Object)">
+        <member name="M:Newtonsoft.Json.Linq.JPropertyDescriptor.ShouldSerializeValue(System.Object)">
             <summary>
             When overridden in a derived class, determines a value indicating whether the value of this property needs to be persisted.
             </summary>
@@ -1226,7 +2342,7 @@
             <param name="component">The component with the property to be examined for persistence. 
                             </param>
         </member>
-        <member name="P:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.ComponentType">
+        <member name="P:Newtonsoft.Json.Linq.JPropertyDescriptor.ComponentType">
             <summary>
             When overridden in a derived class, gets the type of the component this property is bound to.
             </summary>
@@ -1234,7 +2350,7 @@
             A <see cref="T:System.Type"/> that represents the type of component this property is bound to. When the <see cref="M:System.ComponentModel.PropertyDescriptor.GetValue(System.Object)"/> or <see cref="M:System.ComponentModel.PropertyDescriptor.SetValue(System.Object,System.Object)"/> methods are invoked, the object specified might be an instance of this type.
             </returns>
         </member>
-        <member name="P:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.IsReadOnly">
+        <member name="P:Newtonsoft.Json.Linq.JPropertyDescriptor.IsReadOnly">
             <summary>
             When overridden in a derived class, gets a value indicating whether this property is read-only.
             </summary>
@@ -1242,7 +2358,7 @@
             true if the property is read-only; otherwise, false.
             </returns>
         </member>
-        <member name="P:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.PropertyType">
+        <member name="P:Newtonsoft.Json.Linq.JPropertyDescriptor.PropertyType">
             <summary>
             When overridden in a derived class, gets the type of the property.
             </summary>
@@ -1250,7 +2366,7 @@
             A <see cref="T:System.Type"/> that represents the type of the property.
             </returns>
         </member>
-        <member name="P:Newtonsoft.Json.Linq.ComponentModel.JPropertyDescriptor.NameHashCode">
+        <member name="P:Newtonsoft.Json.Linq.JPropertyDescriptor.NameHashCode">
             <summary>
             Gets the hash code for the name of the member.
             </summary>
@@ -1768,6 +2884,19 @@
             <param name="jsonSerializer">The <see cref="T:Newtonsoft.Json.JsonSerializer"/> that will be used when reading the object.</param>
             <returns>A <see cref="T:Newtonsoft.Json.Linq.JToken"/> with the value of the specified object</returns>
         </member>
+        <member name="M:Newtonsoft.Json.Linq.JToken.ToObject``1">
+            <summary>
+            Creates the specified .NET type from the <see cref="T:Newtonsoft.Json.Linq.JToken"/>.
+            </summary>
+            <returns>The new object created from the JSON value.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JToken.ToObject``1(Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Creates the specified .NET type from the <see cref="T:Newtonsoft.Json.Linq.JToken"/> using the specified <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
+            </summary>
+            <param name="jsonSerializer">The <see cref="T:Newtonsoft.Json.JsonSerializer"/> that will be used when creating the object.</param>
+            <returns>The new object created from the JSON value.</returns>
+        </member>
         <member name="M:Newtonsoft.Json.Linq.JToken.ReadFrom(Newtonsoft.Json.JsonReader)">
             <summary>
             Creates a <see cref="T:Newtonsoft.Json.Linq.JToken"/> from a <see cref="T:Newtonsoft.Json.JsonReader"/>.
@@ -1927,6 +3056,24 @@
             <param name="value">The value.</param>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JValue.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JValue"/> class with the given value.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JValue.#ctor(System.Guid)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JValue"/> class with the given value.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JValue.#ctor(System.Uri)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JValue"/> class with the given value.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JValue.#ctor(System.TimeSpan)">
             <summary>
             Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JValue"/> class with the given value.
             </summary>
@@ -2244,12 +3391,25 @@
         </member>
         <member name="F:Newtonsoft.Json.DefaultValueHandling.Include">
             <summary>
-            Include default values when serializing and deserializing objects.
+            Include members where the member value is the same as the member's default value when serializing objects.
+            Included members are written to JSON. Has no effect when deserializing.
             </summary>
         </member>
         <member name="F:Newtonsoft.Json.DefaultValueHandling.Ignore">
             <summary>
-            Ignore default values when serializing and deserializing objects.
+            Ignore members where the member value is the same as the member's default value when serializing objects
+            so that is is not written to JSON, and ignores setting members when the JSON value equals the member's default value.
+            </summary>
+        </member>
+        <member name="F:Newtonsoft.Json.DefaultValueHandling.Populate">
+            <summary>
+            Members with a default value but no JSON will be set to their default value when deserializing.
+            </summary>
+        </member>
+        <member name="F:Newtonsoft.Json.DefaultValueHandling.IgnoreAndPopulate">
+            <summary>
+            Ignore members where the member value is the same as the member's default value when serializing objects
+            and sets members to their default value when deserializing.
             </summary>
         </member>
         <member name="T:Newtonsoft.Json.JsonConverterAttribute">
@@ -2731,6 +3891,11 @@
             	<c>true</c> if LineNumber and LinePosition can be provided; otherwise, <c>false</c>.
             </returns>
         </member>
+        <member name="P:Newtonsoft.Json.JsonTextReader.Culture">
+            <summary>
+            Gets or sets the culture used when reading JSON. Defaults to <see cref="P:System.Globalization.CultureInfo.CurrentCulture"/>.
+            </summary>
+        </member>
         <member name="P:Newtonsoft.Json.JsonTextReader.LineNumber">
             <summary>
             Gets the current line number.
@@ -2798,6 +3963,12 @@
             Gets or sets whether this property's value is serialized as a reference.
             </summary>
             <value>Whether this property's value is serialized as a reference.</value>
+        </member>
+        <member name="P:Newtonsoft.Json.JsonPropertyAttribute.Order">
+            <summary>
+            Gets or sets the order of serialization and deserialization of a member.
+            </summary>
+            <value>The numeric order of serialization or deserialization.</value>
         </member>
         <member name="P:Newtonsoft.Json.JsonPropertyAttribute.PropertyName">
             <summary>
@@ -2994,6 +4165,24 @@
             </summary>
             <param name="value">The <see cref="T:Byte[]"/> value to write.</param>
         </member>
+        <member name="M:Newtonsoft.Json.JsonTextWriter.WriteValue(System.Guid)">
+            <summary>
+            Writes a <see cref="T:System.Guid"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Guid"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonTextWriter.WriteValue(System.TimeSpan)">
+            <summary>
+            Writes a <see cref="T:System.TimeSpan"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.TimeSpan"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonTextWriter.WriteValue(System.Uri)">
+            <summary>
+            Writes a <see cref="T:System.Uri"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Uri"/> value to write.</param>
+        </member>
         <member name="M:Newtonsoft.Json.JsonTextWriter.WriteComment(System.String)">
             <summary>
             Writes out a comment <code>/*...*/</code> containing the specified text. 
@@ -3051,6 +4240,15 @@
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         </member>
+        <member name="M:Newtonsoft.Json.JsonWriterException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.JsonWriterException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
+        </member>
         <member name="T:Newtonsoft.Json.JsonReaderException">
             <summary>
             The exception thrown when an error occurs while reading Json text.
@@ -3075,6 +4273,15 @@
             </summary>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonReaderException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.JsonReaderException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
         </member>
         <member name="P:Newtonsoft.Json.JsonReaderException.LineNumber">
             <summary>
@@ -3244,6 +4451,20 @@
             </summary>
             <param name="value">The value to convert.</param>
             <returns>A JSON string representation of the <see cref="T:System.Guid"/>.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonConvert.ToString(System.TimeSpan)">
+            <summary>
+            Converts the <see cref="T:System.TimeSpan"/> to its JSON string representation.
+            </summary>
+            <param name="value">The value to convert.</param>
+            <returns>A JSON string representation of the <see cref="T:System.TimeSpan"/>.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonConvert.ToString(System.Uri)">
+            <summary>
+            Converts the <see cref="T:System.Uri"/> to its JSON string representation.
+            </summary>
+            <param name="value">The value to convert.</param>
+            <returns>A JSON string representation of the <see cref="T:System.Uri"/>.</returns>
         </member>
         <member name="M:Newtonsoft.Json.JsonConvert.ToString(System.String)">
             <summary>
@@ -3495,6 +4716,15 @@
             </summary>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.JsonSerializationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.JsonSerializationException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
         </member>
         <member name="T:Newtonsoft.Json.JsonSerializer">
             <summary>
@@ -3852,6 +5082,12 @@
             Occurs before an item is added to the collection.
             </summary>
         </member>
+        <member name="P:Newtonsoft.Json.Linq.JContainer.ChildrenTokens">
+            <summary>
+            Gets the container's children tokens.
+            </summary>
+            <value>The container's children tokens.</value>
+        </member>
         <member name="P:Newtonsoft.Json.Linq.JContainer.HasValues">
             <summary>
             Gets a value indicating whether this token has childen tokens.
@@ -3875,6 +5111,12 @@
             <value>
             A <see cref="T:Newtonsoft.Json.Linq.JToken"/> containing the last child token of the <see cref="T:Newtonsoft.Json.Linq.JToken"/>.
             </value>
+        </member>
+        <member name="P:Newtonsoft.Json.Linq.JContainer.Count">
+            <summary>
+            Gets the count of child JSON tokens.
+            </summary>
+            <value>The count of child JSON tokens</value>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JConstructor.#ctor">
             <summary>
@@ -3920,6 +5162,12 @@
             </summary>
             <param name="reader">A <see cref="T:Newtonsoft.Json.JsonReader"/> that will be read for the content of the <see cref="T:Newtonsoft.Json.Linq.JConstructor"/>.</param>
             <returns>A <see cref="T:Newtonsoft.Json.Linq.JConstructor"/> that contains the JSON that was read from the specified <see cref="T:Newtonsoft.Json.JsonReader"/>.</returns>
+        </member>
+        <member name="P:Newtonsoft.Json.Linq.JConstructor.ChildrenTokens">
+            <summary>
+            Gets the container's children tokens.
+            </summary>
+            <value>The container's children tokens.</value>
         </member>
         <member name="P:Newtonsoft.Json.Linq.JConstructor.Name">
             <summary>
@@ -4214,6 +5462,12 @@
             An <see cref="T:System.Object"/> that represents the owner of the specified property.
             </returns>
         </member>
+        <member name="P:Newtonsoft.Json.Linq.JObject.ChildrenTokens">
+            <summary>
+            Gets the container's children tokens.
+            </summary>
+            <value>The container's children tokens.</value>
+        </member>
         <member name="E:Newtonsoft.Json.Linq.JObject.PropertyChanged">
             <summary>
             Occurs when a property value changes.
@@ -4236,13 +5490,6 @@
             Gets or sets the <see cref="T:Newtonsoft.Json.Linq.JToken"/> with the specified property name.
             </summary>
             <value></value>
-        </member>
-        <member name="P:Newtonsoft.Json.Linq.JObject.Count">
-            <summary>
-            Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-            </summary>
-            <value></value>
-            <returns>The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.</returns>
         </member>
         <member name="T:Newtonsoft.Json.Linq.JArray">
             <summary>
@@ -4368,6 +5615,12 @@
             </returns>
             <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.</exception>
         </member>
+        <member name="P:Newtonsoft.Json.Linq.JArray.ChildrenTokens">
+            <summary>
+            Gets the container's children tokens.
+            </summary>
+            <value>The container's children tokens.</value>
+        </member>
         <member name="P:Newtonsoft.Json.Linq.JArray.Type">
             <summary>
             Gets the node type for this <see cref="T:Newtonsoft.Json.Linq.JToken"/>.
@@ -4385,13 +5638,6 @@
             Gets or sets the <see cref="T:Newtonsoft.Json.Linq.JToken"/> at the specified index.
             </summary>
             <value></value>
-        </member>
-        <member name="P:Newtonsoft.Json.Linq.JArray.Count">
-            <summary>
-            Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-            </summary>
-            <value></value>
-            <returns>The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.</returns>
         </member>
         <member name="T:Newtonsoft.Json.Linq.JTokenReader">
             <summary>
@@ -4598,6 +5844,24 @@
             </summary>
             <param name="value">The <see cref="T:Byte[]"/> value to write.</param>
         </member>
+        <member name="M:Newtonsoft.Json.Linq.JTokenWriter.WriteValue(System.TimeSpan)">
+            <summary>
+            Writes a <see cref="T:System.TimeSpan"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.TimeSpan"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JTokenWriter.WriteValue(System.Guid)">
+            <summary>
+            Writes a <see cref="T:System.Guid"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Guid"/> value to write.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JTokenWriter.WriteValue(System.Uri)">
+            <summary>
+            Writes a <see cref="T:System.Uri"/> value.
+            </summary>
+            <param name="value">The <see cref="T:System.Uri"/> value to write.</param>
+        </member>
         <member name="P:Newtonsoft.Json.Linq.JTokenWriter.Token">
             <summary>
             Gets the token being writen.
@@ -4614,14 +5878,6 @@
             Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JProperty"/> class from another <see cref="T:Newtonsoft.Json.Linq.JProperty"/> object.
             </summary>
             <param name="other">A <see cref="T:Newtonsoft.Json.Linq.JProperty"/> object to copy from.</param>
-        </member>
-        <member name="M:Newtonsoft.Json.Linq.JProperty.Children">
-            <summary>
-            Returns a collection of the child tokens of this token, in document order.
-            </summary>
-            <returns>
-            An <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:Newtonsoft.Json.Linq.JToken"/> containing the child tokens of this <see cref="T:Newtonsoft.Json.Linq.JToken"/>, in document order.
-            </returns>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JProperty.#ctor(System.String,System.Object[])">
             <summary>
@@ -4650,6 +5906,12 @@
             </summary>
             <param name="reader">A <see cref="T:Newtonsoft.Json.JsonReader"/> that will be read for the content of the <see cref="T:Newtonsoft.Json.Linq.JProperty"/>.</param>
             <returns>A <see cref="T:Newtonsoft.Json.Linq.JProperty"/> that contains the JSON that was read from the specified <see cref="T:Newtonsoft.Json.JsonReader"/>.</returns>
+        </member>
+        <member name="P:Newtonsoft.Json.Linq.JProperty.ChildrenTokens">
+            <summary>
+            Gets the container's children tokens.
+            </summary>
+            <value>The container's children tokens.</value>
         </member>
         <member name="P:Newtonsoft.Json.Linq.JProperty.Name">
             <summary>
@@ -4749,6 +6011,21 @@
             A collection of bytes value.
             </summary>
         </member>
+        <member name="F:Newtonsoft.Json.Linq.JTokenType.Guid">
+            <summary>
+            A Guid value.
+            </summary>
+        </member>
+        <member name="F:Newtonsoft.Json.Linq.JTokenType.Uri">
+            <summary>
+            A Uri value.
+            </summary>
+        </member>
+        <member name="F:Newtonsoft.Json.Linq.JTokenType.TimeSpan">
+            <summary>
+            A TimeSpan value.
+            </summary>
+        </member>
         <member name="T:Newtonsoft.Json.Schema.Extensions">
             <summary>
             Contains the JSON schema extension methods.
@@ -4803,6 +6080,15 @@
             </summary>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Schema.JsonSchemaException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Schema.JsonSchemaException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
         </member>
         <member name="P:Newtonsoft.Json.Schema.JsonSchemaException.LineNumber">
             <summary>
@@ -4939,6 +6225,22 @@
             </summary>
             <param name="objectType">Type of the object.</param>
             <returns>A <see cref="T:Newtonsoft.Json.Serialization.JsonObjectContract"/> for the given type.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Serialization.DefaultContractResolver.CreateConstructorParameters(System.Reflection.ConstructorInfo,Newtonsoft.Json.Serialization.JsonPropertyCollection)">
+            <summary>
+            Creates the constructor parameters.
+            </summary>
+            <param name="constructor">The constructor to create properties for.</param>
+            <param name="memberProperties">The type's member properties.</param>
+            <returns>Properties for the given <see cref="T:System.Reflection.ConstructorInfo"/>.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Serialization.DefaultContractResolver.CreatePropertyFromConstructorParameter(Newtonsoft.Json.Serialization.JsonProperty,System.Reflection.ParameterInfo)">
+            <summary>
+            Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonProperty"/> for the given <see cref="T:System.Reflection.ParameterInfo"/>.
+            </summary>
+            <param name="matchingMemberProperty">The matching member property.</param>
+            <param name="parameterInfo">The constructor parameter.</param>
+            <returns>A created <see cref="T:Newtonsoft.Json.Serialization.JsonProperty"/> for the given <see cref="T:System.Reflection.ParameterInfo"/>.</returns>
         </member>
         <member name="M:Newtonsoft.Json.Serialization.DefaultContractResolver.ResolveContractConverter(System.Type)">
             <summary>
@@ -5313,7 +6615,7 @@
         </member>
         <member name="T:Newtonsoft.Json.Serialization.JsonProperty">
             <summary>
-            Maps a JSON property to a .NET member.
+            Maps a JSON property to a .NET member or constructor parameter.
             </summary>
         </member>
         <member name="M:Newtonsoft.Json.Serialization.JsonProperty.ToString">
@@ -5326,9 +6628,21 @@
         </member>
         <member name="P:Newtonsoft.Json.Serialization.JsonProperty.PropertyName">
             <summary>
-            Gets the name of the property.
+            Gets or sets the name of the property.
             </summary>
             <value>The name of the property.</value>
+        </member>
+        <member name="P:Newtonsoft.Json.Serialization.JsonProperty.Order">
+            <summary>
+            Gets or sets the order of serialization and deserialization of a member.
+            </summary>
+            <value>The numeric order of serialization or deserialization.</value>
+        </member>
+        <member name="P:Newtonsoft.Json.Serialization.JsonProperty.UnderlyingName">
+            <summary>
+            Gets or sets the name of the underlying member or parameter.
+            </summary>
+            <value>The name of the underlying member or parameter.</value>
         </member>
         <member name="P:Newtonsoft.Json.Serialization.JsonProperty.ValueProvider">
             <summary>
@@ -5349,6 +6663,12 @@
             </summary>
             <value>The converter.</value>
         </member>
+        <member name="P:Newtonsoft.Json.Serialization.JsonProperty.MemberConverter">
+            <summary>
+            Gets the member converter.
+            </summary>
+            <value>The member converter.</value>
+        </member>
         <member name="P:Newtonsoft.Json.Serialization.JsonProperty.Ignored">
             <summary>
             Gets a value indicating whether this <see cref="T:Newtonsoft.Json.Serialization.JsonProperty"/> is ignored.
@@ -5366,12 +6686,6 @@
             Gets a value indicating whether this <see cref="T:Newtonsoft.Json.Serialization.JsonProperty"/> is writable.
             </summary>
             <value><c>true</c> if writable; otherwise, <c>false</c>.</value>
-        </member>
-        <member name="P:Newtonsoft.Json.Serialization.JsonProperty.MemberConverter">
-            <summary>
-            Gets the member converter.
-            </summary>
-            <value>The member converter.</value>
         </member>
         <member name="P:Newtonsoft.Json.Serialization.JsonProperty.DefaultValue">
             <summary>
@@ -5895,6 +7209,11 @@
             </summary>
             <value>The object's properties.</value>
         </member>
+        <member name="P:Newtonsoft.Json.Serialization.JsonObjectContract.ConstructorParameters">
+            <summary>
+            Gets the constructor parameters required for any non-default constructor
+            </summary>
+        </member>
         <member name="P:Newtonsoft.Json.Serialization.JsonObjectContract.OverrideConstructor">
             <summary>
             Gets or sets the override constructor used to create the object.
@@ -6377,6 +7696,25 @@
             <param name="initial">The list to add to.</param>
             <param name="collection">The collection of elements to add.</param>
         </member>
+        <member name="M:Newtonsoft.Json.Utilities.CollectionUtils.IndexOf``1(System.Collections.Generic.IEnumerable{``0},``0)">
+            <summary>
+            Returns the index of the first occurrence in a sequence by using the default equality comparer.
+            </summary>
+            <typeparam name="TSource">The type of the elements of source.</typeparam>
+            <param name="list">A sequence in which to locate a value.</param>
+            <param name="value">The object to locate in the sequence</param>
+            <returns>The zero-based index of the first occurrence of value within the entire sequence, if found; otherwise, –1.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Utilities.CollectionUtils.IndexOf``1(System.Collections.Generic.IEnumerable{``0},``0,System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Returns the index of the first occurrence in a sequence by using a specified IEqualityComparer.
+            </summary>
+            <typeparam name="TSource">The type of the elements of source.</typeparam>
+            <param name="list">A sequence in which to locate a value.</param>
+            <param name="value">The object to locate in the sequence</param>
+            <param name="comparer">An equality comparer to compare values.</param>
+            <returns>The zero-based index of the first occurrence of value within the entire sequence, if found; otherwise, –1.</returns>
+        </member>
         <member name="M:Newtonsoft.Json.Utilities.ReflectionUtils.GetCollectionItemType(System.Type)">
             <summary>
             Gets the type of the typed collection's items.
@@ -6442,12 +7780,13 @@
             	<c>true</c> if the specified MemberInfo can be read; otherwise, <c>false</c>.
             </returns>
         </member>
-        <member name="M:Newtonsoft.Json.Utilities.ReflectionUtils.CanSetMemberValue(System.Reflection.MemberInfo,System.Boolean)">
+        <member name="M:Newtonsoft.Json.Utilities.ReflectionUtils.CanSetMemberValue(System.Reflection.MemberInfo,System.Boolean,System.Boolean)">
             <summary>
             Determines whether the specified MemberInfo can be set.
             </summary>
             <param name="member">The MemberInfo to determine whether can be set.</param>
             <param name="nonPublic">if set to <c>true</c> then allow the member to be set non-publicly.</param>
+            <param name="canSetReadOnly">if set to <c>true</c> then allow the member to be set if read-only.</param>
             <returns>
             	<c>true</c> if the specified MemberInfo can be set; otherwise, <c>false</c>.
             </returns>

@@ -704,10 +704,10 @@
         </member>
         <member name="M:Xunit.Sdk.PropertyChangedException.#ctor(System.String)">
             <summary>
-            Creates a new instance of the <see cref="T:Xunit.Sdk.ThrowsException"/> class. Call this constructor
+            Creates a new instance of the <see cref="T:Xunit.Sdk.PropertyChangedException"/> class. Call this constructor
             when no exception was thrown.
             </summary>
-            <param name="expectedType">The type of the exception that was expected</param>
+            <param name="propertyName">The name of the property that was expected.</param>
         </member>
         <member name="T:Xunit.Sdk.SingleException">
             <summary>
@@ -719,6 +719,13 @@
             Initializes a new instance of the <see cref="T:Xunit.Sdk.SingleException"/> class.
             </summary>
             <param name="count">The numbers of items in the collection.</param>
+        </member>
+        <member name="M:Xunit.Sdk.SingleException.#ctor(System.Int32,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Xunit.Sdk.SingleException"/> class.
+            </summary>
+            <param name="count">The numbers of items in the collection.</param>
+            <param name="expected">The object expected to be in the collection.</param>
         </member>
         <member name="T:Xunit.Sdk.Executor">
             <summary>
