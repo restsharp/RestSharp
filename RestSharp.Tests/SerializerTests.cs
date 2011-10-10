@@ -78,6 +78,26 @@ namespace RestSharp.Tests
 			Assert.Equal(expected.ToString(), doc.ToString());
 		}
 
+        [Fact]
+        public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
+        {
+            var poco = new Person
+            {
+                Name = "Foo",
+                Age = 50,
+                Price = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                IsCool = false
+            };
+
+            var xml = new XmlSerializer();
+            xml.DateFormat = DateFormat.Iso8601;
+            var doc = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWithXmlProperty();
+
+            Assert.Equal(expected.ToString(), doc.ToString());
+        }
+
 		[Fact]
 		public void Can_serialize_simple_POCO_With_Different_Root_Element() {
 			var poco = new Person {
@@ -158,6 +178,7 @@ namespace RestSharp.Tests
 			public decimal Price { get; set; }
 			public DateTime StartDate { get; set; }
 			public List<Item> Items { get; set; }
+            public bool? IsCool {get;set;}
 		}
 
 		private class Item
@@ -219,6 +240,21 @@ namespace RestSharp.Tests
 
 			return doc;
 		}
+
+        private XDocument GetSimplePocoXDocWithXmlProperty()
+        {
+            var doc = new XDocument();
+            var root = new XElement("Person");
+            root.Add(new XElement("Name", "Foo"),
+                    new XElement("Age", 50),
+                    new XElement("Price", 19.95m),
+                    new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString("s")),
+                    new XElement("IsCool", false));
+
+            doc.Add(root);
+
+            return doc;
+        }
 
 		private XDocument GetSimplePocoXDocWithRoot() {
 			var doc = new XDocument();

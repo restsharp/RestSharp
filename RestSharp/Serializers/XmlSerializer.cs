@@ -171,7 +171,10 @@ namespace RestSharp.Serializers
 					output = ((DateTime)obj).ToString(DateFormat);
 				}
 			}
-			// else if... if needed for other types
+            if (obj is bool)
+            {
+                output = obj.ToString().ToLower();
+            }
 
 			return output.ToString();
 		}
