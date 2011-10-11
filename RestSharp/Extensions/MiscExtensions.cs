@@ -79,7 +79,7 @@ namespace RestSharp.Extensions
 		/// <returns></returns>
 		public static string AsString(this JToken token)
 		{
-			return token.ToString();
+			return token.Type == JTokenType.String ? token.Value<string>() : token.ToString();
 		}
 
 		/// <summary>

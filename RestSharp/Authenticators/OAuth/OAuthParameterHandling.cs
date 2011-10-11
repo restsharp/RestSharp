@@ -2,12 +2,12 @@ using System;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT
-    [Serializable]
+#if !SILVERLIGHT && !WINDOWS_PHONE
+	[Serializable]
 #endif
-    public enum OAuthParameterHandling
-    {
-        HttpAuthorizationHeader,
-        UrlOrPostParameters
-    }
+	public enum OAuthParameterHandling
+	{
+		HttpAuthorizationHeader,
+		UrlOrPostParameters
+	}
 }

@@ -181,6 +181,34 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Nested_List_Without_Elements_To_Empty_List()
+		{
+			var doc = CreateXmlWithEmptyNestedList();
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc });
+
+			Assert.NotNull(output.images);
+			Assert.NotNull(output.Images);
+			Assert.Empty(output.images);
+			Assert.Empty(output.Images);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Inline_List_Without_Elements_To_Empty_List()
+		{
+			var doc = CreateXmlWithEmptyInlineList();
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc });
+
+			Assert.NotNull(output.images);
+			Assert.NotNull(output.Images);
+			Assert.Empty(output.images);
+			Assert.Empty(output.Images);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
 		{
 			var doc = CreateXmlWithNullValues();
@@ -447,38 +475,38 @@ namespace RestSharp.Tests
 			var response = new RestResponse { Content = doc.ToString() };
 
 			var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.xml_api_reply>(response);
+			var output = d.Deserialize<SampleClasses.xml_api_reply>(response);
 
 			Assert.NotEmpty(output.weather);
 			Assert.Equal(4, output.weather.Count);
 			Assert.Equal("Sunny", output.weather[0].condition.data);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Boolean_From_Number()
-        {
-            var xmlpath = PathFor("boolean_from_number.xml");
-            var doc = XDocument.Load(xmlpath);
-            var response = new RestResponse { Content = doc.ToString() };
+		[Fact]
+		public void Can_Deserialize_Boolean_From_Number()
+		{
+				var xmlpath = PathFor("boolean_from_number.xml");
+				var doc = XDocument.Load(xmlpath);
+				var response = new RestResponse { Content = doc.ToString() };
 
-            var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.BooleanTest>(response);
+				var d = new XmlDeserializer();
+				var output = d.Deserialize<SampleClasses.BooleanTest>(response);
 
-            Assert.True(output.Value);
-        }
+				Assert.True(output.Value);
+		}
 
-        [Fact]
-        public void Can_Deserialize_Boolean_From_String()
-        {
-            var xmlpath = PathFor("boolean_from_string.xml");
-            var doc = XDocument.Load(xmlpath);
-            var response = new RestResponse { Content = doc.ToString() };
+		[Fact]
+		public void Can_Deserialize_Boolean_From_String()
+		{
+				var xmlpath = PathFor("boolean_from_string.xml");
+				var doc = XDocument.Load(xmlpath);
+				var response = new RestResponse { Content = doc.ToString() };
 
-            var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.BooleanTest>(response);
+				var d = new XmlDeserializer();
+				var output = d.Deserialize<SampleClasses.BooleanTest>(response);
 
-            Assert.True(output.Value);
-        }
+				Assert.True(output.Value);
+		}
 
 		private static string CreateUnderscoresXml()
 		{
@@ -698,6 +726,28 @@ namespace RestSharp.Tests
 					 new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString()),
 					 new XElement("UniqueId", new Guid(GuidString))
 					 );
+
+			doc.Add(root);
+
+			return doc.ToString();
+		}
+
+		private static string CreateXmlWithEmptyNestedList()
+		{
+			var doc = new XDocument();
+			var root = new XElement("EmptyListSample");
+
+			root.Add(new XElement("Images"));
+
+			doc.Add(root);
+
+			return doc.ToString();
+		}
+
+		private static string CreateXmlWithEmptyInlineList()
+		{
+			var doc = new XDocument();
+			var root = new XElement("EmptyListSample");
 
 			doc.Add(root);
 
