@@ -40,7 +40,7 @@ namespace RestSharp.Deserializers
 
 		public T Deserialize<T>(RestResponse response) where T : new()
 		{
-			if (response.Content == null)
+			if (string.IsNullOrEmpty( response.Content ))
 				return default(T);
 
 			var doc = XDocument.Parse(response.Content);
