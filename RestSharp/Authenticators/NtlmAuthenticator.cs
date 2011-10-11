@@ -23,7 +23,7 @@ namespace RestSharp
 	/// </summary>
 	public class NtlmAuthenticator : IAuthenticator
 	{
-        public void Authenticate(RestClient client, RestRequest request)
+        public void Authenticate(IRestClient client, IRestRequest request)
         {
 			request.Credentials = System.Net.CredentialCache.DefaultCredentials;
 		}

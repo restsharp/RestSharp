@@ -42,7 +42,7 @@ namespace RestSharp
 		/// <remarks>
 		/// Mainly for debugging if ResponseStatus is not OK
 		/// </remarks> 
-		public RestRequest Request { get; set; }
+		public IRestRequest Request { get; set; }
 		/// <summary>
 		/// MIME content type of response
 		/// </summary>

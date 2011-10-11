@@ -30,7 +30,7 @@ namespace RestSharp
 			_username = username;
 		}
 
-		public void Authenticate(RestClient client, RestRequest request) {
+		public void Authenticate(IRestClient client, IRestRequest request) {
 			// NetworkCredentials always makes two trips, even if with PreAuthenticate,
 			// it is also unsafe for many partial trust scenarios
 			// request.Credentials = Credentials;

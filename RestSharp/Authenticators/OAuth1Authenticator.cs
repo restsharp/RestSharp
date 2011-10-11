@@ -123,7 +123,7 @@ namespace RestSharp.Authenticators
 			return authenticator;
 		}
 
-		public void Authenticate(RestClient client, RestRequest request)
+		public void Authenticate(IRestClient client, IRestRequest request)
 		{
 			var workflow = new OAuthWorkflow
 			{
@@ -145,7 +145,7 @@ namespace RestSharp.Authenticators
 			AddOAuthData(client, request, workflow);
 		}
 
-		private void AddOAuthData(RestClient client, RestRequest request, OAuthWorkflow workflow)
+		private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
 		{
 			var url = client.BuildUri(request).ToString();
 

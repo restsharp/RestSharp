@@ -264,7 +264,7 @@ namespace RestSharp
 			}
 		}
 
-		private void AuthenticateIfNeeded(RestClient client, RestRequest request)
+		private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
 		{
 			if (Authenticator != null)
 			{
@@ -277,7 +277,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">RestRequest to execute</param>
 		/// <returns>Assembled System.Uri</returns>
-		public Uri BuildUri(RestRequest request)
+		public Uri BuildUri(IRestRequest request)
 		{
 			var assembled = request.Resource;
 			var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
@@ -312,7 +312,7 @@ namespace RestSharp
 			return new Uri(assembled);
 		}
 
-		private string EncodeParameters(RestRequest request)
+		private string EncodeParameters(IRestRequest request)
 		{
 			var querystring = new StringBuilder();
 			foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
@@ -325,7 +325,7 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
-		private void ConfigureHttp(RestRequest request, IHttp http)
+		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach(var p in DefaultParameters)
@@ -464,7 +464,7 @@ namespace RestSharp
 			return restResponse;
 		}
 
-		private RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) where T : new()
+		private RestResponse<T> Deserialize<T>(IRestRequest request, RestResponse raw) where T : new()
 		{
 			request.OnBeforeDeserialization(raw);
 

@@ -437,7 +437,7 @@ namespace RestSharp
 		/// <summary>
 		/// Internal Method so that RestClient can increase the number of attempts
 		/// </summary>
-		internal void IncreaseNumAttempts()
+		public void IncreaseNumAttempts()
 		{
 			_attempts++;
 		}

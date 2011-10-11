@@ -30,7 +30,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse> callback)
+		public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<RestResponse> callback)
 		{
 			return ExecuteAsync(request, (response, handle) => callback(response));
 		}
@@ -40,7 +40,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync(RestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
 		{
 			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
@@ -91,7 +91,7 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
 		{
 			return ExecuteAsync(request, (response, asyncHandle) =>
 			{
@@ -111,7 +111,7 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(RestRequest request, Action<RestResponse<T>> callback) where T : new()
+		public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<RestResponse<T>> callback) where T : new()
 		{
 			return ExecuteAsync<T>(request, (response, asyncHandle) => callback(response));
 		}
