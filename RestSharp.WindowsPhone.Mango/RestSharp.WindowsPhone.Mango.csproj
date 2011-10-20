@@ -43,8 +43,8 @@
     <DocumentationFile>Bin\Release\RestSharp.WindowsPhone.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json.WindowsPhone">
-      <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\sl3-wp\Newtonsoft.Json.WindowsPhone.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.0.3\lib\sl4\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
