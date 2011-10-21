@@ -93,6 +93,7 @@
     <Compile Include="Authenticators\OAuth\WebParameter.cs" />
     <Compile Include="Authenticators\OAuth\WebParameterCollection.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
+    <Compile Include="Deserializers\DotNetXmlDeserializer.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
     <Compile Include="Extensions\MonoHttp\Helpers.cs" />
     <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />

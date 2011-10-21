@@ -82,6 +82,9 @@
     <Compile Include="..\RestSharp\Deserializers\DeserializeAsAttribute.cs">
       <Link>Deserializers\DeserializeAsAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Deserializers\DotNetXmlDeserializer.cs">
+      <Link>Deserializers\DotNetXmlDeserializer.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Deserializers\IDeserializer.cs">
       <Link>Deserializers\IDeserializer.cs</Link>
     </Compile>
