@@ -508,6 +508,32 @@ namespace RestSharp.Tests
 				Assert.True(output.Value);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values()
+        {
+            var doc = CreateXmlWithAttributesAndNullValues();
+
+            var xml = new XmlDeserializer();
+            var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+
+            Assert.Null(output.Id);
+            Assert.Null(output.StartDate);
+            Assert.Null(output.UniqueId);
+        }
+
+        [Fact]
+        public void Can_Deserialize_Mixture_Of_Empty_Elements_With_Attributes_And_Populated_Elements()
+        {
+            var doc = CreateXmlWithAttributesAndNullValuesAndPopulatedValues();
+
+            var xml = new XmlDeserializer();
+            var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+
+            Assert.Null(output.Id);
+            Assert.Null(output.StartDate);
+            Assert.Equal(new Guid(GuidString), output.UniqueId);
+        }
+
 		private static string CreateUnderscoresXml()
 		{
 			var doc = new XDocument();
@@ -753,5 +779,39 @@ namespace RestSharp.Tests
 
 			return doc.ToString();
 		}
+
+        private static string CreateXmlWithAttributesAndNullValues()
+        {
+            var doc = new XDocument();
+            var root = new XElement("NullableValues");
+
+            var idElement = new XElement("Id", null);
+            idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
+            root.Add(idElement,
+                     new XElement("StartDate", null),
+                     new XElement("UniqueId", null)
+                );
+
+            doc.Add(root);
+
+            return doc.ToString();
+        }
+
+        private static string CreateXmlWithAttributesAndNullValuesAndPopulatedValues()
+        {
+            var doc = new XDocument();
+            var root = new XElement("NullableValues");
+
+            var idElement = new XElement("Id", null);
+            idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
+            root.Add(idElement,
+                     new XElement("StartDate", null),
+                     new XElement("UniqueId", new Guid(GuidString))
+                );
+
+            doc.Add(root);
+
+            return doc.ToString();
+        }
 	}
 }
