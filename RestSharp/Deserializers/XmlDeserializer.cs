@@ -124,7 +124,13 @@ namespace RestSharp.Deserializers
 				// check for nullable and extract underlying type
 				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 				{
-					type = type.GetGenericArguments()[0];
+                    // if the value is empty, set the property to null...
+                    if (value == null || String.IsNullOrEmpty(value.ToString()))
+                    {
+                        prop.SetValue(x, null, null);
+                        continue;
+                    }
+                    type = type.GetGenericArguments()[0];
 				}
 
 				if (type == typeof(bool))
