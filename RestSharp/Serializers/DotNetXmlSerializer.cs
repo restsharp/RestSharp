@@ -26,22 +26,23 @@ namespace RestSharp.Serializers
     public class DotNetXmlSerializer : ISerializer
     {
         /// <summary>
-		/// Default constructor, does not specify namespace
-		/// </summary>
+        /// Default constructor, does not specify namespace
+        /// </summary>
         public DotNetXmlSerializer()
         {
             this.ContentType = "application/xml";
             this.Encoding = Encoding.UTF8;
-		}
+        }
 
         /// <summary>
-		/// Specify the namespaced to be used when serializing
-		/// </summary>
-		/// <param name="namespace">XML namespace</param>
-        public DotNetXmlSerializer(string @namespace) : this()
+        /// Specify the namespaced to be used when serializing
+        /// </summary>
+        /// <param name="namespace">XML namespace</param>
+        public DotNetXmlSerializer(string @namespace)
+            : this()
         {
-			Namespace = @namespace;
-		}
+            Namespace = @namespace;
+        }
 
         /// <summary>
         /// Serialize the object as XML
