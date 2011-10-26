@@ -283,6 +283,21 @@ namespace RestSharp.Deserializers
 			return item;
 		}
 
+                private object CreateAndMap(Type t, XElement element)
+                {
+                        object item;
+                        if (t == typeof(System.String))
+                        {
+                                item = element.Value; 
+                        }
+                        else
+                        {
+                                item = Activator.CreateInstance(t);
+                                Map(item, element); 
+                        }
+                        return item;
+                }
+
 		private object GetValueFromXml(XElement root, XName name)
 		{
 			object val = null;
