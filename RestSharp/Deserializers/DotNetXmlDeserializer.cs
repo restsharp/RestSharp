@@ -19,31 +19,29 @@ using System.Text;
 
 namespace RestSharp.Deserializers
 {
-    /// <summary>
-    /// Wrapper for System.Xml.Serialization.XmlSerializer.
-    /// </summary>
-    public class DotNetXmlDeserializer : IDeserializer
-    {
-        public string DateFormat { get; set; }
+	/// <summary>
+	/// Wrapper for System.Xml.Serialization.XmlSerializer.
+	/// </summary>
+	public class DotNetXmlDeserializer : IDeserializer
+	{
+		public string DateFormat { get; set; }
 
-        public string Namespace { get; set; }
+		public string Namespace { get; set; }
 
-        public string RootElement { get; set; }
+		public string RootElement { get; set; }
 
-        public T Deserialize<T>(RestResponse response) where T : new()
-        {
-            if (string.IsNullOrEmpty(response.Content))
-            {
-                return default(T);
-            }
+		public T Deserialize<T>(RestResponse response) where T : new()
+		{
+			if (string.IsNullOrEmpty(response.Content))
+			{
+				return default(T);
+			}
 
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content));
-            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            var entity = (T)serializer.Deserialize(stream);
-            stream.Close();
-            stream.Dispose();
-
-            return entity;
-        }
-    }
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
+			{
+				var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+				return (T)serializer.Deserialize(stream);
+			}
+		}
+	}
 }
