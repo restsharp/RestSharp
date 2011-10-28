@@ -165,16 +165,14 @@ namespace RestSharp.Serializers
 		private string GetSerializedValue(object obj) {
 			var output = obj;
 
-			if (obj is DateTime) {
-				// check for DateFormat when adding date props
-				if (DateFormat.HasValue()) {
-					output = ((DateTime)obj).ToString(DateFormat);
-				}
+			if (obj is DateTime && DateFormat.HasValue())
+			{
+				output = ((DateTime) obj).ToString(DateFormat);
 			}
-            if (obj is bool)
-            {
-                output = obj.ToString().ToLower();
-            }
+			if (obj is bool)
+			{
+				output = obj.ToString().ToLower();
+			}
 
 			return output.ToString();
 		}

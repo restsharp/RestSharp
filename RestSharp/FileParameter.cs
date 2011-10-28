@@ -8,15 +8,15 @@ namespace RestSharp
 	/// </summary>
 	public class FileParameter
 	{
-	    ///<summary>
-	    /// Creates a file parameter from an array of bytes.
-	    ///</summary>
-	    ///<param name="name">The parameter name to use in the request.</param>
-	    ///<param name="data">The data to use as the file's contents.</param>
-	    ///<param name="filename">The filename to use in the request.</param>
-	    ///<param name="contentType">The content type to use in the request.</param>
-	    ///<returns>The <see cref="FileParameter"/></returns>
-	    public static FileParameter Create(string name, byte[] data, string filename, string contentType)
+		///<summary>
+		/// Creates a file parameter from an array of bytes.
+		///</summary>
+		///<param name="name">The parameter name to use in the request.</param>
+		///<param name="data">The data to use as the file's contents.</param>
+		///<param name="filename">The filename to use in the request.</param>
+		///<param name="contentType">The content type to use in the request.</param>
+		///<returns>The <see cref="FileParameter"/></returns>
+		public static FileParameter Create(string name, byte[] data, string filename, string contentType)
 		{
 #if FRAMEWORK
 			var length = data.LongLength;
@@ -29,14 +29,14 @@ namespace RestSharp
 				FileName = filename,
 				ContentType = contentType,
 				ContentLength = length,
-                Name = name
+				Name = name
 			};
 		}
 
 		///<summary>
 		/// Creates a file parameter from an array of bytes.
 		///</summary>
-        ///<param name="name">The parameter name to use in the request.</param>
+		///<param name="name">The parameter name to use in the request.</param>
 		///<param name="data">The data to use as the file's contents.</param>
 		///<param name="filename">The filename to use in the request.</param>
 		///<returns>The <see cref="FileParameter"/> using the default content type.</returns>
@@ -61,9 +61,9 @@ namespace RestSharp
 		/// MIME content type of file
 		/// </summary>
 		public string ContentType { get; set; }
-        /// <summary>
-        /// Name of the parameter
-        /// </summary>
-        public string Name { get; set; }
+		/// <summary>
+		/// Name of the parameter
+		/// </summary>
+		public string Name { get; set; }
 	}
 }

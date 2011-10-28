@@ -16,11 +16,7 @@
 
 #if FRAMEWORK
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 
 #if !MONOTOUCH && !MONODROID
 using System.Web;
