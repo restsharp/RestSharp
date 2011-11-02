@@ -682,7 +682,7 @@ namespace RestSharp.Tests
 
 			root.Add(new XElement("Url", "http://example.com"));
 			root.Add(new XElement("UrlPath", "/foo/bar"));
-			root.Add(new XElement("Order", "Third"));
+			root.Add(new XElement("Order", "third"));
 
 			root.Add(new XElement("BestFriend",
 						new XElement("Name", "The Fonz"),
