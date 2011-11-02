@@ -522,7 +522,7 @@ namespace RestSharp.Tests
 			doc["ReadOnly"] = "dummy";
 			doc["Url"] = "http://example.com";
 			doc["UrlPath"] = "/foo/bar";
-			doc["Order"] = "Third";
+			doc["Order"] = "third";
 
 			doc["Guid"] = new Guid(GuidString).ToString();
 			doc["EmptyGuid"] = "";
