@@ -186,10 +186,11 @@ namespace RestSharp
 		RestRequest AddParameter(string name, object value);
 
 		/// <summary>
-		/// Adds a parameter to the request. There are four types of parameters:
+		/// Adds a parameter to the request. There are five types of parameters:
 		///	- GetOrPost: Either a QueryString value or encoded form value based on method
 		///	- HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
 		///	- UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+		///	- Cookie: Adds the name/value pair to the HTTP request's Cookies collection
 		///	- RequestBody: Used by AddBody() (not recommended to use directly)
 		/// </summary>
 		/// <param name="name">Name of the parameter</param>
@@ -205,6 +206,14 @@ namespace RestSharp
 		/// <param name="value">Value of the header to add</param>
 		/// <returns></returns>
 		RestRequest AddHeader(string name, string value);
+
+		/// <summary>
+		/// Shortcut to AddParameter(name, value, Cookie) overload
+		/// </summary>
+		/// <param name="name">Name of the cookie to add</param>
+		/// <param name="value">Value of the cookie to add</param>
+		/// <returns></returns>
+		RestRequest AddCookie (string name, string value);
 
 		/// <summary>
 		/// Shortcut to AddParameter(name, value, UrlSegment) overload
