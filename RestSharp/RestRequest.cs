@@ -332,6 +332,17 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// Shortcut to AddParameter(name, value, Cookie) overload
+		/// </summary>
+		/// <param name="name">Name of the cookie to add</param>
+		/// <param name="value">Value of the cookie to add</param>
+		/// <returns></returns>
+		public RestRequest AddCookie (string name, string value)
+		{
+			return AddParameter(name, value, ParameterType.Cookie);
+		}
+
+		/// <summary>
 		/// Shortcut to AddParameter(name, value, UrlSegment) overload
 		/// </summary>
 		/// <param name="name">Name of the segment to add</param>
