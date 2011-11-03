@@ -300,7 +300,7 @@ namespace RestSharp
 			if(!string.IsNullOrEmpty(BaseUrl))
 				assembled = string.Format("{0}/{1}", BaseUrl, assembled);
 
-			if (request.Method != Method.POST && request.Method != Method.PUT)
+			if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
 			{
 				// build and attach querystring if this is a get-style request
 				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))

@@ -79,6 +79,14 @@ namespace RestSharp
 			return GetStyleMethodInternal("DELETE");
 		}
 
+		/// <summary>
+		/// Execute a PATCH request
+		/// </summary>
+		public HttpResponse Patch()
+		{
+			return PostPutInternal("PATCH");
+		}
+
 		private HttpResponse GetStyleMethodInternal(string method)
 		{
 			var webRequest = ConfigureWebRequest(method, Url);
