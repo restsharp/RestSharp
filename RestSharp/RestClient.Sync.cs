@@ -99,6 +99,9 @@ namespace RestSharp
 				case Method.OPTIONS:
 					httpResponse = http.Options();
 					break;
+				case Method.PATCH:
+					httpResponse = http.Patch();
+					break;
 			}
 
 			var restResponse = ConvertToRestResponse(httpResponse);
