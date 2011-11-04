@@ -115,7 +115,7 @@ namespace RestSharp
 		/// <param name="name">The parameter name to use in the request</param>
 		/// <param name="path">Full path to file to upload</param>
 		/// <returns>This request</returns>
-		RestRequest AddFile(string name, string path);
+		IRestRequest AddFile (string name, string path);
 
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name
@@ -124,7 +124,7 @@ namespace RestSharp
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
-		RestRequest AddFile(string name, byte[] bytes, string fileName);
+		IRestRequest AddFile (string name, byte[] bytes, string fileName);
 
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name and content type
@@ -134,7 +134,7 @@ namespace RestSharp
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
-		RestRequest AddFile(string name, byte[] bytes, string fileName, string contentType);
+		IRestRequest AddFile (string name, byte[] bytes, string fileName, string contentType);
 #endif
 
 		/// <summary>
@@ -143,14 +143,14 @@ namespace RestSharp
 		/// <param name="obj">The object to serialize</param>
 		/// <param name="xmlNamespace">The XML namespace to use when serializing</param>
 		/// <returns>This request</returns>
-		RestRequest AddBody(object obj, string xmlNamespace);
+		IRestRequest AddBody (object obj, string xmlNamespace);
 
 		/// <summary>
 		/// Serializes obj to data format specified by RequestFormat and adds it to the request body.
 		/// </summary>
 		/// <param name="obj">The object to serialize</param>
 		/// <returns>This request</returns>
-		RestRequest AddBody(object obj);
+		IRestRequest AddBody (object obj);
 
 		/// <summary>
 		/// Calls AddParameter() for all public, readable properties specified in the white list
@@ -161,21 +161,21 @@ namespace RestSharp
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <param name="whitelist">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		RestRequest AddObject(object obj, params string[] whitelist);
+		IRestRequest AddObject (object obj, params string[] whitelist);
 
 		/// <summary>
 		/// Calls AddParameter() for all public, readable properties of obj
 		/// </summary>
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <returns>This request</returns>
-		RestRequest AddObject(object obj);
+		IRestRequest AddObject (object obj);
 
 		/// <summary>
 		/// Add the parameter to the request
 		/// </summary>
 		/// <param name="p">Parameter to add</param>
 		/// <returns></returns>
-		RestRequest AddParameter(Parameter p);
+		IRestRequest AddParameter (Parameter p);
 
 		/// <summary>
 		/// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
@@ -183,20 +183,21 @@ namespace RestSharp
 		/// <param name="name">Name of the parameter</param>
 		/// <param name="value">Value of the parameter</param>
 		/// <returns>This request</returns>
-		RestRequest AddParameter(string name, object value);
+		IRestRequest AddParameter (string name, object value);
 
 		/// <summary>
-		/// Adds a parameter to the request. There are four types of parameters:
+		/// Adds a parameter to the request. There are five types of parameters:
 		///	- GetOrPost: Either a QueryString value or encoded form value based on method
 		///	- HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
 		///	- UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+		///	- Cookie: Adds the name/value pair to the HTTP request's Cookies collection
 		///	- RequestBody: Used by AddBody() (not recommended to use directly)
 		/// </summary>
 		/// <param name="name">Name of the parameter</param>
 		/// <param name="value">Value of the parameter</param>
 		/// <param name="type">The type of parameter to add</param>
 		/// <returns>This request</returns>
-		RestRequest AddParameter(string name, object value, ParameterType type);
+		IRestRequest AddParameter (string name, object value, ParameterType type);
 
 		/// <summary>
 		/// Shortcut to AddParameter(name, value, HttpHeader) overload
@@ -204,7 +205,15 @@ namespace RestSharp
 		/// <param name="name">Name of the header to add</param>
 		/// <param name="value">Value of the header to add</param>
 		/// <returns></returns>
-		RestRequest AddHeader(string name, string value);
+		IRestRequest AddHeader (string name, string value);
+
+		/// <summary>
+		/// Shortcut to AddParameter(name, value, Cookie) overload
+		/// </summary>
+		/// <param name="name">Name of the cookie to add</param>
+		/// <param name="value">Value of the cookie to add</param>
+		/// <returns></returns>
+		IRestRequest AddCookie (string name, string value);
 
 		/// <summary>
 		/// Shortcut to AddParameter(name, value, UrlSegment) overload
@@ -212,9 +221,9 @@ namespace RestSharp
 		/// <param name="name">Name of the segment to add</param>
 		/// <param name="value">Value of the segment to add</param>
 		/// <returns></returns>
-		RestRequest AddUrlSegment(string name, string value);
+		IRestRequest AddUrlSegment(string name, string value);
 
-		Action<RestResponse> OnBeforeDeserialization { get; set; }
+		Action<IRestResponse> OnBeforeDeserialization { get; set; }
 		void IncreaseNumAttempts();
 	}
 }
