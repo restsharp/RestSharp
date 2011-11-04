@@ -15,6 +15,8 @@
 #endregion
 
 using System;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace RestSharp.Extensions
@@ -67,6 +69,25 @@ namespace RestSharp.Extensions
 			return Convert.ChangeType(source, newType);
 #else
 			return Convert.ChangeType(source, newType, null);
+#endif
+		}
+
+		/// <summary>
+		/// Find a value from a System.Enum by trying several possible variants
+		/// of the string value of the enum.
+		/// </summary>
+		/// <param name="type">Type of enum</typeparam>
+		/// <param name="value">Value for which to search</param>
+		/// <param name="culture">The culture used to calculate the name variants</param>
+		/// <returns></returns>
+		public static object FindEnumValue(this Type type, string value, CultureInfo culture)
+		{
+#if FRAMEWORK
+			return Enum.GetValues(type)
+				.Cast<Enum>()
+				.First(v => v.ToString().GetNameVariants(culture).Contains(value));
+#else
+			return Enum.Parse(type, value, true);
 #endif
 		}
 	}
