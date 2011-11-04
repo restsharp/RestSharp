@@ -50,6 +50,7 @@ namespace RestSharp
 		HttpWebRequest OptionsAsync(Action<HttpResponse> action);
 		HttpWebRequest PostAsync(Action<HttpResponse> action);
 		HttpWebRequest PutAsync(Action<HttpResponse> action);
+		HttpWebRequest PatchAsync(Action<HttpResponse> action);
 
 #if FRAMEWORK
 		HttpResponse Delete();
@@ -58,6 +59,7 @@ namespace RestSharp
 		HttpResponse Options();
 		HttpResponse Post();
 		HttpResponse Put();
+		HttpResponse Patch();
 
 		IWebProxy Proxy { get; set; }
 #endif
