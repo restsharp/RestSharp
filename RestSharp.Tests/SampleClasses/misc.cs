@@ -47,6 +47,8 @@ namespace RestSharp.Tests
 
 		public Order Order { get; set; }
 
+		public Disposition Disposition { get; set; }
+
 	}
 
 	public class PersonForJson
@@ -74,12 +76,20 @@ namespace RestSharp.Tests
 
 		public Order Order { get; set; }
 
+		public Disposition Disposition { get; set; }
 	}
 
 	public enum Order { 
 		First,
 		Second,
 		Third
+	}
+
+	public enum Disposition
+	{
+		Friendly,
+		SoSo,
+		SteerVeryClear
 	}
 
 	public class Friend
