@@ -41,6 +41,7 @@ namespace RestSharp
 		/// </summary>
 		public RestClient()
 		{
+			CookieContainer = new CookieContainer ();
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
 			DefaultParameters = new List<Parameter>();
@@ -226,6 +227,11 @@ namespace RestSharp
 		public bool FollowRedirects { get; set; }
 
 		/// <summary>
+		/// The CookieContainer used fo requests made by this client instance
+		/// </summary>
+		public CookieContainer CookieContainer { get; set; }
+
+		/// <summary>
 		/// UserAgent to use for requests made by this client instance
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -327,6 +333,8 @@ namespace RestSharp
 
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
+			http.CookieContainer = CookieContainer;
+
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach(var p in DefaultParameters)
 			{

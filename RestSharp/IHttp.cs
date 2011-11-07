@@ -24,6 +24,7 @@ namespace RestSharp
 {
 	public interface IHttp
 	{
+		CookieContainer CookieContainer { get; set; }
 		ICredentials Credentials { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }

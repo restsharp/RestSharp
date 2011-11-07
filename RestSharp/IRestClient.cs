@@ -29,6 +29,10 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+		CookieContainer CookieContainer { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		string UserAgent { get; set; }
 		/// <summary>
 		/// 
