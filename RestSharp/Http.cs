@@ -99,6 +99,10 @@ namespace RestSharp
 		/// </summary>
 		public ICredentials Credentials { get; set; }
 		/// <summary>
+		/// The System.Net.CookieContainer to be used for the request
+		/// </summary>
+		public CookieContainer CookieContainer { get; set; }
+		/// <summary>
 		/// Collection of files to be sent with request
 		/// </summary>
 		public IList<HttpFile> Files { get; private set; }
@@ -227,7 +231,7 @@ namespace RestSharp
 
 		private void AppendCookies(HttpWebRequest webRequest)
 		{
-			webRequest.CookieContainer = new CookieContainer();
+			webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
 			foreach (var httpCookie in Cookies)
 			{
 				var cookie = new Cookie
