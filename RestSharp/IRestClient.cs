@@ -37,6 +37,10 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+		bool ExecuteCallbacksInCallingContext { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		IAuthenticator Authenticator { get; set; }
 		/// <summary>
 		/// 

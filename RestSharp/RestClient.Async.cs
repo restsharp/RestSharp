@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Text;
 using System.Net;
 
@@ -52,26 +53,35 @@ namespace RestSharp
 			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 			HttpWebRequest webRequest = null;
 			var asyncHandle = new RestRequestAsyncHandle();
+
+			Action<HttpResponse> response_cb = r => ProcessResponse(r, asyncHandle, callback);
+
+			if (ExecuteCallbacksInCallingContext && SynchronizationContext.Current != null) {
+				var ctx = SynchronizationContext.Current;
+				var cb = response_cb;
+
+				response_cb = resp => ctx.Post(s => cb(resp), null);
+			}
 			
 			switch(request.Method)
 			{
 				case Method.GET:
-					webRequest = http.GetAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.GetAsync(response_cb);
 					break;
 				case Method.POST:
-					webRequest = http.PostAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.PostAsync(response_cb);
 					break;
 				case Method.PUT:
-					webRequest = http.PutAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.PutAsync(response_cb);
 					break;
 				case Method.DELETE:
-					webRequest = http.DeleteAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.DeleteAsync(response_cb);
 					break;
 				case Method.HEAD:
-					webRequest = http.HeadAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.HeadAsync(response_cb);
 					break;
 				case Method.OPTIONS:
-					webRequest = http.OptionsAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.OptionsAsync(response_cb);
 					break;
 			}
 			
