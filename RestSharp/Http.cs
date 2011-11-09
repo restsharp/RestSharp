@@ -174,7 +174,9 @@ namespace RestSharp
 			_restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 			_restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
 			_restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
-			_restrictedHeaderActions.Add("Range", (r, v) => { /* Ignore */ });
+#if FRAMEWORK
+			_restrictedHeaderActions.Add("Range", (r, v) => { AddRange(r, v); });
+#endif
 		}
 
 		private const string FormBoundary = "-----------------------------28947758029299";
@@ -348,5 +350,20 @@ namespace RestSharp
 				webResponse.Close();
 			}
 		}
+
+#if FRAMEWORK
+		private void AddRange(HttpWebRequest r, string range)
+		{
+			System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(range, "=(\\d+)-(\\d+)$");
+			if (!m.Success)
+			{
+				return;
+			}
+
+			int from = Convert.ToInt32(m.Groups[1].Value);
+			int to = Convert.ToInt32(m.Groups[2].Value);
+			r.AddRange(from, to);
+		}
+#endif
 	}
 }

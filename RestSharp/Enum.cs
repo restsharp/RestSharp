@@ -47,7 +47,8 @@ namespace RestSharp
 		PUT,
 		DELETE,
 		HEAD,
-		OPTIONS
+		OPTIONS,
+		PATCH
 	}
 
 	/// <summary>
