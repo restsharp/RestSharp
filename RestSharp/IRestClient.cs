@@ -37,7 +37,7 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
-		bool ExecuteCallbacksInCallingContext { get; set; }
+		bool UseSynchronizationContext { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>

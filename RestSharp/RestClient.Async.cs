@@ -56,7 +56,7 @@ namespace RestSharp
 
 			Action<HttpResponse> response_cb = r => ProcessResponse(r, asyncHandle, callback);
 
-			if (ExecuteCallbacksInCallingContext && SynchronizationContext.Current != null) {
+			if (UseSynchronizationContext && SynchronizationContext.Current != null) {
 				var ctx = SynchronizationContext.Current;
 				var cb = response_cb;
 

@@ -42,7 +42,7 @@ namespace RestSharp
 		public RestClient()
 		{
 #if WINDOWS_PHONE
-			ExecuteCallbacksInCallingContext = true;
+			UseSynchronizationContext = true;
 #endif
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
@@ -241,7 +241,7 @@ namespace RestSharp
 		/// <summary>
 		/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
 		/// </summary>
-		public bool ExecuteCallbacksInCallingContext { get; set; }
+		public bool UseSynchronizationContext { get; set; }
 
 		/// <summary>
 		/// Authenticator to use for requests made by this client instance
