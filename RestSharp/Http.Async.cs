@@ -317,15 +317,7 @@ namespace RestSharp
 
 		private static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
-#if WINDOWS_PHONE
-			var dispatcher = Deployment.Current.Dispatcher;
-			dispatcher.BeginInvoke(() =>
-			{
-#endif
 			callback(response);
-#if WINDOWS_PHONE
-			});
-#endif
 		}
 
 		partial void AddAsyncHeaderActions()
