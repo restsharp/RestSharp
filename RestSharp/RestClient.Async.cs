@@ -84,7 +84,7 @@ namespace RestSharp
 					webRequest = http.OptionsAsync(response_cb);
 					break;
 				case Method.PATCH:
-					webRequest = http.PatchAsync(r => ProcessResponse(r, asyncHandle, callback));
+					webRequest = http.PatchAsync(response_cb);
 					break;
 			}
 			
