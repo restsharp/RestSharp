@@ -41,7 +41,7 @@ namespace RestSharp.Authenticators
 										SignatureTreatment = OAuthSignatureTreatment.Escaped,
 										ConsumerKey = consumerKey,
 										ConsumerSecret = consumerSecret,
-                                        Type = OAuthType.RequestToken
+											Type = OAuthType.RequestToken
 									};
 			return authenticator;
 		}
@@ -64,7 +64,7 @@ namespace RestSharp.Authenticators
 										ConsumerSecret = consumerSecret,
 										Token = token,
 										TokenSecret = tokenSecret,
-                                        Type = OAuthType.AccessToken
+										Type = OAuthType.AccessToken
 									};
 			return authenticator;
 		}
@@ -213,15 +213,15 @@ namespace RestSharp.Authenticators
 			parameters.Sort((l, r) => l.Name.CompareTo(r.Name));
 
 			var parameterCount = 0;
-            var oathParameters = parameters.Where(parameter =>
-													   !parameter.Name.IsNullOrBlank() &&
-													   !parameter.Value.IsNullOrBlank() &&
-														parameter.Name.StartsWith("oauth_")
-													   ).ToList();
+			var oathParameters = parameters.Where(parameter =>
+				!parameter.Name.IsNullOrBlank() &&
+				!parameter.Value.IsNullOrBlank() &&
+				parameter.Name.StartsWith("oauth_")
+				).ToList();
 			foreach (var parameter in oathParameters)
 			{
 				parameterCount++;
-                var format = parameterCount < oathParameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
+				var format = parameterCount < oathParameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
 				sb.Append(format.FormatWith(parameter.Name, parameter.Value));
 			}
 

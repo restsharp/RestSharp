@@ -129,6 +129,7 @@
     <Compile Include="RestResponseCookie.cs" />
     <Compile Include="Authenticators\SimpleAuthenticator.cs" />
     <Compile Include="RestClient.Async.cs" />
+    <Compile Include="Deserializers\DotNetXmlDeserializer.cs" />
     <Compile Include="Serializers\DotNetXmlSerializer.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />

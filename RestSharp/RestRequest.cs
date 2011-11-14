@@ -114,7 +114,7 @@ namespace RestSharp
 			/// <param name="name">The parameter name to use in the request</param>
 			/// <param name="path">Full path to file to upload</param>
 			/// <returns>This request</returns>
-		public RestRequest AddFile(string name, string path)
+		public IRestRequest AddFile (string name, string path)
 		{
 			return AddFile(new FileParameter
 			{
@@ -137,7 +137,7 @@ namespace RestSharp
 		/// <param name="bytes">The file data</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(string name, byte[] bytes, string fileName)
+		public IRestRequest AddFile (string name, byte[] bytes, string fileName)
 		{
 			return AddFile(FileParameter.Create(name, bytes, fileName));
 		}
@@ -150,7 +150,7 @@ namespace RestSharp
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(string name, byte[] bytes, string fileName, string contentType)
+		public IRestRequest AddFile (string name, byte[] bytes, string fileName, string contentType)
 		{
 			return AddFile(FileParameter.Create(name, bytes, fileName, contentType));
 		}
@@ -162,7 +162,7 @@ namespace RestSharp
 		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(string name, Action<Stream> writer, string fileName)
+		public IRestRequest AddFile (string name, Action<Stream> writer, string fileName)
 		{
 			return AddFile(name, writer, fileName, null);
 		}
@@ -175,12 +175,12 @@ namespace RestSharp
 		/// <param name="fileName">The file name to use for the uploaded file</param>
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
-		public RestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType)
+		public IRestRequest AddFile (string name, Action<Stream> writer, string fileName, string contentType)
 		{
 			return AddFile(new FileParameter { Name = name, Writer = writer, FileName = fileName, ContentType = contentType });
 		}
 
-		private RestRequest AddFile(FileParameter file)
+		private IRestRequest AddFile (FileParameter file)
 		{
 			Files.Add(file);
 			return this;
@@ -192,7 +192,7 @@ namespace RestSharp
 		/// <param name="obj">The object to serialize</param>
 		/// <param name="xmlNamespace">The XML namespace to use when serializing</param>
 		/// <returns>This request</returns>
-		public RestRequest AddBody(object obj, string xmlNamespace)
+		public IRestRequest AddBody (object obj, string xmlNamespace)
 		{
 			string serialized;
 			string contentType;
@@ -227,7 +227,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="obj">The object to serialize</param>
 		/// <returns>This request</returns>
-		public RestRequest AddBody(object obj)
+		public IRestRequest AddBody (object obj)
 		{
 			return AddBody(obj, "");
 		}
@@ -241,7 +241,7 @@ namespace RestSharp
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <param name="whitelist">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		public RestRequest AddObject(object obj, params string[] whitelist)
+		public IRestRequest AddObject (object obj, params string[] whitelist)
 		{
 			// automatically create parameters from object props
 			var type = obj.GetType();
@@ -276,7 +276,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <returns>This request</returns>
-		public RestRequest AddObject(object obj)
+		public IRestRequest AddObject (object obj)
 		{
 			AddObject(obj, new string[] { });
 			return this;
@@ -287,7 +287,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="p">Parameter to add</param>
 		/// <returns></returns>
-		public RestRequest AddParameter(Parameter p)
+		public IRestRequest AddParameter (Parameter p)
 		{
 			Parameters.Add(p);
 			return this;
@@ -299,7 +299,7 @@ namespace RestSharp
 		/// <param name="name">Name of the parameter</param>
 		/// <param name="value">Value of the parameter</param>
 		/// <returns>This request</returns>
-		public RestRequest AddParameter(string name, object value)
+		public IRestRequest AddParameter (string name, object value)
 		{
 			return AddParameter(new Parameter { Name = name, Value = value, Type = ParameterType.GetOrPost });
 		}
@@ -315,7 +315,7 @@ namespace RestSharp
 		/// <param name="value">Value of the parameter</param>
 		/// <param name="type">The type of parameter to add</param>
 		/// <returns>This request</returns>
-		public RestRequest AddParameter(string name, object value, ParameterType type)
+		public IRestRequest AddParameter (string name, object value, ParameterType type)
 		{
 			return AddParameter(new Parameter { Name = name, Value = value, Type = type });
 		}
@@ -326,9 +326,20 @@ namespace RestSharp
 		/// <param name="name">Name of the header to add</param>
 		/// <param name="value">Value of the header to add</param>
 		/// <returns></returns>
-		public RestRequest AddHeader(string name, string value)
+		public IRestRequest AddHeader (string name, string value)
 		{
 			return AddParameter(name, value, ParameterType.HttpHeader);
+		}
+
+		/// <summary>
+		/// Shortcut to AddParameter(name, value, Cookie) overload
+		/// </summary>
+		/// <param name="name">Name of the cookie to add</param>
+		/// <param name="value">Value of the cookie to add</param>
+		/// <returns></returns>
+		public IRestRequest AddCookie (string name, string value)
+		{
+			return AddParameter(name, value, ParameterType.Cookie);
 		}
 
 		/// <summary>
@@ -337,7 +348,7 @@ namespace RestSharp
 		/// <param name="name">Name of the segment to add</param>
 		/// <param name="value">Value of the segment to add</param>
 		/// <returns></returns>
-		public RestRequest AddUrlSegment(string name, string value)
+		public IRestRequest AddUrlSegment (string name, string value)
 		{
 			return AddParameter(name, value, ParameterType.UrlSegment);
 		}
@@ -404,7 +415,7 @@ namespace RestSharp
 		/// <summary>
 		/// A function to run prior to deserializing starting (e.g. change settings if error encountered)
 		/// </summary>
-		public Action<RestResponse> OnBeforeDeserialization { get; set; }
+		public Action<IRestResponse> OnBeforeDeserialization { get; set; }
 
 		/// <summary>
 		/// Used by the default deserializers to explicitly set which date format string to use when parsing dates.

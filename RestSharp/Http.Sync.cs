@@ -16,11 +16,7 @@
 
 #if FRAMEWORK
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 
 #if !MONOTOUCH && !MONODROID
 using System.Web;
@@ -81,6 +77,14 @@ namespace RestSharp
 		public HttpResponse Delete()
 		{
 			return GetStyleMethodInternal("DELETE");
+		}
+
+		/// <summary>
+		/// Execute a PATCH request
+		/// </summary>
+		public HttpResponse Patch()
+		{
+			return PostPutInternal("PATCH");
 		}
 
 		private HttpResponse GetStyleMethodInternal(string method)

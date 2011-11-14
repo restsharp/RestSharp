@@ -29,11 +29,19 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+		CookieContainer CookieContainer { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		string UserAgent { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>
 		int Timeout { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		bool UseSynchronizationContext { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>

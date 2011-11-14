@@ -195,6 +195,7 @@ namespace RestSharp.Tests
 			Assert.Equal(new Guid(GuidString), p.Guid);
 
 			Assert.Equal(Order.Third, p.Order);
+			Assert.Equal(Disposition.SoSo, p.Disposition);
 
 			Assert.NotNull(p.Friends);
 			Assert.Equal(10, p.Friends.Count);
@@ -522,7 +523,8 @@ namespace RestSharp.Tests
 			doc["ReadOnly"] = "dummy";
 			doc["Url"] = "http://example.com";
 			doc["UrlPath"] = "/foo/bar";
-			doc["Order"] = "Third";
+			doc["Order"] = "third";
+			doc["Disposition"] = "so_so";
 
 			doc["Guid"] = new Guid(GuidString).ToString();
 			doc["EmptyGuid"] = "";

@@ -41,6 +41,9 @@ namespace RestSharp
 		/// </summary>
 		public RestClient()
 		{
+#if WINDOWS_PHONE
+			UseSynchronizationContext = true;
+#endif
 			ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
 			DefaultParameters = new List<Parameter>();
@@ -226,6 +229,11 @@ namespace RestSharp
 		public bool FollowRedirects { get; set; }
 
 		/// <summary>
+		/// The CookieContainer used fo requests made by this client instance
+		/// </summary>
+		public CookieContainer CookieContainer { get; set; }
+
+		/// <summary>
 		/// UserAgent to use for requests made by this client instance
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -234,6 +242,11 @@ namespace RestSharp
 		/// Timeout in milliseconds to use for requests made by this client instance
 		/// </summary>
 		public int Timeout { get; set; }
+
+		/// <summary>
+		/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
+		/// </summary>
+		public bool UseSynchronizationContext { get; set; }
 
 		/// <summary>
 		/// Authenticator to use for requests made by this client instance
@@ -294,7 +307,7 @@ namespace RestSharp
 			if(!string.IsNullOrEmpty(BaseUrl))
 				assembled = string.Format("{0}/{1}", BaseUrl, assembled);
 
-			if (request.Method != Method.POST && request.Method != Method.PUT)
+			if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
 			{
 				// build and attach querystring if this is a get-style request
 				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))
@@ -327,6 +340,8 @@ namespace RestSharp
 
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
+			http.CookieContainer = CookieContainer;
+
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach(var p in DefaultParameters)
 			{

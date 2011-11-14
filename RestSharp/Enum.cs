@@ -14,8 +14,6 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-
 namespace RestSharp
 {
 	///<summary>
@@ -49,7 +47,8 @@ namespace RestSharp
 		PUT,
 		DELETE,
 		HEAD,
-		OPTIONS
+		OPTIONS,
+		PATCH
 	}
 
 	/// <summary>

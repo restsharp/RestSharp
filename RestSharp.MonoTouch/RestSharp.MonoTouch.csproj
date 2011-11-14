@@ -287,7 +287,10 @@
     <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
       <Link>Serializers\DotNetXmlSerializer.cs</Link>
     </Compile>
-  </ItemGroup>
+    <Compile Include="..\RestSharp\Deserializers\DotNetXmlDeserializer.cs">
+      <Link>Deserializers\DotNetXmlDeserializer.cs</Link>
+    </Compile>
+   </ItemGroup>
   <ItemGroup>
     <Folder Include="Authenticators\" />
     <Folder Include="Deserializers\" />

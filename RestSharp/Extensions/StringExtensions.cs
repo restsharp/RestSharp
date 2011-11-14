@@ -43,10 +43,10 @@ namespace RestSharp.Extensions
 			return HttpUtility.UrlDecode(input);
 		}
 
-        /// <summary>
-        /// Uses Uri.EscapeDataString() based on recommendations on MSDN
-        /// http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
-        /// </summary>
+		/// <summary>
+		/// Uses Uri.EscapeDataString() based on recommendations on MSDN
+		/// http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+		/// </summary>
 		public static string UrlEncode(this string input)
 		{
 			return Uri.EscapeDataString(input);
@@ -297,6 +297,43 @@ namespace RestSharp.Extensions
 				"$1-$2"), @"[\s]", "-");
 		}
 
+		/// <summary>
+		/// Return possible variants of a name for name matching.
+		/// </summary>
+		/// <param name="name">String to convert</param>
+		/// <param name="culture">The culture to use for conversion</param>
+		/// <returns>IEnumerable&lt;string&gt;</returns>
+		public static IEnumerable<string> GetNameVariants(this string name, CultureInfo culture)
+		{
+			if (String.IsNullOrEmpty(name))
+				yield break;
 
+			var actualName = name;
+			yield return actualName;
+
+			// try camel cased name
+			actualName = name.ToCamelCase(culture);
+			yield return actualName;
+
+			// try lower cased name
+			actualName = name.ToLower(culture);
+			yield return actualName;
+
+			// try name with underscores
+			actualName = name.AddUnderscores();
+			yield return actualName;
+
+			// try name with underscores with lower case
+			actualName = name.AddUnderscores().ToLower(culture);
+			yield return actualName;
+
+			// try name with dashes
+			actualName = name.AddDashes();
+			yield return actualName;
+
+			// try name with dashes with lower case
+			actualName = name.AddDashes().ToLower(culture);
+			yield return actualName;
+		}
 	}
 }

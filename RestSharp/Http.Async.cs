@@ -15,11 +15,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using RestSharp.Extensions;
 
@@ -74,6 +70,11 @@ namespace RestSharp
 		public HttpWebRequest PutAsync(Action<HttpResponse> action)
 		{
 			return PutPostInternalAsync("PUT", action);
+		}
+
+		public HttpWebRequest PatchAsync(Action<HttpResponse> action)
+		{
+			return PutPostInternalAsync("PATCH", action);
 		}
 
 		private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
@@ -316,15 +317,7 @@ namespace RestSharp
 
 		private static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
 		{
-#if WINDOWS_PHONE
-			var dispatcher = Deployment.Current.Dispatcher;
-			dispatcher.BeginInvoke(() =>
-			{
-#endif
 			callback(response);
-#if WINDOWS_PHONE
-			});
-#endif
 		}
 
 		partial void AddAsyncHeaderActions()

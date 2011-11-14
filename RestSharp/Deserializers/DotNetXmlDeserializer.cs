@@ -14,25 +14,34 @@
 //   limitations under the License. 
 #endregion
 
-using System;
+using System.IO;
+using System.Text;
 
 namespace RestSharp.Deserializers
 {
-		/// <summary>
-		/// Allows control how class and property names and values are deserialized by XmlAttributeDeserializer
-		/// </summary>
-		[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-		public sealed class DeserializeAsAttribute : Attribute
+	/// <summary>
+	/// Wrapper for System.Xml.Serialization.XmlSerializer.
+	/// </summary>
+	public class DotNetXmlDeserializer : IDeserializer
+	{
+		public string DateFormat { get; set; }
+
+		public string Namespace { get; set; }
+
+		public string RootElement { get; set; }
+
+		public T Deserialize<T>(RestResponse response) where T : new()
 		{
-			/// <summary>
-			/// The name to use for the serialized element
-			/// </summary>
-			public string Name { get; set; }
+			if (string.IsNullOrEmpty(response.Content))
+			{
+				return default(T);
+			}
 
-			/// <summary>
-			/// Sets if the property to Deserialize is an Attribute or Element (Default: false)
-			/// </summary>
-			public bool Attribute { get; set; }
-	 }
-
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
+			{
+				var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+				return (T)serializer.Deserialize(stream);
+			}
+		}
+	}
 }

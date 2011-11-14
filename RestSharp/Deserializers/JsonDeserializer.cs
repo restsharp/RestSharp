@@ -91,50 +91,8 @@ namespace RestSharp.Deserializers
 				var type = prop.PropertyType;
 
 				var name = prop.Name;
-				var value = json[name];
-				var actualName = name;
-
-				if (value == null)
-				{
-					// try camel cased name
-					actualName = name.ToCamelCase(Culture);
-					value = json[actualName];
-				}
-
-				if (value == null)
-				{
-					// try lower cased name
-					actualName = name.ToLower(Culture);
-					value = json[actualName];
-				}
-
-				if (value == null)
-				{
-					// try name with underscores
-					actualName = name.AddUnderscores();
-					value = json[actualName];
-				}
-
-				if (value == null)
-				{
-					// try name with underscores with lower case
-					actualName = name.AddUnderscores().ToLower(Culture);
-					value = json[actualName];
-				}
-
-				if (value == null)
-				{
-					// try name with dashes
-					actualName = name.AddDashes();
-					value = json[actualName];
-				}
-
-				if (value == null)
-				{
-					// try name with dashes with lower case
-					actualName = name.AddDashes().ToLower(Culture);
-					value = json[actualName];
-				}
+				var actualName = name.GetNameVariants(Culture).FirstOrDefault(n => json[n] != null);
+				var value = actualName != null ? json[actualName] : null;
 
 				if (value == null || value.Type == JTokenType.Null)
 				{
@@ -156,8 +114,7 @@ namespace RestSharp.Deserializers
 				}
 				else if (type.IsEnum)
 				{
-					string raw = value.AsString();
-					var converted = Enum.Parse(type, raw, false);
+					var converted = type.FindEnumValue(value.AsString(), Culture);
 					prop.SetValue(x, converted, null);
 				}
 				else if (type == typeof(Uri))
