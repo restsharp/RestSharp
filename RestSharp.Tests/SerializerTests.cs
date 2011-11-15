@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml.Linq;
 using RestSharp.Serializers;
 using RestSharp.Tests.SampleClasses;
@@ -25,6 +26,12 @@ namespace RestSharp.Tests
 {
 	public class SerializerTests
 	{
+	    public SerializerTests()
+	    {
+            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
+	    }
+
 		[Fact]
 		public void Serializes_Properties_In_Specified_Order() {
 			var ordered = new OrderedProperties();
@@ -164,9 +171,9 @@ namespace RestSharp.Tests
 				}
 			};
 
-			var xml = new XmlSerializer();
+		    var xml = new XmlSerializer();
 			var doc = xml.Serialize(pocoList);
-			var expected = GetPeopleXDoc();
+			var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
 
 			Assert.Equal(expected.ToString(), doc);
 		}
@@ -298,7 +305,7 @@ namespace RestSharp.Tests
 			return doc;
 		}
 
-		private XDocument GetPeopleXDoc()
+		private XDocument GetPeopleXDoc(CultureInfo culture)
 		{
 			var doc = new XDocument();
 			var root = new XElement("People");
@@ -310,8 +317,8 @@ namespace RestSharp.Tests
 			items.Add(new XElement("Item", new XElement("Name", "Three"), new XElement("Value", 3)));
 			element.Add(new XElement("Name", "Foo"),
 				new XElement("Age", 50),
-				new XElement("Price", 19.95m),
-				new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+                new XElement("Price", 19.95m.ToString(culture)),
+                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(culture)));
 
 			element.Add(items);
 			root.Add(element);
@@ -319,8 +326,8 @@ namespace RestSharp.Tests
 
 			element.Add(new XElement("Name", "Bar"),
 				new XElement("Age", 23),
-				new XElement("Price", 23.23m),
-				new XElement("StartDate", new DateTime(2009, 12, 23, 10, 23, 23).ToString()));
+                new XElement("Price", 23.23m.ToString(culture)),
+                new XElement("StartDate", new DateTime(2009, 12, 23, 10, 23, 23).ToString(culture)));
 
 			element.Add(items);
 

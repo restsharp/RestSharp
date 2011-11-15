@@ -140,7 +140,7 @@ namespace RestSharp.Deserializers
 				}
 				else if (type.IsPrimitive)
 				{
-					prop.SetValue(x, value.ChangeType(type), null);
+					prop.SetValue(x, value.ChangeType(type, Culture), null);
 				}
 				else if (type.IsEnum)
 				{

@@ -110,7 +110,7 @@ namespace RestSharp.Deserializers
 					// no primitives can contain quotes so we can safely remove them
 					// allows converting a json value like {"index": "1"} to an int
 					var tmpVal = value.AsString().Replace("\"", string.Empty);
-					prop.SetValue(x, tmpVal.ChangeType(type), null);
+					prop.SetValue(x, tmpVal.ChangeType(type, Culture), null);
 				}
 				else if (type.IsEnum)
 				{
@@ -153,7 +153,7 @@ namespace RestSharp.Deserializers
 				}
 				else if (type == typeof(Decimal))
 				{
-					var dec = Decimal.Parse(value.AsString(), Culture);
+                    var dec = Decimal.Parse(value.AsString(Culture), Culture);
 					prop.SetValue(x, dec, null);
 				}
 				else if (type == typeof(Guid))
@@ -259,7 +259,7 @@ namespace RestSharp.Deserializers
 					var value = element as JValue;
 					if (value != null)
 					{
-						list.Add(value.Value.ChangeType(itemType));
+						list.Add(value.Value.ChangeType(itemType, Culture));
 					}
 				}
 				else if (itemType == typeof(string))
