@@ -142,7 +142,7 @@ namespace RestSharp.Deserializers
 
 				if (type.IsPrimitive)
 				{
-					prop.SetValue(x, value.ChangeType(type), null);
+					prop.SetValue(x, value.ChangeType(type, Culture), null);
 				}
 				else if (type.IsEnum)
 				{
@@ -166,14 +166,14 @@ namespace RestSharp.Deserializers
 					}
 					else
 					{
-						value = DateTime.Parse(value.ToString());
+						value = DateTime.Parse(value.ToString(), Culture);
 					}
 
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Decimal))
 				{
-					value = Decimal.Parse(value.ToString());
+					value = Decimal.Parse(value.ToString(), Culture);
 					prop.SetValue(x, value, null);
 				}
 				else if (type == typeof(Guid))

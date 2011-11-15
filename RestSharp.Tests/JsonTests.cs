@@ -120,18 +120,19 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date()
 		{
+		    var culture = CultureInfo.InvariantCulture;
 			var format = "dd yyyy MMM, hh:mm ss tt";
 			var date = new DateTime(2010, 2, 8, 11, 11, 11);
 
 			var formatted = new
 			{
-				StartDate = date.ToString(format)
+				StartDate = date.ToString(format, culture)
 			};
 
 			var data = JsonConvert.SerializeObject(formatted);
 			var response = new RestResponse { Content = data };
 
-			var json = new JsonDeserializer { DateFormat = format };
+			var json = new JsonDeserializer { DateFormat = format, Culture = culture };
 
 			var output = json.Deserialize<PersonForJson>(response);
 

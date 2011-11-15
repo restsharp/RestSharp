@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -224,9 +225,10 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Elements_to_Nullable_Values()
 		{
-			var doc = CreateXmlWithoutEmptyValues();
+		    var culture = CultureInfo.InvariantCulture;
+            var doc = CreateXmlWithoutEmptyValues(culture);
 
-			var xml = new XmlDeserializer();
+		    var xml = new XmlDeserializer() {Culture = culture};
 			var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
 			Assert.NotNull(output.Id);
@@ -241,20 +243,24 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date()
 		{
+		    var culture = CultureInfo.InvariantCulture;
 			var format = "dd yyyy MMM, hh:mm ss tt zzz";
 			var date = new DateTime(2010, 2, 8, 11, 11, 11);
 
 			var doc = new XDocument();
 
 			var root = new XElement("Person");
-			root.Add(new XElement("StartDate", date.ToString(format)));
+            root.Add(new XElement("StartDate", date.ToString(format, culture)));
 
 			doc.Add(root);
 
-			var xml = new XmlDeserializer();
-			xml.DateFormat = format;
+		    var xml = new XmlDeserializer
+		                  {
+                              DateFormat = format,
+                              Culture = culture
+		                  };
 
-			var response = new RestResponse { Content = doc.ToString() };
+		    var response = new RestResponse { Content = doc.ToString() };
 			var output = xml.Deserialize<PersonForXml>(response);
 
 			Assert.Equal(date, output.StartDate);
@@ -745,13 +751,13 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-		private static string CreateXmlWithoutEmptyValues()
+		private static string CreateXmlWithoutEmptyValues(CultureInfo culture)
 		{
 			var doc = new XDocument();
 			var root = new XElement("NullableValues");
 
 			root.Add(new XElement("Id", 123),
-					 new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString()),
+                     new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString(culture)),
 					 new XElement("UniqueId", new Guid(GuidString))
 					 );
 
