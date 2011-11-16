@@ -72,14 +72,14 @@ namespace RestSharp.Extensions
 #endif
 		}
 
-        public static object ChangeType(this object source, Type newType, CultureInfo culture)
-        {
+		public static object ChangeType(this object source, Type newType, CultureInfo culture)
+		{
 #if FRAMEWORK
-            return Convert.ChangeType(source, newType, culture);
+			return Convert.ChangeType(source, newType, culture);
 #else
 			return Convert.ChangeType(source, newType, null);
 #endif
-        }
+		}
 
 		/// <summary>
 		/// Find a value from a System.Enum by trying several possible variants

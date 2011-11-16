@@ -225,10 +225,9 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Elements_to_Nullable_Values()
 		{
-		    var culture = CultureInfo.InvariantCulture;
-            var doc = CreateXmlWithoutEmptyValues(culture);
-
-		    var xml = new XmlDeserializer() {Culture = culture};
+			var culture = CultureInfo.InvariantCulture;
+			var doc = CreateXmlWithoutEmptyValues(culture);
+			var xml = new XmlDeserializer() {Culture = culture};
 			var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
 			Assert.NotNull(output.Id);
@@ -243,24 +242,24 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date()
 		{
-		    var culture = CultureInfo.InvariantCulture;
+			var culture = CultureInfo.InvariantCulture;
 			var format = "dd yyyy MMM, hh:mm ss tt zzz";
 			var date = new DateTime(2010, 2, 8, 11, 11, 11);
 
 			var doc = new XDocument();
 
 			var root = new XElement("Person");
-            root.Add(new XElement("StartDate", date.ToString(format, culture)));
+			root.Add(new XElement("StartDate", date.ToString(format, culture)));
 
 			doc.Add(root);
 
-		    var xml = new XmlDeserializer
-		                  {
-                              DateFormat = format,
-                              Culture = culture
-		                  };
+			var xml = new XmlDeserializer
+			{
+				DateFormat = format,
+				Culture = culture
+			};
 
-		    var response = new RestResponse { Content = doc.ToString() };
+			var response = new RestResponse { Content = doc.ToString() };
 			var output = xml.Deserialize<PersonForXml>(response);
 
 			Assert.Equal(date, output.StartDate);
@@ -515,31 +514,31 @@ namespace RestSharp.Tests
 				Assert.True(output.Value);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values()
-        {
-            var doc = CreateXmlWithAttributesAndNullValues();
+		[Fact]
+		public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values()
+		{
+			var doc = CreateXmlWithAttributesAndNullValues();
 
-            var xml = new XmlDeserializer();
-            var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<NullableValues>(new RestResponse {Content = doc});
 
-            Assert.Null(output.Id);
-            Assert.Null(output.StartDate);
-            Assert.Null(output.UniqueId);
-        }
+			Assert.Null(output.Id);
+			Assert.Null(output.StartDate);
+			Assert.Null(output.UniqueId);
+		}
 
-        [Fact]
-        public void Can_Deserialize_Mixture_Of_Empty_Elements_With_Attributes_And_Populated_Elements()
-        {
-            var doc = CreateXmlWithAttributesAndNullValuesAndPopulatedValues();
+		[Fact]
+		public void Can_Deserialize_Mixture_Of_Empty_Elements_With_Attributes_And_Populated_Elements()
+		{
+			var doc = CreateXmlWithAttributesAndNullValuesAndPopulatedValues();
 
-            var xml = new XmlDeserializer();
-            var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<NullableValues>(new RestResponse {Content = doc});
 
-            Assert.Null(output.Id);
-            Assert.Null(output.StartDate);
-            Assert.Equal(new Guid(GuidString), output.UniqueId);
-        }
+			Assert.Null(output.Id);
+			Assert.Null(output.StartDate);
+			Assert.Equal(new Guid(GuidString), output.UniqueId);
+		}
 
 		private static string CreateUnderscoresXml()
 		{
@@ -757,9 +756,9 @@ namespace RestSharp.Tests
 			var root = new XElement("NullableValues");
 
 			root.Add(new XElement("Id", 123),
-                     new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString(culture)),
-					 new XElement("UniqueId", new Guid(GuidString))
-					 );
+				new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString(culture)),
+				new XElement("UniqueId", new Guid(GuidString))
+			);
 
 			doc.Add(root);
 
@@ -788,38 +787,38 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-        private static string CreateXmlWithAttributesAndNullValues()
-        {
-            var doc = new XDocument();
-            var root = new XElement("NullableValues");
+		private static string CreateXmlWithAttributesAndNullValues()
+		{
+			var doc = new XDocument();
+			var root = new XElement("NullableValues");
 
-            var idElement = new XElement("Id", null);
-            idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
-            root.Add(idElement,
-                     new XElement("StartDate", null),
-                     new XElement("UniqueId", null)
-                );
+			var idElement = new XElement("Id", null);
+			idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
+			root.Add(idElement,
+				new XElement("StartDate", null),
+				new XElement("UniqueId", null)
+			);
 
-            doc.Add(root);
+			doc.Add(root);
 
-            return doc.ToString();
-        }
+			return doc.ToString();
+		}
 
-        private static string CreateXmlWithAttributesAndNullValuesAndPopulatedValues()
-        {
-            var doc = new XDocument();
-            var root = new XElement("NullableValues");
+		private static string CreateXmlWithAttributesAndNullValuesAndPopulatedValues()
+		{
+			var doc = new XDocument();
+			var root = new XElement("NullableValues");
 
-            var idElement = new XElement("Id", null);
-            idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
-            root.Add(idElement,
-                     new XElement("StartDate", null),
-                     new XElement("UniqueId", new Guid(GuidString))
-                );
+			var idElement = new XElement("Id", null);
+			idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
+			root.Add(idElement,
+				new XElement("StartDate", null),
+				new XElement("UniqueId", new Guid(GuidString))
+			);
 
-            doc.Add(root);
+			doc.Add(root);
 
-            return doc.ToString();
-        }
+			return doc.ToString();
+		}
 	}
 }

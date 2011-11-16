@@ -153,7 +153,7 @@ namespace RestSharp.Deserializers
 				}
 				else if (type == typeof(Decimal))
 				{
-                    var dec = Decimal.Parse(value.AsString(Culture), Culture);
+					var dec = Decimal.Parse(value.AsString(Culture), Culture);
 					prop.SetValue(x, dec, null);
 				}
 				else if (type == typeof(Guid))

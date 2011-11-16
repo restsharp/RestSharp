@@ -26,11 +26,11 @@ namespace RestSharp.Tests
 {
 	public class SerializerTests
 	{
-	    public SerializerTests()
-	    {
-            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
-	    }
+		public SerializerTests()
+		{
+			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
+		}
 
 		[Fact]
 		public void Serializes_Properties_In_Specified_Order() {
@@ -85,25 +85,25 @@ namespace RestSharp.Tests
 			Assert.Equal(expected.ToString(), doc.ToString());
 		}
 
-        [Fact]
-        public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
-        {
-            var poco = new Person
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                IsCool = false
-            };
+		[Fact]
+		public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
+		{
+			var poco = new Person
+			{
+				Name = "Foo",
+				Age = 50,
+				Price = 19.95m,
+				StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+				IsCool = false
+			};
 
-            var xml = new XmlSerializer();
-            xml.DateFormat = DateFormat.Iso8601;
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithXmlProperty();
+			var xml = new XmlSerializer();
+			xml.DateFormat = DateFormat.Iso8601;
+			var doc = xml.Serialize(poco);
+			var expected = GetSimplePocoXDocWithXmlProperty();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
-        }
+			Assert.Equal(expected.ToString(), doc);
+		}
 
 		[Fact]
 		public void Can_serialize_simple_POCO_With_Different_Root_Element() {
@@ -171,7 +171,7 @@ namespace RestSharp.Tests
 				}
 			};
 
-		    var xml = new XmlSerializer();
+			var xml = new XmlSerializer();
 			var doc = xml.Serialize(pocoList);
 			var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
 
@@ -185,7 +185,7 @@ namespace RestSharp.Tests
 			public decimal Price { get; set; }
 			public DateTime StartDate { get; set; }
 			public List<Item> Items { get; set; }
-            public bool? IsCool {get;set;}
+			public bool? IsCool {get;set;}
 		}
 
 		private class Item
@@ -248,20 +248,20 @@ namespace RestSharp.Tests
 			return doc;
 		}
 
-        private XDocument GetSimplePocoXDocWithXmlProperty()
-        {
-            var doc = new XDocument();
-            var root = new XElement("Person");
-            root.Add(new XElement("Name", "Foo"),
-                    new XElement("Age", 50),
-                    new XElement("Price", 19.95m),
-                    new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString("s")),
-                    new XElement("IsCool", false));
+		private XDocument GetSimplePocoXDocWithXmlProperty()
+		{
+			var doc = new XDocument();
+			var root = new XElement("Person");
+			root.Add(new XElement("Name", "Foo"),
+				new XElement("Age", 50),
+				new XElement("Price", 19.95m),
+				new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString("s")),
+				new XElement("IsCool", false));
 
-            doc.Add(root);
+			doc.Add(root);
 
-            return doc;
-        }
+			return doc;
+		}
 
 		private XDocument GetSimplePocoXDocWithRoot() {
 			var doc = new XDocument();
@@ -317,8 +317,8 @@ namespace RestSharp.Tests
 			items.Add(new XElement("Item", new XElement("Name", "Three"), new XElement("Value", 3)));
 			element.Add(new XElement("Name", "Foo"),
 				new XElement("Age", 50),
-                new XElement("Price", 19.95m.ToString(culture)),
-                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(culture)));
+				new XElement("Price", 19.95m.ToString(culture)),
+				new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(culture)));
 
 			element.Add(items);
 			root.Add(element);
@@ -326,8 +326,8 @@ namespace RestSharp.Tests
 
 			element.Add(new XElement("Name", "Bar"),
 				new XElement("Age", 23),
-                new XElement("Price", 23.23m.ToString(culture)),
-                new XElement("StartDate", new DateTime(2009, 12, 23, 10, 23, 23).ToString(culture)));
+				new XElement("Price", 23.23m.ToString(culture)),
+				new XElement("StartDate", new DateTime(2009, 12, 23, 10, 23, 23).ToString(culture)));
 
 			element.Add(items);
 
