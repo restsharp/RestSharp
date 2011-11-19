@@ -94,7 +94,7 @@ namespace RestSharp.Extensions
 #if FRAMEWORK
 			return Enum.GetValues(type)
 				.Cast<Enum>()
-				.First(v => v.ToString().GetNameVariants(culture).Contains(value));
+				.First(v => v.ToString().GetNameVariants(culture).Contains(value, StringComparer.Create(culture, true)));
 #else
 			return Enum.Parse(type, value, true);
 #endif

@@ -19,6 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Extensions;
 
@@ -140,13 +141,18 @@ namespace RestSharp.Deserializers
 					}
 				}
 
-				if (type.IsPrimitive)
+				if (type == typeof(bool))
+				{
+					var toConvert = value.ToString().ToLower();
+					prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
+				}
+				else if (type.IsPrimitive)
 				{
 					prop.SetValue(x, value.ChangeType(type, Culture), null);
 				}
 				else if (type.IsEnum)
 				{
-					var converted = Enum.Parse(type, value.ToString(), false);
+					var converted = type.FindEnumValue(value.ToString(), Culture);
 					prop.SetValue(x, converted, null);
 				}
 				else if (type == typeof(Uri))
