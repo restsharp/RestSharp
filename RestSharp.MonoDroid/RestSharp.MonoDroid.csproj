@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MONODROID</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MONODROID FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -240,10 +240,10 @@
     <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
       <Link>RestRequestAsyncHandle.cs</Link>
     </Compile>
-	<Compile Include="..\RestSharp\Deserializers\DotNetXmlDeserializer.cs">
+    <Compile Include="..\RestSharp\Deserializers\DotNetXmlDeserializer.cs">
       <Link>Deserializers\DotNetXmlDeserializer.cs</Link>
     </Compile>
-   </ItemGroup>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
