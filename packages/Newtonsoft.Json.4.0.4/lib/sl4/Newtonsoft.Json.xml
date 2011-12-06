@@ -2307,7 +2307,7 @@
         </member>
         <member name="P:Newtonsoft.Json.JsonTextReader.Culture">
             <summary>
-            Gets or sets the culture used when reading JSON. Defaults to <see cref="P:System.Globalization.CultureInfo.CurrentCulture"/>.
+            Gets or sets the culture used when reading JSON. Defaults to <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>.
             </summary>
         </member>
         <member name="P:Newtonsoft.Json.JsonTextReader.LineNumber">
