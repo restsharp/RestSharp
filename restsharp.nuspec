@@ -11,7 +11,7 @@
 		<licenseUrl>https://github.com/johnsheehan/RestSharp/blob/master/LICENSE.txt</licenseUrl>
 		<iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
 		<dependencies>
-			<dependency id="Newtonsoft.Json" />
+			<dependency id="Newtonsoft.Json" version="4.0.4" />
 		</dependencies>
 		<tags>REST HTTP API JSON XML</tags>
 	</metadata>
