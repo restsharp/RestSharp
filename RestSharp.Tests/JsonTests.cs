@@ -313,6 +313,17 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Unix_Json_Dates()
+		{
+			var doc = CreateUnixDateJson();
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var bd = d.Deserialize<Birthdate>(response);
+
+			Assert.Equal(new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc), bd.Value);
+		}
+
+		[Fact]
 		public void Can_Deserialize_JsonNet_Dates()
 		{
 			var doc = File.ReadAllText(Path.Combine("SampleData", "person.json.txt"));
@@ -509,6 +520,14 @@ namespace RestSharp.Tests
 			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
 
 			return JsonConvert.SerializeObject(bd, new JavaScriptDateTimeConverter());
+		}
+
+		private string CreateUnixDateJson()
+		{
+			var doc = new JObject();
+			doc["Value"] = 1309421746;
+
+			return doc.ToString();
 		}
 
 		private string CreateJson()

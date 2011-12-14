@@ -101,6 +101,13 @@ namespace RestSharp.Extensions
 
 			input = input.RemoveSurroundingQuotes();
 
+			long unix;
+			if (Int64.TryParse(input, out unix))
+			{
+				var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+				return epoch.AddSeconds(unix);
+			}
+
 			if (input.Contains("/Date("))
 			{
 				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/", culture);
