@@ -47,6 +47,8 @@ namespace RestSharp.Tests
 
 			Assert.NotEmpty(output.Names);
 			Assert.NotEmpty(output.Numbers);
+			Assert.False(output.Names[0].Length == 0);
+			Assert.False(output.Numbers.Sum() == 0);
 		}
 
 		[Fact]

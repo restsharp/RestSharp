@@ -283,6 +283,10 @@ namespace RestSharp.Deserializers
 			{
 				item = element.Value;
 			}
+			else if (t.IsPrimitive)
+			{
+				item = element.Value.ChangeType(t, Culture);
+			}
 			else
 			{
 				item = Activator.CreateInstance(t);
