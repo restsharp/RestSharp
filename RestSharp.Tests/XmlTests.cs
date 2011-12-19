@@ -37,6 +37,21 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Lists_of_Simple_Types()
+		{
+			var xmlpath = PathFor("xmllists.xml");
+			var doc = XDocument.Load(xmlpath);
+
+			var xml = new XmlDeserializer();
+			var output = xml.Deserialize<SimpleTypesListSample>(new RestResponse() { Content = doc.ToString() });
+
+			Assert.NotEmpty(output.Names);
+			Assert.NotEmpty(output.Numbers);
+			Assert.False(output.Names[0].Length == 0);
+			Assert.False(output.Numbers.Sum() == 0);
+		}
+
+		[Fact]
 		public void Can_Deserialize_To_List_Inheritor_From_Custom_Root_With_Attributes()
 		{
 			var xmlpath = PathFor("ListWithAttributes.xml");
