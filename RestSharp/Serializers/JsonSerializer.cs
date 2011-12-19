@@ -28,12 +28,27 @@ namespace RestSharp.Serializers
 	/// </summary>
 	public class JsonSerializer : ISerializer
 	{
-		/// <summary>
+	    private readonly Newtonsoft.Json.JsonSerializer _serializer;
+        
+        /// <summary>
 		/// Default serializer
 		/// </summary>
 		public JsonSerializer() {
 			ContentType = "application/json";
+            _serializer = new Newtonsoft.Json.JsonSerializer {
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                NullValueHandling = NullValueHandling.Include,
+                DefaultValueHandling = DefaultValueHandling.Include
+            };
 		}
+
+        /// <summary>
+        /// Default serializer with overload for allowing custom Json.NET settings
+        /// </summary>
+        public JsonSerializer(Newtonsoft.Json.JsonSerializer serializer){
+            ContentType = "application/json";
+            _serializer = serializer;
+        }
 
 		/// <summary>
 		/// Serialize the object as JSON
@@ -41,18 +56,12 @@ namespace RestSharp.Serializers
 		/// <param name="obj">Object to serialize</param>
 		/// <returns>JSON as String</returns>
 		public string Serialize(object obj) {
-			var serializer = new Newtonsoft.Json.JsonSerializer {
-				MissingMemberHandling = MissingMemberHandling.Ignore,
-				NullValueHandling = NullValueHandling.Include,
-				DefaultValueHandling = DefaultValueHandling.Include
-			};
-
 			using (var stringWriter = new StringWriter()) {
 				using (var jsonTextWriter = new JsonTextWriter(stringWriter)) {
 					jsonTextWriter.Formatting = Formatting.Indented;
 					jsonTextWriter.QuoteChar = '"';
 
-					serializer.Serialize(jsonTextWriter, obj);
+					_serializer.Serialize(jsonTextWriter, obj);
 
 					var result = stringWriter.ToString();
 					return result;
