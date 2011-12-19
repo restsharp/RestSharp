@@ -278,8 +278,21 @@ namespace RestSharp.Deserializers
 
 		private object CreateAndMap(Type t, XElement element)
 		{
-			var item = Activator.CreateInstance(t);
-			Map(item, element);
+			object item;
+			if (t == typeof(String))
+			{
+				item = element.Value;
+			}
+			else if (t.IsPrimitive)
+			{
+				item = element.Value.ChangeType(t, Culture);
+			}
+			else
+			{
+				item = Activator.CreateInstance(t);
+				Map(item, element);
+			}
+
 			return item;
 		}
 

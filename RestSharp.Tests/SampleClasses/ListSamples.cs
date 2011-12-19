@@ -5,6 +5,12 @@ using System.Text;
 
 namespace RestSharp.Tests.SampleClasses
 {
+	public class SimpleTypesListSample
+	{
+		public List<string> Names { get; set; }
+		public List<int> Numbers { get; set; }
+	}
+
 	public class InlineListSample
 	{
 		public int Count { get; set; }
