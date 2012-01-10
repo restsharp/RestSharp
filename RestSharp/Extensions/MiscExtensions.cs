@@ -143,15 +143,7 @@ namespace RestSharp.Extensions
 				encoding = Encoding.UTF7;
 			}
 #endif
-			using (MemoryStream stream = new MemoryStream())
-			{
-				stream.Write(buffer, 0, buffer.Length);
-				stream.Seek(0, SeekOrigin.Begin);
-				using (StreamReader reader = new StreamReader(stream, encoding))
-				{
-					return reader.ReadToEnd();
-				}
-			}
+			return encoding.GetString(buffer);
 		}
 
 	}
