@@ -481,6 +481,7 @@ namespace RestSharp.Tests
 			var response = new RestResponse { Content = doc.ToString() };
 
 			var d = new XmlDeserializer();
+            d.RootElement = "event";
 			var output = d.Deserialize<SampleClasses.Lastfm.Event>(response);
 
 			//Assert.NotEmpty(output.artists);
@@ -554,6 +555,19 @@ namespace RestSharp.Tests
 			Assert.Null(output.StartDate);
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
+
+	    [Fact]
+	    public void Can_Deserialize_Object_With_Property_Named_The_Same_As_Nested_Objects_Property()
+	    {
+	        var person = CreatePersonXmlWithNoNameWithFriendWhoHasName();
+            var response = new RestResponse { Content = person };
+            
+            var d = new XmlDeserializer();
+            var p = d.Deserialize<PersonForXml>(response);
+
+            Assert.Null(p.Name);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+	    }
 
 		private static string CreateUnderscoresXml()
 		{
@@ -720,6 +734,23 @@ namespace RestSharp.Tests
 							));
 			}
 			root.Add(friends);
+
+			doc.Add(root);
+			return doc.ToString();
+		}
+
+
+        private static string CreatePersonXmlWithNoNameWithFriendWhoHasName()
+		{
+			var doc = new XDocument();
+			var root = new XElement("Person");
+			root.Add(new XElement("StartDate", new DateTime(2009, 9, 25, 0, 6, 1)));
+			root.Add(new XElement("Age", 28));
+
+			root.Add(new XElement("BestFriend",
+						new XElement("Name", "The Fonz"),
+						new XElement("Since", 1952)
+					));
 
 			doc.Add(root);
 			return doc.ToString();
