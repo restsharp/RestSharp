@@ -768,6 +768,14 @@
             <param name="testMethod">The method under test</param>
             <param name="parameters">The parameters to be passed to the test method</param>
         </member>
+        <member name="M:Xunit.Extensions.TheoryCommand.#ctor(Xunit.Sdk.IMethodInfo,System.Object[],System.Type[])">
+            <summary>
+            Creates a new instance of <see cref="T:Xunit.Extensions.TheoryCommand"/> based on a generic theory.
+            </summary>
+            <param name="testMethod">The method under test</param>
+            <param name="parameters">The parameters to be passed to the test method</param>
+            <param name="genericTypes">The generic types that were used to resolved the generic method.</param>
+        </member>
         <member name="M:Xunit.Extensions.TheoryCommand.Execute(System.Object)">
             <inheritdoc/>
         </member>
