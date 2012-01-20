@@ -247,6 +247,13 @@ namespace RestSharp.Deserializers
 			var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
 			
 			var name = t.Name;
+
+            if (!elements.Any())
+            {
+                var lowerName = name.ToLower().AsNamespaced(Namespace);
+                elements = root.Descendants().Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName);
+            } 
+
 			if (!elements.Any())
 			{
 				var lowerName = name.ToLower().AsNamespaced(Namespace);
