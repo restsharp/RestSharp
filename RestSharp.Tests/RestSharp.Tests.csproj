@@ -111,6 +111,9 @@
     <Content Include="SampleData\datetimes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\jsonenums.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\person.json.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
