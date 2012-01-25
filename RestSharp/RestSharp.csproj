@@ -55,9 +55,9 @@
     <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.0.7.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.5\lib\net35\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.7\lib\net35\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -93,6 +93,15 @@
     <Compile Include="Authenticators\OAuth\WebPairCollection.cs" />
     <Compile Include="Authenticators\OAuth\WebParameter.cs" />
     <Compile Include="Authenticators\OAuth\WebParameterCollection.cs" />
+    <Compile Include="Compression\ZLib\Crc32.cs" />
+    <Compile Include="Compression\ZLib\FlushType.cs" />
+    <Compile Include="Compression\ZLib\GZipStream.cs" />
+    <Compile Include="Compression\ZLib\Inflate.cs" />
+    <Compile Include="Compression\ZLib\InfTree.cs" />
+    <Compile Include="Compression\ZLib\ZLib.cs" />
+    <Compile Include="Compression\ZLib\ZLibCodec.cs" />
+    <Compile Include="Compression\ZLib\ZLibConstants.cs" />
+    <Compile Include="Compression\ZLib\ZLibStream.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
     <Compile Include="Extensions\MonoHttp\Helpers.cs" />
