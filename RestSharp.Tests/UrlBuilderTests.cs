@@ -122,5 +122,17 @@ namespace RestSharp.Tests
 			Assert.Equal(expected, output);
 		}
 
+		[Fact]
+		public void GET_with_empty_request_and_bare_hostname()
+		{
+			var request = new RestRequest();
+			var client = new RestClient("http://example.com");
+
+			var expected = new Uri("http://example.com/");
+			var output = client.BuildUri(request);
+
+			Assert.Equal(expected, output);
+		}
+
 	}
 }
