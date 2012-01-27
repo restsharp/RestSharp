@@ -238,19 +238,24 @@ namespace RestSharp
 			webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
 			foreach (var httpCookie in Cookies)
 			{
-				var cookie = new Cookie
+#if FRAMEWORK
+                var cookie = new Cookie
 				{
 					Name = httpCookie.Name,
 					Value = httpCookie.Value,
 					Domain = webRequest.RequestUri.Host
 				};
-#if FRAMEWORK
 				webRequest.CookieContainer.Add(cookie);
 #else
+                var cookie = new Cookie
+				{
+					Name = httpCookie.Name,
+					Value = httpCookie.Value
+				};
 				var uri = webRequest.RequestUri;
 				webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
 #endif
-			}
+            }
 		}
 
 		private string EncodeParameters()
