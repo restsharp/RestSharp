@@ -72,7 +72,18 @@ namespace RestSharp.Deserializers
 
 		private JToken FindRoot(string content)
 		{
-			JObject json = JObject.Parse(content);
+            JObject json;
+
+            try
+            {
+                json = JObject.Parse(content);
+            }
+            catch (Exception)
+            {
+                // Ugly workaround for WPF standard serialized lists.
+                json = JObject.Parse(@"{root:" + content + "}");
+                RootElement = "root";
+            }
 			JToken root = json.Root;
 
 			if (RootElement.HasValue())
