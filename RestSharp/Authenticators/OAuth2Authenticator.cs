@@ -97,7 +97,7 @@ namespace RestSharp
 		public override void Authenticate(IRestClient client, IRestRequest request)
 		{
 			// only add the Authorization parameter if it hasn't been added.
-			if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.InvariantCultureIgnoreCase)))
+			if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
 			{
 				request.AddParameter("Authorization", _authorizationValue, ParameterType.HttpHeader);
 			}

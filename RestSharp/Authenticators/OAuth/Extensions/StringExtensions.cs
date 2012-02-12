@@ -29,7 +29,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
 		public static bool EqualsIgnoreCase(this string left, string right)
 		{
-			return String.Compare(left, right, StringComparison.InvariantCultureIgnoreCase) == 0;
+			return String.Compare(left, right, StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
 		public static bool EqualsAny(this string input, params string[] args)

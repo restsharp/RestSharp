@@ -320,7 +320,7 @@ namespace RestSharp
 				response.ContentType = webResponse.ContentType;
 				response.ContentLength = webResponse.ContentLength;
 #if WINDOWS_PHONE
-                if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
                     response.RawBytes = new GZipStream(webResponse.GetResponseStream()).ReadAsBytes();
                 else
                     response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
