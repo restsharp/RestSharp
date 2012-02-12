@@ -107,16 +107,5 @@ namespace RestSharp
 				callback(restResponse, asyncHandle);
 			});
 		}
-
-		/// <summary>
-		/// Executes the request and callback asynchronously, authenticating if needed
-		/// </summary>
-		/// <typeparam name="T">Target deserialization type</typeparam>
-		/// <param name="request">Request to be executed</param>
-		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<RestResponse<T>> callback) where T : new()
-		{
-			return ExecuteAsync<T>(request, (response, asyncHandle) => callback(response));
-		}
 	}
 }
