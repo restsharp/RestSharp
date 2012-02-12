@@ -25,17 +25,6 @@ namespace RestSharp
 {
 	public partial class RestClient
 	{
-
-		/// <summary>
-		/// Executes the request and callback asynchronously, authenticating if needed
-		/// </summary>
-		/// <param name="request">Request to be executed</param>
-		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<RestResponse> callback)
-		{
-			return ExecuteAsync(request, (response, handle) => callback(response));
-		}
-
 		/// <summary>
 		/// Executes the request and callback asynchronously, authenticating if needed
 		/// </summary>
