@@ -1313,9 +1313,41 @@
             Allow Json.NET to use a non-public default constructor.
             </summary>
         </member>
+        <member name="T:Newtonsoft.Json.Converters.VersionConverter">
+            <summary>
+            Converts a <see cref="T:System.Version"/> to and from a string (e.g. "1.2.3.4").
+            </summary>
+        </member>
+        <member name="M:Newtonsoft.Json.Converters.VersionConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object.
+            </summary>
+            <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter"/> to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Converters.VersionConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object.
+            </summary>
+            <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader"/> to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing property value of the JSON that is being converted.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>The object value.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Converters.VersionConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type.
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>
+            	<c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+            </returns>
+        </member>
         <member name="T:Newtonsoft.Json.JsonConstructorAttribute">
             <summary>
-            Instructs the <see cref="T:Newtonsoft.Json.JsonSerializer"/> not to serialize the public field or public read/write property value.
+            Instructs the <see cref="T:Newtonsoft.Json.JsonSerializer"/> to use the specified constructor when deserializing that object.
             </summary>
         </member>
         <member name="T:Newtonsoft.Json.Linq.JPropertyDescriptor">
@@ -5388,6 +5420,17 @@
             </summary>
             <param name="source">The source <see cref="T:Newtonsoft.Json.Linq.JToken"/> to test.</param>
             <param name="schema">The schema to test with.</param>
+            <returns>
+            	<c>true</c> if the specified <see cref="T:Newtonsoft.Json.Linq.JToken"/> is valid; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Schema.Extensions.IsValid(Newtonsoft.Json.Linq.JToken,Newtonsoft.Json.Schema.JsonSchema,System.Collections.Generic.IList{System.String}@)">
+            <summary>
+            Determines whether the <see cref="T:Newtonsoft.Json.Linq.JToken"/> is valid.
+            </summary>
+            <param name="source">The source <see cref="T:Newtonsoft.Json.Linq.JToken"/> to test.</param>
+            <param name="schema">The schema to test with.</param>
+            <param name="errorMessages">When this method returns, contains any error messages generated while validating. </param>
             <returns>
             	<c>true</c> if the specified <see cref="T:Newtonsoft.Json.Linq.JToken"/> is valid; otherwise, <c>false</c>.
             </returns>
