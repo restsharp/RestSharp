@@ -164,6 +164,9 @@
     <Compile Include="..\RestSharp\RestClient.cs">
       <Link>RestClient.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\RestClientExtensions.cs">
+      <Link>RestClientExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\RestRequest.cs">
       <Link>RestRequest.cs</Link>
     </Compile>
