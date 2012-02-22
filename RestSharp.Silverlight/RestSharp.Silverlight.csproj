@@ -49,9 +49,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.5\lib\sl4\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.8\lib\sl4\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -163,6 +163,9 @@
     </Compile>
     <Compile Include="..\RestSharp\RestClient.cs">
       <Link>RestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClientExtensions.cs">
+      <Link>RestClientExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\RestRequest.cs">
       <Link>RestRequest.cs</Link>

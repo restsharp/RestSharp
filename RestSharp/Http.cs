@@ -23,6 +23,10 @@ using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using RestSharp.Extensions;
 
+#if WINDOWS_PHONE
+using RestSharp.Compression.ZLib;
+#endif
+
 namespace RestSharp
 {
 	/// <summary>
@@ -315,7 +319,14 @@ namespace RestSharp
 #endif
 				response.ContentType = webResponse.ContentType;
 				response.ContentLength = webResponse.ContentLength;
-				response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+#if WINDOWS_PHONE
+                if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
+                    response.RawBytes = new GZipStream(webResponse.GetResponseStream()).ReadAsBytes();
+                else
+                    response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+#else
+                response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+#endif
 				//response.Content = GetString(response.RawBytes);
 				response.StatusCode = webResponse.StatusCode;
 				response.StatusDescription = webResponse.StatusDescription;

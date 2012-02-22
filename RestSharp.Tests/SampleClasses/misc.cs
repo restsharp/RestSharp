@@ -153,4 +153,15 @@ namespace RestSharp.Tests
 		public DateTimeOffset? NullableDateTimeOffsetWithNull { get; set; }
 		public DateTimeOffset? NullableDateTimeOffsetWithValue { get; set; }
 	}
+
+	public class JsonEnumsTestStructure
+	{
+		public Disposition Upper { get; set; }
+		public Disposition Lower { get; set; }
+		public Disposition CamelCased { get; set; }
+		public Disposition Underscores { get; set; }
+		public Disposition LowerUnderscores { get; set; }
+		public Disposition Dashes { get; set; }
+		public Disposition LowerDashes { get; set; }
+	}
 }
