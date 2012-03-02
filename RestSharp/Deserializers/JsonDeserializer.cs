@@ -240,8 +240,51 @@ namespace RestSharp.Deserializers
 			foreach (JProperty child in elements)
 			{
 				var key = child.Name;
-				var item = CreateAndMap(valueType, child.Value);
-				dict.Add(key, item);
+				//value types need to be mapped differently
+		                if (valueType.IsValueType)
+		                {
+		                    var value = child.Value;
+		                    if (valueType.IsPrimitive)
+		                    {
+		                        // no primitives can contain quotes so we can safely remove them
+		                        // allows converting a json value like {"index": "1"} to an int
+		                        var tmpVal = value.AsString().Replace("\"", string.Empty);
+		                        dict.Add(key, tmpVal.ChangeType(valueType, Culture));
+		                    }
+		                    else if (valueType.IsEnum)
+		                    {
+		                        var converted = valueType.FindEnumValue(value.AsString(), Culture);
+		                        dict.Add(key, converted);
+		                    }
+		                    else if (valueType == typeof(DateTime) || valueType == typeof(DateTimeOffset))
+		                    {
+		                        DateTime dt;
+		                        if (DateFormat.HasValue())
+		                        {
+		                            var clean = value.AsString();
+		                            dt = DateTime.ParseExact(clean, DateFormat, Culture);
+		                        }
+		                        else if (value.Type == JTokenType.Date)
+		                        {
+		                            dt = value.Value<DateTime>().ToUniversalTime();
+		                        }
+		                        else
+		                        {
+		                            // try parsing instead
+		                            dt = value.AsString().ParseJsonDate(Culture);
+		                        }
+		
+		                        if (valueType == typeof(DateTime))
+		                            dict.Add(key, dt);
+		                        else if (valueType == typeof(DateTimeOffset))
+		                            dict.Add(key, (DateTimeOffset)dt);
+		                    }
+		                }
+		                else
+		                {
+		                    var item = CreateAndMap(valueType, child.Value);
+		                    dict.Add(key, item);
+		                }
 			}
 
 			return dict;
