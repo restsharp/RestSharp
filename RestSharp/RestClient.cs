@@ -229,7 +229,7 @@ namespace RestSharp
 		public bool FollowRedirects { get; set; }
 
 		/// <summary>
-		/// The CookieContainer used fo requests made by this client instance
+		/// The CookieContainer used for requests made by this client instance
 		/// </summary>
 		public CookieContainer CookieContainer { get; set; }
 
