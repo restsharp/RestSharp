@@ -33,7 +33,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <returns>RestResponse</returns>
-		public virtual RestResponse Execute(IRestRequest request)
+		public virtual IRestResponse Execute(IRestRequest request)
 		{
 			AuthenticateIfNeeded(this, request);
 
@@ -41,7 +41,7 @@ namespace RestSharp
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
 			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 
-			var response = new RestResponse();
+			IRestResponse response = new RestResponse();
 			try
 			{
 				response = GetResponse(request);
@@ -65,13 +65,13 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to execute</param>
 		/// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
-		public virtual RestResponse<T> Execute<T>(IRestRequest request) where T : new()
+		public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
 		{
 			var raw = Execute(request);
 			return Deserialize<T>(request, raw);
 		}
 		
-		private RestResponse GetResponse(IRestRequest request)
+		private IRestResponse GetResponse(IRestRequest request)
 		{
 			var http = HttpFactory.Create();
 

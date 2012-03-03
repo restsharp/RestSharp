@@ -30,7 +30,7 @@ namespace RestSharp.Deserializers
 
 		public string RootElement { get; set; }
 
-		public T Deserialize<T>(RestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response) where T : new()
 		{
 			if (string.IsNullOrEmpty(response.Content))
 			{

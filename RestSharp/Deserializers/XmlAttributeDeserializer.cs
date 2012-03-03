@@ -37,7 +37,7 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(RestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response) where T : new()
 		{
 			if (response.Content == null)
 				return default(T);
