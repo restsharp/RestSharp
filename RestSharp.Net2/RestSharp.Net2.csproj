@@ -223,9 +223,6 @@
     <Compile Include="..\RestSharp\IRestResponse.cs">
       <Link>IRestResponse.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\LinqBridge.cs">
-      <Link>LinqBridge.cs</Link>
-    </Compile>
     <Compile Include="..\RestSharp\Parameter.cs">
       <Link>Parameter.cs</Link>
     </Compile>
@@ -277,6 +274,7 @@
     <Compile Include="..\RestSharp\Validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
+    <Compile Include="LinqBridge-1.2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
