@@ -1,4 +1,4 @@
-# RestSharp - Simple .NET REST Client
+# RestSharp .NET 2.0 Fork - Simple .NET REST Client
 
 This is a fork of RestSharp for ,NET 2.0.
 
