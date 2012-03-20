@@ -314,6 +314,24 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+        public void Can_Deserialize_TimeSpan()
+        {
+            var doc = File.ReadAllText(Path.Combine("SampleData", "timespans.txt"));
+            var d = new JsonDeserializer();
+            var response = new RestResponse { Content = doc };
+            var payload = d.Deserialize<TimeSpanTestStructure>(response);
+
+            Assert.Equal(new TimeSpan(468006), payload.Tick);
+            Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
+            Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
+            Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
+            Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+            Assert.Null(payload.NullableWithoutValue);
+            Assert.NotNull(payload.NullableWithValue);
+            Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+        }
+
+		[Fact]
 		public void Can_Deserialize_Iso_Json_Dates()
 		{
 			var doc = CreateIsoDateJson();

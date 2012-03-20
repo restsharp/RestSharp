@@ -154,6 +154,17 @@ namespace RestSharp.Tests
 		public DateTimeOffset? NullableDateTimeOffsetWithValue { get; set; }
 	}
 
+    public class TimeSpanTestStructure
+    {
+        public TimeSpan Tick { get; set; }
+        public TimeSpan Millisecond { get; set; }
+        public TimeSpan Second { get; set; }
+        public TimeSpan Minute { get; set; }
+        public TimeSpan Hour { get; set; }
+        public TimeSpan? NullableWithoutValue { get; set; }
+        public TimeSpan? NullableWithValue { get; set; }
+    }
+
 	public class JsonEnumsTestStructure
 	{
 		public Disposition Upper { get; set; }
