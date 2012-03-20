@@ -1,5 +1,10 @@
 # RestSharp - Simple .NET REST Client
 
+This is a fork of RestSharp for ,NET 2.0.
+
+To get it to work correctly we have included System.Xml.Linq from Mono project, and LinqBridge.cs, 
+so you may run into conflicts should you have other .NET2 projects that have done the same
+
 ### [Official Site/Blog][1] - [@RestSharp][2]  
 ### Please use the [Google Group][3] for feature requests and troubleshooting usage.
 ### License: Apache License 2.0  
