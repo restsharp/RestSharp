@@ -7,9 +7,14 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyDescription("Simple REST and HTTP API Client")]
 [assembly: AssemblyConfiguration("")]
+#if NET_2_0
+[assembly: AssemblyCompany("https://github.com/mcintyre321/RestSharp-.NET-2.0-Fork")]
+#else
 [assembly: AssemblyCompany("restsharp.org")]
-[assembly: AssemblyProduct("RestSharp")]
 [assembly: AssemblyCopyright("Copyright © RestSharp Project 2009-2011")]
+#endif
+[assembly: AssemblyProduct("RestSharp")]
+
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
