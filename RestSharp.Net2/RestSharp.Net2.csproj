@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;Net2;FRAMEWORK</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;Net2;FRAMEWORK;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -276,13 +276,39 @@
     </Compile>
     <Compile Include="LinqBridge-1.2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System.Xml.Linq\Extensions.cs" />
+    <Compile Include="System.Xml.Linq\LoadOptions.cs" />
+    <Compile Include="System.Xml.Linq\XAttribute.cs" />
+    <Compile Include="System.Xml.Linq\XCData.cs" />
+    <Compile Include="System.Xml.Linq\XComment.cs" />
+    <Compile Include="System.Xml.Linq\XContainer.cs" />
+    <Compile Include="System.Xml.Linq\XDeclaration.cs" />
+    <Compile Include="System.Xml.Linq\XDocument.cs" />
+    <Compile Include="System.Xml.Linq\XDocumentType.cs" />
+    <Compile Include="System.Xml.Linq\XElement.cs" />
+    <Compile Include="System.Xml.Linq\XIterators.cs" />
+    <Compile Include="System.Xml.Linq\XName.cs" />
+    <Compile Include="System.Xml.Linq\XNamespace.cs" />
+    <Compile Include="System.Xml.Linq\XNode.cs" />
+    <Compile Include="System.Xml.Linq\XNodeDocumentOrderComparer.cs" />
+    <Compile Include="System.Xml.Linq\XNodeEqualityComparer.cs" />
+    <Compile Include="System.Xml.Linq\XNodeNavigator.cs" />
+    <Compile Include="System.Xml.Linq\XNodeReader.cs" />
+    <Compile Include="System.Xml.Linq\XNodeWriter.cs" />
+    <Compile Include="System.Xml.Linq\XObject.cs" />
+    <Compile Include="System.Xml.Linq\XObjectChange.cs" />
+    <Compile Include="System.Xml.Linq\XObjectChangeEventArgs.cs" />
+    <Compile Include="System.Xml.Linq\XProcessingInstruction.cs" />
+    <Compile Include="System.Xml.Linq\XStreamingElement.cs" />
+    <Compile Include="System.Xml.Linq\XText.cs" />
+    <Compile Include="System.Xml.Linq\XUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Compile Include="System.Xml.Linq\System.Xml.Linq.Dummy.cs" />
+    <Compile Include="System.Xml.Linq\ReaderOptions.cs" />
+    <Compile Include="System.Xml.Linq\SaveOptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
