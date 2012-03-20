@@ -22,6 +22,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 
+#if Net2
+using RestSharp.Contrib;
+#endif
+
 #if SILVERLIGHT
 using System.Windows.Browser;
 #endif

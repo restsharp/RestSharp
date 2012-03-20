@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{E709A928
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.WindowsPhone.Mango", "RestSharp.WindowsPhone.Mango\RestSharp.WindowsPhone.Mango.csproj", "{71647E33-714F-4975-8368-71B075045272}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Net2", "RestSharp.Net2\RestSharp.Net2.csproj", "{FD6CE701-F52D-433F-A654-D46CA555093D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,16 @@ Global
 		{71647E33-714F-4975-8368-71B075045272}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{71647E33-714F-4975-8368-71B075045272}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{71647E33-714F-4975-8368-71B075045272}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FD6CE701-F52D-433F-A654-D46CA555093D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
