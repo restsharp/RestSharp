@@ -161,7 +161,12 @@ namespace RestSharp.Deserializers
 					string raw = value.AsString();
 					var guid = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(raw);
 					prop.SetValue(x, guid, null);
-				}
+                }
+                else if (type == typeof(TimeSpan))
+                {
+                    var timeSpan = TimeSpan.Parse(value.AsString(Culture));
+                    prop.SetValue(x, timeSpan, null);
+                }
 				else if (type.IsGenericType)
 				{
 					var genericTypeDef = type.GetGenericTypeDefinition();
