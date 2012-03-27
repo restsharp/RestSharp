@@ -51,6 +51,10 @@ namespace RestSharp.Tests.SampleClasses
 		public string profile_sidebar_border_color { get; set; }
 		public long id { get; set; }
 		public int utc_offset { get; set; }
-
 	}
+
+    public class StatusList : List<status>
+    {
+
+    }
 }

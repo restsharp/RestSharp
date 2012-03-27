@@ -155,6 +155,16 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.Count);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Root_Json_Array_To_Inherited_List()
+        {
+            var data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
+            var response = new RestResponse { Content = data };
+            var json = new JsonDeserializer();
+            var output = json.Deserialize<StatusList>(response);
+            Assert.Equal(4, output.Count);
+        }
+
 		[Fact]
 		public void Can_Deserialize_Various_Enum_Values ()
 		{
