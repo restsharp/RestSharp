@@ -250,9 +250,12 @@ namespace RestSharp.Deserializers
 		private IList BuildList(Type type, JEnumerable<JToken> elements)
 		{
 			var list = (IList)Activator.CreateInstance(type);
-			var itemType = type.GetGenericArguments()[0];
 
-			foreach (var element in elements)
+            var listType = type.GetInterfaces().First(x => x.GetGenericTypeDefinition() == typeof(IList<>));
+
+            var itemType = listType.GetGenericArguments()[0];
+
+            foreach (var element in elements)
 			{
 				if (itemType.IsPrimitive)
 				{
