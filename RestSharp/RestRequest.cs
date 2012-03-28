@@ -50,7 +50,7 @@ namespace RestSharp
 			Files = new List<FileParameter>();
 			XmlSerializer = new XmlSerializer();
 			JsonSerializer = new JsonSerializer();
-
+		    AlwaysUseQueryString = false;
 			OnBeforeDeserialization = r => { };
 		}
 
@@ -453,7 +453,13 @@ namespace RestSharp
 			_attempts++;
 		}
 
-		/// <summary>
+	    /// <summary>
+	    /// When set to True, GetOrPost parameters will always
+	    /// be sent as a query string regardless of the Http Method.
+	    /// </summary>
+	    public bool AlwaysUseQueryString { get; set; }
+
+	    /// <summary>
 		/// How many attempts were made to send this Request?
 		/// </summary>
 		/// <remarks>

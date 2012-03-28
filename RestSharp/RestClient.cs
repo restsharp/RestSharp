@@ -316,7 +316,7 @@ namespace RestSharp
 				}
 			}
 
-			if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+			if ((request.AlwaysUseQueryString) || (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH))
 			{
 				// build and attach querystring if this is a get-style request
 				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))

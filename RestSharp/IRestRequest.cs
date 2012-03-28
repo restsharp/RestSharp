@@ -225,5 +225,11 @@ namespace RestSharp
 
 		Action<IRestResponse> OnBeforeDeserialization { get; set; }
 		void IncreaseNumAttempts();
+
+        /// <summary>
+        /// When set to True, GetOrPost parameters will always
+        /// be sent as a query string regardless of the Http Method.
+        /// </summary>
+        bool AlwaysUseQueryString { get; set; }
 	}
 }
