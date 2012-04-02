@@ -350,6 +350,7 @@ namespace RestSharp
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			http.CookieContainer = CookieContainer;
+		    http.AlwaysUseQueryString = request.AlwaysUseQueryString;
 
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach(var p in DefaultParameters)
