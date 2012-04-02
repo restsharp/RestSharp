@@ -316,7 +316,7 @@ namespace RestSharp
 				}
 			}
 
-			if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+			if ((request.AlwaysUseQueryString) || (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH))
 			{
 				// build and attach querystring if this is a get-style request
 				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))
@@ -350,6 +350,7 @@ namespace RestSharp
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			http.CookieContainer = CookieContainer;
+		    http.AlwaysUseQueryString = request.AlwaysUseQueryString;
 
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach(var p in DefaultParameters)

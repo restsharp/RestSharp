@@ -46,6 +46,13 @@ namespace RestSharp
 			return new Http();
 		}
 
+        /// <summary>
+        /// Set to true to send HTTP parameters in the query string
+        /// for POST and PUT requests. This allows a request body to
+        /// be sent in addition to the query string parameters.
+        /// </summary>
+	    public bool AlwaysUseQueryString { get; set; }
+
 		/// <summary>
 		/// True if this HTTP request has any HTTP parameters
 		/// </summary>
@@ -277,7 +284,7 @@ namespace RestSharp
 			{
 				webRequest.ContentType = GetMultipartFormContentType();
 			}
-			else if(HasParameters)
+			else if(!AlwaysUseQueryString && HasParameters)
 			{
 				webRequest.ContentType = "application/x-www-form-urlencoded";
 				RequestBody = EncodeParameters();

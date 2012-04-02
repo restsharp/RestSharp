@@ -28,6 +28,7 @@ namespace RestSharp
 		ICredentials Credentials { get; set; }
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
+        bool AlwaysUseQueryString { get; set; }
 #if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
 #endif
