@@ -49,7 +49,7 @@ namespace RestSharp
 			Parameters = new List<Parameter>();
 			Files = new List<FileParameter>();
 			XmlSerializer = new XmlSerializer();
-			JsonSerializer = new JsonSerializer();
+			//JsonSerializer = new JsonSerializer();
 
 			OnBeforeDeserialization = r => { };
 		}

@@ -49,10 +49,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.8\lib\sl4\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows" />
@@ -179,9 +175,6 @@
     <Compile Include="..\RestSharp\Serializers\ISerializer.cs">
       <Link>Serializers\ISerializer.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\Serializers\JsonSerializer.cs">
-      <Link>Serializers\JsonSerializer.cs</Link>
-    </Compile>
     <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
       <Link>Serializers\SerializeAsAttribute.cs</Link>
     </Compile>
@@ -190,6 +183,9 @@
     </Compile>
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Validation\Require.cs">
       <Link>Validation\Require.cs</Link>

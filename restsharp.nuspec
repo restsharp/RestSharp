@@ -10,9 +10,6 @@
 		<projectUrl>http://restsharp.org</projectUrl>
 		<licenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</licenseUrl>
 		<iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
-		<dependencies>
-			<dependency id="Newtonsoft.Json" />
-		</dependencies>
 		<tags>REST HTTP API JSON XML</tags>
 		<releaseNotes>
 			102.7 - Updating Json.NET to 4.0.8, misc fixes
