@@ -110,7 +110,7 @@ namespace RestSharp.Extensions
 
 			if (input.Contains("/Date("))
 			{
-				return ExtractDate(input, @"\\/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\/", culture);
+				return ExtractDate(input, @"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/", culture);
 			}
 
 			if (input.Contains("new Date("))

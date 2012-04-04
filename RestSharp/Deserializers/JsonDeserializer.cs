@@ -1,24 +1,7 @@
-﻿#region License
-//   Copyright 2010 John Sheehan
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License. 
-#endregion
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 
 using RestSharp.Extensions;
 using System.Globalization;
@@ -48,42 +31,41 @@ namespace RestSharp.Deserializers
 				if (RootElement.HasValue())
 				{
 					var root = FindRoot(response.Content);
-					target = (T)BuildList(objType, root.Children());
+					target = (T)BuildList(objType, root);
 				}
 				else
 				{
-					JArray json = JArray.Parse(response.Content);
-					target = (T)BuildList(objType, json.Root.Children());
+					var data = SimpleJson.DeserializeObject(response.Content);
+					target = (T)BuildList(objType, data);
 				}
 			}
 			else if (target is IDictionary)
 			{
 				var root = FindRoot(response.Content);
-				target = (T)BuildDictionary(target.GetType(), root.Children()); 
+				target = (T)BuildDictionary(target.GetType(), root);
 			}
 			else
 			{
 				var root = FindRoot(response.Content);
-				Map(target, root);
+				Map(target, (IDictionary<string, object>)root);
 			}
 
 			return target;
 		}
 
-		private JToken FindRoot(string content)
+		private object FindRoot(string content)
 		{
-			JObject json = JObject.Parse(content);
-			JToken root = json.Root;
-
-			if (RootElement.HasValue())
-				root = json.SelectToken(RootElement);
-
-			return root;
+			var data = (IDictionary<string, object>)SimpleJson.DeserializeObject(content);
+			if (RootElement.HasValue() && data.ContainsKey(RootElement))
+			{
+				return data[RootElement];
+			}
+			return data;
 		}
 
-		private void Map(object x, JToken json)
+		private void Map(object target, IDictionary<string, object> data)
 		{
-			var objType = x.GetType();
+			var objType = target.GetType();
 			var props = objType.GetProperties().Where(p => p.CanWrite).ToList();
 
 			foreach (var prop in props)
@@ -91,13 +73,10 @@ namespace RestSharp.Deserializers
 				var type = prop.PropertyType;
 
 				var name = prop.Name;
-				var actualName = name.GetNameVariants(Culture).FirstOrDefault(n => json[n] != null);
-				var value = actualName != null ? json[actualName] : null;
+				var actualName = name.GetNameVariants(Culture).FirstOrDefault(n => data.ContainsKey(n));
+				var value = actualName != null ? data[actualName] : null;
 
-				if (value == null || value.Type == JTokenType.Null)
-				{
-					continue;
-				}
+				if (value == null) continue;
 
 				// check for nullable and extract underlying type
 				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -109,66 +88,66 @@ namespace RestSharp.Deserializers
 				{
 					// no primitives can contain quotes so we can safely remove them
 					// allows converting a json value like {"index": "1"} to an int
-					var tmpVal = value.AsString().Replace("\"", string.Empty);
-					prop.SetValue(x, tmpVal.ChangeType(type, Culture), null);
+					var tmpVal = value.ToString().Replace("\"", string.Empty);
+					prop.SetValue(target, tmpVal.ChangeType(type, Culture), null);
 				}
 				else if (type.IsEnum)
 				{
-					var converted = type.FindEnumValue(value.AsString(), Culture);
-					prop.SetValue(x, converted, null);
+					var converted = type.FindEnumValue(value.ToString(), Culture);
+					prop.SetValue(target, converted, null);
 				}
 				else if (type == typeof(Uri))
 				{
-					string raw = value.AsString();
+					string raw = value.ToString();
 					var uri = new Uri(raw, UriKind.RelativeOrAbsolute);
-					prop.SetValue(x, uri, null);
+					prop.SetValue(target, uri, null);
 				}
 				else if (type == typeof(string))
 				{
-					string raw = value.AsString();
-					prop.SetValue(x, raw, null);
+					string raw = value.ToString();
+					prop.SetValue(target, raw, null);
 				}
 				else if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
 				{
 					DateTime dt;
+					var clean = value.ToString();
 					if (DateFormat.HasValue())
 					{
-						var clean = value.AsString();
 						dt = DateTime.ParseExact(clean, DateFormat, Culture);
-					}
-					else if (value.Type == JTokenType.Date)
-					{
-						dt = value.Value<DateTime>().ToUniversalTime();
 					}
 					else
 					{
 						// try parsing instead
-						dt = value.AsString().ParseJsonDate(Culture);
+						dt = clean.ParseJsonDate(Culture);
 					}
 
 					if (type == typeof(DateTime))
-						prop.SetValue(x, dt, null);
+					{
+						prop.SetValue(target, dt, null);
+					}
 					else if (type == typeof(DateTimeOffset))
-						prop.SetValue(x, (DateTimeOffset)dt, null);
+					{
+						prop.SetValue(target, (DateTimeOffset)dt, null);
+					}
 				}
 				else if (type == typeof(Decimal))
 				{
-					var dec = Decimal.Parse(value.AsString(Culture), Culture);
-					prop.SetValue(x, dec, null);
+					var dec = Decimal.Parse(value.ToString(), Culture);
+					prop.SetValue(target, dec, null);
 				}
 				else if (type == typeof(Guid))
 				{
-					string raw = value.AsString();
+					string raw = value.ToString();
 					var guid = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(raw);
-					prop.SetValue(x, guid, null);
+					prop.SetValue(target, guid, null);
 				}
 				else if (type.IsGenericType)
 				{
 					var genericTypeDef = type.GetGenericTypeDefinition();
 					if (genericTypeDef == typeof(List<>))
 					{
-						var list = BuildList(type, value.Children());
-						prop.SetValue(x, list, null);
+						var list = BuildList(type, value);
+						prop.SetValue(target, list, null);
 					}
 					else if (genericTypeDef == typeof(Dictionary<,>))
 					{
@@ -177,69 +156,35 @@ namespace RestSharp.Deserializers
 						// only supports Dict<string, T>()
 						if (keyType == typeof(string))
 						{
-							var dict = BuildDictionary(type, value.Children());
-							prop.SetValue(x, dict, null);
+							var dict = BuildDictionary(type, value);
+							prop.SetValue(target, dict, null);
 						}
 					}
 					else
 					{
 						// nested property classes
-						var item = CreateAndMap(type, json[actualName]);
-						prop.SetValue(x, item, null);
+						var item = CreateAndMap(type, data[actualName]);
+						prop.SetValue(target, item, null);
 					}
 				}
 				else
 				{
 					// nested property classes
-					var item = CreateAndMap(type, json[actualName]);
-					prop.SetValue(x, item, null);
+					var item = CreateAndMap(type, data[actualName]);
+					prop.SetValue(target, item, null);
 				}
 			}
+
+
 		}
 
-		private object CreateAndMap(Type type, JToken element)
-		{
-			object instance = null;
-			if (type.IsGenericType)
-			{
-				var genericTypeDef = type.GetGenericTypeDefinition();
-				if (genericTypeDef == typeof(Dictionary<,>))
-				{
-					instance = BuildDictionary(type, element.Children());
-				}
-				else if (genericTypeDef == typeof(List<>))
-				{
-					instance = BuildList(type, element.Children());
-				}
-				else if (type == typeof(string))
-				{
-					instance = (string)element;
-				}
-				else
-				{
-					instance = Activator.CreateInstance(type);
-					Map(instance, element);
-				}
-			}
-			else if (type == typeof(string))
-			{
-				instance = (string)element;
-			}
-			else
-			{
-				instance = Activator.CreateInstance(type);
-				Map(instance, element);
-			}
-			return instance;
-		}
-
-		private IDictionary BuildDictionary(Type type, JEnumerable<JToken> elements)
+		private IDictionary BuildDictionary(Type type, object parent)
 		{
 			var dict = (IDictionary)Activator.CreateInstance(type);
 			var valueType = type.GetGenericArguments()[1];
-			foreach (JProperty child in elements)
+			foreach (var child in (IDictionary<string, object>)parent)
 			{
-				var key = child.Name;
+				var key = child.Key;
 				var item = CreateAndMap(valueType, child.Value);
 				dict.Add(key, item);
 			}
@@ -247,24 +192,21 @@ namespace RestSharp.Deserializers
 			return dict;
 		}
 
-		private IList BuildList(Type type, JEnumerable<JToken> elements)
+		private IList BuildList(Type type, object parent)
 		{
 			var list = (IList)Activator.CreateInstance(type);
 			var itemType = type.GetGenericArguments()[0];
 
-			foreach (var element in elements)
+			foreach (var element in (IList)parent)
 			{
 				if (itemType.IsPrimitive)
 				{
-					var value = element as JValue;
-					if (value != null)
-					{
-						list.Add(value.Value.ChangeType(itemType, Culture));
-					}
+					var value = element.ToString();
+					list.Add(value.ChangeType(itemType, Culture));
 				}
 				else if (itemType == typeof(string))
 				{
-					list.Add(element.AsString());
+					list.Add(element.ToString());
 				}
 				else
 				{
@@ -274,5 +216,43 @@ namespace RestSharp.Deserializers
 			}
 			return list;
 		}
+
+		private object CreateAndMap(Type type, object element)
+		{
+			object instance = null;
+			if (type.IsGenericType)
+			{
+				var genericTypeDef = type.GetGenericTypeDefinition();
+				if (genericTypeDef == typeof(Dictionary<,>))
+				{
+					instance = BuildDictionary(type, element);
+				}
+				else if (genericTypeDef == typeof(List<>))
+				{
+					instance = BuildList(type, element);
+				}
+				else if (type == typeof(string))
+				{
+					instance = (string)element;
+				}
+				else
+				{
+					instance = Activator.CreateInstance(type);
+					Map(instance, (IDictionary<string, object>)element);
+				}
+			}
+			else if (type == typeof(string))
+			{
+				instance = (string)element;
+			}
+			else
+			{
+				instance = Activator.CreateInstance(type);
+				var data = (IDictionary<string, object>)element;
+				Map(instance, data);
+			}
+			return instance;
+		}
+
 	}
 }

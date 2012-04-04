@@ -13,7 +13,7 @@
     <AssemblyName>RestSharp.WindowsPhone</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
-    <TargetFrameworkProfile>WindowsPhone</TargetFrameworkProfile>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <SilverlightApplication>false</SilverlightApplication>
     <ValidateXaml>true</ValidateXaml>
@@ -44,10 +44,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.8\lib\sl3-wp\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -252,9 +248,6 @@
     <Compile Include="..\restsharp\serializers\ISerializer.cs">
       <Link>Serializers\ISerializer.cs</Link>
     </Compile>
-    <Compile Include="..\restsharp\serializers\JsonSerializer.cs">
-      <Link>Serializers\JsonSerializer.cs</Link>
-    </Compile>
     <Compile Include="..\restsharp\serializers\SerializeAsAttribute.cs">
       <Link>Serializers\SerializeAsAttribute.cs</Link>
     </Compile>
@@ -263,6 +256,9 @@
     </Compile>
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
     </Compile>
     <Compile Include="..\restsharp\validation\Require.cs">
       <Link>Validation\Require.cs</Link>

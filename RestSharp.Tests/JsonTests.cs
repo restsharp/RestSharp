@@ -325,17 +325,6 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_JScript_Json_Dates()
-		{
-			var doc = CreateJScriptDateJson();
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var bd = d.Deserialize<Birthdate>(response);
-
-			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value);
-		}
-
-		[Fact]
 		public void Can_Deserialize_Unix_Json_Dates()
 		{
 			var doc = CreateUnixDateJson();
@@ -535,14 +524,6 @@ namespace RestSharp.Tests
 			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
 
 			return JsonConvert.SerializeObject(bd, new IsoDateTimeConverter());
-		}
-
-		private string CreateJScriptDateJson()
-		{
-			var bd = new Birthdate();
-			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
-
-			return JsonConvert.SerializeObject(bd, new JavaScriptDateTimeConverter());
 		}
 
 		private string CreateUnixDateJson()
