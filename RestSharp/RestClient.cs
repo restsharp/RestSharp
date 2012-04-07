@@ -488,7 +488,7 @@ namespace RestSharp
 			return restResponse;
 		}
 
-		private RestResponse<T> Deserialize<T>(IRestRequest request, RestResponse raw) where T : new()
+		private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw) where T : new()
 		{
 			request.OnBeforeDeserialization(raw);
 
@@ -497,10 +497,10 @@ namespace RestSharp
 			handler.DateFormat = request.DateFormat;
 			handler.Namespace = request.XmlNamespace;
 
-			var response = new RestResponse<T>();
+			IRestResponse<T> response = new RestResponse<T>();
 			try
 			{
-				response = (RestResponse<T>)raw;
+			    response = raw.toAsyncResponse<T>();
 				response.Data = handler.Deserialize<T>(raw);
 			}
 			catch (Exception ex)

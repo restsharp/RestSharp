@@ -20,7 +20,7 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(RestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response) where T : new()
 		{
 			var target = new T();
 
