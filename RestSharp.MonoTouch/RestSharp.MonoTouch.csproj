@@ -158,6 +158,9 @@
     <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
       <Link>Serializers\SerializeAsAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseExtensions.cs">
+      <Link>Extensions\ResponseExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
       <Link>Serializers\XmlSerializer.cs</Link>
     </Compile>

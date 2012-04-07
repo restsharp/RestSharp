@@ -126,6 +126,9 @@
     <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
       <Link>Extensions\XmlExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseExtensions.cs">
+      <Link>Extensions\ResponseExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Deserializers\DeserializeAsAttribute.cs">
       <Link>Deserializers\DeserializeAsAttribute.cs</Link>
     </Compile>
