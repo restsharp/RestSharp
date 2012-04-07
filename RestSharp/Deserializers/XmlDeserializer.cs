@@ -179,7 +179,12 @@ namespace RestSharp.Deserializers
 					var raw = value.ToString();
 					value = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(value.ToString());
 					prop.SetValue(x, value, null);
-				}
+                }
+                else if (type == typeof(TimeSpan))
+                {
+                    var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
+                    prop.SetValue(x, timeSpan, null);
+                }
 				else if (type.IsGenericType)
 				{
 					var t = type.GetGenericArguments()[0];

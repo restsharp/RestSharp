@@ -151,6 +151,9 @@
     <Content Include="SampleData\Lastfm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\timespans.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\xmllists.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
