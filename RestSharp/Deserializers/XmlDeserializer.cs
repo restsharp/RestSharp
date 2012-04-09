@@ -38,7 +38,7 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response)
 		{
 			if (string.IsNullOrEmpty( response.Content ))
 				return default(T);
@@ -56,7 +56,7 @@ namespace RestSharp.Deserializers
 				RemoveNamespace(doc);
 			}
 
-			var x = new T();
+			var x = Activator.CreateInstance<T>();
 			var objType = x.GetType();
 
 			if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
