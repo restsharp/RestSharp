@@ -20,9 +20,9 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response)
 		{
-			var target = new T();
+			var target = Activator.CreateInstance<T>();
 
 			if (target is IList)
 			{
