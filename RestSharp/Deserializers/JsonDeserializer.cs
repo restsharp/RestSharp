@@ -20,9 +20,9 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response)
 		{
-			var target = new T();
+			var target = Activator.CreateInstance<T>();
 
 			if (target is IList)
 			{
@@ -78,6 +78,8 @@ namespace RestSharp.Deserializers
 
 				if (value == null) continue;
 
+				var stringValue = Convert.ToString(value, Culture);
+
 				// check for nullable and extract underlying type
 				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 				{
@@ -88,37 +90,34 @@ namespace RestSharp.Deserializers
 				{
 					// no primitives can contain quotes so we can safely remove them
 					// allows converting a json value like {"index": "1"} to an int
-					var tmpVal = value.ToString().Replace("\"", string.Empty);
+					var tmpVal = stringValue.Replace("\"", string.Empty);
 					prop.SetValue(target, tmpVal.ChangeType(type, Culture), null);
 				}
 				else if (type.IsEnum)
 				{
-					var converted = type.FindEnumValue(value.ToString(), Culture);
+					var converted = type.FindEnumValue(stringValue, Culture);
 					prop.SetValue(target, converted, null);
 				}
 				else if (type == typeof(Uri))
 				{
-					string raw = value.ToString();
-					var uri = new Uri(raw, UriKind.RelativeOrAbsolute);
+					var uri = new Uri(stringValue, UriKind.RelativeOrAbsolute);
 					prop.SetValue(target, uri, null);
 				}
 				else if (type == typeof(string))
 				{
-					string raw = value.ToString();
-					prop.SetValue(target, raw, null);
+					prop.SetValue(target, stringValue, null);
 				}
 				else if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
 				{
 					DateTime dt;
-					var clean = value.ToString();
 					if (DateFormat.HasValue())
 					{
-						dt = DateTime.ParseExact(clean, DateFormat, Culture);
+						dt = DateTime.ParseExact(stringValue, DateFormat, Culture);
 					}
 					else
 					{
 						// try parsing instead
-						dt = clean.ParseJsonDate(Culture);
+						dt = stringValue.ParseJsonDate(Culture);
 					}
 
 					if (type == typeof(DateTime))
@@ -132,20 +131,19 @@ namespace RestSharp.Deserializers
 				}
 				else if (type == typeof(Decimal))
 				{
-					var dec = Decimal.Parse(value.ToString(), Culture);
+					var dec = Decimal.Parse(stringValue, Culture);
 					prop.SetValue(target, dec, null);
 				}
 				else if (type == typeof(Guid))
 				{
-					string raw = value.ToString();
-					var guid = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(raw);
+					var guid = string.IsNullOrEmpty(stringValue) ? Guid.Empty : new Guid(stringValue);
 					prop.SetValue(target, guid, null);
-                }
-                else if (type == typeof(TimeSpan))
-                {
-                    var timeSpan = TimeSpan.Parse(value.ToString());
-                    prop.SetValue(target, timeSpan, null);
-                }
+				}
+				else if (type == typeof(TimeSpan))
+				{
+					var timeSpan = TimeSpan.Parse(stringValue);
+					prop.SetValue(target, timeSpan, null);
+				}
 				else if (type.IsGenericType)
 				{
 					var genericTypeDef = type.GetGenericTypeDefinition();
