@@ -248,6 +248,9 @@
     <Compile Include="..\restsharp\serializers\ISerializer.cs">
       <Link>Serializers\ISerializer.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Serializers\JsonSerializer.cs">
+      <Link>Serializers\JsonSerializer.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\serializers\SerializeAsAttribute.cs">
       <Link>Serializers\SerializeAsAttribute.cs</Link>
     </Compile>

@@ -139,6 +139,7 @@
     <Compile Include="Deserializers\DotNetXmlDeserializer.cs" />
     <Compile Include="Serializers\DotNetXmlSerializer.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
+    <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\SerializeAsAttribute.cs" />
     <Compile Include="Serializers\XmlSerializer.cs" />
     <Compile Include="Http.Async.cs" />
