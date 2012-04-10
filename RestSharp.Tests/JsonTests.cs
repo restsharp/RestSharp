@@ -30,7 +30,9 @@ namespace RestSharp.Tests
 {
 	public class JsonTests
 	{
-		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+        private const string AlternativeCulture = "pt-PT";
+
+        private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
 		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
@@ -233,6 +235,15 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
+        [Fact]
+        public void Can_Deserialize_With_Default_Root_Alternative_Culture()
+        {
+            using (new CultureChange(AlternativeCulture))
+            {
+                Can_Deserialize_With_Default_Root();
+            }
+        }
+
 		[Fact]
 		public void Can_Deserialize_Names_With_Underscores_With_Default_Root()
 		{
@@ -262,6 +273,15 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Names_With_Underscores_With_Default_Root_Alternative_Culture()
+        {
+            using (new CultureChange(AlternativeCulture))
+            {
+                Can_Deserialize_Names_With_Underscores_With_Default_Root();
+            }
+        }
+
 		[Fact]
 		public void Can_Deserialize_Names_With_Dashes_With_Default_Root()
 		{
@@ -290,6 +310,15 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 1", p.Foes["dict1"].Nickname);
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
+
+        [Fact]
+        public void Can_Deserialize_Names_With_Dashes_With_Default_Root_Alternative_Culture()
+        {
+            using (new CultureChange(AlternativeCulture))
+            {
+                Can_Deserialize_Names_With_Dashes_With_Default_Root();
+            }
+        }
 
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data()

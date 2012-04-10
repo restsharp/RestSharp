@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CultureChange.cs" />
     <Compile Include="JsonTests.cs" />
     <Compile Include="Fakes\NullHttp.cs" />
     <Compile Include="NamespacedXmlTests.cs" />
