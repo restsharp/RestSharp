@@ -96,6 +96,9 @@
     <Compile Include="..\RestSharp\RestResponse.cs">
       <Link>RestResponse.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Validation\Require.cs">
       <Link>Validation\Require.cs</Link>
     </Compile>
