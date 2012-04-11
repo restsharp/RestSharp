@@ -62,7 +62,7 @@ namespace RestSharp
 		{
 			get
 			{
-				if (_content == null)
+				if (_content == null && RawBytes != null)
 				{
 					_content = RawBytes.AsString();
 				}
