@@ -49,7 +49,21 @@ namespace RestSharp.Extensions
 		/// </summary>
 		public static string UrlEncode(this string input)
 		{
-			return Uri.EscapeDataString(input);
+            const int maxLength = 30000;
+            if (input.Length <= maxLength)
+                return Uri.EscapeDataString(input);
+
+            StringBuilder sb = new StringBuilder(input.Length * 2);
+            int index = 0;            
+            while (index < input.Length)
+            {
+                int length = Math.Min(input.Length - index, maxLength);
+                string subString = input.Substring(index, length);
+                sb.Append(Uri.EscapeDataString(subString));
+                index += subString.Length;
+            }
+
+			return sb.ToString();
 		}
 
 		public static string HtmlDecode(this string input)
