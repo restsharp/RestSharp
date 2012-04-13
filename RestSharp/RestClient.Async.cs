@@ -107,5 +107,91 @@ namespace RestSharp
 				callback(restResponse, asyncHandle);
 			});
 		}
+
+		public virtual RestRequestAsyncHandle GetAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.GET;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle PostAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.POST;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle PutAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.PUT;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle HeadAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.HEAD;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle OptionsAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.OPTIONS;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle PatchAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.PATCH;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle DeleteAsync<T>(IRestRequest request, Action<RestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		{
+			request.Method = Method.DELETE;
+			return ExecuteAsync<T>(request, callback);
+		}
+
+
+		public virtual RestRequestAsyncHandle GetAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.GET;
+			return ExecuteAsync(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle PostAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.POST;
+			return ExecuteAsync(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle PutAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.PUT;
+			return ExecuteAsync(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle HeadAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.HEAD;
+			return ExecuteAsync(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle OptionsAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.OPTIONS;
+			return ExecuteAsync(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle PatchAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.PATCH;
+			return ExecuteAsync(request, callback);
+		}
+
+		public virtual RestRequestAsyncHandle DeleteAsync(IRestRequest request, Action<RestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.DELETE;
+			return ExecuteAsync(request, callback);
+		}
+
 	}
 }

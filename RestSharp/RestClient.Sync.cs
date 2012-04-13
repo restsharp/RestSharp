@@ -70,6 +70,90 @@ namespace RestSharp
 			var raw = Execute(request);
 			return Deserialize<T>(request, raw);
 		}
+
+		public virtual RestResponse<T> Get<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.GET;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse<T> Post<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.POST;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse<T> Put<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.PUT;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse<T> Head<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.HEAD;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse<T> Options<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.OPTIONS;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse<T> Patch<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.PATCH;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse<T> Delete<T>(IRestRequest request) where T : new()
+		{
+			request.Method = Method.DELETE;
+			return Execute<T>(request);
+		}
+
+		public virtual RestResponse Get(IRestRequest request)
+		{
+			request.Method = Method.GET;
+			return Execute(request);
+		}
+
+		public virtual RestResponse Post(IRestRequest request)
+		{
+			request.Method = Method.POST;
+			return Execute(request);
+		}
+
+		public virtual RestResponse Put(IRestRequest request)
+		{
+			request.Method = Method.PUT;
+			return Execute(request);
+		}
+
+		public virtual RestResponse Head(IRestRequest request)
+		{
+			request.Method = Method.HEAD;
+			return Execute(request);
+		}
+
+		public virtual RestResponse Options(IRestRequest request)
+		{
+			request.Method = Method.OPTIONS;
+			return Execute(request);
+		}
+
+		public virtual RestResponse Patch(IRestRequest request)
+		{
+			request.Method = Method.PATCH;
+			return Execute(request);
+		}
+
+		public virtual RestResponse Delete(IRestRequest request)
+		{
+			request.Method = Method.DELETE;
+			return Execute(request);
+		}
 		
 		private RestResponse GetResponse(IRestRequest request)
 		{
