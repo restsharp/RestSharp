@@ -131,7 +131,20 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.Images.Count);
 		}
 
-		[Fact]
+        [Fact]
+        public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name_But_Attr_Using_XmlAttributeDeserializer()
+        {
+            var xmlpath = PathFor("InlineListAttrSample.xml");
+            var doc = XDocument.Load(xmlpath);
+
+            var xml = new XmlAttributeDeserializer();
+            var output = xml.Deserialize<InlineListAttrSample>(new RestResponse { Content = doc.ToString() });
+
+            Assert.NotEmpty(output.Images);
+            Assert.Equal(4, output.Images.Count);
+        }
+
+        [Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name()
 		{
 			var xmlpath = PathFor("InlineListSample.xml");

@@ -37,7 +37,7 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response)
+		public T Deserialize<T>(IRestResponse response) where T : new()
 		{
 			if (response.Content == null)
 				return default(T);
@@ -55,7 +55,7 @@ namespace RestSharp.Deserializers
 				RemoveNamespace(doc);
 			}
 
-            var x = Activator.CreateInstance<T>();
+			var x = new T();
 			var objType = x.GetType();
 
 			if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
@@ -109,25 +109,19 @@ namespace RestSharp.Deserializers
 
 				var value = GetValueFromXml(root, name, isAttribute);
 
-				//if (value == null)
+				if (value == null)
 				{
 					// special case for inline list items
 					if (type.IsGenericType)
 					{
 						var genericType = type.GetGenericArguments()[0];
                         
-                        string subElemName = genericType.Name;
+                        string genTypeName = genericType.Name;
+                        var genTypeAttr = genericType.GetAttribute<DeserializeAsAttribute>();
+				        if (genTypeAttr != null)
+					        genTypeName = genTypeAttr.Name ?? genTypeName;
 
-                        if (options != null && !string.IsNullOrEmpty(options.Name))
-                            subElemName = options.Name;
-                        else
-                        {
-                            var genTypeAttr = genericType.GetAttribute<DeserializeAsAttribute>();
-                            if (genTypeAttr != null)
-                                subElemName = genTypeAttr.Name ?? subElemName;
-                        }
-
-						var first = GetElementByName(root, subElemName);
+						var first = GetElementByName(root, genTypeName);
 						if (first != null)
 						{
 							var elements = root.Elements(first.Name);
@@ -135,10 +129,10 @@ namespace RestSharp.Deserializers
 							var list = (IList)Activator.CreateInstance(type);
 							PopulateListFromElements(genericType, elements, list);
 							prop.SetValue(x, list, null);
-                            continue; //skip the other List implementation (see below)
+
 						}
 					}
-					//continue;
+					continue;
 				}
 
 				// check for nullable and extract underlying type
@@ -321,14 +315,10 @@ namespace RestSharp.Deserializers
 				}
 				else
 				{
-                    if (!(element.IsEmpty || element.HasElements)) // || element.HasAttributes))
-                    {
-                        val = element.Value;
-                    }
-                    else
-                    {
-                        val = element;
-                    }
+					if (!element.IsEmpty || element.HasElements || element.HasAttributes)
+					{
+						val = element.Value;
+					}
 				}
 			}
 

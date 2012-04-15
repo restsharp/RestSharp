@@ -114,6 +114,9 @@
     <Content Include="SampleData\datetimes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\InlineListAttrSample.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\jsonenums.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
