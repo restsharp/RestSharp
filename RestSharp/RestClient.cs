@@ -341,7 +341,10 @@ namespace RestSharp
 			{
 				if (querystring.Length > 1)
 					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
+                if (p.SkipUrlEncode)
+                    querystring.AppendFormat("{0}={1}", p.Name, (p.Value.ToString()));
+                else
+				    querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
 			}
 
 			return querystring.ToString();
@@ -420,7 +423,8 @@ namespace RestSharp
 						  select new HttpParameter
 						  {
 							  Name = p.Name,
-							  Value = p.Value.ToString()
+							  Value = p.Value.ToString(),
+                              SkipUrlEncode = p.SkipUrlEncode
 						  };
 
 			foreach(var parameter in @params)

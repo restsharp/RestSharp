@@ -131,7 +131,20 @@ namespace RestSharp.Tests
 			Assert.Equal(4, output.Images.Count);
 		}
 
-		[Fact]
+        [Fact]
+        public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name_But_Attr_Using_XmlAttributeDeserializer()
+        {
+            var xmlpath = PathFor("InlineListAttrSample.xml");
+            var doc = XDocument.Load(xmlpath);
+
+            var xml = new XmlAttributeDeserializer();
+            var output = xml.Deserialize<InlineListAttrSample>(new RestResponse { Content = doc.ToString() });
+
+            Assert.NotEmpty(output.Images);
+            Assert.Equal(4, output.Images.Count);
+        }
+
+        [Fact]
 		public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name()
 		{
 			var xmlpath = PathFor("InlineListSample.xml");
@@ -545,7 +558,18 @@ namespace RestSharp.Tests
 			Assert.Equal("Sunny", output.weather[0].condition.data);
 		}
 
-		[Fact]
+        [Fact]
+        public void Can_Deserialize_AcoustID_Xml()
+        {
+            var xmlpath = PathFor("AcoustID.xml");
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+
+            var d = new XmlDeserializer();
+            var output = d.Deserialize<MTB.Worker.AcoustID.Response>(response);
+
+        }
+        [Fact]
 		public void Can_Deserialize_Boolean_From_Number()
 		{
 				var xmlpath = PathFor("boolean_from_number.xml");

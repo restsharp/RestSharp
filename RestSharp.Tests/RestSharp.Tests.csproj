@@ -95,6 +95,7 @@
     <Compile Include="SampleClasses\SOUser.cs" />
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
+    <Compile Include="SampleClasses\WrkAcoustIDXmlResponse.cs" />
     <Compile Include="SerializerTests.cs" />
     <Compile Include="SimpleJson.cs" />
     <Compile Include="UrlBuilderTests.cs" />
@@ -111,6 +112,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\datetimes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\InlineListAttrSample.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\jsonenums.txt">
@@ -139,6 +143,9 @@
     </Content>
     <Content Include="SampleData\ListWithAttributes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\AcoustID.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\NestedListSample.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

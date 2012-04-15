@@ -265,7 +265,10 @@ namespace RestSharp
 			{
 				if (querystring.Length > 1)
 					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
+                if (p.SkipUrlEncode)
+                    querystring.AppendFormat("{0}={1}", p.Name, p.Value);
+                else
+                    querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
 			}
 
 			return querystring.ToString();

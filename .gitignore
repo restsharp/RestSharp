@@ -35,3 +35,4 @@ Download/
 #Ignore files from MonoDevelop
 *.pidb
 *.userprefs
+/MyTest/

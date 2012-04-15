@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RestSharp.Deserializers;
 
 namespace RestSharp.Tests.SampleClasses
 {
@@ -18,7 +19,14 @@ namespace RestSharp.Tests.SampleClasses
 		public List<Image> Images { get; set; }
 	}
 
-	public class NestedListSample
+    public class InlineListAttrSample
+    {
+        public int Count { get; set; }
+        [DeserializeAs(Name = "image-large")]
+        public List<image> Images { get; set; }
+    }
+
+    public class NestedListSample
 	{
 		public List<image> images { get; set; }
 		public List<Image> Images { get; set; }

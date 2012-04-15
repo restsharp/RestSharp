@@ -34,6 +34,11 @@ namespace RestSharp
 		/// </summary>
 		public ParameterType Type { get; set; }
 
+        /// <summary>
+        /// This may skip the UrlEncode when building the uri
+        /// </summary>
+        public bool SkipUrlEncode { get; set; }
+
 		/// <summary>
 		/// Return a human-readable representation of this parameter
 		/// </summary>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<InlineListSample>
+	<count>4</count>
+	<image-large src="1.gif">value1</image-large>
+	<image-large src="2.gif">value2</image-large>
+	<image-large src="3.gif">value3</image-large>
+	<image-large src="4.gif">value4</image-large>
+</InlineListSample>

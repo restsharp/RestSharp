@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<response>
+  <status>ok</status>
+  <results>
+    <result>
+      <recordings>
+        <recording>
+          <artists>
+            <artist>
+              <id>6d7b7cd4-254b-4c25-83f6-dd20f98ceacd</id>
+              <name>M83</name>
+            </artist>
+          </artists>
+          <duration>639</duration>
+          <releasegroups>
+            <releasegroup>
+              <artists>
+                <artist>
+                  <id>89ad4ac3-39f7-470e-963a-56509c546377</id>
+                  <name>Various Artists</name>
+                </artist>
+              </artists>
+              <type>Soundtrack</type>
+              <id>9e585041-f2c1-3f0d-be40-40c845a3323f</id>
+              <releases>
+                <release>
+                  <track_count>23</track_count>
+                  <title>Donkey Punch</title>
+                  <country>GB</country>
+                  <artists>
+                    <artist>
+                      <id>89ad4ac3-39f7-470e-963a-56509c546377</id>
+                      <name>Various Artists</name>
+                    </artist>
+                  </artists>
+                  <date>
+                    <month>7</month>
+                    <day>28</day>
+                    <year>2008</year>
+                  </date>
+                  <medium_count>2</medium_count>
+                  <id>11de51d7-32c0-4f8b-8df8-1dce7e65245f</id>
+                </release>
+              </releases>
+              <title>Donkey Punch</title>
+            </releasegroup>
+            <releasegroup>
+              <artists>
+                <artist>
+                  <id>6d7b7cd4-254b-4c25-83f6-dd20f98ceacd</id>
+                  <name>M83</name>
+                </artist>
+              </artists>
+              <type>Album</type>
+              <id>ddaa2d4d-314e-3e7c-b1d0-f6d207f5aa2f</id>
+              <releases>
+                <release>
+                  <track_count>16</track_count>
+                  <title>Before the Dawn Heals Us</title>
+                  <country>JP</country>
+                  <artists>
+                    <artist>
+                      <id>6d7b7cd4-254b-4c25-83f6-dd20f98ceacd</id>
+                      <name>M83</name>
+                    </artist>
+                  </artists>
+                  <date>
+                    <month>9</month>
+                    <day>14</day>
+                    <year>2005</year>
+                  </date>
+                  <medium_count>1</medium_count>
+                  <id>79903505-a23e-4790-8cd5-d5d801337f46</id>
+                </release>
+                <release>
+                  <track_count>15</track_count>
+                  <title>Before the Dawn Heals Us</title>
+                  <country>FR</country>
+                  <artists>
+                    <artist>
+                      <id>6d7b7cd4-254b-4c25-83f6-dd20f98ceacd</id>
+                      <name>M83</name>
+                    </artist>
+                  </artists>
+                  <date>
+                    <month>1</month>
+                    <day>24</day>
+                    <year>2005</year>
+                  </date>
+                  <medium_count>1</medium_count>
+                  <id>db85c244-53e7-441c-bab0-52c9c0d27450</id>
+                </release>
+                <release>
+                  <track_count>15</track_count>
+                  <title>Before the Dawn Heals Us</title>
+                  <country>US</country>
+                  <artists>
+                    <artist>
+                      <id>6d7b7cd4-254b-4c25-83f6-dd20f98ceacd</id>
+                      <name>M83</name>
+                    </artist>
+                  </artists>
+                  <date>
+                    <month>1</month>
+                    <day>25</day>
+                    <year>2005</year>
+                  </date>
+                  <medium_count>1</medium_count>
+                  <id>fad5e4b4-13ac-3f6c-9915-1f0267780df7</id>
+                </release>
+              </releases>
+              <title>Before the Dawn Heals Us</title>
+            </releasegroup>
+          </releasegroups>
+          <title>Lower Your Eyelids to Die With the Sun</title>
+          <id>cd2e7c47-16f5-46c6-a37c-a1eb7bf599ff</id>
+        </recording>
+      </recordings>
+      <score>1.0</score>
+      <id>9ff43b6a-4f16-427c-93c2-92307ca505e0</id>
+    </result>
+  </results>
+</response>
