@@ -545,7 +545,18 @@ namespace RestSharp.Tests
 			Assert.Equal("Sunny", output.weather[0].condition.data);
 		}
 
-		[Fact]
+        [Fact]
+        public void Can_Deserialize_AcoustID_Xml()
+        {
+            var xmlpath = PathFor("AcoustID.xml");
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+
+            var d = new XmlDeserializer();
+            var output = d.Deserialize<MTB.Worker.AcoustID.Response>(response);
+
+        }
+        [Fact]
 		public void Can_Deserialize_Boolean_From_Number()
 		{
 				var xmlpath = PathFor("boolean_from_number.xml");
