@@ -18,5 +18,9 @@ namespace RestSharp
 		/// Value of the parameter
 		/// </summary>
 		public string Value { get; set; }
-	}
+        /// <summary>
+        /// This may skip the UrlEncode when building the uri
+        /// </summary>
+        public bool SkipUrlEncode { get; set; }
+    }
 }
