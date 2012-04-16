@@ -41,6 +41,52 @@
 
         <h4><a href="https://github.com/restsharp/RestSharp/wiki/Acknowledgements">Contributors and Acknowledgements</a></h4>
 
+
+        <h3>Examples</h3>
+        {% highlight csharp %}
+          var client = new RestClient("http://example.com");
+          // client.Authenticator = new HttpBasicAuthenticator(username, password);
+
+          var request = new RestRequest("resource/{id}", Method.POST);
+          request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
+          request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
+
+          // add POST or URL parameters for all properties on an object
+          request.AddObject(object);
+
+          // or just whitelisted properties
+          request.AddObject(object, "PersonId", "Name", ...);
+
+          // easily add HTTP Headers
+          request.AddHeader("header", "value");
+
+          // add files to upload (works with compatible verbs)
+          request.AddFile(path);
+
+          // execute the request
+          RestResponse response = client.Execute(request);
+          var content = response.Content; // raw content as string
+
+          // or automatically deserialize result
+          // return content type is sniffed but can be explicitly set via RestClient.AddHandler();
+          RestResponse<Person> response2 = client.Execute<Person>(request);
+          var name = response2.Data.Name;
+
+          // easy async support
+          client.ExecuteAsync(request, response => {
+              Console.WriteLine(response.Content);
+          });
+
+          // async with deserialization
+          var asyncHandle = client.ExecuteAsync<Person>(request, response => {
+              Console.WriteLine(response.Data.Name);
+          });
+
+          // abort the request on demand
+          asyncHandle.Abort();
+
+        {% endhighlight %}
+
         <h3>The Latest</h3>
 
         <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
