@@ -56,12 +56,6 @@ var request = new RestRequest("resource/{id}", Method.POST);
 request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
 request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
 
-// add POST or URL parameters for all properties on an object
-request.AddObject(object);
-
-// or just whitelisted properties
-request.AddObject(object, "PersonId", "Name", ...);
-
 // easily add HTTP Headers
 request.AddHeader("header", "value");
 
