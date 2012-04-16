@@ -7,16 +7,15 @@ if not exist Download\package\lib\sl3-wp mkdir Download\package\lib\sl3-wp
 if not exist Download\package\lib\sl4-wp71 mkdir Download\package\lib\sl4-wp71
 if not exist Download\package\lib\sl4 mkdir Download\package\lib\sl4
 
-tools\ilmerge.exe /lib:RestSharp\bin\Release /internalize /ndebug /v2 /out:Download\RestSharp.dll RestSharp.dll Newtonsoft.Json.dll
 copy RestSharp\bin\Release\RestSharp.xml Download\
 
-copy RestSharp.Silverlight\bin\Release\*.dll Download\Silverlight\
-copy RestSharp.Silverlight\bin\Release\*.xml Download\Silverlight\
+copy RestSharp.Silverlight\bin\Release\RestSharp.dll Download\Silverlight\
+copy RestSharp.Silverlight\bin\Release\RestSharp.xml Download\Silverlight\
 
-copy RestSharp.WindowsPhone\bin\Release\*.dll Download\WindowsPhone\7.0\
-copy RestSharp.WindowsPhone\bin\Release\*.xml Download\WindowsPhone\7.0\
-copy RestSharp.WindowsPhone.Mango\bin\Release\*.dll Download\WindowsPhone\7.1\
-copy RestSharp.WindowsPhone.Mango\bin\Release\*.xml Download\WindowsPhone\7.1\
+copy RestSharp.WindowsPhone\bin\Release\RestSharp.dll Download\WindowsPhone\7.0\
+copy RestSharp.WindowsPhone\bin\Release\RestSharp.xml Download\WindowsPhone\7.0\
+copy RestSharp.WindowsPhone.Mango\bin\Release\RestSharp.dll Download\WindowsPhone\7.1\
+copy RestSharp.WindowsPhone.Mango\bin\Release\RestSharp.xml Download\WindowsPhone\7.1\
 
 copy LICENSE.txt Download
 copy readme.txt Download
