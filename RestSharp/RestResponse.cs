@@ -96,11 +96,11 @@ namespace RestSharp
 		/// <summary>
 		/// Cookies returned by server with the response
 		/// </summary>
-		public IList<RestResponseCookie> Cookies { get; protected set; }
+		public IList<RestResponseCookie> Cookies { get; protected internal set; }
 		/// <summary>
 		/// Headers returned by server with the response
 		/// </summary>
-		public IList<Parameter> Headers { get; protected set; }
+		public IList<Parameter> Headers { get; protected internal set; }
 
 		private ResponseStatus _responseStatus = ResponseStatus.None;
 		/// <summary>
@@ -159,6 +159,7 @@ namespace RestSharp
 				StatusDescription = response.StatusDescription
 			};
 		}
+        
 	}
 
 	/// <summary>

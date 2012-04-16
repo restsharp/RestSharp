@@ -30,7 +30,9 @@ namespace RestSharp.Tests
 {
 	public class JsonTests
 	{
-		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+		  private const string AlternativeCulture = "pt-PT";
+
+		  private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
 		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
@@ -126,7 +128,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date()
 		{
-		    var culture = CultureInfo.InvariantCulture;
+			 var culture = CultureInfo.InvariantCulture;
 			var format = "dd yyyy MMM, hh:mm ss tt";
 			var date = new DateTime(2010, 2, 8, 11, 11, 11);
 
@@ -233,6 +235,15 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
+		  [Fact]
+		  public void Can_Deserialize_With_Default_Root_Alternative_Culture()
+		  {
+				using (new CultureChange(AlternativeCulture))
+				{
+					 Can_Deserialize_With_Default_Root();
+				}
+		  }
+
 		[Fact]
 		public void Can_Deserialize_Names_With_Underscores_With_Default_Root()
 		{
@@ -261,6 +272,15 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 1", p.Foes["dict1"].Nickname);
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
+
+		  [Fact]
+		  public void Can_Deserialize_Names_With_Underscores_With_Default_Root_Alternative_Culture()
+		  {
+				using (new CultureChange(AlternativeCulture))
+				{
+					 Can_Deserialize_Names_With_Underscores_With_Default_Root();
+				}
+		  }
 
 		[Fact]
 		public void Can_Deserialize_Names_With_Dashes_With_Default_Root()
@@ -291,6 +311,15 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
+		  [Fact]
+		  public void Can_Deserialize_Names_With_Dashes_With_Default_Root_Alternative_Culture()
+		  {
+				using (new CultureChange(AlternativeCulture))
+				{
+					 Can_Deserialize_Names_With_Dashes_With_Default_Root();
+				}
+		  }
+
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data()
 		{
@@ -312,6 +341,24 @@ namespace RestSharp.Tests
 
 			Assert.Null(p.ReadOnlyProxy);
 		}
+
+		[Fact]
+		  public void Can_Deserialize_TimeSpan()
+		  {
+				var doc = File.ReadAllText(Path.Combine("SampleData", "timespans.txt"));
+				var d = new JsonDeserializer();
+				var response = new RestResponse { Content = doc };
+				var payload = d.Deserialize<TimeSpanTestStructure>(response);
+
+				Assert.Equal(new TimeSpan(468006), payload.Tick);
+				Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
+				Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
+				Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
+				Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+				Assert.Null(payload.NullableWithoutValue);
+				Assert.NotNull(payload.NullableWithValue);
+				Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+		  }
 
 		[Fact]
 		public void Can_Deserialize_Iso_Json_Dates()
