@@ -354,11 +354,9 @@ namespace RestSharp.Deserializers
 			}
 
 			// try looking for element that matches sanitized property name (Order by depth)
-			var element = root.Descendants()
-				.OrderBy(d => d.Ancestors().Count())
-				.FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) 
-				?? root.Descendants()
-				.OrderBy(d => d.Ancestors().Count())
+			var element = root.Elements()
+				.FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName)
+                ?? root.Elements()
 				.FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
 
 			if (element != null)
