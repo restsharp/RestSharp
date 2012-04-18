@@ -98,14 +98,14 @@ namespace RestSharp
 		{
 			return ExecuteAsync(request, (response, asyncHandle) =>
 			{
-				var restResponse = (IRestResponse<T>)response;
-				if (response.ResponseStatus != ResponseStatus.Aborted)
-				{
-					restResponse = Deserialize<T>(request, response);
-				}
+                IRestResponse<T> restResponse = null;
+                if (response.ResponseStatus != ResponseStatus.Aborted)
+                {
+                    restResponse = Deserialize<T>(request, response);
+                }
 
-				callback(restResponse, asyncHandle);
-			});
+                callback(restResponse, asyncHandle);
+            });
 		}
 	}
 }
