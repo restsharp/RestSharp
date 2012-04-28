@@ -98,7 +98,7 @@ namespace RestSharp
 		{
 			return ExecuteAsync(request, (response, asyncHandle) =>
 			{
-				var restResponse = (IRestResponse<T>)response;
+				IRestResponse<T> restResponse = null;
 				if (response.ResponseStatus != ResponseStatus.Aborted)
 				{
 					restResponse = Deserialize<T>(request, response);
