@@ -24,7 +24,7 @@
 //#define SIMPLE_JSON_OBJARRAYINTERNAL
 
 // NOTE: uncomment the following line to enable dynamic support.
-//#define SIMPLE_JSON_DYNAMIC
+//#define NET4
 
 // NOTE: uncomment the following line to enable DataContract support.
 //#define SIMPLE_JSON_DATACONTRACT
@@ -44,7 +44,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-#if SIMPLE_JSON_DYNAMIC
+#if NET4
 using System.Dynamic;
 #endif
 using System.Globalization;
@@ -110,7 +110,7 @@ namespace RestSharp
     public
 #endif
  class JsonObject :
-#if SIMPLE_JSON_DYNAMIC
+#if NET4
  DynamicObject,
 #endif
  IDictionary<string, object>
@@ -322,7 +322,7 @@ namespace RestSharp
             return SimpleJson.SerializeObject(this);
         }
 
-#if SIMPLE_JSON_DYNAMIC
+#if NET4
         /// <summary>
         /// Provides implementation for type conversion operations. Classes derived from the <see cref="T:System.Dynamic.DynamicObject"/> class can override this method to specify dynamic behavior for operations that convert an object from one type to another.
         /// </summary>

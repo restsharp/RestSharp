@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{E709A928
 		restsharp.nuspec = restsharp.nuspec
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Net4", "RestSharp.Net4\RestSharp.Net4.csproj", "{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,16 @@ Global
 		{F4D48DF6-316E-4963-B5C1-59CA39B431B7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F4D48DF6-316E-4963-B5C1-59CA39B431B7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F4D48DF6-316E-4963-B5C1-59CA39B431B7}.Release|x86.ActiveCfg = Release|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5FF943A5-260F-4042-B4CE-C4977BAD4EBB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
