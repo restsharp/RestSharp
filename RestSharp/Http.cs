@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using RestSharp.Extensions;
 
 #if WINDOWS_PHONE
@@ -180,8 +180,15 @@ namespace RestSharp
 		{
 			_restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
 			_restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
-			_restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
-			_restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
+			_restrictedHeaderActions.Add("Date", (r, v) =>
+				{
+					DateTime parsed;
+					if (DateTime.TryParse(v, out parsed))
+					{
+						r.Date = parsed;
+					}
+				});
+			_restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
 #if FRAMEWORK
 			_restrictedHeaderActions.Add("Range", (r, v) => { AddRange(r, v); });
 #endif
