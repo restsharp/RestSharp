@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using RestSharp.Extensions;
 
 #if WINDOWS_PHONE
@@ -180,8 +180,20 @@ namespace RestSharp
 		{
 			_restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
 			_restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
+#if NET4
+			_restrictedHeaderActions.Add("Date", (r, v) =>
+				{
+					DateTime parsed;
+					if (DateTime.TryParse(v, out parsed))
+					{
+						r.Date = parsed;
+					}
+				});
+			_restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
+#else
 			_restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
 			_restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
+#endif
 #if FRAMEWORK
 			_restrictedHeaderActions.Add("Range", (r, v) => { AddRange(r, v); });
 #endif
@@ -239,7 +251,7 @@ namespace RestSharp
 			foreach (var httpCookie in Cookies)
 			{
 #if FRAMEWORK
-                var cookie = new Cookie
+				var cookie = new Cookie
 				{
 					Name = httpCookie.Name,
 					Value = httpCookie.Value,
@@ -247,7 +259,7 @@ namespace RestSharp
 				};
 				webRequest.CookieContainer.Add(cookie);
 #else
-                var cookie = new Cookie
+				var cookie = new Cookie
 				{
 					Name = httpCookie.Name,
 					Value = httpCookie.Value
@@ -255,7 +267,7 @@ namespace RestSharp
 				var uri = webRequest.RequestUri;
 				webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
 #endif
-            }
+			}
 		}
 
 		private string EncodeParameters()
@@ -325,12 +337,12 @@ namespace RestSharp
 				response.ContentType = webResponse.ContentType;
 				response.ContentLength = webResponse.ContentLength;
 #if WINDOWS_PHONE
-                if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
-                    response.RawBytes = new GZipStream(webResponse.GetResponseStream()).ReadAsBytes();
-                else
-                    response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+				if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
+					response.RawBytes = new GZipStream(webResponse.GetResponseStream()).ReadAsBytes();
+				else
+					response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
 #else
-                response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+				response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
 #endif
 				//response.Content = GetString(response.RawBytes);
 				response.StatusCode = webResponse.StatusCode;
