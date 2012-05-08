@@ -171,5 +171,20 @@ namespace RestSharp.IntegrationTests
 
             Assert.Equal("name%5Bfirst%5D", sortedParams[0].Name);
         }
+
+		[Fact]
+		public void Use_RFC_3986_Encoding_For_Auth_Signature_Base()
+		{
+			// reserved characters for 2396 and 3986
+			var reserved2396Characters = new[] { ";", "/", "?", ":", "@", "&", "=", "+", "$", "," }; // http://www.ietf.org/rfc/rfc2396.txt
+			var additionalReserved3986Characters = new[] { "!", "*", "'", "(", ")" };  // http://www.ietf.org/rfc/rfc3986.txt
+			var reservedCharacterString = string.Join( string.Empty, reserved2396Characters.Union( additionalReserved3986Characters ) );
+			
+			// act
+			var escapedString = OAuthTools.UrlEncodeRelaxed( reservedCharacterString );
+
+			// assert
+			Assert.Equal( "%3B%2F%3F%3A%40%26%3D%2B%24%2C%21%2A%27%28%29", escapedString );
+		}
 	}
 }
