@@ -63,7 +63,7 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
-		RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new();
+		RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
 #if FRAMEWORK
 		/// <summary>

@@ -488,7 +488,7 @@ namespace RestSharp
 			return restResponse;
 		}
 
-		private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw) where T : new()
+		private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
 		{
 			request.OnBeforeDeserialization(raw);
 

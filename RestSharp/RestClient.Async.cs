@@ -94,11 +94,11 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
+		public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
 		{
 			return ExecuteAsync(request, (response, asyncHandle) =>
 			{
-				var restResponse = (IRestResponse<T>)response;
+				IRestResponse<T> restResponse = response as RestResponse<T>;
 				if (response.ResponseStatus != ResponseStatus.Aborted)
 				{
 					restResponse = Deserialize<T>(request, response);

@@ -7,7 +7,7 @@ namespace RestSharp.Extensions
 {
     public static class ResponseExtensions
     {
-        public static IRestResponse<T> toAsyncResponse<T>(this IRestResponse response) where T : new()
+        public static IRestResponse<T> toAsyncResponse<T>(this IRestResponse response)
         {
             return new RestResponse<T>
             {

@@ -2,7 +2,7 @@
 
 namespace RestSharp
 {
-	public static class RestClientExtensions
+	public static partial class RestClientExtensions
 	{
 		/// <summary>
 		/// Executes the request and callback asynchronously, authenticating if needed
