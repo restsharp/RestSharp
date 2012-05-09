@@ -314,13 +314,6 @@ namespace RestSharp
 				response.ResponseStatus = ResponseStatus.Error;
 				ExecuteCallback(response, callback);
 			}
-			catch(Exception ex)
-			{
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-				response.ResponseStatus = ResponseStatus.Error;
-				ExecuteCallback(response, callback);
-			}
 		}
 
 		private static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
