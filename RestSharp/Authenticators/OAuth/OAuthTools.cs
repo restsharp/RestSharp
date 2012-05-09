@@ -89,6 +89,8 @@ namespace RestSharp.Authenticators.OAuth
 		/// <seealso cref="http://stackoverflow.com/questions/846487/how-to-get-uri-escapedatastring-to-comply-with-rfc-3986" />
 		private static readonly string[] UriRfc3986CharsToEscape = new[] { "!", "*", "'", "(", ")" };
 
+		private static readonly string[] UriRfc3968EscapedHex = new[] {"%21", "%2A", "%27", "%28", "%29"};
+
 		/// <summary>
 		/// URL encodes a string based on section 5.1 of the OAuth spec.
 		/// Namely, percent encoding with [RFC3986], avoiding unreserved characters,
@@ -113,8 +115,10 @@ namespace RestSharp.Authenticators.OAuth
 			StringBuilder escaped = new StringBuilder(Uri.EscapeDataString(value));
 
 			// Upgrade the escaping to RFC 3986, if necessary.
-			for (int i = 0; i < UriRfc3986CharsToEscape.Length; i++) {
-				escaped.Replace(UriRfc3986CharsToEscape[i], Uri.HexEscape(UriRfc3986CharsToEscape[i][0]));
+			for (int i = 0; i < UriRfc3986CharsToEscape.Length; i++)
+			{
+				string t = UriRfc3986CharsToEscape[i];
+				escaped.Replace(t, UriRfc3968EscapedHex[i]);
 			}
 
 			// Return the fully-RFC3986-escaped string.
