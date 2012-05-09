@@ -53,6 +53,9 @@
     <Compile Include="..\restsharp\authenticators\NtlmAuthenticator.cs">
       <Link>Authenticators\NtlmAuthenticator.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth1Authenticator.cs">
+      <Link>Authenticators\OAuth1Authenticator.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\authenticators\OAuth2Authenticator.cs">
       <Link>Authenticators\OAuth2Authenticator.cs</Link>
     </Compile>
