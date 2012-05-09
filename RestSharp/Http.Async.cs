@@ -267,10 +267,13 @@ namespace RestSharp
 				{
 					throw ex;
 				}
-				
 				if (ex.Response is HttpWebResponse)
 				{
 					raw = ex.Response as HttpWebResponse;
+				}
+				else
+				{
+					throw ex;
 				}
 			}
 
@@ -305,6 +308,11 @@ namespace RestSharp
 					ExecuteCallback(response, callback);
 					return;
 				}
+
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+				response.ResponseStatus = ResponseStatus.Error;
+				ExecuteCallback(response, callback);
 			}
 			catch(Exception ex)
 			{

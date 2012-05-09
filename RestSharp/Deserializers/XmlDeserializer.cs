@@ -38,7 +38,7 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(RestResponse response) where T : new()
+		public T Deserialize<T>(IRestResponse response)
 		{
 			if (string.IsNullOrEmpty( response.Content ))
 				return default(T);
@@ -56,7 +56,7 @@ namespace RestSharp.Deserializers
 				RemoveNamespace(doc);
 			}
 
-			var x = new T();
+			var x = Activator.CreateInstance<T>();
 			var objType = x.GetType();
 
 			if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
@@ -179,7 +179,12 @@ namespace RestSharp.Deserializers
 					var raw = value.ToString();
 					value = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(value.ToString());
 					prop.SetValue(x, value, null);
-				}
+                }
+                else if (type == typeof(TimeSpan))
+                {
+                    var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
+                    prop.SetValue(x, timeSpan, null);
+                }
 				else if (type.IsGenericType)
 				{
 					var t = type.GetGenericArguments()[0];

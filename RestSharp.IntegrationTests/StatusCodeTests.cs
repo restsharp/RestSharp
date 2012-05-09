@@ -26,6 +26,10 @@ namespace RestSharp.IntegrationTests
 			obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
 		}
 
+		/// <summary>
+		/// Success of this test is based largely on the behavior of your current DNS.
+		/// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
+		/// </summary>
 		[Fact]
 		public void Handles_Non_Existent_Domain()
 		{
