@@ -43,10 +43,6 @@
     <DocumentationFile>Bin\Release\RestSharp.WindowsPhone.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.8\lib\sl4-windowsphone71\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -57,9 +53,6 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\RestSharp.WindowsPhone\SimpleJson.cs">
-      <Link>SimpleJson.cs</Link>
-    </Compile>
     <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
       <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
     </Compile>
@@ -272,6 +265,9 @@
     </Compile>
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
     </Compile>
     <Compile Include="..\restsharp\validation\Require.cs">
       <Link>Validation\Require.cs</Link>
