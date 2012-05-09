@@ -261,5 +261,33 @@ namespace RestSharp.IntegrationTests
 			Assert.NotNull( response.Data.FirstName );
 			Assert.NotNull( response.Data.LastName );
 		}
+
+		[Fact( Skip = "Provide your own consumer key/secret before running" )]
+		public void Can_Query_Vimeo()
+		{
+			const string consumerKey = "TODO_CONSUMER_KEY_HERE";
+			const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
+
+			// arrange
+			var client = new RestClient {
+				BaseUrl = "http://vimeo.com/api/rest/v2",
+				Authenticator = OAuth1Authenticator.ForRequestToken( consumerKey, consumerSecret )
+			};
+			var request = new RestRequest();
+			request.AddParameter( "format", "json" );
+			request.AddParameter( "method", "vimeo.videos.search" );
+			request.AddParameter( "query", "weather" );
+			request.AddParameter( "full_response", 1 );
+
+			// act
+			var response = client.Execute( request );
+
+			// assert
+			Assert.NotNull( response );
+			Assert.Equal( HttpStatusCode.OK, response.StatusCode );
+			Assert.NotNull( response.Content );
+			Assert.False( response.Content.Contains( "\"stat\":\"fail\"" )  );
+			Assert.True( response.Content.Contains( "\"stat\":\"ok\"" )  );
+		}
 	}
 }
