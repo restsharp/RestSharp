@@ -12,8 +12,12 @@
 		<iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
 		<tags>REST HTTP API JSON XML</tags>
 		<releaseNotes>
+			103.1 - #267 Added CLS Compliance
+					#263 Fixed InvalidCastException 
+					#218 Handles connection failures better
+					#231 OAuth now complies with rfc3986 url hex encoding
 			103.0 - Remove dependency on Json.NET
-			        Remove WP7.0 support (7.1 Mango remains).
+					Remove WP7.0 support (7.1 Mango remains).
 			102.7 - Updating Json.NET to 4.0.8, misc fixes
 			102.6 - Updating Json.NET reference to 4.0.5
 		</releaseNotes>
