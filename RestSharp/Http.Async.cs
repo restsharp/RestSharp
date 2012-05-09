@@ -266,11 +266,12 @@ namespace RestSharp
 				if(ex.Status == WebExceptionStatus.RequestCanceled)
 				{
 					throw ex;
-				}			
+				}
 				if (ex.Response is HttpWebResponse)
 				{
 					raw = ex.Response as HttpWebResponse;
-				} else
+				}
+				else
 				{
 					throw ex;
 				}
@@ -306,15 +307,12 @@ namespace RestSharp
 					response.ResponseStatus = ResponseStatus.Aborted;
 					ExecuteCallback(response, callback);
 					return;
-				} else
-				{
-					response.ErrorMessage = ex.Message;
-					response.ErrorException = ex;
-					response.ResponseStatus = ResponseStatus.Error;
-					ExecuteCallback(response, callback);
-					return;
 				}
 
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+				response.ResponseStatus = ResponseStatus.Error;
+				ExecuteCallback(response, callback);
 			}
 			catch(Exception ex)
 			{
