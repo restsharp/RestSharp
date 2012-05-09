@@ -8,11 +8,13 @@
     <ProjectGuid>{1B662C38-984F-4B6A-89B5-AFF7FCBE43A2}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RestSharp.Android</RootNamespace>
-    <AssemblyName>RestSharp.Android</AssemblyName>
+    <RootNamespace>RestSharp</RootNamespace>
+    <AssemblyName>RestSharp.MonoDroid</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AndroidSupportedAbis>armeabi</AndroidSupportedAbis>
+    <AndroidStoreUncompressedFileExtensions />
+    <MandroidI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,9 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json.MonoDroid">
-      <HintPath>..\References\Newtonsoft.Json.MonoDroid.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -89,6 +88,9 @@
     </Compile>
     <Compile Include="..\RestSharp\RestClient.Sync.cs">
       <Link>RestClient.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClientExtensions.cs">
+      <Link>RestClientExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\RestRequest.cs">
       <Link>RestRequest.cs</Link>
@@ -187,61 +189,61 @@
       <Link>IHttpFactory.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth1Authenticator.cs">
-      <Link>Authenticators\Authenticators\OAuth1Authenticator.cs</Link>
+      <Link>Authenticators\OAuth1Authenticator.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth2Authenticator.cs">
-      <Link>Authenticators\Authenticators\OAuth2Authenticator.cs</Link>
+      <Link>Authenticators\OAuth2Authenticator.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameter.cs">
-      <Link>Authenticators\Authenticators\OAuth\HttpPostParameter.cs</Link>
+      <Link>Authenticators\OAuth\HttpPostParameter.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameterType.cs">
-      <Link>Authenticators\Authenticators\OAuth\HttpPostParameterType.cs</Link>
+      <Link>Authenticators\OAuth\HttpPostParameterType.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthParameterHandling.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthParameterHandling.cs</Link>
+      <Link>Authenticators\OAuth\OAuthParameterHandling.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureMethod.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthSignatureMethod.cs</Link>
+      <Link>Authenticators\OAuth\OAuthSignatureMethod.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureTreatment.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthSignatureTreatment.cs</Link>
+      <Link>Authenticators\OAuth\OAuthSignatureTreatment.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthTools.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthTools.cs</Link>
+      <Link>Authenticators\OAuth\OAuthTools.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthType.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthType.cs</Link>
+      <Link>Authenticators\OAuth\OAuthType.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWebQueryInfo.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthWebQueryInfo.cs</Link>
+      <Link>Authenticators\OAuth\OAuthWebQueryInfo.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWorkflow.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthWorkflow.cs</Link>
+      <Link>Authenticators\OAuth\OAuthWorkflow.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebPair.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebPair.cs</Link>
+      <Link>Authenticators\OAuth\WebPair.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebPairCollection.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebPairCollection.cs</Link>
+      <Link>Authenticators\OAuth\WebPairCollection.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameter.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebParameter.cs</Link>
+      <Link>Authenticators\OAuth\WebParameter.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameterCollection.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebParameterCollection.cs</Link>
+      <Link>Authenticators\OAuth\WebParameterCollection.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\CollectionExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\CollectionExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\CollectionExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\OAuthExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\OAuthExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\OAuthExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\StringExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\StringExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\StringExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\TimeExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
       <Link>RestRequestAsyncHandle.cs</Link>
@@ -249,6 +251,10 @@
     <Compile Include="..\RestSharp\Deserializers\DotNetXmlDeserializer.cs">
       <Link>Deserializers\DotNetXmlDeserializer.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

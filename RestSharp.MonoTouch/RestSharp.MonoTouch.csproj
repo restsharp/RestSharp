@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</ProjectGuid>
-    <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>RestSharp.MonoTouch</RootNamespace>
+    <RootNamespace>RestSharp</RootNamespace>
     <MtouchSdkVersion>3.2</MtouchSdkVersion>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
@@ -29,6 +29,7 @@
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -44,6 +45,7 @@
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +62,7 @@
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -75,6 +78,7 @@
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -82,11 +86,8 @@
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="NewtonsoftJsonMonoTouch, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\NewtonsoftJsonMonoTouch.dll</HintPath>
-    </Reference>
   </ItemGroup>
+  <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="..\RestSharp\Enum.cs">
@@ -137,6 +138,9 @@
     <Compile Include="..\RestSharp\RestClient.Sync.cs">
       <Link>RestClient.Sync.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\RestClientExtensions.cs">
+      <Link>RestClientExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\RestRequest.cs">
       <Link>RestRequest.cs</Link>
     </Compile>
@@ -161,8 +165,8 @@
     <Compile Include="..\RestSharp\Serializers\SerializeAsAttribute.cs">
       <Link>Serializers\SerializeAsAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\Extensions\ResponseExtensions.cs">
-      <Link>Extensions\ResponseExtensions.cs</Link>
+    <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
+      <Link>Serializers\DotNetXmlSerializer.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
       <Link>Serializers\XmlSerializer.cs</Link>
@@ -175,6 +179,9 @@
     </Compile>
     <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
       <Link>Extensions\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseExtensions.cs">
+      <Link>Extensions\ResponseExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Deserializers\DeserializeAsAttribute.cs">
       <Link>Deserializers\DeserializeAsAttribute.cs</Link>
@@ -231,77 +238,71 @@
       <Link>IHttpFactory.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth1Authenticator.cs">
-      <Link>Authenticators\Authenticators\OAuth1Authenticator.cs</Link>
+      <Link>Authenticators\OAuth1Authenticator.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth2Authenticator.cs">
-      <Link>Authenticators\Authenticators\OAuth2Authenticator.cs</Link>
+      <Link>Authenticators\OAuth2Authenticator.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameter.cs">
-      <Link>Authenticators\Authenticators\OAuth\HttpPostParameter.cs</Link>
+      <Link>Authenticators\OAuth\HttpPostParameter.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameterType.cs">
-      <Link>Authenticators\Authenticators\OAuth\HttpPostParameterType.cs</Link>
+      <Link>Authenticators\OAuth\HttpPostParameterType.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthParameterHandling.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthParameterHandling.cs</Link>
+      <Link>Authenticators\OAuth\OAuthParameterHandling.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureMethod.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthSignatureMethod.cs</Link>
+      <Link>Authenticators\OAuth\OAuthSignatureMethod.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureTreatment.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthSignatureTreatment.cs</Link>
+      <Link>Authenticators\OAuth\OAuthSignatureTreatment.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthTools.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthTools.cs</Link>
+      <Link>Authenticators\OAuth\OAuthTools.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthType.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthType.cs</Link>
+      <Link>Authenticators\OAuth\OAuthType.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWebQueryInfo.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthWebQueryInfo.cs</Link>
+      <Link>Authenticators\OAuth\OAuthWebQueryInfo.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWorkflow.cs">
-      <Link>Authenticators\Authenticators\OAuth\OAuthWorkflow.cs</Link>
+      <Link>Authenticators\OAuth\OAuthWorkflow.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebPair.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebPair.cs</Link>
+      <Link>Authenticators\OAuth\WebPair.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebPairCollection.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebPairCollection.cs</Link>
+      <Link>Authenticators\OAuth\WebPairCollection.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameter.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebParameter.cs</Link>
+      <Link>Authenticators\OAuth\WebParameter.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameterCollection.cs">
-      <Link>Authenticators\Authenticators\OAuth\WebParameterCollection.cs</Link>
+      <Link>Authenticators\OAuth\WebParameterCollection.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\CollectionExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\CollectionExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\CollectionExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\OAuthExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\OAuthExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\OAuthExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\StringExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\StringExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\StringExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\TimeExtensions.cs">
-      <Link>Authenticators\Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
+      <Link>Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
       <Link>RestRequestAsyncHandle.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\Serializers\DotNetXmlSerializer.cs">
-      <Link>Serializers\DotNetXmlSerializer.cs</Link>
-    </Compile>
     <Compile Include="..\RestSharp\Deserializers\DotNetXmlDeserializer.cs">
       <Link>Deserializers\DotNetXmlDeserializer.cs</Link>
     </Compile>
-   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Authenticators\" />
-    <Folder Include="Deserializers\" />
-    <Folder Include="Serializers\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Validation\" />
+    <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 </Project>
