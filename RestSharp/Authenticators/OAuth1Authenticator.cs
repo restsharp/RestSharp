@@ -6,6 +6,8 @@ using RestSharp.Authenticators.OAuth.Extensions;
 
 #if WINDOWS_PHONE
 using System.Net;
+#elif SILVERLIGHT
+using System.Windows.Browser;
 #else
 using RestSharp.Contrib;
 #endif
