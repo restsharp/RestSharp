@@ -1,3 +1,5 @@
+%windir%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe RestSharp.sln /t:Clean,Rebuild /p:Configuration=Release /fileLogger
+
 if not exist Download\Net4 mkdir Download\Net4\
 if not exist Download\Silverlight mkdir Download\Silverlight\
 if not exist Download\WindowsPhone mkdir Download\WindowsPhone\
