@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-#if SILVERLIGHT
-using Hammock.Silverlight.Compat;
-#else
-
-#endif
-
 namespace RestSharp.Authenticators.OAuth.Extensions
 {
 	internal static class CollectionExtensions
@@ -55,7 +49,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 			}
 		}
 
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !SILVERLIGHT
 
 		public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
 		{
