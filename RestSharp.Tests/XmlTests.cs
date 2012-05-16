@@ -464,12 +464,12 @@ namespace RestSharp.Tests
 			Assert.NotNull(p.Foes);
 			Assert.Equal(5, p.Foes.Count);
 			Assert.Equal("Yankees", p.Foes.Team);
-		}
-
-		[Fact]
-		public void Can_Deserialize_Names_With_Underscores_Without_Matching_Case_On_Default_Root()
+		}	
+        
+        [Fact]
+		public void Can_Deserialize_Lower_Cased_Root_Elements_With_Dashes()
 		{
-			var doc = CreateLowercaseUnderscoresXml();
+			var doc = CreateDashesXml();
 			var response = new RestResponse { Content = doc };
 
 			var d = new XmlDeserializer();
@@ -495,6 +495,20 @@ namespace RestSharp.Tests
 			Assert.NotNull(p.Foes);
 			Assert.Equal(5, p.Foes.Count);
 			Assert.Equal("Yankees", p.Foes.Team);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Root_Elements_Without_Matching_Case_And_Dashes()
+		{
+			var doc = CreateLowerCasedRootElementWithDashesXml();
+			var response = new RestResponse { Content = doc };
+
+			var d = new XmlDeserializer();
+			var p = d.Deserialize<List<IncomingInvoice>>(response);
+
+            Assert.NotNull(p);
+            Assert.Equal(1, p.Count);
+            Assert.Equal(45, p[0].ConceptId);
 		}
 
 
@@ -723,6 +737,18 @@ namespace RestSharp.Tests
 			}
 			root.Add(foes);
 
+			doc.Add(root);
+			return doc.ToString();
+		}
+        
+        private static string CreateLowerCasedRootElementWithDashesXml()
+		{
+            var doc = new XDocument();
+			var root = new XElement("incoming-invoices", 
+                new XElement("incoming-invoice", 
+                    new XElement("concept-id", 45)
+                )
+            );
 			doc.Add(root);
 			return doc.ToString();
 		}
