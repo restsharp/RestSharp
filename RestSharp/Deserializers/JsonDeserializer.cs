@@ -209,7 +209,11 @@ namespace RestSharp.Deserializers
 				}
 				else if (itemType == typeof(string))
 				{
-					list.Add(element.ToString());
+					//ensure we handle case where element is null
+					if (element == null)
+						list.Add(null);
+					else
+						list.Add(element.ToString());
 				}
 				else
 				{
