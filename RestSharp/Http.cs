@@ -180,7 +180,6 @@ namespace RestSharp
 		{
 			_restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
 			_restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
-			_restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
 #if NET4
 			_restrictedHeaderActions.Add("Date", (r, v) =>
 				{
@@ -192,6 +191,7 @@ namespace RestSharp
 				});
 			_restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
 #else
+			_restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
 			_restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
 #endif
 #if FRAMEWORK
