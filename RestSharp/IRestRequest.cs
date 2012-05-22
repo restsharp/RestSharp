@@ -225,5 +225,11 @@ namespace RestSharp
 
 		Action<IRestResponse> OnBeforeDeserialization { get; set; }
 		void IncreaseNumAttempts();
+
+		/// <summary>
+		/// Gets or sets a user-defined state object that contains information about a request and which can be later 
+		/// retrieved when the request completes.
+		/// </summary>
+		object UserState { get; set; }
 	}
 }

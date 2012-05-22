@@ -444,7 +444,7 @@ namespace RestSharp
 			}
 		}
 
-		private RestResponse ConvertToRestResponse(HttpResponse httpResponse)
+        private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
 		{
 			var restResponse = new RestResponse();
 			restResponse.Content = httpResponse.Content;
@@ -459,6 +459,7 @@ namespace RestSharp
 			restResponse.Server = httpResponse.Server;
 			restResponse.StatusCode = httpResponse.StatusCode;
 			restResponse.StatusDescription = httpResponse.StatusDescription;
+            restResponse.Request = request;
 
 			foreach (var header in httpResponse.Headers)
 			{
@@ -502,7 +503,8 @@ namespace RestSharp
 			{
 			    response = raw.toAsyncResponse<T>();
 				response.Data = handler.Deserialize<T>(raw);
-			}
+                response.Request = request;
+            }
 			catch (Exception ex)
 			{
 				response.ResponseStatus = ResponseStatus.Error;

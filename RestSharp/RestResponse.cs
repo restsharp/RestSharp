@@ -156,7 +156,8 @@ namespace RestSharp
 				ResponseUri = response.ResponseUri,
 				Server = response.Server,
 				StatusCode = response.StatusCode,
-				StatusDescription = response.StatusDescription
+				StatusDescription = response.StatusDescription,
+                Request = response.Request
 			};
 		}
         

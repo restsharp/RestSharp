@@ -82,9 +82,9 @@ namespace RestSharp
 			return asyncHandle;
 		}
 
-		private void ProcessResponse(HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle, Action<IRestResponse, RestRequestAsyncHandle> callback)
+		private void ProcessResponse(IRestRequest request, HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle, Action<IRestResponse, RestRequestAsyncHandle> callback)
 		{
-			var restResponse = ConvertToRestResponse(httpResponse);
+			var restResponse = ConvertToRestResponse(request, httpResponse);
 			callback(restResponse, asyncHandle);
 		}
 
