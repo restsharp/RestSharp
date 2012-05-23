@@ -10,7 +10,7 @@ namespace RestSharp.Deserializers
 {
 	public class JsonDeserializer : IDeserializer
 	{
-		 public string RootElement { get; set; }
+		public string RootElement { get; set; }
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
 		public CultureInfo Culture { get; set; }
@@ -204,12 +204,12 @@ namespace RestSharp.Deserializers
 			{
 				if (itemType.IsPrimitive)
 				{
-					var value = element.ToString();
+					var value = element == null ? String.Empty : element.ToString();
 					list.Add(value.ChangeType(itemType, Culture));
 				}
 				else if (itemType == typeof(string))
 				{
-					list.Add(element.ToString());
+					list.Add(element == null ? String.Empty : element.ToString());
 				}
 				else
 				{
