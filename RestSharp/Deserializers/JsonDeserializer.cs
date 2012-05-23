@@ -10,7 +10,7 @@ namespace RestSharp.Deserializers
 {
 	public class JsonDeserializer : IDeserializer
 	{
-		public string RootElement { get; set; }
+		 public string RootElement { get; set; }
 		public string Namespace { get; set; }
 		public string DateFormat { get; set; }
 		public CultureInfo Culture { get; set; }
