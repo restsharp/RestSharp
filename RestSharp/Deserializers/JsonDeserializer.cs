@@ -204,12 +204,12 @@ namespace RestSharp.Deserializers
 			{
 				if (itemType.IsPrimitive)
 				{
-					var value = element.ToString();
+					var value = element == null ? String.Empty : element.ToString();
 					list.Add(value.ChangeType(itemType, Culture));
 				}
 				else if (itemType == typeof(string))
 				{
-					list.Add(element.ToString());
+					list.Add(element == null ? String.Empty : element.ToString());
 				}
 				else
 				{
