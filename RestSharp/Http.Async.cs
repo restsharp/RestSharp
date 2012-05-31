@@ -287,7 +287,7 @@ namespace RestSharp
 
 		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback, object userState)
 		{
-			var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
+			var response = new HttpResponse {ResponseStatus = ResponseStatus.None, UserState = userState};
 
 			try
 			{
