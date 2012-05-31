@@ -58,12 +58,12 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
-		RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);
+        RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, object userState = null);
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
-		RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
+        RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, object userState = null);
 
 #if FRAMEWORK
 		/// <summary>

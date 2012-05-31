@@ -118,5 +118,10 @@ namespace RestSharp
 		/// Exception thrown when error is encountered.
 		/// </summary>
 		public Exception ErrorException { get; set; }
-	}
+
+        /// <summary>
+        /// Customizable state for asynchronous operations
+        /// </summary>
+        public object UserState { get; set; }
+    }
 }

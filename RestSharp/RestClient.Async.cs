@@ -30,7 +30,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
+        public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, object userState = null)
 		{
 			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
@@ -56,25 +56,25 @@ namespace RestSharp
 			switch(request.Method)
 			{
 				case Method.GET:
-					webRequest = http.GetAsync(response_cb);
+					webRequest = http.GetAsync(response_cb, userState);
 					break;
 				case Method.POST:
-					webRequest = http.PostAsync(response_cb);
+                    webRequest = http.PostAsync(response_cb, userState);
 					break;
 				case Method.PUT:
-					webRequest = http.PutAsync(response_cb);
+                    webRequest = http.PutAsync(response_cb, userState);
 					break;
 				case Method.DELETE:
-					webRequest = http.DeleteAsync(response_cb);
+                    webRequest = http.DeleteAsync(response_cb, userState);
 					break;
 				case Method.HEAD:
-					webRequest = http.HeadAsync(response_cb);
+                    webRequest = http.HeadAsync(response_cb, userState);
 					break;
 				case Method.OPTIONS:
-					webRequest = http.OptionsAsync(response_cb);
+                    webRequest = http.OptionsAsync(response_cb, userState);
 					break;
 				case Method.PATCH:
-					webRequest = http.PatchAsync(response_cb);
+                    webRequest = http.PatchAsync(response_cb, userState);
 					break;
 			}
 			
@@ -94,7 +94,7 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="callback">Callback function to be executed upon completion</param>
-		public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
+        public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, object userState = null)
 		{
 			return ExecuteAsync(request, (response, asyncHandle) =>
 			{
@@ -105,7 +105,7 @@ namespace RestSharp
 				}
 
 				callback(restResponse, asyncHandle);
-			});
+            }, userState);
 		}
 	}
 }

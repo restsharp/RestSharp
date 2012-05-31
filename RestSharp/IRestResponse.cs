@@ -87,6 +87,11 @@ namespace RestSharp
 		/// The exception thrown during the request, if any
 		/// </summary>
 		Exception ErrorException { get; set; }
+
+        /// <summary>
+        /// Customizable state for asynchronous calls
+        /// </summary>
+        object UserState { get; set; }
 	}
 
 	/// <summary>
