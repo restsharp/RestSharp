@@ -128,6 +128,11 @@ namespace RestSharp
 		/// The exception thrown during the request, if any
 		/// </summary>
 		public Exception ErrorException { get; set; }
+
+        /// <summary>
+        /// Customizable state for asynchronous calls
+        /// </summary>
+        public object UserState { get; set; }
 	}
 
 	/// <summary>
@@ -156,7 +161,8 @@ namespace RestSharp
 				ResponseUri = response.ResponseUri,
 				Server = response.Server,
 				StatusCode = response.StatusCode,
-				StatusDescription = response.StatusDescription
+				StatusDescription = response.StatusDescription,
+                UserState = response.UserState
 			};
 		}
         

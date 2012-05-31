@@ -459,6 +459,7 @@ namespace RestSharp
 			restResponse.Server = httpResponse.Server;
 			restResponse.StatusCode = httpResponse.StatusCode;
 			restResponse.StatusDescription = httpResponse.StatusDescription;
+            restResponse.UserState = httpResponse.UserState;
 
 			foreach (var header in httpResponse.Headers)
 			{

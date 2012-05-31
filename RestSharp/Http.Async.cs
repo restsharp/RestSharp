@@ -42,42 +42,42 @@ namespace RestSharp
 	{
 		private TimeOutState _timeoutState;
 
-		public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
+		public HttpWebRequest DeleteAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return GetStyleMethodInternalAsync("DELETE", action);
+			return GetStyleMethodInternalAsync("DELETE", action, userState);
 		}
 
-		public HttpWebRequest GetAsync(Action<HttpResponse> action)
+        public HttpWebRequest GetAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return GetStyleMethodInternalAsync("GET", action);
+            return GetStyleMethodInternalAsync("GET", action, userState);
 		}
 
-		public HttpWebRequest HeadAsync(Action<HttpResponse> action)
+        public HttpWebRequest HeadAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return GetStyleMethodInternalAsync("HEAD", action);
+            return GetStyleMethodInternalAsync("HEAD", action, userState);
 		}
 
-		public HttpWebRequest OptionsAsync(Action<HttpResponse> action)
+        public HttpWebRequest OptionsAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return GetStyleMethodInternalAsync("OPTIONS", action);
+            return GetStyleMethodInternalAsync("OPTIONS", action, userState);
 		}
 
-		public HttpWebRequest PostAsync(Action<HttpResponse> action)
+        public HttpWebRequest PostAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return PutPostInternalAsync("POST", action);
+            return PutPostInternalAsync("POST", action, userState);
 		}
 
-		public HttpWebRequest PutAsync(Action<HttpResponse> action)
+        public HttpWebRequest PutAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return PutPostInternalAsync("PUT", action);
+            return PutPostInternalAsync("PUT", action, userState);
 		}
 
-		public HttpWebRequest PatchAsync(Action<HttpResponse> action)
+        public HttpWebRequest PatchAsync(Action<HttpResponse> action, object userState = null)
 		{
-			return PutPostInternalAsync("PATCH", action);
+            return PutPostInternalAsync("PATCH", action, userState);
 		}
 
-		private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+        private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback, object userState)
 		{
 			HttpWebRequest webRequest = null;
 			try
@@ -85,7 +85,7 @@ namespace RestSharp
 				var url = Url;
 				webRequest = ConfigureAsyncWebRequest(method, url);
 				_timeoutState = new TimeOutState { Request = webRequest };
-				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback, userState), webRequest);
 				SetTimeout(asyncResult, _timeoutState);
 			}
 			catch(Exception ex)
@@ -94,19 +94,20 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
+                response.UserState = userState;
 				ExecuteCallback(response, callback);
 			}
 			return webRequest;
 		}
 
-		private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
+		private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback, object userState)
 		{
 			HttpWebRequest webRequest = null;
 			try
 			{
 				webRequest = ConfigureAsyncWebRequest(method, Url);
 				PreparePostBody(webRequest);
-				WriteRequestBodyAsync(webRequest, callback);
+				WriteRequestBodyAsync(webRequest, callback, userState);
 			}
 			catch(Exception ex)
 			{
@@ -114,13 +115,14 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
+                response.UserState = userState;
 				ExecuteCallback(response, callback);
 			}
 			
 			return webRequest;
 		}
 
-		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
+		private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback, object userState)
 		{
 			IAsyncResult asyncResult;
 			_timeoutState = new TimeOutState { Request = webRequest };
@@ -130,12 +132,12 @@ namespace RestSharp
 #if !WINDOWS_PHONE
 				webRequest.ContentLength = CalculateContentLength();
 #endif
-				asyncResult = webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback), webRequest);
+				asyncResult = webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback, userState), webRequest);
 			}
 
 			else
 			{
-				asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+				asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback, userState), webRequest);
 			}
 
 			SetTimeout(asyncResult, _timeoutState);
@@ -166,13 +168,13 @@ namespace RestSharp
 			return length;
 		}
 
-		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
+		private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback, object userState)
 		{
 			var webRequest = (HttpWebRequest)result.AsyncState;
 
 			if (_timeoutState.TimedOut)
 			{
-				var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+				var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut, UserState = userState};
 				ExecuteCallback(response, callback);
 				return;
 			}
@@ -196,7 +198,7 @@ namespace RestSharp
 			{
 				if (ex.Status == WebExceptionStatus.RequestCanceled)
 				{
-					var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+					var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut, UserState = userState};
 					ExecuteCallback(response, callback);
 					return;
 				}
@@ -207,13 +209,14 @@ namespace RestSharp
 				{
 					ErrorMessage = ex.Message,
 					ErrorException = ex,
-					ResponseStatus = ResponseStatus.Error
+					ResponseStatus = ResponseStatus.Error,
+                    UserState = userState
 				};
 				ExecuteCallback(response, callback);
 				return;
 			}
 
-			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+			webRequest.BeginGetResponse(r => ResponseCallback(r, callback, userState), webRequest);
 		}
 
 		private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
@@ -249,10 +252,11 @@ namespace RestSharp
 			}
 		}
 
-		private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+		private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback, object userState)
 		{
 			var response = new HttpResponse();
 			response.ResponseStatus = ResponseStatus.None;
+            response.UserState = userState;
 
 			HttpWebResponse raw = null;
 
@@ -281,15 +285,16 @@ namespace RestSharp
 			raw.Close();
 		}
 
-		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
+		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback, object userState)
 		{
-			var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
+			var response = new HttpResponse {ResponseStatus = ResponseStatus.None, UserState = userState};
 
 			try
 			{
 				if(_timeoutState.TimedOut)
 				{
 					response.ResponseStatus = ResponseStatus.TimedOut;
+                    response.UserState = userState;
 					ExecuteCallback(response, callback);
 					return;
 				}
@@ -298,13 +303,14 @@ namespace RestSharp
 				{
 					ExtractResponseData(response, webResponse);
 					ExecuteCallback(response, callback);
-				});
+				}, userState);
 			}
 			catch(WebException ex)
 			{
 				if(ex.Status == WebExceptionStatus.RequestCanceled)
 				{
 					response.ResponseStatus = ResponseStatus.Aborted;
+                    response.UserState = userState;
 					ExecuteCallback(response, callback);
 					return;
 				}
@@ -312,6 +318,7 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
+                response.UserState = userState;
 				ExecuteCallback(response, callback);
 			}
 			catch(Exception ex)
@@ -319,6 +326,7 @@ namespace RestSharp
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
 				response.ResponseStatus = ResponseStatus.Error;
+                response.UserState = userState;
 				ExecuteCallback(response, callback);
 			}
 		}
