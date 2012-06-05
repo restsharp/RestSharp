@@ -151,6 +151,9 @@ namespace RestSharp.Authenticators
 		private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
 		{
 			var url = client.BuildUri(request).ToString();
+			var queryStringStart = url.IndexOf('?');
+			if (queryStringStart != -1)
+				url = url.Substring(0, queryStringStart);
 
 			OAuthWebQueryInfo oauth;
 			var method = request.Method.ToString().ToUpperInvariant();
