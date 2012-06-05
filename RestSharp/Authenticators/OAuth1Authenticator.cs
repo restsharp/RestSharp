@@ -162,6 +162,10 @@ namespace RestSharp.Authenticators
 			// http://tools.ietf.org/html/rfc5849#section-3.4.1
 			// if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
 			// or implement a seperate class for each OAuth version
+			foreach (var p in client.DefaultParameters.Where(p => p.Type == ParameterType.GetOrPost))
+			{
+				parameters.Add( new WebPair( p.Name, p.Value.ToString() ) );
+			}
 			foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
 			{
 				parameters.Add(new WebPair(p.Name, p.Value.ToString()));
