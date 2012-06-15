@@ -315,6 +315,12 @@ namespace RestSharp.Authenticators.OAuth
 
 					break;
 				}
+                case OAuthSignatureMethod.PlainText:
+                {
+                    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+
+                    break;
+                }
 				default:
 					throw new NotImplementedException("Only HMAC-SHA1 is currently supported.");
 			}
