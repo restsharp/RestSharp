@@ -192,23 +192,22 @@ namespace RestSharp
 					}
 				}
 			}
-			catch (WebException ex)
-			{
-				if (ex.Status == WebExceptionStatus.RequestCanceled)
-				{
-					var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
-					ExecuteCallback(response, callback);
-					return;
-				}
-			}
 			catch (Exception ex)
 			{
-				var response = new HttpResponse
+				HttpResponse response;
+				if (ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
 				{
-					ErrorMessage = ex.Message,
-					ErrorException = ex,
-					ResponseStatus = ResponseStatus.Error
-				};
+					response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+				}
+				else
+				{
+					response = new HttpResponse
+					{
+						ErrorMessage = ex.Message,
+						ErrorException = ex,
+						ResponseStatus = ResponseStatus.Error
+					};
+				}
 				ExecuteCallback(response, callback);
 				return;
 			}
@@ -297,20 +296,18 @@ namespace RestSharp
 					ExecuteCallback(response, callback);
 				});
 			}
-			catch(WebException ex)
-			{
-				if(ex.Status == WebExceptionStatus.RequestCanceled)
-				{
-					response.ResponseStatus = ResponseStatus.Aborted;
-					ExecuteCallback(response, callback);
-					return;
-				}
-			}
 			catch(Exception ex)
 			{
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-				response.ResponseStatus = ResponseStatus.Error;
+				if(ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
+				{
+					response.ResponseStatus = ResponseStatus.Aborted;
+				}
+				else
+				{
+					response.ErrorMessage = ex.Message;
+					response.ErrorException = ex;
+					response.ResponseStatus = ResponseStatus.Error;
+				}
 				ExecuteCallback(response, callback);
 			}
 		}
