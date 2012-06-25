@@ -200,22 +200,25 @@ namespace RestSharp.Deserializers
 			var list = (IList)Activator.CreateInstance(type);
 			var itemType = type.GetGenericArguments()[0];
 
-			foreach (var element in (IList)parent)
-			{
-				if (itemType.IsPrimitive)
-				{
-					var value = element.ToString();
-					list.Add(value.ChangeType(itemType, Culture));
+			if (parent is IList) {
+				foreach (var element in (IList)parent) {
+					if (itemType.IsPrimitive)
+					{
+						var value = element.ToString ();
+						list.Add (value.ChangeType (itemType, Culture));
+					}
+					else if (itemType == typeof (string))
+					{
+						list.Add (element.ToString ());
+					}
+					else
+					{
+						var item = CreateAndMap (itemType, element);
+						list.Add (item);
+					}
 				}
-				else if (itemType == typeof(string))
-				{
-					list.Add(element.ToString());
-				}
-				else
-				{
-					var item = CreateAndMap(itemType, element);
-					list.Add(item);
-				}
+			} else {
+			    list.Add (CreateAndMap (itemType, parent));
 			}
 			return list;
 		}
