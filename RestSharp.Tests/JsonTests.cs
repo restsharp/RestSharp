@@ -72,10 +72,21 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Can_Deserialize_Simple_Generic_List_given_Item_Without_Array ()
+		public void Can_Deserialize_Simple_Generic_List_Given_Item_Without_Array ()
 		{
 			const string content = "{\"users\":\"johnsheehan\"}";
 			var json = new JsonDeserializer { RootElement = "users" };
+
+			var output = json.Deserialize<List<string>> (new RestResponse { Content = content });
+
+			Assert.True (output.SequenceEqual (new[] { "johnsheehan" }));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Simple_Generic_List_Given_Toplevel_Item_Without_Array ()
+		{
+			const string content = "\"johnsheehan\"";
+			var json = new JsonDeserializer ();
 
 			var output = json.Deserialize<List<string>> (new RestResponse { Content = content });
 
