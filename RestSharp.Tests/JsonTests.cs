@@ -485,6 +485,20 @@ namespace RestSharp.Tests
 			Assert.Equal(bd["ThingBlue"], "ThingBlue");
 		}
 
+		[Fact]
+		public void Can_Deserialize_To_Dictionary_String_String_With_Dynamic_Values ()
+		{
+			var doc = CreateDynamicJsonStringDictionary ();
+			var d = new JsonDeserializer ();
+			var response = new RestResponse { Content = doc };
+			var bd = d.Deserialize<Dictionary<string, string>> (response);
+
+			Assert.Equal ("[\"Value1\",\"Value2\"]", bd["Thing1"]);
+			Assert.Equal ("Thing2", bd["Thing2"]);
+			Assert.Equal ("{\"Name\":\"ThingRed\",\"Color\":\"Red\"}", bd["ThingRed"]);
+			Assert.Equal ("{\"Name\":\"ThingBlue\",\"Color\":\"Blue\"}", bd["ThingBlue"]);
+		}
+
 		private string CreateJsonWithUnderscores()
 		{
 			var doc = new JObject();
@@ -654,6 +668,16 @@ namespace RestSharp.Tests
 			doc["ThingRed"] = "ThingRed";
 			doc["ThingBlue"] = "ThingBlue";
 			return doc.ToString();
+		}
+
+		public string CreateDynamicJsonStringDictionary ()
+		{
+			var doc = new JObject ();
+			doc["Thing1"] = new JArray () { "Value1", "Value2" };
+			doc["Thing2"] = "Thing2";
+			doc["ThingRed"] = new JObject (new JProperty ("Name", "ThingRed"), new JProperty ("Color", "Red"));
+			doc["ThingBlue"] = new JObject (new JProperty("Name", "ThingBlue"), new JProperty ("Color", "Blue"));
+			return doc.ToString ();
 		}
 	}
 }
