@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -68,6 +69,28 @@ namespace RestSharp.Tests
 			var output = json.Deserialize<List<string>>(new RestResponse {Content = content});
 
 			Assert.NotEmpty(output);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Simple_Generic_List_Given_Item_Without_Array ()
+		{
+			const string content = "{\"users\":\"johnsheehan\"}";
+			var json = new JsonDeserializer { RootElement = "users" };
+
+			var output = json.Deserialize<List<string>> (new RestResponse { Content = content });
+
+			Assert.True (output.SequenceEqual (new[] { "johnsheehan" }));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Simple_Generic_List_Given_Toplevel_Item_Without_Array ()
+		{
+			const string content = "\"johnsheehan\"";
+			var json = new JsonDeserializer ();
+
+			var output = json.Deserialize<List<string>> (new RestResponse { Content = content });
+
+			Assert.True (output.SequenceEqual (new[] { "johnsheehan" }));
 		}
 
 		[Fact]
