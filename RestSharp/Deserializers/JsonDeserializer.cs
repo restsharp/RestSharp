@@ -249,7 +249,7 @@ namespace RestSharp.Deserializers
 			}
 			else if (type == typeof(string))
 			{
-				instance = (string)element;
+				instance = element.ToString();
 			}
 			else
 			{
