@@ -44,7 +44,7 @@ namespace RestSharp
 			HttpWebRequest webRequest = null;
 			var asyncHandle = new RestRequestAsyncHandle();
 
-			Action<HttpResponse> response_cb = r => ProcessResponse(r, asyncHandle, callback);
+			Action<HttpResponse> response_cb = r => ProcessResponse(request, r, asyncHandle, callback);
 
 			if (UseSynchronizationContext && SynchronizationContext.Current != null) {
 				var ctx = SynchronizationContext.Current;

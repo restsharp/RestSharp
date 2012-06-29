@@ -104,7 +104,7 @@ namespace RestSharp
 					break;
 			}
 
-			var restResponse = ConvertToRestResponse(httpResponse);
+			var restResponse = ConvertToRestResponse(request, httpResponse);
 			return restResponse;
 		}
 
