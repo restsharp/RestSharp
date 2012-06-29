@@ -72,6 +72,19 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Simple_Generic_List_of_Simple_Types_With_Nulls ()
+		{
+			const string content = "{\"users\":[\"johnsheehan\",\"jagregory\",null,\"drusellers\",\"structuremap\"]}";
+			var json = new JsonDeserializer { RootElement = "users" };
+
+			var output = json.Deserialize<List<string>> (new RestResponse { Content = content });
+
+			Assert.NotEmpty (output);
+			Assert.Equal (null, output[2]);
+			Assert.Equal (5, output.Count);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Simple_Generic_List_Given_Item_Without_Array ()
 		{
 			const string content = "{\"users\":\"johnsheehan\"}";
