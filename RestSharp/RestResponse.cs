@@ -157,7 +157,7 @@ namespace RestSharp
 				Server = response.Server,
 				StatusCode = response.StatusCode,
 				StatusDescription = response.StatusDescription,
-                Request = response.Request
+				Request = response.Request
 			};
 		}
         
