@@ -15,6 +15,7 @@ using RestSharp.Contrib;
 
 namespace RestSharp.Authenticators
 {
+	/// <seealso href="http://tools.ietf.org/html/rfc5849"/>
 	public class OAuth1Authenticator : IAuthenticator
 	{
 		public virtual string Realm { get; set; }
@@ -150,19 +151,27 @@ namespace RestSharp.Authenticators
 		private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
 		{
 			var url = client.BuildUri(request).ToString();
+			var queryStringStart = url.IndexOf('?');
+			if (queryStringStart != -1)
+				url = url.Substring(0, queryStringStart);
 
 			OAuthWebQueryInfo oauth;
 			var method = request.Method.ToString().ToUpperInvariant();
 
 			var parameters = new WebParameterCollection();
 
-			// for non-GET style requests make sure params are part of oauth signature
-			if (request.Method != Method.GET && request.Method != Method.DELETE)
+			// include all GET and POST parameters before generating the signature
+			// according to the RFC 5849 - The OAuth 1.0 Protocol
+			// http://tools.ietf.org/html/rfc5849#section-3.4.1
+			// if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
+			// or implement a seperate class for each OAuth version
+			foreach (var p in client.DefaultParameters.Where(p => p.Type == ParameterType.GetOrPost))
 			{
-				foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
-				{
-					parameters.Add(new WebPair(p.Name, p.Value.ToString()));
-				}
+				parameters.Add( new WebPair( p.Name, p.Value.ToString() ) );
+			}
+			foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
+			{
+				parameters.Add(new WebPair(p.Name, p.Value.ToString()));
 			}
 
 			switch (Type)
@@ -193,10 +202,10 @@ namespace RestSharp.Authenticators
 					request.AddHeader("Authorization", GetAuthorizationHeader(parameters));
 					break;
 				case OAuthParameterHandling.UrlOrPostParameters:
-					parameters.Add("oauth_signature", HttpUtility.UrlDecode(oauth.Signature));
-					foreach (var parameter in parameters)
+					parameters.Add("oauth_signature", oauth.Signature);
+					foreach (var parameter in parameters.Where(parameter => !parameter.Name.IsNullOrBlank() && parameter.Name.StartsWith("oauth_")))
 					{
-						request.AddParameter(parameter.Name, parameter.Value);
+						request.AddParameter(parameter.Name, HttpUtility.UrlDecode(parameter.Value));
 					}
 					break;
 				default:
