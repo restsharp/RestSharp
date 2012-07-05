@@ -50,6 +50,11 @@ namespace RestSharp.Tests
 		public Disposition Disposition { get; set; }
 
 	}
+    
+    public class IncomingInvoice
+	{
+        public int ConceptId  { get; set; } 
+	}
 
 	public class PersonForJson
 	{
