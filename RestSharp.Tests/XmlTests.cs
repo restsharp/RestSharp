@@ -464,7 +464,38 @@ namespace RestSharp.Tests
 			Assert.NotNull(p.Foes);
 			Assert.Equal(5, p.Foes.Count);
 			Assert.Equal("Yankees", p.Foes.Team);
-		}	
+		}
+
+		[Fact]
+		public void Can_Deserialize_Names_With_Underscores_Without_Matching_Case_On_Default_Root ()
+		{
+			var doc = CreateLowercaseUnderscoresXml ();
+			var response = new RestResponse { Content = doc };
+
+			var d = new XmlDeserializer ();
+			var p = d.Deserialize<PersonForXml> (response);
+
+			Assert.Equal ("John Sheehan", p.Name);
+			Assert.Equal (new DateTime (2009, 9, 25, 0, 6, 1), p.StartDate);
+			Assert.Equal (28, p.Age);
+			Assert.Equal (long.MaxValue, p.BigNumber);
+			Assert.Equal (99.9999m, p.Percent);
+			Assert.Equal (false, p.IsCool);
+			Assert.Equal (new Guid (GuidString), p.UniqueId);
+			Assert.Equal (new Uri ("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+			Assert.Equal (new Uri ("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+
+			Assert.NotNull (p.Friends);
+			Assert.Equal (10, p.Friends.Count);
+
+			Assert.NotNull (p.BestFriend);
+			Assert.Equal ("The Fonz", p.BestFriend.Name);
+			Assert.Equal (1952, p.BestFriend.Since);
+
+			Assert.NotNull (p.Foes);
+			Assert.Equal (5, p.Foes.Count);
+			Assert.Equal ("Yankees", p.Foes.Team);
+		}
         
         [Fact]
 		public void Can_Deserialize_Lower_Cased_Root_Elements_With_Dashes()
@@ -506,9 +537,9 @@ namespace RestSharp.Tests
 			var d = new XmlDeserializer();
 			var p = d.Deserialize<List<IncomingInvoice>>(response);
 
-            Assert.NotNull(p);
-            Assert.Equal(1, p.Count);
-            Assert.Equal(45, p[0].ConceptId);
+			Assert.NotNull(p);
+			Assert.Equal(1, p.Count);
+			Assert.Equal(45, p[0].ConceptId);
 		}
 
 
@@ -744,11 +775,11 @@ namespace RestSharp.Tests
         private static string CreateLowerCasedRootElementWithDashesXml()
 		{
             var doc = new XDocument();
-			var root = new XElement("incoming-invoices", 
-                new XElement("incoming-invoice", 
-                    new XElement("concept-id", 45)
-                )
-            );
+			var root = new XElement("incoming-invoices",
+				new XElement("incoming-invoice",
+					new XElement("concept-id", 45)
+				)
+			);
 			doc.Add(root);
 			return doc.ToString();
 		}
