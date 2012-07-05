@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Serialization;
 using RestSharp.Authenticators.OAuth;
+using RestSharp.IntegrationTests.Models;
 using Xunit;
 using System.Net;
 using RestSharp.Contrib;
@@ -185,6 +186,108 @@ namespace RestSharp.IntegrationTests
 
 			// assert
 			Assert.Equal( "%3B%2F%3F%3A%40%26%3D%2B%24%2C%21%2A%27%28%29", escapedString );
+		}
+
+		[Fact( Skip = "Provide your own consumer key/secret before running" )]
+		public void Can_Authenticate_LinkedIN_With_OAuth()
+		{
+			const string consumerKey = "TODO_CONSUMER_KEY_HERE";
+			const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
+
+			// request token
+			var client = new RestClient {
+				BaseUrl = "https://api.linkedin.com/uas/oauth",
+				Authenticator = OAuth1Authenticator.ForRequestToken( consumerKey, consumerSecret, "http://localhost" )
+			};
+			var requestTokenRequest = new RestRequest( "requestToken" );
+			var requestTokenResponse = client.Execute( requestTokenRequest );
+			Assert.NotNull( requestTokenResponse );
+			Assert.Equal( HttpStatusCode.OK, requestTokenResponse.StatusCode );
+			var requestTokenResponseParameters = HttpUtility.ParseQueryString( requestTokenResponse.Content );
+			var requestToken = requestTokenResponseParameters[ "oauth_token" ];
+			var requestSecret = requestTokenResponseParameters[ "oauth_token_secret" ];
+			Assert.NotNull( requestToken );
+			Assert.NotNull( requestSecret );
+
+			// redirect user
+			requestTokenRequest = new RestRequest( "authenticate?oauth_token=" + requestToken );
+			var redirectUri = client.BuildUri( requestTokenRequest );
+			Process.Start( redirectUri.ToString() );
+			var requestUrl = "TODO: put browser URL here"; // replace this via the debugger with the return url from LinkedIN. Simply copy it from the opened browser
+			if ( !Debugger.IsAttached )
+			{
+				Debugger.Launch();
+			}
+			Debugger.Break();
+
+			// get the access token
+			var requestTokenQueryParameters = HttpUtility.ParseQueryString( new Uri( requestUrl ).Query );
+			var requestVerifier = requestTokenQueryParameters[ "oauth_verifier" ];
+			client.Authenticator = OAuth1Authenticator.ForAccessToken( consumerKey, consumerSecret, requestToken, requestSecret, requestVerifier );
+			var requestAccessTokenRequest = new RestRequest( "accessToken" );
+			var requestActionTokenResponse = client.Execute( requestAccessTokenRequest );
+			Assert.NotNull( requestActionTokenResponse );
+			Assert.Equal( HttpStatusCode.OK, requestActionTokenResponse.StatusCode );
+			var requestActionTokenResponseParameters = HttpUtility.ParseQueryString( requestActionTokenResponse.Content );
+			var accessToken = requestActionTokenResponseParameters[ "oauth_token" ];
+			var accessSecret = requestActionTokenResponseParameters[ "oauth_token_secret" ];
+			Assert.NotNull( accessToken );
+			Assert.NotNull( accessSecret );
+		}
+
+		[Fact( Skip = "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test" )]
+		public void Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN()
+		{
+			const string consumerKey = "TODO_CONSUMER_KEY_HERE";
+			const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
+			const string accessToken = "TODO_ACCES_TOKEN_HERE";
+			const string accessSecret = "TODO_ACCES_SECRET_HERE";
+
+			// arrange
+			var client = new RestClient {
+				BaseUrl = "http://api.linkedin.com/v1",
+				Authenticator = OAuth1Authenticator.ForProtectedResource( consumerKey, consumerSecret, accessToken, accessSecret )
+			};
+			var request = new RestRequest( "people/~:(id,first-name,last-name)" );
+
+			// act
+			var response = client.Execute< LinkedINMemberProfile >( request );
+
+			// assert
+			Assert.NotNull( response );
+			Assert.Equal( HttpStatusCode.OK, response.StatusCode );
+			Assert.NotNull( response.Data );
+			Assert.NotNull( response.Data.Id );
+			Assert.NotNull( response.Data.FirstName );
+			Assert.NotNull( response.Data.LastName );
+		}
+
+		[Fact( Skip = "Provide your own consumer key/secret before running" )]
+		public void Can_Query_Vimeo()
+		{
+			const string consumerKey = "TODO_CONSUMER_KEY_HERE";
+			const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
+
+			// arrange
+			var client = new RestClient {
+				BaseUrl = "http://vimeo.com/api/rest/v2",
+				Authenticator = OAuth1Authenticator.ForRequestToken( consumerKey, consumerSecret )
+			};
+			var request = new RestRequest();
+			request.AddParameter( "format", "json" );
+			request.AddParameter( "method", "vimeo.videos.search" );
+			request.AddParameter( "query", "weather" );
+			request.AddParameter( "full_response", 1 );
+
+			// act
+			var response = client.Execute( request );
+
+			// assert
+			Assert.NotNull( response );
+			Assert.Equal( HttpStatusCode.OK, response.StatusCode );
+			Assert.NotNull( response.Content );
+			Assert.False( response.Content.Contains( "\"stat\":\"fail\"" )  );
+			Assert.True( response.Content.Contains( "\"stat\":\"ok\"" )  );
 		}
 	}
 }
