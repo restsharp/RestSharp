@@ -53,4 +53,8 @@ namespace RestSharp.Tests.SampleClasses
 		public int utc_offset { get; set; }
 
 	}
+
+	public class StatusList : List<status>
+	{
+	}
 }

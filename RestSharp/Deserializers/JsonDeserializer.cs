@@ -198,7 +198,8 @@ namespace RestSharp.Deserializers
 		private IList BuildList(Type type, object parent)
 		{
 			var list = (IList)Activator.CreateInstance(type);
-			var itemType = type.GetGenericArguments()[0];
+			var listType = type.GetInterfaces().First(x => x.GetGenericTypeDefinition() == typeof(IList<>));
+			var itemType = listType.GetGenericArguments()[0];
 
 			if (parent is IList) {
 				foreach (var element in (IList)parent) {
