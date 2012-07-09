@@ -38,12 +38,20 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response)
-		{
-			if (string.IsNullOrEmpty( response.Content ))
-				return default(T);
+        public T Deserialize<T>(IRestResponse response)
+        {
+            if (response == null)
+                throw new ArgumentNullException("response");
 
-			var doc = XDocument.Parse(response.Content);
+            if (string.IsNullOrEmpty(response.Content))
+                return default(T);
+
+            return Deserialize<T>(response.Content);
+        }
+
+		public T Deserialize<T>(string content)
+		{
+			var doc = XDocument.Parse(content);
 			var root = doc.Root;
 			if (RootElement.HasValue() && doc.Root != null)
 			{

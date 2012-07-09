@@ -20,7 +20,18 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response)
+        public T Deserialize<T>(IRestResponse response)
+        {
+            if (response == null)
+                throw new ArgumentNullException("response");
+
+            if (string.IsNullOrEmpty(response.Content))
+                return default(T);
+
+            return Deserialize<T>(response.Content);
+        }
+
+		public T Deserialize<T>(string content)
 		{
 			var target = Activator.CreateInstance<T>();
 
@@ -30,23 +41,23 @@ namespace RestSharp.Deserializers
 
 				if (RootElement.HasValue())
 				{
-					var root = FindRoot(response.Content);
+                    var root = FindRoot(content);
 					target = (T)BuildList(objType, root);
 				}
 				else
 				{
-					var data = SimpleJson.DeserializeObject(response.Content);
+                    var data = SimpleJson.DeserializeObject(content);
 					target = (T)BuildList(objType, data);
 				}
 			}
 			else if (target is IDictionary)
 			{
-				var root = FindRoot(response.Content);
+                var root = FindRoot(content);
 				target = (T)BuildDictionary(target.GetType(), root);
 			}
 			else
 			{
-				var root = FindRoot(response.Content);
+                var root = FindRoot(content);
 				Map(target, (IDictionary<string, object>)root);
 			}
 
