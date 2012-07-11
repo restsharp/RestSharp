@@ -304,6 +304,16 @@ namespace RestSharp.Extensions
 				"$1-$2"), @"[\s]", "-");
 		}
 
+        /// <summary>
+        /// Add an undescore prefix to a pascasl-cased string
+        /// </summary>
+        /// <param name="pascalCasedWord"></param>
+        /// <returns></returns>
+        public static string AddUnderscorePrefix(this string pascalCasedWord)
+        {
+            return string.Format("_{0}", pascalCasedWord);
+        }
+
 		/// <summary>
 		/// Return possible variants of a name for name matching.
 		/// </summary>
@@ -334,6 +344,13 @@ namespace RestSharp.Extensions
 
 			// try name with dashes with lower case
 			yield return name.AddDashes().ToLower(culture);
-		}
+
+            // try name with underscore prefix
+            yield return name.AddUnderscorePrefix();
+
+            // try name with underscore prefix with lower case
+            yield return name.AddUnderscorePrefix().ToLower(culture);
+
+        }
 	}
 }
