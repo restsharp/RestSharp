@@ -56,6 +56,11 @@ namespace RestSharp.Tests
         public int ConceptId  { get; set; } 
 	}
 
+    public class GuidList
+    {
+        public List<Guid> Ids { get; set; }
+    }
+
 	public class PersonForJson
 	{
 		public string Name { get; set; }
