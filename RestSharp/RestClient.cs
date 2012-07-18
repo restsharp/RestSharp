@@ -270,7 +270,7 @@ namespace RestSharp
 			set
 			{
 				_baseUrl = value;
-				if (_baseUrl.EndsWith("/"))
+				if (_baseUrl != null && _baseUrl.EndsWith("/"))
 				{
 					_baseUrl = _baseUrl.Substring(0, _baseUrl.Length - 1);
 				}
