@@ -261,7 +261,7 @@ namespace RestSharp
 		/// <example>
 		/// client.BaseUrl = "http://example.com";
 		/// </example>
-		public string BaseUrl
+		public virtual string BaseUrl
 		{
 			get
 			{
