@@ -798,5 +798,13 @@ namespace RestSharp.Tests
 			doc["ThingBlue"] = new JObject (new JProperty("Name", "ThingBlue"), new JProperty ("Color", "Blue"));
 			return doc.ToString ();
 		}
+
+		private T GetPayLoad<T>(string fileName)
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", fileName));
+			var response = new RestResponse { Content = doc };
+			var d = new JsonDeserializer();
+			return d.Deserialize<T>(response);
+		}
 	}
 }
