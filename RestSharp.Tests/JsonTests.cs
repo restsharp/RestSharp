@@ -220,6 +220,23 @@ namespace RestSharp.Tests
 			Assert.Equal (output.LowerDashes, Disposition.SoSo);
 		}
 
+        [Fact]
+        public void Can_Deserialize_List_of_Guid()
+        {
+            Guid ID1 = new Guid("b0e5c11f-e944-478c-aadd-753b956d0c8c");
+            Guid ID2 = new Guid("809399fa-21c4-4dca-8dcd-34cb697fbca0");
+            var data = new JObject();
+            data["Ids"] = new JArray(ID1, ID2);
+
+            var d = new JsonDeserializer();
+            var response = new RestResponse { Content = data.ToString() };
+            var p = d.Deserialize<GuidList>(response);
+
+            Assert.Equal(2, p.Ids.Count);
+            Assert.Equal(ID1, p.Ids[0]);
+            Assert.Equal(ID2, p.Ids[1]);
+        }
+
 		[Fact]
 		public void Can_Deserialize_Guid_String_Fields()
 		{

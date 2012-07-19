@@ -218,13 +218,17 @@ namespace RestSharp.Deserializers
 
 						list.Add (element.ToString ());
 					}
-					else
-					{
-						if (element == null)
-						{
-							list.Add (null);
-							continue;
-						}
+                    else if (itemType == typeof(Guid))
+                    {
+                        list.Add(new Guid((string)element));
+                    }
+                    else
+                    {
+                        if (element == null)
+                        {
+                            list.Add(null);
+                            continue;
+                        }
 
 						var item = CreateAndMap (itemType, element);
 						list.Add (item);
