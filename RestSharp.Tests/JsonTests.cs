@@ -527,6 +527,45 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Iso8601DateTimeLocal()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "iso8601datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<Iso8601DateTimeTestStructure>(response);
+
+			Assert.Equal(
+				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc).ToString("u"),
+				payload.DateTimeLocal.ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Iso8601DateTimeZulu()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "iso8601datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<Iso8601DateTimeTestStructure>(response);
+
+			Assert.Equal(
+				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc).ToString("u"),
+				payload.DateTimeUtc.ToUniversalTime().ToString("u"));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Iso8601DateTimeWithOffset()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "iso8601datetimes.txt"));
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc };
+			var payload = d.Deserialize<Iso8601DateTimeTestStructure>(response);
+
+			Assert.Equal(
+				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc).ToString("u"),
+				payload.DateTimeWithOffset.ToUniversalTime().ToString("u"));
+		}
+
+		[Fact]
 		public void Can_Deserialize_Nullable_DateTimeOffset_With_Value()
 		{
 			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
