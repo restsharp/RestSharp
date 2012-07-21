@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RestSharp.Tests.SampleClasses
 {
-    public class BooleanTest
+	public class BooleanTest
     {
         public bool Value { get; set; }
     }

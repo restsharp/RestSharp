@@ -558,7 +558,7 @@ namespace RestSharp.Compression.ZLib
 						tb[0] = -1;
 						{
 							int[] bl = new int[] { 9 };  // must be <= 9 for lookahead assumptions
-							int[] bd = new int[] { 6 }; // must be <= 9 for lookahead assumptions                                                       
+							int[] bd = new int[] { 6 }; // must be <= 9 for lookahead assumptions
 							int[] tl = new int[1];
 							int[] td = new int[1];
 

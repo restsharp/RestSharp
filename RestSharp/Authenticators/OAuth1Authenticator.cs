@@ -105,7 +105,7 @@ namespace RestSharp.Authenticators
 				ConsumerSecret = consumerSecret,
 				ClientUsername = username,
 				ClientPassword = password,
-                Type = OAuthType.ClientAuthentication
+				Type = OAuthType.ClientAuthentication
 			};
 			return authenticator;
 		}

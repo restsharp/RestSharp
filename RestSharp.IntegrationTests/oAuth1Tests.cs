@@ -164,14 +164,14 @@ namespace RestSharp.IntegrationTests
 			Assert.Equal(2, queueResponse.Data.Items.Count);
 		}
 
-        [Fact]
-        public void Properly_Encodes_Parameter_Names()
-        {
-            var postData = new WebParameterCollection { { "name[first]", "Chuck" }, { "name[last]", "Testa" }};
-            var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
+		[Fact]
+		public void Properly_Encodes_Parameter_Names()
+		{
+			var postData = new WebParameterCollection { { "name[first]", "Chuck" }, { "name[last]", "Testa" }};
+			var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
 
-            Assert.Equal("name%5Bfirst%5D", sortedParams[0].Name);
-        }
+			Assert.Equal("name%5Bfirst%5D", sortedParams[0].Name);
+		}
 
 		[Fact]
 		public void Use_RFC_3986_Encoding_For_Auth_Signature_Base()
