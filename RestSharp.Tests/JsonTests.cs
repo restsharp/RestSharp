@@ -190,8 +190,8 @@ namespace RestSharp.Tests
 			Assert.Equal(123, output.Id);
 			Assert.NotNull(output.StartDate);
 			Assert.Equal(
-				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc).ToString("u"),
-				output.StartDate.Value.ToString("u"));
+				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc),
+				output.StartDate.Value);
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
@@ -465,8 +465,8 @@ namespace RestSharp.Tests
 			var person = GetPayLoad<PersonForJson>("person.json.txt");
 
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				person.StartDate.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				person.StartDate);
 		}
 
 		[Fact]
@@ -475,8 +475,8 @@ namespace RestSharp.Tests
 			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.DateTime.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.DateTime);
 		}
 
 		[Fact]
@@ -486,8 +486,8 @@ namespace RestSharp.Tests
 
 			Assert.NotNull(payload.NullableDateTimeWithValue);
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.NullableDateTimeWithValue.Value.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.NullableDateTimeWithValue.Value);
 		}
 
 		[Fact]
@@ -504,8 +504,8 @@ namespace RestSharp.Tests
 			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.DateTimeOffset.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.DateTimeOffset);
 		}
 
 		[Fact]
@@ -514,8 +514,8 @@ namespace RestSharp.Tests
 			var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc).ToString("u"),
-				payload.DateTimeLocal.ToString("u"));
+				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc),
+				payload.DateTimeLocal);
 		}
 
 		[Fact]
@@ -524,8 +524,8 @@ namespace RestSharp.Tests
 			var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc).ToString("u"),
-				payload.DateTimeUtc.ToUniversalTime().ToString("u"));
+				new DateTime(2012, 7, 19, 10, 23, 25, 544, DateTimeKind.Utc),
+				payload.DateTimeUtc.ToUniversalTime());
 		}
 
 		[Fact]
@@ -534,8 +534,8 @@ namespace RestSharp.Tests
 			var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc).ToString("u"),
-				payload.DateTimeWithOffset.ToUniversalTime().ToString("u"));
+				new DateTime(2012, 7, 19, 10, 23, 25, 544, DateTimeKind.Utc),
+				payload.DateTimeWithOffset.ToUniversalTime());
 		}
 
 		[Fact]
@@ -545,8 +545,8 @@ namespace RestSharp.Tests
 
 			Assert.NotNull(payload.NullableDateTimeOffsetWithValue);
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.NullableDateTimeOffsetWithValue.Value.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.NullableDateTimeOffsetWithValue);
 		}
 
 		[Fact]
