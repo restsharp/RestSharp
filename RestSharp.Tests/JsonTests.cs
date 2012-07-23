@@ -31,9 +31,9 @@ namespace RestSharp.Tests
 {
 	public class JsonTests
 	{
-		  private const string AlternativeCulture = "pt-PT";
+		private const string AlternativeCulture = "pt-PT";
 
-		  private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
 		[Fact]
 		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
@@ -190,8 +190,8 @@ namespace RestSharp.Tests
 			Assert.Equal(123, output.Id);
 			Assert.NotNull(output.StartDate);
 			Assert.Equal(
-				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc).ToString("u"),
-				output.StartDate.Value.ToString("u"));
+				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc),
+				output.StartDate.Value);
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
@@ -315,14 +315,14 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
-		  [Fact]
-		  public void Can_Deserialize_With_Default_Root_Alternative_Culture()
-		  {
-				using (new CultureChange(AlternativeCulture))
-				{
-					 Can_Deserialize_With_Default_Root();
-				}
-		  }
+		[Fact]
+		public void Can_Deserialize_With_Default_Root_Alternative_Culture()
+		{
+			using (new CultureChange(AlternativeCulture))
+			{
+					Can_Deserialize_With_Default_Root();
+			}
+		}
 
 		[Fact]
 		public void Can_Deserialize_Names_With_Underscores_With_Default_Root()
@@ -353,14 +353,14 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
-		  [Fact]
-		  public void Can_Deserialize_Names_With_Underscores_With_Default_Root_Alternative_Culture()
-		  {
-				using (new CultureChange(AlternativeCulture))
-				{
-					 Can_Deserialize_Names_With_Underscores_With_Default_Root();
-				}
-		  }
+		[Fact]
+		public void Can_Deserialize_Names_With_Underscores_With_Default_Root_Alternative_Culture()
+		{
+			using (new CultureChange(AlternativeCulture))
+			{
+					Can_Deserialize_Names_With_Underscores_With_Default_Root();
+			}
+		}
 
 		[Fact]
 		public void Can_Deserialize_Names_With_Dashes_With_Default_Root()
@@ -391,14 +391,14 @@ namespace RestSharp.Tests
 			Assert.Equal("Foe 2", p.Foes["dict2"].Nickname);
 		}
 
-		  [Fact]
-		  public void Can_Deserialize_Names_With_Dashes_With_Default_Root_Alternative_Culture()
-		  {
-				using (new CultureChange(AlternativeCulture))
-				{
-					 Can_Deserialize_Names_With_Dashes_With_Default_Root();
-				}
-		  }
+		[Fact]
+		public void Can_Deserialize_Names_With_Dashes_With_Default_Root_Alternative_Culture()
+		{
+			using (new CultureChange(AlternativeCulture))
+			{
+					Can_Deserialize_Names_With_Dashes_With_Default_Root();
+			}
+		}
 
 		[Fact]
 		public void Ignore_Protected_Property_That_Exists_In_Data()
@@ -423,22 +423,19 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		  public void Can_Deserialize_TimeSpan()
-		  {
-				var doc = File.ReadAllText(Path.Combine("SampleData", "timespans.txt"));
-				var d = new JsonDeserializer();
-				var response = new RestResponse { Content = doc };
-				var payload = d.Deserialize<TimeSpanTestStructure>(response);
+		public void Can_Deserialize_TimeSpan()
+		{
+			var payload = GetPayLoad<TimeSpanTestStructure>("timespans.txt");
 
-				Assert.Equal(new TimeSpan(468006), payload.Tick);
-				Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
-				Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
-				Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
-				Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
-				Assert.Null(payload.NullableWithoutValue);
-				Assert.NotNull(payload.NullableWithValue);
-				Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
-		  }
+			Assert.Equal(new TimeSpan(468006), payload.Tick);
+			Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
+			Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
+			Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
+			Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+			Assert.Null(payload.NullableWithoutValue);
+			Assert.NotNull(payload.NullableWithValue);
+			Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Iso_Json_Dates()
@@ -465,50 +462,38 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_JsonNet_Dates()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "person.json.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var person = d.Deserialize<PersonForJson>(response);
+			var person = GetPayLoad<PersonForJson>("person.json.txt");
 
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				person.StartDate.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				person.StartDate);
 		}
 
 		[Fact]
 		public void Can_Deserialize_DateTime()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.DateTime.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.DateTime);
 		}
 
 		[Fact]
 		public void Can_Deserialize_Nullable_DateTime_With_Value()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.NotNull(payload.NullableDateTimeWithValue);
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.NullableDateTimeWithValue.Value.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.NullableDateTimeWithValue.Value);
 		}
 
 		[Fact]
 		public void Can_Deserialize_Nullable_DateTime_With_Null()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.Null(payload.NullableDateTimeWithNull);
 		}
@@ -516,37 +501,58 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_DateTimeOffset()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.DateTimeOffset.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.DateTimeOffset);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Iso8601DateTimeLocal()
+		{
+			var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
+
+			Assert.Equal(
+				new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc),
+				payload.DateTimeLocal);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Iso8601DateTimeZulu()
+		{
+			var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
+
+			Assert.Equal(
+				new DateTime(2012, 7, 19, 10, 23, 25, 544, DateTimeKind.Utc),
+				payload.DateTimeUtc.ToUniversalTime());
+		}
+
+		[Fact]
+		public void Can_Deserialize_Iso8601DateTimeWithOffset()
+		{
+			var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
+
+			Assert.Equal(
+				new DateTime(2012, 7, 19, 10, 23, 25, 544, DateTimeKind.Utc),
+				payload.DateTimeWithOffset.ToUniversalTime());
 		}
 
 		[Fact]
 		public void Can_Deserialize_Nullable_DateTimeOffset_With_Value()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.NotNull(payload.NullableDateTimeOffsetWithValue);
 			Assert.Equal(
-				new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc).ToString("u"),
-				payload.NullableDateTimeOffsetWithValue.Value.ToString("u"));
+				new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+				payload.NullableDateTimeOffsetWithValue);
 		}
 
 		[Fact]
 		public void Can_Deserialize_Nullable_DateTimeOffset_With_Null()
 		{
-			var doc = File.ReadAllText(Path.Combine("SampleData", "datetimes.txt"));
-			var d = new JsonDeserializer();
-			var response = new RestResponse { Content = doc };
-			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
 
 			Assert.Null(payload.NullableDateTimeOffsetWithNull);
 		}
@@ -758,6 +764,14 @@ namespace RestSharp.Tests
 			doc["ThingRed"] = new JObject (new JProperty ("Name", "ThingRed"), new JProperty ("Color", "Red"));
 			doc["ThingBlue"] = new JObject (new JProperty("Name", "ThingBlue"), new JProperty ("Color", "Blue"));
 			return doc.ToString ();
+		}
+
+		private T GetPayLoad<T>(string fileName)
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", fileName));
+			var response = new RestResponse { Content = doc };
+			var d = new JsonDeserializer();
+			return d.Deserialize<T>(response);
 		}
 	}
 }

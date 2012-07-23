@@ -157,6 +157,11 @@ namespace RestSharp.Extensions
 				return date;
 			}
 
+			if (DateTime.TryParse(input, culture, DateTimeStyles.None, out date))
+			{
+				return date;
+			}
+
 			return default(DateTime);
 		}
 
