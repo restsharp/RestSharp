@@ -165,6 +165,13 @@ namespace RestSharp.Tests
 		public DateTimeOffset? NullableDateTimeOffsetWithValue { get; set; }
 	}
 
+	public class Iso8601DateTimeTestStructure
+	{
+		public DateTime DateTimeLocal { get; set; }
+		public DateTime DateTimeUtc { get; set; }
+		public DateTime DateTimeWithOffset { get; set; }
+	}
+
 	public class TimeSpanTestStructure
 	{
 		public TimeSpan Tick { get; set; }
