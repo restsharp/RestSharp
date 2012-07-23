@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-
-using RestSharp.Extensions;
 using System.Globalization;
+using System.Linq;
+using RestSharp.Extensions;
 
 namespace RestSharp.Deserializers
 {
@@ -78,107 +77,14 @@ namespace RestSharp.Deserializers
 
 				if (value == null) continue;
 
-                var stringValue = Convert.ToString(value, Culture);
-
 				// check for nullable and extract underlying type
 				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 				{
 					type = type.GetGenericArguments()[0];
 				}
 
-				if (type.IsPrimitive)
-				{
-					// no primitives can contain quotes so we can safely remove them
-					// allows converting a json value like {"index": "1"} to an int
-					var tmpVal = stringValue.Replace("\"", string.Empty);
-					prop.SetValue(target, tmpVal.ChangeType(type, Culture), null);
-				}
-				else if (type.IsEnum)
-				{
-					var converted = type.FindEnumValue(stringValue, Culture);
-					prop.SetValue(target, converted, null);
-				}
-				else if (type == typeof(Uri))
-				{
-					var uri = new Uri(stringValue, UriKind.RelativeOrAbsolute);
-					prop.SetValue(target, uri, null);
-				}
-				else if (type == typeof(string))
-				{
-					prop.SetValue(target, stringValue, null);
-				}
-				else if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
-				{
-					DateTime dt;
-					if (DateFormat.HasValue())
-					{
-						dt = DateTime.ParseExact(stringValue, DateFormat, Culture);
-					}
-					else
-					{
-						// try parsing instead
-						dt = stringValue.ParseJsonDate(Culture);
-					}
-
-					if (type == typeof(DateTime))
-					{
-						prop.SetValue(target, dt, null);
-					}
-					else if (type == typeof(DateTimeOffset))
-					{
-						prop.SetValue(target, (DateTimeOffset)dt, null);
-					}
-				}
-				else if (type == typeof(Decimal))
-				{
-					var dec = Decimal.Parse(stringValue, Culture);
-					prop.SetValue(target, dec, null);
-				}
-				else if (type == typeof(Guid))
-				{
-					var guid = string.IsNullOrEmpty(stringValue) ? Guid.Empty : new Guid(stringValue);
-					prop.SetValue(target, guid, null);
-                }
-                else if (type == typeof(TimeSpan))
-                {
-                    var timeSpan = TimeSpan.Parse(stringValue);
-                    prop.SetValue(target, timeSpan, null);
-                }
-				else if (type.IsGenericType)
-				{
-					var genericTypeDef = type.GetGenericTypeDefinition();
-					if (genericTypeDef == typeof(List<>))
-					{
-						var list = BuildList(type, value);
-						prop.SetValue(target, list, null);
-					}
-					else if (genericTypeDef == typeof(Dictionary<,>))
-					{
-						var keyType = type.GetGenericArguments()[0];
-
-						// only supports Dict<string, T>()
-						if (keyType == typeof(string))
-						{
-							var dict = BuildDictionary(type, value);
-							prop.SetValue(target, dict, null);
-						}
-					}
-					else
-					{
-						// nested property classes
-						var item = CreateAndMap(type, data[actualName]);
-						prop.SetValue(target, item, null);
-					}
-				}
-				else
-				{
-					// nested property classes
-					var item = CreateAndMap(type, data[actualName]);
-					prop.SetValue(target, item, null);
-				}
+				prop.SetValue(target, ConvertValue(type, value), null);
 			}
-
-
 		}
 
 		private IDictionary BuildDictionary(Type type, object parent)
@@ -188,7 +94,7 @@ namespace RestSharp.Deserializers
 			foreach (var child in (IDictionary<string, object>)parent)
 			{
 				var key = child.Key;
-				var item = CreateAndMap(valueType, child.Value);
+				var item = ConvertValue(valueType, child.Value);
 				dict.Add(key, item);
 			}
 
@@ -201,77 +107,142 @@ namespace RestSharp.Deserializers
 			var listType = type.GetInterfaces().First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
 			var itemType = listType.GetGenericArguments()[0];
 
-			if (parent is IList) {
-				foreach (var element in (IList)parent) {
+			if (parent is IList)
+			{
+				foreach (var element in (IList)parent)
+				{
 					if (itemType.IsPrimitive)
 					{
-						var value = element.ToString ();
-						list.Add (value.ChangeType (itemType, Culture));
+						var value = element.ToString();
+						list.Add(value.ChangeType(itemType, Culture));
 					}
-					else if (itemType == typeof (string))
+					else if (itemType == typeof(string))
 					{
 						if (element == null)
 						{
-							list.Add (null);
+							list.Add(null);
 							continue;
 						}
 
-						list.Add (element.ToString ());
+						list.Add(element.ToString());
 					}
 					else
 					{
 						if (element == null)
 						{
-							list.Add (null);
+							list.Add(null);
 							continue;
 						}
 
-						var item = CreateAndMap (itemType, element);
-						list.Add (item);
+						var item = ConvertValue(itemType, element);
+						list.Add(item);
 					}
 				}
-			} else {
-			    list.Add (CreateAndMap (itemType, parent));
+			}
+			else
+			{
+				list.Add(ConvertValue(itemType, parent));
 			}
 			return list;
 		}
 
-		private object CreateAndMap(Type type, object element)
+		private object ConvertValue(Type type, object value)
 		{
-			object instance = null;
-			if (type.IsGenericType)
+			var stringValue = Convert.ToString(value, Culture);
+
+			if (type.IsPrimitive)
 			{
-				var genericTypeDef = type.GetGenericTypeDefinition();
-				if (genericTypeDef == typeof(Dictionary<,>))
-				{
-					instance = BuildDictionary(type, element);
-				}
-				else if (genericTypeDef == typeof(List<>))
-				{
-					instance = BuildList(type, element);
-				}
-				else if (type == typeof(string))
-				{
-					instance = (string)element;
-				}
-				else
-				{
-					instance = Activator.CreateInstance(type);
-					Map(instance, (IDictionary<string, object>)element);
-				}
+				// no primitives can contain quotes so we can safely remove them
+				// allows converting a json value like {"index": "1"} to an int
+				var tmpVal = stringValue.Replace("\"", string.Empty);
+
+				return tmpVal.ChangeType(type, Culture);
+			}
+			else if (type.IsEnum)
+			{
+				return type.FindEnumValue(stringValue, Culture);
+			}
+			else if (type == typeof(Uri))
+			{
+				return new Uri(stringValue, UriKind.RelativeOrAbsolute);
 			}
 			else if (type == typeof(string))
 			{
-				instance = element.ToString();
+				return stringValue;
+			}
+			else if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
+			{
+				DateTime dt;
+				if (DateFormat.HasValue())
+				{
+					dt = DateTime.ParseExact(stringValue, DateFormat, Culture);
+				}
+				else
+				{
+					// try parsing instead
+					dt = stringValue.ParseJsonDate(Culture);
+				}
+
+				if (type == typeof(DateTime))
+				{
+					return dt;
+				}
+				else if (type == typeof(DateTimeOffset))
+				{
+					return (DateTimeOffset)dt;
+				}
+			}
+			else if (type == typeof(Decimal))
+			{
+				return Decimal.Parse(stringValue, Culture);
+			}
+			else if (type == typeof(Guid))
+			{
+				return string.IsNullOrEmpty(stringValue) ? Guid.Empty : new Guid(stringValue);
+			}
+			else if (type == typeof(TimeSpan))
+			{
+				return TimeSpan.Parse(stringValue);
+			}
+			else if (type.IsGenericType)
+			{
+				var genericTypeDef = type.GetGenericTypeDefinition();
+				if (genericTypeDef == typeof(List<>))
+				{
+					return BuildList(type, value);
+				}
+				else if (genericTypeDef == typeof(Dictionary<,>))
+				{
+					var keyType = type.GetGenericArguments()[0];
+
+					// only supports Dict<string, T>()
+					if (keyType == typeof(string))
+					{
+						return BuildDictionary(type, value);
+					}
+				}
+				else
+				{
+					// nested property classes
+					return CreateAndMap(type, value);
+				}
 			}
 			else
 			{
-				instance = Activator.CreateInstance(type);
-				var data = (IDictionary<string, object>)element;
-				Map(instance, data);
+				// nested property classes
+				return CreateAndMap(type, value);
 			}
-			return instance;
+
+			return null;
 		}
 
+		private object CreateAndMap(Type type, object element)
+		{
+			var instance = Activator.CreateInstance(type);
+
+			Map(instance, (IDictionary<string, object>)element);
+
+			return instance;
+		}
 	}
 }
