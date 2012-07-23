@@ -50,10 +50,10 @@ namespace RestSharp.Tests
 		public Disposition Disposition { get; set; }
 
 	}
-    
-    public class IncomingInvoice
+
+	public class IncomingInvoice
 	{
-        public int ConceptId  { get; set; } 
+		public int ConceptId { get; set; }
 	}
 
 	public class PersonForJson
@@ -84,7 +84,8 @@ namespace RestSharp.Tests
 		public Disposition Disposition { get; set; }
 	}
 
-	public enum Order { 
+	public enum Order
+	{
 		First,
 		Second,
 		Third
@@ -149,6 +150,11 @@ namespace RestSharp.Tests
 		public List<T> Items { get; set; }
 	}
 
+	public class GuidList
+	{
+		public List<Guid> Ids { get; set; }
+	}
+
 	public class DateTimeTestStructure
 	{
 		public DateTime DateTime { get; set; }
@@ -159,16 +165,16 @@ namespace RestSharp.Tests
 		public DateTimeOffset? NullableDateTimeOffsetWithValue { get; set; }
 	}
 
-    public class TimeSpanTestStructure
-    {
-        public TimeSpan Tick { get; set; }
-        public TimeSpan Millisecond { get; set; }
-        public TimeSpan Second { get; set; }
-        public TimeSpan Minute { get; set; }
-        public TimeSpan Hour { get; set; }
-        public TimeSpan? NullableWithoutValue { get; set; }
-        public TimeSpan? NullableWithValue { get; set; }
-    }
+	public class TimeSpanTestStructure
+	{
+		public TimeSpan Tick { get; set; }
+		public TimeSpan Millisecond { get; set; }
+		public TimeSpan Second { get; set; }
+		public TimeSpan Minute { get; set; }
+		public TimeSpan Hour { get; set; }
+		public TimeSpan? NullableWithoutValue { get; set; }
+		public TimeSpan? NullableWithValue { get; set; }
+	}
 
 	public class JsonEnumsTestStructure
 	{
