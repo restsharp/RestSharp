@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>103.2</version>
+		<version>103.3</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
@@ -13,23 +13,11 @@
 		<tags>REST HTTP API JSON XML</tags>
 		<releaseNotes>
 			<![CDATA[
-			New Features
-			- Allow deserializing a single item into a List<T> field, for JSON that only uses a list when there's more than one item for a given field (thanks petejohanson)
-			- Extended NtlmAuthenticator so that it can also impersonate a user (thanks kleinron)
-			- Added support for mapping JSON objects to Dictionary<string, string=""> (thanks petejohanson)
-			- Added ability to set Host and Date when built for .NET 4.0 (thanks lukebakken)
-			- Allow deserializing lists with null in them. Should resolve pull request (thanks petejohanson)
-			- Add support for deserializing JSON to subclasses of List<T> (thanks abaybuzskiy)
-
-			Bugs fixed
-			- Fixed invalid OAuth1 signature for GET request (thanks trilobyte)
-			- Added some missing OAuth files to the .NET4 and Silverlight projects (thanks PedroLamas)
-			- Removed unused NewtonsoftJsonMonoTouch.dll and Newtonsoft.Json.MonoDroid.dll binaries (thanks attilah)
-			- Fixed various issues with MonoTouch/Droid ports (thanks attilah)
-			- Add ability to set Host and Date when built for .NET 4.0 (thanks lukebakken)
-			- Fixed XmlDeserializer issue not handling lowercase + dash root elements in some cases
-			- Fixed an issue where RestResponse.Request was not populated (thanks mattleibow)
-			- Don't crash on captive networks that intercept SSL (thanks aroben)
+* Added in the check for it being generic before calling GetGenericType Definition() (thanks nicwise)
+* Add support for deserializing properties with an underscore prefix (thanks psampaio)
+* BaseUrl is now virtual (thanks Haacked)
+* Fixed List<T> json deserialization, when T was a something like DateTime, Timespan, Guid, etc. (thanks PedroLamas)
+* Improve support for parsing iso8601 dates (thanks friism)
 			]]>
 		</releaseNotes>
 	</metadata>
