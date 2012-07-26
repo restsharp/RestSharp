@@ -325,6 +325,20 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Names_With_Underscore_Prefix()
+		{
+			var data = File.ReadAllText(Path.Combine("SampleData", "underscore_prefix.txt"));
+			var response = new RestResponse { Content = data };
+			var json = new JsonDeserializer();
+			json.RootElement = "User";
+
+			var output = json.Deserialize<SOUser>(response);
+
+			Assert.Equal("John Sheehan", output.DisplayName);
+			Assert.Equal(1786, output.Id);
+		}
+
+		[Fact]
 		public void Can_Deserialize_Names_With_Underscores_With_Default_Root()
 		{
 			var doc = CreateJsonWithUnderscores();
