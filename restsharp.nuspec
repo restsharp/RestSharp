@@ -18,6 +18,8 @@
 * BaseUrl is now virtual (thanks Haacked)
 * Fixed List<T> json deserialization, when T was a something like DateTime, Timespan, Guid, etc. (thanks PedroLamas)
 * Improve support for parsing iso8601 dates (thanks friism)
+
+For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.markdown
 			]]>
 		</releaseNotes>
 	</metadata>
