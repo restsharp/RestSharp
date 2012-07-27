@@ -1,5 +1,9 @@
 # RestSharp Release Notes
 
+## 103.4
+
+* Version bump to fix assembly versioning
+
 ## 103.3
 
 * Added in the check for it being generic before calling GetGenericType Definition() (thanks nicwise)

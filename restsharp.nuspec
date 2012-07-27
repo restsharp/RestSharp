@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>103.3</version>
+		<version>103.4</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
@@ -13,6 +13,10 @@
 		<tags>REST HTTP API JSON XML</tags>
 		<releaseNotes>
 			<![CDATA[
+103.4
+* Bump to fix assembly versioning.
+
+103.3
 * Added in the check for it being generic before calling GetGenericType Definition() (thanks nicwise)
 * Add support for deserializing properties with an underscore prefix (thanks psampaio)
 * BaseUrl is now virtual (thanks Haacked)
