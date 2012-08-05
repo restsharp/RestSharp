@@ -34,6 +34,9 @@ namespace RestSharp
 	/// </summary>
 	public partial class RestClient : IRestClient
 	{
+		// silverlight friendly way to get current version
+		static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
+
 		public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
 		/// <summary>
@@ -57,12 +60,6 @@ namespace RestSharp
 			AddHandler("text/xml", new XmlDeserializer());
 			AddHandler("*", new XmlDeserializer());
 
-			// silverlight friendly way to get current version
-			var assembly = Assembly.GetExecutingAssembly();
-			AssemblyName assemblyName = new AssemblyName(assembly.FullName);
-			var version = assemblyName.Version;
-
-			UserAgent = "RestSharp " + version.ToString();
 			FollowRedirects = true;
 		}
 
@@ -363,13 +360,15 @@ namespace RestSharp
 			}
 
 			http.Url = BuildUri(request);
-			
-			if(UserAgent.HasValue())
-			{
-				http.UserAgent = UserAgent;
-			}
 
-			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
+			var userAgent = UserAgent ?? http.UserAgent;
+			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp " + version.ToString();
+
+			var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+			if (timeout > 0)
+			{
+				http.Timeout = timeout;
+			}
 
 #if !SILVERLIGHT
 			http.FollowRedirects = FollowRedirects;
