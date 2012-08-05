@@ -369,7 +369,11 @@ namespace RestSharp
 				http.UserAgent = UserAgent;
 			}
 
-			http.Timeout = request.Timeout == 0 ? Timeout : request.Timeout;
+			var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+			if (timeout > 0)
+			{
+				http.Timeout = timeout;
+			}
 
 #if !SILVERLIGHT
 			http.FollowRedirects = FollowRedirects;
