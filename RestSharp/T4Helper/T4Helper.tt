@@ -22,31 +22,31 @@
 	//   \/ \/ \/ \/ \/
 	var _namespace = "";
 
-    var currentDirectory = Path.GetDirectoryName(Host.TemplateFile);
-    var restSharpSchemas = Directory.GetFiles(currentDirectory, "*.rs", SearchOption.AllDirectories);
-    
-    foreach (var file in restSharpSchemas)
-    {
-        string newFile = Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file) + ".cs");        
-        RestSharpTemplate template = new RestSharpTemplate(file, _namespace);
-        template.Output.File = newFile;
-        template.Render();
+	var currentDirectory = Path.GetDirectoryName(Host.TemplateFile);
+	var restSharpSchemas = Directory.GetFiles(currentDirectory, "*.rs", SearchOption.AllDirectories);
+
+	foreach (var file in restSharpSchemas)
+	{
+		string newFile = Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file) + ".cs");        
+		RestSharpTemplate template = new RestSharpTemplate(file, _namespace);
+		template.Output.File = newFile;
+		template.Render();
 	}
 #>
 
 <#+
 public class RestSharpTemplate : T4Toolbox.Template
-{    
-    protected string FilePath { get; set; }
-    protected string Namespace { get; set; }
-    public RestSharpTemplate(string file, string _namespace)
-    {
-        FilePath = file;
+{
+	protected string FilePath { get; set; }
+	protected string Namespace { get; set; }
+	public RestSharpTemplate(string file, string _namespace)
+	{
+		FilePath = file;
 		Namespace = _namespace;
-    }
-    
-    public override string TransformText()
-    {
+	}
+
+	public override string TransformText()
+	{
 		// load file
 		var doc = XDocument.Load(FilePath);
 		RemoveNamespace(doc);
@@ -59,15 +59,15 @@ public class RestSharpTemplate : T4Toolbox.Template
 			Write(Environment.NewLine + "namespace " + Namespace + " {" + Environment.NewLine);
 		
 		Write(BuildClass(doc.Root));
-		
+
 		foreach (var item in Deferred.Reverse())
 			Write(item.Value);
 		
 		if (!string.IsNullOrEmpty(Namespace)) 
 			Write(Environment.NewLine + "}");
 		
-        return this.GenerationEnvironment.ToString();
-    }
+		return this.GenerationEnvironment.ToString();
+	}
 	
 	string BuildClass(XElement root)
 	{

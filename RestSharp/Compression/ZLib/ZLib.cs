@@ -120,60 +120,60 @@ namespace RestSharp.Compression.ZLib
 
 
 #if NOTUSED
-        
-        /// <summary>
-        /// Performs an unsigned bitwise right shift with the specified number
-        /// </summary>
-        /// <param name="number">Number to operate on</param>
-        /// <param name="bits">Ammount of bits to shift</param>
-        /// <returns>The resulting number from the shift operation</returns>
-        public static int URShift(int number, long bits)
-        {
-            return URShift(number, (int)bits);
-        }
 
-        /// <summary>
-        /// Performs an unsigned bitwise right shift with the specified number
-        /// </summary>
-        /// <param name="number">Number to operate on</param>
-        /// <param name="bits">Ammount of bits to shift</param>
-        /// <returns>The resulting number from the shift operation</returns>
-        public static long URShift(long number, long bits)
-        {
-            return URShift(number, (int)bits);
-        }
+		/// <summary>
+		/// Performs an unsigned bitwise right shift with the specified number
+		/// </summary>
+		/// <param name="number">Number to operate on</param>
+		/// <param name="bits">Ammount of bits to shift</param>
+		/// <returns>The resulting number from the shift operation</returns>
+		public static int URShift(int number, long bits)
+		{
+			return URShift(number, (int)bits);
+		}
+
+		/// <summary>
+		/// Performs an unsigned bitwise right shift with the specified number
+		/// </summary>
+		/// <param name="number">Number to operate on</param>
+		/// <param name="bits">Ammount of bits to shift</param>
+		/// <returns>The resulting number from the shift operation</returns>
+		public static long URShift(long number, long bits)
+		{
+			return URShift(number, (int)bits);
+		}
 
 #endif
 
 #if POINTLESS        
-        /*******************************/
-        /// <summary>Reads a number of characters from the current source Stream and writes the data to the target array at the specified index.</summary>
-        /// <param name="sourceStream">The source Stream to read from.</param>
-        /// <param name="target">Contains the array of characteres read from the source Stream.</param>
-        /// <param name="start">The starting index of the target array.</param>
-        /// <param name="count">The maximum number of characters to read from the source Stream.</param>
-        /// <returns>The number of characters read. The number will be less than or equal to count depending on the data available in the source Stream. Returns -1 if the end of the stream is reached.</returns>
-        public static System.Int32 ReadInput(System.IO.Stream sourceStream, byte[] target, int start, int count)
-        {
-            // Returns 0 bytes if not enough space in target
-            if (target.Length == 0)
-                return 0;
+		/*******************************/
+		/// <summary>Reads a number of characters from the current source Stream and writes the data to the target array at the specified index.</summary>
+		/// <param name="sourceStream">The source Stream to read from.</param>
+		/// <param name="target">Contains the array of characteres read from the source Stream.</param>
+		/// <param name="start">The starting index of the target array.</param>
+		/// <param name="count">The maximum number of characters to read from the source Stream.</param>
+		/// <returns>The number of characters read. The number will be less than or equal to count depending on the data available in the source Stream. Returns -1 if the end of the stream is reached.</returns>
+		public static System.Int32 ReadInput(System.IO.Stream sourceStream, byte[] target, int start, int count)
+		{
+			// Returns 0 bytes if not enough space in target
+			if (target.Length == 0)
+				return 0;
 
-            if (count == 0) return 0;
+			if (count == 0) return 0;
 
-            // why double-buffer?
-            //byte[] receiver = new byte[target.Length];
-            int bytesRead = sourceStream.Read(target, start, count);
+			// why double-buffer?
+			//byte[] receiver = new byte[target.Length];
+			int bytesRead = sourceStream.Read(target, start, count);
 
-            // Returns -1 if EOF
-            //if (bytesRead == 0)
-            //    return -1;
+			// Returns -1 if EOF
+			//if (bytesRead == 0)
+			//    return -1;
 
-            //for (int i = start; i < start + bytesRead; i++)
-            //    target[i] = (byte)receiver[i];
+			//for (int i = start; i < start + bytesRead; i++)
+			//    target[i] = (byte)receiver[i];
 
-            return bytesRead;
-        }
+			return bytesRead;
+		}
 #endif
 
 

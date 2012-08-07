@@ -171,7 +171,7 @@ namespace RestSharp.Authenticators.OAuth
 			var exclusions = copy.Where(n => n.Name.EqualsIgnoreCase("oauth_signature"));
 
 			copy.RemoveAll(exclusions);
-            copy.ForEach(p => { p.Name = UrlEncodeStrict(p.Name); p.Value = UrlEncodeStrict(p.Value); });
+			copy.ForEach(p => { p.Name = UrlEncodeStrict(p.Name); p.Value = UrlEncodeStrict(p.Value); });
 			copy.Sort(
 				(x, y) =>
 				string.CompareOrdinal(x.Name, y.Name) != 0
@@ -317,9 +317,9 @@ namespace RestSharp.Authenticators.OAuth
 				}
 				case OAuthSignatureMethod.PlainText:
 				{
-				    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+					signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-				    break;
+					break;
 				}
 				default:
 					throw new NotImplementedException("Only HMAC-SHA1 is currently supported.");
