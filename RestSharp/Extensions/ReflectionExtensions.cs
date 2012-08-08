@@ -92,9 +92,20 @@ namespace RestSharp.Extensions
 		public static object FindEnumValue(this Type type, string value, CultureInfo culture)
 		{
 #if FRAMEWORK
-			return Enum.GetValues(type)
-				.Cast<Enum>()
-				.First(v => v.ToString().GetNameVariants(culture).Contains(value, StringComparer.Create(culture, true)));
+			var ret = Enum.GetValues( type )
+			.Cast<Enum>()
+			.FirstOrDefault(v => v.ToString().GetNameVariants(culture).Contains(value, StringComparer.Create(culture, true)));
+
+			if (ret == null)
+			{
+				int enumValueAsInt;
+				if (Int32.TryParse(value, out enumValueAsInt) && Enum.IsDefined(type, enumValueAsInt))
+				{
+					ret = (Enum) Enum.ToObject(type, enumValueAsInt);
+				}
+			}
+
+			return ret;
 #else
 			return Enum.Parse(type, value, true);
 #endif

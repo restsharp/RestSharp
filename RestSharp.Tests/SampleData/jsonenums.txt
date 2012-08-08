@@ -6,4 +6,5 @@
   "lower_underscores": "so_so",
   "dashes": "So-So",
   "lower_dashes": "so_so",
+  "integer" : 1
 }
