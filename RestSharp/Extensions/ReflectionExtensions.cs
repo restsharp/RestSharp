@@ -94,15 +94,15 @@ namespace RestSharp.Extensions
 #if FRAMEWORK
 			var ret = Enum.GetValues( type )
 			.Cast<Enum>()
-			.FirstOrDefault( v => v.ToString().GetNameVariants( culture ).Contains( value, StringComparer.Create( culture, true ) ) );
+			.FirstOrDefault(v => v.ToString().GetNameVariants(culture).Contains(value, StringComparer.Create(culture, true)));
 
-			if ( ret == null )
+			if (ret == null)
 			{
 				int enumValueAsInt;
-				if ( Int32.TryParse( value, out enumValueAsInt ) && Enum.IsDefined( type, enumValueAsInt ) )
+				if (Int32.TryParse(value, out enumValueAsInt) && Enum.IsDefined(type, enumValueAsInt))
 				{
-					ret = (Enum) Enum.ToObject( type, enumValueAsInt );
-            }
+					ret = (Enum) Enum.ToObject(type, enumValueAsInt);
+				}
 			}
 
 			return ret;
