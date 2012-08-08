@@ -69,6 +69,25 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_serialize_Enum()
+		{
+			var enumClass = new ClassWithEnum
+			{
+				Color = Color.Red
+			};
+
+			var xml = new XmlSerializer();
+			var doc = xml.Serialize(enumClass);
+
+			var expected = new XDocument();
+			var root = new XElement("ClassWithEnum");
+			root.Add( new XElement("Color", "Red") );
+			expected.Add(root);
+
+			Assert.Equal( expected.ToString(), doc.ToString() );
+      }
+
+		[Fact]
 		public void Can_serialize_simple_POCO_With_DateFormat_Specified() {
 			var poco = new Person {
 				Name = "Foo",
@@ -192,6 +211,18 @@ namespace RestSharp.Tests
 		{
 			public string Name { get; set; }
 			public int Value { get; set; }
+		}
+
+		private enum Color
+		{
+			Red,
+			Blue,
+			Green
+		}
+
+		private class ClassWithEnum
+		{
+			public Color Color { get; set; }
 		}
 
 		[SerializeAs(Name = "Person")]

@@ -245,13 +245,23 @@ namespace RestSharp.Tests
 			var json = new JsonDeserializer ();
 			var output = json.Deserialize<JsonEnumsTestStructure>(response);
 
-			Assert.Equal (output.Upper, Disposition.Friendly);
-			Assert.Equal (output.Lower, Disposition.Friendly);
-			Assert.Equal (output.CamelCased, Disposition.SoSo);
-			Assert.Equal (output.Underscores, Disposition.SoSo);
-			Assert.Equal (output.LowerUnderscores, Disposition.SoSo);
-			Assert.Equal (output.Dashes, Disposition.SoSo);
-			Assert.Equal (output.LowerDashes, Disposition.SoSo);
+			Assert.Equal(Disposition.Friendly,output.Upper);
+			Assert.Equal(Disposition.Friendly,output.Lower);
+			Assert.Equal(Disposition.SoSo,output.CamelCased);
+			Assert.Equal(Disposition.SoSo,output.Underscores);
+			Assert.Equal(Disposition.SoSo,output.LowerUnderscores);
+			Assert.Equal(Disposition.SoSo,output.Dashes);
+			Assert.Equal(Disposition.SoSo,output.LowerDashes);
+			Assert.Equal(Disposition.SoSo,output.Integer);
+		}
+
+		[Fact]
+		public void Deserialization_Of_Undefined_Int_Value_Still_Throws_InvalidOperationException()
+		{
+			const string data = @"{ ""Integer"" : 1024 }";
+			var response = new RestResponse { Content = data };
+			var json = new JsonDeserializer ();
+			Assert.Throws<InvalidOperationException>(() => json.Deserialize<JsonEnumsTestStructure>(response));
 		}
 
 		[Fact]

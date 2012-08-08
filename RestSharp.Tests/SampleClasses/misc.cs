@@ -192,5 +192,6 @@ namespace RestSharp.Tests
 		public Disposition LowerUnderscores { get; set; }
 		public Disposition Dashes { get; set; }
 		public Disposition LowerDashes { get; set; }
+		public Disposition Integer { get; set; }
 	}
 }
