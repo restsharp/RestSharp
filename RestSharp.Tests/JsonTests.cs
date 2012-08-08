@@ -256,12 +256,13 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
-		public void Deserialization_Of_Undefined_Int_Value_Still_Throws_InvalidOperationException()
+		public void Deserialization_Of_Undefined_Int_Value_Returns_Enum_Default()
 		{
 			const string data = @"{ ""Integer"" : 1024 }";
 			var response = new RestResponse { Content = data };
 			var json = new JsonDeserializer ();
-			Assert.Throws<InvalidOperationException>(() => json.Deserialize<JsonEnumsTestStructure>(response));
+			var result = json.Deserialize<JsonEnumsTestStructure>(response);
+			Assert.Equal(Disposition.Friendly,result.Integer);
 		}
 
 		[Fact]
