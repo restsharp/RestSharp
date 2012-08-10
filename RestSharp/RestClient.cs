@@ -16,16 +16,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Xml;
-using System.Xml.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
-using System.Text;
-using System.Reflection;
 
 namespace RestSharp
 {
@@ -84,71 +81,6 @@ namespace RestSharp
 		/// If specified in both client and request, the request wins
 		/// </summary>
 		public IList<Parameter> DefaultParameters { get; private set; }
-
-		/// <summary>
-		/// Add a parameter to use on every request made with this client instance
-		/// </summary>
-		/// <param name="p">Parameter to add</param>
-		/// <returns></returns>
-		public void AddDefaultParameter(Parameter p)
-		{
-			if (p.Type == ParameterType.RequestBody)
-			{
-				throw new NotSupportedException("Cannot set request body from default headers. Use Request.AddBody() instead.");
-			}
-
-			DefaultParameters.Add(p);
-		}
-
-		/// <summary>
-		/// Adds a HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
-		/// Used on every request made by this client instance
-		/// </summary>
-		/// <param name="name">Name of the parameter</param>
-		/// <param name="value">Value of the parameter</param>
-		/// <returns>This request</returns>
-		public void AddDefaultParameter(string name, object value)
-		{
-			AddDefaultParameter(new Parameter { Name = name, Value = value, Type = ParameterType.GetOrPost });
-		}
-
-		/// <summary>
-		/// Adds a parameter to the request. There are four types of parameters:
-		///	- GetOrPost: Either a QueryString value or encoded form value based on method
-		///	- HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-		///	- UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-		///	- RequestBody: Used by AddBody() (not recommended to use directly)
-		/// </summary>
-		/// <param name="name">Name of the parameter</param>
-		/// <param name="value">Value of the parameter</param>
-		/// <param name="type">The type of parameter to add</param>
-		/// <returns>This request</returns>
-		public void AddDefaultParameter(string name, object value, ParameterType type)
-		{
-			AddDefaultParameter(new Parameter { Name = name, Value = value, Type = type });
-		}
-
-		/// <summary>
-		/// Shortcut to AddDefaultParameter(name, value, HttpHeader) overload
-		/// </summary>
-		/// <param name="name">Name of the header to add</param>
-		/// <param name="value">Value of the header to add</param>
-		/// <returns></returns>
-		public void AddDefaultHeader(string name, string value)
-		{
-			AddDefaultParameter(name, value, ParameterType.HttpHeader);
-		}
-
-		/// <summary>
-		/// Shortcut to AddDefaultParameter(name, value, UrlSegment) overload
-		/// </summary>
-		/// <param name="name">Name of the segment to add</param>
-		/// <param name="value">Value of the segment to add</param>
-		/// <returns></returns>
-		public void AddDefaultUrlSegment(string name, string value)
-		{
-			AddDefaultParameter(name, value, ParameterType.UrlSegment);
-		}
 
 		/// <summary>
 		/// Registers a content handler to process response content
