@@ -63,6 +63,7 @@ namespace RestSharp
 		HttpResponse Patch();
 
 		IWebProxy Proxy { get; set; }
+		bool AttemptPostFilesWithoutBuffering { get; set; }
 #endif
 	}
 }
