@@ -77,7 +77,17 @@ namespace RestSharp
 			return PutPostInternalAsync("PATCH", action);
 		}
 
-		private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+	    public HttpWebRequest CopyAsync(Action<HttpResponse> action)
+	    {
+            return PutPostInternalAsync("COPY", action);
+	    }
+
+	    public HttpWebRequest MoveAsync(Action<HttpResponse> action)
+	    {
+            return PutPostInternalAsync("MOVE", action);
+        }
+
+	    private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
 		{
 			HttpWebRequest webRequest = null;
 			try
