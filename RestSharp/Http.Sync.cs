@@ -79,6 +79,22 @@ namespace RestSharp
 			return GetStyleMethodInternal("DELETE");
 		}
 
+        /// <summary>
+        /// Execute a COPY request
+        /// </summary>
+        public HttpResponse Copy()
+        {
+            return PostPutInternal("COPY");
+        }
+
+        /// <summary>
+        /// Execute a MOVE request
+        /// </summary>
+        public HttpResponse Move()
+        {
+            return PostPutInternal("MOVE");
+        }
+
 		/// <summary>
 		/// Execute a PATCH request
 		/// </summary>

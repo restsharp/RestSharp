@@ -76,7 +76,13 @@ namespace RestSharp
 				case Method.PATCH:
 					webRequest = http.PatchAsync(response_cb);
 					break;
-			}
+                case Method.COPY:
+                    webRequest = http.CopyAsync(response_cb);
+                    break;
+                case Method.MOVE:
+                    webRequest = http.MoveAsync(response_cb);
+                    break;
+            }
 			
 			asyncHandle.WebRequest = webRequest;
 			return asyncHandle;

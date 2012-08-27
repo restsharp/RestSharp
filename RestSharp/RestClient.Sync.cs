@@ -101,8 +101,14 @@ namespace RestSharp
 					break;
 				case Method.PATCH:
 					httpResponse = http.Patch();
-					break;
-			}
+			        break;
+                case Method.COPY:
+                    httpResponse = http.Copy();
+                    break;
+                case Method.MOVE:
+                    httpResponse = http.Move();
+                    break;
+            }
 
 			var restResponse = ConvertToRestResponse(request, httpResponse);
 			return restResponse;
