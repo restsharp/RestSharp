@@ -52,8 +52,8 @@ namespace RestSharp
 		HttpWebRequest PostAsync(Action<HttpResponse> action);
 		HttpWebRequest PutAsync(Action<HttpResponse> action);
         HttpWebRequest PatchAsync(Action<HttpResponse> action);
-        HttpWebRequest CopyAsync(Action<HttpResponse> action);
-        HttpWebRequest MoveAsync(Action<HttpResponse> action);
+        HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
+        HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
 
 #if FRAMEWORK
 		HttpResponse Delete();
@@ -63,8 +63,8 @@ namespace RestSharp
 		HttpResponse Post();
 		HttpResponse Put();
         HttpResponse Patch();
-        HttpResponse Copy();
-        HttpResponse Move();
+        HttpResponse AsPost(string httpMethod);
+        HttpResponse AsGet(string httpMethod);
 
 		IWebProxy Proxy { get; set; }
 #endif

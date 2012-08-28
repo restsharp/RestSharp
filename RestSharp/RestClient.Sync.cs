@@ -35,31 +35,73 @@ namespace RestSharp
 		/// <returns>RestResponse</returns>
 		public virtual IRestResponse Execute(IRestRequest request)
 		{
-			AuthenticateIfNeeded(this, request);
+            var method = Enum.GetName(typeof(Method), request.Method);
+            switch (request.Method)
+            {
+                case Method.POST:
+                case Method.PUT:
+                case Method.PATCH:
+                    return Execute(request, method, DoExecuteAsPost);
 
-			// add Accept header based on registered deserializers
-			var accepts = string.Join(", ", AcceptTypes.ToArray());
-			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-
-			IRestResponse response = new RestResponse();
-			try
-			{
-				response = GetResponse(request);
-				response.Request = request;
-				response.Request.IncreaseNumAttempts();
-
-			}
-			catch (Exception ex)
-			{
-				response.ResponseStatus = ResponseStatus.Error;
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-			}
-
-			return response;
+                default:
+                    return Execute(request, method, DoExecuteAsGet);
+            }
 		}
 
-		/// <summary>
+        public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
+        {
+            return Execute(request, httpMethod, DoExecuteAsGet);
+        }
+
+        public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
+        {
+            request.Method = Method.POST; // Required by RestClient.BuildUri... 
+            return Execute(request, httpMethod, DoExecuteAsPost);
+        }
+
+        private IRestResponse Execute(IRestRequest request, string httpMethod, Func<IHttp, string, HttpResponse> getResponse)
+	    {
+            AuthenticateIfNeeded(this, request);
+
+            // add Accept header based on registered deserializers
+            var accepts = string.Join(", ", AcceptTypes.ToArray());
+            AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+
+            IRestResponse response = new RestResponse();
+            try
+            {
+                var http = HttpFactory.Create();
+
+                ConfigureHttp(request, http);
+                ConfigureProxy(http);
+
+                response = ConvertToRestResponse(request, getResponse(http, httpMethod));
+                response.Request = request;
+                response.Request.IncreaseNumAttempts();
+
+            }
+            catch (Exception ex)
+            {
+                response.ResponseStatus = ResponseStatus.Error;
+                response.ErrorMessage = ex.Message;
+                response.ErrorException = ex;
+            }
+
+            return response;
+	    }
+
+
+	    private static HttpResponse DoExecuteAsGet(IHttp http, string method)
+	    {
+	        return http.AsGet(method);
+	    }
+
+	    private static HttpResponse DoExecuteAsPost(IHttp http, string method)
+	    {
+	        return http.AsPost(method);
+	    }
+
+	    /// <summary>
 		/// Executes the specified request and deserializes the response content using the appropriate content handler
 		/// </summary>
 		/// <typeparam name="T">Target deserialization type</typeparam>
@@ -67,54 +109,20 @@ namespace RestSharp
 		/// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
 		public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
 		{
-			var raw = Execute(request);
-			return Deserialize<T>(request, raw);
-		}
-		
-		private IRestResponse GetResponse(IRestRequest request)
-		{
-			var http = HttpFactory.Create();
-
-			ConfigureHttp(request, http);
-			ConfigureProxy(http);
-
-			var httpResponse = new HttpResponse();
-
-			switch (request.Method) {
-				case Method.GET:
-					httpResponse = http.Get();
-					break;
-				case Method.POST:
-					httpResponse = http.Post();
-					break;
-				case Method.PUT:
-					httpResponse = http.Put();
-					break;
-				case Method.DELETE:
-					httpResponse = http.Delete();
-					break;
-				case Method.HEAD:
-					httpResponse = http.Head();
-					break;
-				case Method.OPTIONS:
-					httpResponse = http.Options();
-					break;
-				case Method.PATCH:
-					httpResponse = http.Patch();
-			        break;
-                case Method.COPY:
-                    httpResponse = http.Copy();
-                    break;
-                case Method.MOVE:
-                    httpResponse = http.Move();
-                    break;
-            }
-
-			var restResponse = ConvertToRestResponse(request, httpResponse);
-			return restResponse;
+	        return Deserialize<T>(request, Execute(request));
 		}
 
-		private void ConfigureProxy(IHttp http)
+	    public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
+	    {
+            return Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
+	    }
+
+        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
+        {
+            return Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
+        }
+
+	    private void ConfigureProxy(IHttp http)
 		{
 			if (Proxy != null)
 			{

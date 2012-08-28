@@ -69,18 +69,6 @@ namespace RestSharp
 			return client.ExecuteAsync<T>(request, callback);
 		}
 
-        public static RestRequestAsyncHandle CopyAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.COPY;
-            return client.ExecuteAsync<T>(request, callback);
-        }
-
-        public static RestRequestAsyncHandle MoveAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.MOVE;
-            return client.ExecuteAsync<T>(request, callback);
-        }
-
 		public static RestRequestAsyncHandle GetAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 		{
 			request.Method = Method.GET;
@@ -122,19 +110,6 @@ namespace RestSharp
             request.Method = Method.DELETE;
             return client.ExecuteAsync(request, callback);
         }
-        
-        public static RestRequestAsyncHandle CopyAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.COPY;
-            return client.ExecuteAsync(request, callback);
-        }
-
-        public static RestRequestAsyncHandle MoveAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.MOVE;
-            return client.ExecuteAsync(request, callback);
-        }
-
 #if FRAMEWORK
 		public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
 		{
@@ -178,18 +153,6 @@ namespace RestSharp
             return client.Execute<T>(request);
         }
 
-        public static IRestResponse<T> Copy<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.COPY;
-            return client.Execute<T>(request);
-        }
-
-        public static IRestResponse<T> Move<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.MOVE;
-            return client.Execute<T>(request);
-        }
-
 		public static IRestResponse Get(this IRestClient client, IRestRequest request)
 		{
 			request.Method = Method.GET;
@@ -229,18 +192,6 @@ namespace RestSharp
         public static IRestResponse Delete(this IRestClient client, IRestRequest request)
         {
             request.Method = Method.DELETE;
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Copy(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.COPY;
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Move(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.MOVE;
             return client.Execute(request);
         }
 #endif

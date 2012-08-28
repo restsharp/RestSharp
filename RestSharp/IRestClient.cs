@@ -77,5 +77,44 @@ namespace RestSharp
 #endif
 
 		Uri BuildUri(IRestRequest request);
+
+	    /// <summary>
+	    /// Executes a GET-style request and callback asynchronously, authenticating if needed
+	    /// </summary>
+	    /// <param name="request">Request to be executed</param>
+	    /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
+	    /// <param name="httpMethod">The HTTP method to execute</param>
+	    RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod);
+
+	    /// <summary>
+	    /// Executes a POST-style request and callback asynchronously, authenticating if needed
+	    /// </summary>
+	    /// <param name="request">Request to be executed</param>
+	    /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
+	    /// <param name="httpMethod">The HTTP method to execute</param>
+	    RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod);
+
+	    /// <summary>
+	    /// Executes a GET-style request and callback asynchronously, authenticating if needed
+	    /// </summary>
+	    /// <typeparam name="T">Target deserialization type</typeparam>
+	    /// <param name="request">Request to be executed</param>
+	    /// <param name="callback">Callback function to be executed upon completion</param>
+	    /// <param name="httpMethod">The HTTP method to execute</param>
+	    RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
+
+	    /// <summary>
+	    /// Executes a GET-style request and callback asynchronously, authenticating if needed
+	    /// </summary>
+	    /// <typeparam name="T">Target deserialization type</typeparam>
+	    /// <param name="request">Request to be executed</param>
+	    /// <param name="callback">Callback function to be executed upon completion</param>
+	    /// <param name="httpMethod">The HTTP method to execute</param>
+	    RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
+
+	    IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
+	    IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod);
+	    IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new();
+	    IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
 	}
 }

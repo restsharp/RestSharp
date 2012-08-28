@@ -79,22 +79,6 @@ namespace RestSharp
 			return GetStyleMethodInternal("DELETE");
 		}
 
-        /// <summary>
-        /// Execute a COPY request
-        /// </summary>
-        public HttpResponse Copy()
-        {
-            return PostPutInternal("COPY");
-        }
-
-        /// <summary>
-        /// Execute a MOVE request
-        /// </summary>
-        public HttpResponse Move()
-        {
-            return PostPutInternal("MOVE");
-        }
-
 		/// <summary>
 		/// Execute a PATCH request
 		/// </summary>
@@ -103,7 +87,27 @@ namespace RestSharp
 			return PostPutInternal("PATCH");
 		}
 
-		private HttpResponse GetStyleMethodInternal(string method)
+        /// <summary>
+        /// Execute a GET-style request with the specified HTTP Method.  
+        /// </summary>
+        /// <param name="httpMethod">The HTTP method to execute.</param>
+        /// <returns></returns>
+	    public HttpResponse AsGet(string httpMethod)
+	    {
+            return GetStyleMethodInternal(httpMethod.ToUpperInvariant());
+        }
+
+        /// <summary>
+        /// Execute a POST-style request with the specified HTTP Method.  
+        /// </summary>
+        /// <param name="httpMethod">The HTTP method to execute.</param>
+        /// <returns></returns>
+        public HttpResponse AsPost(string httpMethod)
+        {
+            return PostPutInternal(httpMethod.ToUpperInvariant());
+        }
+
+	    private HttpResponse GetStyleMethodInternal(string method)
 		{
 			var webRequest = ConfigureWebRequest(method, Url);
 
