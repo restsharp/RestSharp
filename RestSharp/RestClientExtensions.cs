@@ -105,12 +105,11 @@ namespace RestSharp
 			return client.ExecuteAsync(request, callback);
 		}
 
-		public static RestRequestAsyncHandle DeleteAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
-		{
-			request.Method = Method.DELETE;
-			return client.ExecuteAsync(request, callback);
-		}
-
+        public static RestRequestAsyncHandle DeleteAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
+        {
+            request.Method = Method.DELETE;
+            return client.ExecuteAsync(request, callback);
+        }
 #if FRAMEWORK
 		public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
 		{
@@ -148,11 +147,11 @@ namespace RestSharp
 			return client.Execute<T>(request);
 		}
 
-		public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request) where T : new()
-		{
-			request.Method = Method.DELETE;
-			return client.Execute<T>(request);
-		}
+        public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request) where T : new()
+        {
+            request.Method = Method.DELETE;
+            return client.Execute<T>(request);
+        }
 
 		public static IRestResponse Get(this IRestClient client, IRestRequest request)
 		{
@@ -190,11 +189,11 @@ namespace RestSharp
 			return client.Execute(request);
 		}
 
-		public static IRestResponse Delete(this IRestClient client, IRestRequest request)
-		{
-			request.Method = Method.DELETE;
-			return client.Execute(request);
-		}
+        public static IRestResponse Delete(this IRestClient client, IRestRequest request)
+        {
+            request.Method = Method.DELETE;
+            return client.Execute(request);
+        }
 #endif
 	}
 }
