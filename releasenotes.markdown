@@ -1,5 +1,12 @@
 # RestSharp Release Notes
 
+## 103.5
+
+* Added support for non-standard HTTP methods (thanks jhoerr)
+* Resolved an xAuth support issue in the OAuth1Authenticator (thanks artema)
+* Change AddDefaultParameter methods to be extension methods (thanks haacked)
+* Adding support for deserializing enums from integer representations (thanks dontjee)
+
 ## 103.4
 
 * Version bump to fix assembly versioning
