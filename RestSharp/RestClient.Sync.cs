@@ -35,70 +35,70 @@ namespace RestSharp
 		/// <returns>RestResponse</returns>
 		public virtual IRestResponse Execute(IRestRequest request)
 		{
-            var method = Enum.GetName(typeof(Method), request.Method);
-            switch (request.Method)
-            {
-                case Method.POST:
-                case Method.PUT:
-                case Method.PATCH:
-                    return Execute(request, method, DoExecuteAsPost);
-                default:
-                    return Execute(request, method, DoExecuteAsGet);
-            }
+			var method = Enum.GetName(typeof(Method), request.Method);
+			switch (request.Method)
+			{
+				case Method.POST:
+				case Method.PUT:
+				case Method.PATCH:
+					return Execute(request, method, DoExecuteAsPost);
+				default:
+					return Execute(request, method, DoExecuteAsGet);
+			}
 		}
 
-        public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
-        {
-            return Execute(request, httpMethod, DoExecuteAsGet);
-        }
+		public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
+		{
+			return Execute(request, httpMethod, DoExecuteAsGet);
+		}
 
-        public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
-        {
-            request.Method = Method.POST; // Required by RestClient.BuildUri... 
-            return Execute(request, httpMethod, DoExecuteAsPost);
-        }
+		public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
+		{
+			request.Method = Method.POST; // Required by RestClient.BuildUri... 
+			return Execute(request, httpMethod, DoExecuteAsPost);
+		}
 
-        private IRestResponse Execute(IRestRequest request, string httpMethod, Func<IHttp, string, HttpResponse> getResponse)
-	    {
-            AuthenticateIfNeeded(this, request);
+		private IRestResponse Execute(IRestRequest request, string httpMethod, Func<IHttp, string, HttpResponse> getResponse)
+		{
+			AuthenticateIfNeeded(this, request);
 
-            // add Accept header based on registered deserializers
-            var accepts = string.Join(", ", AcceptTypes.ToArray());
-            this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+			// add Accept header based on registered deserializers
+			var accepts = string.Join(", ", AcceptTypes.ToArray());
+			this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 
-            IRestResponse response = new RestResponse();
-            try
-            {
-                var http = HttpFactory.Create();
+			IRestResponse response = new RestResponse();
+			try
+			{
+				var http = HttpFactory.Create();
 
-                ConfigureHttp(request, http);
-                ConfigureProxy(http);
+				ConfigureHttp(request, http);
+				ConfigureProxy(http);
 
-                response = ConvertToRestResponse(request, getResponse(http, httpMethod));
-                response.Request = request;
-                response.Request.IncreaseNumAttempts();
+				response = ConvertToRestResponse(request, getResponse(http, httpMethod));
+				response.Request = request;
+				response.Request.IncreaseNumAttempts();
 
-            }
-            catch (Exception ex)
-            {
-                response.ResponseStatus = ResponseStatus.Error;
-                response.ErrorMessage = ex.Message;
-                response.ErrorException = ex;
-            }
+			}
+			catch (Exception ex)
+			{
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+			}
 
-            return response;
-	    }
+			return response;
+		}
 
 
-	    private static HttpResponse DoExecuteAsGet(IHttp http, string method)
-	    {
-	        return http.AsGet(method);
-	    }
+		private static HttpResponse DoExecuteAsGet(IHttp http, string method)
+		{
+			return http.AsGet(method);
+		}
 
-	    private static HttpResponse DoExecuteAsPost(IHttp http, string method)
-	    {
-	        return http.AsPost(method);
-	    }
+		private static HttpResponse DoExecuteAsPost(IHttp http, string method)
+		{
+			return http.AsPost(method);
+		}
 
 	    /// <summary>
 		/// Executes the specified request and deserializes the response content using the appropriate content handler
@@ -108,20 +108,20 @@ namespace RestSharp
 		/// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
 		public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
 		{
-	        return Deserialize<T>(request, Execute(request));
+			return Deserialize<T>(request, Execute(request));
 		}
 
-	    public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
-	    {
-            return Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
-	    }
+		public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
+		{
+			return Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
+		}
 
-        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
-        {
-            return Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
-        }
+		public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
+		{
+			return Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
+		}
 
-	    private void ConfigureProxy(IHttp http)
+		private void ConfigureProxy(IHttp http)
 		{
 			if (Proxy != null)
 			{

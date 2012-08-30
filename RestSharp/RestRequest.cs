@@ -107,13 +107,13 @@ namespace RestSharp
 			//resource.PathAndQuery not supported by Silverlight :(
 		}
 
-			/// <summary>
-			/// Adds a file to the Files collection to be included with a POST or PUT request 
-			/// (other methods do not support file uploads).
-			/// </summary>
-			/// <param name="name">The parameter name to use in the request</param>
-			/// <param name="path">Full path to file to upload</param>
-			/// <returns>This request</returns>
+		/// <summary>
+		/// Adds a file to the Files collection to be included with a POST or PUT request 
+		/// (other methods do not support file uploads).
+		/// </summary>
+		/// <param name="name">The parameter name to use in the request</param>
+		/// <param name="path">Full path to file to upload</param>
+		/// <returns>This request</returns>
 		public IRestRequest AddFile (string name, string path)
 		{
 			return AddFile(new FileParameter

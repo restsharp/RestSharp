@@ -77,25 +77,25 @@ namespace RestSharp
 			return PutPostInternalAsync("PATCH", action);
 		}
 
-        /// <summary>
-        /// Execute an async POST-style request with the specified HTTP Method.  
-        /// </summary>
-        /// <param name="httpMethod">The HTTP method to execute.</param>
-        /// <returns></returns>
-        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
-        {
-            return PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
-        }
+		/// <summary>
+		/// Execute an async POST-style request with the specified HTTP Method.  
+		/// </summary>
+		/// <param name="httpMethod">The HTTP method to execute.</param>
+		/// <returns></returns>
+		public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
+		{
+			return PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
+		}
 
-        /// <summary>
-        /// Execute an async GET-style request with the specified HTTP Method.  
-        /// </summary>
-        /// <param name="httpMethod">The HTTP method to execute.</param>
-        /// <returns></returns>
-        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
-	    {
-            return GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
-	    }
+		/// <summary>
+		/// Execute an async GET-style request with the specified HTTP Method.  
+		/// </summary>
+		/// <param name="httpMethod">The HTTP method to execute.</param>
+		/// <returns></returns>
+		public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
+		{
+			return GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
+		}
 
 	    private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
 		{
