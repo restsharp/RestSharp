@@ -112,9 +112,11 @@ namespace RestSharp
 	    /// <param name="httpMethod">The HTTP method to execute</param>
 	    RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
 
+#if FRAMEWORK
 	    IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
 	    IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod);
 	    IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new();
 	    IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
+#endif
 	}
 }
