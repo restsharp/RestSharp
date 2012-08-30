@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>RestSharp</id>
-		<version>103.4</version>
+		<version>103.5</version>
 		<authors>John Sheehan, RestSharp Community</authors>
 		<owners>John Sheehan</owners>
 		<description>Simple REST and HTTP API Client</description>
@@ -13,17 +13,7 @@
 		<tags>REST HTTP API JSON XML</tags>
 		<releaseNotes>
 			<![CDATA[
-103.4
-* Bump to fix assembly versioning.
-
-103.3
-* Added in the check for it being generic before calling GetGenericType Definition() (thanks nicwise)
-* Add support for deserializing properties with an underscore prefix (thanks psampaio)
-* BaseUrl is now virtual (thanks Haacked)
-* Fixed List<T> json deserialization, when T was a something like DateTime, Timespan, Guid, etc. (thanks PedroLamas)
-* Improve support for parsing iso8601 dates (thanks friism)
-
-For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.markdown
+			For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.markdown
 			]]>
 		</releaseNotes>
 	</metadata>
