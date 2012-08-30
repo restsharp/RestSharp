@@ -39,7 +39,7 @@ namespace RestSharp
 
 			// add Accept header based on registered deserializers
 			var accepts = string.Join(", ", AcceptTypes.ToArray());
-			AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+			this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 
 			IRestResponse response = new RestResponse();
 			try
