@@ -227,7 +227,7 @@ namespace RestSharp.Authenticators
 			var oathParameters = parameters.Where(parameter =>
 				!parameter.Name.IsNullOrBlank() &&
 				!parameter.Value.IsNullOrBlank() &&
-				parameter.Name.StartsWith("oauth_")
+                (parameter.Name.StartsWith("oauth_") || parameter.Name.StartsWith("x_auth_"))
 				).ToList();
 			foreach (var parameter in oathParameters)
 			{
