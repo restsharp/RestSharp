@@ -1,7 +1,8 @@
 # RestSharp Release Notes
 
-## 103.5
+## 104.0
 
+* Fixed Windows Phone and Silverlight to use culture when calling Convert.ChangeType() (thanks trydis)
 * Added support for non-standard HTTP methods (thanks jhoerr)
 * Resolved an xAuth support issue in the OAuth1Authenticator (thanks artema)
 * Change AddDefaultParameter methods to be extension methods (thanks haacked)
