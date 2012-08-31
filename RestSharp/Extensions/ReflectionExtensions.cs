@@ -74,7 +74,7 @@ namespace RestSharp.Extensions
 
 		public static object ChangeType(this object source, Type newType, CultureInfo culture)
 		{
-#if FRAMEWORK || WINDOWS_PHONE
+#if FRAMEWORK || SILVERLIGHT || WINDOWS_PHONE
 			return Convert.ChangeType(source, newType, culture);
 #else
 			return Convert.ChangeType(source, newType, null);
