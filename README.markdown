@@ -13,6 +13,7 @@
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
 * GET, POST, PUT, HEAD, OPTIONS, DELETE supported
+* Other non-standard HTTP methods also supported
 * oAuth 1, oAuth 2, Basic, NTLM and Parameter-based Authenticators included
 * Supports custom authentication schemes via IAuthenticator
 * Multi-part form/file uploads
