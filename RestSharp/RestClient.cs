@@ -282,6 +282,8 @@ namespace RestSharp
 		{
 			http.CookieContainer = CookieContainer;
 
+			http.ResponseWriter = request.ResponseWriter;
+
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach(var p in DefaultParameters)
 			{

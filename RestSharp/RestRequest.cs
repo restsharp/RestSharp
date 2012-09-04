@@ -42,6 +42,11 @@ namespace RestSharp
 		public ISerializer XmlSerializer { get; set; }
 
 		/// <summary>
+		/// Set this to write response to Stream rather than reading into memory.
+		/// </summary>
+		public Action<Stream> ResponseWriter { get; set; }
+
+		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public RestRequest()

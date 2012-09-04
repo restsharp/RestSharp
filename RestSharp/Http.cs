@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using RestSharp.Extensions;
 
 #if WINDOWS_PHONE
@@ -106,6 +106,10 @@ namespace RestSharp
 		/// The System.Net.CookieContainer to be used for the request
 		/// </summary>
 		public CookieContainer CookieContainer { get; set; }
+		/// <summary>
+		/// The method to use to write the response instead of reading into RawBytes
+		/// </summary>
+		public Action<Stream> ResponseWriter { get; set; }
 		/// <summary>
 		/// Collection of files to be sent with request
 		/// </summary>
@@ -326,7 +330,7 @@ namespace RestSharp
 			WriteStringTo(requestStream, GetMultipartFooter());
 		}
 
-		private static void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
+		private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
 		{
 			using (webResponse)
 			{
@@ -337,14 +341,41 @@ namespace RestSharp
 				response.ContentType = webResponse.ContentType;
 				response.ContentLength = webResponse.ContentLength;
 #if WINDOWS_PHONE
+				Stream responseStream = webResponse.GetResponseStream();
 				if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
-					response.RawBytes = new GZipStream(webResponse.GetResponseStream()).ReadAsBytes();
+				{
+					var gzStream = new GZipStream(responseStream);
+					if (ResponseWriter == null)
+					{
+						response.RawBytes = gzStream.ReadAsBytes();
+					}
+					else
+					{
+						ResponseWriter(gzStream);
+					}
+				}
 				else
-					response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+				{
+					if (ResponseWriter == null)
+					{
+						response.RawBytes = responseStream.ReadAsBytes();
+					}
+					else
+					{
+						ResponseWriter(responseStream);
+					}
+				}
 #else
-				response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+				Stream responseStream = webResponse.GetResponseStream();
+				if (ResponseWriter == null)
+				{
+					response.RawBytes = responseStream.ReadAsBytes();
+				}
+				else
+				{
+					ResponseWriter(responseStream);
+				}
 #endif
-				//response.Content = GetString(response.RawBytes);
 				response.StatusCode = webResponse.StatusCode;
 				response.StatusDescription = webResponse.StatusDescription;
 				response.ResponseUri = webResponse.ResponseUri;
