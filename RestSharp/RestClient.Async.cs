@@ -39,9 +39,9 @@ namespace RestSharp
 						case Method.PATCH:
 						case Method.POST:
 						case Method.PUT:
-							return ExecuteAsync(request, callback, method, DoAsGetAsync);
-						default:
 							return ExecuteAsync(request, callback, method, DoAsPostAsync);
+						default:
+							return ExecuteAsync(request, callback, method, DoAsGetAsync);
 				}
 		}
 
