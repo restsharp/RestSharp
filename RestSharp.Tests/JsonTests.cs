@@ -191,7 +191,7 @@ namespace RestSharp.Tests
 			Assert.NotNull(output.StartDate);
 			Assert.Equal(
 				new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc),
-				output.StartDate.Value);
+				output.StartDate.Value.ToUniversalTime());
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
@@ -300,7 +300,7 @@ namespace RestSharp.Tests
 			var p = d.Deserialize<PersonForJson>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
-			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc), p.StartDate);
+			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc), p.StartDate.ToUniversalTime());
 			Assert.Equal(28, p.Age);
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
@@ -358,7 +358,7 @@ namespace RestSharp.Tests
 			var p = d.Deserialize<PersonForJson>(response);
 
 			Assert.Equal("John Sheehan", p.Name);
-			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+			Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate.ToUniversalTime());
 			Assert.Equal(28, p.Age);
 			Assert.Equal(long.MaxValue, p.BigNumber);
 			Assert.Equal(99.9999m, p.Percent);
@@ -470,7 +470,8 @@ namespace RestSharp.Tests
 			var response = new RestResponse { Content = doc };
 			var bd = d.Deserialize<Birthdate>(response);
 
-			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value);
+			Assert.Equal(new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc), bd.Value.ToUniversalTime());
+            Assert.NotEqual(DateTimeKind.Unspecified, bd.Value.Kind);
 		}
 
 		[Fact]
