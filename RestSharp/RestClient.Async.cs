@@ -53,7 +53,7 @@ namespace RestSharp
 		/// <param name="httpMethod">The HTTP method to execute</param>
 		public virtual RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
 		{
-			return ExecuteAsync(request, callback, httpMethod, DoAsPostAsync);
+			return ExecuteAsync(request, callback, httpMethod, DoAsGetAsync);
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace RestSharp
 		public virtual RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
 		{
 			request.Method = Method.POST;  // Required by RestClient.BuildUri... 
-			return ExecuteAsync(request, callback, httpMethod, DoAsGetAsync);
+			return ExecuteAsync(request, callback, httpMethod, DoAsPostAsync);
 		}
 
 		private RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod, Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
