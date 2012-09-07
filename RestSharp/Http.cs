@@ -340,41 +340,19 @@ namespace RestSharp
 #endif
 				response.ContentType = webResponse.ContentType;
 				response.ContentLength = webResponse.ContentLength;
+				Stream webResponseStream = webResponse.GetResponseStream();
 #if WINDOWS_PHONE
-				Stream responseStream = webResponse.GetResponseStream();
-				if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
+				if (String.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
 				{
-					var gzStream = new GZipStream(responseStream);
-					if (ResponseWriter == null)
-					{
-						response.RawBytes = gzStream.ReadAsBytes();
-					}
-					else
-					{
-						ResponseWriter(gzStream);
-					}
+					var gzStream = new GZipStream(webResponseStream);
+					ProcessResponseStream(gzStream, response);
 				}
 				else
 				{
-					if (ResponseWriter == null)
-					{
-						response.RawBytes = responseStream.ReadAsBytes();
-					}
-					else
-					{
-						ResponseWriter(responseStream);
-					}
+					ProcessResponseStream(webResponseStream, response);
 				}
 #else
-				Stream responseStream = webResponse.GetResponseStream();
-				if (ResponseWriter == null)
-				{
-					response.RawBytes = responseStream.ReadAsBytes();
-				}
-				else
-				{
-					ResponseWriter(responseStream);
-				}
+				ProcessResponseStream(webResponseStream, response);
 #endif
 				response.StatusCode = webResponse.StatusCode;
 				response.StatusDescription = webResponse.StatusDescription;
@@ -411,6 +389,18 @@ namespace RestSharp
 				}
 
 				webResponse.Close();
+			}
+		}
+
+		private void ProcessResponseStream(Stream webResponseStream, HttpResponse response)
+		{
+			if (ResponseWriter == null)
+			{
+				response.RawBytes = webResponseStream.ReadAsBytes();
+			}
+			else
+			{
+				ResponseWriter(webResponseStream);
 			}
 		}
 
