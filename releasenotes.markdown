@@ -1,5 +1,9 @@
 # RestSharp Release Notes
 
+## 104.1
+
+* Fixed bug where ExecuteAsync sometimes doesn't send data
+
 ## 104.0
 
 * Fixed Windows Phone and Silverlight to use culture when calling Convert.ChangeType() (thanks trydis)
