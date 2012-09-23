@@ -100,6 +100,7 @@
     <Compile Include="Compression\ZLib\ZLibCodec.cs" />
     <Compile Include="Compression\ZLib\ZLibConstants.cs" />
     <Compile Include="Compression\ZLib\ZLibStream.cs" />
+    <Compile Include="Deserializers\AsDateTimeFormatAttribute.cs" />
     <Compile Include="Deserializers\JsonDeserializer.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />

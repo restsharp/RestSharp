@@ -76,6 +76,12 @@ namespace RestSharp.Deserializers
 				var value = actualName != null ? data[actualName] : null;
 
 				if (value == null) continue;
+                
+				string customDateFormat = DateFormat;
+				var customDateAttribute = prop.GetAttribute<AsDateTimeFormatAttribute>();
+
+				if (customDateAttribute != null && !string.IsNullOrEmpty(customDateAttribute.Format))
+					customDateFormat = customDateAttribute.Format;
 
 				// check for nullable and extract underlying type
 				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -83,7 +89,7 @@ namespace RestSharp.Deserializers
 					type = type.GetGenericArguments()[0];
 				}
 
-				prop.SetValue(target, ConvertValue(type, value), null);
+				prop.SetValue(target, ConvertValue(type, value, customDateFormat), null);
 			}
 		}
 
@@ -146,7 +152,7 @@ namespace RestSharp.Deserializers
 			return list;
 		}
 
-		private object ConvertValue(Type type, object value)
+		private object ConvertValue(Type type, object value, string dateTimeFormat = null)
 		{
 			var stringValue = Convert.ToString(value, Culture);
 
@@ -173,9 +179,9 @@ namespace RestSharp.Deserializers
 			else if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
 			{
 				DateTime dt;
-				if (DateFormat.HasValue())
+				if (!string.IsNullOrEmpty(dateTimeFormat))
 				{
-					dt = DateTime.ParseExact(stringValue, DateFormat, Culture);
+					dt = DateTime.ParseExact(stringValue, dateTimeFormat, Culture);
 				}
 				else
 				{
