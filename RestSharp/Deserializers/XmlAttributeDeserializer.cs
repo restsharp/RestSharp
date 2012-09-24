@@ -107,6 +107,12 @@ namespace RestSharp.Deserializers
 					isAttribute = options.Attribute;
 				}
 
+				string customDateFormat = DateFormat;
+				var customDateAttribute = prop.GetAttribute<AsDateTimeFormatAttribute>();
+
+				if (customDateAttribute != null && !string.IsNullOrEmpty(customDateAttribute.Format))
+					customDateFormat = customDateAttribute.Format;
+
 				var value = GetValueFromXml(root, name, isAttribute);
 
 				if (value == null)
@@ -166,9 +172,9 @@ namespace RestSharp.Deserializers
 				}
 				else if (type == typeof(DateTime))
 				{
-					if (DateFormat.HasValue())
+					if (!string.IsNullOrEmpty(customDateFormat))
 					{
-						value = DateTime.ParseExact(value.ToString(), DateFormat, Culture);
+						value = DateTime.ParseExact(value.ToString(), customDateFormat, Culture);
 					}
 					else
 					{

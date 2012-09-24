@@ -113,6 +113,9 @@
     <Compile Include="..\restsharp\authenticators\SimpleAuthenticator.cs">
       <Link>Authenticators\SimpleAuthenticator.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Deserializers\AsDateTimeFormatAttribute.cs">
+      <Link>Deserializers\AsDateTimeFormatAttribute.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\deserializers\DeserializeAsAttribute.cs">
       <Link>Deserializers\DeserializeAsAttribute.cs</Link>
     </Compile>
