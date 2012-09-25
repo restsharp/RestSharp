@@ -81,8 +81,7 @@ namespace RestSharp.Serializers
 					root.Add(instance);
 				}
 			}
-			else
-				Map(root, obj);
+			Map(root, obj);
 
 			if (RootElement.HasValue()) {
 				var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
@@ -108,6 +107,9 @@ namespace RestSharp.Serializers
 
 			foreach (var prop in props) {
 				var name = prop.Name;
+                if (obj is IList && (name == "Item" || name == "Capacity")) {
+                    continue;
+                }
 				var rawValue = prop.GetValue(obj, null);
 
 				if (rawValue == null) {
