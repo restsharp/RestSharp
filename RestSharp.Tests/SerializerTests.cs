@@ -197,6 +197,18 @@ namespace RestSharp.Tests
 			Assert.Equal(expected.ToString(), doc);
 		}
 
+        [Fact]
+        public void Can_serialize_a_list_subclass_with_attribute()
+        {
+            var pocoList = new PersonListWithAttribute { };
+
+            var xml = new XmlSerializer();
+            var doc = xml.Serialize(pocoList);
+            var expected = GetPeopleEmptyXDoc(CultureInfo.InvariantCulture);
+
+            Assert.Equal(expected.ToString(), doc);
+        }
+
 		private class Person
 		{
 			public string Name { get; set; }
@@ -245,6 +257,13 @@ namespace RestSharp.Tests
 		{
 
 		}
+
+        [SerializeAs(Name = "People")]
+        private class PersonListWithAttribute : List<Person>
+        {
+            [SerializeAs(Attribute = true)]
+            public string Attr { get; set; }
+        }
 
 		private XDocument GetSimplePocoXDoc()
 		{
@@ -367,5 +386,15 @@ namespace RestSharp.Tests
 
 			return doc;
 		}
+
+        private XDocument GetPeopleEmptyXDoc(CultureInfo culture)
+        {
+            var doc = new XDocument();
+            var root = new XElement("People");
+            root.Add(new XAttribute("Attr", "Value"));
+            doc.Add(root);
+
+            return doc;
+        }
 	}
 }
