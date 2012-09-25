@@ -200,7 +200,7 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_serialize_a_list_subclass_with_attribute()
         {
-            var pocoList = new PersonListWithAttribute { };
+            var pocoList = new PersonListWithAttribute { Attr = "Value" };
 
             var xml = new XmlSerializer();
             var doc = xml.Serialize(pocoList);
