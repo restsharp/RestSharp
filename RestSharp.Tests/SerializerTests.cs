@@ -85,7 +85,7 @@ namespace RestSharp.Tests
 			expected.Add(root);
 
 			Assert.Equal( expected.ToString(), doc.ToString() );
-      }
+		}
 
 		[Fact]
 		public void Can_serialize_simple_POCO_With_DateFormat_Specified() {
@@ -197,17 +197,36 @@ namespace RestSharp.Tests
 			Assert.Equal(expected.ToString(), doc);
 		}
 
-        [Fact]
-        public void Can_serialize_a_list_subclass_with_attribute()
-        {
-            var pocoList = new PersonListWithAttribute { Attr = "Value" };
+		[Fact]
+		public void Can_serialize_a_root_list_subclass_with_attribute()
+		{
+			var pocoList = new PersonListWithAttribute { Attr = "Value" };
 
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(pocoList);
-            var expected = GetPeopleEmptyXDoc(CultureInfo.InvariantCulture);
+			var xml = new XmlSerializer();
+			var doc = xml.Serialize(pocoList);
+			var expected = GetPeopleEmptyXDoc(CultureInfo.InvariantCulture);
 
-            Assert.Equal(expected.ToString(), doc);
-        }
+			Assert.Equal(expected.ToString(), doc);
+		}
+
+		[Fact]
+		public void Can_serialize_an_element_list_subclass_with_attribute()
+		{
+			var pocoList = new PeopleWithAttribute {
+				new PersonWithAttribute() {
+					Attr = "Value",
+					Age = 50,
+					Price = 19.95m,
+					StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+				}
+			};
+
+			var xml = new XmlSerializer();
+			var doc = xml.Serialize(pocoList);
+			var expected = GetListWithAttributeInElementXDoc(CultureInfo.InvariantCulture);
+
+			Assert.Equal(expected.ToString(), doc);
+		}
 
 		private class Person
 		{
@@ -258,12 +277,25 @@ namespace RestSharp.Tests
 
 		}
 
-        [SerializeAs(Name = "People")]
-        private class PersonListWithAttribute : List<Person>
-        {
-            [SerializeAs(Attribute = true)]
-            public string Attr { get; set; }
-        }
+		[SerializeAs(Name = "People")]
+		private class PersonListWithAttribute : List<Person>
+		{
+			[SerializeAs(Attribute = true)]
+			public string Attr { get; set; }
+		}
+
+		[SerializeAs(Name = "Person")]
+		private class PersonWithAttribute : Person
+		{
+			[SerializeAs(Attribute = true)]
+			public string Attr { get; set; }
+		}
+
+		[SerializeAs(Name = "People")]
+		private class PeopleWithAttribute : List<PersonWithAttribute>
+		{
+
+		}
 
 		private XDocument GetSimplePocoXDoc()
 		{
@@ -387,14 +419,29 @@ namespace RestSharp.Tests
 			return doc;
 		}
 
-        private XDocument GetPeopleEmptyXDoc(CultureInfo culture)
-        {
-            var doc = new XDocument();
-            var root = new XElement("People");
-            root.Add(new XAttribute("Attr", "Value"));
-            doc.Add(root);
+		private XDocument GetPeopleEmptyXDoc(CultureInfo culture)
+		{
+			var doc = new XDocument();
+			var root = new XElement("People");
+			root.Add(new XAttribute("Attr", "Value"));
+			doc.Add(root);
 
-            return doc;
-        }
+			return doc;
+		}
+
+		private XDocument GetListWithAttributeInElementXDoc(CultureInfo culture)
+		{
+			var doc = new XDocument();
+			var root = new XElement("People");
+			var element = new XElement("Person");
+			element.Add(new XAttribute("Attr", "Value"),
+				new XElement("Age", 50),
+				new XElement("Price", 19.95m),
+				new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+			root.Add(element);
+			doc.Add(root);
+
+			return doc;
+		}
 	}
 }
