@@ -57,6 +57,8 @@ using System.Runtime.Serialization;
 #endif
 using System.Text;
 using RestSharp.Reflection;
+using RestSharp.Extensions;
+using RestSharp.Serializers;
 
 namespace RestSharp
 {
@@ -1282,6 +1284,21 @@ namespace RestSharp
             CacheResolver = new CacheResolver(BuildMap);
         }
 
+        protected string GetName(MemberInfo Info)
+        {
+           string name = Info.Name;
+           
+           SerializeAsAttribute attribute = Info.GetAttribute<SerializeAsAttribute>();
+
+           if( attribute == null )
+              return name;
+
+           if (!string.IsNullOrEmpty(attribute.Name))
+              name = attribute.Name;
+
+           return attribute.TransformName(name);
+        }
+
         protected virtual void BuildMap(Type type, SafeDictionary<string, CacheResolver.MemberMap> memberMaps)
         {
 #if NETFX_CORE
@@ -1292,7 +1309,7 @@ namespace RestSharp
             foreach (PropertyInfo info in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
 #endif
-                memberMaps.Add(info.Name, new CacheResolver.MemberMap(info));
+                memberMaps.Add(GetName(info), new CacheResolver.MemberMap(info));
             }
 #if NETFX_CORE
             foreach (FieldInfo info in type.GetTypeInfo().DeclaredFields) {
@@ -1301,7 +1318,7 @@ namespace RestSharp
             foreach (FieldInfo info in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
 #endif
-                memberMaps.Add(info.Name, new CacheResolver.MemberMap(info));
+                memberMaps.Add(GetName(info), new CacheResolver.MemberMap(info));
             }
         }
 
