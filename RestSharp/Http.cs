@@ -75,7 +75,7 @@ namespace RestSharp
 		{
 			get
 			{
-				return !string.IsNullOrEmpty(RequestBody);
+				return RequestBodyBytes != null || !string.IsNullOrEmpty(RequestBody);
 			}
 		}
 
@@ -146,6 +146,10 @@ namespace RestSharp
 		/// Content type of the request body.
 		/// </summary>
 		public string RequestContentType { get; set; }
+		/// <summary>
+		/// An alternative to RequestBody, for when the caller already has the byte array.
+		/// </summary>
+		public byte[] RequestBodyBytes { get; set; }
 		/// <summary>
 		/// URL to call for this request
 		/// </summary>
