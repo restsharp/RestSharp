@@ -31,6 +31,7 @@ using System.Windows;
 
 #if (FRAMEWORK && !MONOTOUCH && !MONODROID)
 using System.Web;
+using System.IO;
 #endif
 
 namespace RestSharp
@@ -165,7 +166,15 @@ namespace RestSharp
 		{
 			if (!HasFiles)
 			{
-				return _defaultEncoding.GetByteCount(RequestBody);
+				if (RequestBody is HttpFile)
+				{
+					return (RequestBody as HttpFile).ContentLength;
+				}
+				else
+				{
+					return _defaultEncoding.GetByteCount((string)RequestBody);
+				}
+				
 			}
 
 			// calculate length for multipart form
@@ -208,7 +217,14 @@ namespace RestSharp
 					}
 					else
 					{
-						WriteStringTo(requestStream, RequestBody);
+						if (RequestBody is HttpFile)
+						{
+							(RequestBody as HttpFile).Writer(requestStream);
+						}
+						else
+						{
+							WriteStringTo(requestStream, (string)RequestBody);
+						}
 					}
 				}
 			}

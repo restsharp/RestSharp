@@ -194,7 +194,7 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public IRestRequest AddBody (object obj, string xmlNamespace)
 		{
-			string serialized;
+			object serialized;
 			string contentType;
 
 			switch (RequestFormat)
@@ -209,7 +209,6 @@ namespace RestSharp
 					serialized = XmlSerializer.Serialize(obj);
 					contentType = XmlSerializer.ContentType;
 					break;
-
 				default:
 					serialized = "";
 					contentType = "";
