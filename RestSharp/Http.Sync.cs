@@ -23,6 +23,7 @@ using System.Web;
 #endif
 
 using RestSharp.Extensions;
+using System.IO;
 
 namespace RestSharp
 {
@@ -190,13 +191,27 @@ namespace RestSharp
 			if (!HasBody)
 				return;
 
-			var bytes = _defaultEncoding.GetBytes(RequestBody);
-
-			webRequest.ContentLength = bytes.Length;
-
-			using (var requestStream = webRequest.GetRequestStream())
+            
+			if (RequestBody is HttpFile)
 			{
-				requestStream.Write(bytes, 0, bytes.Length);
+				HttpFile httpFileRequestBody = (RequestBody as HttpFile);
+				webRequest.ContentLength = httpFileRequestBody.ContentLength;
+
+				using (var requestStream = webRequest.GetRequestStream())
+				{
+					httpFileRequestBody.Writer(requestStream);
+				}
+			}
+			else
+			{
+				var bytes = _defaultEncoding.GetBytes((string)RequestBody);
+
+				webRequest.ContentLength = bytes.Length;
+
+				using (var requestStream = webRequest.GetRequestStream())
+				{
+					requestStream.Write(bytes, 0, bytes.Length);
+				}
 			}
 		}
 

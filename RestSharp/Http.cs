@@ -75,7 +75,7 @@ namespace RestSharp
 		{
 			get
 			{
-				return !string.IsNullOrEmpty(RequestBody);
+				return RequestBody != null;
 			}
 		}
 
@@ -141,7 +141,7 @@ namespace RestSharp
 		/// <summary>
 		/// Request body to be sent with request
 		/// </summary>
-		public string RequestBody { get; set; }
+		public object RequestBody { get; set; }
 		/// <summary>
 		/// Content type of the request body.
 		/// </summary>
@@ -305,6 +305,7 @@ namespace RestSharp
 			var bytes = _defaultEncoding.GetBytes(toWrite);
 			stream.Write(bytes, 0, bytes.Length);
 		}
+
 		
 		private void WriteMultipartFormData(Stream requestStream)
 		{

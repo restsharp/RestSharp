@@ -372,8 +372,17 @@ namespace RestSharp
 
 			if(body != null)
 			{
-				http.RequestBody = body.Value.ToString();
-				http.RequestContentType = body.Name;
+				if (body.Value is FileParameter)
+				{
+					FileParameter bodyValue = (FileParameter)body.Value;
+					http.RequestBody = new HttpFile { Writer = bodyValue.Writer, ContentLength = bodyValue.ContentLength };
+					http.RequestContentType = body.Name;
+				}
+				else
+				{
+					http.RequestBody = body.Value;
+					http.RequestContentType = body.Name;
+				}
 			}
 		}
 
