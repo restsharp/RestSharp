@@ -642,6 +642,41 @@ namespace RestSharp.Tests
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
+        [Fact]
+        public void Can_Deserialize_DateTimeOffset()
+        {
+            var culture = CultureInfo.InvariantCulture;
+            var doc = new XDocument(culture);
+            
+            DateTimeOffset DateTimeOffset = new DateTimeOffset(2013, 02, 08, 9, 18, 22, TimeSpan.FromHours(10));
+            DateTimeOffset? NullableDateTimeOffsetWithValue = new DateTimeOffset(2013, 02, 08, 9, 18, 23, TimeSpan.FromHours(10));
+
+            var root = new XElement("Dates");
+            root.Add(new XElement("DateTimeOffset", DateTimeOffset));
+            root.Add(new XElement("NullableDateTimeOffsetWithNull", string.Empty));
+            root.Add(new XElement("NullableDateTimeOffsetWithValue", NullableDateTimeOffsetWithValue));
+            
+            doc.Add(root);
+
+            var xml = new XmlDeserializer
+            {
+                Culture = culture,
+            };
+
+            var response = new RestResponse { Content = doc.ToString() };
+
+            var d = new XmlDeserializer()
+            {
+                Culture = culture,
+            };
+            var payload = d.Deserialize<DateTimeTestStructure>(response);
+            Assert.Equal(DateTimeOffset, payload.DateTimeOffset);
+            Assert.Null(payload.NullableDateTimeOffsetWithNull);
+
+            Assert.True(payload.NullableDateTimeOffsetWithValue.HasValue);
+            Assert.Equal(NullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
+        }
+
 		private static string CreateUnderscoresXml()
 		{
 			var doc = new XDocument();
@@ -934,5 +969,6 @@ namespace RestSharp.Tests
 
 			return doc.ToString();
 		}
+
 	}
 }
