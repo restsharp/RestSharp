@@ -23,6 +23,7 @@ using System.Xml.Linq;
 using RestSharp.Extensions;
 using System.Globalization;
 using System.Xml;
+using System.ComponentModel;
 
 namespace RestSharp.Deserializers
 {
@@ -218,19 +219,40 @@ namespace RestSharp.Deserializers
 				}
 				else
 				{
-					// nested property classes
-					if (root != null)
+					//fallback to type converters if possible
+					object result;
+					if (TryGetFromString(value.ToString(), out result, type))
 					{
-						var element = GetElementByName(root, name);
-						if (element != null)
+						prop.SetValue(x, value, null);
+					}
+					else
+					{
+						// nested property classes
+						if (root != null)
 						{
-							var item = CreateAndMap(type, element);
-							prop.SetValue(x, item, null);
+							var element = GetElementByName(root, name);
+							if (element != null)
+							{
+								var item = CreateAndMap(type, element);
+								prop.SetValue(x, item, null);
+							}
 						}
 					}
 				}
 			}
 		}
+
+        private static bool TryGetFromString(string inputString, out object result, Type type)
+        {
+            var converter = TypeDescriptor.GetConverter(type);
+            if (converter.CanConvertFrom(typeof(string)))
+            {
+                result = (converter.ConvertFromInvariantString(inputString));
+                return true;
+            }
+            result = null;
+            return false;
+        }
 
 		private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
 		{
