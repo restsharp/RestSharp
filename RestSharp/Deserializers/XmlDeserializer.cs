@@ -169,6 +169,11 @@ namespace RestSharp.Deserializers
 
 					prop.SetValue(x, value, null);
 				}
+                else if (type == typeof(DateTimeOffset))
+                {
+                    var toConvert = value.ToString();
+                    prop.SetValue(x, XmlConvert.ToDateTimeOffset(toConvert), null);
+                }
 				else if (type == typeof(Decimal))
 				{
 					value = Decimal.Parse(value.ToString(), Culture);
