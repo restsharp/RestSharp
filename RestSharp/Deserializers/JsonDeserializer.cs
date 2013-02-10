@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using RestSharp.Extensions;
 
 namespace RestSharp.Deserializers
@@ -204,7 +205,11 @@ namespace RestSharp.Deserializers
 			{
 				return TimeSpan.Parse(stringValue);
 			}
-			else if (type.IsGenericType)
+            else if (type == typeof (byte[]))
+            {
+                return stringValue.Length > 0 ? Encoding.UTF8.GetBytes(stringValue) : new byte[0];
+            }
+            else if (type.IsGenericType)
 			{
 				var genericTypeDef = type.GetGenericTypeDefinition();
 				if (genericTypeDef == typeof(List<>))

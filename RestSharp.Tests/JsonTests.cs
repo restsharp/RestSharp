@@ -48,6 +48,19 @@ namespace RestSharp.Tests
 			Assert.NotEmpty(output.Groups);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Byte_Array()
+        {
+            var doc = File.ReadAllText(Path.Combine("SampleData", "ByteArray.txt"));
+            var json = new JsonDeserializer();
+
+            var output = json.Deserialize<List<ClassWithRawData>>(new RestResponse { Content = doc });
+
+            Assert.NotNull(output);
+            Assert.NotNull(output.Count == 2);
+            Assert.NotNull(output[0].BodyRaw != null);
+        }
+
 		[Fact]
 		public void Can_Deserialize_Lists_of_Simple_Types()
 		{
