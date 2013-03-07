@@ -175,7 +175,26 @@ namespace RestSharp.Deserializers
                     var toConvert = value.ToString();
                     if (!string.IsNullOrEmpty(toConvert))
                     {
-                        prop.SetValue(x, XmlConvert.ToDateTimeOffset(toConvert), null);
+                        DateTimeOffset deserialisedValue;
+                        try
+                        {
+                            deserialisedValue = XmlConvert.ToDateTimeOffset(toConvert);
+                            prop.SetValue(x, deserialisedValue, null);
+                        }
+                        catch (Exception)
+                        {
+                            object result;
+                            if (TryGetFromString(toConvert, out result, type))
+                            {
+                                prop.SetValue(x, result, null);
+                            }
+                            else
+                            {
+                                //fallback to parse
+                                deserialisedValue = DateTimeOffset.Parse(toConvert);
+                                prop.SetValue(x, deserialisedValue, null);
+                            }
+                        }
                     }
                 }
 				else if (type == typeof(Decimal))
@@ -223,7 +242,7 @@ namespace RestSharp.Deserializers
 					object result;
 					if (TryGetFromString(value.ToString(), out result, type))
 					{
-						prop.SetValue(x, value, null);
+                        prop.SetValue(x, result, null);
 					}
 					else
 					{
