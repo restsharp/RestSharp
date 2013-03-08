@@ -116,10 +116,12 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public IRestRequest AddFile (string name, string path)
 		{
+			var fileInfo = new FileInfo(path);
 			return AddFile(new FileParameter
 			{
 				Name = name,
-				FileName = Path.GetFileName(path),
+				FileName = fileInfo.Name,
+				ContentLength = fileInfo.Length,
 				Writer = s =>
 				{
 					using(var file = new StreamReader(path))
