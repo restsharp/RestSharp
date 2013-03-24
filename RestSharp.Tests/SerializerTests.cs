@@ -157,6 +157,35 @@ namespace RestSharp.Tests
 			Assert.Equal(expected.ToString(), doc.ToString());
 		}
 
+        [Fact]
+        public void Can_serialize_simple_POCO_With_Attribute_Options_Defined_And_Property_Containing_IList_Elements()
+        {
+            var poco = new WackyPerson
+            {
+                Name = "Foo",
+                Age = 50,
+                Price = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                ContactData = new ContactData
+                    {
+                        EmailAddresses = new List<EmailAddress>
+                            {
+                                new EmailAddress
+                                    {
+                                        Address = "test@test.com",
+                                        Location = "Work"
+                                    }
+                            }
+                    }
+            };
+
+            var xml = new XmlSerializer();
+            var doc = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWackyNamesWithIListProperty();
+
+            Assert.Equal(expected.ToString(), doc.ToString());
+        }
+
 		[Fact]
 		public void Can_serialize_a_list_which_is_the_root_element()
 		{
@@ -238,13 +267,37 @@ namespace RestSharp.Tests
 
 			[SerializeAs(Name = "start_date", Attribute = true)]
 			public DateTime StartDate { get; set; }
+
+            [SerializeAs(Name = "contact-data")]
+            public ContactData ContactData { get; set; } 
 		}
 
 		[SerializeAs(Name = "People")]
 		private class PersonList : List<Person>
 		{
-
+           
 		}
+
+        private class ContactData
+        {
+            public ContactData()
+            {
+                EmailAddresses = new List<EmailAddress>();
+            }
+
+            [SerializeAs(Name = "email-addresses")]
+            public List<EmailAddress> EmailAddresses { get; set; }
+        }
+
+        [SerializeAs(Name = "email-address")]
+        private class EmailAddress
+        {
+            [SerializeAs(Name = "address")]
+            public string Address { get; set; }
+
+            [SerializeAs(Name = "location")]
+            public string Location { get; set; }
+        }
 
 		private XDocument GetSimplePocoXDoc()
 		{
@@ -322,6 +375,26 @@ namespace RestSharp.Tests
 
 			return doc;
 		}
+
+        private XDocument GetSimplePocoXDocWackyNamesWithIListProperty()
+        {
+            var doc = new XDocument();
+            var root = new XElement("Person");
+            root.Add(new XAttribute("WackyName", "Foo"),
+                    new XElement("Age", 50),
+                    new XAttribute("Price", 19.95m),
+                    new XAttribute("start_date", new DateTime(2009, 12, 18, 10, 2, 23).ToString()),
+                    new XElement("contact-data", 
+                        new XElement("email-addresses",
+                            new XElement("email-address",
+                                new XElement("address", "test@test.com"),
+                                new XElement("location", "Work")
+                                ))));
+
+            doc.Add(root);
+
+            return doc;
+        }
 
 		private XDocument GetSortedPropsXDoc() {
 			var doc = new XDocument();
