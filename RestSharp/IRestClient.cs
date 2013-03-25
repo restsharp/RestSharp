@@ -49,7 +49,7 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
-		string BaseUrl { get; set; }
+		Uri BaseUrl { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>

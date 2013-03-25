@@ -64,7 +64,7 @@ namespace RestSharp
 		/// Sets the BaseUrl property for requests made by this client instance
 		/// </summary>
 		/// <param name="baseUrl"></param>
-		public RestClient(string baseUrl)
+		public RestClient(Uri baseUrl)
 			: this()
 		{
 			BaseUrl = baseUrl;
@@ -182,31 +182,16 @@ namespace RestSharp
 		/// </summary>
 		public IAuthenticator Authenticator { get; set; }
 
-		private string _baseUrl;
-		/// <summary>
-		/// Combined with Request.Resource to construct URL for request
-		/// Should include scheme and domain without trailing slash.
-		/// </summary>
-		/// <example>
-		/// client.BaseUrl = "http://example.com";
-		/// </example>
-		public virtual string BaseUrl
-		{
-			get
-			{
-				return _baseUrl;
-			}
-			set
-			{
-				_baseUrl = value;
-				if (_baseUrl != null && _baseUrl.EndsWith("/"))
-				{
-					_baseUrl = _baseUrl.Substring(0, _baseUrl.Length - 1);
-				}
-			}
-		}
+	    /// <summary>
+	    /// Combined with Request.Resource to construct URL for request
+	    /// Should include scheme and domain without trailing slash.
+	    /// </summary>
+	    /// <example>
+	    /// client.BaseUrl = new Uri("http://example.com");
+	    /// </example>
+	    public virtual Uri BaseUrl { get; set; }
 
-		private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
+	    private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
 		{
 			if (Authenticator != null)
 			{
@@ -223,26 +208,28 @@ namespace RestSharp
 		{
 			var assembled = request.Resource;
 			var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+
+		    var builder = new UriBuilder(BaseUrl);
+            
 			foreach (var p in urlParms)
 			{
-				assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                if (!String.IsNullOrEmpty(assembled))
+				    assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+
+			    builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
 			}
+
+            this.BaseUrl = new Uri(builder.ToString());
 
 			if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
 			{
 				assembled = assembled.Substring(1);
 			}
 
-			if (!string.IsNullOrEmpty(BaseUrl))
+			if (BaseUrl != null && !String.IsNullOrEmpty(BaseUrl.AbsoluteUri))
 			{
-				if (string.IsNullOrEmpty(assembled))
-				{
-					assembled = BaseUrl;
-				}
-				else
-				{
-					assembled = string.Format("{0}/{1}", BaseUrl, assembled);
-				}
+			    if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled)) assembled = String.Concat("/", assembled);
+				assembled = string.IsNullOrEmpty(assembled) ? BaseUrl.AbsoluteUri : string.Format("{0}{1}", BaseUrl, assembled);
 			}
 
 			if (request.Method != Method.POST 

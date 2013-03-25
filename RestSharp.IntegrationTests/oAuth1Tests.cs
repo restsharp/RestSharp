@@ -20,7 +20,7 @@ namespace RestSharp.IntegrationTests
 			const string consumerKey = "";
 			const string consumerSecret = "";
 
-			var baseUrl = "http://api.twitter.com";
+			var baseUrl = new Uri("http://api.twitter.com");
 			var client = new RestClient(baseUrl);
 			client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
 			var request = new RestRequest("oauth/request_token", Method.POST);
@@ -107,7 +107,7 @@ namespace RestSharp.IntegrationTests
 			const string consumerKey = "";
 			const string consumerSecret = "";
 
-			var baseUrl = "http://api.netflix.com";
+			var baseUrl = new Uri("http://api.netflix.com");
 			var client = new RestClient(baseUrl);
 			client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
 			var request = new RestRequest("oauth/request_token");
@@ -124,7 +124,7 @@ namespace RestSharp.IntegrationTests
 			Assert.NotNull(oauth_token_secret);
 			Assert.NotNull(applicationName);
 
-			var baseSslUrl = "https://api-user.netflix.com";
+			var baseSslUrl = new Uri("https://api-user.netflix.com");
 			var sslClient = new RestClient(baseSslUrl);
 			request = new RestRequest("oauth/login");
 			request.AddParameter("oauth_token", oauth_token);
@@ -196,7 +196,7 @@ namespace RestSharp.IntegrationTests
 
 			// request token
 			var client = new RestClient {
-				BaseUrl = "https://api.linkedin.com/uas/oauth",
+				BaseUrl = new Uri("https://api.linkedin.com/uas/oauth"),
 				Authenticator = OAuth1Authenticator.ForRequestToken( consumerKey, consumerSecret, "http://localhost" )
 			};
 			var requestTokenRequest = new RestRequest( "requestToken" );
@@ -245,7 +245,7 @@ namespace RestSharp.IntegrationTests
 
 			// arrange
 			var client = new RestClient {
-				BaseUrl = "http://api.linkedin.com/v1",
+				BaseUrl = new Uri("http://api.linkedin.com/v1"),
 				Authenticator = OAuth1Authenticator.ForProtectedResource( consumerKey, consumerSecret, accessToken, accessSecret )
 			};
 			var request = new RestRequest( "people/~:(id,first-name,last-name)" );
@@ -270,7 +270,7 @@ namespace RestSharp.IntegrationTests
 
 			// arrange
 			var client = new RestClient {
-				BaseUrl = "http://vimeo.com/api/rest/v2",
+				BaseUrl = new Uri("http://vimeo.com/api/rest/v2"),
 				Authenticator = OAuth1Authenticator.ForRequestToken( consumerKey, consumerSecret )
 			};
 			var request = new RestRequest();

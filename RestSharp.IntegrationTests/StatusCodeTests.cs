@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using RestSharp.IntegrationTests.Helpers;
 using Xunit;
 using System.Net;
@@ -10,8 +11,8 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Handles_GET_Request_404_Error()
 		{
-			const string baseUrl = "http://localhost:8080/";
-			using(SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
+			Uri baseUrl = new Uri("http://localhost:8080/");
+			using(SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
 			{
 				var client = new RestClient(baseUrl);
 				var request = new RestRequest("404");
@@ -33,7 +34,7 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Handles_Non_Existent_Domain()
 		{
-			var client = new RestClient("http://nonexistantdomainimguessing.org");
+			var client = new RestClient(new Uri("http://nonexistantdomainimguessing.org"));
 			var request = new RestRequest("foo");
 			var response = client.Execute(request);
 			Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
@@ -42,8 +43,8 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Handles_Different_Root_Element_On_Error()
 		{
-			const string baseUrl = "http://localhost:8080/";
-			using(SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+			Uri baseUrl = new Uri("http://localhost:8080/");
+			using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
 			{
 				var client = new RestClient(baseUrl);
 				var request = new RestRequest("error");
@@ -66,8 +67,8 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Handles_Default_Root_Element_On_No_Error()
 		{
-			const string baseUrl = "http://localhost:8080/";
-			using(SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+            Uri baseUrl = new Uri("http://localhost:8080/");
+			using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
 			{
 				var client = new RestClient(baseUrl);
 				var request = new RestRequest("success");
