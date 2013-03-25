@@ -146,8 +146,13 @@ namespace RestSharp.Serializers
 				else if (rawValue is IList) {
 					var itemTypeName = "";
 					foreach (var item in (IList)rawValue) {
-						if (itemTypeName == "") {
-							itemTypeName = item.GetType().Name;
+						if (itemTypeName == "")
+						{
+                            var type = item.GetType();
+                            var setting = type.GetAttribute<SerializeAsAttribute>();
+                            itemTypeName = setting != null && setting.Name.HasValue() 
+                                ? setting.Name 
+                                : type.Name;
 						}
 						var instance = new XElement(itemTypeName);
 						Map(instance, item);
