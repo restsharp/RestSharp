@@ -148,6 +148,19 @@ namespace RestSharp.Tests
         }
 
         [Fact]
+        public void GET_with_Url_string_containing_tokens()
+        {
+            var request = new RestRequest();
+            request.AddUrlSegment("foo", "bar");
+            var client = new RestClient("http://example.com/{foo}");
+
+            var expected = new Uri("http://example.com/bar");
+            var output = client.BuildUri(request);
+
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
         public void GET_with_Uri_and_resource_containing_tokens()
         {
             var request = new RestRequest("resource/{baz}");
@@ -159,6 +172,29 @@ namespace RestSharp.Tests
             var output = client.BuildUri(request);
 
             Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void GET_with_Url_string_and_resource_containing_tokens()
+        {
+            var request = new RestRequest("resource/{baz}");
+            request.AddUrlSegment("foo", "bar");
+            request.AddUrlSegment("baz", "bat");
+            var client = new RestClient("http://example.com/{foo}");
+
+            var expected = new Uri("http://example.com/bar/resource/bat");
+            var output = client.BuildUri(request);
+
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void GET_with_Invalid_Url_string_throws_exception()
+        {
+            Assert.Throws<UriFormatException>(delegate
+                {
+                    var client = new RestClient("invalid url");
+                });
         }
 	}
 }

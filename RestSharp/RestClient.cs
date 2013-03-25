@@ -64,11 +64,20 @@ namespace RestSharp
 		/// Sets the BaseUrl property for requests made by this client instance
 		/// </summary>
 		/// <param name="baseUrl"></param>
-		public RestClient(Uri baseUrl)
-			: this()
+		public RestClient(Uri baseUrl) : this()
 		{
 			BaseUrl = baseUrl;
 		}
+
+        /// <summary>
+        /// Sets the BaseUrl property for requests made by this client instance
+        /// </summary>
+        /// <param name="baseUrl"></param>
+        public RestClient(string baseUrl) : this()
+        {
+            var uri = new Uri(baseUrl);
+            BaseUrl = uri;
+        }
 
 		private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
 		private IList<string> AcceptTypes { get; set; }
