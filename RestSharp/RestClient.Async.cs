@@ -18,6 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+#if NET4
+using System.Threading.Tasks;
+#endif
 using System.Text;
 using System.Net;
 
@@ -156,5 +159,90 @@ namespace RestSharp
 
 			callback(restResponse, asyncHandle);
 		}
+
+#if NET4
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<T> ExecuteAsync<T>(IRestRequest request, CancellationToken token)
+		{
+			var taskCompletionSource = new TaskCompletionSource<T>();
+
+			try
+			{
+				var async = this.ExecuteAsync<T>(request, (response, _) =>
+					{
+						if (token.IsCancellationRequested)
+						{
+							taskCompletionSource.TrySetCanceled();
+						}
+						else if (response.ErrorException != null)
+						{
+							taskCompletionSource.TrySetException(response.ErrorException);
+						}
+						else
+						{
+							taskCompletionSource.TrySetResult(response.Data);
+						}
+					});
+
+				token.Register(() =>
+					{
+						async.Abort();
+						taskCompletionSource.TrySetCanceled();
+					});
+			}
+			catch (Exception ex)
+			{
+				taskCompletionSource.TrySetException(ex);
+			}
+
+			return taskCompletionSource.Task;
+		}
+
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token)
+		{
+			var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
+
+			try
+			{
+				var async = this.ExecuteAsync(request, (response, _) =>
+					{
+						if (token.IsCancellationRequested)
+						{
+							taskCompletionSource.TrySetCanceled();
+						}
+						else if (response.ErrorException != null)
+						{
+							taskCompletionSource.TrySetException(response.ErrorException);
+						}
+						else
+						{
+							taskCompletionSource.TrySetResult(response);
+						}
+					});
+
+				token.Register(() =>
+					{
+						async.Abort();
+						taskCompletionSource.TrySetCanceled();
+					});
+			}
+			catch (Exception ex)
+			{
+				taskCompletionSource.TrySetException(ex);
+			}
+
+			return taskCompletionSource.Task;
+		}
+#endif
 	}
 }

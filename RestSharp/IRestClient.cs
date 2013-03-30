@@ -18,6 +18,10 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+#if NET4
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace RestSharp
 {
@@ -117,6 +121,23 @@ namespace RestSharp
 		IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod);
 		IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new();
 		IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
+#endif
+
+#if NET4
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<T> ExecuteAsync<T>(IRestRequest request, CancellationToken token);
+
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token);
 #endif
 	}
 }
