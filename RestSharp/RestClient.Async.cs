@@ -162,12 +162,66 @@ namespace RestSharp
 
 #if NET4
 		/// <summary>
-		/// Executes the request and callback asynchronously, authenticating if needed
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request)
+		{
+		    return ExecuteTaskAsync<T>(request, CancellationToken.None);
+		}
+
+        /// <summary>
+        /// Executes a GET-style request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        public virtual Task<T> ExecuteTaskAsyncGet<T>(IRestRequest request)
+        {
+            return ExecuteTaskAsyncGet<T>(request, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Executes a GET-style request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        public virtual Task<T> ExecuteTaskAsyncGet<T>(IRestRequest request, CancellationToken token)
+        {
+            request.Method = Method.GET;
+            return ExecuteTaskAsync<T>(request, token);
+        }
+
+        /// <summary>
+        /// Executes a POST-style request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        public virtual Task<T> ExecuteTaskAsyncPost<T>(IRestRequest request)
+        {
+            return ExecuteTaskAsyncPost<T>(request, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Executes a POST-style request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        public virtual Task<T> ExecuteTaskAsyncPost<T>(IRestRequest request, CancellationToken token)
+        {
+            request.Method = Method.POST;
+            return ExecuteTaskAsync<T>(request, token);
+        }
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
 		/// </summary>
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="token">The cancellation token</param>
-		public virtual Task<T> ExecuteAsync<T>(IRestRequest request, CancellationToken token)
+		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
 		{
 			var taskCompletionSource = new TaskCompletionSource<T>();
 
@@ -204,11 +258,60 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Executes the request and callback asynchronously, authenticating if needed
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
+		{
+		    return ExecuteTaskAsync(request, CancellationToken.None);
+		}
+
+        /// <summary>
+        /// Executes a GET-style asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        public virtual Task<IRestResponse> ExecuteTaskAsyncGet(IRestRequest request)
+        {
+            return ExecuteTaskAsyncGet(request, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Executes a GET-style asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        public virtual Task<IRestResponse> ExecuteTaskAsyncGet(IRestRequest request, CancellationToken token)
+        {
+            request.Method = Method.GET;
+            return ExecuteTaskAsync(request, token);
+        }
+
+        /// <summary>
+        /// Executes a POST-style asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        public virtual Task<IRestResponse> ExecuteTaskAsyncPost(IRestRequest request)
+        {
+            return ExecuteTaskAsyncPost(request, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Executes a POST-style asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        public virtual Task<IRestResponse> ExecuteTaskAsyncPost(IRestRequest request, CancellationToken token)
+        {
+            request.Method = Method.POST;
+            return ExecuteTaskAsync(request, token);
+        }
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
 		/// </summary>
 		/// <param name="request">Request to be executed</param>
 		/// <param name="token">The cancellation token</param>
-		public virtual Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token)
+		public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
 		{
 			var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
 
