@@ -90,6 +90,10 @@ namespace RestSharp
 			if (contentType != "*")
 			{
 				AcceptTypes.Add(contentType);
+				// add Accept header based on registered deserializers
+				var accepts = string.Join(", ", AcceptTypes.ToArray());
+				this.RemoveDefaultParameter("Accept");
+				this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
 			}
 		}
 
@@ -101,6 +105,7 @@ namespace RestSharp
 		{
 			ContentHandlers.Remove(contentType);
 			AcceptTypes.Remove(contentType);
+			this.RemoveDefaultParameter("Accept");
 		}
 
 		/// <summary>
@@ -110,6 +115,7 @@ namespace RestSharp
 		{
 			ContentHandlers.Clear();
 			AcceptTypes.Clear();
+			this.RemoveDefaultParameter("Accept");
 		}
 
 		/// <summary>

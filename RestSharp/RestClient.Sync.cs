@@ -62,10 +62,6 @@ namespace RestSharp
 		{
 			AuthenticateIfNeeded(this, request);
 
-			// add Accept header based on registered deserializers
-			var accepts = string.Join(", ", AcceptTypes.ToArray());
-			this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-
 			IRestResponse response = new RestResponse();
 			try
 			{
@@ -88,7 +84,6 @@ namespace RestSharp
 
 			return response;
 		}
-
 
 		private static HttpResponse DoExecuteAsGet(IHttp http, string method)
 		{
