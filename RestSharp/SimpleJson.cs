@@ -1282,6 +1282,12 @@ namespace RestSharp
             CacheResolver = new CacheResolver(BuildMap);
         }
 
+        /// <summary>
+        /// Whether to obey System.NonSerializedAttribute on fields and properties.
+        /// Defaults to false (i.e. all fields and properties are serialized).
+        /// </summary>
+        public bool ObeyNonSerialized { get; set; }
+
         protected virtual void BuildMap(Type type, SafeDictionary<string, CacheResolver.MemberMap> memberMaps)
         {
 #if NETFX_CORE
@@ -1292,7 +1298,8 @@ namespace RestSharp
             foreach (PropertyInfo info in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
 #endif
-                memberMaps.Add(info.Name, new CacheResolver.MemberMap(info));
+                if (ShouldSerialize(info))
+                    memberMaps.Add(info.Name, new CacheResolver.MemberMap(info));
             }
 #if NETFX_CORE
             foreach (FieldInfo info in type.GetTypeInfo().DeclaredFields) {
@@ -1301,7 +1308,21 @@ namespace RestSharp
             foreach (FieldInfo info in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
 #endif
-                memberMaps.Add(info.Name, new CacheResolver.MemberMap(info));
+                if (ShouldSerialize(info))
+                    memberMaps.Add(info.Name, new CacheResolver.MemberMap(info));
+            }
+        }
+
+        private bool ShouldSerialize(MemberInfo info)
+        {
+            if (ObeyNonSerialized)
+            {
+                var props = info.GetCustomAttributes(typeof(NonSerializedAttribute), true);
+                return props.Length == 0;
+            }
+            else
+            {
+                return true;
             }
         }
 
