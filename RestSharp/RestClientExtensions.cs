@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace RestSharp
 {
@@ -212,6 +213,21 @@ namespace RestSharp
 
 			restClient.DefaultParameters.Add(p);
 		}
+
+        /// <summary>
+        /// Removes a parameter from the default parameters that are used on every request made with this client instance
+        /// </summary>
+        /// <param name="restClient">The IRestClient instance</param>
+        /// <param name="name">The name of the parameter that needs to be removed</param>
+        /// <returns></returns>
+        public static void RemoveDefaultParameter(this IRestClient restClient, string name)
+        {
+            var parameter = restClient.DefaultParameters.SingleOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (parameter != null)
+            {
+                restClient.DefaultParameters.Remove(parameter);
+            }
+        }
 
 		/// <summary>
 		/// Adds a HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
