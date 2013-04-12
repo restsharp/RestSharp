@@ -265,7 +265,16 @@ namespace RestSharp
 					{
 						if (propType.IsArray)
 						{
-							val = string.Join(",", (string[])val);
+							var elementType = propType.GetElementType();
+
+							if (((Array)val).Length > 0 && (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string))) {
+								// convert the array to an array of strings
+								var values = (from object item in ((Array)val) select item.ToString()).ToArray<string>();
+								val = string.Join(",", values);
+							} else {
+								// try to cast it
+								val = string.Join(",", (string[])val);
+							}
 						}
 
 						AddParameter(prop.Name, val);
