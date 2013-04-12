@@ -143,7 +143,6 @@ namespace RestSharp.Extensions
 			var formats = new[] {
 				"u", 
 				"s", 
-				"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", 
 				"yyyy-MM-ddTHH:mm:ssZ", 
 				"yyyy-MM-dd HH:mm:ssZ", 
 				"yyyy-MM-ddTHH:mm:ss", 
