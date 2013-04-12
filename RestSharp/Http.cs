@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using RestSharp.Extensions;
 
 #if WINDOWS_PHONE
@@ -106,6 +106,10 @@ namespace RestSharp
 		/// The System.Net.CookieContainer to be used for the request
 		/// </summary>
 		public CookieContainer CookieContainer { get; set; }
+		/// <summary>
+		/// The method to use to write the response instead of reading into RawBytes
+		/// </summary>
+		public Action<Stream> ResponseWriter { get; set; }
 		/// <summary>
 		/// Collection of files to be sent with request
 		/// </summary>
@@ -326,7 +330,7 @@ namespace RestSharp
 			WriteStringTo(requestStream, GetMultipartFooter());
 		}
 
-		private static void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
+		private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
 		{
 			using (webResponse)
 			{
@@ -336,15 +340,20 @@ namespace RestSharp
 #endif
 				response.ContentType = webResponse.ContentType;
 				response.ContentLength = webResponse.ContentLength;
+				Stream webResponseStream = webResponse.GetResponseStream();
 #if WINDOWS_PHONE
-				if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
-					response.RawBytes = new GZipStream(webResponse.GetResponseStream()).ReadAsBytes();
+				if (String.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
+				{
+					var gzStream = new GZipStream(webResponseStream);
+					ProcessResponseStream(gzStream, response);
+				}
 				else
-					response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+				{
+					ProcessResponseStream(webResponseStream, response);
+				}
 #else
-				response.RawBytes = webResponse.GetResponseStream().ReadAsBytes();
+				ProcessResponseStream(webResponseStream, response);
 #endif
-				//response.Content = GetString(response.RawBytes);
 				response.StatusCode = webResponse.StatusCode;
 				response.StatusDescription = webResponse.StatusDescription;
 				response.ResponseUri = webResponse.ResponseUri;
@@ -380,6 +389,18 @@ namespace RestSharp
 				}
 
 				webResponse.Close();
+			}
+		}
+
+		private void ProcessResponseStream(Stream webResponseStream, HttpResponse response)
+		{
+			if (ResponseWriter == null)
+			{
+				response.RawBytes = webResponseStream.ReadAsBytes();
+			}
+			else
+			{
+				ResponseWriter(webResponseStream);
 			}
 		}
 
