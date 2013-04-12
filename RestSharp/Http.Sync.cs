@@ -190,7 +190,7 @@ namespace RestSharp
 			if (!HasBody)
 				return;
 
-			var bytes = _defaultEncoding.GetBytes(RequestBody);
+			var bytes = RequestBodyBytes == null ? _defaultEncoding.GetBytes(RequestBody) : RequestBodyBytes;
 
 			webRequest.ContentLength = bytes.Length;
 

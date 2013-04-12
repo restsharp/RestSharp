@@ -44,6 +44,11 @@ namespace RestSharp
 		string RequestBody { get; set; }
 		string RequestContentType { get; set; }
 
+		/// <summary>
+		/// An alternative to RequestBody, for when the caller already has the byte array.
+		/// </summary>
+		byte[] RequestBodyBytes { get; set; }
+
 		Uri Url { get; set; }
 
 		HttpWebRequest DeleteAsync(Action<HttpResponse> action);
