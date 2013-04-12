@@ -86,6 +86,7 @@
     <Compile Include="NamespacedXmlTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleClasses\BooleanTest.cs" />
+    <Compile Include="SampleClasses\ClassWithRawData.cs" />
     <Compile Include="SampleClasses\foursq.cs" />
     <Compile Include="SampleClasses\googleweather.cs" />
     <Compile Include="SampleClasses\JsonLists.cs" />
@@ -110,6 +111,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\boolean_from_number.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ByteArray.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\iso8601datetimes.txt">
