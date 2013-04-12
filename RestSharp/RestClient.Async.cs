@@ -73,10 +73,6 @@ namespace RestSharp
 			var http = HttpFactory.Create();
 			AuthenticateIfNeeded(this, request);
 
-			// add Accept header based on registered deserializers
-			var accepts = string.Join(", ", AcceptTypes.ToArray());
-			this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-
 			ConfigureHttp(request, http);
 
 			var asyncHandle = new RestRequestAsyncHandle();

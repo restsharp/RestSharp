@@ -301,6 +301,13 @@ namespace RestSharp
 				request.AddParameter(p);
 			}
 
+			// Add Accept header based on registered deserializers if none has been set by the caller.
+			if (!request.Parameters.Any(p2 => p2.Name.ToLowerInvariant() == "accept"))
+			{
+				var accepts = string.Join(", ", AcceptTypes.ToArray());
+				request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
+			}
+
 			http.Url = BuildUri(request);
 
 			var userAgent = UserAgent ?? http.UserAgent;
