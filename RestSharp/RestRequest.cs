@@ -126,7 +126,8 @@ namespace RestSharp
 					{
 						file.BaseStream.CopyTo(s);
 					}
-				}
+				},
+				ContentLength = new FileInfo(path).Length
 			});
 		}
 
