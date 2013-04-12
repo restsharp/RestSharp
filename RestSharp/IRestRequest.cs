@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using RestSharp.Serializers;
 
@@ -34,6 +35,11 @@ namespace RestSharp
 		/// By default the included XmlSerializer is used.
 		/// </summary>
 		ISerializer XmlSerializer { get; set; }
+
+		/// <summary>
+		/// Set this to write response to Stream rather than reading into memory.
+		/// </summary>
+		Action<Stream> ResponseWriter { get; set; }
 
 		/// <summary>
 		/// Container of all HTTP parameters to be passed with the request. 
