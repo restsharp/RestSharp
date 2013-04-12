@@ -79,7 +79,6 @@ namespace RestSharp
 			return response;
 		}
 
-
 		private static HttpResponse DoExecuteAsGet(IHttp http, string method)
 		{
 			return http.AsGet(method);
