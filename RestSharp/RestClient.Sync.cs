@@ -72,7 +72,6 @@ namespace RestSharp
 				var http = HttpFactory.Create();
 
 				ConfigureHttp(request, http);
-				ConfigureProxy(http);
 
 				response = ConvertToRestResponse(request, getResponse(http, httpMethod));
 				response.Request = request;

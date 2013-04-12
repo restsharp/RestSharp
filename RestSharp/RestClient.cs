@@ -375,6 +375,8 @@ namespace RestSharp
 				http.RequestBody = body.Value.ToString();
 				http.RequestContentType = body.Name;
 			}
+
+			ConfigureProxy(http);
 		}
 
 		private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
