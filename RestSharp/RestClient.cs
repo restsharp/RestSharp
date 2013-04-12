@@ -380,7 +380,11 @@ namespace RestSharp
 
 			if(body != null)
 			{
-				http.RequestBody = body.Value.ToString();
+				object val = body.Value;
+				if (val is byte[])
+					http.RequestBodyBytes = (byte[])val;
+				else
+					http.RequestBody = body.Value.ToString();
 				http.RequestContentType = body.Name;
 			}
 #if FRAMEWORK

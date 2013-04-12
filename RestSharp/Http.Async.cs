@@ -163,6 +163,9 @@ namespace RestSharp
 
 		private long CalculateContentLength()
 		{
+			if (RequestBodyBytes != null)
+				return RequestBodyBytes.Length;
+
 			if (!HasFiles)
 			{
 				return _defaultEncoding.GetByteCount(RequestBody);
@@ -205,6 +208,10 @@ namespace RestSharp
 					if(HasFiles)
 					{
 						WriteMultipartFormData(requestStream);
+					}
+					else if (RequestBodyBytes != null)
+					{
+						requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
 					}
 					else
 					{
