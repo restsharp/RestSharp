@@ -156,6 +156,14 @@ namespace RestSharp
 		/// Proxy info to be sent with request
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
+
+		/// <summary>
+		/// If the framework you are using defaults to buffering the entire 
+		/// file you are uploading in memory before transmitting (.NET 4.0), 
+		/// set this flag to True to attempt to set flags that should make the 
+		/// file get streamed to HTTP directly from disk.  
+		/// </summary>
+		public bool AttemptPostFilesWithoutBuffering { get; set; }
 #endif
 
 		/// <summary>
@@ -172,6 +180,9 @@ namespace RestSharp
 
 			AddSharedHeaderActions();
 			AddSyncHeaderActions();
+#if FRAMEWORK
+			AttemptPostFilesWithoutBuffering = false;
+#endif
 		}
 
 		partial void AddSyncHeaderActions();

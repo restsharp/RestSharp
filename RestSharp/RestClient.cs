@@ -375,6 +375,9 @@ namespace RestSharp
 				http.RequestBody = body.Value.ToString();
 				http.RequestContentType = body.Name;
 			}
+#if FRAMEWORK
+			http.AttemptPostFilesWithoutBuffering = request.AttemptPostFilesWithoutBuffering;
+#endif
 		}
 
 		private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)

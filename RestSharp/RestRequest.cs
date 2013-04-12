@@ -52,6 +52,9 @@ namespace RestSharp
 			JsonSerializer = new JsonSerializer();
 
 			OnBeforeDeserialization = r => { };
+#if FRAMEWORK
+			AttemptPostFilesWithoutBuffering = false;
+#endif
 		}
 
 		/// <summary>
@@ -464,5 +467,18 @@ namespace RestSharp
 		{
 			get { return _attempts; }
 		}
+
+#if FRAMEWORK
+
+		/// <summary>
+		/// If the framework you are using defaults to buffering the entire 
+		/// file you are uploading in memory before transmitting (.NET 4.0), 
+		/// set this flag to True to set flags that should make the 
+		/// file get streamed to HTTP directly from disk.  
+		/// </summary>
+		public bool AttemptPostFilesWithoutBuffering { get; set; }
+
+#endif
+
 	}
 }

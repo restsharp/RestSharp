@@ -250,6 +250,12 @@ namespace RestSharp
 				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value; 
 			}
 
+			if (AttemptPostFilesWithoutBuffering)
+			{
+				webRequest.SendChunked = true;
+				webRequest.AllowWriteStreamBuffering = false;
+			}
+
 			return webRequest;
 		}
 	}
