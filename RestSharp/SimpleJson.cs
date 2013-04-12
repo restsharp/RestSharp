@@ -1041,6 +1041,16 @@ namespace RestSharp
                 IDictionary<string, string> dict = (IDictionary<string, string>)value;
                 success = SerializeObject(jsonSerializerStrategy, dict.Keys, dict.Values, builder);
             }
+            else if (value is IDictionary<string, int>)
+            {
+                IDictionary<string, int> dict = (IDictionary<string, int>)value;
+                success = SerializeObject(jsonSerializerStrategy, dict.Keys, dict.Values, builder);
+            }
+            else if (value is IDictionary<string, bool>)
+            {
+                IDictionary<string, bool> dict = (IDictionary<string, bool>)value;
+                success = SerializeObject(jsonSerializerStrategy, dict.Keys, dict.Values, builder);
+            }
             else if (value is IEnumerable)
                 success = SerializeArray(jsonSerializerStrategy, (IEnumerable)value, builder);
             else if (IsNumeric(value))
