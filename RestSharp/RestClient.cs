@@ -149,6 +149,12 @@ namespace RestSharp
 		/// X509CertificateCollection to be sent with request
 		/// </summary>
 		public X509CertificateCollection ClientCertificates { get; set; }
+
+		/// <summary>
+		/// Proxy to use for requests made by this client instance.
+		/// Passed on to underying WebRequest if set.
+		/// </summary>
+		public IWebProxy Proxy { get; set; }
 #endif
 
 		/// <summary>
@@ -375,9 +381,20 @@ namespace RestSharp
 				http.RequestBody = body.Value.ToString();
 				http.RequestContentType = body.Name;
 			}
-
+#if FRAMEWORK
 			ConfigureProxy(http);
+#endif
 		}
+
+#if FRAMEWORK
+		private void ConfigureProxy(IHttp http)
+		{
+			if (Proxy != null)
+			{
+				http.Proxy = Proxy;
+			}
+		}
+#endif
 
 		private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
 		{

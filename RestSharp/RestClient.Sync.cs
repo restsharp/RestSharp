@@ -11,11 +11,6 @@ namespace RestSharp
 	public partial class RestClient
 	{
 
-		/// <summary>
-		/// Proxy to use for requests made by this client instance.
-		/// Passed on to underying WebRequest if set.
-		/// </summary>
-		public IWebProxy Proxy { get; set; }
 
 		/// <summary>
 		/// Executes the specified request and downloads the response data
@@ -118,14 +113,6 @@ namespace RestSharp
 		public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
 		{
 			return Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
-		}
-
-		private void ConfigureProxy(IHttp http)
-		{
-			if (Proxy != null)
-			{
-				http.Proxy = Proxy;
-			}
 		}
 	}
 }
