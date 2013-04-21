@@ -464,17 +464,22 @@ namespace RestSharp
 		{
 			request.OnBeforeDeserialization(raw);
 
-			IDeserializer handler = GetHandler(raw.ContentType);
-			handler.RootElement = request.RootElement;
-			handler.DateFormat = request.DateFormat;
-			handler.Namespace = request.XmlNamespace;
-
 			IRestResponse<T> response = new RestResponse<T>();
 			try
 			{
 			    response = raw.toAsyncResponse<T>();
-				response.Data = handler.Deserialize<T>(raw);
 				response.Request = request;
+
+				// Only attempt to deserialize if the request was successful
+				if (response.StatusCode == HttpStatusCode.OK)
+				{
+					IDeserializer handler = GetHandler(raw.ContentType);
+					handler.RootElement = request.RootElement;
+					handler.DateFormat = request.DateFormat;
+					handler.Namespace = request.XmlNamespace;
+
+					response.Data = handler.Deserialize<T>(raw);
+				}
 			}
 			catch (Exception ex)
 			{
