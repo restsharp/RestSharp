@@ -224,7 +224,7 @@ namespace RestSharp
 				HttpResponse response;
 				if (ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
 				{
-					response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+					response = new HttpResponse {ResponseStatus = _timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted};
 					ExecuteCallback (response, callback);
 					return;
 				}
