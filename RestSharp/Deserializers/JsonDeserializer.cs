@@ -77,12 +77,6 @@ namespace RestSharp.Deserializers
 
 				if (value == null) continue;
 
-				// check for nullable and extract underlying type
-				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-				{
-					type = type.GetGenericArguments()[0];
-				}
-
 				prop.SetValue(target, ConvertValue(type, value), null);
 			}
 		}
@@ -149,6 +143,15 @@ namespace RestSharp.Deserializers
 		private object ConvertValue(Type type, object value)
 		{
 			var stringValue = Convert.ToString(value, Culture);
+
+			// check for nullable and extract underlying type
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+			{
+				// Since the type is nullable and no value is provided return null
+				if (String.IsNullOrEmpty(stringValue)) return null;
+
+				type = type.GetGenericArguments()[0];
+			}
 
 			if (type.IsPrimitive)
 			{
