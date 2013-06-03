@@ -290,8 +290,9 @@ namespace RestSharp
 			return querystring.ToString();
 		}
 
-		private void ConfigureHttp(IRestRequest request, IHttp http)
-		{
+		private void ConfigureHttp(IRestRequest request, IHttp http) {
+			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
+
 			http.CookieContainer = CookieContainer;
 
 			http.ResponseWriter = request.ResponseWriter;

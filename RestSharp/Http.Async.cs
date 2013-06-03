@@ -145,7 +145,7 @@ namespace RestSharp
 			IAsyncResult asyncResult;
 			_timeoutState = new TimeOutState { Request = webRequest };
 
-			if (HasBody || HasFiles)
+			if (HasBody || HasFiles || AlwaysMultipartFormData)
 			{
 #if !WINDOWS_PHONE
 				webRequest.ContentLength = CalculateContentLength();
@@ -166,7 +166,7 @@ namespace RestSharp
 			if (RequestBodyBytes != null)
 				return RequestBodyBytes.Length;
 
-			if (!HasFiles)
+			if (!HasFiles && !AlwaysMultipartFormData)
 			{
 				return _defaultEncoding.GetByteCount(RequestBody);
 			}
@@ -205,7 +205,7 @@ namespace RestSharp
 			{
 				using(var requestStream = webRequest.EndGetRequestStream(result))
 				{
-					if(HasFiles)
+					if(HasFiles || AlwaysMultipartFormData)
 					{
 						WriteMultipartFormData(requestStream);
 					}
@@ -377,7 +377,7 @@ namespace RestSharp
 #if !WINDOWS_PHONE
 			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
 			// or indirectly
-			if(!HasFiles)
+			if(!HasFiles && !AlwaysMultipartFormData)
 			{
 				webRequest.ContentLength = 0;
 			}
