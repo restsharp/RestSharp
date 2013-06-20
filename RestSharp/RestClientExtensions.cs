@@ -205,6 +205,8 @@ namespace RestSharp
 		/// <returns></returns>
 		public static void AddDefaultParameter(this IRestClient restClient, Parameter p)
 		{
+			if (p == null) throw new ArgumentNullException("p");
+
 			if (p.Type == ParameterType.RequestBody)
 			{
 				throw new NotSupportedException(
@@ -222,6 +224,8 @@ namespace RestSharp
         /// <returns></returns>
         public static void RemoveDefaultParameter(this IRestClient restClient, string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             var parameter = restClient.DefaultParameters.SingleOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (parameter != null)
             {

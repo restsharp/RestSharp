@@ -297,7 +297,7 @@ namespace RestSharp
 			http.ResponseWriter = request.ResponseWriter;
 
 			// move RestClient.DefaultParameters into Request.Parameters
-			foreach(var p in DefaultParameters)
+			foreach(var p in DefaultParameters.Where(p => p != null))
 			{
 				if(request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
 				{
