@@ -248,9 +248,6 @@
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\SimpleJson.cs">
-      <Link>SimpleJson.cs</Link>
-    </Compile>
     <Compile Include="..\restsharp\validation\Require.cs">
       <Link>Validation\Require.cs</Link>
     </Compile>
