@@ -20,9 +20,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
 using Xunit;
@@ -133,8 +130,8 @@ namespace RestSharp.Tests
 		{
 			Guid ID1 = new Guid("b0e5c11f-e944-478c-aadd-753b956d0c8c");
 			Guid ID2 = new Guid("809399fa-21c4-4dca-8dcd-34cb697fbca0");
-			var data = new JObject();
-			data["Ids"] = new JArray(ID1, ID2);
+            var data = new JsonObject();
+			data["Ids"] = new JsonArray() {ID1, ID2};
 
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = data.ToString() };
@@ -150,8 +147,8 @@ namespace RestSharp.Tests
 		{
 			DateTime Item1 = new DateTime(2010, 2, 8, 11, 11, 11);
 			DateTime Item2 = Item1.AddSeconds(12345);
-			var data = new JObject();
-			data["Items"] = new JArray(Item1.ToString("u"), Item2.ToString("u"));
+			var data = new JsonObject();
+			data["Items"] = new JsonArray {Item1.ToString("u"), Item2.ToString("u")};
 
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = data.ToString() };
@@ -207,7 +204,7 @@ namespace RestSharp.Tests
 				StartDate = date.ToString(format, culture)
 			};
 
-			var data = JsonConvert.SerializeObject(formatted);
+			var data = SimpleJson.SerializeObject(formatted);
 			var response = new RestResponse { Content = data };
 
 			var json = new JsonDeserializer { DateFormat = format, Culture = culture };
@@ -268,7 +265,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Guid_String_Fields()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Guid"] = GuidString;
 
 			var d = new JsonDeserializer();
@@ -281,7 +278,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_Quoted_Primitive()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Age"] = "28";
 
 			var d = new JsonDeserializer();
@@ -612,7 +609,7 @@ namespace RestSharp.Tests
 
 		private string CreateJsonWithUnderscores()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["name"] = "John Sheehan";
 			doc["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
 			doc["age"] = 28;
@@ -624,26 +621,27 @@ namespace RestSharp.Tests
 			doc["url"] = "http://example.com";
 			doc["url_path"] = "/foo/bar";
 
-			doc["best_friend"] = new JObject(
-									new JProperty("name", "The Fonz"),
-									new JProperty("since", 1952)
-								);
+            
+			doc["best_friend"] = new JsonObject { 
+                                    {"name", "The Fonz"},
+									{"since", 1952}
+                                };
 
-			var friendsArray = new JArray();
+			var friendsArray = new JsonArray();
 			for (int i = 0; i < 10; i++)
 			{
-				friendsArray.Add(new JObject(
-									new JProperty("name", "Friend" + i),
-									new JProperty("since", DateTime.Now.Year - i)
-								));
+				friendsArray.Add(new JsonObject {
+									{"name", "Friend" + i},
+									{"since", DateTime.Now.Year - i}
+								});
 			}
 
 			doc["friends"] = friendsArray;
 
-			var foesArray = new JObject(
-								new JProperty("dict1", new JObject(new JProperty("nickname", "Foe 1"))),
-								new JProperty("dict2", new JObject(new JProperty("nickname", "Foe 2")))
-							);
+			var foesArray = new JsonObject{
+								{"dict1", new JsonObject{{"nickname", "Foe 1"}}},
+								{"dict2", new JsonObject{{"nickname", "Foe 2"}}}
+                            };
 
 			doc["foes"] = foesArray;
 
@@ -652,7 +650,7 @@ namespace RestSharp.Tests
 
 		private string CreateJsonWithDashes()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["name"] = "John Sheehan";
 			doc["start-date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
 			doc["age"] = 28;
@@ -664,26 +662,26 @@ namespace RestSharp.Tests
 			doc["url"] = "http://example.com";
 			doc["url-path"] = "/foo/bar";
 
-			doc["best-friend"] = new JObject(
-									new JProperty("name", "The Fonz"),
-									new JProperty("since", 1952)
-								);
+			doc["best-friend"] = new JsonObject{
+									{"name", "The Fonz"},
+									{"since", 1952}
+								};
 
-			var friendsArray = new JArray();
+			var friendsArray = new JsonArray();
 			for (int i = 0; i < 10; i++)
 			{
-				friendsArray.Add(new JObject(
-									new JProperty("name", "Friend" + i),
-									new JProperty("since", DateTime.Now.Year - i)
-								));
+				friendsArray.Add(new JsonObject{
+									{"name", "Friend" + i},
+									{"since", DateTime.Now.Year - i}
+								});
 			}
 
 			doc["friends"] = friendsArray;
 
-			var foesArray = new JObject(
-								new JProperty("dict1", new JObject(new JProperty("nickname", "Foe 1"))),
-								new JProperty("dict2", new JObject(new JProperty("nickname", "Foe 2")))
-							);
+			var foesArray = new JsonObject{
+								{"dict1", new JsonObject{{"nickname", "Foe 1"}}},
+								{"dict2", new JsonObject{{"nickname", "Foe 2"}}}
+							};
 
 			doc["foes"] = foesArray;
 
@@ -695,12 +693,12 @@ namespace RestSharp.Tests
 			var bd = new Birthdate();
 			bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
 
-			return JsonConvert.SerializeObject(bd, new IsoDateTimeConverter());
+			return SimpleJson.SerializeObject(bd);
 		}
 
 		private string CreateUnixDateJson()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Value"] = 1309421746;
 
 			return doc.ToString();
@@ -708,7 +706,7 @@ namespace RestSharp.Tests
 
 		private string CreateJson()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Name"] = "John Sheehan";
 			doc["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
 			doc["Age"] = 28;
@@ -725,26 +723,26 @@ namespace RestSharp.Tests
 			doc["Guid"] = new Guid(GuidString).ToString();
 			doc["EmptyGuid"] = "";
 
-			doc["BestFriend"] = new JObject(
-									new JProperty("Name", "The Fonz"),
-									new JProperty("Since", 1952)
-								);
+			doc["BestFriend"] = new JsonObject{
+									{"Name", "The Fonz"},
+									{"Since", 1952}
+								};
 
-			var friendsArray = new JArray();
+			var friendsArray = new JsonArray();
 			for (int i = 0; i < 10; i++)
 			{
-				friendsArray.Add(new JObject(
-									new JProperty("Name", "Friend" + i),
-									new JProperty("Since", DateTime.Now.Year - i)
-								));
+				friendsArray.Add(new JsonObject{
+									{"Name", "Friend" + i},
+									{"Since", DateTime.Now.Year - i}
+								});
 			}
 
 			doc["Friends"] = friendsArray;
 
-			var foesArray = new JObject(
-								new JProperty("dict1", new JObject(new JProperty("Nickname", "Foe 1"))),
-								new JProperty("dict2", new JObject(new JProperty("Nickname", "Foe 2")))
-							);
+			var foesArray = new JsonObject{
+								{"dict1", new JsonObject{{"Nickname", "Foe 1"}}},
+								{"dict2", new JsonObject{{"Nickname", "Foe 2"}}}
+							};
 
 			doc["Foes"] = foesArray;
 
@@ -753,7 +751,7 @@ namespace RestSharp.Tests
 
 		private string CreateJsonWithNullValues()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Id"] = null;
 			doc["StartDate"] = null;
 			doc["UniqueId"] = null;
@@ -763,7 +761,7 @@ namespace RestSharp.Tests
 
 		private string CreateJsonWithoutEmptyValues()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Id"] = 123;
 			doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc);
 			doc["UniqueId"] = new Guid(GuidString).ToString();
@@ -773,7 +771,7 @@ namespace RestSharp.Tests
 
 		public string CreateJsonStringDictionary()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Thing1"] = "Thing1";
 			doc["Thing2"] = "Thing2";
 			doc["ThingRed"] = "ThingRed";
@@ -783,11 +781,11 @@ namespace RestSharp.Tests
 
 		public string CreateDynamicJsonStringDictionary ()
 		{
-			var doc = new JObject ();
-			doc["Thing1"] = new JArray () { "Value1", "Value2" };
+			var doc = new JsonObject ();
+			doc["Thing1"] = new JsonArray { "Value1", "Value2" };
 			doc["Thing2"] = "Thing2";
-			doc["ThingRed"] = new JObject (new JProperty ("Name", "ThingRed"), new JProperty ("Color", "Red"));
-			doc["ThingBlue"] = new JObject (new JProperty("Name", "ThingBlue"), new JProperty ("Color", "Blue"));
+			doc["ThingRed"] = new JsonObject {{"Name", "ThingRed"}, {"Color", "Red"}};
+			doc["ThingBlue"] = new JsonObject {{"Name", "ThingBlue"}, {"Color", "Blue"}};
 			return doc.ToString ();
 		}
 
