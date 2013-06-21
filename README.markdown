@@ -25,7 +25,7 @@ var client = new RestClient("http://example.com");
 
 var request = new RestRequest("resource/{id}", Method.POST);
 request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
-request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
+request.AddUrlSegment("id", "123"); // replaces matching token in request.Resource
 
 // add parameters for all properties on an object
 request.AddObject(object);
@@ -40,7 +40,7 @@ request.AddHeader("header", "value");
 request.AddFile(path);
 
 // execute the request
-RestResponse response = client.Execute(request);
+IRestResponse response = client.Execute(request);
 var content = response.Content; // raw content as string
 
 // or automatically deserialize result
