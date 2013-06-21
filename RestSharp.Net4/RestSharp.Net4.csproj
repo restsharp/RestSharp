@@ -251,6 +251,9 @@
     <Compile Include="..\restsharp\validation\Require.cs">
       <Link>Validation\Require.cs</Link>
     </Compile>
+    <Compile Include="..\restsharp\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
