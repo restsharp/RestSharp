@@ -241,6 +241,46 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// Calls AddParameter() for all public, readable properties specified in the white list using a specific type
+		/// </summary>
+		/// <example>
+		/// request.AddObject(product, GetOrPost, "ProductId", "Price", ...);
+		/// </example>
+		/// <param name="obj">The object with properties to add as parameters</param>
+		/// <param name="paramType">The parameter type to use</param> 
+		/// <param name="whitelist">The names of the properties to include</param>
+		/// <returns>This request</returns>
+		public IRestRequest AddObject (object obj, ParameterType paramType = ParameterType.GetOrPost, params string[] whitelist)
+		{
+			// automatically create parameters from object props
+			var type = obj.GetType();
+			var props = type.GetProperties();
+			
+			foreach (var prop in props)
+			{
+				bool isAllowed = whitelist.Length == 0 || (whitelist.Length > 0 && whitelist.Contains(prop.Name));
+				
+				if (isAllowed)
+				{
+					var val = prop.GetValue(obj, null);
+					
+					if (val != null)
+					{
+						var propType = prop.PropertyType;
+						if (propType.IsArray)
+						{
+							val = string.Join(",", (string[])val);
+						}
+						
+						AddParameter(prop.Name, val, paramType);
+					}
+				}
+			}
+			
+			return this;
+
+		}
+		/// <summary>
 		/// Calls AddParameter() for all public, readable properties specified in the white list
 		/// </summary>
 		/// <example>
@@ -251,41 +291,7 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public IRestRequest AddObject (object obj, params string[] whitelist)
 		{
-			// automatically create parameters from object props
-			var type = obj.GetType();
-			var props = type.GetProperties();
-
-			foreach (var prop in props)
-			{
-				bool isAllowed = whitelist.Length == 0 || (whitelist.Length > 0 && whitelist.Contains(prop.Name));
-
-				if (isAllowed)
-				{
-					var propType = prop.PropertyType;
-					var val = prop.GetValue(obj, null);
-
-					if (val != null)
-					{
-						if (propType.IsArray)
-						{
-							var elementType = propType.GetElementType();
-
-							if (((Array)val).Length > 0 && (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string))) {
-								// convert the array to an array of strings
-								var values = (from object item in ((Array)val) select item.ToString()).ToArray<string>();
-								val = string.Join(",", values);
-							} else {
-								// try to cast it
-								val = string.Join(",", (string[])val);
-							}
-						}
-
-						AddParameter(prop.Name, val);
-					}
-				}
-			}
-
-			return this;
+			return AddObject (obj, ParameterType.GetOrPost, whitelist);
 		}
 
 		/// <summary>
