@@ -264,11 +264,6 @@ namespace RestSharp
 				// build and attach querystring if this is a get-style request
 				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))
 				{
-					if (assembled.EndsWith("/"))
-					{
-						assembled = assembled.Substring(0, assembled.Length - 1);
-					}
-
 					var data = EncodeParameters(request);
 					assembled = string.Format("{0}?{1}", assembled, data);
 				}
