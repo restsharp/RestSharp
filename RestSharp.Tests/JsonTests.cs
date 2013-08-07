@@ -607,13 +607,13 @@ namespace RestSharp.Tests
 			Assert.Equal ("{\"Name\":\"ThingBlue\",\"Color\":\"Blue\"}", bd["ThingBlue"]);
 		}
 
-        [Fact]
-        public void Can_Deserializer_Object_Type_Property_With_Primitive_Value()
-        {
-            var payload = GetPayLoad<ObjectProperties>("objectproperty.txt");
+		[Fact]
+		public void Can_Deserializer_Object_Type_Property_With_Primitive_Value()
+		{
+			var payload = GetPayLoad<ObjectProperties>("objectproperty.txt");
 
-            Assert.Equal(42L, payload.ObjectProperty);
-        }
+			Assert.Equal(42L, payload.ObjectProperty);
+		}
 
 		private string CreateJsonWithUnderscores()
 		{
