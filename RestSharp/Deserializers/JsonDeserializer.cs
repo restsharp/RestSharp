@@ -150,10 +150,10 @@ namespace RestSharp.Deserializers
 		{
 			var stringValue = Convert.ToString(value, Culture);
 
-            //if (type == typeof(System.Object))
-            //{
-            //    type = value.GetType();
-            //}
+			if (type == typeof(System.Object))
+			{
+				type = value.GetType();
+			}
 
 			if (type.IsPrimitive)
 			{
