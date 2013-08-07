@@ -608,7 +608,7 @@ namespace RestSharp.Tests
 		}
 
         [Fact]
-        public void Can_Deserializer_Object_Type_Property_With_Primitive_Vale()
+        public void Can_Deserializer_Object_Type_Property_With_Primitive_Value()
         {
             var payload = GetPayLoad<ObjectProperties>("objectproperty.txt");
 
