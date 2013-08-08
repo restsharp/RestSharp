@@ -129,10 +129,10 @@ namespace RestSharp.Tests
 		public DateTime StartDate { get; set; }
 	}
 
-    public class ObjectProperties
-    {
-        public object ObjectProperty { get; set; }
-    }
+	public class ObjectProperties
+	{
+		public object ObjectProperty { get; set; }
+	}
 
 	public class DatabaseCollection : List<Database>
 	{
