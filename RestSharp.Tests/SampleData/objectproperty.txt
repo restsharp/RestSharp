@@ -1,0 +1,3 @@
+﻿{
+    "ObjectProperty": 42
+}
