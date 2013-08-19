@@ -5,7 +5,7 @@
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	 http://www.apache.org/licenses/LICENSE-2.0
 //
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
@@ -132,81 +132,81 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		Task<T> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token);
 
-	    /// <summary>
-	    /// Executes the request asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <typeparam name="T">Target deserialization type</typeparam>
-	    /// <param name="request">Request to be executed</param>
-	    Task<T> ExecuteTaskAsync<T>(IRestRequest request);
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		Task<T> ExecuteTaskAsync<T>(IRestRequest request);
 
-	    /// <summary>
-	    /// Executes a GET-style request asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <typeparam name="T">Target deserialization type</typeparam>
-	    /// <param name="request">Request to be executed</param>
-	    Task<T> ExecuteTaskAsyncGet<T>(IRestRequest request);
+		/// <summary>
+		/// Executes a GET-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		Task<T> ExecuteGetTaskAsync<T>(IRestRequest request);
 
-	    /// <summary>
-	    /// Executes a GET-style request asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <typeparam name="T">Target deserialization type</typeparam>
-	    /// <param name="request">Request to be executed</param>
-	    /// <param name="token">The cancellation token</param>
-	    Task<T> ExecuteTaskAsyncGet<T>(IRestRequest request, CancellationToken token);
+		/// <summary>
+		/// Executes a GET-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<T> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token);
 
-	    /// <summary>
-	    /// Executes a POST-style request asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <typeparam name="T">Target deserialization type</typeparam>
-	    /// <param name="request">Request to be executed</param>
-	    Task<T> ExecuteTaskAsyncPost<T>(IRestRequest request);
+		/// <summary>
+		/// Executes a POST-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		Task<T> ExecutePostTaskAsync<T>(IRestRequest request);
 
-	    /// <summary>
-	    /// Executes a POST-style request asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <typeparam name="T">Target deserialization type</typeparam>
-	    /// <param name="request">Request to be executed</param>
-	    /// <param name="token">The cancellation token</param>
-        Task<T> ExecuteTaskAsyncPost<T>(IRestRequest request, CancellationToken token);
+		/// <summary>
+		/// Executes a POST-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<T> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token);
 
-        /// <summary>
-        /// Executes the request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token);
+		/// <summary>
+		/// Executes the request and callback asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token);
 
-	    /// <summary>
-	    /// Executes the request asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <param name="request">Request to be executed</param>
-	    Task<IRestResponse> ExecuteTaskAsync(IRestRequest request);
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		Task<IRestResponse> ExecuteTaskAsync(IRestRequest request);
 
-	    /// <summary>
-	    /// Executes a GET-style asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <param name="request">Request to be executed</param>
-	    Task<IRestResponse> ExecuteTaskAsyncGet(IRestRequest request);
+		/// <summary>
+		/// Executes a GET-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request);
 
-	    /// <summary>
-	    /// Executes a GET-style asynchronously, authenticating if needed
-	    /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-	    Task<IRestResponse> ExecuteTaskAsyncGet(IRestRequest request, CancellationToken token);
+		/// <summary>
+		/// Executes a GET-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token);
 
-	    /// <summary>
-	    /// Executes a POST-style asynchronously, authenticating if needed
-	    /// </summary>
-	    /// <param name="request">Request to be executed</param>
-	    Task<IRestResponse> ExecuteTaskAsyncPost(IRestRequest request);
+		/// <summary>
+		/// Executes a POST-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request);
 
-	    /// <summary>
-	    /// Executes a POST-style asynchronously, authenticating if needed
-	    /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-	    Task<IRestResponse> ExecuteTaskAsyncPost(IRestRequest request, CancellationToken token);
+		/// <summary>
+		/// Executes a POST-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token);
 #endif
-    }
+	}
 }
