@@ -24,6 +24,8 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Net;
 
+using RestSharp.Extensions;
+
 namespace RestSharp
 {
 	public partial class RestClient
@@ -237,6 +239,10 @@ namespace RestSharp
 						{
 							taskCompletionSource.TrySetException(response.ErrorException);
 						}
+						else if (response.ResponseStatus != ResponseStatus.Completed)
+						{
+							taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
+						}
 						else
 						{
 							taskCompletionSource.TrySetResult(response.Data);
@@ -326,6 +332,10 @@ namespace RestSharp
 						else if (response.ErrorException != null)
 						{
 							taskCompletionSource.TrySetException(response.ErrorException);
+						}
+						else if (response.ResponseStatus != ResponseStatus.Completed)
+						{
+							taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
 						}
 						else
 						{

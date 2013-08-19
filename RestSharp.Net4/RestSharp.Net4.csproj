@@ -257,6 +257,7 @@
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
+    <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="Extensions\RestClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
