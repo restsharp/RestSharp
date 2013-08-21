@@ -404,6 +404,8 @@ namespace RestSharp
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			ServicePointManager.Expect100Continue = false;
 
+			webRequest.CachePolicy = RequestCachePolicy;
+
 			if (Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;

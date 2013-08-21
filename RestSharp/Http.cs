@@ -19,6 +19,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Extensions;
@@ -158,7 +161,12 @@ namespace RestSharp
 		/// URL to call for this request
 		/// </summary>
 		public Uri Url { get; set; }
-
+#if FRAMEWORK
+		/// <summary>
+		/// RequestCachePolicy to apply for this request
+		/// </summary>
+		public RequestCachePolicy RequestCachePolicy { get; set; }
+#endif
 #if FRAMEWORK
 		/// <summary>
 		/// Proxy info to be sent with request
@@ -180,6 +188,16 @@ namespace RestSharp
 
 			AddSharedHeaderActions();
 			AddSyncHeaderActions();
+
+			SetDefaultRequestCachePolicy();
+		}
+
+		private void SetDefaultRequestCachePolicy()
+		{
+#if FRAMEWORK
+			//this allows to set default value from web/app config: http://msdn.microsoft.com/en-us/library/htyz4bkd.aspx
+			RequestCachePolicy = HttpWebRequest.DefaultCachePolicy;
+#endif
 		}
 
 		partial void AddSyncHeaderActions();

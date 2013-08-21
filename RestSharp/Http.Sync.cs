@@ -229,6 +229,8 @@ namespace RestSharp
 				webRequest.UserAgent = UserAgent;
 			}
 
+			webRequest.CachePolicy = RequestCachePolicy;
+
 			if(Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;
