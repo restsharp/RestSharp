@@ -27,13 +27,18 @@ namespace RestSharp.Serializers
 			Namespace = @namespace;
 		}
 
-		/// <summary>
+        public string Serialize(object obj)
+        {
+            return Serialize(obj, null);
+        }
+        
+        /// <summary>
 		/// Serialize the object as XML
 		/// </summary>
 		/// <param name="obj">Object to serialize</param>
 		/// <returns>XML as string</returns>
-		public string Serialize(object obj)
-		{
+        public string Serialize(object obj, SerializerOptions options) 
+        {
 			var ns = new XmlSerializerNamespaces();
 			ns.Add(string.Empty, Namespace);
 			var serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
@@ -68,7 +73,12 @@ namespace RestSharp.Serializers
 		/// </summary>
 		public Encoding Encoding { get; set; }
 
-		/// <summary>
+        /// <summary>
+        /// Current serialization options
+        /// </summary>
+        public SerializerOptions Options { get; set; }
+        
+        /// <summary>
 		/// Need to subclass StringWriter in order to override Encoding
 		/// </summary>
 		private class EncodingStringWriter : StringWriter
