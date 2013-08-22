@@ -18,6 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -58,6 +61,8 @@ namespace RestSharp
 			AddHandler("*", new XmlDeserializer());
 
 			FollowRedirects = true;
+
+		SetDefaultCachePolicy();
 		}
 
 		/// <summary>
@@ -183,6 +188,12 @@ namespace RestSharp
 		/// Timeout in milliseconds to use for requests made by this client instance
 		/// </summary>
 		public int Timeout { get; set; }
+#if FRAMEWORK
+		/// <summary>
+		/// CachePolicy to use for requests made by this client instance
+		/// </summary>
+		public RequestCachePolicy CachePolicy { get; set; }
+#endif
 
 		/// <summary>
 		/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
@@ -277,6 +288,14 @@ namespace RestSharp
 			return new Uri(assembled);
 		}
 
+		private void SetDefaultCachePolicy()
+		{
+#if FRAMEWORK
+			//this allows to set default value from web/app config: http://msdn.microsoft.com/en-us/library/htyz4bkd.aspx
+			CachePolicy = HttpWebRequest.DefaultCachePolicy;
+#endif
+		}
+
 		private string EncodeParameters(IRestRequest request)
 		{
 			var querystring = new StringBuilder();
@@ -329,6 +348,9 @@ namespace RestSharp
 			http.FollowRedirects = FollowRedirects;
 #endif
 #if FRAMEWORK
+
+			http.CachePolicy = CachePolicy;
+
 			if (ClientCertificates != null)
 			{
 				http.ClientCertificates = ClientCertificates;

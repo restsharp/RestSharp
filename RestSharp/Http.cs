@@ -163,9 +163,9 @@ namespace RestSharp
 		public Uri Url { get; set; }
 #if FRAMEWORK
 		/// <summary>
-		/// RequestCachePolicy to apply for this request
+		/// CachePolicy to apply for this request
 		/// </summary>
-		public RequestCachePolicy RequestCachePolicy { get; set; }
+		public RequestCachePolicy CachePolicy { get; set; }
 #endif
 #if FRAMEWORK
 		/// <summary>
@@ -188,16 +188,6 @@ namespace RestSharp
 
 			AddSharedHeaderActions();
 			AddSyncHeaderActions();
-
-			SetDefaultRequestCachePolicy();
-		}
-
-		private void SetDefaultRequestCachePolicy()
-		{
-#if FRAMEWORK
-			//this allows to set default value from web/app config: http://msdn.microsoft.com/en-us/library/htyz4bkd.aspx
-			RequestCachePolicy = HttpWebRequest.DefaultCachePolicy;
-#endif
 		}
 
 		partial void AddSyncHeaderActions();
