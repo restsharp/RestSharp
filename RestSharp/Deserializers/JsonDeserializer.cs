@@ -195,8 +195,8 @@ namespace RestSharp.Deserializers
 			else if (type == typeof(Decimal))
 			{
 				if (value is double)
-                    			return (decimal)((double)value);
-                    			
+					return (decimal)((double)value);
+
 				return Decimal.Parse(stringValue, Culture);
 			}
 			else if (type == typeof(Guid))
