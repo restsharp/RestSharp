@@ -69,7 +69,7 @@ using RestSharp.Reflection;
 // ReSharper disable RedundantExplicitArrayCreation
 // ReSharper disable SuggestUseVarKeywordEvident
 namespace RestSharp
-{
+{    
     /// <summary>
     /// Represents the json array.
     /// </summary>
@@ -483,6 +483,17 @@ namespace RestSharp
 
 namespace RestSharp
 {
+    public class SerializerOptions
+    {
+        public SerializerOptions()
+        {
+            // set defaults
+            SkipNullProperties = false;
+        }
+
+        public bool SkipNullProperties { get; set; }
+    }
+
     /// <summary>
     /// This class encodes and decodes JSON strings.
     /// Spec. details, see http://www.json.org/
@@ -496,7 +507,8 @@ namespace RestSharp
 #else
     public
 #endif
- static class SimpleJson
+
+    static class SimpleJson
     {
         private const int TOKEN_NONE = 0;
         private const int TOKEN_CURLY_OPEN = 1;
@@ -582,16 +594,16 @@ namespace RestSharp
         /// <param name="json">A IDictionary&lt;string,object> / IList&lt;object></param>
         /// <param name="jsonSerializerStrategy">Serializer strategy to use</param>
         /// <returns>A JSON encoded string, or null if object 'json' is not serializable</returns>
-        public static string SerializeObject(object json, IJsonSerializerStrategy jsonSerializerStrategy)
+        public static string SerializeObject(object json, IJsonSerializerStrategy jsonSerializerStrategy, SerializerOptions options = null)
         {
             StringBuilder builder = new StringBuilder(BUILDER_CAPACITY);
-            bool success = SerializeValue(jsonSerializerStrategy, json, builder);
+            bool success = SerializeValue(jsonSerializerStrategy, json, builder, options);
             return (success ? builder.ToString() : null);
         }
 
-        public static string SerializeObject(object json)
+        public static string SerializeObject(object json, SerializerOptions options = null)
         {
-            return SerializeObject(json, CurrentJsonSerializerStrategy);
+            return SerializeObject(json, CurrentJsonSerializerStrategy, options);
         }
 
         public static string EscapeToJavascriptString(string jsonString)
@@ -985,7 +997,7 @@ namespace RestSharp
             return TOKEN_NONE;
         }
 
-        static bool SerializeValue(IJsonSerializerStrategy jsonSerializerStrategy, object value, StringBuilder builder)
+        static bool SerializeValue(IJsonSerializerStrategy jsonSerializerStrategy, object value, StringBuilder builder, SerializerOptions options = null)
         {
             bool success = true;
             string stringValue = value as string;
@@ -996,32 +1008,44 @@ namespace RestSharp
                 IDictionary<string, object> dict = value as IDictionary<string, object>;
                 if (dict != null)
                 {
-                    success = SerializeObject(jsonSerializerStrategy, dict.Keys, dict.Values, builder);
+                    success = SerializeObject(jsonSerializerStrategy, dict.Keys, dict.Values, builder, options);
                 }
                 else
                 {
                     IDictionary<string, string> stringDictionary = value as IDictionary<string, string>;
                     if (stringDictionary != null)
                     {
-                        success = SerializeObject(jsonSerializerStrategy, stringDictionary.Keys, stringDictionary.Values, builder);
+                        success = SerializeObject(jsonSerializerStrategy, stringDictionary.Keys, stringDictionary.Values, builder, options);
                     }
                     else
                     {
                         IEnumerable enumerableValue = value as IEnumerable;
                         if (enumerableValue != null)
-                            success = SerializeArray(jsonSerializerStrategy, enumerableValue, builder);
+                            success = SerializeArray(jsonSerializerStrategy, enumerableValue, builder, options);
                         else if (IsNumeric(value))
                             success = SerializeNumber(value, builder);
                         else if (value is bool)
                             builder.Append((bool)value ? "true" : "false");
                         else if (value == null)
-                            builder.Append("null");
+                        {
+                            if (options == null)
+                            {
+                                builder.Append("null");
+                            }
+                            else
+                            {
+                                if (!options.SkipNullProperties)
+                                {
+                                    builder.Append("null");
+                                }
+                            }
+                        }
                         else
                         {
                             object serializedObject;
                             success = jsonSerializerStrategy.TrySerializeNonPrimitiveObject(value, out serializedObject);
                             if (success)
-                                SerializeValue(jsonSerializerStrategy, serializedObject, builder);
+                                SerializeValue(jsonSerializerStrategy, serializedObject, builder, options);
                         }
                     }
                 }
@@ -1029,7 +1053,7 @@ namespace RestSharp
             return success;
         }
 
-        static bool SerializeObject(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable keys, IEnumerable values, StringBuilder builder)
+        static bool SerializeObject(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable keys, IEnumerable values, StringBuilder builder, SerializerOptions options = null)
         {
             builder.Append("{");
             IEnumerator ke = keys.GetEnumerator();
@@ -1039,15 +1063,19 @@ namespace RestSharp
             {
                 object key = ke.Current;
                 object value = ve.Current;
+
+                string stringKey = key as string;
+
+                if ((options != null) && (stringKey != null) && (options.SkipNullProperties) && (value == null))
+                    continue;
                 if (!first)
                     builder.Append(",");
-                string stringKey = key as string;
                 if (stringKey != null)
                     SerializeString(stringKey, builder);
                 else
-                    if (!SerializeValue(jsonSerializerStrategy, value, builder)) return false;
+                    if (!SerializeValue(jsonSerializerStrategy, value, builder, options)) return false;
                 builder.Append(":");
-                if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                if (!SerializeValue(jsonSerializerStrategy, value, builder, options))
                     return false;
                 first = false;
             }
@@ -1055,7 +1083,7 @@ namespace RestSharp
             return true;
         }
 
-        static bool SerializeArray(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable anArray, StringBuilder builder)
+        static bool SerializeArray(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable anArray, StringBuilder builder, SerializerOptions options = null)
         {
             builder.Append("[");
             bool first = true;
@@ -1063,7 +1091,7 @@ namespace RestSharp
             {
                 if (!first)
                     builder.Append(",");
-                if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                if (!SerializeValue(jsonSerializerStrategy, value, builder, options))
                     return false;
                 first = false;
             }
