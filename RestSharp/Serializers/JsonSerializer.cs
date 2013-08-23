@@ -16,10 +16,10 @@ namespace RestSharp.Serializers
 			ContentType = "application/json";
 		}
 
-        public string Serialize(object obj)
-        {
-            return Serialize(obj, Options);
-        }
+		public string Serialize(object obj)
+		{
+			return Serialize(obj, Options);
+		}
         
 		/// <summary>
 		/// Serialize the object as JSON
