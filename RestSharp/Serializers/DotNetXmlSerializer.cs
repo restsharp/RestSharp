@@ -27,12 +27,12 @@ namespace RestSharp.Serializers
 			Namespace = @namespace;
 		}
 
-        public string Serialize(object obj)
-        {
-            return Serialize(obj, null);
-        }
+		public string Serialize(object obj)
+		{
+			return Serialize(obj, null);
+		}
         
-        /// <summary>
+		/// <summary>
 		/// Serialize the object as XML
 		/// </summary>
 		/// <param name="obj">Object to serialize</param>
