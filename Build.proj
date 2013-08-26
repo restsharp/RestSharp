@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\.build</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
+
+  <!-- Version Number -->
+  <PropertyGroup Condition=" '$(BUILD_NUMBER)' == '' ">
+    <Version>1.0.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0.0</InformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(BUILD_NUMBER)' != '' ">
+    <!-- Build Server Number -->
+    <Version>1.0.0.0</Version>
+    <FileVersion>$(BUILD_NUMBER)</FileVersion>
+    <InformationalVersion>$(BUILD_NUMBER)</InformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(BuildConfiguration)' == '' ">
+    <BuildConfiguration>Release</BuildConfiguration>
+  </PropertyGroup>
+
+  <Target Name="Clean">
+    <DeleteTree Directories="**\obj\**;**\bin\**" />
+  </Target>
+
+  <Target Name="Version">
+    <Time>
+      <Output TaskParameter="Year" PropertyName="Year" />
+    </Time>
+
+    <Message Text="Version: $(Version)"/>
+
+    <Attrib Files="$(MSBuildProjectDirectory)\GlobalAssemblyInfo.cs" ReadOnly="False" />
+
+    <AssemblyInfo CodeLanguage="CS"
+                  OutputFile="$(MSBuildProjectDirectory)\GlobalAssemblyInfo.cs"
+                  GenerateClass="true"
+                  AssemblyCopyright="Copyright © $(Year). All rights reserved."
+                  AssemblyConfiguration="$(BuildConfiguration)"
+                  AssemblyVersion="$(Version)"
+                  AssemblyFileVersion="$(FileVersion)"
+                  AssemblyInformationalVersion="$(InformationalVersion)" />
+  </Target>
+
+  <!-- Projects to Build -->
+  <ItemGroup>
+    <ProjectFiles Include="$(MSBuildProjectDirectory)\**\*.sln">
+      <Properties>Configuration=$(BuildConfiguration)</Properties>
+    </ProjectFiles>
+  </ItemGroup>
+
+  <Target Name="Compile" DependsOnTargets="Clean;Version">
+    <MSBuild Projects="@(ProjectFiles)" />
+  </Target>
+
+  <Target Name="Build">
+    <CallTarget Targets="Compile" />
+  </Target>
+
+</Project>

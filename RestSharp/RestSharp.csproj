@@ -56,6 +56,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>$(SolutionDir)\.build</MSBuildCommunityTasksPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -181,6 +184,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -192,4 +196,16 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild">        
+    <GetAssemblyIdentity AssemblyFiles="$(OutDir)RestSharp.dll">
+      <Output TaskParameter="Assemblies" ItemName="AsmInfo" />      
+    </GetAssemblyIdentity>
+    
+    <!-- insert the version number into the nuspec files -->
+    <XmlUpdate
+      Namespace="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd" 
+      XmlFileName="$(SolutionDir)restsharp.nuspec" 
+      XPath="/package/metadata/version" 
+      Value="%(AsmInfo.Version)" />
+  </Target>
 </Project>
