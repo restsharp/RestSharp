@@ -200,6 +200,10 @@
   </Target>
   -->
   <ItemGroup>
+    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.csproj">
+      <Project>{CCC30138-3D68-44D8-AF1A-D22F769EE8DC}</Project>
+      <Name>RestSharp.Build</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RestSharp\RestSharp.csproj">
       <Project>{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}</Project>
       <Name>RestSharp</Name>

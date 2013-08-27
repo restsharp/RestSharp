@@ -36,7 +36,7 @@ namespace RestSharp.Tests
                 [Fact]
                 public void ReturnsFalse()
                 {
-                    var task = new Automation.NuSpecUpdateTask();
+                    var task = new Build.NuSpecUpdateTask();
                     Assert.False(task.Execute());
                 }
             }
@@ -48,8 +48,9 @@ namespace RestSharp.Tests
                 [Fact]
                 public void PullsVersionAttributeInstead()
                 {
-                    var task = new Automation.NuSpecUpdateTask(this.GetType().Assembly);
+                    var task = new Build.NuSpecUpdateTask();
                     task.SpecFile = this.FileName;
+                    task.SourceAssemblyFile = "RestSharp.Tests.dll";
                     task.Execute();
 
                     Assert.Equal("1.0.0.0", task.Version);
@@ -58,7 +59,7 @@ namespace RestSharp.Tests
 
             public class WhenSpecFileIsValid : BaseNuSpecUpdateTest
             {
-                private Automation.NuSpecUpdateTask _subject = new Automation.NuSpecUpdateTask();
+                private Build.NuSpecUpdateTask _subject = new Build.NuSpecUpdateTask();
                 private bool _result;
 
                 private string _expectedId = "RestSharp";
@@ -70,6 +71,7 @@ namespace RestSharp.Tests
                 protected override void Setup()
                 {
                     this._subject.SpecFile = this.FileName;
+                    this._subject.SourceAssemblyFile = "RestSharp.dll";
                     this._result = this._subject.Execute();
                 }
 

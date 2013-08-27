@@ -5,8 +5,9 @@ using System.Text;
 using Microsoft.Build.Utilities;
 using System.Reflection;
 using System.Xml.Linq;
+using System.IO;
 
-namespace RestSharp.Automation
+namespace RestSharp.Build
 {
     public class NuSpecUpdateTask : Task
     {
@@ -22,6 +23,8 @@ namespace RestSharp.Automation
 
         public string SpecFile { get; set; }
 
+        public string SourceAssemblyFile { get; set; }
+
         public NuSpecUpdateTask()
             : this(null)
         {
@@ -29,13 +32,15 @@ namespace RestSharp.Automation
 
         public NuSpecUpdateTask(Assembly assembly)
         {
-            this._assembly = assembly ??
-                Assembly.GetExecutingAssembly();            
+            this._assembly = assembly;
         }
 
         public override bool Execute()
         {
             if (string.IsNullOrEmpty(this.SpecFile)) return false;
+
+            var path = Path.GetFullPath(this.SourceAssemblyFile);
+            this._assembly = this._assembly ?? Assembly.LoadFile(path);
 
             var name = this._assembly.GetName();
 
@@ -44,8 +49,8 @@ namespace RestSharp.Automation
             this.Description = this.GetDescription(this._assembly);
             this.Version = this.GetVersion(this._assembly);
 
-            this.GenerateComputedSpecFile();
-
+            this.GenerateComputedSpecFile();            
+            
             return true;
         }
 
@@ -112,6 +117,6 @@ namespace RestSharp.Automation
             }
 
             return null;
-        }
+        }        
     }
 }

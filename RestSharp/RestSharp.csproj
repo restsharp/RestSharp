@@ -94,7 +94,6 @@
     <Compile Include="Authenticators\OAuth\WebPairCollection.cs" />
     <Compile Include="Authenticators\OAuth\WebParameter.cs" />
     <Compile Include="Authenticators\OAuth\WebParameterCollection.cs" />
-    <Compile Include="Automation\NuSpecUpdateTask.cs" />
     <Compile Include="Compression\ZLib\Crc32.cs" />
     <Compile Include="Compression\ZLib\FlushType.cs" />
     <Compile Include="Compression\ZLib\GZipStream.cs" />
@@ -183,7 +182,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
@@ -197,8 +195,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <UsingTask TaskName="NuSpecUpdateTask" AssemblyFile="$(OutDir)RestSharp.dll" />
-  <Target Name="AfterBuild">        
-    <NuSpecUpdateTask SpecFile="$(SolutionDir)restsharp.nuspec" />
+  <UsingTask TaskName="NuSpecUpdateTask" AssemblyFile="$(SolutionDir).nuget\RestSharp.Build.dll" />
+  <Target Name="AfterBuild" Condition="$(Configuration) == Release">
+    <NuSpecUpdateTask SpecFile="$(SolutionDir)restsharp.nuspec" SourceAssemblyFile="$(TargetDir)RestSharp.dll" />
   </Target>
 </Project>
