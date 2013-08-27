@@ -197,4 +197,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <UsingTask TaskName="NuSpecUpdateTask" AssemblyFile="$(OutDir)RestSharp.dll" />
+  <Target Name="AfterBuild">        
+    <NuSpecUpdateTask SpecFile="$(SolutionDir)restsharp.nuspec" />
+  </Target>
 </Project>
