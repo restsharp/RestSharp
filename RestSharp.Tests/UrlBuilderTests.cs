@@ -49,6 +49,21 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void GET_wth_trailing_slash_and_query_parameters()
+		{
+			var request = new RestRequest("/resource/");
+			var client = new RestClient("http://example.com");
+			request.AddParameter( "foo", "bar" );
+
+			var expected = new Uri("http://example.com/resource/?foo=bar");
+			var output = client.BuildUri(request);
+
+			var response = client.Execute( request );
+
+			Assert.Equal(expected, output);
+		}
+
+		[Fact]
 		public void POST_with_leading_slash_and_baseurl_trailing_slash()
 		{
 			var request = new RestRequest("/resource", Method.POST);
