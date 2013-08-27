@@ -6,6 +6,7 @@ using Xunit;
 using System.Reflection;
 using System.IO;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace RestSharp.Tests
 {
@@ -66,7 +67,7 @@ namespace RestSharp.Tests
                 private string _expectedDescription = "Simple REST and HTTP API Client";
                 private string _expectedAuthors = "John Sheehan, RestSharp Community";
                 private string _expectedOwners = "John Sheehan, RestSharp Community";
-                private string _expectedVersion = "104.2.0";
+                private Regex _expectedVersion = new Regex(@"^\d+\.\d+\.\d+$", RegexOptions.Compiled);
 
                 protected override void Setup()
                 {
@@ -96,7 +97,7 @@ namespace RestSharp.Tests
                 [Fact]
                 public void PullsVersionFromAssemblyInfo()
                 {
-                    Assert.Equal(this._expectedVersion, this._subject.Version);
+                    Assert.True(this._expectedVersion.IsMatch(this._subject.Version));
                 }
 
                 [Fact]
@@ -113,7 +114,7 @@ namespace RestSharp.Tests
                     Assert.Equal(this._expectedDescription, doc.Descendants("description").First().Value);
                     Assert.Equal(this._expectedAuthors, doc.Descendants("authors").First().Value);
                     Assert.Equal(this._expectedOwners, doc.Descendants("owners").First().Value);
-                    Assert.Equal(this._expectedVersion, doc.Descendants("version").First().Value);
+                    Assert.True(this._expectedVersion.IsMatch(doc.Descendants("version").First().Value));
                 }
             }
         }
