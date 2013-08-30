@@ -192,17 +192,17 @@ namespace RestSharp.Tests
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Json_Using_DeserializeAs_Attribute()
-        {
-            const string content = "{\"sid\":\"asdasdasdasdasdasdasda\",\"friendlyName\":\"VeryNiceName\",\"oddballPropertyName\":\"blahblah\"}";
+		[Fact]
+		public void Can_Deserialize_Json_Using_DeserializeAs_Attribute()
+		{
+			const string content = "{\"sid\":\"asdasdasdasdasdasdasda\",\"friendlyName\":\"VeryNiceName\",\"oddballPropertyName\":\"blahblah\"}";
 
-            var json = new JsonDeserializer { RootElement = "users" };
-            var output = json.Deserialize<Oddball>(new RestResponse { Content = content });
+			var json = new JsonDeserializer { RootElement = "users" };
+			var output = json.Deserialize<Oddball>(new RestResponse { Content = content });
 
-            Assert.NotNull(output);
-            Assert.Equal("blahblah", output.GoodPropertyName);
-        }
+			Assert.NotNull(output);
+			Assert.Equal("blahblah", output.GoodPropertyName);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date()
