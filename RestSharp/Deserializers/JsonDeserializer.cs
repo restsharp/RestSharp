@@ -71,23 +71,18 @@ namespace RestSharp.Deserializers
 			{
 				var type = prop.PropertyType;
 
-				//var name = prop.Name;
-                string name = String.Empty;
+				string name = String.Empty;
 
-                //check and see if there is a JsonProperty attribute on this property
-                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
-                if (attributes.Length > 0)
-                {
-                    //if there is use that value as the name
-                    // we will also just use the first one we find, if for some reason the dev defines multiple
-                    var attribute = (DeserializeAsAttribute)attributes[0];
-                    name = attribute.Name;
-                }
-                else
-                {
-                    //otherwise just use the property name
-                    name = prop.Name;
-                }
+				var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+				if (attributes.Length > 0)
+				{
+					var attribute = (DeserializeAsAttribute)attributes[0];
+					name = attribute.Name;
+				}
+				else
+				{
+					name = prop.Name;
+				}
 
 				var actualName = name.GetNameVariants(Culture).FirstOrDefault(n => data.ContainsKey(n));
 				var value = actualName != null ? data[actualName] : null;
