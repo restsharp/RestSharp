@@ -194,4 +194,9 @@ namespace RestSharp.Tests
 		public Disposition LowerDashes { get; set; }
 		public Disposition Integer { get; set; }
 	}
+
+	public class DecimalNumber
+	{
+		public decimal Value { get; set; }
+	}
 }

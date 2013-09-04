@@ -619,6 +619,17 @@ namespace RestSharp.Tests
 			Assert.Equal ("{\"Name\":\"ThingBlue\",\"Color\":\"Blue\"}", bd["ThingBlue"]);
 		}
 
+		[Fact]
+		public void Can_Deserialize_Decimal_With_Four_Zeros_After_Floating_Point()
+		{
+			const string json = "{\"Value\":0.00005557}";
+			var response = new RestResponse() {Content = json};
+			var d = new JsonDeserializer();
+			var result = d.Deserialize<DecimalNumber>(response);
+
+			Assert.Equal(result.Value, .00005557m);
+		}
+
 		private string CreateJsonWithUnderscores()
 		{
 			var doc = new JsonObject();
