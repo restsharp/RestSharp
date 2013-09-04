@@ -471,9 +471,9 @@ namespace RestSharp
 				response.Request = request;
 
 				// Only attempt to deserialize if the request has a chance of containing a valid entry
-                if (response.StatusCode == HttpStatusCode.OK 
-                    || response.StatusCode == HttpStatusCode.Created 
-                    || response.StatusCode == HttpStatusCode.NonAuthoritativeInformation)
+				if (response.StatusCode == HttpStatusCode.OK 
+					|| response.StatusCode == HttpStatusCode.Created 
+					|| response.StatusCode == HttpStatusCode.NonAuthoritativeInformation)
 				{
 					IDeserializer handler = GetHandler(raw.ContentType);
 					handler.RootElement = request.RootElement;

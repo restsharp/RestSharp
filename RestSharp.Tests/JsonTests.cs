@@ -175,18 +175,18 @@ namespace RestSharp.Tests
 			Assert.Null(output.UniqueId);
 		}
 
-        [Fact]
-        public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
-        {
-            var doc = CreateJsonWithEmptyValues();
+		[Fact]
+		public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
+		{
+			var doc = CreateJsonWithEmptyValues();
 
-            var json = new JsonDeserializer();
-            var output = json.Deserialize<NullableValues>(new RestResponse { Content = doc });
+			var json = new JsonDeserializer();
+			var output = json.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
-            Assert.Null(output.Id);
-            Assert.Null(output.StartDate);
-            Assert.Null(output.UniqueId);
-        }
+			Assert.Null(output.Id);
+			Assert.Null(output.StartDate);
+			Assert.Null(output.UniqueId);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Elements_to_Nullable_Values()
@@ -774,15 +774,15 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
-        private string CreateJsonWithEmptyValues()
-        {
-            var doc = new JObject();
-            doc["Id"] = "";
-            doc["StartDate"] = "";
-            doc["UniqueId"] = "";
+		private string CreateJsonWithEmptyValues()
+		{
+			var doc = new JObject();
+			doc["Id"] = "";
+			doc["StartDate"] = "";
+			doc["UniqueId"] = "";
 
-            return doc.ToString();
-        }
+			return doc.ToString();
+		}
 
 		private string CreateJsonWithoutEmptyValues()
 		{
