@@ -25,6 +25,11 @@ namespace RestSharp
 	public interface IRestRequest
 	{
 		/// <summary>
+		/// Always send a multipart/form-data request - even when no Files are present.
+		/// </summary>
+		bool AlwaysMultipartFormData { get; set; }
+
+		/// <summary>
 		/// Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.
 		/// By default the included JsonSerializer is used (currently using JSON.NET default serialization).
 		/// </summary>
