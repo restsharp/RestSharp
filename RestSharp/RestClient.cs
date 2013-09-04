@@ -220,7 +220,7 @@ namespace RestSharp
 			var assembled = request.Resource;
 			var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
 
-		var builder = new UriBuilder(BaseUrl);
+			var builder = new UriBuilder(BaseUrl);
 
 			foreach (var p in urlParms)
 			{

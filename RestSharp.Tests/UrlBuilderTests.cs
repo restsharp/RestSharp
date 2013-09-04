@@ -76,7 +76,7 @@ namespace RestSharp.Tests
 		public void POST_with_resource_containing_slashes()
 		{
 			var request = new RestRequest("resource/foo", Method.POST);
-            var client = new RestClient(new Uri("http://example.com"));
+			var client = new RestClient(new Uri("http://example.com"));
 
 			var expected = new Uri("http://example.com/resource/foo");
 			var output = client.BuildUri(request);
