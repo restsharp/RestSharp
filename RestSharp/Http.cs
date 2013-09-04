@@ -298,7 +298,7 @@ namespace RestSharp
 
 		private void PreparePostBody(HttpWebRequest webRequest)
 		{
-            if (HasFiles || AlwaysMultipartFormData)
+			if (HasFiles || AlwaysMultipartFormData)
 			{
 				webRequest.ContentType = GetMultipartFormContentType();
 			}
