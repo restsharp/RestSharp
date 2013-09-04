@@ -150,6 +150,7 @@ namespace RestSharp
 				ContentType = response.ContentType,
 				Cookies = response.Cookies,
 				ErrorMessage = response.ErrorMessage,
+				ErrorException = response.ErrorException,
 				Headers = response.Headers,
 				RawBytes = response.RawBytes,
 				ResponseStatus = response.ResponseStatus,
