@@ -91,6 +91,7 @@
     <Compile Include="SampleClasses\misc.cs" />
     <Compile Include="SampleClasses\nullables.cs" />
     <Compile Include="SampleClasses\eventful.cs" />
+    <Compile Include="SampleClasses\Oddball.cs" />
     <Compile Include="SampleClasses\SOUser.cs" />
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
