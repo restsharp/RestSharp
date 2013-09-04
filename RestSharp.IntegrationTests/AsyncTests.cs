@@ -13,7 +13,7 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Can_Perform_GET_Async()
 		{
-            Uri baseUrl = new Uri("http://localhost:8080/");
+			Uri baseUrl = new Uri("http://localhost:8080/");
 			const string val = "Basic async test";
 			var resetEvent = new ManualResetEvent(false);
 			using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue(val)))
@@ -34,7 +34,7 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Can_Perform_GET_Async_Without_Async_Handle()
 		{
-            Uri baseUrl = new Uri("http://localhost:8080/");
+			Uri baseUrl = new Uri("http://localhost:8080/");
 			const string val = "Basic async test";
 			var resetEvent = new ManualResetEvent(false);
 			using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue(val)))

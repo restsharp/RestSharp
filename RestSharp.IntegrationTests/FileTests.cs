@@ -10,7 +10,7 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Handles_Binary_File_Download()
 		{
-            Uri baseUrl = new Uri("http://localhost:8080/");
+			Uri baseUrl = new Uri("http://localhost:8080/");
 			using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.FileHandler))
 			{
 				var client = new RestClient(baseUrl);

@@ -67,7 +67,7 @@ namespace RestSharp.IntegrationTests
 		[Fact]
 		public void Handles_Default_Root_Element_On_No_Error()
 		{
-            Uri baseUrl = new Uri("http://localhost:8080/");
+			Uri baseUrl = new Uri("http://localhost:8080/");
 			using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
 			{
 				var client = new RestClient(baseUrl);
