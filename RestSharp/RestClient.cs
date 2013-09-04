@@ -75,8 +75,10 @@ namespace RestSharp
         /// <param name="baseUrl"></param>
         public RestClient(string baseUrl) : this()
         {
-            var uri = new Uri(baseUrl);
-            BaseUrl = uri;
+            if (String.IsNullOrEmpty(baseUrl))
+                throw new ArgumentNullException("baseUrl");
+
+            BaseUrl = new Uri(baseUrl);
         }
 
 		private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
