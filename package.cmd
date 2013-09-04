@@ -45,4 +45,5 @@ copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Packag
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\sl4-wp71\
 
 tools\nuget.exe update -self
-tools\nuget.exe pack restsharp.nuspec -BasePath Download\Package -Output Download
+tools\nuget.exe pack restsharp-computed.nuspec -BasePath Download\Package -Output Download
+rm restsharp-computed.nuspec
