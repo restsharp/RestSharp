@@ -5,7 +5,7 @@
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	 http://www.apache.org/licenses/LICENSE-2.0
 //
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+#if NET4
+using System.Threading.Tasks;
+#endif
 using System.Text;
 using System.Net;
+
+using RestSharp.Extensions;
 
 namespace RestSharp
 {
@@ -152,5 +157,231 @@ namespace RestSharp
 
 			callback(restResponse, asyncHandle);
 		}
+
+#if NET4
+		/// <summary>
+		/// Executes a GET-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<T> ExecuteGetTaskAsync<T>(IRestRequest request)
+		{
+			return this.ExecuteGetTaskAsync<T>(request, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Executes a GET-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<T> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
+		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
+			request.Method = Method.GET;
+			return ExecuteTaskAsync<T>(request, token);
+		}
+
+		/// <summary>
+		/// Executes a POST-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<T> ExecutePostTaskAsync<T>(IRestRequest request)
+		{
+			return this.ExecutePostTaskAsync<T>(request, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Executes a POST-style request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<T> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
+		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
+			request.Method = Method.POST;
+			return ExecuteTaskAsync<T>(request, token);
+		}
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request)
+		{
+			return ExecuteTaskAsync<T>(request, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
+		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
+			var taskCompletionSource = new TaskCompletionSource<T>();
+
+			try
+			{
+				var async = this.ExecuteAsync<T>(request, (response, _) =>
+					{
+						if (token.IsCancellationRequested)
+						{
+							taskCompletionSource.TrySetCanceled();
+						}
+						else if (response.ErrorException != null)
+						{
+							taskCompletionSource.TrySetException(response.ErrorException);
+						}
+						else if (response.ResponseStatus != ResponseStatus.Completed)
+						{
+							taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
+						}
+						else
+						{
+							taskCompletionSource.TrySetResult(response.Data);
+						}
+					});
+
+				token.Register(() =>
+					{
+						async.Abort();
+						taskCompletionSource.TrySetCanceled();
+					});
+			}
+			catch (Exception ex)
+			{
+				taskCompletionSource.TrySetException(ex);
+			}
+
+			return taskCompletionSource.Task;
+		}
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
+		{
+			return ExecuteTaskAsync(request, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Executes a GET-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request)
+		{
+			return this.ExecuteGetTaskAsync(request, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Executes a GET-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
+		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
+			request.Method = Method.GET;
+			return ExecuteTaskAsync(request, token);
+		}
+
+		/// <summary>
+		/// Executes a POST-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request)
+		{
+			return this.ExecutePostTaskAsync(request, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Executes a POST-style asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
+		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
+			request.Method = Method.POST;
+			return ExecuteTaskAsync(request, token);
+		}
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <param name="request">Request to be executed</param>
+		/// <param name="token">The cancellation token</param>
+		public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
+		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
+			var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
+
+			try
+			{
+				var async = this.ExecuteAsync(request, (response, _) =>
+					{
+						if (token.IsCancellationRequested)
+						{
+							taskCompletionSource.TrySetCanceled();
+						}
+						else if (response.ErrorException != null)
+						{
+							taskCompletionSource.TrySetException(response.ErrorException);
+						}
+						else if (response.ResponseStatus != ResponseStatus.Completed)
+						{
+							taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
+						}
+						else
+						{
+							taskCompletionSource.TrySetResult(response);
+						}
+					});
+
+				token.Register(() =>
+					{
+						async.Abort();
+						taskCompletionSource.TrySetCanceled();
+					});
+			}
+			catch (Exception ex)
+			{
+				taskCompletionSource.TrySetException(ex);
+			}
+
+			return taskCompletionSource.Task;
+		}
+#endif
 	}
 }
