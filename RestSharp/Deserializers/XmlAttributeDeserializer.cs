@@ -55,7 +55,7 @@ namespace RestSharp.Deserializers
 				RemoveNamespace(doc);
 			}
 
-            var x = Activator.CreateInstance<T>();
+			var x = Activator.CreateInstance<T>();
 			var objType = x.GetType();
 
 			if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
