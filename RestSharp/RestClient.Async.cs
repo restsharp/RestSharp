@@ -164,16 +164,6 @@ namespace RestSharp
 
 #if NET4
 		/// <summary>
-		/// Executes the request asynchronously, authenticating if needed
-		/// </summary>
-		/// <typeparam name="T">Target deserialization type</typeparam>
-		/// <param name="request">Request to be executed</param>
-		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request)
-		{
-			return ExecuteTaskAsync<T>(request, CancellationToken.None);
-		}
-
-		/// <summary>
 		/// Executes a GET-style request asynchronously, authenticating if needed
 		/// </summary>
 		/// <typeparam name="T">Target deserialization type</typeparam>
@@ -191,6 +181,11 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		public virtual Task<T> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
 		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
 			request.Method = Method.GET;
 			return ExecuteTaskAsync<T>(request, token);
 		}
@@ -213,8 +208,23 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		public virtual Task<T> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
 		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
 			request.Method = Method.POST;
 			return ExecuteTaskAsync<T>(request, token);
+		}
+
+		/// <summary>
+		/// Executes the request asynchronously, authenticating if needed
+		/// </summary>
+		/// <typeparam name="T">Target deserialization type</typeparam>
+		/// <param name="request">Request to be executed</param>
+		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request)
+		{
+			return ExecuteTaskAsync<T>(request, CancellationToken.None);
 		}
 
 		/// <summary>
@@ -225,6 +235,11 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		public virtual Task<T> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
 		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
 			var taskCompletionSource = new TaskCompletionSource<T>();
 
 			try
@@ -288,6 +303,11 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
 		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
 			request.Method = Method.GET;
 			return ExecuteTaskAsync(request, token);
 		}
@@ -308,6 +328,11 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
 		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
 			request.Method = Method.POST;
 			return ExecuteTaskAsync(request, token);
 		}
@@ -319,6 +344,11 @@ namespace RestSharp
 		/// <param name="token">The cancellation token</param>
 		public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
 		{
+			if (request == null)
+			{
+				throw new ArgumentNullException("request");
+			}
+
 			var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
 
 			try
