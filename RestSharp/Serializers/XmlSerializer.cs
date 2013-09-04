@@ -81,8 +81,7 @@ namespace RestSharp.Serializers
 					root.Add(instance);
 				}
 			}
-			else
-				Map(root, obj);
+			Map(root, obj);
 
 			if (RootElement.HasValue()) {
 				var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
@@ -108,6 +107,9 @@ namespace RestSharp.Serializers
 
 			foreach (var prop in props) {
 				var name = prop.Name;
+				if (obj is IList && (name == "Item" || name == "Capacity")) {
+					continue;
+				}
 				var rawValue = prop.GetValue(obj, null);
 
 				if (rawValue == null) {
@@ -143,21 +145,20 @@ namespace RestSharp.Serializers
 
 					element.Value = value;
 				}
-				else if (rawValue is IList) {
-					var itemTypeName = "";
-					foreach (var item in (IList)rawValue) {
-						if (itemTypeName == "") {
-							itemTypeName = item.GetType().Name;
-						}
-						var instance = new XElement(itemTypeName);
-						Map(instance, item);
-						element.Add(instance);
-					}
-				}
 				else {
+					if (rawValue is IList) {
+						var itemTypeName = "";
+						foreach (var item in (IList)rawValue) {
+							if (itemTypeName == "") {
+								itemTypeName = item.GetType().Name;
+							}
+							var instance = new XElement(itemTypeName);
+							Map(instance, item);
+							element.Add(instance);
+						}
+					}
 					Map(element, rawValue);
 				}
-
 				root.Add(element);
 			}
 		}
