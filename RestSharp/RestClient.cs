@@ -465,18 +465,18 @@ namespace RestSharp
 			handler.Namespace = request.XmlNamespace;
 
 			IRestResponse<T> response = new RestResponse<T>();
-			try
+            try
 			{
 			    response = raw.toAsyncResponse<T>();
 				response.Data = handler.Deserialize<T>(raw);
-				response.Request = request;
 			}
 			catch (Exception ex)
 			{
 				response.ResponseStatus = ResponseStatus.Error;
 				response.ErrorMessage = ex.Message;
 				response.ErrorException = ex;
-			}
+            }
+            response.Request = request;
 
 			return response;
 		}
