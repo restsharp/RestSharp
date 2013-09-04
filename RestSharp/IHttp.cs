@@ -27,6 +27,12 @@ namespace RestSharp
 		Action<Stream> ResponseWriter { get; set; }
 		CookieContainer CookieContainer { get; set; }
 		ICredentials Credentials { get; set; }
+
+		/// <summary>
+		/// Always send a multipart/form-data request - even when no Files are present.
+		/// </summary>
+		bool AlwaysMultipartFormData { get; set; }
+
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
 #if !SILVERLIGHT

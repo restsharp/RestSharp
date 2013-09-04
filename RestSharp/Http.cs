@@ -91,6 +91,11 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// Always send a multipart/form-data request - even when no Files are present.
+		/// </summary>
+		public bool AlwaysMultipartFormData { get; set; }
+		
+		/// <summary>
 		/// UserAgent to be sent with request
 		/// </summary>
 		public string UserAgent { get; set; }
@@ -293,7 +298,7 @@ namespace RestSharp
 
 		private void PreparePostBody(HttpWebRequest webRequest)
 		{
-			if(HasFiles)
+            if (HasFiles || AlwaysMultipartFormData)
 			{
 				webRequest.ContentType = GetMultipartFormContentType();
 			}
