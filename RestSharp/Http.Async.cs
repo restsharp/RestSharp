@@ -398,7 +398,7 @@ namespace RestSharp
 #if FRAMEWORK
 			if(ClientCertificates != null)
 			{
-				webRequest.ClientCertificates = ClientCertificates;
+				webRequest.ClientCertificates.AddRange(ClientCertificates);
 			}
 			
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
