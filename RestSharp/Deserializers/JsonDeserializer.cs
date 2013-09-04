@@ -71,7 +71,19 @@ namespace RestSharp.Deserializers
 			{
 				var type = prop.PropertyType;
 
-				var name = prop.Name;
+				string name = String.Empty;
+
+				var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+				if (attributes.Length > 0)
+				{
+					var attribute = (DeserializeAsAttribute)attributes[0];
+					name = attribute.Name;
+				}
+				else
+				{
+					name = prop.Name;
+				}
+
 				var actualName = name.GetNameVariants(Culture).FirstOrDefault(n => data.ContainsKey(n));
 				var value = actualName != null ? data[actualName] : null;
 
