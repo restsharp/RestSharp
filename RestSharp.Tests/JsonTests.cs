@@ -632,8 +632,6 @@ namespace RestSharp.Tests
 			Assert.Equal ("{\"Name\":\"ThingBlue\",\"Color\":\"Blue\"}", bd["ThingBlue"]);
 		}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 		[Fact]
 		public void Can_Deserialize_Decimal_With_Four_Zeros_After_Floating_Point()
 		{
