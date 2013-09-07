@@ -110,13 +110,24 @@ namespace RestSharp
 			}
 			catch(Exception ex)
 			{
-				var response = new HttpResponse();
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-				response.ResponseStatus = ResponseStatus.Error;
-				ExecuteCallback(response, callback);
+				ExecuteCallback(CreateErrorResponse(ex), callback);
 			}
 			return webRequest;
+		}
+
+		private HttpResponse CreateErrorResponse(Exception ex)
+		{
+			var response = new HttpResponse();
+			if (ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
+			{
+				response.ResponseStatus = _timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
+				return response;
+			}
+
+			response.ErrorMessage = ex.Message;
+			response.ErrorException = ex;
+			response.ResponseStatus = ResponseStatus.Error;
+			return response;
 		}
 
 		private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
@@ -130,11 +141,7 @@ namespace RestSharp
 			}
 			catch(Exception ex)
 			{
-				var response = new HttpResponse();
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-				response.ResponseStatus = ResponseStatus.Error;
-				ExecuteCallback(response, callback);
+				ExecuteCallback(CreateErrorResponse(ex), callback);
 			}
 			
 			return webRequest;
@@ -221,21 +228,7 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-				HttpResponse response;
-				if (ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
-				{
-					response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
-					ExecuteCallback (response, callback);
-					return;
-				}
-				
-				response = new HttpResponse
-				{
-					ErrorMessage = ex.Message,
-					ErrorException = ex,
-					ResponseStatus = ResponseStatus.Error
-				};
-				ExecuteCallback(response, callback);
+				ExecuteCallback(CreateErrorResponse(ex), callback);
 				return;
 			}
 
@@ -328,17 +321,7 @@ namespace RestSharp
 			}
 			catch(Exception ex)
 			{
-				if(ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
-				{
-					response.ResponseStatus = ResponseStatus.Aborted;
-					ExecuteCallback(response, callback);
-					return;
-				}
-
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-				response.ResponseStatus = ResponseStatus.Error;
-				ExecuteCallback(response, callback);
+				ExecuteCallback(CreateErrorResponse(ex), callback);
 			}
 		}
 
