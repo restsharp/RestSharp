@@ -165,6 +165,11 @@ namespace RestSharp.Deserializers
 				type = type.GetGenericArguments()[0];
 			}
 			
+			if (type == typeof(System.Object) && value != null)
+			{
+				type = value.GetType();
+			}
+
 			if (type.IsPrimitive)
 			{
 				// no primitives can contain quotes so we can safely remove them
