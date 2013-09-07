@@ -254,47 +254,47 @@ namespace RestSharp.Tests
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
-        [Fact]
-        public void Can_Deserialize_TimeSpan()
-        {
-            var culture = CultureInfo.InvariantCulture;
-            var doc = new XDocument(culture);
+		[Fact]
+		public void Can_Deserialize_TimeSpan()
+		{
+			var culture = CultureInfo.InvariantCulture;
+			var doc = new XDocument(culture);
 
-            TimeSpan? nullTimespan = null;
-            TimeSpan? nullValueTimeSpan = new TimeSpan(21, 30, 7);
+			TimeSpan? nullTimespan = null;
+			TimeSpan? nullValueTimeSpan = new TimeSpan(21, 30, 7);
 
-            var root = new XElement("Person");
-            root.Add(new XElement("Tick", new TimeSpan(468006)));
-            root.Add(new XElement("Millisecond", new TimeSpan(0, 0, 0, 0, 125)));
-            root.Add(new XElement("Second", new TimeSpan(0, 0, 8)));
-            root.Add(new XElement("Minute", new TimeSpan(0, 55, 2)));
-            root.Add(new XElement("Hour", new TimeSpan(21, 30, 7)));
-            root.Add(new XElement("NullableWithoutValue", nullTimespan));
-            root.Add(new XElement("NullableWithValue", nullValueTimeSpan));
+			var root = new XElement("Person");
+			root.Add(new XElement("Tick", new TimeSpan(468006)));
+			root.Add(new XElement("Millisecond", new TimeSpan(0, 0, 0, 0, 125)));
+			root.Add(new XElement("Second", new TimeSpan(0, 0, 8)));
+			root.Add(new XElement("Minute", new TimeSpan(0, 55, 2)));
+			root.Add(new XElement("Hour", new TimeSpan(21, 30, 7)));
+			root.Add(new XElement("NullableWithoutValue", nullTimespan));
+			root.Add(new XElement("NullableWithValue", nullValueTimeSpan));
 
-            doc.Add(root);
+			doc.Add(root);
 
-            var xml = new XmlDeserializer
-            {
-                Culture = culture,
-            };
+			var xml = new XmlDeserializer
+			{
+				Culture = culture,
+			};
 
-            var response = new RestResponse { Content = doc.ToString() };
+			var response = new RestResponse { Content = doc.ToString() };
 
-            var d = new XmlDeserializer()
-            {
-                Culture = culture,
-            };
-            var payload = d.Deserialize<TimeSpanTestStructure>(response);
-            Assert.Equal(new TimeSpan(468006), payload.Tick);
-            Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
-            Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
-            Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
-            Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
-            Assert.Null(payload.NullableWithoutValue);
-            Assert.NotNull(payload.NullableWithValue);
-            Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
-        }
+			var d = new XmlDeserializer()
+			{
+				Culture = culture,
+			};
+			var payload = d.Deserialize<TimeSpanTestStructure>(response);
+			Assert.Equal(new TimeSpan(468006), payload.Tick);
+			Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
+			Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
+			Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
+			Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+			Assert.Null(payload.NullableWithoutValue);
+			Assert.NotNull(payload.NullableWithValue);
+			Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+		}
 
 		[Fact]
 		public void Can_Deserialize_Custom_Formatted_Date()
@@ -496,8 +496,8 @@ namespace RestSharp.Tests
 			Assert.Equal (5, p.Foes.Count);
 			Assert.Equal ("Yankees", p.Foes.Team);
 		}
-        
-        [Fact]
+		
+		[Fact]
 		public void Can_Deserialize_Lower_Cased_Root_Elements_With_Dashes()
 		{
 			var doc = CreateDashesXml();
@@ -642,6 +642,41 @@ namespace RestSharp.Tests
 			Assert.Equal(new Guid(GuidString), output.UniqueId);
 		}
 
+		[Fact]
+		public void Can_Deserialize_DateTimeOffset()
+		{
+			var culture = CultureInfo.InvariantCulture;
+			var doc = new XDocument(culture);
+			
+			DateTimeOffset DateTimeOffset = new DateTimeOffset(2013, 02, 08, 9, 18, 22, TimeSpan.FromHours(10));
+			DateTimeOffset? NullableDateTimeOffsetWithValue = new DateTimeOffset(2013, 02, 08, 9, 18, 23, TimeSpan.FromHours(10));
+
+			var root = new XElement("Dates");
+			root.Add(new XElement("DateTimeOffset", DateTimeOffset));
+			root.Add(new XElement("NullableDateTimeOffsetWithNull", string.Empty));
+			root.Add(new XElement("NullableDateTimeOffsetWithValue", NullableDateTimeOffsetWithValue));
+			
+			doc.Add(root);
+
+			var xml = new XmlDeserializer
+			{
+				Culture = culture,
+			};
+
+			var response = new RestResponse { Content = doc.ToString() };
+
+			var d = new XmlDeserializer()
+			{
+				Culture = culture,
+			};
+			var payload = d.Deserialize<DateTimeTestStructure>(response);
+			Assert.Equal(DateTimeOffset, payload.DateTimeOffset);
+			Assert.Null(payload.NullableDateTimeOffsetWithNull);
+
+			Assert.True(payload.NullableDateTimeOffsetWithValue.HasValue);
+			Assert.Equal(NullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
+		}
+
 		private static string CreateUnderscoresXml()
 		{
 			var doc = new XDocument();
@@ -771,10 +806,10 @@ namespace RestSharp.Tests
 			doc.Add(root);
 			return doc.ToString();
 		}
-        
-        private static string CreateLowerCasedRootElementWithDashesXml()
+		
+		private static string CreateLowerCasedRootElementWithDashesXml()
 		{
-            var doc = new XDocument();
+			var doc = new XDocument();
 			var root = new XElement("incoming-invoices",
 				new XElement("incoming-invoice",
 					new XElement("concept-id", 45)
@@ -934,5 +969,6 @@ namespace RestSharp.Tests
 
 			return doc.ToString();
 		}
+
 	}
 }
