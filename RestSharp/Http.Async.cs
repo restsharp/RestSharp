@@ -118,7 +118,8 @@ namespace RestSharp
 		private HttpResponse CreateErrorResponse(Exception ex)
 		{
 			var response = new HttpResponse();
-			if (ex is WebException && ((WebException)ex).Status == WebExceptionStatus.RequestCanceled)
+			var webException = ex as WebException;
+			if (webException != null && webException.Status == WebExceptionStatus.RequestCanceled)
 			{
 				response.ResponseStatus = _timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
 				return response;
