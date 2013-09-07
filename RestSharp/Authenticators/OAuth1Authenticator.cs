@@ -203,7 +203,7 @@ namespace RestSharp.Authenticators
 					break;
 				case OAuthParameterHandling.UrlOrPostParameters:
 					parameters.Add("oauth_signature", oauth.Signature);
-					foreach (var parameter in parameters.Where(parameter => !parameter.Name.IsNullOrBlank() && parameter.Name.StartsWith("oauth_")))
+					foreach (var parameter in parameters.Where(parameter => !parameter.Name.IsNullOrBlank() && (parameter.Name.StartsWith("oauth_") || parameter.Name.StartsWith("x_auth_"))))
 					{
 						request.AddParameter(parameter.Name, HttpUtility.UrlDecode(parameter.Value));
 					}
