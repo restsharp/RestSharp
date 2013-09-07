@@ -797,7 +797,7 @@ namespace RestSharp.Tests
 
 		private string CreateJsonWithEmptyValues()
 		{
-			var doc = new JObject();
+			var doc = new JsonObject();
 			doc["Id"] = "";
 			doc["StartDate"] = "";
 			doc["UniqueId"] = "";
