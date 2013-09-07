@@ -43,26 +43,26 @@ namespace RestSharp.Serializers
 			ContentType = "text/xml";
 		}
 
-        public string Serialize(object obj)
-        {
-            return Serialize(obj, null);
-        }
-        
-        /// <summary>
+		public string Serialize(object obj)
+		{
+			return Serialize(obj, null);
+		}
+		
+		/// <summary>
 		/// Serialize the object as XML
 		/// </summary>
 		/// <param name="obj">Object to serialize</param>
 		/// <returns>XML as string</returns>
-        public string Serialize(object obj, SerializerOptions options) {
+		public string Serialize(object obj, SerializerOptions options) {
 			var doc = new XDocument();
 
 			var t = obj.GetType();
 			var name = t.Name;
 
 			var serializeAsAttribute = t.GetAttribute<SerializeAsAttribute>();
-            if (serializeAsAttribute != null)
-            {
-                name = serializeAsAttribute.TransformName(serializeAsAttribute.Name ?? name);
+			if (serializeAsAttribute != null)
+			{
+				name = serializeAsAttribute.TransformName(serializeAsAttribute.Name ?? name);
 			}
 
 			var root = new XElement(name.AsNamespaced(Namespace));
@@ -204,9 +204,9 @@ namespace RestSharp.Serializers
 		/// Content type for serialized content
 		/// </summary>
 		public string ContentType { get; set; }
-        /// <summary>
-        /// Current serialization options
-        /// </summary>
-        public SerializerOptions Options { get; set; }
-    }
+		/// <summary>
+		/// Current serialization options
+		/// </summary>
+		public SerializerOptions Options { get; set; }
+	}
 }
