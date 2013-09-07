@@ -117,6 +117,9 @@
     <Content Include="SampleData\iso8601datetimes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\objectproperty.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\underscore_prefix.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -130,7 +130,7 @@ namespace RestSharp.Tests
 		{
 			Guid ID1 = new Guid("b0e5c11f-e944-478c-aadd-753b956d0c8c");
 			Guid ID2 = new Guid("809399fa-21c4-4dca-8dcd-34cb697fbca0");
-            var data = new JsonObject();
+			var data = new JsonObject();
 			data["Ids"] = new JsonArray() {ID1, ID2};
 
 			var d = new JsonDeserializer();
@@ -632,6 +632,8 @@ namespace RestSharp.Tests
 			Assert.Equal ("{\"Name\":\"ThingBlue\",\"Color\":\"Blue\"}", bd["ThingBlue"]);
 		}
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 		[Fact]
 		public void Can_Deserialize_Decimal_With_Four_Zeros_After_Floating_Point()
 		{
@@ -641,6 +643,14 @@ namespace RestSharp.Tests
 			var result = d.Deserialize<DecimalNumber>(response);
 
 			Assert.Equal(result.Value, .00005557m);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Object_Type_Property_With_Primitive_Vale()
+		{
+			var payload = GetPayLoad<ObjectProperties>("objectproperty.txt");
+
+			Assert.Equal(42L, payload.ObjectProperty);
 		}
 
 		private string CreateJsonWithUnderscores()
@@ -657,11 +667,11 @@ namespace RestSharp.Tests
 			doc["url"] = "http://example.com";
 			doc["url_path"] = "/foo/bar";
 
-            
+			
 			doc["best_friend"] = new JsonObject { 
-                                    {"name", "The Fonz"},
+									{"name", "The Fonz"},
 									{"since", 1952}
-                                };
+								};
 
 			var friendsArray = new JsonArray();
 			for (int i = 0; i < 10; i++)
@@ -677,7 +687,7 @@ namespace RestSharp.Tests
 			var foesArray = new JsonObject{
 								{"dict1", new JsonObject{{"nickname", "Foe 1"}}},
 								{"dict2", new JsonObject{{"nickname", "Foe 2"}}}
-                            };
+							};
 
 			doc["foes"] = foesArray;
 
