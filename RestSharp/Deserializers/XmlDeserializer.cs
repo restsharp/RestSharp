@@ -125,13 +125,13 @@ namespace RestSharp.Deserializers
 				// check for nullable and extract underlying type
 				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 				{
-                    // if the value is empty, set the property to null...
-                    if (value == null || String.IsNullOrEmpty(value.ToString()))
-                    {
-                        prop.SetValue(x, null, null);
-                        continue;
-                    }
-                    type = type.GetGenericArguments()[0];
+					// if the value is empty, set the property to null...
+					if (value == null || String.IsNullOrEmpty(value.ToString()))
+					{
+						prop.SetValue(x, null, null);
+						continue;
+					}
+					type = type.GetGenericArguments()[0];
 				}
 
 				if (type == typeof(bool))
@@ -170,33 +170,33 @@ namespace RestSharp.Deserializers
 
 					prop.SetValue(x, value, null);
 				}
-                else if (type == typeof(DateTimeOffset))
-                {
-                    var toConvert = value.ToString();
-                    if (!string.IsNullOrEmpty(toConvert))
-                    {
-                        DateTimeOffset deserialisedValue;
-                        try
-                        {
-                            deserialisedValue = XmlConvert.ToDateTimeOffset(toConvert);
-                            prop.SetValue(x, deserialisedValue, null);
-                        }
-                        catch (Exception)
-                        {
-                            object result;
-                            if (TryGetFromString(toConvert, out result, type))
-                            {
-                                prop.SetValue(x, result, null);
-                            }
-                            else
-                            {
-                                //fallback to parse
-                                deserialisedValue = DateTimeOffset.Parse(toConvert);
-                                prop.SetValue(x, deserialisedValue, null);
-                            }
-                        }
-                    }
-                }
+				else if (type == typeof(DateTimeOffset))
+				{
+					var toConvert = value.ToString();
+					if (!string.IsNullOrEmpty(toConvert))
+					{
+						DateTimeOffset deserialisedValue;
+						try
+						{
+							deserialisedValue = XmlConvert.ToDateTimeOffset(toConvert);
+							prop.SetValue(x, deserialisedValue, null);
+						}
+						catch (Exception)
+						{
+							object result;
+							if (TryGetFromString(toConvert, out result, type))
+							{
+								prop.SetValue(x, result, null);
+							}
+							else
+							{
+								//fallback to parse
+								deserialisedValue = DateTimeOffset.Parse(toConvert);
+								prop.SetValue(x, deserialisedValue, null);
+							}
+						}
+					}
+				}
 				else if (type == typeof(Decimal))
 				{
 					value = Decimal.Parse(value.ToString(), Culture);
@@ -207,12 +207,12 @@ namespace RestSharp.Deserializers
 					var raw = value.ToString();
 					value = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(value.ToString());
 					prop.SetValue(x, value, null);
-                }
-                else if (type == typeof(TimeSpan))
-                {
-                    var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
-                    prop.SetValue(x, timeSpan, null);
-                }
+				}
+				else if (type == typeof(TimeSpan))
+				{
+					var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
+					prop.SetValue(x, timeSpan, null);
+				}
 				else if (type.IsGenericType)
 				{
 					var t = type.GetGenericArguments()[0];
@@ -242,7 +242,7 @@ namespace RestSharp.Deserializers
 					object result;
 					if (TryGetFromString(value.ToString(), out result, type))
 					{
-                        prop.SetValue(x, result, null);
+						prop.SetValue(x, result, null);
 					}
 					else
 					{
@@ -261,17 +261,17 @@ namespace RestSharp.Deserializers
 			}
 		}
 
-        private static bool TryGetFromString(string inputString, out object result, Type type)
-        {
-            var converter = TypeDescriptor.GetConverter(type);
-            if (converter.CanConvertFrom(typeof(string)))
-            {
-                result = (converter.ConvertFromInvariantString(inputString));
-                return true;
-            }
-            result = null;
-            return false;
-        }
+		private static bool TryGetFromString(string inputString, out object result, Type type)
+		{
+			var converter = TypeDescriptor.GetConverter(type);
+			if (converter.CanConvertFrom(typeof(string)))
+			{
+				result = (converter.ConvertFromInvariantString(inputString));
+				return true;
+			}
+			result = null;
+			return false;
+		}
 
 		private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
 		{
