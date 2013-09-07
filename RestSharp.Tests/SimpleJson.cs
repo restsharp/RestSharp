@@ -17,7 +17,7 @@
 // <website>https://github.com/facebook-csharp-sdk/simple-json</website>
 //-----------------------------------------------------------------------
 
-// VERSION: 0.25.0
+// VERSION: 0.26.0
 
 // NOTE: uncomment the following line to make SimpleJson class internal.
 //#define SIMPLE_JSON_INTERNAL
@@ -38,6 +38,8 @@
 // NOTE: uncomment the following line if you are compiling under Window Metro style application/library.
 // usually already defined in properties
 //#define NETFX_CORE;
+
+// If you are targetting WinStore, WP8 and NET4.5+ PCL make sure to #define SIMPLE_JSON_TYPEINFO;
 
 // original json parsing code from http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
 
@@ -1330,13 +1332,9 @@ namespace RestSharp.Tests
                 return value;
             if ((valueIsDouble && type != typeof(double)) || (valueIsLong && type != typeof(long)))
             {
-                obj =
-#if NETFX_CORE
- type == typeof(int) || type == typeof(long) || type == typeof(double) || type == typeof(float) || type == typeof(bool) || type == typeof(decimal) || type == typeof(byte) || type == typeof(short)
-#else
- typeof(IConvertible).IsAssignableFrom(type)
-#endif
- ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture) : value;
+                obj = type == typeof(int) || type == typeof(long) || type == typeof(double) || type == typeof(float) || type == typeof(bool) || type == typeof(decimal) || type == typeof(byte) || type == typeof(short)
+                            ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture)
+                            : value;
             }
             else
             {
