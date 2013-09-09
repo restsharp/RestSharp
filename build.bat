@@ -10,7 +10,7 @@ REM %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild src\Twilio.sln /p:Config
 if not "%errorlevel%"=="0" goto failure
 
 REM Unit tests
-"%GallioEcho%" RestSharp.Integration.Tests\bin\Release\RestSharp.IntegrationTests.dll
+"%GallioEcho%" RestSharp.IntegrationTests\bin\Release\RestSharp.IntegrationTests
 if not "%errorlevel%"=="0" goto failure
 
 
