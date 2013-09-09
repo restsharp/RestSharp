@@ -10,7 +10,7 @@ REM %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild src\Twilio.sln /p:Config
 if not "%errorlevel%"=="0" goto failure
 
 REM Unit tests
-"%GallioEcho%" RestSharp.IntegrationTests\bin\Release\RestSharp.IntegrationTests
+"%GallioEcho%" RestSharp.IntegrationTests\bin\Release\RestSharp.IntegrationTests.dll
 if not "%errorlevel%"=="0" goto failure
 
 
@@ -48,3 +48,16 @@ copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Packag
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\sl4-wp71\
 
 %nuget% pack "restsharp.nuspec" -BasePath Download\Package -Output Download
+if not "%errorlevel%"=="0" goto failure
+
+:success
+
+REM use github status API to indicate commit compile success
+
+exit 0
+
+:failure
+
+REM use github status API to indicate commit compile success
+
+exit -1
