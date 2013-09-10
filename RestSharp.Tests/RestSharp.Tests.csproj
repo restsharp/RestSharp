@@ -76,7 +76,7 @@
     </Reference>
     <Reference Include="xunit.runner.tdnet, Version=1.8.0.1545, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.1.8.0.1545\lib\xunit.runner.tdnet.dll</HintPath>
+      <HintPath>..\packages\xunit.1.9.0.1566\lib\xunit.runner.tdnet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
