@@ -85,7 +85,7 @@ namespace RestSharp.Extensions
 		/// Find a value from a System.Enum by trying several possible variants
 		/// of the string value of the enum.
 		/// </summary>
-		/// <param name="type">Type of enum</typeparam>
+		/// <param name="type">Type of enum</param>
 		/// <param name="value">Value for which to search</param>
 		/// <param name="culture">The culture used to calculate the name variants</param>
 		/// <returns></returns>
