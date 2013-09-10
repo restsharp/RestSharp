@@ -263,6 +263,7 @@ namespace RestSharp.Deserializers
 
 		private static bool TryGetFromString(string inputString, out object result, Type type)
 		{
+#if !SILVERLIGHT
 			var converter = TypeDescriptor.GetConverter(type);
 			if (converter.CanConvertFrom(typeof(string)))
 			{
@@ -271,6 +272,10 @@ namespace RestSharp.Deserializers
 			}
 			result = null;
 			return false;
+#else
+			result = null;
+			return false;
+#endif
 		}
 
 		private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
