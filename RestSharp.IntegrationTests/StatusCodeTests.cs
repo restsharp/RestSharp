@@ -59,7 +59,7 @@ namespace RestSharp.IntegrationTests
 				var response = client.Execute<Response>(request);
 
 				Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-				Assert.Equal("Not found!", response.Data.Message);
+				Assert.Null(response.Data);
 			}
 		}
 
