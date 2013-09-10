@@ -10,8 +10,8 @@ REM %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild src\Twilio.sln /p:Config
 if not "%errorlevel%"=="0" goto failure
 
 REM Unit tests
-"%GallioEcho%" RestSharp.IntegrationTests\bin\Release\RestSharp.IntegrationTests.dll
-if not "%errorlevel%"=="0" goto failure
+REM "%GallioEcho%" RestSharp.IntegrationTests\bin\Release\RestSharp.IntegrationTests.dll
+REM if not "%errorlevel%"=="0" goto failure
 
 
 rd Download /s /q  REM delete the old stuff
