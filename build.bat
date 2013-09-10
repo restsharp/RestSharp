@@ -47,7 +47,7 @@ copy RestSharp.Net4\bin\Release\RestSharp.xml Download\Package\lib\net4-client\
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Package\lib\sl4\
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\sl4-wp71\
 
-%nuget% pack "restsharp.nuspec" -BasePath Download\Package -Output Download
+%nuget% pack "restsharp-computed.nuspec" -BasePath Download\Package -Output Download
 if not "%errorlevel%"=="0" goto failure
 
 :success
