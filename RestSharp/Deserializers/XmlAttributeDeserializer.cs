@@ -21,6 +21,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
 
 namespace RestSharp.Deserializers
@@ -109,7 +110,8 @@ namespace RestSharp.Deserializers
 
 				var value = GetValueFromXml(root, name, isAttribute);
 
-				if (value == null || value == string.Empty)
+				var stringValue = value as string;
+				if (stringValue.IsNullOrBlank())
 				{
 					// special case for inline list items
 					if (type.IsGenericType)
