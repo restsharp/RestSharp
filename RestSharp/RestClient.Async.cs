@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-#if NET4
+#if NET4 || WP8
 using System.Threading.Tasks;
 #endif
 using System.Text;
@@ -158,7 +158,7 @@ namespace RestSharp
 			callback(restResponse, asyncHandle);
 		}
 
-#if NET4
+#if NET4 || WP8
 		/// <summary>
 		/// Executes a GET-style request asynchronously, authenticating if needed
 		/// </summary>
