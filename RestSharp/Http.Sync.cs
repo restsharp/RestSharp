@@ -111,6 +111,16 @@ namespace RestSharp
 		{
 			var webRequest = ConfigureWebRequest(method, Url);
 
+
+            if (method == "DELETE" || method == "OPTIONS")
+            {
+                if (HasBody)
+                {
+                    webRequest.ContentType = RequestContentType;
+                    WriteRequestBody(webRequest);
+                }
+            }
+
 			return GetResponse(webRequest);
 		}
 

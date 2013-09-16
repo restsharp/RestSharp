@@ -71,6 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CompressionTests.cs" />
     <Compile Include="Helpers\SimpleServer.cs" />
+    <Compile Include="RequestBodyTests.cs" />
     <Compile Include="StatusCodeTests.cs" />
   </ItemGroup>
   <ItemGroup>
