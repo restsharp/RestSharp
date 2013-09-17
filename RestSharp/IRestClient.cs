@@ -17,6 +17,9 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
 using System.Security.Cryptography.X509Certificates;
 #if NET4
 using System.Threading;
@@ -42,6 +45,12 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		int Timeout { get; set; }
+#if FRAMEWORK
+		/// <summary>
+		/// 
+		/// </summary>
+		RequestCachePolicy CachePolicy { get; set; }
+#endif
 		/// <summary>
 		/// 
 		/// </summary>

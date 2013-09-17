@@ -388,10 +388,14 @@ namespace RestSharp
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			ServicePointManager.Expect100Continue = false;
 
+			webRequest.CachePolicy = CachePolicy;
+
 			if (Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;
 			}
+
+			webRequest.CachePolicy = CachePolicy;
 
 			if (Proxy != null)
 			{

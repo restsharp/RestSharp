@@ -18,6 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
 using System.Security.Cryptography.X509Certificates;
 
 namespace RestSharp
@@ -56,6 +59,9 @@ namespace RestSharp
 		byte[] RequestBodyBytes { get; set; }
 
 		Uri Url { get; set; }
+#if FRAMEWORK
+		RequestCachePolicy CachePolicy { get; set; }
+#endif
 
 		HttpWebRequest DeleteAsync(Action<HttpResponse> action);
 		HttpWebRequest GetAsync(Action<HttpResponse> action);
