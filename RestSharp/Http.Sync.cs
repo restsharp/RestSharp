@@ -107,9 +107,15 @@ namespace RestSharp
 			return PostPutInternal(httpMethod.ToUpperInvariant());
 		}
 
-	    private HttpResponse GetStyleMethodInternal(string method)
+		private HttpResponse GetStyleMethodInternal(string method)
 		{
 			var webRequest = ConfigureWebRequest(method, Url);
+
+			if (HasBody && (method == "DELETE" || method == "OPTIONS"))
+			{
+				webRequest.ContentType = RequestContentType;
+				WriteRequestBody(webRequest);
+			}
 
 			return GetResponse(webRequest);
 		}
