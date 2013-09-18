@@ -69,7 +69,7 @@ namespace RestSharp.IntegrationTests
 		}
 		
 		[Fact]
-		public void Can_Perform_GET_TaskAsync_With_Response_Type()
+		public void Can_Perform_ExecuteGetTaskAsync_With_Response_Type()
 		{
 			const string baseUrl = "http://localhost:8080/";
 			using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
@@ -78,6 +78,22 @@ namespace RestSharp.IntegrationTests
 				var request = new RestRequest("success");
 
 				var task = client.ExecuteTaskAsync<Response>(request);
+				task.Wait();
+
+				Assert.Equal("Works!", task.Result.Data.Message);
+			}
+		}
+
+		[Fact]
+		public void Can_Perform_GetTaskAsync_With_Response_Type()
+		{
+			const string baseUrl = "http://localhost:8080/";
+			using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+			{
+				var client = new RestClient(baseUrl);
+				var request = new RestRequest("success");
+
+				var task = client.GetTaskAsync<Response>(request);
 				task.Wait();
 
 				Assert.Equal("Works!", task.Result.Message);
@@ -148,7 +164,7 @@ namespace RestSharp.IntegrationTests
 				var task = client.ExecuteTaskAsync<Response>(request);
 				task.Wait();
 
-				Assert.Null(task.Result);
+				Assert.Null(task.Result.Data);
 			}
 		}
 
