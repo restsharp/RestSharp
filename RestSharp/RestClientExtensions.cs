@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RestSharp
 {
@@ -106,11 +107,54 @@ namespace RestSharp
 			return client.ExecuteAsync(request, callback);
 		}
 
-        public static RestRequestAsyncHandle DeleteAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.DELETE;
-            return client.ExecuteAsync(request, callback);
-        }
+		public static RestRequestAsyncHandle DeleteAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
+		{
+			request.Method = Method.DELETE;
+			return client.ExecuteAsync(request, callback);
+		}
+
+#if NET4
+		public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			return client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+
+		public static Task<T> PostTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			return client.ExecutePostTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+
+		public static Task<T> PutTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			request.Method = Method.PUT;
+			return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+
+		public static Task<T> HeadTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			request.Method = Method.HEAD;
+			return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+
+		public static Task<T> OptionsTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			request.Method = Method.OPTIONS;
+			return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+
+		public static Task<T> PatchTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			request.Method = Method.PATCH;
+			return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+
+		public static Task<T> DeleteTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			request.Method = Method.DELETE;
+			return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+		}
+#endif
+
 #if FRAMEWORK
 		public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
 		{
@@ -148,11 +192,11 @@ namespace RestSharp
 			return client.Execute<T>(request);
 		}
 
-        public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.DELETE;
-            return client.Execute<T>(request);
-        }
+		public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request) where T : new()
+		{
+			request.Method = Method.DELETE;
+			return client.Execute<T>(request);
+		}
 
 		public static IRestResponse Get(this IRestClient client, IRestRequest request)
 		{
@@ -190,11 +234,11 @@ namespace RestSharp
 			return client.Execute(request);
 		}
 
-        public static IRestResponse Delete(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.DELETE;
-            return client.Execute(request);
-        }
+		public static IRestResponse Delete(this IRestClient client, IRestRequest request)
+		{
+			request.Method = Method.DELETE;
+			return client.Execute(request);
+		}
 #endif
 
 		/// <summary>
@@ -214,20 +258,20 @@ namespace RestSharp
 			restClient.DefaultParameters.Add(p);
 		}
 
-        /// <summary>
-        /// Removes a parameter from the default parameters that are used on every request made with this client instance
-        /// </summary>
-        /// <param name="restClient">The IRestClient instance</param>
-        /// <param name="name">The name of the parameter that needs to be removed</param>
-        /// <returns></returns>
-        public static void RemoveDefaultParameter(this IRestClient restClient, string name)
-        {
-            var parameter = restClient.DefaultParameters.SingleOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            if (parameter != null)
-            {
-                restClient.DefaultParameters.Remove(parameter);
-            }
-        }
+		/// <summary>
+		/// Removes a parameter from the default parameters that are used on every request made with this client instance
+		/// </summary>
+		/// <param name="restClient">The IRestClient instance</param>
+		/// <param name="name">The name of the parameter that needs to be removed</param>
+		/// <returns></returns>
+		public static void RemoveDefaultParameter(this IRestClient restClient, string name)
+		{
+			var parameter = restClient.DefaultParameters.SingleOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+			if (parameter != null)
+			{
+				restClient.DefaultParameters.Remove(parameter);
+			}
+		}
 
 		/// <summary>
 		/// Adds a HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
