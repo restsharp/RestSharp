@@ -1,5 +1,29 @@
 # RestSharp Release Notes
 
+## 104.2
+
+To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.1...104.2).
+
+### New Features
+
+* Allow specifying the body of a `PUT` or `POST` to be specified as a byte array.
+* Added `ExecuteAsync` overloads that return `Task<T>`
+* Improved handling of nullable types
+* Support `DateTimeOffset` to `XmlDeserializer`
+
+### Bug Fixes
+
+* Crash if an XML attribute contains empty string
+* Adding array of int to request
+* Support XAuth parameters for OAuth parameter handling
+* Memory leak around handling of Accepts header
+* `ConfigureProxy` was not being called for async request
+* Serialization for classes with `IList` properties
+* Exception when executing async requests on multiple threads with one `RestClient`
+* ResponseStatus.Aborted was not being set if request was aborted
+* ClientCertificate threw `NotImplementedException` on Mono
+* Fix decimal parsing for small decimal values
+
 ## 104.1
 
 * Fixed bug where ExecuteAsync sometimes doesn't send data

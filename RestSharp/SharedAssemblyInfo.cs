@@ -25,7 +25,7 @@ using System;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(SharedAssembylInfo.Version + ".0")]
-[assembly: AssemblyInformationalVersion(SharedAssembylInfo.Version + "-beta")]
+[assembly: AssemblyInformationalVersion(SharedAssembylInfo.Version)]
 [assembly: AssemblyFileVersion(SharedAssembylInfo.Version + ".0")]
 
 class SharedAssembylInfo
