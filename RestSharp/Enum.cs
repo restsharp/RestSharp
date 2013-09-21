@@ -26,7 +26,7 @@ namespace RestSharp
 		UrlSegment,
 		HttpHeader,
 		RequestBody,
-        QueryString
+		QueryString
 	}
 
 	/// <summary>

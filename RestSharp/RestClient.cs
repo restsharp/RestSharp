@@ -257,42 +257,43 @@ namespace RestSharp
 				}
 			}
 
-            IEnumerable<Parameter> parameters = null;
-            
-            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
-            {
-                // build and attach querystring if this is a get-style request
-                parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString);
-            }
-            else
-            {
-                parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString);
-            }
+			IEnumerable<Parameter> parameters = null;
 
-            // build and attach querystring 
-            if  (parameters != null && parameters.Any())
-            {
-                var data = EncodeParameters(request, parameters);
-                assembled = string.Format("{0}?{1}", assembled, data);
-            }
+			if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+			{
+				// build and attach querystring if this is a get-style request
+				parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString);
+			}
+			else
+			{
+				parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString);
+			}
+
+			// build and attach querystring 
+			if (parameters != null && parameters.Any())
+			{
+				var data = EncodeParameters(request, parameters);
+				assembled = string.Format("{0}?{1}", assembled, data);
+			}
 
 			return new Uri(assembled);
 		}
 
-        private string EncodeParameters(IRestRequest request, IEnumerable<Parameter> parameters)
-        {
-            var querystring = new StringBuilder();
-            foreach (var p in parameters)
-            {
-                if (querystring.Length > 1)
-                    querystring.Append("&");
-                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
-            }
+		private string EncodeParameters(IRestRequest request, IEnumerable<Parameter> parameters)
+		{
+			var querystring = new StringBuilder();
+			foreach (var p in parameters)
+			{
+				if (querystring.Length > 1)
+					querystring.Append("&");
+				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
+			}
 
 			return querystring.ToString();
 		}
 
-		private void ConfigureHttp(IRestRequest request, IHttp http) {
+		private void ConfigureHttp(IRestRequest request, IHttp http)
+		{
 			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
 
 			http.CookieContainer = CookieContainer;
@@ -300,9 +301,9 @@ namespace RestSharp
 			http.ResponseWriter = request.ResponseWriter;
 
 			// move RestClient.DefaultParameters into Request.Parameters
-			foreach(var p in DefaultParameters)
+			foreach (var p in DefaultParameters)
 			{
-				if(request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
+				if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
 				{
 					continue;
 				}
@@ -340,7 +341,7 @@ namespace RestSharp
 			http.MaxRedirects = MaxRedirects;
 #endif
 
-			if(request.Credentials != null)
+			if (request.Credentials != null)
 			{
 				http.Credentials = request.Credentials;
 			}
@@ -353,7 +354,7 @@ namespace RestSharp
 							  Value = p.Value.ToString()
 						  };
 
-			foreach(var header in headers)
+			foreach (var header in headers)
 			{
 				http.Headers.Add(header);
 			}
@@ -366,7 +367,7 @@ namespace RestSharp
 							  Value = p.Value.ToString()
 						  };
 
-			foreach(var cookie in cookies)
+			foreach (var cookie in cookies)
 			{
 				http.Cookies.Add(cookie);
 			}
@@ -380,12 +381,12 @@ namespace RestSharp
 							  Value = p.Value.ToString()
 						  };
 
-			foreach(var parameter in @params)
+			foreach (var parameter in @params)
 			{
 				http.Parameters.Add(parameter);
 			}
 
-			foreach(var file in request.Files)
+			foreach (var file in request.Files)
 			{
 				http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Writer = file.Writer, FileName = file.FileName, ContentLength = file.ContentLength });
 			}
@@ -394,7 +395,7 @@ namespace RestSharp
 						where p.Type == ParameterType.RequestBody
 						select p).FirstOrDefault();
 
-			if(body != null)
+			if (body != null)
 			{
 				object val = body.Value;
 				if (val is byte[])
@@ -442,7 +443,8 @@ namespace RestSharp
 
 			foreach (var cookie in httpResponse.Cookies)
 			{
-				restResponse.Cookies.Add(new RestResponseCookie {
+				restResponse.Cookies.Add(new RestResponseCookie
+				{
 					Comment = cookie.Comment,
 					CommentUri = cookie.CommentUri,
 					Discard = cookie.Discard,
@@ -474,8 +476,8 @@ namespace RestSharp
 				response.Request = request;
 
 				// Only attempt to deserialize if the request has a chance of containing a valid entry
-				if (response.StatusCode == HttpStatusCode.OK 
-					|| response.StatusCode == HttpStatusCode.Created 
+				if (response.StatusCode == HttpStatusCode.OK
+					|| response.StatusCode == HttpStatusCode.Created
 					|| response.StatusCode == HttpStatusCode.NonAuthoritativeInformation)
 				{
 					IDeserializer handler = GetHandler(raw.ContentType);
