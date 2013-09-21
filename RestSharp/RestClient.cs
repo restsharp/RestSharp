@@ -257,30 +257,37 @@ namespace RestSharp
 				}
 			}
 
-			if (request.Method != Method.POST 
-					&& request.Method != Method.PUT 
-					&& request.Method != Method.PATCH)
-			{
-				// build and attach querystring if this is a get-style request
-				if (request.Parameters.Any(p => p.Type == ParameterType.GetOrPost))
-				{
-					var data = EncodeParameters(request);
-					assembled = string.Format("{0}?{1}", assembled, data);
-				}
-			}
+            IEnumerable<Parameter> parameters = null;
+            
+            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+            {
+                // build and attach querystring if this is a get-style request
+                parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString);
+            }
+            else
+            {
+                parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString);
+            }
+
+            // build and attach querystring 
+            if  (parameters != null && parameters.Any())
+            {
+                var data = EncodeParameters(request, parameters);
+                assembled = string.Format("{0}?{1}", assembled, data);
+            }
 
 			return new Uri(assembled);
 		}
 
-		private string EncodeParameters(IRestRequest request)
-		{
-			var querystring = new StringBuilder();
-			foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
-			{
-				if (querystring.Length > 1)
-					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
-			}
+        private string EncodeParameters(IRestRequest request, IEnumerable<Parameter> parameters)
+        {
+            var querystring = new StringBuilder();
+            foreach (var p in parameters)
+            {
+                if (querystring.Length > 1)
+                    querystring.Append("&");
+                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
+            }
 
 			return querystring.ToString();
 		}
