@@ -25,7 +25,8 @@ namespace RestSharp
 		GetOrPost,
 		UrlSegment,
 		HttpHeader,
-		RequestBody
+		RequestBody,
+		QueryString
 	}
 
 	/// <summary>
