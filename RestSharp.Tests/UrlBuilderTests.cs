@@ -53,12 +53,12 @@ namespace RestSharp.Tests
 		{
 			var request = new RestRequest("/resource/");
 			var client = new RestClient("http://example.com");
-			request.AddParameter( "foo", "bar" );
+			request.AddParameter("foo", "bar");
 
 			var expected = new Uri("http://example.com/resource/?foo=bar");
 			var output = client.BuildUri(request);
 
-			var response = client.Execute( request );
+			var response = client.Execute(request);
 
 			Assert.Equal(expected, output);
 		}
@@ -149,5 +149,18 @@ namespace RestSharp.Tests
 			Assert.Equal(expected, output);
 		}
 
+		[Fact]
+		public void POST_with_querystring_containing_tokens()
+		{
+			var request = new RestRequest("resource", Method.POST);
+			request.AddParameter("foo", "bar", ParameterType.QueryString);
+
+			var client = new RestClient("http://example.com");
+
+			var expected = new Uri("http://example.com/resource?foo=bar");
+			var output = client.BuildUri(request);
+
+			Assert.Equal(expected, output);
+		}
 	}
 }
