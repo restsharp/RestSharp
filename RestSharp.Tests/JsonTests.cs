@@ -314,6 +314,19 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Int_to_Bool()
+		{
+			var doc = new JsonObject();
+			doc["IsCool"] = 1;
+
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc.ToString() };
+			var p = d.Deserialize<PersonForJson>(response);
+
+			Assert.True(p.IsCool);
+		}
+
+		[Fact]
 		public void Can_Deserialize_With_Default_Root()
 		{
 			var doc = CreateJson();
