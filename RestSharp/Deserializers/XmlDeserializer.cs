@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 
 using RestSharp.Extensions;
@@ -39,7 +40,7 @@ namespace RestSharp.Deserializers
 			Culture = CultureInfo.InvariantCulture;
 		}
 
-		public T Deserialize<T>(IRestResponse response)
+		public virtual T Deserialize<T>(IRestResponse response)
 		{
 			if (string.IsNullOrEmpty( response.Content ))
 				return default(T);
@@ -72,7 +73,7 @@ namespace RestSharp.Deserializers
 			return x;
 		}
 
-		void RemoveNamespace(XDocument xdoc)
+		private void RemoveNamespace(XDocument xdoc)
 		{
 			foreach (XElement e in xdoc.Root.DescendantsAndSelf())
 			{
@@ -87,7 +88,7 @@ namespace RestSharp.Deserializers
 			}
 		}
 
-		private void Map(object x, XElement root)
+		protected virtual void Map(object x, XElement root)
 		{
 			var objType = x.GetType();
 			var props = objType.GetProperties();
@@ -100,7 +101,7 @@ namespace RestSharp.Deserializers
 					continue;
 
 				var name = prop.Name.AsNamespaced(Namespace);
-				var value = GetValueFromXml(root, name);
+				var value = GetValueFromXml(root, name, prop);
 
 				if (value == null)
 				{
@@ -342,7 +343,7 @@ namespace RestSharp.Deserializers
 			return list;
 		}
 
-		private object CreateAndMap(Type t, XElement element)
+		protected virtual object CreateAndMap(Type t, XElement element)
 		{
 			object item;
 			if (t == typeof(String))
@@ -362,7 +363,7 @@ namespace RestSharp.Deserializers
 			return item;
 		}
 
-		private object GetValueFromXml(XElement root, XName name)
+		protected virtual object GetValueFromXml(XElement root, XName name, PropertyInfo prop)
 		{
 			object val = null;
 
@@ -389,7 +390,7 @@ namespace RestSharp.Deserializers
 			return val;
 		}
 
-		private XElement GetElementByName(XElement root, XName name)
+		protected virtual XElement GetElementByName(XElement root, XName name)
 		{
 			var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
 			var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
@@ -430,7 +431,7 @@ namespace RestSharp.Deserializers
 			return null;
 		}
 
-		private XAttribute GetAttributeByName(XElement root, XName name)
+		protected virtual XAttribute GetAttributeByName(XElement root, XName name)
 		{
 			var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
 			var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
