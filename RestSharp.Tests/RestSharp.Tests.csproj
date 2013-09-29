@@ -80,6 +80,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
+    <Compile Include="XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
     <Compile Include="JsonTests.cs" />
     <Compile Include="Fakes\NullHttp.cs" />
@@ -103,7 +105,7 @@
     <Compile Include="SerializerTests.cs" />
     <Compile Include="SimpleJson.cs" />
     <Compile Include="UrlBuilderTests.cs" />
-    <Compile Include="XmlTests.cs" />
+    <Compile Include="XmlDeserializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleData\4sq.txt">
