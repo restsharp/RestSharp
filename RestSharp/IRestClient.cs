@@ -18,7 +18,7 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-#if NET4
+#if NET4 || MONODROID || MONOTOUCH
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -123,7 +123,7 @@ namespace RestSharp
 		IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
 #endif
 
-#if NET4
+#if NET4 || MONODROID || MONOTOUCH
 		/// <summary>
 		/// Executes the request and callback asynchronously, authenticating if needed
 		/// </summary>
