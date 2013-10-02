@@ -303,6 +303,7 @@
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 </Project>
