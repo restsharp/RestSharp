@@ -475,11 +475,11 @@ namespace RestSharp
 				response = raw.toAsyncResponse<T>();
 				response.Request = request;
 
-				// Only attempt to deserialize if the request has a chance of containing a valid entry
-				if (response.StatusCode == HttpStatusCode.OK
-					|| response.StatusCode == HttpStatusCode.Created
-					|| response.StatusCode == HttpStatusCode.NonAuthoritativeInformation)
-				{
+				// Only attempt to deserialize if the request has not errored due
+                // to a transport or framework exception.  HTTP errors should attempt to 
+                // be deserialized 
+
+                if (response.ErrorException==null) {
 					IDeserializer handler = GetHandler(raw.ContentType);
 					handler.RootElement = request.RootElement;
 					handler.DateFormat = request.DateFormat;
