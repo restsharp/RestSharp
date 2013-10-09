@@ -469,31 +469,31 @@ namespace RestSharp
 		{
 			request.OnBeforeDeserialization(raw);
 
-			IRestResponse<T> response = new RestResponse<T>();
-			try
-			{
-				response = raw.toAsyncResponse<T>();
-				response.Request = request;
+            IRestResponse<T> response = new RestResponse<T>();
+            try
+            {
+                response = raw.toAsyncResponse<T>();
+                response.Request = request;
 
-				// Only attempt to deserialize if the request has not errored due
+                // Only attempt to deserialize if the request has not errored due
                 // to a transport or framework exception.  HTTP errors should attempt to 
                 // be deserialized 
 
                 if (response.ErrorException==null) {
-					IDeserializer handler = GetHandler(raw.ContentType);
-					handler.RootElement = request.RootElement;
-					handler.DateFormat = request.DateFormat;
-					handler.Namespace = request.XmlNamespace;
+                    IDeserializer handler = GetHandler(raw.ContentType);
+                    handler.RootElement = request.RootElement;
+                    handler.DateFormat = request.DateFormat;
+                    handler.Namespace = request.XmlNamespace;
 
-					response.Data = handler.Deserialize<T>(raw);
-				}
-			}
-			catch (Exception ex)
-			{
-				response.ResponseStatus = ResponseStatus.Error;
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-			}
+                    response.Data = handler.Deserialize<T>(raw);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.ResponseStatus = ResponseStatus.Error;
+                response.ErrorMessage = ex.Message;
+                response.ErrorException = ex;
+            }
 
 			return response;
 		}

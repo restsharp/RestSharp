@@ -163,24 +163,24 @@ namespace RestSharp
 
 		private static HttpWebResponse GetRawResponse(HttpWebRequest request)
 		{
-			try
-			{
-				return (HttpWebResponse)request.GetResponse();
-			}
-			catch (WebException ex)
-			{
+            try
+            {
+                return (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException ex)
+            {
                 // Check to see if this is an HTTP error or a transport error.
                 // In cases where an HTTP error occurs ( status code >= 400 )
                 // return the underlying HTTP response, otherwise assume a
                 // transport exception (ex: connection timeout) and
                 // rethrow the exception
 
-				if (ex.Response is HttpWebResponse)
-				{
-					return ex.Response as HttpWebResponse;
-				}
-				throw;
-			}
+                if (ex.Response is HttpWebResponse)
+                {
+                    return ex.Response as HttpWebResponse;
+                }
+                throw;
+            }
 		}
 
 		private void PreparePostData(HttpWebRequest webRequest)

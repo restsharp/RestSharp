@@ -276,17 +276,17 @@ namespace RestSharp
 
 			HttpWebResponse raw = null;
 
-			try
-			{
-				var webRequest = (HttpWebRequest)result.AsyncState;
-				raw = webRequest.EndGetResponse(result) as HttpWebResponse;
-			}
-			catch(WebException ex)
-			{
-				if(ex.Status == WebExceptionStatus.RequestCanceled)
-				{
-					throw ex;
-				}
+            try
+            {
+                var webRequest = (HttpWebRequest)result.AsyncState;
+                raw = webRequest.EndGetResponse(result) as HttpWebResponse;
+            }
+            catch(WebException ex)
+            {
+                if(ex.Status == WebExceptionStatus.RequestCanceled)
+                {
+                    throw ex;
+                }
 
                 // Check to see if this is an HTTP error or a transport error.
                 // In cases where an HTTP error occurs ( status code >= 400 )
@@ -302,7 +302,7 @@ namespace RestSharp
                 {
                     throw ex;
                 }
-			}
+            }
 
 			callback(raw);
 			raw.Close();
