@@ -479,7 +479,8 @@ namespace RestSharp
                 // to a transport or framework exception.  HTTP errors should attempt to 
                 // be deserialized 
 
-                if (response.ErrorException==null) {
+                if (response.ErrorException==null) 
+                {
                     IDeserializer handler = GetHandler(raw.ContentType);
                     handler.RootElement = request.RootElement;
                     handler.DateFormat = request.DateFormat;

@@ -40,29 +40,29 @@ namespace RestSharp.IntegrationTests
 			obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
 		}
 
-		[Fact]
-		public void Handles_Different_Root_Element_On_Http_Error()
-		{
-			const string baseUrl = "http://localhost:8080/";
-			using(SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
-			{
-				var client = new RestClient(baseUrl);
-				var request = new RestRequest("error");
-				request.RootElement = "Success";
-				request.OnBeforeDeserialization = resp =>
-				{
-					if(resp.StatusCode == HttpStatusCode.BadRequest)
-					{
-						request.RootElement = "Error";
-					}
-				};
+        [Fact]
+        public void Handles_Different_Root_Element_On_Http_Error()
+        {
+            const string baseUrl = "http://localhost:8080/";
+            using(SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("error");
+                request.RootElement = "Success";
+                request.OnBeforeDeserialization = resp =>
+                {
+                    if(resp.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        request.RootElement = "Error";
+                    }
+                };
 
-				var response = client.Execute<Response>(request);
+                var response = client.Execute<Response>(request);
 
-				Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
                 Assert.Equal("Not found!", response.Data.Message);
-			}
-		}
+            }
+        }
 
 		[Fact]
 		public void Handles_Default_Root_Element_On_No_Error()
