@@ -84,8 +84,9 @@ namespace RestSharp
 		string ErrorMessage { get; set; }
 
 		/// <summary>
-		/// The exception thrown during the request, if any
+		/// Exceptions thrown during the request, if any.  
 		/// </summary>
+        /// <remarks>Will contain only network transport or framework exceptions thrown during the request.  HTTP protocol errors are handled by RestSharp and will not appear here.</remarks>
 		Exception ErrorException { get; set; }
 	}
 
