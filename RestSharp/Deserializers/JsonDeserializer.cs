@@ -100,16 +100,16 @@ namespace RestSharp.Deserializers
 			foreach (var child in (IDictionary<string, object>)parent)
 			{
 				var key = child.Key;
-				object item;
+				object item = null;
 				if(valueType.GetGenericTypeDefinition() != typeof(List<>))
 				{
-					var item = ConvertValue(valueType, child.Value);
+					item = ConvertValue(valueType, child.Value);
 				}
 				else
 				{
 					foreach (var element in (JsonArray)child.Value)
 					{
-						var item = ConvertValue(valueType, element);
+						item = ConvertValue(valueType, element);
 					}
 				}
 				dict.Add(key, item);
