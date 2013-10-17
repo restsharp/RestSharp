@@ -620,7 +620,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_To_Dictionary_String_String()
 		{
-			var doc = CreateJsonStringDictionary();
+            var doc = CreateJsonStringDictionary();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
 			var bd = d.Deserialize<Dictionary<string,string>>(response);

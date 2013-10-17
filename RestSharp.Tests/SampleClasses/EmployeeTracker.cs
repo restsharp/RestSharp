@@ -14,9 +14,9 @@ namespace RestSharp.Tests.SampleClasses
         public Dictionary<String, List<String>> EmployeesMail { get; set; }
         /// <summary>
         /// Key:    Employee name.
-        /// Value:  Hours worked this week.
+        /// Value:  Hours worked this each week.
         /// </summary>
-        public Dictionary<String, List<Int32>> EmployeesTime { get; set; }
+        public Dictionary<String, List<List<Int32>>> EmployeesTime { get; set; }
 
         /// <summary>
         /// Key:    Employee name.

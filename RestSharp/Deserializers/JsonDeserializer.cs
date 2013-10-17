@@ -101,20 +101,13 @@ namespace RestSharp.Deserializers
 			{
 				var key = child.Key;
 				object item = null;
-				if(valueType.GetGenericTypeDefinition() != typeof(List<>))
+                if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
 				{
-					item = ConvertValue(valueType, child.Value);
+                    item = BuildList(valueType, child.Value);
 				}
 				else
 				{
-                    item = (IList)Activator.CreateInstance(valueType); 
-                    foreach (var jArray in (JsonArray)child.Value)
-					{
-                        foreach (var element in (IList)ConvertValue(valueType, jArray))
-                        {
-                            ((IList)item).Add(element);
-                        }
-					}
+                    item = ConvertValue(valueType, child.Value); 
 				}
 				dict.Add(key, item);
 			}
