@@ -664,6 +664,21 @@ namespace RestSharp.Tests
 			Assert.Equal(42L, payload.ObjectProperty);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Dictionary_of_Lists()
+        {
+            var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
+
+            var json = new JsonDeserializer();
+            json.RootElement = "response";
+
+            var output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
+
+            Assert.NotEmpty(output.EmployeesMail);
+            Assert.NotEmpty(output.EmployeesTime);
+            Assert.NotEmpty(output.EmployeesPay);
+        }
+
 		private string CreateJsonWithUnderscores()
 		{
 			var doc = new JsonObject();
