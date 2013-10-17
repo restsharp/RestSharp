@@ -107,9 +107,13 @@ namespace RestSharp.Deserializers
 				}
 				else
 				{
-					foreach (var element in (JsonArray)child.Value)
+                    item = (IList)Activator.CreateInstance(valueType); 
+                    foreach (var jArray in (JsonArray)child.Value)
 					{
-						item = ConvertValue(valueType, element);
+                        foreach (var element in (IList)ConvertValue(valueType, jArray))
+                        {
+                            ((IList)item).Add(element);
+                        }
 					}
 				}
 				dict.Add(key, item);
