@@ -1,5 +1,21 @@
 # RestSharp Release Notes
 
+## 104.3.3
+
+To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.2...104.3.3).
+
+### New Features/Improvements
+
+* Support for query string parameters on POST requests
+* Deserialize an integer to a bool property
+* Enable Task extensions for Monotouch and Monodroid platforms
+* Support for deserializing a dictionary of lists
+
+### Bug Fixes
+
+* Fixed regression that prevented deserializing requests when non-protocol errors occurred
+* Properly URL encode strings longer than 32766 characters
+
 ## 104.2
 
 To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.1...104.2).
