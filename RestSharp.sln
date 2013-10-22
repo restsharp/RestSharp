@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "RestSharp\RestSharp.csproj", "{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "RestSharp.Tests\RestSharp.Tests.csproj", "{1464E4AC-18BB-4F23-8A0B-68196F9E1871}"
@@ -27,6 +27,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1B3F12
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Build", "RestSharp.Build\RestSharp.Build.csproj", "{CCC30138-3D68-44D8-AF1A-D22F769EE8DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{C5B02FAA-6A0A-4BF9-BBD4-82FD2DCBF669}"
+	ProjectSection(SolutionItems) = preProject
+		CONTRIBUTING.markdown = CONTRIBUTING.markdown
+		README.markdown = README.markdown
+		readme.txt = readme.txt
+		releasenotes.markdown = releasenotes.markdown
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
