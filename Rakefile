@@ -22,6 +22,11 @@ test_runner :tests => :build do |t|
   t.exe = FileList['packages/xunit.runners.*/tools/xunit.console.clr4.exe'].first
 end
 
+test_runner :integration_tests => :build do |t|
+  t.files = FileList['RestSharp.IntegrationTests/bin/Debug/RestSharp.IntegrationTests.dll']
+  t.exe = FileList['packages/xunit.runners.*/tools/xunit.console.clr4.exe'].first
+end
+
 directory 'build/pkg'
 
 desc "package nugets"
