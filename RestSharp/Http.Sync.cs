@@ -212,6 +212,8 @@ namespace RestSharp
 			}
 		}
 
+        // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
+        // TODO: duplication at the moment).
 		private HttpWebRequest ConfigureWebRequest(string method, Uri url)
 		{
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);

@@ -350,7 +350,9 @@ namespace RestSharp
 #endif
 		}
 
-		private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
+        // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
+        // TODO: duplication at the moment).
+        private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
 		{
 #if SILVERLIGHT
 			WebRequest.RegisterPrefix("http://", WebRequestCreator.ClientHttp);
