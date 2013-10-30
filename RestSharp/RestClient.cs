@@ -158,7 +158,7 @@ namespace RestSharp
 
 		/// <summary>
 		/// Proxy to use for requests made by this client instance.
-		/// Passed on to underying WebRequest if set.
+		/// Passed on to underlying WebRequest if set.
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
 #endif
