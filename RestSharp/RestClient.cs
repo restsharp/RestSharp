@@ -295,10 +295,10 @@ namespace RestSharp
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
+			http.UseDefaultCredentials = request.UseDefaultCredentials;
+			http.ResponseWriter = request.ResponseWriter;
 
 			http.CookieContainer = CookieContainer;
-
-			http.ResponseWriter = request.ResponseWriter;
 
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach (var p in DefaultParameters)
