@@ -118,6 +118,12 @@ namespace RestSharp
 		/// </remarks>
 		int Attempts { get; }
 
+		/// <summary>
+		/// Determine whether or not the "default credentials" (e.g. the user account under which the current process is running)
+		/// will be sent along to the server. The default is false.
+		/// </summary>
+		bool UseDefaultCredentials { get; set; }
+
 #if FRAMEWORK
 		/// <summary>
 		/// Adds a file to the Files collection to be included with a POST or PUT request 

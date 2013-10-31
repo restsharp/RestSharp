@@ -76,6 +76,7 @@
     <Compile Include="Helpers\SimpleServer.cs" />
     <Compile Include="RequestBodyTests.cs" />
     <Compile Include="StatusCodeTests.cs" />
+    <Compile Include="RequestHeadTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Koala.jpg">

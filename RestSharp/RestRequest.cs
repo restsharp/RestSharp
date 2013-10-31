@@ -52,6 +52,12 @@ namespace RestSharp
 		public Action<Stream> ResponseWriter { get; set; }
 
 		/// <summary>
+		/// Determine whether or not the "default credentials" (e.g. the user account under which the current process is running)
+		/// will be sent along to the server. The default is false.
+		/// </summary>
+		public bool UseDefaultCredentials { get; set; }
+
+		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public RestRequest()
