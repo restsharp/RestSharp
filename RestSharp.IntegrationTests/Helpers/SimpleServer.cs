@@ -12,11 +12,11 @@ namespace RestSharp.IntegrationTests.Helpers
 
 		public static SimpleServer Create(string url, Action<HttpListenerContext> handler, AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
 		{
-		    var listener = new HttpListener
-		    {
-		        Prefixes = { url },
-                AuthenticationSchemes = authenticationSchemes
-		    };
+			var listener = new HttpListener
+			{
+				Prefixes = { url },
+				AuthenticationSchemes = authenticationSchemes
+			};
 			var server = new SimpleServer(listener, handler);
 			server.Start();
 			return server;
