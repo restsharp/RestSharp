@@ -42,6 +42,7 @@ namespace RestSharp
 		X509CertificateCollection ClientCertificates { get; set; }
 		int? MaxRedirects { get; set; }
 #endif
+		bool UseDefaultCredentials { get; set; }
 
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }

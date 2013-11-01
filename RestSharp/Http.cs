@@ -136,6 +136,12 @@ namespace RestSharp
 		public int? MaxRedirects { get; set; }
 #endif
 		/// <summary>
+		/// Determine whether or not the "default credentials" (e.g. the user account under which the current process is running)
+		/// will be sent along to the server.
+		/// </summary>
+		public bool UseDefaultCredentials { get; set; }
+
+		/// <summary>
 		/// HTTP headers to be sent with request
 		/// </summary>
 		public IList<HttpHeader> Headers { get; private set; }

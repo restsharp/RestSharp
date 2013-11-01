@@ -158,7 +158,7 @@ namespace RestSharp
 
 		/// <summary>
 		/// Proxy to use for requests made by this client instance.
-		/// Passed on to underying WebRequest if set.
+		/// Passed on to underlying WebRequest if set.
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
 #endif
@@ -295,10 +295,10 @@ namespace RestSharp
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
+			http.UseDefaultCredentials = request.UseDefaultCredentials;
+			http.ResponseWriter = request.ResponseWriter;
 
 			http.CookieContainer = CookieContainer;
-
-			http.ResponseWriter = request.ResponseWriter;
 
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach (var p in DefaultParameters)

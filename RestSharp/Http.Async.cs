@@ -350,6 +350,8 @@ namespace RestSharp
 #endif
 		}
 
+		// TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
+		// TODO: duplication at the moment).
 		private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
 		{
 #if SILVERLIGHT
@@ -357,7 +359,7 @@ namespace RestSharp
 			WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
-			webRequest.UseDefaultCredentials = false;
+			webRequest.UseDefaultCredentials = UseDefaultCredentials;
 
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);

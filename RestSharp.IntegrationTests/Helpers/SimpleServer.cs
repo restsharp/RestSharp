@@ -10,9 +10,14 @@ namespace RestSharp.IntegrationTests.Helpers
 		readonly Action<HttpListenerContext> _handler;
 		Thread _processor;
 
-		public static SimpleServer Create(string url, Action<HttpListenerContext> handler)
+		public static SimpleServer Create(string url, Action<HttpListenerContext> handler, AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
 		{
-			var server = new SimpleServer(new HttpListener { Prefixes = { url } }, handler);
+			var listener = new HttpListener
+			{
+				Prefixes = { url },
+				AuthenticationSchemes = authenticationSchemes
+			};
+			var server = new SimpleServer(listener, handler);
 			server.Start();
 			return server;
 		}
