@@ -30,5 +30,5 @@ using System;
 
 class SharedAssembylInfo
 {
-    public const string Version = "104.3.3";
+    public const string Version = "104.4.0";
 }
