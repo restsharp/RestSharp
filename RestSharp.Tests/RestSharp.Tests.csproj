@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
+    <Compile Include="SampleClasses\FooWithArrayProperty.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
     <Compile Include="XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
@@ -219,6 +220,9 @@
       <Project>{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}</Project>
       <Name>RestSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
