@@ -237,6 +237,22 @@ namespace RestSharp.Deserializers
 					var list = HandleListDerivative(x, root, prop.Name, type);
 					prop.SetValue(x, list, null);
 				}
+                else if (type.IsArray)
+                {
+                    // TODO: this solution is rather nasty(?). There should be a HandleArray method.
+                    var listType = typeof(List<>);
+                    var closedListType = listType.MakeGenericType(type.GetElementType());
+
+                    var list = (IList)HandleListDerivative(x, root, prop.Name, closedListType);
+                    var array = (Array)Activator.CreateInstance(type, new object[] { list.Count });
+
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        array.SetValue(list[i], i);
+                    }
+
+                    prop.SetValue(x, array, null);
+                }
 				else
 				{
 					//fallback to type converters if possible

@@ -646,6 +646,21 @@ namespace RestSharp.Tests
 			Assert.Equal(NullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
 		}
 
+        [Fact]
+        public void Can_Deserialize_Array()
+        {
+            var xml = CreateXmlWithArray();
+            var deserializer = new XmlDeserializer();
+
+            var result = deserializer.Deserialize<FooWithArrayProperty>(new RestResponse { Content = xml });
+
+            Assert.NotNull(result);
+            Assert.Equal("Foobar", result.Name);
+            Assert.Equal(2, result.Ids.Length);
+            Assert.Equal(1, result.Ids[0].Value);
+            Assert.Equal(2, result.Ids[1].Value);
+        }
+
 		private static string CreateUnderscoresXml()
 		{
 			var doc = new XDocument();
@@ -939,5 +954,19 @@ namespace RestSharp.Tests
 			return doc.ToString();
 		}
 
+        private static string CreateXmlWithArray()
+        {
+            var document = new XDocument();
+
+            document.Add(new XElement("FooWithArrayProperty",
+                new XElement("Name", "Foobar"),
+                new XElement("Ids",
+                    new XElement("Id",
+                        new XElement("Value", 1)),
+                    new XElement("Id",
+                        new XElement("Value", 2)))));
+
+            return document.ToString();
+        }
 	}
 }
