@@ -272,14 +272,14 @@ namespace RestSharp
 			// build and attach querystring 
 			if (parameters != null && parameters.Any())
 			{
-				var data = EncodeParameters(request, parameters);
+				var data = EncodeParameters(parameters);
 				assembled = string.Format("{0}?{1}", assembled, data);
 			}
 
 			return new Uri(assembled);
 		}
 
-		private string EncodeParameters(IRestRequest request, IEnumerable<Parameter> parameters)
+		private static string EncodeParameters(IEnumerable<Parameter> parameters)
 		{
 			var querystring = new StringBuilder();
 			foreach (var p in parameters)
@@ -312,7 +312,7 @@ namespace RestSharp
 			}
 
 			// Add Accept header based on registered deserializers if none has been set by the caller.
-			if (!request.Parameters.Any(p2 => p2.Name.ToLowerInvariant() == "accept"))
+			if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
 			{
 				var accepts = string.Join(", ", AcceptTypes.ToArray());
 				request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
@@ -321,7 +321,7 @@ namespace RestSharp
 			http.Url = BuildUri(request);
 
 			var userAgent = UserAgent ?? http.UserAgent;
-			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp " + version.ToString();
+			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
 
 			var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
 			if (timeout > 0)
@@ -469,32 +469,32 @@ namespace RestSharp
 		{
 			request.OnBeforeDeserialization(raw);
 
-            IRestResponse<T> response = new RestResponse<T>();
-            try
-            {
-                response = raw.toAsyncResponse<T>();
-                response.Request = request;
+			IRestResponse<T> response = new RestResponse<T>();
+			try
+			{
+				response = raw.toAsyncResponse<T>();
+				response.Request = request;
 
-                // Only attempt to deserialize if the request has not errored due
-                // to a transport or framework exception.  HTTP errors should attempt to 
-                // be deserialized 
+				// Only attempt to deserialize if the request has not errored due
+				// to a transport or framework exception.  HTTP errors should attempt to 
+				// be deserialized 
 
-                if (response.ErrorException==null) 
-                {
-                    IDeserializer handler = GetHandler(raw.ContentType);
-                    handler.RootElement = request.RootElement;
-                    handler.DateFormat = request.DateFormat;
-                    handler.Namespace = request.XmlNamespace;
+				if (response.ErrorException==null) 
+				{
+					IDeserializer handler = GetHandler(raw.ContentType);
+					handler.RootElement = request.RootElement;
+					handler.DateFormat = request.DateFormat;
+					handler.Namespace = request.XmlNamespace;
 
-                    response.Data = handler.Deserialize<T>(raw);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.ResponseStatus = ResponseStatus.Error;
-                response.ErrorMessage = ex.Message;
-                response.ErrorException = ex;
-            }
+					response.Data = handler.Deserialize<T>(raw);
+				}
+			}
+			catch (Exception ex)
+			{
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+			}
 
 			return response;
 		}
