@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="AsyncTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
+    <Compile Include="AsyncRequestBodyTests.cs" />
     <Compile Include="NonProtocolExceptionHandlingTests.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="FileTests.cs" />

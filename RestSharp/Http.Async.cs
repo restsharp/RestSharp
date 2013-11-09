@@ -104,9 +104,17 @@ namespace RestSharp
 			{
 				var url = Url;
 				webRequest = ConfigureAsyncWebRequest(method, url);
-				_timeoutState = new TimeOutState { Request = webRequest };
-				var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
-				SetTimeout(asyncResult, _timeoutState);
+                if (HasBody && (method == "DELETE" || method == "OPTIONS"))
+                {
+                    webRequest.ContentType = RequestContentType;
+                    WriteRequestBodyAsync(webRequest, callback);
+                }
+                else
+                {
+                    _timeoutState = new TimeOutState { Request = webRequest };
+                    var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+                    SetTimeout(asyncResult, _timeoutState);
+                }
 			}
 			catch(Exception ex)
 			{
