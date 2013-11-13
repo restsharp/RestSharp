@@ -223,6 +223,15 @@ namespace RestSharp
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
 
+			if (Host != null)
+			{
+#if NET4 || MONODROID || MONOTOUCH
+				webRequest.Host = Host;
+#else
+				throw new NotImplementedException("Explicit Host header is supported from .NET 4");
+#endif
+			}
+
 			webRequest.Method = method;
 
 			// make sure Content-Length header is always sent since default is -1
