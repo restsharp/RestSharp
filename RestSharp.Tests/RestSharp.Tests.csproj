@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
+    <Compile Include="SampleClasses\EnumTest.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
     <Compile Include="XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
@@ -122,6 +123,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\jsondictionary.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\jsonenumtypes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\objectproperty.txt">
