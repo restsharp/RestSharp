@@ -57,6 +57,7 @@ namespace RestSharp
 		byte[] RequestBodyBytes { get; set; }
 
 		Uri Url { get; set; }
+		string Host { get; set; }
 
 		HttpWebRequest DeleteAsync(Action<HttpResponse> action);
 		HttpWebRequest GetAsync(Action<HttpResponse> action);

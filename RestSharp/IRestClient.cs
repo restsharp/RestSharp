@@ -57,6 +57,10 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+		string BaseHost { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		IList<Parameter> DefaultParameters { get; }
 		/// <summary>
 		/// 

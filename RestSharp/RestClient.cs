@@ -218,6 +218,12 @@ namespace RestSharp
 			}
 		}
 
+		/// <summary>
+		/// Explicit Host header value to use in requests independent from the request URI.
+		/// If null, default host value extracted from URI is used.
+		/// </summary>
+		public virtual string BaseHost { get; set; }
+
 		private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
 		{
 			if (Authenticator != null)
@@ -319,6 +325,7 @@ namespace RestSharp
 			}
 
 			http.Url = BuildUri(request);
+			http.Host = BaseHost;
 
 			var userAgent = UserAgent ?? http.UserAgent;
 			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;

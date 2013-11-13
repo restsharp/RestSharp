@@ -169,6 +169,11 @@ namespace RestSharp
 		/// URL to call for this request
 		/// </summary>
 		public Uri Url { get; set; }
+		/// <summary>
+		/// Explicit Host header value to use in requests independent from the request URI.
+		/// If null, default host value extracted from URI is used.
+		/// </summary>
+		public string Host { get; set; }
 
 #if FRAMEWORK
 		/// <summary>
