@@ -98,10 +98,10 @@ namespace RestSharp.Extensions
 
 			if (ret == null)
 			{
-				int enumValueAsInt;
-				if (Int32.TryParse(value, out enumValueAsInt) && Enum.IsDefined(type, enumValueAsInt))
+				var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
+				if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
 				{
-					ret = (Enum) Enum.ToObject(type, enumValueAsInt);
+					ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
 				}
 			}
 
