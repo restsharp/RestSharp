@@ -184,7 +184,18 @@ namespace RestSharp
 
 			if (!HasFiles && !AlwaysMultipartFormData)
 			{
-				return _defaultEncoding.GetByteCount(RequestBody);
+                if (RequestBody is HttpFile)
+                {
+                    return (RequestBody as HttpFile).ContentLength;
+                }
+                else if ( RequestBodyBytes !=null)
+                {
+                    return RequestBodyBytes.Length;
+                }
+                else
+                {
+                    return _defaultEncoding.GetByteCount((string)RequestBody);
+                }
 			}
 
 			// calculate length for multipart form
@@ -231,7 +242,14 @@ namespace RestSharp
 					}
 					else
 					{
-						WriteStringTo(requestStream, RequestBody);
+                        if (RequestBody is HttpFile)
+                        {
+                            (RequestBody as HttpFile).Writer(requestStream);
+                        }
+                        else
+                        {
+                            WriteStringTo(requestStream, (string)RequestBody);
+                        }
 					}
 				}
 			}

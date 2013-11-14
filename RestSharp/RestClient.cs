@@ -400,6 +400,11 @@ namespace RestSharp
 				object val = body.Value;
 				if (val is byte[])
 					http.RequestBodyBytes = (byte[])val;
+                else if ( val is FileParameter)
+                {
+                    FileParameter bodyValue = (FileParameter)body.Value;
+                    http.RequestBody = new HttpFile { Writer = bodyValue.Writer, ContentLength = bodyValue.ContentLength };
+                }
 				else
 					http.RequestBody = body.Value.ToString();
 				http.RequestContentType = body.Name;

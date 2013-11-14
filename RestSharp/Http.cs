@@ -75,7 +75,7 @@ namespace RestSharp
 		{
 			get
 			{
-				return RequestBodyBytes != null || !string.IsNullOrEmpty(RequestBody);
+				return RequestBodyBytes != null || RequestBody!=null;
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace RestSharp
 		/// <summary>
 		/// Request body to be sent with request
 		/// </summary>
-		public string RequestBody { get; set; }
+		public object RequestBody { get; set; }
 		/// <summary>
 		/// Content type of the request body.
 		/// </summary>
