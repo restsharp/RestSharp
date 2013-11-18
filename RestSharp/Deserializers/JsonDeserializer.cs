@@ -254,6 +254,11 @@ namespace RestSharp.Deserializers
 					return CreateAndMap(type, value);
 				}
 			}
+			else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
+			{
+				// handles classes that derive from List<T>
+				return BuildList(type, value);
+			}
 			else
 			{
 				// nested property classes
