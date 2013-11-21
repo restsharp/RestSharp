@@ -104,6 +104,10 @@ namespace RestSharp
 		/// </summary>
 		public int Timeout { get; set; }
 		/// <summary>
+		/// The number of milliseconds before the writing or reading times out.
+		/// </summary>
+		public int ReadWriteTimeout { get; set; }
+		/// <summary>
 		/// System.Net.ICredentials to be sent with request
 		/// </summary>
 		public ICredentials Credentials { get; set; }
