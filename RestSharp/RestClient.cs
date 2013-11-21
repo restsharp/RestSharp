@@ -184,10 +184,10 @@ namespace RestSharp
 		/// </summary>
 		public int Timeout { get; set; }
 
-        /// <summary>
-        /// The number of milliseconds before the writing or reading times out.
-        /// </summary>
-        public int ReadWriteTimeout { get; set; }
+		/// <summary>
+		/// The number of milliseconds before the writing or reading times out.
+		/// </summary>
+		public int ReadWriteTimeout { get; set; }
 
 		/// <summary>
 		/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
@@ -334,11 +334,11 @@ namespace RestSharp
 				http.Timeout = timeout;
 			}
 
-            var readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
-            if (readWriteTimeout > 0)
-            {
-                http.ReadWriteTimeout = readWriteTimeout;
-            }
+			var readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
+			if (readWriteTimeout > 0)
+			{
+				http.ReadWriteTimeout = readWriteTimeout;
+			}
 
 #if !SILVERLIGHT
 			http.FollowRedirects = FollowRedirects;

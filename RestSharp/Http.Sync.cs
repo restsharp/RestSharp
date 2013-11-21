@@ -248,10 +248,10 @@ namespace RestSharp
 				webRequest.Timeout = Timeout;
 			}
 
-            if (ReadWriteTimeout != 0)
-            {
-                webRequest.ReadWriteTimeout = ReadWriteTimeout;
-            }
+			if (ReadWriteTimeout != 0)
+			{
+				webRequest.ReadWriteTimeout = ReadWriteTimeout;
+			}
 
 			if(Credentials != null)
 			{

@@ -35,7 +35,7 @@ namespace RestSharp
 
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
-        int ReadWriteTimeout { get; set; }
+		int ReadWriteTimeout { get; set; }
 #if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
 #endif

@@ -45,10 +45,10 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
-        int ReadWriteTimeout { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
+		int ReadWriteTimeout { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		bool UseSynchronizationContext { get; set; }
 		/// <summary>
 		/// 
