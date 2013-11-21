@@ -109,6 +109,11 @@ namespace RestSharp
 		/// </summary>
 		int Timeout { get; set; }
 
+        /// <summary>
+        /// The number of milliseconds before the writing or reading times out.  This timeout value overrides a timeout set on the RestClient.
+        /// </summary>
+        int ReadWriteTimeout { get; set; }
+
 		/// <summary>
 		/// How many attempts were made to send this Request?
 		/// </summary>
