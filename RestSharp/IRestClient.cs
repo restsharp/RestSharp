@@ -58,6 +58,10 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		string BaseUrl { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        bool PreAuthenticate { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>
