@@ -223,7 +223,7 @@ namespace RestSharp
 			}
 		}
 
-        public bool PreAuthenticate { get; set; }
+		public bool PreAuthenticate { get; set; }
 
 		private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
 		{
@@ -326,7 +326,7 @@ namespace RestSharp
 			}
 
 			http.Url = BuildUri(request);
-            http.PreAuthenticate = PreAuthenticate;
+			http.PreAuthenticate = PreAuthenticate;
 
 			var userAgent = UserAgent ?? http.UserAgent;
 			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;

@@ -174,7 +174,7 @@ namespace RestSharp
 		/// </summary>
 		public Uri Url { get; set; }
 
-        public bool PreAuthenticate { get; set; }
+		public bool PreAuthenticate { get; set; }
 
 #if FRAMEWORK
 		/// <summary>

@@ -218,7 +218,7 @@ namespace RestSharp
 		{
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.UseDefaultCredentials = UseDefaultCredentials;
-            webRequest.PreAuthenticate = PreAuthenticate;
+			webRequest.PreAuthenticate = PreAuthenticate;
 			ServicePointManager.Expect100Continue = false;
 
 			AppendHeaders(webRequest);

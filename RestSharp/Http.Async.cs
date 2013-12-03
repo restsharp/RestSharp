@@ -368,7 +368,7 @@ namespace RestSharp
 #endif
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
 			webRequest.UseDefaultCredentials = UseDefaultCredentials;
-            webRequest.PreAuthenticate = PreAuthenticate;
+			webRequest.PreAuthenticate = PreAuthenticate;
 
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
