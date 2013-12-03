@@ -61,6 +61,10 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+		bool PreAuthenticate { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
 		IList<Parameter> DefaultParameters { get; }
 		/// <summary>
 		/// 
