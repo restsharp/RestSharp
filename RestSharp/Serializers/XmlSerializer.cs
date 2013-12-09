@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using RestSharp.Extensions;
@@ -172,14 +173,56 @@ namespace RestSharp.Serializers
 
 			if (obj is DateTime && DateFormat.HasValue())
 			{
-				output = ((DateTime) obj).ToString(DateFormat);
+				output = ((DateTime) obj).ToString(DateFormat, CultureInfo.InvariantCulture);
 			}
 			if (obj is bool)
 			{
-				output = obj.ToString().ToLower();
+				output = ((bool)obj).ToString(CultureInfo.InvariantCulture).ToLower();
+			}
+			if (IsNumeric(obj))
+			{
+				return SerializeNumber(obj);
 			}
 
 			return output.ToString();
+		}
+
+		static string SerializeNumber(object number)
+		{
+			if (number is long)
+				return ((long)number).ToString(CultureInfo.InvariantCulture);
+			else if (number is ulong)
+				return ((ulong)number).ToString(CultureInfo.InvariantCulture);
+			else if (number is int)
+				return ((int)number).ToString(CultureInfo.InvariantCulture);
+			else if (number is uint)
+				return ((uint)number).ToString(CultureInfo.InvariantCulture);
+			else if (number is decimal)
+				return ((decimal)number).ToString(CultureInfo.InvariantCulture);
+			else if (number is float)
+				return ((float)number).ToString(CultureInfo.InvariantCulture);
+			else
+				return (Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
+		}
+
+		/// <summary>
+		/// Determines if a given object is numeric in any way
+		/// (can be integer, double, null, etc).
+		/// </summary>
+		static bool IsNumeric(object value)
+		{
+			if (value is sbyte) return true;
+			if (value is byte) return true;
+			if (value is short) return true;
+			if (value is ushort) return true;
+			if (value is int) return true;
+			if (value is uint) return true;
+			if (value is long) return true;
+			if (value is ulong) return true;
+			if (value is float) return true;
+			if (value is double) return true;
+			if (value is decimal) return true;
+			return false;
 		}
 
 		/// <summary>
