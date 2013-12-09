@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using RestSharp.Extensions;
@@ -172,11 +173,11 @@ namespace RestSharp.Serializers
 
 			if (obj is DateTime && DateFormat.HasValue())
 			{
-				output = ((DateTime) obj).ToString(DateFormat);
+				output = ((DateTime) obj).ToString(DateFormat, CultureInfo.InvariantCulture);
 			}
 			if (obj is bool)
 			{
-				output = obj.ToString().ToLower();
+				output = ((bool)obj).ToString(CultureInfo.InvariantCulture).ToLower();
 			}
 
 			return output.ToString();
