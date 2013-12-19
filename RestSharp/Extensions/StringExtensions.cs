@@ -176,21 +176,19 @@ namespace RestSharp.Extensions
 			};
 
 #if PocketPC
-            foreach (string format in formats) {
-                try {
-                    //IFormatProvider fp = DateTimeFormatInfo.
-                    return DateTime.ParseExact(input, format, culture);
-                } catch (Exception) {
-                }
-            }
-            try {
-                //IFormatProvider fp = DateTimeFormatInfo.
-                return DateTime.Parse(input, culture);
-            } catch (Exception) {
-            }
+			foreach (string format in formats) {
+				try {
+					return DateTime.ParseExact(input, format, culture);
+				} catch (Exception) {
+				}
+			}
+			try {
+				return DateTime.Parse(input, culture);
+			} catch (Exception) {
+			}
 #else
-            DateTime date;
-            if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.None, out date))
+			DateTime date;
+			if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.None, out date))
 			{
 				return date;
 			}
@@ -200,7 +198,7 @@ namespace RestSharp.Extensions
 			}
 #endif
 
-            return default(DateTime);
+			return default(DateTime);
 		}
 
 		private static DateTime ExtractDate(string input, string pattern, CultureInfo culture)
