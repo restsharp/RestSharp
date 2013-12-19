@@ -1,0 +1,160 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A29E330B-F854-4287-BEB2-C4CBE9D9C637}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RestSharp.Compact</RootNamespace>
+    <AssemblyName>RestSharp.Compact</AssemblyName>
+    <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PlatformFamilyName>PocketPC</PlatformFamilyName>
+    <PlatformID>4118C335-430C-497f-BE48-11C3316B135E</PlatformID>
+    <OSVersion>5.1</OSVersion>
+    <DeployDirSuffix>RestSharp.Compact</DeployDirSuffix>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <NativePlatformName>Windows Mobile 5.0 Pocket PC SDK</NativePlatformName>
+    <FormFactorID>
+    </FormFactorID>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin_compact\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PocketPC SIMPLE_JSON_NO_LINQ_EXPRESSION</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin_compact\Release\</OutputPath>
+    <DefineConstants>TRACE;PocketPC SIMPLE_JSON_NO_LINQ_EXPRESSION FRAMEWORK</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Authenticators\NtlmAuthenticator.cs" />
+    <Compile Include="Authenticators\OAuth1Authenticator.cs" />
+    <Compile Include="Authenticators\OAuth2Authenticator.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\OAuthExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\StringExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\Extensions\TimeExtensions.cs" />
+    <Compile Include="Authenticators\OAuth\HttpPostParameter.cs" />
+    <Compile Include="Authenticators\OAuth\HttpPostParameterType.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthParameterHandling.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthSignatureMethod.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthSignatureTreatment.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthTools.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthType.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthWebQueryInfo.cs" />
+    <Compile Include="Authenticators\OAuth\OAuthWorkflow.cs" />
+    <Compile Include="Authenticators\OAuth\WebPair.cs" />
+    <Compile Include="Authenticators\OAuth\WebPairCollection.cs" />
+    <Compile Include="Authenticators\OAuth\WebParameter.cs" />
+    <Compile Include="Authenticators\OAuth\WebParameterCollection.cs" />
+    <Compile Include="Compression\ZLib\Crc32.cs" />
+    <Compile Include="Compression\ZLib\FlushType.cs" />
+    <Compile Include="Compression\ZLib\GZipStream.cs" />
+    <Compile Include="Compression\ZLib\Inflate.cs" />
+    <Compile Include="Compression\ZLib\InfTree.cs" />
+    <Compile Include="Compression\ZLib\ZLib.cs" />
+    <Compile Include="Compression\ZLib\ZLibCodec.cs" />
+    <Compile Include="Compression\ZLib\ZLibConstants.cs" />
+    <Compile Include="Compression\ZLib\ZLibStream.cs" />
+    <Compile Include="Deserializers\JsonDeserializer.cs" />
+    <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
+    <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
+    <Compile Include="Extensions\MonoHttp\Helpers.cs" />
+    <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />
+    <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
+    <Compile Include="Extensions\ResponseExtensions.cs" />
+    <Compile Include="RestClientExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Http.Sync.cs" />
+    <Compile Include="HttpCookie.cs" />
+    <Compile Include="HttpResponse.cs" />
+    <Compile Include="Deserializers\IDeserializer.cs" />
+    <Compile Include="Deserializers\XmlDeserializer.cs" />
+    <Compile Include="Enum.cs" />
+    <Compile Include="Extensions\MiscExtensions.cs" />
+    <Compile Include="Authenticators\HttpBasicAuthenticator.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="FileParameter.cs" />
+    <Compile Include="Http.cs" />
+    <Compile Include="HttpFile.cs" />
+    <Compile Include="HttpHeader.cs" />
+    <Compile Include="HttpParameter.cs" />
+    <Compile Include="IHttp.cs" />
+    <Compile Include="IHttpFactory.cs" />
+    <Compile Include="IHttpResponse.cs" />
+    <Compile Include="IRestClient.cs" />
+    <Compile Include="IRestRequest.cs" />
+    <Compile Include="IRestResponse.cs" />
+    <Compile Include="RestResponse.cs" />
+    <Compile Include="Authenticators\IAuthenticator.cs" />
+    <Compile Include="Parameter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RestClient.cs" />
+    <Compile Include="RestRequest.cs" />
+    <Compile Include="RestResponseCookie.cs" />
+    <Compile Include="Authenticators\SimpleAuthenticator.cs" />
+    <Compile Include="RestClient.Async.cs" />
+    <Compile Include="Deserializers\DotNetXmlDeserializer.cs" />
+    <Compile Include="Serializers\DotNetXmlSerializer.cs" />
+    <Compile Include="Serializers\ISerializer.cs" />
+    <Compile Include="Serializers\JsonSerializer.cs" />
+    <Compile Include="Serializers\SerializeAsAttribute.cs" />
+    <Compile Include="Serializers\XmlSerializer.cs" />
+    <Compile Include="Http.Async.cs" />
+    <Compile Include="RestClient.Sync.cs" />
+    <None Include="packages.config" />
+    <None Include="T4Helper\T4Helper.tt">
+      <LastGenOutput>T4Helper.log</LastGenOutput>
+    </None>
+    <None Include="T4Helper\T4Toolbox.tt">
+    </None>
+    <Compile Include="SharedAssemblyInfo.cs" />
+    <Compile Include="SimpleJson.cs" />
+    <Compile Include="Validation\Validate.cs" />
+    <Compile Include="Validation\Require.cs" />
+    <Compile Include="RestRequestAsyncHandle.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}">
+        <HostingProcess disable="1" />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

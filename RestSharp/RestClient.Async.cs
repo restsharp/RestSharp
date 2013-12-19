@@ -37,8 +37,11 @@ namespace RestSharp
 		/// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
 		public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 		{
-
+#if PocketPC
+                string method = request.Method.ToString();
+#else
 				string method = Enum.GetName(typeof (Method), request.Method);
+#endif
 				switch (request.Method)
 				{
 						case Method.PATCH:
@@ -84,6 +87,7 @@ namespace RestSharp
 
 			Action<HttpResponse> response_cb = r => ProcessResponse(request, r, asyncHandle, callback);
 
+#if !PocketPC
 			if (UseSynchronizationContext && SynchronizationContext.Current != null)
 			{
 				var ctx = SynchronizationContext.Current;
@@ -91,7 +95,7 @@ namespace RestSharp
 
 				response_cb = resp => ctx.Post(s => cb(resp), null);
 			}
-
+#endif
 			asyncHandle.WebRequest = getWebRequest(http, response_cb, httpMethod);
 			return asyncHandle;
 		}

@@ -10,7 +10,7 @@ namespace RestSharp.Authenticators.OAuth
 		{
 		}
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
 		public WebParameterCollection(NameValueCollection collection) : base(collection)
 		{
 		}

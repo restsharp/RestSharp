@@ -38,10 +38,12 @@ namespace RestSharp.Extensions
 {
 	public static class StringExtensions
 	{
+#if !PocketPC
 		public static string UrlDecode(this string input)
 		{
 			return HttpUtility.UrlDecode(input);
 		}
+#endif
 
 		/// <summary>
 		/// Uses Uri.EscapeDataString() based on recommendations on MSDN
@@ -69,6 +71,7 @@ namespace RestSharp.Extensions
 			return sb.ToString();
 		}
 
+#if !PocketPC
 		public static string HtmlDecode(this string input)
 		{
 			return HttpUtility.HtmlDecode(input);
@@ -78,6 +81,7 @@ namespace RestSharp.Extensions
 		{
 			return HttpUtility.HtmlEncode(input);
 		}
+#endif
 
 #if FRAMEWORK
 		public static string HtmlAttributeEncode(this string input)
@@ -118,11 +122,14 @@ namespace RestSharp.Extensions
 
 			input = input.RemoveSurroundingQuotes();
 
-			long unix;
-			if (Int64.TryParse(input, out unix))
+			long? unix = null;
+            try {
+                unix = Int64.Parse(input);
+            } catch (Exception) { };
+			if (unix.HasValue)
 			{
 				var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-				return epoch.AddSeconds(unix);
+				return epoch.AddSeconds(unix.Value);
 			}
 
 			if (input.Contains("/Date("))
@@ -168,16 +175,28 @@ namespace RestSharp.Extensions
 				"M/d/yyyy h:mm:ss tt" // default format for invariant culture
 			};
 
+#if PocketPC
+			foreach (string format in formats) {
+				try {
+					return DateTime.ParseExact(input, format, culture);
+				} catch (Exception) {
+				}
+			}
+			try {
+				return DateTime.Parse(input, culture);
+			} catch (Exception) {
+			}
+#else
 			DateTime date;
 			if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.None, out date))
 			{
 				return date;
 			}
-
 			if (DateTime.TryParse(input, culture, DateTimeStyles.None, out date))
 			{
 				return date;
 			}
+#endif
 
 			return default(DateTime);
 		}

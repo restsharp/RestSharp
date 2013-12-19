@@ -49,7 +49,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 			}
 		}
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
 
 		public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
 		{
