@@ -6,7 +6,7 @@ using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
 	[Serializable]
 #endif
 	internal static class OAuthTools
@@ -20,13 +20,13 @@ namespace RestSharp.Authenticators.OAuth
 		private static readonly Random _random;
 		private static readonly object _randomLock = new object();
 
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
 		private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
 #endif
 
 		static OAuthTools()
 		{
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
 			var bytes = new byte[4];
 			_rng.GetNonZeroBytes(bytes);
 			_random = new Random(BitConverter.ToInt32(bytes, 0));
@@ -305,6 +305,7 @@ namespace RestSharp.Authenticators.OAuth
 			string signature;
 			switch (signatureMethod)
 			{
+#if !PocketPC
 				case OAuthSignatureMethod.HmacSha1:
 				{
 					var crypto = new HMACSHA1();
@@ -315,6 +316,7 @@ namespace RestSharp.Authenticators.OAuth
 
 					break;
 				}
+#endif
 				case OAuthSignatureMethod.PlainText:
 				{
 				    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
@@ -322,7 +324,11 @@ namespace RestSharp.Authenticators.OAuth
 				    break;
 				}
 				default:
+#if PocketPC
+					throw new NotImplementedException("Only PlainText is currently supported.");
+#else
 					throw new NotImplementedException("Only HMAC-SHA1 is currently supported.");
+#endif
 			}
 
 			var result = signatureTreatment == OAuthSignatureTreatment.Escaped

@@ -25,7 +25,7 @@ namespace RestSharp.Extensions
 	/// </summary>
 	public static class MiscExtensions
 	{
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !PocketPC
 		/// <summary>
 		/// Save a byte array to a file
 		/// </summary>
@@ -87,7 +87,7 @@ namespace RestSharp.Extensions
 			Encoding encoding = Encoding.UTF8;
 
 #if FRAMEWORK
-			return encoding.GetString(buffer);
+			return encoding.GetString(buffer, 0, buffer.Length);
 #else
 			if (buffer == null || buffer.Length == 0)
 				return "";

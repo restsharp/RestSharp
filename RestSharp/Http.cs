@@ -114,7 +114,9 @@ namespace RestSharp
 		/// <summary>
 		/// The System.Net.CookieContainer to be used for the request
 		/// </summary>
+#if !PocketPC
 		public CookieContainer CookieContainer { get; set; }
+#endif
 		/// <summary>
 		/// The method to use to write the response instead of reading into RawBytes
 		/// </summary>
@@ -143,8 +145,9 @@ namespace RestSharp
 		/// Determine whether or not the "default credentials" (e.g. the user account under which the current process is running)
 		/// will be sent along to the server.
 		/// </summary>
+#if !PocketPC
 		public bool UseDefaultCredentials { get; set; }
-
+#endif
 		/// <summary>
 		/// HTTP headers to be sent with request
 		/// </summary>
@@ -272,9 +275,12 @@ namespace RestSharp
 
 		private void AppendCookies(HttpWebRequest webRequest)
 		{
+#if !PocketPC
 			webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
+#endif
 			foreach (var httpCookie in Cookies)
 			{
+#if !PocketPC
 #if FRAMEWORK
 				var cookie = new Cookie
 				{
@@ -291,6 +297,7 @@ namespace RestSharp
 				};
 				var uri = webRequest.RequestUri;
 				webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
+#endif
 #endif
 			}
 		}
@@ -380,6 +387,7 @@ namespace RestSharp
 				response.ResponseUri = webResponse.ResponseUri;
 				response.ResponseStatus = ResponseStatus.Completed;
 
+#if !PocketPC
 				if (webResponse.Cookies != null)
 				{
 					foreach (Cookie cookie in webResponse.Cookies)
@@ -402,7 +410,7 @@ namespace RestSharp
 						});
 					}
 				}
-
+#endif
 				foreach (var headerName in webResponse.Headers.AllKeys)
 				{
 					var headerValue = webResponse.Headers[headerName];

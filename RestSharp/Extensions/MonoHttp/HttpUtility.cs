@@ -182,7 +182,7 @@ namespace RestSharp.Contrib
 
 			byte[] buf = bytes.ToArray();
 			bytes = null;
-			return e.GetString(buf);
+			return e.GetString(buf, 0, buf.Length);
 
 		}
 
@@ -412,7 +412,8 @@ namespace RestSharp.Contrib
 			// avoided GetByteCount call
 			byte[] bytes = new byte[Enc.GetMaxByteCount(s.Length)];
 			int realLen = Enc.GetBytes(s, 0, s.Length, bytes, 0);
-			return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, realLen));
+			byte[] r = UrlEncodeToBytes(bytes, 0, realLen);
+			return Encoding.ASCII.GetString(r, 0, r.Length);
 		}
 
 		public static string UrlEncode(byte[] bytes)
@@ -422,8 +423,8 @@ namespace RestSharp.Contrib
 
 			if (bytes.Length == 0)
 				return String.Empty;
-
-			return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, bytes.Length));
+			byte[] r = UrlEncodeToBytes(bytes, 0, bytes.Length);
+			return Encoding.ASCII.GetString(r, 0, r.Length);
 		}
 
 		public static string UrlEncode(byte[] bytes, int offset, int count)
@@ -433,8 +434,8 @@ namespace RestSharp.Contrib
 
 			if (bytes.Length == 0)
 				return String.Empty;
-
-			return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, offset, count));
+			byte[] r = UrlEncodeToBytes(bytes, offset, count);
+			return Encoding.ASCII.GetString(r, 0, r.Length);
 		}
 
 		public static byte[] UrlEncodeToBytes(string str)
@@ -480,8 +481,8 @@ namespace RestSharp.Contrib
 		{
 			if (str == null)
 				return null;
-
-			return Encoding.ASCII.GetString(UrlEncodeUnicodeToBytes(str));
+			byte[] r = UrlEncodeUnicodeToBytes(str);
+			return Encoding.ASCII.GetString(r, 0, r.Length);
 		}
 
 		public static byte[] UrlEncodeUnicodeToBytes(string str)

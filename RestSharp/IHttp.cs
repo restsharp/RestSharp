@@ -25,7 +25,9 @@ namespace RestSharp
 	public interface IHttp
 	{
 		Action<Stream> ResponseWriter { get; set; }
+#if !PocketPC
 		CookieContainer CookieContainer { get; set; }
+#endif
 		ICredentials Credentials { get; set; }
 
 		/// <summary>
@@ -43,8 +45,9 @@ namespace RestSharp
 		X509CertificateCollection ClientCertificates { get; set; }
 		int? MaxRedirects { get; set; }
 #endif
+#if !PocketPC
 		bool UseDefaultCredentials { get; set; }
-
+#endif
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }
 		IList<HttpFile> Files { get; }

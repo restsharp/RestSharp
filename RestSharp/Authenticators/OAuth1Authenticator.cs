@@ -156,7 +156,11 @@ namespace RestSharp.Authenticators
 				url = url.Substring(0, queryStringStart);
 
 			OAuthWebQueryInfo oauth;
+#if PocketPC
+            var method = request.Method.ToString().ToUpper();
+#else
 			var method = request.Method.ToString().ToUpperInvariant();
+#endif
 
 			var parameters = new WebParameterCollection();
 

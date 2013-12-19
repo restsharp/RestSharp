@@ -29,7 +29,7 @@ using System.Windows.Threading;
 using System.Windows;
 #endif
 
-#if (FRAMEWORK && !MONOTOUCH && !MONODROID)
+#if (FRAMEWORK && !MONOTOUCH && !MONODROID && !PocketPC)
 using System.Web;
 #endif
 
@@ -84,7 +84,11 @@ namespace RestSharp
 		/// <returns></returns>
 		public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
 		{
+#if PocketPC
+			return PutPostInternalAsync(httpMethod.ToUpper(), action);
+#else
 			return PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
+#endif
 		}
 
 		/// <summary>
@@ -94,7 +98,11 @@ namespace RestSharp
 		/// <returns></returns>
 		public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
 		{
+#if PocketPC
+			return GetStyleMethodInternalAsync(httpMethod.ToUpper(), action);
+#else
 			return GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
+#endif
 		}
 
 	    private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
@@ -163,7 +171,7 @@ namespace RestSharp
 
 			if (HasBody || HasFiles || AlwaysMultipartFormData)
 			{
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !PocketPC
 				webRequest.ContentLength = CalculateContentLength();
 #endif
 				asyncResult = webRequest.BeginGetRequestStream(result => RequestStreamCallback(result, callback), webRequest);
@@ -246,7 +254,7 @@ namespace RestSharp
 
 		private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
 		{
-#if FRAMEWORK
+#if FRAMEWORK && !PocketPC
 			if (Timeout != 0)
 			{
 				ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true);
@@ -367,7 +375,9 @@ namespace RestSharp
 			WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
+#if !PocketPC
 			webRequest.UseDefaultCredentials = UseDefaultCredentials;
+#endif
 			webRequest.PreAuthenticate = PreAuthenticate;
 
 			AppendHeaders(webRequest);
@@ -376,7 +386,7 @@ namespace RestSharp
 			webRequest.Method = method;
 
 			// make sure Content-Length header is always sent since default is -1
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !PocketPC
 			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
 			// or indirectly
 			if(!HasFiles && !AlwaysMultipartFormData)
@@ -384,7 +394,7 @@ namespace RestSharp
 				webRequest.ContentLength = 0;
 			}
 #endif
-	
+
 			if(Credentials != null)
 			{
 				webRequest.Credentials = Credentials;

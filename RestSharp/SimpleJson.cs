@@ -816,9 +816,17 @@ namespace RestSharp
                         {
                             // parse the 32 bit hex into an integer codepoint
                             uint codePoint;
+
+#if PocketPC
+                            try {
+                                codePoint = UInt32.Parse(new string(json, index, 4), NumberStyles.HexNumber);
+                            } catch (Exception ex) {
+                                return "";
+                            }
+#else
                             if (!(success = UInt32.TryParse(new string(json, index, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codePoint)))
                                 return "";
-
+#endif
                             // convert the integer codepoint to a unicode char and add to string
                             if (0xD800 <= codePoint && codePoint <= 0xDBFF)  // if high surrogate
                             {
@@ -826,8 +834,18 @@ namespace RestSharp
                                 remainingLength = json.Length - index;
                                 if (remainingLength >= 6)
                                 {
-                                    uint lowCodePoint;
+                                    uint lowCodePoint = 0;
+
+#if PocketPC
+                                    bool lowCodePointPassed = false;
+                                    try {
+                                        lowCodePoint = UInt32.Parse(new string(json, index + 2, 4), NumberStyles.HexNumber);
+                                        lowCodePointPassed = true;
+                                    } catch (Exception) { }
+                                    if (new string(json, index, 2) == "\\u" && lowCodePointPassed)
+#else
                                     if (new string(json, index, 2) == "\\u" && UInt32.TryParse(new string(json, index + 2, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out lowCodePoint))
+#endif
                                     {
                                         if (0xDC00 <= lowCodePoint && lowCodePoint <= 0xDFFF)    // if low surrogate
                                         {
@@ -883,13 +901,33 @@ namespace RestSharp
             if (str.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || str.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
             {
                 double number;
+#if PocketPC
+                try {
+                    number = double.Parse(new string(json, index, charLength), NumberStyles.Any);
+                    success = true;
+                } catch (Exception) {
+                    number = 0;
+                    success = false;
+                }
+#else
                 success = double.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+#endif
                 returnNumber = number;
             }
             else
             {
                 long number;
+#if PocketPC
+                try {
+                    number = long.Parse(new string(json, index, charLength), NumberStyles.Any);
+                    success = true;
+                } catch (Exception) {
+                    number = 0;
+                    success = false;
+                }
+#else
                 success = long.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+#endif
                 returnNumber = number;
             }
             index = lastIndex + 1;
@@ -1304,8 +1342,10 @@ namespace RestSharp
                 {
                     if (type == typeof(DateTime) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTime)))
                         return DateTime.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
+#if !PocketPC
                     if (type == typeof(DateTimeOffset) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTimeOffset)))
                         return DateTimeOffset.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
+#endif
                     if (type == typeof(Guid) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid)))
                         return new Guid(str);
                     return str;
@@ -1422,8 +1462,10 @@ namespace RestSharp
             bool returnValue = true;
             if (input is DateTime)
                 output = ((DateTime)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
+#if !PocketPC
             else if (input is DateTimeOffset)
                 output = ((DateTimeOffset)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
+#endif
             else if (input is Guid)
                 output = ((Guid)input).ToString("D");
             else if (input is Uri)
@@ -1797,7 +1839,7 @@ namespace RestSharp
 
             public static GetDelegate GetGetMethod(PropertyInfo propertyInfo)
             {
-#if SIMPLE_JSON_NO_LINQ_EXPRESSION
+#if SIMPLE_JSON_NO_LINQ_EXPRESSION || PocketPC
                 return GetGetMethodByReflection(propertyInfo);
 #else
                 return GetGetMethodByExpression(propertyInfo);
@@ -1806,7 +1848,7 @@ namespace RestSharp
 
             public static GetDelegate GetGetMethod(FieldInfo fieldInfo)
             {
-#if SIMPLE_JSON_NO_LINQ_EXPRESSION
+#if SIMPLE_JSON_NO_LINQ_EXPRESSION || PocketPC
                 return GetGetMethodByReflection(fieldInfo);
 #else
                 return GetGetMethodByExpression(fieldInfo);
@@ -1824,7 +1866,7 @@ namespace RestSharp
                 return delegate(object source) { return fieldInfo.GetValue(source); };
             }
 
-#if !SIMPLE_JSON_NO_LINQ_EXPRESSION
+#if !SIMPLE_JSON_NO_LINQ_EXPRESSION && !PocketPC
 
             public static GetDelegate GetGetMethodByExpression(PropertyInfo propertyInfo)
             {

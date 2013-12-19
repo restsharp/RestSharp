@@ -32,8 +32,11 @@ namespace RestSharp
 	public partial class RestClient : IRestClient
 	{
 		// silverlight friendly way to get current version
+#if PocketPC
+		static readonly Version version = Assembly.GetExecutingAssembly().GetName().Version;
+#else
 		static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-
+#endif
 		public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
 		/// <summary>
@@ -172,7 +175,9 @@ namespace RestSharp
 		/// <summary>
 		/// The CookieContainer used for requests made by this client instance
 		/// </summary>
+#if !PocketPC
 		public CookieContainer CookieContainer { get; set; }
+#endif
 
 		/// <summary>
 		/// UserAgent to use for requests made by this client instance
@@ -302,11 +307,13 @@ namespace RestSharp
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
+#if !PocketPC
 			http.UseDefaultCredentials = request.UseDefaultCredentials;
+#endif
 			http.ResponseWriter = request.ResponseWriter;
-
+#if !PocketPC
 			http.CookieContainer = CookieContainer;
-
+#endif
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach (var p in DefaultParameters)
 			{
@@ -319,7 +326,11 @@ namespace RestSharp
 			}
 
 			// Add Accept header based on registered deserializers if none has been set by the caller.
+#if PocketPC
+			if (request.Parameters.All(p2 => p2.Name.ToLower() != "accept"))
+#else
 			if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+#endif
 			{
 				var accepts = string.Join(", ", AcceptTypes.ToArray());
 				request.AddParameter("Accept", accepts, ParameterType.HttpHeader);

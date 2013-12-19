@@ -33,7 +33,9 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+#if !PocketPC
 		CookieContainer CookieContainer { get; set; }
+#endif
 		/// <summary>
 		/// 
 		/// </summary>
