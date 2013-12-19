@@ -196,7 +196,7 @@ namespace RestSharp.Deserializers
 			}
 			else if (type == typeof(DateTime)
 #if !PocketPC
-                || type == typeof(DateTimeOffset))
+                || type == typeof(DateTimeOffset)
 #endif
                 )
 			{
