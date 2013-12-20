@@ -16,15 +16,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-//using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Net.Http;
+using System.Collections.ObjectModel;
 
 namespace RestSharp
 {
@@ -36,10 +35,10 @@ namespace RestSharp
         #region Private Members 
 
 		static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-
+            
         #endregion
 
-        public IHttpFactory HttpFactory = new SimpleFactory<Http>();
+        //public IHttpFactory HttpFactory = new SimpleHttpFactory<Http>();
 
         #region Public Constructors
 
@@ -48,8 +47,6 @@ namespace RestSharp
 		/// </summary>
 		public RestClient()
 		{
-			UseSynchronizationContext = true;
-
             ContentHandlers = new Dictionary<string, IDeserializer>();
 			AcceptTypes = new List<string>();
 			DefaultParameters = new List<Parameter>();
@@ -78,10 +75,12 @@ namespace RestSharp
 
         #endregion
 
-        private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
-		private IList<string> AcceptTypes { get; set; }
-
         #region Public Properties
+
+        /// <summary>
+        /// A ReadOnlyCollection of the default Accept header values used with no Accept header value is set explicitly.
+        /// </summary>
+        public ICollection<string> DefaultAcceptTypes { get { return new ReadOnlyCollection<string>(AcceptTypes); } }
 
         /// <summary>
 		/// Parameters included with every request made with this instance of RestClient
@@ -95,6 +94,12 @@ namespace RestSharp
         public int? MaxRedirects { get; set; }
 
         /// <summary>
+        /// Default is true. Determine whether or not requests that result in 
+        /// HTTP status codes of 3xx should follow returned redirect
+        /// </summary>
+        public bool FollowRedirects { get; set; }
+
+        /// <summary>
         /// X509CertificateCollection to be sent with request
         /// </summary>
         //public X509CertificateCollection ClientCertificates { get; set; }
@@ -106,12 +111,6 @@ namespace RestSharp
         public IWebProxy Proxy { get; set; }
 
         /// <summary>
-        /// Default is true. Determine whether or not requests that result in 
-        /// HTTP status codes of 3xx should follow returned redirect
-        /// </summary>
-        public bool FollowRedirects { get; set; }
-
-        /// <summary>
         /// The CookieContainer used for requests made by this client instance
         /// </summary>
         public CookieContainer CookieContainer { get; set; }
@@ -119,17 +118,28 @@ namespace RestSharp
         /// <summary>
         /// UserAgent to use for requests made by this client instance
         /// </summary>
-        public string UserAgent { get; set; }
+        private string _userAgent;
+        public string UserAgent
+        {
+            get 
+            {
+                if (!this._userAgent.HasValue())
+                {
+                    this._userAgent = "RestSharp/" + version;
+                }
+
+                return this._userAgent;
+            }
+            set
+            {
+                this._userAgent = value;
+            }
+        }
 
         /// <summary>
         /// Timeout in milliseconds to use for requests made by this client instance
         /// </summary>
-        public int Timeout { get; set; }
-
-        /// <summary>
-        /// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
-        /// </summary>
-        public bool UseSynchronizationContext { get; set; }
+        public int? Timeout { get; set; }
 
         /// <summary>
         /// Authenticator to use for requests made by this client instance
@@ -231,59 +241,6 @@ namespace RestSharp
 		}
 
         /// <summary>
-        /// Assembles URL to call based on parameters, method and resource
-        /// </summary>
-        /// <param name="request">RestRequest to execute</param>
-        /// <returns>Assembled System.Uri</returns>
-        public Uri BuildUri(IRestRequest request)
-        {
-            var assembled = request.Resource;
-            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            foreach (var p in urlParms)
-            {
-                assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
-            }
-
-            if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
-            {
-                assembled = assembled.Substring(1);
-            }
-
-            if (!string.IsNullOrEmpty(BaseUrl))
-            {
-                if (string.IsNullOrEmpty(assembled))
-                {
-                    assembled = BaseUrl;
-                }
-                else
-                {
-                    assembled = string.Format("{0}/{1}", BaseUrl, assembled);
-                }
-            }
-
-            IEnumerable<Parameter> parameters = null;
-
-            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
-            {
-                // build and attach querystring if this is a get-style request
-                parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString);
-            }
-            else
-            {
-                parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString);
-            }
-
-            // build and attach querystring 
-            if (parameters != null && parameters.Any())
-            {
-                var data = EncodeParameters(parameters);
-                assembled = string.Format("{0}?{1}", assembled, data);
-            }
-
-            return new Uri(assembled);
-        }
-
-        /// <summary>
         /// Executes a GET-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
@@ -361,48 +318,6 @@ namespace RestSharp
             }
 
             return Deserialize<T>(request, await ExecuteAsync(request));
-
-            //var response = await ExecuteAsync<T>(request);
-            //return response;
-            //var taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
-
-            //try
-            //{
-                //var async = await ExecuteAsync<T>(request);
-                
-                
-                //, (response, _) =>
-                //{   
-                //    if (token.IsCancellationRequested)
-                //    {
-                //        taskCompletionSource.TrySetCanceled();
-                //    }
-                //    else if (response.ErrorException != null)
-                //    {
-                //        taskCompletionSource.TrySetException(response.ErrorException);
-                //    }
-                //    else if (response.ResponseStatus != ResponseStatus.Completed)
-                //    {
-                //        taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
-                //    }
-                //    else
-                //    {
-                //        taskCompletionSource.TrySetResult(response);
-                //    }
-                //});
-
-                //token.Register(() =>
-                //{
-                //    async.Abort();
-                //    taskCompletionSource.TrySetCanceled();
-                //});
-            //}
-            //catch (Exception ex)
-            //{
-            //    taskCompletionSource.TrySetException(ex);
-            //}
-
-            //return taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -421,7 +336,7 @@ namespace RestSharp
         /// <param name="token">The cancellation token</param>
         public virtual async Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token)
         {
-            string method = Enum.GetName(typeof(Method), request.Method);
+            HttpMethod method = new HttpMethod(Enum.GetName(typeof(Method), request.Method));
             switch (request.Method)
             {
                 case Method.PATCH:
@@ -446,23 +361,43 @@ namespace RestSharp
 
         #endregion
 
+        #region Private Properties
+
+        private List<string> AcceptTypes { get; set; }
+
+        private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
+
+        #endregion 
+
         #region Private Methods 
 
-        private async Task<IRestResponse> ExecuteAsync(IRestRequest request, string httpMethod, Func<IHttp, string, Task<HttpResponse>> getResponse)
+        private async Task<IRestResponse> ExecuteAsync(IRestRequest restRequest, HttpMethod httpMethod, Func<IHttp, HttpMethod, Task<HttpResponse>> getResponse)
         {
-			AuthenticateIfNeeded(this, request);
+			//AddAuthenticationIfNeeded(restRequest);
 
 			IRestResponse response = new RestResponse();
-			try
+
+            try
 			{
-				var http = HttpFactory.Create();
+				//var http = HttpFactory.Create();
 
-				ConfigureHttp(request, http);
+                //http.HandlerFactory = this.HandlerFactory();                               
+                
+                //ConfigureHttp(request, http);
 
-				response = ConvertToRestResponse(request, await getResponse(http, httpMethod)); //execute async
-				response.Request = request;
+                //response = ConvertToRestResponse(request, httpResponse); //execute async
+
+                var converter = new HttpConverter();
+
+                var httpRequest = converter.ConvertTo(this, restRequest);
+
+                IHttp http = new Http(httpRequest);
+
+                var httpResponse = await getResponse(http, httpMethod);
+
+                response = converter.ConvertFrom(httpResponse);
+                response.Request = restRequest;
 				response.Request.IncreaseNumAttempts();
-
 			}
 			catch (Exception ex)
 			{
@@ -474,231 +409,219 @@ namespace RestSharp
 			return response;
         }
 
-        private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
-        {
-            if (Authenticator != null)
-            {
-                Authenticator.Authenticate(client, request);
-            }
-        }
 
-        private static async Task<HttpResponse> DoAsGetAsync(IHttp http, string method)
+
+        //private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
+        //{
+        //    if (Authenticator != null)
+        //    {
+        //        Authenticator.Authenticate(client, request);
+        //    }
+        //}
+
+        private static async Task<HttpResponse> DoAsGetAsync(IHttp http, HttpMethod method)
         {
             return await http.AsGetAsync(method);
         }
 
-        private static async Task<HttpResponse> DoAsPostAsync(IHttp http, string method)
+        private static async Task<HttpResponse> DoAsPostAsync(IHttp http, HttpMethod method)
         {
             return await http.AsPostAsync(method);
         }
 
-        //private void ProcessResponse(IRestRequest request, HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle, Action<IRestResponse, RestRequestAsyncHandle> callback)
-        //private void ProcessResponse(IRestRequest request, HttpResponse httpResponse)
-        private IRestResponse ProcessResponse(IRestRequest request, HttpResponse httpResponse)
-        {
-            var restResponse = ConvertToRestResponse(request, httpResponse);
-            return restResponse;
-            //callback(restResponse, asyncHandle);
-        }
-
-        //private void DeserializeResponse<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, IRestResponse response, RestRequestAsyncHandle asyncHandle)
-        //private void DeserializeResponse<T>(IRestRequest request, IRestResponse response)
+        //private IRestResponse ProcessResponse(IRestRequest request, HttpResponse httpResponse)
         //{
-        //    IRestResponse<T> restResponse = response as RestResponse<T>;
-        //    if (response.ResponseStatus == ResponseStatus.Completed)
-        //    {
-        //        restResponse = Deserialize<T>(request, response);
-        //    }
-
-        //    //callback(restResponse, asyncHandle);
+        //    var restResponse = ConvertToRestResponse(request, httpResponse);
+        //    return restResponse;
         //}
 
-		private static string EncodeParameters(IEnumerable<Parameter> parameters)
-		{
-			var querystring = new StringBuilder();
-			foreach (var p in parameters)
-			{
-				if (querystring.Length > 1)
-					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
-			}
+        //private static string EncodeParameters(IEnumerable<Parameter> parameters)
+        //{
+        //    var querystring = new StringBuilder();
+        //    foreach (var p in parameters)
+        //    {
+        //        if (querystring.Length > 1)
+        //            querystring.Append("&");
+        //        querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
+        //    }
 
-			return querystring.ToString();
-		}
+        //    return querystring.ToString();
+        //}
 
-		private void ConfigureHttp(IRestRequest request, IHttp http)
-		{
-			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
-			http.UseDefaultCredentials = request.UseDefaultCredentials;
-			http.ResponseWriter = request.ResponseWriter;
+        //private void ConfigureHttp(IRestRequest request, IHttp http)
+        //{
 
-			http.CookieContainer = CookieContainer;
+        //    http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
+        //    http.UseDefaultCredentials = request.UseDefaultCredentials;
+        //    http.ResponseWriter = request.ResponseWriter;
 
-			// move RestClient.DefaultParameters into Request.Parameters
-			foreach (var p in DefaultParameters)
-			{
-				if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
-				{
-					continue;
-				}
+        //    http.CookieContainer = CookieContainer;
 
-				request.AddParameter(p);
-			}
+        //    // move RestClient.DefaultParameters into Request.Parameters
+        //    //foreach (var p in DefaultParameters)
+        //    //{
+        //    //    if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
+        //    //    {
+        //    //        continue;
+        //    //    }
 
-			// Add Accept header based on registered deserializers if none has been set by the caller.
-			if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
-			{
-				var accepts = string.Join(", ", AcceptTypes.ToArray());
-				request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
-			}
+        //    //    request.AddParameter(p);
+        //    //}
 
-			http.Url = BuildUri(request);
+        //    // Add Accept header based on registered deserializers if none has been set by the caller.
+        //    if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+        //    {
+        //        var accepts = string.Join(", ", AcceptTypes.ToArray());
+        //        request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
+        //    }
 
-			var userAgent = UserAgent ?? http.UserAgent;
-			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
+        //    http.Url = BuildUri(request);
 
-			var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
-			if (timeout > 0)
-			{
-				http.Timeout = timeout;
-			}
+        //    var userAgent = UserAgent ?? http.UserAgent;
+        //    http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
 
-			http.FollowRedirects = FollowRedirects;
+        //    var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+        //    if (timeout > 0)
+        //    {
+        //        http.Timeout = timeout;
+        //    }
 
-            //if (ClientCertificates != null)
-            //{
-            //    http.ClientCertificates = ClientCertificates;
-            //}
+        //    http.FollowRedirects = FollowRedirects;
 
-			http.MaxRedirects = MaxRedirects;
+        //    //if (ClientCertificates != null)
+        //    //{
+        //    //    http.ClientCertificates = ClientCertificates;
+        //    //}
 
-			if (request.Credentials != null)
-			{
-				http.Credentials = request.Credentials;
-			}
+        //    http.MaxRedirects = MaxRedirects;
 
-			var headers = from p in request.Parameters
-						  where p.Type == ParameterType.HttpHeader
-						  select new HttpHeader
-						  {
-							  Name = p.Name,
-							  Value = new List<string>() { p.Value.ToString() }
-						  };
+        //    if (request.Credentials != null)
+        //    {
+        //        http.Credentials = request.Credentials;
+        //    }
 
-			foreach (var header in headers)
-			{
-				http.Headers.Add(header);
-			}
+        //    var headers = from p in request.Parameters
+        //                  where p.Type == ParameterType.HttpHeader
+        //                  select new HttpHeader
+        //                  {
+        //                      Name = p.Name,
+        //                      Value = new List<string>() { p.Value.ToString() }
+        //                  };
 
-			var cookies = from p in request.Parameters
-						  where p.Type == ParameterType.Cookie
-						  select new HttpCookie
-						  {
-							  Name = p.Name,
-							  Value = p.Value.ToString()
-						  };
+        //    foreach (var header in headers)
+        //    {
+        //        http.Headers.Add(header);
+        //    }
 
-			foreach (var cookie in cookies)
-			{
-				http.Cookies.Add(cookie);
-			}
+        //    var cookies = from p in request.Parameters
+        //                  where p.Type == ParameterType.Cookie
+        //                  select new HttpCookie
+        //                  {
+        //                      Name = p.Name,
+        //                      Value = p.Value.ToString()
+        //                  };
 
-            var @params = request.Parameters
-                                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
-                                .Select(p => new KeyValuePair<string, string>(p.Name, p.Value.ToString()));
+        //    foreach (var cookie in cookies)
+        //    {
+        //        http.Cookies.Add(cookie);
+        //    }
 
-            //var @params = from p in request.Parameters
-            //              where p.Type == ParameterType.GetOrPost
-            //                    && p.Value != null
-            //              select new KeyValuePair<string,string>()
-            //              {
-            //                  Key = p.Name,
-            //                  Value = p.Value.ToString()
-            //              };
+        //    var @params = request.Parameters
+        //                        .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
+        //                        .Select(p => new KeyValuePair<string, string>(p.Name, p.Value.ToString()));
 
-            //var t = KeyValuePair<string, string>();
+        //    //var @params = from p in request.Parameters
+        //    //              where p.Type == ParameterType.GetOrPost
+        //    //                    && p.Value != null
+        //    //              select new KeyValuePair<string,string>()
+        //    //              {
+        //    //                  Key = p.Name,
+        //    //                  Value = p.Value.ToString()
+        //    //              };
 
-			foreach (var parameter in @params)
-			{
-				http.Parameters.Add(new KeyValuePair<string,string>(parameter.Key, parameter.Value));
-			}
+        //    //var t = KeyValuePair<string, string>();
 
-			foreach (var file in request.Files)
-			{
-				//http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Writer = file.Writer, FileName = file.FileName, ContentLength = file.ContentLength });
-                http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Data = file.Data, FileName = file.FileName, ContentLength = file.ContentLength });
-			}
+        //    foreach (var parameter in @params)
+        //    {
+        //        http.Parameters.Add(new KeyValuePair<string,string>(parameter.Key, parameter.Value));
+        //    }
 
-			var body = (from p in request.Parameters
-						where p.Type == ParameterType.RequestBody
-						select p).FirstOrDefault();
+        //    foreach (var file in request.Files)
+        //    {
+        //        //http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Writer = file.Writer, FileName = file.FileName, ContentLength = file.ContentLength });
+        //        http.Files.Add(new HttpFile { Name = file.Name, ContentType = file.ContentType, Data = file.Data, FileName = file.FileName, ContentLength = file.ContentLength });
+        //    }
 
-			if (body != null)
-			{
-				object val = body.Value;
-				if (val is byte[])
-					http.RequestBodyBytes = (byte[])val;
-				else
-					http.RequestBody = body.Value.ToString();
-				http.RequestContentType = body.Name;
-			}
+        //    var body = (from p in request.Parameters
+        //                where p.Type == ParameterType.RequestBody
+        //                select p).FirstOrDefault();
 
-            ConfigureProxy(http);
-		}
+        //    if (body != null)
+        //    {
+        //        object val = body.Value;
+        //        if (val is byte[])
+        //            http.RequestBodyBytes = (byte[])val;
+        //        else
+        //            http.RequestBody = body.Value.ToString();
+        //        http.RequestContentType = body.Name;
+        //    }
 
-		private void ConfigureProxy(IHttp http)
-		{
-			if (Proxy != null)
-			{
-				http.Proxy = Proxy;
-			}
-		}
+        //    ConfigureProxy(http);
+        //}
 
-		private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
-		{
-			var restResponse = new RestResponse();
-			restResponse.Content = httpResponse.Content;
-			restResponse.ContentEncoding = httpResponse.ContentEncoding;
-			restResponse.ContentLength = httpResponse.ContentLength;
-			restResponse.ContentType = httpResponse.ContentType;
-			restResponse.ErrorException = httpResponse.ErrorException;
-			restResponse.ErrorMessage = httpResponse.ErrorMessage;
-			restResponse.RawBytes = httpResponse.RawBytes;
-			restResponse.ResponseStatus = httpResponse.ResponseStatus;
-			restResponse.ResponseUri = httpResponse.ResponseUri;
-			restResponse.Server = httpResponse.Server;
-			restResponse.StatusCode = httpResponse.StatusCode;
-			restResponse.StatusDescription = httpResponse.StatusDescription;
-			restResponse.Request = request;
+        //private void ConfigureProxy(IHttp http)
+        //{
+        //    if (Proxy != null)
+        //    {
+        //        http.Proxy = Proxy;
+        //    }
+        //}
 
-			foreach (var header in httpResponse.Headers)
-			{
-				restResponse.Headers.Add(new Parameter { Name = header.Name, Value = header.Value, Type = ParameterType.HttpHeader });
-			}
+        //private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
+        //{
+        //    var restResponse = new RestResponse();
+        //    restResponse.Content = httpResponse.Content;
+        //    restResponse.ContentEncoding = httpResponse.ContentEncoding;
+        //    restResponse.ContentLength = httpResponse.ContentLength;
+        //    restResponse.ContentType = httpResponse.ContentType;
+        //    restResponse.ErrorException = httpResponse.ErrorException;
+        //    restResponse.ErrorMessage = httpResponse.ErrorMessage;
+        //    restResponse.RawBytes = httpResponse.RawBytes;
+        //    restResponse.ResponseStatus = httpResponse.ResponseStatus;
+        //    restResponse.ResponseUri = httpResponse.ResponseUri;
+        //    restResponse.Server = httpResponse.Server;
+        //    restResponse.StatusCode = httpResponse.StatusCode;
+        //    restResponse.StatusDescription = httpResponse.StatusDescription;
+        //    restResponse.Request = request;
 
-			foreach (var cookie in httpResponse.Cookies)
-			{
-				restResponse.Cookies.Add(new RestResponseCookie
-				{
-					Comment = cookie.Comment,
-					CommentUri = cookie.CommentUri,
-					Discard = cookie.Discard,
-					Domain = cookie.Domain,
-					Expired = cookie.Expired,
-					Expires = cookie.Expires,
-					HttpOnly = cookie.HttpOnly,
-					Name = cookie.Name,
-					Path = cookie.Path,
-					Port = cookie.Port,
-					Secure = cookie.Secure,
-					TimeStamp = cookie.TimeStamp,
-					Value = cookie.Value,
-					Version = cookie.Version
-				});
-			}
+        //    foreach (var header in httpResponse.Headers)
+        //    {
+        //        restResponse.Headers.Add(new Parameter { Name = header.Name, Value = header.Value, Type = ParameterType.HttpHeader });
+        //    }
 
-			return restResponse;
-		}
+        //    foreach (var cookie in httpResponse.Cookies)
+        //    {
+        //        restResponse.Cookies.Add(new RestResponseCookie
+        //        {
+        //            Comment = cookie.Comment,
+        //            CommentUri = cookie.CommentUri,
+        //            Discard = cookie.Discard,
+        //            Domain = cookie.Domain,
+        //            Expired = cookie.Expired,
+        //            Expires = cookie.Expires,
+        //            HttpOnly = cookie.HttpOnly,
+        //            Name = cookie.Name,
+        //            Path = cookie.Path,
+        //            Port = cookie.Port,
+        //            Secure = cookie.Secure,
+        //            TimeStamp = cookie.TimeStamp,
+        //            Value = cookie.Value,
+        //            Version = cookie.Version
+        //        });
+        //    }
+
+        //    return restResponse;
+        //}
 
 		private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
 		{

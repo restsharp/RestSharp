@@ -36,7 +36,7 @@ namespace RestSharp
 		
 		/// <summary>
 		/// Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.
-		/// By default the included JsonSerializer is used (currently using JSON.NET default serialization).
+		/// By default the included JsonSerializer is used (currently using SimpleJson default serialization).
 		/// </summary>
 		public ISerializer JsonSerializer { get; set; }
 
@@ -64,7 +64,7 @@ namespace RestSharp
 		{
 			Parameters = new List<Parameter>();
 			Files = new List<FileParameter>();
-			//XmlSerializer = new XmlSerializer();
+			XmlSerializer = new XmlSerializer();
 			JsonSerializer = new JsonSerializer();
 
 			OnBeforeDeserialization = r => { };
@@ -124,32 +124,6 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Adds a file to the Files collection to be included with a POST or PUT request 
-		/// (other methods do not support file uploads).
-		/// </summary>
-		/// <param name="name">The parameter name to use in the request</param>
-		/// <param name="path">Full path to file to upload</param>
-		/// <returns>This request</returns>
-        //public IRestRequest AddFile (string name, string path)
-        //{
-        //    FileInfo f = new FileInfo (path);
-        //    long fileLength = f.Length;
-        //    return AddFile(new FileParameter
-        //    {
-        //        Name = name,
-        //        FileName = Path.GetFileName(path),
-        //        ContentLength = fileLength,
-        //        Writer = s =>
-        //        {
-        //            using(var file = new StreamReader(path))
-        //            {
-        //                file.BaseStream.CopyTo(s);
-        //            }
-        //        }
-        //    });
-        //}
-
-		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name
 		/// </summary>
 		/// <param name="name">The parameter name to use in the request</param>
@@ -173,31 +147,6 @@ namespace RestSharp
 		{
 			return AddFile(FileParameter.Create(name, bytes, fileName, contentType));
 		}
-
-		/// <summary>
-		/// Adds the bytes to the Files collection with the specified file name and content type
-		/// </summary>
-		/// <param name="name">The parameter name to use in the request</param>
-		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
-		/// <param name="fileName">The file name to use for the uploaded file</param>
-		/// <returns>This request</returns>
-        //public IRestRequest AddFile (string name, Action<Stream> writer, string fileName)
-        //{
-        //    return AddFile(name, writer, fileName, null);
-        //}
-
-		/// <summary>
-		/// Adds the bytes to the Files collection with the specified file name and content type
-		/// </summary>
-		/// <param name="name">The parameter name to use in the request</param>
-		/// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
-		/// <param name="fileName">The file name to use for the uploaded file</param>
-		/// <param name="contentType">The MIME type of the file to upload</param>
-		/// <returns>This request</returns>
-        //public IRestRequest AddFile (string name, Action<Stream> writer, string fileName, string contentType)
-        //{
-        //    return AddFile(new FileParameter { Name = name, Writer = writer, FileName = fileName, ContentType = contentType });
-        //}
 
 		private IRestRequest AddFile (FileParameter file)
 		{
@@ -417,7 +366,7 @@ namespace RestSharp
 		/// </example>
 		public string Resource { get; set; }
 
-		private DataFormat _requestFormat = DataFormat.Xml;
+        private DataFormat _requestFormat = DataFormat.Json;
 		/// <summary>
 		/// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
 		/// By default XmlSerializer is used.
@@ -460,16 +409,19 @@ namespace RestSharp
 		/// </summary>
 		public ICredentials Credentials { get; set; }
 
-		/// <summary>
-		/// Gets or sets a user-defined state object that contains information about a request and which can be later 
-		/// retrieved when the request completes.
-		/// </summary>
-		public object UserState { get; set; }
+        public IWebProxy Proxy { get; set; }
 
 		/// <summary>
 		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 		/// </summary>
 		public int Timeout { get; set; }
+
+        /// <summary>
+        /// MaxAutomaticRedirections
+        /// </summary>
+        public int? MaxAutomaticRedirects { get; set; }
+
+        public CookieContainer CookieContainer { get; set; }
 
 		private int _attempts;
 

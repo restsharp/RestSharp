@@ -1,22 +1,19 @@
 ﻿using System;
 using System.IO;
 using RestSharp.IntegrationTests.Helpers;
-//using Xunit;
-using NUnit;
+using Xunit;
 using System.Reflection;
 using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace RestSharp.IntegrationTests
 {
-    //[Trait("Integration", "File Tests")]
-    [Category("Integation [File Tests]")]
+    [Trait("Integration", "File Tests")]
 	public class FileTests
 	{
         const string baseUrl = "http://localhost:8080/";
         
-        //[Fact]              
-        [Test]
+        [Fact]              
+        
         public async void Can_Handle_Binary_File_Download()
 		{
 			using (SimpleServer.Create(baseUrl, Handlers.FileHandler))
@@ -26,12 +23,12 @@ namespace RestSharp.IntegrationTests
 				var response = await client.DownloadDataAsync(request);
 
                 byte[] expected = await LoadSourceFile();
-				Assert.AreEqual(expected, response);
+				Assert.Equal(expected, response);
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Write_Response_To_Stream()
         {
             using (SimpleServer.Create(baseUrl, Handlers.FileHandler))
@@ -47,7 +44,7 @@ namespace RestSharp.IntegrationTests
                 }
                 var fromTemp = File.ReadAllBytes(tempFile);
                 var expected = await LoadSourceFile();
-                Assert.AreEqual(expected, fromTemp);
+                Assert.Equal(expected, fromTemp);
             }
         }
 

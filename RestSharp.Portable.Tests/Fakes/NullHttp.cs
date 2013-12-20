@@ -5,11 +5,11 @@ using System.Text;
 
 namespace RestSharp.Tests.Fakes
 {
-	public class NullHttp : Http
-	{
-		public new HttpResponse Get()
-		{
-			return new HttpResponse();
-		}
-	}
+    //public class NullHttp : Http
+    //{
+    //    public new HttpResponse Get()
+    //    {
+    //        return new HttpResponse();
+    //    }
+    //}
 }

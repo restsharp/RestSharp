@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using Xunit;
+using Xunit;
 using RestSharp.IntegrationTests.Helpers;
 using System.Net;
 using System.Threading;
-using NUnit.Framework;
 
 namespace RestSharp.IntegrationTests
 {
-    //[Trait("Integration", "Non-protocol Error Tests")]
-    [Category("Integation [Non-protocol Error Tests]")]
+    [Trait("Integration", "Non-protocol Error Tests")]
     public class NonProtocolExceptionHandlingTests
     {
 
@@ -19,15 +17,15 @@ namespace RestSharp.IntegrationTests
         /// Success of this test is based largely on the behavior of your current DNS.
         /// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
         /// </summary>
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Handles_Non_Existent_Domain()
         {
             var client = new RestClient("http://nonexistantdomainimguessing.org");
             var request = new RestRequest("foo");
             var response = await client.ExecuteAsync(request);
             
-            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
+            Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
         }
 
         /// <summary>
@@ -35,8 +33,8 @@ namespace RestSharp.IntegrationTests
         /// Simulates a server timeout, then verifies that the ErrorException
         /// property is correctly populated.
         /// </summary>
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Handles_Server_Timeout_Error()
         {
             const string baseUrl = "http://localhost:8080/";
@@ -48,7 +46,7 @@ namespace RestSharp.IntegrationTests
 
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.AreEqual(response.ErrorException.Message, "The operation has timed out");                
+                Assert.Equal(response.ErrorException.Message, "The operation has timed out");                
 
             }
         }
@@ -58,8 +56,8 @@ namespace RestSharp.IntegrationTests
         /// Simulates a server timeout, then verifies that the ErrorException
         /// property is correctly populated.
         /// </summary>
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Handles_Server_Timeout_Error_With_Deserializer()
         {
             const string baseUrl = "http://localhost:8080/";
@@ -72,7 +70,7 @@ namespace RestSharp.IntegrationTests
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.AreEqual(response.ErrorException.Message, "The operation has timed out");
+                Assert.Equal(response.ErrorException.Message, "The operation has timed out");
 
             }
         }

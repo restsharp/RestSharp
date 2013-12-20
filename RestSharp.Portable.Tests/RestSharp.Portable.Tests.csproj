@@ -78,6 +78,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\net45\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Net.Http.Primitives, Version=4.2.18.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\net45\System.Net.Http.Primitives.dll</HintPath>
@@ -87,22 +88,25 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="xunit, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="xunit">
       <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
     </Reference>
-    <Reference Include="xunit.extensions, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="xunit.extensions">
       <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RestSharp_RestRequest\When_Configuring_A_RestRequest.cs" />
+    <Compile Include="RestSharp_Http\When_Configuring_A_MessageHandler.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
-    <Compile Include="XmlAttributeDeserializerTests.cs" />
+    <Compile Include="RestSharp_Http\When_Configuring_A_RequestMessage.cs" />
+    <Compile Include="RestSharp_Http\When_Making_An_Http_Request.cs" />
+    <Compile Include="RestSharp_Http\When_Receiving_An_Http_Response.cs" />
+    <Compile Include="RestSharp_Deserializers_Xml\XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
-    <Compile Include="JsonDeserializerTests.cs" />
+    <Compile Include="RestSharp_Deserializers_Json\JsonDeserializerTests.cs" />
     <Compile Include="Fakes\NullHttp.cs" />
     <Compile Include="NuSpecUpdateTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -120,9 +124,9 @@
     <Compile Include="SampleClasses\SOUser.cs" />
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
-    <Compile Include="XmlSerializerTests.cs" />
+    <Compile Include="RestSharp_Deserializers_Xml\XmlSerializerTests.cs" />
     <Compile Include="UrlBuilderTests.cs" />
-    <Compile Include="XmlDeserializerTests.cs" />
+    <Compile Include="RestSharp_Deserializers_Xml\XmlDeserializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleData\4sq.txt">
@@ -233,6 +237,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="RestSharp_RestClient\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

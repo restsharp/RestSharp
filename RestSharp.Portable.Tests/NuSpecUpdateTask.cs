@@ -30,6 +30,7 @@ namespace RestSharp.Tests
             protected abstract void Setup();
         }
 
+        [Trait("Unit", "NuSpec Update Build Task")]
         public class Execute
         {
             public class WhenSpecFileNotSpecified

@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Portable.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpMultipartParser", "Http-Multipart-Data-Parser-master\HttpMultipartParser\HttpMultipartParser.csproj", "{4691988A-CE66-40CB-AFB4-2757255E03E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Portable.DesktopHandler", "RestSharp.Portable.DesktopClientHandler\RestSharp.Portable.DesktopHandler.csproj", "{0CF2AE77-0328-4697-AB66-619072197B6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,6 +168,16 @@ Global
 		{4691988A-CE66-40CB-AFB4-2757255E03E0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{4691988A-CE66-40CB-AFB4-2757255E03E0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4691988A-CE66-40CB-AFB4-2757255E03E0}.Release|x86.ActiveCfg = Release|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0CF2AE77-0328-4697-AB66-619072197B6B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

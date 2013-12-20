@@ -6,15 +6,6 @@ namespace RestSharp
 {
 	public static partial class RestClientExtensions
 	{
-        //public static Task<T> GetAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-        //{
-        //    return client.ExecuteGetAsync<T>(request).ContinueWith(x => x.Result.Data);
-        //}
-
-        //public static Task<T> PostAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-        //{
-        //    return client.ExecutePostAsync<T>(request).ContinueWith(x => x.Result.Data);
-        //}
 
 		public static Task<T> PutAsync<T>(this IRestClient client, IRestRequest request) where T : new()
 		{

@@ -2,23 +2,20 @@
 using System.Threading;
 using System.Net;
 using RestSharp.IntegrationTests.Helpers;
-//using Xunit;
-using NUnit;
+using Xunit;
 using System;
 using System.Net.Http.Formatting;
 using System.Web;
-using NUnit.Framework;
 
 namespace RestSharp.IntegrationTests
 {
-    //[Trait("Integration", "GET Style Tests")]
-    [Category("Integation [GET Style Tests]")]
+    [Trait("Integration", "GET Style Tests")]
 	public class GetStyleTests
 	{
         const string baseUrl = "http://localhost:8080/";
         
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public async void Can_Execute_GET()
 		{
             string content = "{\"first\":\"John\", \"last\":\"Doe\"}";
@@ -33,12 +30,12 @@ namespace RestSharp.IntegrationTests
                 Console.WriteLine(response);
 
                 Assert.NotNull(response.Content);
-                Assert.AreEqual(content, response.Content);
+                Assert.Equal(content, response.Content);
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GET_Generic()
         {
             string content = "{\"first\":\"John\", \"last\":\"Doe\"}";
@@ -53,13 +50,13 @@ namespace RestSharp.IntegrationTests
                 Console.WriteLine("Name: " + response.Data.First + response.Data.Last);
 
                 Assert.NotNull(response.Data);
-                Assert.AreEqual("John", response.Data.First);
-                Assert.AreEqual("Doe", response.Data.Last);
+                Assert.Equal("John", response.Data.First);
+                Assert.Equal("Doe", response.Data.Last);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GET_With_UrlSegment()
         {
             string content = "{\"first\":\"John\", \"last\":\"Doe\"}";
@@ -74,14 +71,14 @@ namespace RestSharp.IntegrationTests
 
                 Console.WriteLine(response);
 
-                Assert.AreEqual("/users/123", response.ResponseUri.AbsolutePath);
+                Assert.Equal("/users/123", response.ResponseUri.AbsolutePath);
                 Assert.NotNull(response.Content);
-                Assert.AreEqual(content, response.Content);
+                Assert.Equal(content, response.Content);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GET_With_Cookie_Request()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoCookieRequestValue("ThisIsATestCookie")))
@@ -93,12 +90,12 @@ namespace RestSharp.IntegrationTests
                 var response = await client.ExecuteAsync(request);
 
                 Assert.NotNull(response.Content);
-                Assert.AreEqual(response.Content, "YummyCookies");
+                Assert.Equal(response.Content, "YummyCookies");
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GET_With_Cookie_Response()
         {            
             using (SimpleServer.Create(baseUrl, Handlers.EchoCookieResponseValue("ThisIsATestCookie", "YummyCookies")))
@@ -109,12 +106,12 @@ namespace RestSharp.IntegrationTests
                 var response = await client.ExecuteAsync(request);
 
                 Assert.NotNull(response.Cookies);
-                Assert.AreEqual(response.Cookies[0].Value, "YummyCookies");
+                Assert.Equal(response.Cookies[0].Value, "YummyCookies");
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GET_With_Querystring_Parameters()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoQuerystringValue("ThisIsANewParameter")))
@@ -128,12 +125,12 @@ namespace RestSharp.IntegrationTests
                 var nvc = HttpUtility.ParseQueryString(response.ResponseUri.Query);
                 
                 Assert.NotNull(nvc["ThisIsANewParameter"]);
-                Assert.AreEqual(nvc["ThisIsANewParameter"], "This Is The Parameter Value");
+                Assert.Equal(nvc["ThisIsANewParameter"], "This Is The Parameter Value");
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GET_With_Accept_Header()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoMediaTypeValue("text/csv")))
@@ -144,12 +141,12 @@ namespace RestSharp.IntegrationTests
 
                 var response = await client.ExecuteAsync(request);
 
-                Assert.AreEqual("text/csv", response.ContentType.MediaType);
+                Assert.Equal("text/csv", response.ContentType.MediaType);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_GetAsync()
         {
             string content = "{\"first\":\"John\", \"last\":\"Doe\"}";
@@ -164,13 +161,13 @@ namespace RestSharp.IntegrationTests
                 Console.WriteLine("Name: " + response.Data.First + response.Data.Last);
 
                 Assert.NotNull(response.Data);
-                Assert.AreEqual("John", response.Data.First);
-                Assert.AreEqual("Doe", response.Data.Last);
+                Assert.Equal("John", response.Data.First);
+                Assert.Equal("Doe", response.Data.Last);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Handle_GET_Protocol_Error()
         {
             using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
@@ -180,13 +177,13 @@ namespace RestSharp.IntegrationTests
 
                 var response = await client.ExecuteAsync(request);
 
-                Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
-                Assert.AreEqual("NotFound", response.StatusDescription);
+                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+                Assert.Equal("NotFound", response.StatusDescription);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Handle_GET_Protocol_Error_With_Body()
         {
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
@@ -195,15 +192,15 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("/BadRequestErrorWithBody");
                 var response = await client.ExecuteAsync(request);
 
-                Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-                Assert.AreEqual("Bad Request", response.StatusDescription);
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+                Assert.Equal("Bad Request", response.StatusDescription);
                 Assert.NotNull(response.Content);
-                Assert.AreEqual(ResponseHandler.BadRequestErrorContent, response.Content);
+                Assert.Equal(ResponseHandler.BadRequestErrorContent, response.Content);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Handle_GET_Generic_Protocol_Error()
         {
             using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
@@ -212,8 +209,8 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("/BadRequest/400");
                 var response = await client.ExecuteAsync<Response>(request);
 
-                Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-                Assert.AreEqual("BadRequest", response.StatusDescription);
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+                Assert.Equal("BadRequest", response.StatusDescription);
             }
         }
 

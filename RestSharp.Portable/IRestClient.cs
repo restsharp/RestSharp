@@ -17,7 +17,6 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
-//using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,30 +31,46 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		CookieContainer CookieContainer { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
 		string UserAgent { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
-		int Timeout { get; set; }
-		/// <summary>
-		/// 
-		/// </summary>
-		bool UseSynchronizationContext { get; set; }
+		int? Timeout { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool FollowRedirects { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        int? MaxRedirects { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
 		IAuthenticator Authenticator { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
 		string BaseUrl { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
 		IList<Parameter> DefaultParameters { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ICollection<string> DefaultAcceptTypes { get; }
 
         /// <summary>
 		/// X509CertificateCollection to be sent with request
@@ -66,13 +81,6 @@ namespace RestSharp
         /// 
         /// </summary>
 		IWebProxy Proxy { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-		Uri BuildUri(IRestRequest request);
 
 		/// <summary>
 		/// Executes the request and callback asynchronously, authenticating if needed
@@ -131,5 +139,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
         Task<IRestResponse<T>> ExecutePostAsync<T>(IRestRequest request, CancellationToken token);
+
+
 	}
 }

@@ -1,20 +1,17 @@
 ﻿using System.IO;
 using System.Net;
 using RestSharp.IntegrationTests.Helpers;
-//using Xunit;
-using NUnit;
-using NUnit.Framework;
+using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
-    //[Trait("Integration", "Request Body Tests")]
-    [Category("Integation [Request Body Tests]")]
+    [Trait("Integration", "Request Body Tests")]
 	public class RequestBodyTests
 	{
 		private const string baseUrl = "http://localhost:8080/";
 
-		//[Fact]
-        [Test]
+		[Fact]
+        
 		public async void Can_Not_Be_Added_To_GET_Request()
 		{
 			const Method httpMethod = Method.GET;
@@ -33,8 +30,8 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public async void Can_Be_Added_To_POST_Request()
 		{
 			const Method httpMethod = Method.POST;
@@ -53,8 +50,8 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        //[Fact]
-		[Test]
+        [Fact]
+		
 		public async void Can_Be_Added_To_PUT_Request()
 		{
 			const Method httpMethod = Method.PUT;
@@ -73,8 +70,8 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public async void Can_Be_Added_To_DELETE_Request()
 		{
 			const Method httpMethod = Method.DELETE;
@@ -93,8 +90,8 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public async void Can_Not_Be_Added_To_HEAD_Request()
 		{
 			const Method httpMethod = Method.HEAD;
@@ -113,8 +110,8 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public async void Can_Be_Added_To_OPTIONS_Request()
 		{
 			const Method httpMethod = Method.OPTIONS;
@@ -133,8 +130,8 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public async void Can_Be_Added_To_PATCH_Request()
 		{
 			const Method httpMethod = Method.PATCH;
@@ -156,15 +153,15 @@ namespace RestSharp.IntegrationTests
 		private static void AssertHasNoRequestBody()
 		{
 			Assert.Null(RequestBodyCapturer.CapturedContentType);
-			Assert.AreEqual(false, RequestBodyCapturer.CapturedHasEntityBody);
-			Assert.AreEqual(string.Empty, RequestBodyCapturer.CapturedEntityBody);
+			Assert.Equal(false, RequestBodyCapturer.CapturedHasEntityBody);
+			Assert.Equal(string.Empty, RequestBodyCapturer.CapturedEntityBody);
 		}
 
 		private static void AssertHasRequestBody(string contentType, string bodyData)
 		{
-			Assert.AreEqual(contentType, RequestBodyCapturer.CapturedContentType);
-			Assert.AreEqual(true, RequestBodyCapturer.CapturedHasEntityBody);
-			Assert.AreEqual(bodyData, RequestBodyCapturer.CapturedEntityBody);
+			Assert.Equal(contentType, RequestBodyCapturer.CapturedContentType);
+			Assert.Equal(true, RequestBodyCapturer.CapturedHasEntityBody);
+			Assert.Equal(bodyData, RequestBodyCapturer.CapturedEntityBody);
 		}
 
 		private class RequestBodyCapturer

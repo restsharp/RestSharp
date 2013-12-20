@@ -6,20 +6,17 @@ using System.Text;
 //using RestSharp.Authenticators;
 //using RestSharp.Contrib;
 using RestSharp.IntegrationTests.Helpers;
-//using Xunit;
-using NUnit;
-using NUnit.Framework;
+using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
-    //[Trait("Integration", "Authentication Tests")]
-    [Category("Integration [Authentication Tests]")]    
+    [Trait("Integration", "Authentication Tests")]
 	public class AuthenticationTests
 	{
         const string baseUrl = "http://localhost:8080/";
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public void Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate()
         {
             using (SimpleServer.Create(baseUrl, Handlers.Generic<RequestCapturer>()))
@@ -38,7 +35,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        [Test]
+        
         public void Pass_Default_Credentials_When_UseDefaultCredentials_Is_True()
         {
             using (SimpleServer.Create(baseUrl, Handlers.Generic<RequestCapturer>(), AuthenticationSchemes.Negotiate))
@@ -53,13 +50,13 @@ namespace RestSharp.IntegrationTests
 
                 System.Diagnostics.Debug.WriteLine(response.StatusDescription);
 
-                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.NotNull(RequestCapturer.Headers);
                 Assert.NotNull(RequestCapturer.Headers["Authorization"]);
             }
         }
 
-        [Test]
+        
         public void Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False()
         {
             using (SimpleServer.Create(baseUrl, Handlers.Generic<RequestCapturer>(), AuthenticationSchemes.Negotiate))
@@ -75,12 +72,12 @@ namespace RestSharp.IntegrationTests
                 result.Wait();
                 var response = result.Result;
 
-                Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+                Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
                 Assert.Null(RequestCapturer.Headers);
             }
         }
 
-        [Test]
+        
         public async void Can_Execute_GET_With_Basic_Http_Authentication()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoBasicAuthCredentialsValue()))
@@ -92,7 +89,7 @@ namespace RestSharp.IntegrationTests
                 var response = await client.ExecuteAsync(request);
 
                 Assert.NotNull(response.Content);
-                Assert.AreEqual("testuser|testpassword", response.Content);
+                Assert.Equal("testuser|testpassword", response.Content);
             }
         }
 

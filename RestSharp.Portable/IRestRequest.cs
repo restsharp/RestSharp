@@ -104,10 +104,16 @@ namespace RestSharp
 		/// </summary>
 		ICredentials Credentials { get; set; }
 
+        IWebProxy Proxy { get; set; }
+
 		/// <summary>
 		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 		/// </summary>
 		int Timeout { get; set; }
+
+        int? MaxAutomaticRedirects { get; set; }
+
+        CookieContainer CookieContainer { get; set; }
 
 		/// <summary>
 		/// How many attempts were made to send this Request?
@@ -123,16 +129,6 @@ namespace RestSharp
 		/// will be sent along to the server. The default is false.
 		/// </summary>
 		bool UseDefaultCredentials { get; set; }
-
-//#if FRAMEWORK
-		/// <summary>
-		/// Adds a file to the Files collection to be included with a POST or PUT request 
-		/// (other methods do not support file uploads).
-		/// </summary>
-		/// <param name="name">The parameter name to use in the request</param>
-		/// <param name="path">Full path to file to upload</param>
-		/// <returns>This request</returns>
-		//IRestRequest AddFile (string name, string path);
 
 		/// <summary>
 		/// Adds the bytes to the Files collection with the specified file name
@@ -152,7 +148,6 @@ namespace RestSharp
 		/// <param name="contentType">The MIME type of the file to upload</param>
 		/// <returns>This request</returns>
 		IRestRequest AddFile (string name, byte[] bytes, string fileName, string contentType);
-//#endif
 
 		/// <summary>
 		/// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer

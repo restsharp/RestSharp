@@ -1,20 +1,17 @@
 ﻿using System.Linq;
 using RestSharp.IntegrationTests.Helpers;
-//using Xunit;
-using NUnit;
+using Xunit;
 using System.Net;
-using NUnit.Framework;
 
 namespace RestSharp.IntegrationTests
 {
     //[Trait("Integration", "Deserialization Tests")]
-    [Category("Integation [Deserialization Tests]")]
 	public class DeserializationTests
     {
         const string baseUrl = "http://localhost:8080/";
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public void Handles_Different_Root_Element_On_Http_Error()
         {
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
@@ -35,13 +32,13 @@ namespace RestSharp.IntegrationTests
 
                 var response = result.Result;
 
-                Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-                Assert.AreEqual("Not found!", response.Data.Message);
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+                Assert.Equal("Not found!", response.Data.Message);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
 		public void Handles_Default_Root_Element_On_No_Error()
 		{
 			using(SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
@@ -61,8 +58,8 @@ namespace RestSharp.IntegrationTests
                 result.Wait();
                 var response = result.Result;
 				
-                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-				Assert.AreEqual("Works!", response.Data.Message);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+				Assert.Equal("Works!", response.Data.Message);
 			}
 		}
 	}

@@ -18,14 +18,9 @@ namespace RestSharp
 		///<returns>The <see cref="FileParameter"/></returns>
 		public static FileParameter Create(string name, byte[] data, string filename, string contentType)
 		{
-//#if FRAMEWORK
-//			var length = data.LongLength;
-//#else
             var length = (long)data.Length;
-//#endif
 			return new FileParameter
 			{
-				//Writer = s => s.Write(data, 0, data.Length),
                 Data = data,
 				FileName = filename,
 				ContentType = contentType,
@@ -50,10 +45,6 @@ namespace RestSharp
 		/// The length of data to be sent
 		/// </summary>
 		public long ContentLength { get; set; }
-		/// <summary>
-		/// Provides raw data for file
-		/// </summary>
-		//public Action<Stream> Writer { get; set; }
         /// <summary>
         /// Provides the raw byte array of the file
         /// </summary>

@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Net;
 using RestSharp.Extensions;
 using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace RestSharp
 {
@@ -36,7 +38,14 @@ namespace RestSharp
 		{
 			Headers = new List<HttpHeader>();
 			Cookies = new List<HttpCookie>();
+
+            this.ResponseStatus = ResponseStatus.None;
 		}
+
+        /// <summary>
+        /// The System.Net.CookieContainer to be used for the request
+        /// </summary>
+        public CookieContainer CookieContainer { get; set; }
 
 		/// <summary>
 		/// MIME content type of response
@@ -119,5 +128,62 @@ namespace RestSharp
 		/// Exception thrown when error is encountered.
 		/// </summary>
 		public Exception ErrorException { get; set; }
+
+        internal async Task ConvertFromResponseMessage(HttpResponseMessage responseMessage)
+        {
+            this.Server = responseMessage.Headers.Server;
+            this.StatusCode = responseMessage.StatusCode;
+            this.StatusDescription = responseMessage.ReasonPhrase;
+            this.ResponseUri = responseMessage.RequestMessage.RequestUri;
+            this.ResponseStatus = ResponseStatus.Completed;
+
+            if (responseMessage.Content != null)
+            {
+                this.ContentEncoding = responseMessage.Content.Headers.ContentEncoding;
+                this.ContentType = responseMessage.Content.Headers.ContentType;
+                this.ContentLength = responseMessage.Content.Headers.ContentLength;
+
+                //if (http.ResponseWriter == null)
+                //{
+                //    byte[] bytes = await responseMessage.Content.ReadAsByteArrayAsync();
+                //    this.RawBytes = bytes;
+                //}
+                //else
+                //{
+                //    http.ResponseWriter(await responseMessage.Content.ReadAsStreamAsync());
+                //}
+            }
+            
+            //TODO: Do we need to copy the request CookieContainer over?
+            if (this.CookieContainer == null) { this.CookieContainer = new CookieContainer(); }
+
+            var cookies = this.CookieContainer.GetCookies(responseMessage.RequestMessage.RequestUri);
+
+            foreach (Cookie cookie in cookies)
+            {
+                this.Cookies.Add(new HttpCookie
+                {
+                    Comment = cookie.Comment,
+                    CommentUri = cookie.CommentUri,
+                    Discard = cookie.Discard,
+                    Domain = cookie.Domain,
+                    Expired = cookie.Expired,
+                    Expires = cookie.Expires,
+                    HttpOnly = cookie.HttpOnly,
+                    Name = cookie.Name,
+                    Path = cookie.Path,
+                    Port = cookie.Port,
+                    Secure = cookie.Secure,
+                    TimeStamp = cookie.TimeStamp,
+                    Value = cookie.Value,
+                    Version = cookie.Version
+                });
+            }
+
+            foreach (var header in responseMessage.Headers)
+            {
+                this.Headers.Add(new HttpHeader { Name = header.Key, Value = header.Value });
+            }
+        }
 	}
 }

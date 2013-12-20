@@ -5,20 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using Xunit;
-using NUnit;
-using NUnit.Framework;
+using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
-    //[Trait("Integration", "POST-PUT Style Tests")]
-    [Category("Integation [POST-PUT Style Tests]")]
+    [Trait("Integration", "POST-PUT Style Tests")]
     public class PostPutTests
     {
         const string baseUrl = "http://localhost:8080/";
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_POST()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoPostObject()))
@@ -35,13 +32,13 @@ namespace RestSharp.IntegrationTests
                 var name = JsonConvert.DeserializeObject<Name>(response.Content);
 
                 Assert.NotNull(response.Content);
-                Assert.AreEqual("Jon", name.First);
-                Assert.AreEqual("Doe", name.Last);
+                Assert.Equal("Jon", name.First);
+                Assert.Equal("Doe", name.Last);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_PostAsync()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoPostObject()))
@@ -57,13 +54,13 @@ namespace RestSharp.IntegrationTests
                 Console.WriteLine("Name: " + response.Data.First + response.Data.Last);
 
                 Assert.NotNull(response.Data);
-                Assert.AreEqual("Jon", response.Data.First);
-                Assert.AreEqual("Doe", response.Data.Last);
+                Assert.Equal("Jon", response.Data.First);
+                Assert.Equal("Doe", response.Data.Last);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_POST_With_Body()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoPostObject()))
@@ -79,13 +76,13 @@ namespace RestSharp.IntegrationTests
                 Console.WriteLine("Name: " + response.Data.First + response.Data.Last);
 
                 Assert.NotNull(response.Data);
-                Assert.AreEqual("Jon", response.Data.First);
-                Assert.AreEqual("Doe", response.Data.Last);
+                Assert.Equal("Jon", response.Data.First);
+                Assert.Equal("Doe", response.Data.Last);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_POST_With_Form_Parameters()
         {
             using (SimpleServer.Create(baseUrl, Handlers.EchoPostObject()))
@@ -100,13 +97,13 @@ namespace RestSharp.IntegrationTests
                 var response = await client.ExecuteAsync<Name>(request);
 
                 Assert.NotNull(response.Data);
-                Assert.AreEqual("Jon", response.Data.First);
-                Assert.AreEqual("Doe", response.Data.Last);
+                Assert.Equal("Jon", response.Data.First);
+                Assert.Equal("Doe", response.Data.Last);
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_POST_With_Files()
         {
             byte[] bytes = await FileTests.LoadSourceFile();
@@ -124,8 +121,8 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        //[Fact]
-        [Test]
+        [Fact]
+        
         public async void Can_Execute_POST_With_Multipart()
         {
             byte[] bytes = await FileTests.LoadSourceFile();
@@ -145,8 +142,8 @@ namespace RestSharp.IntegrationTests
                 Console.WriteLine("Name: " + response.Data.First + response.Data.Last);
 
                 Assert.NotNull(response.Data);
-                Assert.AreEqual("Jon", response.Data.First);
-                Assert.AreEqual("Doe", response.Data.Last);
+                Assert.Equal("Jon", response.Data.First);
+                Assert.Equal("Doe", response.Data.Last);
             }
         }
 
