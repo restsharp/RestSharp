@@ -18,7 +18,7 @@ namespace RestSharp.Extensions
 				case ResponseStatus.None:
 					return new WebException("The request could not be processed.", WebExceptionStatus.ServerProtocolViolation);
 				case ResponseStatus.Error:
-					return new WebException("An error occured while processing the request.", WebExceptionStatus.ServerProtocolViolation);
+					return new WebException("An error occurred while processing the request.", WebExceptionStatus.ServerProtocolViolation);
 				case ResponseStatus.TimedOut:
 					return new WebException("The request timed-out.", WebExceptionStatus.Timeout);
 				case ResponseStatus.Aborted:
