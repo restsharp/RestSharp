@@ -54,7 +54,6 @@ namespace RestSharp
 		IList<HttpCookie> Cookies { get; }
 		string RequestBody { get; set; }
 		string RequestContentType { get; set; }
-		bool PreAuthenticate { get; set; }
 
 		/// <summary>
 		/// An alternative to RequestBody, for when the caller already has the byte array.
@@ -85,6 +84,7 @@ namespace RestSharp
 		HttpResponse AsGet(string httpMethod);
 
 		IWebProxy Proxy { get; set; }
+        bool PreAuthenticate { get; set; }
 #endif
 	}
 }

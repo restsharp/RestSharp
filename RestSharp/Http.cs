@@ -177,13 +177,13 @@ namespace RestSharp
 		/// </summary>
 		public Uri Url { get; set; }
 
-		public bool PreAuthenticate { get; set; }
-
 #if FRAMEWORK
 		/// <summary>
 		/// Proxy info to be sent with request
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
+
+        public bool PreAuthenticate { get; set; }
 #endif
 
 		/// <summary>

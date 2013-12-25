@@ -337,7 +337,6 @@ namespace RestSharp
 			}
 
 			http.Url = BuildUri(request);
-			http.PreAuthenticate = PreAuthenticate;
 
 			var userAgent = UserAgent ?? http.UserAgent;
 			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
@@ -363,6 +362,7 @@ namespace RestSharp
 				http.ClientCertificates = ClientCertificates;
 			}
 
+            http.PreAuthenticate = PreAuthenticate;
 			http.MaxRedirects = MaxRedirects;
 #endif
 

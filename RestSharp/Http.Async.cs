@@ -378,7 +378,6 @@ namespace RestSharp
 #if !PocketPC
 			webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif
-			webRequest.PreAuthenticate = PreAuthenticate;
 
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
@@ -412,7 +411,8 @@ namespace RestSharp
 			{
 				webRequest.ClientCertificates.AddRange(ClientCertificates);
 			}
-			
+
+            webRequest.PreAuthenticate = PreAuthenticate;
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			ServicePointManager.Expect100Continue = false;
 
