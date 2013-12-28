@@ -503,15 +503,19 @@ namespace RestSharp
 				// Only attempt to deserialize if the request has not errored due
 				// to a transport or framework exception.  HTTP errors should attempt to 
 				// be deserialized 
-
 				if (response.ErrorException==null) 
 				{
 					IDeserializer handler = GetHandler(raw.ContentType);
-					handler.RootElement = request.RootElement;
-					handler.DateFormat = request.DateFormat;
-					handler.Namespace = request.XmlNamespace;
+					// Only continue if there is a handler defined else there is no way to deserialize the data.
+					// This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
+					if (handler != null)
+					{
+						handler.RootElement = request.RootElement;
+						handler.DateFormat = request.DateFormat;
+						handler.Namespace = request.XmlNamespace;
 
-					response.Data = handler.Deserialize<T>(raw);
+						response.Data = handler.Deserialize<T>(raw);
+					}
 				}
 			}
 			catch (Exception ex)
