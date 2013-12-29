@@ -15,6 +15,7 @@ namespace RestSharp.Extensions
 				ContentLength = response.ContentLength,
 				ContentType = response.ContentType,
 				Cookies = response.Cookies,
+				ErrorException = response.ErrorException,
 				ErrorMessage = response.ErrorMessage,
 				Headers = response.Headers,
 				RawBytes = response.RawBytes,

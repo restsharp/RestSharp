@@ -52,6 +52,12 @@ namespace RestSharp
 		public Action<Stream> ResponseWriter { get; set; }
 
 		/// <summary>
+		/// Determine whether or not the "default credentials" (e.g. the user account under which the current process is running)
+		/// will be sent along to the server. The default is false.
+		/// </summary>
+		public bool UseDefaultCredentials { get; set; }
+
+		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public RestRequest()
@@ -464,6 +470,11 @@ namespace RestSharp
 		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 		/// </summary>
 		public int Timeout { get; set; }
+
+		/// <summary>
+		/// The number of milliseconds before the writing or reading times out.  This timeout value overrides a timeout set on the RestClient.
+		/// </summary>
+		public int ReadWriteTimeout { get; set; }
 
 		private int _attempts;
 

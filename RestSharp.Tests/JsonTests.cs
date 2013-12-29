@@ -278,6 +278,24 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Various_Enum_Types()
+		{
+			var data = File.ReadAllText(Path.Combine("SampleData", "jsonenumtypes.txt"));
+			var response = new RestResponse {Content = data};
+			var json = new JsonDeserializer();
+			var output = json.Deserialize<JsonEnumTypesTestStructure>(response);
+
+			Assert.Equal(ByteEnum.EnumMin, output.ByteEnumType);
+			Assert.Equal(SByteEnum.EnumMin, output.SByteEnumType);
+			Assert.Equal(ShortEnum.EnumMin, output.ShortEnumType);
+			Assert.Equal(UShortEnum.EnumMin, output.UShortEnumType);
+			Assert.Equal(IntEnum.EnumMin, output.IntEnumType);
+			Assert.Equal(UIntEnum.EnumMin, output.UIntEnumType);
+			Assert.Equal(LongEnum.EnumMin, output.LongEnumType);
+			Assert.Equal(ULongEnum.EnumMin, output.ULongEnumType);
+		}
+
+		[Fact]
 		public void Deserialization_Of_Undefined_Int_Value_Returns_Enum_Default()
 		{
 			const string data = @"{ ""Integer"" : 1024 }";

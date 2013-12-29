@@ -25,7 +25,9 @@ namespace RestSharp
 	public interface IHttp
 	{
 		Action<Stream> ResponseWriter { get; set; }
+#if !PocketPC
 		CookieContainer CookieContainer { get; set; }
+#endif
 		ICredentials Credentials { get; set; }
 
 		/// <summary>
@@ -35,6 +37,7 @@ namespace RestSharp
 
 		string UserAgent { get; set; }
 		int Timeout { get; set; }
+		int ReadWriteTimeout { get; set; }
 #if !SILVERLIGHT
 		bool FollowRedirects { get; set; }
 #endif
@@ -42,13 +45,16 @@ namespace RestSharp
 		X509CertificateCollection ClientCertificates { get; set; }
 		int? MaxRedirects { get; set; }
 #endif
-
+#if !PocketPC
+		bool UseDefaultCredentials { get; set; }
+#endif
 		IList<HttpHeader> Headers { get; }
 		IList<HttpParameter> Parameters { get; }
 		IList<HttpFile> Files { get; }
 		IList<HttpCookie> Cookies { get; }
 		string RequestBody { get; set; }
 		string RequestContentType { get; set; }
+		bool PreAuthenticate { get; set; }
 
 		/// <summary>
 		/// An alternative to RequestBody, for when the caller already has the byte array.

@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="AsyncTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
+    <Compile Include="AsyncRequestBodyTests.cs" />
     <Compile Include="NonProtocolExceptionHandlingTests.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="FileTests.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Helpers\SimpleServer.cs" />
     <Compile Include="RequestBodyTests.cs" />
     <Compile Include="StatusCodeTests.cs" />
+    <Compile Include="RequestHeadTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Koala.jpg">

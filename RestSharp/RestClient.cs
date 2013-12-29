@@ -32,8 +32,11 @@ namespace RestSharp
 	public partial class RestClient : IRestClient
 	{
 		// silverlight friendly way to get current version
+#if PocketPC
+		static readonly Version version = Assembly.GetExecutingAssembly().GetName().Version;
+#else
 		static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-
+#endif
 		public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
 		/// <summary>
@@ -158,7 +161,7 @@ namespace RestSharp
 
 		/// <summary>
 		/// Proxy to use for requests made by this client instance.
-		/// Passed on to underying WebRequest if set.
+		/// Passed on to underlying WebRequest if set.
 		/// </summary>
 		public IWebProxy Proxy { get; set; }
 #endif
@@ -172,7 +175,9 @@ namespace RestSharp
 		/// <summary>
 		/// The CookieContainer used for requests made by this client instance
 		/// </summary>
+#if !PocketPC
 		public CookieContainer CookieContainer { get; set; }
+#endif
 
 		/// <summary>
 		/// UserAgent to use for requests made by this client instance
@@ -183,6 +188,11 @@ namespace RestSharp
 		/// Timeout in milliseconds to use for requests made by this client instance
 		/// </summary>
 		public int Timeout { get; set; }
+
+		/// <summary>
+		/// The number of milliseconds before the writing or reading times out.
+		/// </summary>
+		public int ReadWriteTimeout { get; set; }
 
 		/// <summary>
 		/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
@@ -217,6 +227,8 @@ namespace RestSharp
 				}
 			}
 		}
+
+		public bool PreAuthenticate { get; set; }
 
 		private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
 		{
@@ -272,14 +284,14 @@ namespace RestSharp
 			// build and attach querystring 
 			if (parameters != null && parameters.Any())
 			{
-				var data = EncodeParameters(request, parameters);
+				var data = EncodeParameters(parameters);
 				assembled = string.Format("{0}?{1}", assembled, data);
 			}
 
 			return new Uri(assembled);
 		}
 
-		private string EncodeParameters(IRestRequest request, IEnumerable<Parameter> parameters)
+		private static string EncodeParameters(IEnumerable<Parameter> parameters)
 		{
 			var querystring = new StringBuilder();
 			foreach (var p in parameters)
@@ -295,11 +307,13 @@ namespace RestSharp
 		private void ConfigureHttp(IRestRequest request, IHttp http)
 		{
 			http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
-
-			http.CookieContainer = CookieContainer;
-
+#if !PocketPC
+			http.UseDefaultCredentials = request.UseDefaultCredentials;
+#endif
 			http.ResponseWriter = request.ResponseWriter;
-
+#if !PocketPC
+			http.CookieContainer = CookieContainer;
+#endif
 			// move RestClient.DefaultParameters into Request.Parameters
 			foreach (var p in DefaultParameters)
 			{
@@ -312,21 +326,32 @@ namespace RestSharp
 			}
 
 			// Add Accept header based on registered deserializers if none has been set by the caller.
-			if (!request.Parameters.Any(p2 => p2.Name.ToLowerInvariant() == "accept"))
+#if PocketPC
+			if (request.Parameters.All(p2 => p2.Name.ToLower() != "accept"))
+#else
+			if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+#endif
 			{
 				var accepts = string.Join(", ", AcceptTypes.ToArray());
 				request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
 			}
 
 			http.Url = BuildUri(request);
+			http.PreAuthenticate = PreAuthenticate;
 
 			var userAgent = UserAgent ?? http.UserAgent;
-			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp " + version.ToString();
+			http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
 
 			var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
 			if (timeout > 0)
 			{
 				http.Timeout = timeout;
+			}
+
+			var readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
+			if (readWriteTimeout > 0)
+			{
+				http.ReadWriteTimeout = readWriteTimeout;
 			}
 
 #if !SILVERLIGHT
@@ -469,32 +494,36 @@ namespace RestSharp
 		{
 			request.OnBeforeDeserialization(raw);
 
-            IRestResponse<T> response = new RestResponse<T>();
-            try
-            {
-                response = raw.toAsyncResponse<T>();
-                response.Request = request;
+			IRestResponse<T> response = new RestResponse<T>();
+			try
+			{
+				response = raw.toAsyncResponse<T>();
+				response.Request = request;
 
-                // Only attempt to deserialize if the request has not errored due
-                // to a transport or framework exception.  HTTP errors should attempt to 
-                // be deserialized 
+				// Only attempt to deserialize if the request has not errored due
+				// to a transport or framework exception.  HTTP errors should attempt to 
+				// be deserialized 
+				if (response.ErrorException==null) 
+				{
+					IDeserializer handler = GetHandler(raw.ContentType);
+					// Only continue if there is a handler defined else there is no way to deserialize the data.
+					// This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
+					if (handler != null)
+					{
+						handler.RootElement = request.RootElement;
+						handler.DateFormat = request.DateFormat;
+						handler.Namespace = request.XmlNamespace;
 
-                if (response.ErrorException==null) 
-                {
-                    IDeserializer handler = GetHandler(raw.ContentType);
-                    handler.RootElement = request.RootElement;
-                    handler.DateFormat = request.DateFormat;
-                    handler.Namespace = request.XmlNamespace;
-
-                    response.Data = handler.Deserialize<T>(raw);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.ResponseStatus = ResponseStatus.Error;
-                response.ErrorMessage = ex.Message;
-                response.ErrorException = ex;
-            }
+						response.Data = handler.Deserialize<T>(raw);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+			}
 
 			return response;
 		}

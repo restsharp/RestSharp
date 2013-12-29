@@ -26,9 +26,12 @@ using System;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(SharedAssembylInfo.Version + ".0")]
 [assembly: AssemblyInformationalVersion(SharedAssembylInfo.Version)]
+
+#if !PocketPC
 [assembly: AssemblyFileVersion(SharedAssembylInfo.Version + ".0")]
+#endif
 
 class SharedAssembylInfo
 {
-    public const string Version = "104.3.3";
+    public const string Version = "104.4.0";
 }

@@ -18,7 +18,7 @@
 using System;
 using System.Net;
 
-#if !MONOTOUCH && !MONODROID
+#if !MONOTOUCH && !MONODROID && !PocketPC
 using System.Web;
 #endif
 
@@ -94,7 +94,11 @@ namespace RestSharp
 		/// <returns></returns>
 		public HttpResponse AsGet(string httpMethod)
 		{
+#if PocketPC
+			return GetStyleMethodInternal(httpMethod.ToUpper());
+#else
 			return GetStyleMethodInternal(httpMethod.ToUpperInvariant());
+#endif
 		}
 
 		/// <summary>
@@ -104,7 +108,11 @@ namespace RestSharp
 		/// <returns></returns>
 		public HttpResponse AsPost(string httpMethod)
 		{
+#if PocketPC
+			return PostPutInternal(httpMethod.ToUpper());
+#else
 			return PostPutInternal(httpMethod.ToUpperInvariant());
+#endif
 		}
 
 		private HttpResponse GetStyleMethodInternal(string method)
@@ -212,10 +220,15 @@ namespace RestSharp
 			}
 		}
 
+		// TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
+		// TODO: duplication at the moment).
 		private HttpWebRequest ConfigureWebRequest(string method, Uri url)
 		{
 			var webRequest = (HttpWebRequest)WebRequest.Create(url);
-			webRequest.UseDefaultCredentials = false;
+#if !PocketPC
+			webRequest.UseDefaultCredentials = UseDefaultCredentials;
+#endif
+			webRequest.PreAuthenticate = PreAuthenticate;
 			ServicePointManager.Expect100Continue = false;
 
 			AppendHeaders(webRequest);
@@ -244,6 +257,11 @@ namespace RestSharp
 			if(Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;
+			}
+
+			if (ReadWriteTimeout != 0)
+			{
+				webRequest.ReadWriteTimeout = ReadWriteTimeout;
 			}
 
 			if(Credentials != null)

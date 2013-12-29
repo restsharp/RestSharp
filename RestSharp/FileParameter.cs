@@ -18,7 +18,7 @@ namespace RestSharp
 		///<returns>The <see cref="FileParameter"/></returns>
 		public static FileParameter Create(string name, byte[] data, string filename, string contentType)
 		{
-#if FRAMEWORK
+#if FRAMEWORK && !PocketPC
 			var length = data.LongLength;
 #else
 			var length = (long)data.Length;

@@ -110,6 +110,11 @@ namespace RestSharp
 		int Timeout { get; set; }
 
 		/// <summary>
+		/// The number of milliseconds before the writing or reading times out.  This timeout value overrides a timeout set on the RestClient.
+		/// </summary>
+		int ReadWriteTimeout { get; set; }
+
+		/// <summary>
 		/// How many attempts were made to send this Request?
 		/// </summary>
 		/// <remarks>
@@ -117,6 +122,12 @@ namespace RestSharp
 		/// Useful when using Asynchronous Execution with Callbacks
 		/// </remarks>
 		int Attempts { get; }
+
+		/// <summary>
+		/// Determine whether or not the "default credentials" (e.g. the user account under which the current process is running)
+		/// will be sent along to the server. The default is false.
+		/// </summary>
+		bool UseDefaultCredentials { get; set; }
 
 #if FRAMEWORK
 		/// <summary>

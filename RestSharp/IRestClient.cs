@@ -33,7 +33,9 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
+#if !PocketPC
 		CookieContainer CookieContainer { get; set; }
+#endif
 		/// <summary>
 		/// 
 		/// </summary>
@@ -42,6 +44,10 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		int Timeout { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		int ReadWriteTimeout { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>
@@ -54,6 +60,10 @@ namespace RestSharp
 		/// 
 		/// </summary>
 		string BaseUrl { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		bool PreAuthenticate { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>
