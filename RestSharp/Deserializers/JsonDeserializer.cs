@@ -100,7 +100,15 @@ namespace RestSharp.Deserializers
 			foreach (var child in (IDictionary<string, object>)parent)
 			{
 				var key = child.Key;
-				var item = ConvertValue(valueType, child.Value);
+				object item = null;
+                if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+				{
+                    item = BuildList(valueType, child.Value);
+				}
+				else
+				{
+                    item = ConvertValue(valueType, child.Value); 
+				}
 				dict.Add(key, item);
 			}
 
@@ -172,11 +180,7 @@ namespace RestSharp.Deserializers
 
 			if (type.IsPrimitive)
 			{
-				// no primitives can contain quotes so we can safely remove them
-				// allows converting a json value like {"index": "1"} to an int
-				var tmpVal = stringValue.Replace("\"", string.Empty);
-
-				return tmpVal.ChangeType(type, Culture);
+				return value.ChangeType(type, Culture);
 			}
 			else if (type.IsEnum)
 			{

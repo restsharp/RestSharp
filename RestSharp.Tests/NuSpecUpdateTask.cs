@@ -67,7 +67,7 @@ namespace RestSharp.Tests
                 private string _expectedDescription = "Simple REST and HTTP API Client";
                 private string _expectedAuthors = "John Sheehan, RestSharp Community";
                 private string _expectedOwners = "John Sheehan, RestSharp Community";
-                private Regex _expectedVersion = new Regex(@"^\d+\.\d+\.\d+(-\w+)$", RegexOptions.Compiled);
+                private Regex _expectedVersion = new Regex(@"^\d+\.\d+\.\d+(-\w+)?$", RegexOptions.Compiled);
 
                 protected override void Setup()
                 {

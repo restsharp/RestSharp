@@ -45,7 +45,7 @@ var content = response.Content; // raw content as string
 
 // or automatically deserialize result
 // return content type is sniffed but can be explicitly set via RestClient.AddHandler();
-RestResponse<Person> response2 = client.Execute<Person>(request);
+IRestResponse<Person> response2 = client.Execute<Person>(request);
 var name = response2.Data.Name;
 
 // or download and save file to disk

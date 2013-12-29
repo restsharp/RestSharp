@@ -314,6 +314,19 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void Can_Deserialize_Int_to_Bool()
+		{
+			var doc = new JsonObject();
+			doc["IsCool"] = 1;
+
+			var d = new JsonDeserializer();
+			var response = new RestResponse { Content = doc.ToString() };
+			var p = d.Deserialize<PersonForJson>(response);
+
+			Assert.True(p.IsCool);
+		}
+
+		[Fact]
 		public void Can_Deserialize_With_Default_Root()
 		{
 			var doc = CreateJson();
@@ -607,7 +620,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_To_Dictionary_String_String()
 		{
-			var doc = CreateJsonStringDictionary();
+            var doc = CreateJsonStringDictionary();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
 			var bd = d.Deserialize<Dictionary<string,string>>(response);
@@ -650,6 +663,21 @@ namespace RestSharp.Tests
 
 			Assert.Equal(42L, payload.ObjectProperty);
 		}
+
+        [Fact]
+        public void Can_Deserialize_Dictionary_of_Lists()
+        {
+            var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
+
+            var json = new JsonDeserializer();
+            json.RootElement = "response";
+
+            var output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
+
+            Assert.NotEmpty(output.EmployeesMail);
+            Assert.NotEmpty(output.EmployeesTime);
+            Assert.NotEmpty(output.EmployeesPay);
+        }
 
 		private string CreateJsonWithUnderscores()
 		{

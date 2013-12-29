@@ -276,26 +276,33 @@ namespace RestSharp
 
 			HttpWebResponse raw = null;
 
-			try
-			{
-				var webRequest = (HttpWebRequest)result.AsyncState;
-				raw = webRequest.EndGetResponse(result) as HttpWebResponse;
-			}
-			catch(WebException ex)
-			{
-				if(ex.Status == WebExceptionStatus.RequestCanceled)
-				{
-					throw ex;
-				}
-				if (ex.Response is HttpWebResponse)
-				{
-					raw = ex.Response as HttpWebResponse;
-				}
-				else
-				{
-					throw ex;
-				}
-			}
+            try
+            {
+                var webRequest = (HttpWebRequest)result.AsyncState;
+                raw = webRequest.EndGetResponse(result) as HttpWebResponse;
+            }
+            catch(WebException ex)
+            {
+                if(ex.Status == WebExceptionStatus.RequestCanceled)
+                {
+                    throw ex;
+                }
+
+                // Check to see if this is an HTTP error or a transport error.
+                // In cases where an HTTP error occurs ( status code >= 400 )
+                // return the underlying HTTP response, otherwise assume a
+                // transport exception (ex: connection timeout) and
+                // rethrow the exception
+
+                if (ex.Response is HttpWebResponse)
+                {
+                    raw = ex.Response as HttpWebResponse;
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
 
 			callback(raw);
 			raw.Close();
