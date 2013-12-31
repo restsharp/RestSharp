@@ -342,9 +342,9 @@ namespace RestSharp
                 case Method.PATCH:
                 case Method.POST:
                 case Method.PUT:
-                    return await ExecuteAsync(request, method, DoAsPostAsync);
+                    return await ExecuteAsync(request, method, token, DoAsPostAsync);
                 default:
-                    return await ExecuteAsync(request, method, DoAsGetAsync);
+                    return await ExecuteAsync(request, method, token, DoAsGetAsync);
             }           
         }
 
@@ -371,7 +371,7 @@ namespace RestSharp
 
         #region Private Methods 
 
-        private async Task<IRestResponse> ExecuteAsync(IRestRequest restRequest, HttpMethod httpMethod, Func<IHttp, HttpMethod, Task<HttpResponse>> getResponse)
+        private async Task<IRestResponse> ExecuteAsync(IRestRequest restRequest, HttpMethod httpMethod, CancellationToken token, Func<IHttp, HttpMethod, CancellationToken, Task<HttpResponse>> getResponse)
         {
 			//AddAuthenticationIfNeeded(restRequest);
 
@@ -393,7 +393,7 @@ namespace RestSharp
 
                 IHttp http = new Http(httpRequest);
 
-                var httpResponse = await getResponse(http, httpMethod);
+                var httpResponse = await getResponse(http, httpMethod, token);
 
                 response = converter.ConvertFrom(httpResponse);
                 response.Request = restRequest;
@@ -419,14 +419,14 @@ namespace RestSharp
         //    }
         //}
 
-        private static async Task<HttpResponse> DoAsGetAsync(IHttp http, HttpMethod method)
+        private static async Task<HttpResponse> DoAsGetAsync(IHttp http, HttpMethod method, CancellationToken token)
         {
-            return await http.AsGetAsync(method);
+            return await http.AsGetAsync(method, token);
         }
 
-        private static async Task<HttpResponse> DoAsPostAsync(IHttp http, HttpMethod method)
+        private static async Task<HttpResponse> DoAsPostAsync(IHttp http, HttpMethod method, CancellationToken token)
         {
-            return await http.AsPostAsync(method);
+            return await http.AsPostAsync(method, token);
         }
 
         //private IRestResponse ProcessResponse(IRestRequest request, HttpResponse httpResponse)

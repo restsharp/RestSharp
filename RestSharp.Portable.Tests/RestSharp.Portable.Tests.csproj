@@ -96,6 +96,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RestSharp_Authenticators\When_Configuring_Basic_Authentication.cs" />
+    <Compile Include="RestSharp_Authenticators\When_Configuring_Simple_Authentication.cs" />
     <Compile Include="RestSharp_RestRequest\When_Configuring_A_RestRequest.cs" />
     <Compile Include="RestSharp_Http\When_Configuring_A_MessageHandler.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />

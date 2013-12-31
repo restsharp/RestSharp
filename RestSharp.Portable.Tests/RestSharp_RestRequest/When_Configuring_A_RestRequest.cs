@@ -8,7 +8,7 @@ using Xunit;
 
 namespace RestSharp.Tests.RestSharp_Http
 {
-    [Trait("Unit", "Configuring A RestRequest")]
+    [Trait("Unit", "When Configuring A RestRequest")]
     public class When_Configuring_A_RestRequest
     {
 
@@ -111,13 +111,12 @@ namespace RestSharp.Tests.RestSharp_Http
 
         }
 
-        public void bar()
-        {
+        //public void bar()
+        //{
             //client.AddDefaultHeader();
             //client.AddHandler();
             //client.BuildUri();
-        }
-
+        //
 
         public class Name
         {
@@ -125,18 +124,18 @@ namespace RestSharp.Tests.RestSharp_Http
             public string Last { get; set; }
         }
 
-        public class NameComparer : IEqualityComparer<Name> {
+        //public class NameComparer : IEqualityComparer<Name> {
 
-            public bool Equals(Name x, Name y)
-            {
- 	            return (x.First == y.First) && (x.Last == y.Last);
-            }
+        //    public bool Equals(Name x, Name y)
+        //    {
+        //        return (x.First == y.First) && (x.Last == y.Last);
+        //    }
 
-            public int GetHashCode(Name obj)
-            {
- 	            return obj.GetHashCode();
-            }
-        }
+        //    public int GetHashCode(Name obj)
+        //    {
+        //        return obj.GetHashCode();
+        //    }
+        //}
     
     }
 

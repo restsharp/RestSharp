@@ -72,15 +72,12 @@
     <Reference Include="xunit.extensions">
       <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
     </Reference>
-    <Reference Include="xunit.runner.tdnet, Version=1.8.0.1545, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.1.9.0.1566\lib\xunit.runner.tdnet.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
+    <Compile Include="SimpleJson.cs" />
     <Compile Include="XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
     <Compile Include="JsonTests.cs" />
@@ -103,7 +100,6 @@
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
-    <Compile Include="SimpleJson.cs" />
     <Compile Include="UrlBuilderTests.cs" />
     <Compile Include="XmlDeserializerTests.cs" />
   </ItemGroup>

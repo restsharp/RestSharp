@@ -58,7 +58,7 @@ namespace RestSharp
                 assembled = string.Format("{0}?{1}", assembled, data);
             }
 
-            return new Uri(assembled);
+            return new Uri(assembled); //would this throw an invalidoperationexception
 
         }
 
