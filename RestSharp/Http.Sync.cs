@@ -149,11 +149,27 @@ namespace RestSharp
 			_restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
 		}
 
+        private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
+		{
+			var webException = ex as WebException;
+
+            if (webException != null && webException.Status == WebExceptionStatus.Timeout) 
+			{
+                httpResponse.ResponseStatus = ResponseStatus.TimedOut;
+                httpResponse.ErrorMessage = ex.Message;
+                httpResponse.ErrorException = webException;
+			    return;
+			}
+    
+            httpResponse.ErrorMessage = ex.Message;
+            httpResponse.ErrorException = ex;
+            httpResponse.ResponseStatus = ResponseStatus.Error;
+        }
+
 		private HttpResponse GetResponse(HttpWebRequest request)
 		{
-			var response = new HttpResponse();
-			response.ResponseStatus = ResponseStatus.None;
-
+            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
+            
 			try
 			{
 				var webResponse = GetRawResponse(request);
@@ -161,9 +177,7 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-				response.ErrorMessage = ex.Message;
-				response.ErrorException = ex;
-				response.ResponseStatus = ResponseStatus.Error;
+                ExtractErrorResponse(response, ex);
 			}
 
 			return response;
