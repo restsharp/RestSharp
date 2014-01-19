@@ -356,6 +356,19 @@ namespace RestSharp.Extensions
 		}
 
 		/// <summary>
+		/// Add spaces to a pascal-cased string
+		/// </summary>
+		/// <param name="pascalCasedWord">String to convert</param>
+		/// <returns>string</returns>
+		public static string AddSpaces(this string pascalCasedWord)
+		{
+			return
+				Regex.Replace(
+					Regex.Replace(Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1 $2"), @"([a-z\d])([A-Z])",
+						"$1 $2"), @"[-\s]", " ");
+		}
+
+		/// <summary>
 		/// Return possible variants of a name for name matching.
 		/// </summary>
 		/// <param name="name">String to convert</param>
@@ -391,6 +404,12 @@ namespace RestSharp.Extensions
 
 			// try name with underscore prefix, using camel case
 			yield return name.ToCamelCase(culture).AddUnderscorePrefix();
+
+			// try name with spaces
+			yield return name.AddSpaces();
+
+			// try name with spaces with lower case
+			yield return name.AddSpaces().ToLower(culture);
 		}
 	}
 }
