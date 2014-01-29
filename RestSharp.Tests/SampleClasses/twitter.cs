@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RestSharp.Deserializers;
 
 namespace RestSharp.Tests.SampleClasses
 {
@@ -57,4 +58,25 @@ namespace RestSharp.Tests.SampleClasses
 	public class StatusList : List<status>
 	{
 	}
+
+    public class complexStatus
+    {
+        public bool truncated { get; set; }
+        public string created_at { get; set; }
+        public string source { get; set; }
+        public bool favorited { get; set; }
+        public string in_reply_to_user_id { get; set; }
+        public string in_reply_to_status_id { get; set; }
+        public string in_reply_to_screen_name { get; set; }
+        // ignore contributors for now
+        [DeserializeAs(Name="user.following")]
+        public bool follow { get; set; }
+        // ignore geo
+        public long id { get; set; }
+        public string text { get; set; }
+    }
+
+    public class StatusComplexList : List<complexStatus>
+    {
+    }
 }
