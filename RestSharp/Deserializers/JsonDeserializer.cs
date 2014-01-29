@@ -84,12 +84,17 @@ namespace RestSharp.Deserializers
 					name = prop.Name;
 				}
 
-				var actualName = name.GetNameVariants(Culture).FirstOrDefault(n => data.ContainsKey(n));
-				var value = actualName != null ? data[actualName] : null;
-
-				if (value == null) continue;
-
-				prop.SetValue(target, ConvertValue(type, value), null);
+                var parts = name.Split('.');
+			    var currentData = data;
+			    object value = null;
+                for (var i = 0; i < parts.Length; ++i)
+                {
+                    var actualName = parts[i].GetNameVariants(Culture).FirstOrDefault(currentData.ContainsKey);
+                    if (actualName == null) break;
+                    if(i == parts.Length - 1) value = currentData[actualName];
+                    else currentData = (IDictionary<string, object>)currentData[actualName];
+                }
+                if(value != null) prop.SetValue(target, ConvertValue(type, value), null);
 			}
 		}
 
