@@ -249,7 +249,8 @@ namespace RestSharp
 				return;
 			}
 
-			webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+            IAsyncResult asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+            SetTimeout(asyncResult, _timeoutState);
 		}
 
 		private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
