@@ -168,53 +168,53 @@ namespace RestSharp.IntegrationTests
 			}
 		}
 
-        [Fact]
-        public void Can_Timeout_GET_TaskAsync()
-        {
-            const string baseUrl = "http://localhost:8080/";
-            using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
-            {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
-
-                //Half the value of ResponseHandler.Timeout
-                request.Timeout = 500;
-
-                System.AggregateException agg = Assert.Throws<System.AggregateException>(
-                    delegate
-                    {
-                        var task = client.ExecuteTaskAsync(request);
-                        task.Wait();
-                    });
-
-                Assert.IsType(typeof(WebException), agg.InnerException);
-                Assert.Equal("The request timed-out.", agg.InnerException.Message);
-            }
-        }
-
-        [Fact]
-        public void Can_Timeout_PUT_TaskAsync()
-        {
-            const string baseUrl = "http://localhost:8080/";
-            using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
-            {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
-
-                //Half the value of ResponseHandler.Timeout
-                request.Timeout = 500;
-
-                System.AggregateException agg = Assert.Throws<System.AggregateException>(
-                    delegate
-                    {
-                        var task = client.ExecuteTaskAsync(request);
-                        task.Wait();
-                    });
-
-                Assert.IsType(typeof(WebException), agg.InnerException);
-                Assert.Equal("The request timed-out.", agg.InnerException.Message);
-            }
-        }
+	        [Fact]
+	        public void Can_Timeout_GET_TaskAsync()
+	        {
+	            const string baseUrl = "http://localhost:8080/";
+	            using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+	            {
+	                var client = new RestClient(baseUrl);
+	                var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
+	
+	                //Half the value of ResponseHandler.Timeout
+	                request.Timeout = 500;
+	
+	                System.AggregateException agg = Assert.Throws<System.AggregateException>(
+	                    delegate
+	                    {
+	                        var task = client.ExecuteTaskAsync(request);
+	                        task.Wait();
+	                    });
+	
+	                Assert.IsType(typeof(WebException), agg.InnerException);
+	                Assert.Equal("The request timed-out.", agg.InnerException.Message);
+	            }
+	        }
+	
+	        [Fact]
+	        public void Can_Timeout_PUT_TaskAsync()
+	        {
+	            const string baseUrl = "http://localhost:8080/";
+	            using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+	            {
+	                var client = new RestClient(baseUrl);
+	                var request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
+	
+	                //Half the value of ResponseHandler.Timeout
+	                request.Timeout = 500;
+	
+	                System.AggregateException agg = Assert.Throws<System.AggregateException>(
+	                    delegate
+	                    {
+	                        var task = client.ExecuteTaskAsync(request);
+	                        task.Wait();
+	                    });
+	
+	                Assert.IsType(typeof(WebException), agg.InnerException);
+	                Assert.Equal("The request timed-out.", agg.InnerException.Message);
+	            }
+	        }
 
 		void UrlToStatusCodeHandler(HttpListenerContext obj)
 		{
