@@ -1,5 +1,26 @@
 # RestSharp - Simple .NET REST Client
 
+### Building:
+
+Ruby 1.9.3: `bundle && rake`
+
+With Visual Studio 2012: Open and press build.
+
+### Contributing
+
+```
+git clone https://github.com/restsharp/RestSharp.git
+git checkout -b feature/this-was-cool
+# clone on github
+git remote add myself git@github.com:myself/RestSharp.git
+# write tests, feature
+git add .
+git commit -m "awesomeness"
+rake tests
+git push -u myself feature/this-was-cool 
+# send PR in browser
+```
+
 ### [Official Site/Blog][1] - [@RestSharp][2]  
 ### Please use the [Google Group][3] for feature requests and troubleshooting usage.
 ### License: Apache License 2.0  

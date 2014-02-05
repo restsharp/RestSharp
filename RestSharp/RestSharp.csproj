@@ -185,18 +185,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
   <UsingTask TaskName="NuSpecUpdateTask" AssemblyFile="$(SolutionDir).nuget\RestSharp.Build.dll" />
   <Target Name="AfterBuild" Condition="$(Configuration) == Release">
     <NuSpecUpdateTask SpecFile="$(SolutionDir)restsharp.nuspec" SourceAssemblyFile="$(TargetDir)RestSharp.dll" />
