@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Xunit;
 using System.Globalization;
+using Xunit.Extensions;
 
 namespace RestSharp.Tests {
 	public class RestRequestTests {
@@ -16,6 +18,68 @@ namespace RestSharp.Tests {
 		public void Can_Add_Object_With_IntegerArray_property() {
 			var request = new RestRequest();
 			request.AddObject(new { Items = new int[] { 2, 3, 4 } });
+		}
+
+		[Fact]
+		public void Cannot_Set_Empty_Host_Header()
+		{
+			var request = new RestRequest();
+
+			var exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", string.Empty));
+			Assert.Equal("value", exception.ParamName);
+		}
+
+		[Fact]
+		public void Cannot_Set_Too_Long_Host_Header()
+		{
+			var request = new RestRequest();
+
+			var exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", new string('a', 256)));
+			Assert.Equal("value", exception.ParamName);
+		}
+
+		[Theory]
+		[InlineData("http://localhost")]
+		[InlineData("hostname 1234")]
+		[InlineData("-leading.hyphen.not.allowed")]
+		[InlineData("not.allowéd")]
+		[InlineData("bad:port")]
+		[InlineData(" no.leading.white-space")]
+		[InlineData("no.trailing.white-space ")]
+		[InlineData(".leading.dot.not.allowed")]
+		[InlineData("trailing.dot.not.allowed.")]
+		[InlineData("double.dots..not.allowed")]
+		[InlineData(".")]
+		[InlineData(".:2345")]
+		[InlineData(":5678")]
+		[InlineData("1234567890123456789012345678901234567890123456789012345678901234.too.long.label")]
+		public void Cannot_Set_Invalid_Host_Header(string value)
+		{
+			var request = new RestRequest();
+
+			var exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", value));
+			Assert.Equal("value", exception.ParamName);
+		}
+
+		[Theory]
+		[InlineData("localhost")]
+		[InlineData("localhost:1234")]
+		[InlineData("host.local")]
+		[InlineData("anotherhost.local:2345")]
+		[InlineData("www.w3.org")]
+		[InlineData("www.w3.org:3456")]
+		[InlineData("8.8.8.8")]
+		[InlineData("a.1.b.2")]
+		[InlineData("10.20.30.40:1234")]
+		[InlineData("0host")]
+		[InlineData("hypenated-hostname")]
+		[InlineData("multi--hyphens")]
+		[InlineData("123456789012345678901234567890123456789012345678901234567890123")]
+		public void Can_Set_Valid_Host_Header(string value)
+		{
+			var request = new RestRequest();
+
+			Assert.DoesNotThrow(() => request.AddHeader("Host", value));
 		}
 	}
 }

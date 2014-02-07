@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
 
@@ -356,6 +357,10 @@ namespace RestSharp
 		/// <returns></returns>
 		public IRestRequest AddHeader (string name, string value)
 		{
+			if (name == "Host" && (value.Length > 255 || !Regex.IsMatch(value, @"^\w[a-z0-9\-]{0,62}(\.\w[a-z0-9\-]{0,62})*(\:\d+)?$")))
+			{
+				throw new ArgumentException("The specified value is not a valid Host header string.", "value");
+			}
 			return AddParameter(name, value, ParameterType.HttpHeader);
 		}
 
