@@ -29,30 +29,18 @@ namespace RestSharp.Tests {
 			Assert.Equal("value", exception.ParamName);
 		}
 
-		[Fact]
-		public void Cannot_Set_Too_Long_Host_Header()
-		{
-			var request = new RestRequest();
-
-			var exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", new string('a', 256)));
-			Assert.Equal("value", exception.ParamName);
-		}
-
 		[Theory]
 		[InlineData("http://localhost")]
 		[InlineData("hostname 1234")]
 		[InlineData("-leading.hyphen.not.allowed")]
-		[InlineData("not.allowéd")]
 		[InlineData("bad:port")]
 		[InlineData(" no.leading.white-space")]
 		[InlineData("no.trailing.white-space ")]
 		[InlineData(".leading.dot.not.allowed")]
-		[InlineData("trailing.dot.not.allowed.")]
 		[InlineData("double.dots..not.allowed")]
 		[InlineData(".")]
 		[InlineData(".:2345")]
 		[InlineData(":5678")]
-		[InlineData("1234567890123456789012345678901234567890123456789012345678901234.too.long.label")]
 		public void Cannot_Set_Invalid_Host_Header(string value)
 		{
 			var request = new RestRequest();
@@ -74,7 +62,6 @@ namespace RestSharp.Tests {
 		[InlineData("0host")]
 		[InlineData("hypenated-hostname")]
 		[InlineData("multi--hyphens")]
-		[InlineData("123456789012345678901234567890123456789012345678901234567890123")]
 		public void Can_Set_Valid_Host_Header(string value)
 		{
 			var request = new RestRequest();
