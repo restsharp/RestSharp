@@ -153,12 +153,7 @@ namespace RestSharp
 
 		private void DeserializeResponse<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, IRestResponse response, RestRequestAsyncHandle asyncHandle)
 		{
-			IRestResponse<T> restResponse = response as RestResponse<T>;
-			if (response.ResponseStatus == ResponseStatus.Completed)
-			{
-				restResponse = Deserialize<T>(request, response);
-			}
-
+			IRestResponse<T> restResponse = Deserialize<T>(request, response);
 			callback(restResponse, asyncHandle);
 		}
 
