@@ -12,6 +12,19 @@ namespace RestSharp.Tests
 	public class UrlBuilderTests
 	{
 		[Fact]
+		public void Should_not_duplicate_question_mark()
+		{
+			var request = new RestRequest();
+			request.AddParameter("param2", "value2");
+			var client = new RestClient("http://example.com/resource?param1=value1");
+
+			var expected = new Uri("http://example.com/resource?param1=value1&param2=value2");
+			var output = client.BuildUri(request);
+
+			Assert.Equal(expected, output);
+		}
+
+		[Fact]
 		public void GET_with_leading_slash()
 		{
 			var request = new RestRequest("/resource");
