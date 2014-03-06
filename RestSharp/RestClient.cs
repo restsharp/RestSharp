@@ -285,7 +285,8 @@ namespace RestSharp
 			if (parameters != null && parameters.Any())
 			{
 				var data = EncodeParameters(parameters);
-				assembled = string.Format("{0}?{1}", assembled, data);
+				var separator = assembled.Contains("?") ? "&" : "?";
+				assembled = string.Format("{0}{1}{2}", assembled, separator, data);
 			}
 
 			return new Uri(assembled);
