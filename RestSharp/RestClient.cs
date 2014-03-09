@@ -20,7 +20,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
@@ -259,50 +258,47 @@ namespace RestSharp
 
 			if (!string.IsNullOrEmpty(BaseUrl))
 			{
-				if (string.IsNullOrEmpty(assembled))
-				{
-					assembled = BaseUrl;
-				}
-				else
-				{
-					assembled = string.Format("{0}/{1}", BaseUrl, assembled);
-				}
+				assembled = string.IsNullOrEmpty(assembled) ? this.BaseUrl : string.Format("{0}/{1}", this.BaseUrl, assembled);
 			}
 
-			IEnumerable<Parameter> parameters = null;
+			IEnumerable<Parameter> parameters;
 
 			if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
 			{
 				// build and attach querystring if this is a get-style request
-				parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString);
+				parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString).ToList();
 			}
 			else
 			{
-				parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString);
+				parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString).ToList();
+			}
+
+			if (!parameters.Any())
+			{
+				return new Uri(assembled);
 			}
 
 			// build and attach querystring 
-			if (parameters != null && parameters.Any())
-			{
-				var data = EncodeParameters(parameters);
-				var separator = assembled.Contains("?") ? "&" : "?";
-				assembled = string.Format("{0}{1}{2}", assembled, separator, data);
-			}
+			var data = EncodeParameters(parameters);
+			var separator = assembled.Contains("?") ? "&" : "?";
+			assembled = string.Concat(assembled, separator, data);
 
 			return new Uri(assembled);
 		}
 
 		private static string EncodeParameters(IEnumerable<Parameter> parameters)
 		{
-			var querystring = new StringBuilder();
-			foreach (var p in parameters)
+			return string.Join("&", parameters.Select(EncodeParameter).ToArray());
+		}
+
+		private static string EncodeParameter(Parameter parameter)
+		{
+			if (parameter.Value == null)
 			{
-				if (querystring.Length > 1)
-					querystring.Append("&");
-				querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
+				return string.Concat(parameter.Name.UrlEncode(), "=");
 			}
 
-			return querystring.ToString();
+			return string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
 		}
 
 		private void ConfigureHttp(IRestRequest request, IHttp http)
@@ -504,7 +500,7 @@ namespace RestSharp
 				// Only attempt to deserialize if the request has not errored due
 				// to a transport or framework exception.  HTTP errors should attempt to 
 				// be deserialized 
-				if (response.ErrorException==null) 
+				if (response.ErrorException == null)
 				{
 					IDeserializer handler = GetHandler(raw.ContentType);
 					// Only continue if there is a handler defined else there is no way to deserialize the data.
