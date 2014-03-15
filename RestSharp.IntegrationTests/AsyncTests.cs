@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Net;
+using System.Threading.Tasks;
 using RestSharp.IntegrationTests.Helpers;
 using Xunit;
 
@@ -65,6 +67,42 @@ namespace RestSharp.IntegrationTests
 
 				Assert.NotNull(task.Result.Content);
 				Assert.Equal(val, task.Result.Content);
+			}
+		}
+
+		[Fact]
+		public void Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler()
+		{
+			const string baseUrl = "http://localhost:8080/";
+			const string ExceptionMessage = "Thrown from OnBeforeDeserialization";
+
+			using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
+			{
+				var client = new RestClient(baseUrl);
+				var request = new RestRequest("success");
+				request.OnBeforeDeserialization += response =>
+				                                   {
+													   throw new Exception(ExceptionMessage);
+				                                   };
+
+				var task = client.ExecuteTaskAsync<Response>(request);
+
+				try
+				{
+					// In the broken version of the code, an exception thrown in OnBeforeDeserialization causes the task to 
+					// never complete. In order to test that condition, we'll wait for 5 seconds for the task to complete. 
+					// Since we're connecting to a local server, if the task hasn't completed in 5 seconds, it's safe to assume 
+					// that it will never complete.
+					Assert.True(task.Wait(TimeSpan.FromSeconds(5)), "It looks like the async task is stuck and is never going to complete.");
+				}
+				catch (AggregateException e)
+				{
+					Assert.Equal(1, e.InnerExceptions.Count);
+					Assert.Equal(ExceptionMessage, e.InnerExceptions.First().Message);
+					return;
+				}
+
+				Assert.True(false, "The exception thrown from OnBeforeDeserialization should have bubbled up.");
 			}
 		}
 		
