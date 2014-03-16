@@ -288,7 +288,7 @@ namespace RestSharp
 
 		private static string EncodeParameters(IEnumerable<Parameter> parameters)
 		{
-			return string.Join("&", parameters.Select(EncodeParameter).ToArray());
+			return string.Join("&", parameters.Select(x=>EncodeParameter(x)).ToArray());
 		}
 
 		private static string EncodeParameter(Parameter parameter)
