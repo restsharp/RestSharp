@@ -161,7 +161,7 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-				restResponse = new RestResponse<T> {ResponseStatus = ResponseStatus.Error, ErrorMessage = ex.Message, ErrorException = ex};
+				restResponse = new RestResponse<T> { Request = request, ResponseStatus = ResponseStatus.Error, ErrorMessage = ex.Message, ErrorException = ex};
 			}
 
 			callback(restResponse, asyncHandle);
