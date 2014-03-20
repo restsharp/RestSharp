@@ -267,7 +267,17 @@ namespace RestSharp.Deserializers
 					return CreateAndMap(type, value);
 				}
 			}
-			else
+			else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
+			{
+				// handles classes that derive from List<T>
+				return BuildList(type, value);
+			}
+			else if (type == typeof(JsonObject)) 
+			{
+				// simplify JsonObject into a Dictionary<string, object> 
+				return BuildDictionary(typeof(Dictionary<string, object>), value);
+			} 
+			else 
 			{
 				// nested property classes
 				return CreateAndMap(type, value);
