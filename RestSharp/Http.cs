@@ -136,7 +136,9 @@ namespace RestSharp
 		/// X509CertificateCollection to be sent with request
 		/// </summary>
 		public X509CertificateCollection ClientCertificates { get; set; }
-		/// <summary>
+#endif
+#if FRAMEWORK || PocketPC
+        /// <summary>
 		/// Maximum number of automatic redirects to follow if FollowRedirects is true
 		/// </summary>
 		public int? MaxRedirects { get; set; }
@@ -179,7 +181,7 @@ namespace RestSharp
 
 		public bool PreAuthenticate { get; set; }
 
-#if FRAMEWORK
+#if FRAMEWORK || PocketPC
 		/// <summary>
 		/// Proxy info to be sent with request
 		/// </summary>

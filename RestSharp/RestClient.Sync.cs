@@ -1,4 +1,4 @@
-﻿#if FRAMEWORK
+﻿#if FRAMEWORK || PocketPC
 using System;
 using System.Collections.Generic;
 using System.Linq;

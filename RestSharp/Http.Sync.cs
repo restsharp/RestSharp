@@ -14,7 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-#if FRAMEWORK
+#if FRAMEWORK || PocketPC
 using System;
 using System.Net;
 
@@ -257,12 +257,12 @@ namespace RestSharp
 			}
 
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
-
+#if FRAMEWORK
 			if(ClientCertificates != null)
 			{
 				webRequest.ClientCertificates.AddRange(ClientCertificates);
 			}
-
+#endif
 			if(UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
