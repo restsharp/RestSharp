@@ -204,4 +204,49 @@ namespace RestSharp.Tests
 	{
 		public decimal Value { get; set; }
 	}
+
+	public interface IFoo
+	{
+		int Id { get; set; }
+	}
+
+	public abstract class AbstractFoo
+	{
+		public int Id { get; set; }
+	}
+
+	public class ActualFoo : IFoo
+	{
+		public int Id { get; set; }
+	}
+
+	public class NestedInterface
+	{
+		public IFoo Foo { get; set; }
+	}
+
+    public class NestedAbstract
+	{
+		public AbstractFoo Foo { get; set; }
+	}
+
+	public class ActualAbstractFoo : AbstractFoo
+	{
+		
+	}
+
+	public class NestedListInterface
+	{
+		public List<IFoo> Foo { get; set; } 
+	}
+
+	public class NestedListAbstract
+	{
+		public List<AbstractFoo> Foo { get; set; }
+	}
+
+	public class NestedIListIFoo
+	{
+		public IList<IFoo> Foo { get; set; }
+	}
 }

@@ -19,14 +19,29 @@ using System.Text;
 
 namespace RestSharp.Deserializers
 {
-	/// <summary>
+    using System;
+
+    /// <summary>
 	/// Wrapper for System.Xml.Serialization.XmlSerializer.
 	/// </summary>
 	public class DotNetXmlDeserializer : IDeserializer
 	{
 		public string DateFormat { get; set; }
 
-		public string Namespace { get; set; }
+        public TypeResolverDelegate DeserializationResolver 
+        {
+            get
+            {
+                return null;
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public string Namespace { get; set; }
 
 		public string RootElement { get; set; }
 

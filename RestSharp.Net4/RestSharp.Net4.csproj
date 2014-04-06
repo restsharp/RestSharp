@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -123,6 +124,12 @@
     </Compile>
     <Compile Include="..\restsharp\deserializers\IDeserializer.cs">
       <Link>Deserializers\IDeserializer.cs</Link>
+    </Compile>
+	<Compile Include="..\restsharp\deserializers\DeserializerBase.cs">
+      <Link>Deserializers\DeserializerBase.cs</Link>
+    </Compile>
+	<Compile Include="..\restsharp\deserializers\TypeResolverDelegate.cs">
+      <Link>Deserializers\TypeResolverDelegate.cs</Link>
     </Compile>
     <Compile Include="..\restsharp\deserializers\JsonDeserializer.cs">
       <Link>Deserializers\JsonDeserializer.cs</Link>
@@ -258,15 +265,10 @@
     </Compile>
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
-    </Compile>
+    </Compile>    
     <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="Extensions\RestClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

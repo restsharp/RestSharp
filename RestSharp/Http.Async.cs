@@ -379,7 +379,10 @@ namespace RestSharp
 #if !PocketPC
 			webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif
+
+#if !SILVERLIGHT
 			webRequest.PreAuthenticate = PreAuthenticate;
+#endif
 
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);

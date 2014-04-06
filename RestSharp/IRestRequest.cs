@@ -174,6 +174,8 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		IRestRequest AddBody (object obj);
 
+	    IRestRequest AddBody(string serializedJson);
+
 		/// <summary>
 		/// Calls AddParameter() for all public, readable properties specified in the white list
 		/// </summary>
