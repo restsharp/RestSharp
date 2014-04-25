@@ -59,6 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows" />
@@ -269,6 +270,7 @@
     <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
       <Link>RestRequestAsyncHandle.cs</Link>
     </Compile>
+    <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
