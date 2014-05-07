@@ -126,6 +126,17 @@ namespace RestSharp.Tests
 		}
 
 		[Fact]
+		public void GET_with_resource_containing_null_token()
+		{
+			var request = new RestRequest("/resource/{foo}", Method.GET);
+			request.AddUrlSegment("foo", null);
+			var client = new RestClient("http://example.com/api/1.0");
+
+			var exception = Assert.Throws<ArgumentException>(() => client.BuildUri(request));
+			Assert.Contains("foo", exception.Message);
+		}
+
+		[Fact]
 		public void POST_with_resource_containing_tokens()
 		{
 			var request = new RestRequest("resource/{foo}", Method.POST);
