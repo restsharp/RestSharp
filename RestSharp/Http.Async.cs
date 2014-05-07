@@ -76,6 +76,11 @@ namespace RestSharp
 		{
 			return PutPostInternalAsync("PATCH", action);
 		}
+        
+        public HttpWebRequest MergeAsync(Action<HttpResponse> action)
+        {
+            return PutPostInternalAsync("MERGE", action);
+        }
 
 		/// <summary>
 		/// Execute an async POST-style request with the specified HTTP Method.  

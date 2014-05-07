@@ -44,6 +44,7 @@ namespace RestSharp
 #endif
 				switch (request.Method)
 				{
+                        case Method.MERGE:
 						case Method.PATCH:
 						case Method.POST:
 						case Method.PUT:

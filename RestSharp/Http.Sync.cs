@@ -87,6 +87,14 @@ namespace RestSharp
 			return PostPutInternal("PATCH");
 		}
 
+        /// <summary>
+        /// Execute a MERGE request
+        /// </summary>
+        public HttpResponse Merge()
+        {
+            return PostPutInternal("MERGE");
+        }
+
 		/// <summary>
 		/// Execute a GET-style request with the specified HTTP Method.  
 		/// </summary>
