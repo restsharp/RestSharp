@@ -61,15 +61,17 @@ namespace RestSharp.Extensions
 		/// </summary>
 		/// <param name="input">The input stream.</param>
 		/// <param name="output">The output stream.</param>
-		public static void CopyTo(this Stream input, Stream output)
+		public static long CopyTo(this Stream input, Stream output)
 		{
+            long result = 0;
 			var buffer = new byte[32768];
 			while(true)
 			{
 				var read = input.Read(buffer, 0, buffer.Length);
-				if(read <= 0)
-					return;
+                if (read <= 0)
+                    return result;
 				output.Write(buffer, 0, read);
+                result += read;
 			}
 		}
 

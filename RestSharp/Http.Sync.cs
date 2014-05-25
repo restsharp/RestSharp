@@ -224,14 +224,27 @@ namespace RestSharp
 			if (!HasBody)
 				return;
 
-			var bytes = RequestBodyBytes == null ? _defaultEncoding.GetBytes(RequestBody) : RequestBodyBytes;
+            if (RequestBody is HttpFile)
+            {
+                HttpFile httpFileRequestBody = (RequestBody as HttpFile);
+                webRequest.ContentLength = httpFileRequestBody.ContentLength;
 
-			webRequest.ContentLength = bytes.Length;
+                using (var requestStream = webRequest.GetRequestStream())
+                {
+                    httpFileRequestBody.Writer(requestStream);
+                }
+            }
+            else
+            {
+                var bytes = RequestBodyBytes == null ? _defaultEncoding.GetBytes((string)RequestBody) : RequestBodyBytes;
 
-			using (var requestStream = webRequest.GetRequestStream())
-			{
-				requestStream.Write(bytes, 0, bytes.Length);
-			}
+                webRequest.ContentLength = bytes.Length;
+
+                using (var requestStream = webRequest.GetRequestStream())
+                {
+                    requestStream.Write(bytes, 0, bytes.Length);
+                }
+            }
 		}
 
 		// TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
