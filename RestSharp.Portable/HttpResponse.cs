@@ -143,6 +143,9 @@ namespace RestSharp
                 this.ContentType = responseMessage.Content.Headers.ContentType;
                 this.ContentLength = responseMessage.Content.Headers.ContentLength;
 
+                byte[] bytes = await responseMessage.Content.ReadAsByteArrayAsync();
+                this.RawBytes = bytes;
+
                 //if (http.ResponseWriter == null)
                 //{
                 //    byte[] bytes = await responseMessage.Content.ReadAsByteArrayAsync();

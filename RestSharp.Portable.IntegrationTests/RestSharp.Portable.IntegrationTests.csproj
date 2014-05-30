@@ -115,7 +115,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Downloads\Http-Multipart-Data-Parser-master\Http-Multipart-Data-Parser-master\HttpMultipartParser\HttpMultipartParser.csproj">
+    <ProjectReference Include="..\Http-Multipart-Data-Parser-master\HttpMultipartParser\HttpMultipartParser.csproj">
       <Project>{4691988a-ce66-40cb-afb4-2757255e03e0}</Project>
       <Name>HttpMultipartParser</Name>
     </ProjectReference>

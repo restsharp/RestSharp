@@ -64,7 +64,7 @@ namespace RestSharp
                 var cookie = new Cookie
                 {
                     Name = httpCookie.Name,
-                    Value = httpCookie.Value,
+                    Value = Uri.EscapeDataString(httpCookie.Value),
                     Domain = request.Url.Host
                 };
                 this.Instance.CookieContainer.Add(request.Url, cookie);
