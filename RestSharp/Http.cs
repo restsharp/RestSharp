@@ -178,9 +178,7 @@ namespace RestSharp
 		/// URL to call for this request
 		/// </summary>
 		public Uri Url { get; set; }
-		/// <summary>
-		/// Flag to send authorisation header with the HttpWebRequest
-		/// </summary>
+
 		public bool PreAuthenticate { get; set; }
 
 #if FRAMEWORK || PocketPC
