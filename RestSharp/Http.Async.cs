@@ -76,11 +76,11 @@ namespace RestSharp
 		{
 			return PutPostInternalAsync("PATCH", action);
 		}
-        
-        public HttpWebRequest MergeAsync(Action<HttpResponse> action)
-        {
-            return PutPostInternalAsync("MERGE", action);
-        }
+
+		public HttpWebRequest MergeAsync(Action<HttpResponse> action)
+		{
+			return PutPostInternalAsync("MERGE", action);
+		}
 
 		/// <summary>
 		/// Execute an async POST-style request with the specified HTTP Method.  
@@ -110,26 +110,26 @@ namespace RestSharp
 #endif
 		}
 
-	    private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+		private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
 		{
 			HttpWebRequest webRequest = null;
 			try
 			{
 				var url = Url;
 				webRequest = ConfigureAsyncWebRequest(method, url);
-                if (HasBody && (method == "DELETE" || method == "OPTIONS"))
-                {
-                    webRequest.ContentType = RequestContentType;
-                    WriteRequestBodyAsync(webRequest, callback);
-                }
-                else
-                {
-                    _timeoutState = new TimeOutState { Request = webRequest };
-                    var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
-                    SetTimeout(asyncResult, _timeoutState);
-                }
+				if (HasBody && (method == "DELETE" || method == "OPTIONS"))
+				{
+					webRequest.ContentType = RequestContentType;
+					WriteRequestBodyAsync(webRequest, callback);
+				}
+				else
+				{
+					_timeoutState = new TimeOutState { Request = webRequest };
+					var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+					SetTimeout(asyncResult, _timeoutState);
+				}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				ExecuteCallback(CreateErrorResponse(ex), callback);
 			}
@@ -161,11 +161,11 @@ namespace RestSharp
 				PreparePostBody(webRequest);
 				WriteRequestBodyAsync(webRequest, callback);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				ExecuteCallback(CreateErrorResponse(ex), callback);
 			}
-			
+
 			return webRequest;
 		}
 
@@ -224,7 +224,7 @@ namespace RestSharp
 
 			if (_timeoutState.TimedOut)
 			{
-				var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+				var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
 				ExecuteCallback(response, callback);
 				return;
 			}
@@ -232,9 +232,9 @@ namespace RestSharp
 			// write body to request stream
 			try
 			{
-				using(var requestStream = webRequest.EndGetRequestStream(result))
+				using (var requestStream = webRequest.EndGetRequestStream(result))
 				{
-					if(HasFiles || AlwaysMultipartFormData)
+					if (HasFiles || AlwaysMultipartFormData)
 					{
 						WriteMultipartFormData(requestStream);
 					}
@@ -254,8 +254,8 @@ namespace RestSharp
 				return;
 			}
 
-            		IAsyncResult asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
-            		SetTimeout(asyncResult, _timeoutState);
+			IAsyncResult asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+			SetTimeout(asyncResult, _timeoutState);
 		}
 
 		private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
@@ -264,8 +264,8 @@ namespace RestSharp
 			if (Timeout != 0)
 			{
 				ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true);
-			} 
-#endif		
+			}
+#endif
 		}
 
 		private static void TimeoutCallback(object state, bool timedOut)
@@ -298,33 +298,33 @@ namespace RestSharp
 
 			HttpWebResponse raw = null;
 
-            try
-            {
-                var webRequest = (HttpWebRequest)result.AsyncState;
-                raw = webRequest.EndGetResponse(result) as HttpWebResponse;
-            }
-            catch(WebException ex)
-            {
-                if(ex.Status == WebExceptionStatus.RequestCanceled)
-                {
-                    throw ex;
-                }
+			try
+			{
+				var webRequest = (HttpWebRequest)result.AsyncState;
+				raw = webRequest.EndGetResponse(result) as HttpWebResponse;
+			}
+			catch (WebException ex)
+			{
+				if (ex.Status == WebExceptionStatus.RequestCanceled)
+				{
+					throw ex;
+				}
 
-                // Check to see if this is an HTTP error or a transport error.
-                // In cases where an HTTP error occurs ( status code >= 400 )
-                // return the underlying HTTP response, otherwise assume a
-                // transport exception (ex: connection timeout) and
-                // rethrow the exception
+				// Check to see if this is an HTTP error or a transport error.
+				// In cases where an HTTP error occurs ( status code >= 400 )
+				// return the underlying HTTP response, otherwise assume a
+				// transport exception (ex: connection timeout) and
+				// rethrow the exception
 
-                if (ex.Response is HttpWebResponse)
-                {
-                    raw = ex.Response as HttpWebResponse;
-                }
-                else
-                {
-                    throw ex;
-                }
-            }
+				if (ex.Response is HttpWebResponse)
+				{
+					raw = ex.Response as HttpWebResponse;
+				}
+				else
+				{
+					throw ex;
+				}
+			}
 
 			callback(raw);
 			raw.Close();
@@ -332,11 +332,11 @@ namespace RestSharp
 
 		private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
 		{
-			var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
+			var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
 
 			try
 			{
-				if(_timeoutState.TimedOut)
+				if (_timeoutState.TimedOut)
 				{
 					response.ResponseStatus = ResponseStatus.TimedOut;
 					ExecuteCallback(response, callback);
@@ -349,7 +349,7 @@ namespace RestSharp
 					ExecuteCallback(response, callback);
 				});
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				ExecuteCallback(CreateErrorResponse(ex), callback);
 			}
@@ -386,7 +386,7 @@ namespace RestSharp
 #endif
 
 #if !WINDOWS_PHONE && !SILVERLIGHT
-            webRequest.PreAuthenticate = PreAuthenticate;
+			webRequest.PreAuthenticate = PreAuthenticate;
 #endif
 			AppendHeaders(webRequest);
 			AppendCookies(webRequest);
@@ -397,30 +397,30 @@ namespace RestSharp
 #if !WINDOWS_PHONE && !PocketPC
 			// WP7 doesn't as of Beta doesn't support a way to set this value either directly
 			// or indirectly
-			if(!HasFiles && !AlwaysMultipartFormData)
+			if (!HasFiles && !AlwaysMultipartFormData)
 			{
 				webRequest.ContentLength = 0;
 			}
 #endif
 
-			if(Credentials != null)
+			if (Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
 			}
 
 #if !SILVERLIGHT
-			if(UserAgent.HasValue())
+			if (UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
 			}
 #endif
 
 #if FRAMEWORK
-			if(ClientCertificates != null)
+			if (ClientCertificates != null)
 			{
 				webRequest.ClientCertificates.AddRange(ClientCertificates);
 			}
-			
+
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 			ServicePointManager.Expect100Continue = false;
 
@@ -433,7 +433,7 @@ namespace RestSharp
 			{
 				webRequest.ReadWriteTimeout = ReadWriteTimeout;
 			}
-            
+
 			if (Proxy != null)
 			{
 				webRequest.Proxy = Proxy;

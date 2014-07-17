@@ -87,13 +87,13 @@ namespace RestSharp
 			return PostPutInternal("PATCH");
 		}
 
-        /// <summary>
-        /// Execute a MERGE request
-        /// </summary>
-        public HttpResponse Merge()
-        {
-            return PostPutInternal("MERGE");
-        }
+		/// <summary>
+		/// Execute a MERGE request
+		/// </summary>
+		public HttpResponse Merge()
+		{
+			return PostPutInternal("MERGE");
+		}
 
 		/// <summary>
 		/// Execute a GET-style request with the specified HTTP Method.  
@@ -157,27 +157,27 @@ namespace RestSharp
 			_restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
 		}
 
-        private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
+		private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
 		{
 			var webException = ex as WebException;
 
-            if (webException != null && webException.Status == WebExceptionStatus.Timeout) 
+			if (webException != null && webException.Status == WebExceptionStatus.Timeout)
 			{
-                httpResponse.ResponseStatus = ResponseStatus.TimedOut;
-                httpResponse.ErrorMessage = ex.Message;
-                httpResponse.ErrorException = webException;
-			    return;
+				httpResponse.ResponseStatus = ResponseStatus.TimedOut;
+				httpResponse.ErrorMessage = ex.Message;
+				httpResponse.ErrorException = webException;
+				return;
 			}
-    
-            httpResponse.ErrorMessage = ex.Message;
-            httpResponse.ErrorException = ex;
-            httpResponse.ResponseStatus = ResponseStatus.Error;
-        }
+
+			httpResponse.ErrorMessage = ex.Message;
+			httpResponse.ErrorException = ex;
+			httpResponse.ResponseStatus = ResponseStatus.Error;
+		}
 
 		private HttpResponse GetResponse(HttpWebRequest request)
 		{
-            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
-            
+			var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
+
 			try
 			{
 				var webResponse = GetRawResponse(request);
@@ -185,7 +185,7 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-                ExtractErrorResponse(response, ex);
+				ExtractErrorResponse(response, ex);
 			}
 
 			return response;
@@ -193,24 +193,24 @@ namespace RestSharp
 
 		private static HttpWebResponse GetRawResponse(HttpWebRequest request)
 		{
-            try
-            {
-                return (HttpWebResponse)request.GetResponse();
-            }
-            catch (WebException ex)
-            {
-                // Check to see if this is an HTTP error or a transport error.
-                // In cases where an HTTP error occurs ( status code >= 400 )
-                // return the underlying HTTP response, otherwise assume a
-                // transport exception (ex: connection timeout) and
-                // rethrow the exception
+			try
+			{
+				return (HttpWebResponse)request.GetResponse();
+			}
+			catch (WebException ex)
+			{
+				// Check to see if this is an HTTP error or a transport error.
+				// In cases where an HTTP error occurs ( status code >= 400 )
+				// return the underlying HTTP response, otherwise assume a
+				// transport exception (ex: connection timeout) and
+				// rethrow the exception
 
-                if (ex.Response is HttpWebResponse)
-                {
-                    return ex.Response as HttpWebResponse;
-                }
-                throw;
-            }
+				if (ex.Response is HttpWebResponse)
+				{
+					return ex.Response as HttpWebResponse;
+				}
+				throw;
+			}
 		}
 
 		private void PreparePostData(HttpWebRequest webRequest)
@@ -266,17 +266,17 @@ namespace RestSharp
 
 			webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 #if FRAMEWORK
-			if(ClientCertificates != null)
+			if (ClientCertificates != null)
 			{
 				webRequest.ClientCertificates.AddRange(ClientCertificates);
 			}
 #endif
-			if(UserAgent.HasValue())
+			if (UserAgent.HasValue())
 			{
 				webRequest.UserAgent = UserAgent;
 			}
 
-			if(Timeout != 0)
+			if (Timeout != 0)
 			{
 				webRequest.Timeout = Timeout;
 			}
@@ -286,20 +286,20 @@ namespace RestSharp
 				webRequest.ReadWriteTimeout = ReadWriteTimeout;
 			}
 
-			if(Credentials != null)
+			if (Credentials != null)
 			{
 				webRequest.Credentials = Credentials;
 			}
 
-			if(Proxy != null)
+			if (Proxy != null)
 			{
 				webRequest.Proxy = Proxy;
 			}
 
 			webRequest.AllowAutoRedirect = FollowRedirects;
-			if(FollowRedirects && MaxRedirects.HasValue)
+			if (FollowRedirects && MaxRedirects.HasValue)
 			{
-				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value; 
+				webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
 			}
 
 			return webRequest;

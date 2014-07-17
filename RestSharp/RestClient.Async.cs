@@ -40,18 +40,18 @@ namespace RestSharp
 #if PocketPC
                 string method = request.Method.ToString();
 #else
-				string method = Enum.GetName(typeof (Method), request.Method);
+			string method = Enum.GetName(typeof(Method), request.Method);
 #endif
-				switch (request.Method)
-				{
-                        case Method.MERGE:
-						case Method.PATCH:
-						case Method.POST:
-						case Method.PUT:
-							return ExecuteAsync(request, callback, method, DoAsPostAsync);
-						default:
-							return ExecuteAsync(request, callback, method, DoAsGetAsync);
-				}
+			switch (request.Method)
+			{
+				case Method.MERGE:
+				case Method.PATCH:
+				case Method.POST:
+				case Method.PUT:
+					return ExecuteAsync(request, callback, method, DoAsPostAsync);
+				default:
+					return ExecuteAsync(request, callback, method, DoAsGetAsync);
+			}
 		}
 
 		/// <summary>
@@ -162,7 +162,7 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-				restResponse = new RestResponse<T> { Request = request, ResponseStatus = ResponseStatus.Error, ErrorMessage = ex.Message, ErrorException = ex};
+				restResponse = new RestResponse<T> { Request = request, ResponseStatus = ResponseStatus.Error, ErrorMessage = ex.Message, ErrorException = ex };
 			}
 
 			callback(restResponse, asyncHandle);

@@ -39,8 +39,8 @@ namespace RestSharp
 			{
 				case Method.POST:
 				case Method.PUT:
-                case Method.PATCH:
-                case Method.MERGE:
+				case Method.PATCH:
+				case Method.MERGE:
 					return Execute(request, method, DoExecuteAsPost);
 				default:
 					return Execute(request, method, DoExecuteAsGet);
@@ -94,7 +94,7 @@ namespace RestSharp
 			return http.AsPost(method);
 		}
 
-	    /// <summary>
+		/// <summary>
 		/// Executes the specified request and deserializes the response content using the appropriate content handler
 		/// </summary>
 		/// <typeparam name="T">Target deserialization type</typeparam>
