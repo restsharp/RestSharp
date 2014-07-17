@@ -50,7 +50,7 @@ namespace RestSharp
 		HEAD,
 		OPTIONS,
 		PATCH,
-        MERGE,
+		MERGE,
 	}
 
 	/// <summary>
