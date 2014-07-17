@@ -94,7 +94,7 @@ namespace RestSharp
 			return http.AsPost(method);
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Executes the specified request and deserializes the response content using the appropriate content handler
 		/// </summary>
 		/// <typeparam name="T">Target deserialization type</typeparam>

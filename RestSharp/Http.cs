@@ -94,7 +94,6 @@ namespace RestSharp
 		/// Always send a multipart/form-data request - even when no Files are present.
 		/// </summary>
 		public bool AlwaysMultipartFormData { get; set; }
-
 		/// <summary>
 		/// UserAgent to be sent with request
 		/// </summary>
@@ -178,7 +177,9 @@ namespace RestSharp
 		/// URL to call for this request
 		/// </summary>
 		public Uri Url { get; set; }
-
+		/// <summary>
+		/// Flag to send authorisation header with the HttpWebRequest
+		/// </summary>
 		public bool PreAuthenticate { get; set; }
 
 #if FRAMEWORK || PocketPC
@@ -234,24 +235,24 @@ namespace RestSharp
 		{
 			return string.Format("multipart/form-data; boundary={0}", FormBoundary);
 		}
-
-		private static string GetMultipartFileHeader(HttpFile file)
+		
+		private static string GetMultipartFileHeader (HttpFile file)
 		{
-			return string.Format("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
+			return string.Format ("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
 				FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", _lineBreak);
 		}
-
-		private static string GetMultipartFormData(HttpParameter param)
+		
+		private static string GetMultipartFormData (HttpParameter param)
 		{
-			return string.Format("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
+			return string.Format ("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
 				FormBoundary, param.Name, param.Value, _lineBreak);
 		}
-
-		private static string GetMultipartFooter()
+		
+		private static string GetMultipartFooter ()
 		{
-			return string.Format("--{0}--{1}", FormBoundary, _lineBreak);
+			return string.Format ("--{0}--{1}", FormBoundary, _lineBreak);
 		}
-
+		
 		private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
 
 		// handle restricted headers the .NET way - thanks @dimebrain!
@@ -323,23 +324,23 @@ namespace RestSharp
 			{
 				webRequest.ContentType = GetMultipartFormContentType();
 			}
-			else if (HasParameters)
+			else if(HasParameters)
 			{
 				webRequest.ContentType = "application/x-www-form-urlencoded";
 				RequestBody = EncodeParameters();
 			}
-			else if (HasBody)
+			else if(HasBody)
 			{
 				webRequest.ContentType = RequestContentType;
 			}
 		}
-
+		
 		private static void WriteStringTo(Stream stream, string toWrite)
 		{
 			var bytes = _defaultEncoding.GetBytes(toWrite);
 			stream.Write(bytes, 0, bytes.Length);
 		}
-
+		
 		private void WriteMultipartFormData(Stream requestStream)
 		{
 			foreach (var param in Parameters)
@@ -394,8 +395,7 @@ namespace RestSharp
 				{
 					foreach (Cookie cookie in webResponse.Cookies)
 					{
-						response.Cookies.Add(new HttpCookie
-						{
+						response.Cookies.Add(new HttpCookie {
 							Comment = cookie.Comment,
 							CommentUri = cookie.CommentUri,
 							Discard = cookie.Discard,

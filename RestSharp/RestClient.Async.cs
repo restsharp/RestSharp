@@ -38,7 +38,7 @@ namespace RestSharp
 		public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 		{
 #if PocketPC
-                string method = request.Method.ToString();
+            string method = request.Method.ToString();
 #else
 			string method = Enum.GetName(typeof(Method), request.Method);
 #endif
@@ -162,7 +162,7 @@ namespace RestSharp
 			}
 			catch (Exception ex)
 			{
-				restResponse = new RestResponse<T> { Request = request, ResponseStatus = ResponseStatus.Error, ErrorMessage = ex.Message, ErrorException = ex };
+				restResponse = new RestResponse<T> { Request = request, ResponseStatus = ResponseStatus.Error, ErrorMessage = ex.Message, ErrorException = ex};
 			}
 
 			callback(restResponse, asyncHandle);
