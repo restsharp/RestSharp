@@ -40,6 +40,7 @@ namespace RestSharp
 				case Method.POST:
 				case Method.PUT:
 				case Method.PATCH:
+				case Method.MERGE:
 					return Execute(request, method, DoExecuteAsPost);
 				default:
 					return Execute(request, method, DoExecuteAsGet);
