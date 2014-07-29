@@ -80,9 +80,9 @@ namespace RestSharp
 		private RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod, Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
 		{
 			var http = HttpFactory.Create();
-			AuthenticateIfNeeded(this, request);
-
 			ConfigureHttp(request, http);
+
+			AuthenticateIfNeeded(this, request);
 
 			var asyncHandle = new RestRequestAsyncHandle();
 

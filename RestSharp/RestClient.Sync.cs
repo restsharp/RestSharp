@@ -60,7 +60,6 @@ namespace RestSharp
 
 		private IRestResponse Execute(IRestRequest request, string httpMethod, Func<IHttp, string, HttpResponse> getResponse)
 		{
-			AuthenticateIfNeeded(this, request);
 
 			IRestResponse response = new RestResponse();
 			try
@@ -68,6 +67,8 @@ namespace RestSharp
 				var http = HttpFactory.Create();
 
 				ConfigureHttp(request, http);
+
+				AuthenticateIfNeeded(this, request);
 
 				response = ConvertToRestResponse(request, getResponse(http, httpMethod));
 				response.Request = request;
