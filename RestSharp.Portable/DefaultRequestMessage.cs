@@ -80,7 +80,7 @@ namespace RestSharp
                     if (!string.IsNullOrEmpty(request.RequestContentType))
                     {
                         //if not set, StringContent defaults to text/plain
-                        content.Headers.ContentType = new MediaTypeHeaderValue(request.RequestContentType);
+                        content.Headers.ContentType = MediaTypeHeaderValue.Parse(request.RequestContentType);
                     }
 
                     this.Instance.Content = content;
