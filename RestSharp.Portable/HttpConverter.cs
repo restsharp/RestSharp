@@ -95,7 +95,7 @@ namespace RestSharp
             return http;
         }
 
-        private void MergeClientProperties(IRestClient restClient, IRestRequest restRequest)
+        public void MergeClientProperties(IRestClient restClient, IRestRequest restRequest)
         {
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (var p in restClient.DefaultParameters)
