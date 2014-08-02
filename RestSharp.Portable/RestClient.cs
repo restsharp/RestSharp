@@ -388,6 +388,8 @@ namespace RestSharp
                 //response = ConvertToRestResponse(request, httpResponse); //execute async
 
                 var converter = new HttpConverter();
+                
+                converter.MergeClientProperties(this, restRequest);
 
                 var httpRequest = converter.ConvertTo(this, restRequest);
 
