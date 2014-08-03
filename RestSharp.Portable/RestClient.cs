@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,15 +27,15 @@ using System.Collections.ObjectModel;
 
 namespace RestSharp
 {
-    /// <summary>
-    /// Client to translate RestRequests into Http requests and process response result
-    /// </summary>
-    public partial class RestClient : IRestClient
+	/// <summary>
+	/// Client to translate RestRequests into Http requests and process response result
+	/// </summary>
+	public partial class RestClient : IRestClient
     {
-        #region Private Members
+        #region Private Members 
 
-        static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-
+		static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
+            
         #endregion
 
         //public IHttpFactory HttpFactory = new SimpleHttpFactory<Http>();
@@ -43,35 +43,35 @@ namespace RestSharp
         #region Public Constructors
 
         /// <summary>
-        /// Default constructor that registers default content handlers
-        /// </summary>
-        public RestClient()
-        {
+		/// Default constructor that registers default content handlers
+		/// </summary>
+		public RestClient()
+		{
             ContentHandlers = new Dictionary<string, IDeserializer>();
-            AcceptTypes = new List<string>();
-            DefaultParameters = new List<Parameter>();
+			AcceptTypes = new List<string>();
+			DefaultParameters = new List<Parameter>();
 
-            // register default handlers
-            AddHandler("application/json", new JsonDeserializer());
-            AddHandler("application/xml", new XmlDeserializer());
-            AddHandler("text/json", new JsonDeserializer());
-            AddHandler("text/x-json", new JsonDeserializer());
-            AddHandler("text/javascript", new JsonDeserializer());
-            AddHandler("text/xml", new XmlDeserializer());
-            AddHandler("*", new JsonDeserializer());
+			// register default handlers
+			AddHandler("application/json", new JsonDeserializer());
+			AddHandler("application/xml", new XmlDeserializer());
+			AddHandler("text/json", new JsonDeserializer());
+			AddHandler("text/x-json", new JsonDeserializer());
+			AddHandler("text/javascript", new JsonDeserializer());
+			AddHandler("text/xml", new XmlDeserializer());
+			AddHandler("*", new JsonDeserializer());
 
-            FollowRedirects = true;
-        }
+			FollowRedirects = true;
+		}
 
-        /// <summary>
-        /// Sets the BaseUrl property for requests made by this client instance
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        public RestClient(string baseUrl)
-            : this()
-        {
-            BaseUrl = baseUrl;
-        }
+		/// <summary>
+		/// Sets the BaseUrl property for requests made by this client instance
+		/// </summary>
+		/// <param name="baseUrl"></param>
+		public RestClient(string baseUrl)
+			: this()
+		{
+			BaseUrl = baseUrl;
+		}
 
         #endregion
 
@@ -83,10 +83,10 @@ namespace RestSharp
         public ICollection<string> DefaultAcceptTypes { get { return new ReadOnlyCollection<string>(AcceptTypes); } }
 
         /// <summary>
-        /// Parameters included with every request made with this instance of RestClient
-        /// If specified in both client and request, the request wins
-        /// </summary>
-        public IList<Parameter> DefaultParameters { get; private set; }
+		/// Parameters included with every request made with this instance of RestClient
+		/// If specified in both client and request, the request wins
+		/// </summary>
+		public IList<Parameter> DefaultParameters { get; private set; }
 
         /// <summary>
         /// Maximum number of redirects to follow if FollowRedirects is true
@@ -121,7 +121,7 @@ namespace RestSharp
         private string _userAgent;
         public string UserAgent
         {
-            get
+            get 
             {
                 if (!this._userAgent.HasValue())
                 {
@@ -175,70 +175,70 @@ namespace RestSharp
         #region Public Methods
 
         /// <summary>
-        /// Registers a content handler to process response content
-        /// </summary>
-        /// <param name="contentType">MIME content type of the response content</param>
-        /// <param name="deserializer">Deserializer to use to process content</param>
-        public void AddHandler(string contentType, IDeserializer deserializer)
-        {
-            ContentHandlers[contentType] = deserializer;
-            if (contentType != "*")
-            {
-                AcceptTypes.Add(contentType);
-                // add Accept header based on registered deserializers
-                var accepts = string.Join(", ", AcceptTypes.ToArray());
-                this.RemoveDefaultParameter("Accept");
-                this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-            }
-        }
+		/// Registers a content handler to process response content
+		/// </summary>
+		/// <param name="contentType">MIME content type of the response content</param>
+		/// <param name="deserializer">Deserializer to use to process content</param>
+		public void AddHandler(string contentType, IDeserializer deserializer)
+		{
+			ContentHandlers[contentType] = deserializer;
+			if (contentType != "*")
+			{
+				AcceptTypes.Add(contentType);
+				// add Accept header based on registered deserializers
+				var accepts = string.Join(", ", AcceptTypes.ToArray());
+				this.RemoveDefaultParameter("Accept");
+				this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+			}
+		}
 
-        /// <summary>
-        /// Remove a content handler for the specified MIME content type
-        /// </summary>
-        /// <param name="contentType">MIME content type to remove</param>
-        public void RemoveHandler(string contentType)
-        {
-            ContentHandlers.Remove(contentType);
-            AcceptTypes.Remove(contentType);
-            this.RemoveDefaultParameter("Accept");
-        }
+		/// <summary>
+		/// Remove a content handler for the specified MIME content type
+		/// </summary>
+		/// <param name="contentType">MIME content type to remove</param>
+		public void RemoveHandler(string contentType)
+		{
+			ContentHandlers.Remove(contentType);
+			AcceptTypes.Remove(contentType);
+			this.RemoveDefaultParameter("Accept");
+		}
 
-        /// <summary>
-        /// Remove all content handlers
-        /// </summary>
-        public void ClearHandlers()
-        {
-            ContentHandlers.Clear();
-            AcceptTypes.Clear();
-            this.RemoveDefaultParameter("Accept");
-        }
+		/// <summary>
+		/// Remove all content handlers
+		/// </summary>
+		public void ClearHandlers()
+		{
+			ContentHandlers.Clear();
+			AcceptTypes.Clear();
+			this.RemoveDefaultParameter("Accept");
+		}
 
-        /// <summary>
-        /// Retrieve the handler for the specified MIME content type
-        /// </summary>
-        /// <param name="contentType">MIME content type to retrieve</param>
-        /// <returns>IDeserializer instance</returns>
-        IDeserializer GetHandler(string contentType)
-        {
-            if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
-            {
-                return ContentHandlers["*"];
-            }
+		/// <summary>
+		/// Retrieve the handler for the specified MIME content type
+		/// </summary>
+		/// <param name="contentType">MIME content type to retrieve</param>
+		/// <returns>IDeserializer instance</returns>
+		IDeserializer GetHandler(string contentType)
+		{
+			if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
+			{
+				return ContentHandlers["*"];
+			}
 
-            var semicolonIndex = contentType.IndexOf(';');
-            if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
-            IDeserializer handler = null;
-            if (ContentHandlers.ContainsKey(contentType))
-            {
-                handler = ContentHandlers[contentType];
-            }
-            else if (ContentHandlers.ContainsKey("*"))
-            {
-                handler = ContentHandlers["*"];
-            }
+			var semicolonIndex = contentType.IndexOf(';');
+			if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
+			IDeserializer handler = null;
+			if (ContentHandlers.ContainsKey(contentType))
+			{
+				handler = ContentHandlers[contentType];
+			}
+			else if (ContentHandlers.ContainsKey("*"))
+			{
+				handler = ContentHandlers["*"];
+			}
 
-            return handler;
-        }
+			return handler;
+		}
 
         /// <summary>
         /// Executes a GET-style request asynchronously, authenticating if needed
@@ -345,7 +345,7 @@ namespace RestSharp
                     return await ExecuteAsync(request, method, token, DoAsPostAsync);
                 default:
                     return await ExecuteAsync(request, method, token, DoAsGetAsync);
-            }
+            }           
         }
 
         /// <summary>
@@ -367,28 +367,28 @@ namespace RestSharp
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
 
-        #endregion
+        #endregion 
 
-        #region Private Methods
+        #region Private Methods 
 
         private async Task<IRestResponse> ExecuteAsync(IRestRequest restRequest, HttpMethod httpMethod, CancellationToken token, Func<IHttp, HttpMethod, CancellationToken, Task<HttpResponse>> getResponse)
         {
-            //AddAuthenticationIfNeeded(restRequest);
+			//AddAuthenticationIfNeeded(restRequest);
 
-            IRestResponse response = new RestResponse();
+			IRestResponse response = new RestResponse();
 
             try
-            {
-                //var http = HttpFactory.Create();
+			{
+				//var http = HttpFactory.Create();
 
                 //http.HandlerFactory = this.HandlerFactory();                               
-
+                
                 //ConfigureHttp(request, http);
 
                 //response = ConvertToRestResponse(request, httpResponse); //execute async
 
                 var converter = new HttpConverter();
-
+                
                 converter.MergeClientProperties(this, restRequest);
 
                 var httpRequest = converter.ConvertTo(this, restRequest);
@@ -399,16 +399,16 @@ namespace RestSharp
 
                 response = converter.ConvertFrom(httpResponse);
                 response.Request = restRequest;
-                response.Request.IncreaseNumAttempts();
-            }
-            catch (Exception ex)
-            {
-                response.ResponseStatus = ResponseStatus.Error;
-                response.ErrorMessage = ex.Message;
-                response.ErrorException = ex;
-            }
+				response.Request.IncreaseNumAttempts();
+			}
+			catch (Exception ex)
+			{
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+			}
 
-            return response;
+			return response;
         }
 
 
@@ -625,40 +625,40 @@ namespace RestSharp
         //    return restResponse;
         //}
 
-        private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
-        {
-            request.OnBeforeDeserialization(raw);
+		private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
+		{
+			request.OnBeforeDeserialization(raw);
 
-            IRestResponse<T> response = new RestResponse<T>();
-            try
-            {
-                response = raw.toAsyncResponse<T>();
-                response.Request = request;
+			IRestResponse<T> response = new RestResponse<T>();
+			try
+			{
+				response = raw.toAsyncResponse<T>();
+				response.Request = request;
 
-                // Only attempt to deserialize if the request has not errored due
-                // to a transport or framework exception.  HTTP errors should attempt to 
-                // be deserialized 
+				// Only attempt to deserialize if the request has not errored due
+				// to a transport or framework exception.  HTTP errors should attempt to 
+				// be deserialized 
 
-                if (response.ErrorException == null)
-                {
+				if (response.ErrorException==null) 
+				{
                     string mediaType = (raw.ContentType != null) ? raw.ContentType.MediaType : String.Empty;
 
                     IDeserializer handler = GetHandler(mediaType);
-                    handler.RootElement = request.RootElement;
-                    handler.DateFormat = request.DateFormat;
-                    handler.Namespace = request.XmlNamespace;
+					handler.RootElement = request.RootElement;
+					handler.DateFormat = request.DateFormat;
+					handler.Namespace = request.XmlNamespace;
 
-                    response.Data = handler.Deserialize<T>(raw);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.ResponseStatus = ResponseStatus.Error;
-                response.ErrorMessage = ex.Message;
-                response.ErrorException = ex;
-            }
+					response.Data = handler.Deserialize<T>(raw);
+				}
+			}
+			catch (Exception ex)
+			{
+				response.ResponseStatus = ResponseStatus.Error;
+				response.ErrorMessage = ex.Message;
+				response.ErrorException = ex;
+			}
 
-            return response;
+			return response;
         }
 
         #endregion
