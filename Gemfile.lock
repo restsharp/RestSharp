@@ -1,0 +1,39 @@
+GIT
+  remote: git://github.com/Albacore/albacore.git
+  revision: 857689b3b03a39c2a8b8434aba29231bafefb5d1
+  branch: clean_slate
+  specs:
+    albacore (0.7.2)
+      ProcessPilot (~> 2.0)
+      facter (~> 1.7)
+      highline (~> 1.6)
+      map (~> 6.5)
+      nokogiri (~> 1.5)
+      rake (> 10)
+      rubyzip (= 0.9.9)
+      semver2 (~> 3.3)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ProcessPilot (2.0.0.20120301)
+      rUtilAnts (>= 1.0)
+    facter (1.7.3)
+    highline (1.6.20)
+    map (6.5.1)
+    mini_portile (0.5.2)
+    nokogiri (1.6.0)
+      mini_portile (~> 0.5.0)
+    nokogiri (1.6.0-x86-mingw32)
+      mini_portile (~> 0.5.0)
+    rUtilAnts (2.0.0.20130827)
+    rake (10.1.0)
+    rubyzip (0.9.9)
+    semver2 (3.3.2)
+
+PLATFORMS
+  ruby
+  x86-mingw32
+
+DEPENDENCIES
+  albacore!
