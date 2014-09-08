@@ -46,7 +46,7 @@ namespace RestSharp.Deserializers
 			else
 			{
 				var root = FindRoot(response.Content);
-				Map(target, (IDictionary<string, object>)root);
+				target = (T)Map(target, (IDictionary<string, object>)root);
 			}
 
 			return target;
@@ -62,7 +62,7 @@ namespace RestSharp.Deserializers
 			return data;
 		}
 
-		private void Map(object target, IDictionary<string, object> data)
+		private object Map(object target, IDictionary<string, object> data)
 		{
 			var objType = target.GetType();
 			var props = objType.GetProperties().Where(p => p.CanWrite).ToList();
@@ -97,6 +97,8 @@ namespace RestSharp.Deserializers
 				
 				if(value != null) prop.SetValue(target, ConvertValue(type, value), null);
 			}
+
+			return target;
 		}
 
 		private IDictionary BuildDictionary(Type type, object parent)

@@ -67,7 +67,7 @@ namespace RestSharp.Deserializers
 			}
 			else
 			{
-				Map(x, root);
+				x = (T)Map(x, root);
 			}
 
 			return x;
@@ -88,7 +88,7 @@ namespace RestSharp.Deserializers
 			}
 		}
 
-		protected virtual void Map(object x, XElement root)
+		protected virtual object Map(object x, XElement root)
 		{
 			var objType = x.GetType();
 			var props = objType.GetProperties();
@@ -262,6 +262,8 @@ namespace RestSharp.Deserializers
 					}
 				}
 			}
+
+			return x;
 		}
 
 		private static bool TryGetFromString(string inputString, out object result, Type type)
