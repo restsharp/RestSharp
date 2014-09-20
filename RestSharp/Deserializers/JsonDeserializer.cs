@@ -21,6 +21,11 @@ namespace RestSharp.Deserializers
 
 		public T Deserialize<T>(IRestResponse response)
 		{
+			return this.Deserialize<T>(response.Content);
+		}
+
+		public T Deserialize<T>(string serializedInput)
+		{
 			var target = Activator.CreateInstance<T>();
 
 			if (target is IList)
@@ -29,23 +34,23 @@ namespace RestSharp.Deserializers
 
 				if (RootElement.HasValue())
 				{
-					var root = FindRoot(response.Content);
+					var root = FindRoot(serializedInput);
 					target = (T)BuildList(objType, root);
 				}
-				else
+				else 
 				{
-					var data = SimpleJson.DeserializeObject(response.Content);
+					var data = SimpleJson.DeserializeObject(serializedInput);
 					target = (T)BuildList(objType, data);
 				}
 			}
 			else if (target is IDictionary)
 			{
-				var root = FindRoot(response.Content);
+				var root = FindRoot(serializedInput);
 				target = (T)BuildDictionary(target.GetType(), root);
 			}
 			else
 			{
-				var root = FindRoot(response.Content);
+				var root = FindRoot(serializedInput);
 				Map(target, (IDictionary<string, object>)root);
 			}
 

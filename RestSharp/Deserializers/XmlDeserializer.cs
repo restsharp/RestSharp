@@ -42,10 +42,15 @@ namespace RestSharp.Deserializers
 
 		public virtual T Deserialize<T>(IRestResponse response)
 		{
-			if (string.IsNullOrEmpty( response.Content ))
+			return this.Deserialize<T>(response.Content);
+		}
+
+		public virtual T Deserialize<T>(string serializedInput)
+		{
+			if (string.IsNullOrEmpty( serializedInput ))
 				return default(T);
 
-			var doc = XDocument.Parse(response.Content);
+			var doc = XDocument.Parse(serializedInput);
 			var root = doc.Root;
 			if (RootElement.HasValue() && doc.Root != null)
 			{

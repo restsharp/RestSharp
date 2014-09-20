@@ -30,14 +30,20 @@ namespace RestSharp.Deserializers
 
 		public string RootElement { get; set; }
 
+
 		public T Deserialize<T>(IRestResponse response)
 		{
-			if (string.IsNullOrEmpty(response.Content))
+			return this.Deserialize<T>(response.Content);
+		}
+
+		public T Deserialize<T>(string serializedInput)
+		{
+			if (string.IsNullOrEmpty(serializedInput))
 			{
 				return default(T);
 			}
 
-			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(serializedInput)))
 			{
 				var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
 				return (T)serializer.Deserialize(stream);
