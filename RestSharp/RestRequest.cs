@@ -382,6 +382,17 @@ namespace RestSharp
 		}
 
 		/// <summary>
+		/// Shortcut to AddParameter(name, value, QueryString) overload
+		/// </summary>
+		/// <param name="name">Name of the parameter to add</param>
+		/// <param name="value">Value of the parameter to add</param>
+		/// <returns></returns>
+		public IRestRequest AddQueryParameter (string name, string value)
+		{
+			return AddParameter(name, value, ParameterType.QueryString);
+		}
+
+		/// <summary>
 		/// Container of all HTTP parameters to be passed with the request. 
 		/// See AddParameter() for explanation of the types of parameters that can be passed
 		/// </summary>
