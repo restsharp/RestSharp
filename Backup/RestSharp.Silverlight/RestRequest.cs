@@ -252,28 +252,6 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Serializes obj to JSON data format and adds it to the request body.
-		/// </summary>
-		/// <param name="obj">The object to serialize</param>
-		/// <returns>This request</returns>
-		public IRestRequest AddJsonBody(object obj)
-		{
-			RequestFormat = DataFormat.Json;
-			return AddBody(obj, "");
-		}
-
-		/// <summary>
-		/// Serializes obj to XML data format and adds it to the request body..
-		/// </summary>
-		/// <param name="obj">The object to serialize</param>
-		/// <returns>This request</returns>
-		public IRestRequest AddXmlBody(object obj)
-		{
-			RequestFormat = DataFormat.Xml;
-			return AddBody(obj, "");
-		}
-
-		/// <summary>
 		/// Calls AddParameter() for all public, readable properties specified in the white list
 		/// </summary>
 		/// <example>
