@@ -175,15 +175,15 @@ namespace RestSharp
 		IRestRequest AddBody (object obj);
 
 		/// <summary>
-		/// Calls AddParameter() for all public, readable properties specified in the white list
+		/// Calls AddParameter() for all public, readable properties specified in the includedProperties list
 		/// </summary>
 		/// <example>
 		/// request.AddObject(product, "ProductId", "Price", ...);
 		/// </example>
 		/// <param name="obj">The object with properties to add as parameters</param>
-		/// <param name="whitelist">The names of the properties to include</param>
+		/// <param name="includedProperties">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		IRestRequest AddObject (object obj, params string[] whitelist);
+		IRestRequest AddObject (object obj, params string[] includedProperties);
 
 		/// <summary>
 		/// Calls AddParameter() for all public, readable properties of obj

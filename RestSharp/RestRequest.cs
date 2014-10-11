@@ -252,15 +252,15 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Calls AddParameter() for all public, readable properties specified in the white list
+		/// Calls AddParameter() for all public, readable properties specified in the includedProperties list
 		/// </summary>
 		/// <example>
 		/// request.AddObject(product, "ProductId", "Price", ...);
 		/// </example>
 		/// <param name="obj">The object with properties to add as parameters</param>
-		/// <param name="whitelist">The names of the properties to include</param>
+		/// <param name="includedProperties">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		public IRestRequest AddObject (object obj, params string[] whitelist)
+		public IRestRequest AddObject (object obj, params string[] includedProperties)
 		{
 			// automatically create parameters from object props
 			var type = obj.GetType();
@@ -268,7 +268,7 @@ namespace RestSharp
 
 			foreach (var prop in props)
 			{
-				bool isAllowed = whitelist.Length == 0 || (whitelist.Length > 0 && whitelist.Contains(prop.Name));
+				bool isAllowed = includedProperties.Length == 0 || (includedProperties.Length > 0 && includedProperties.Contains(prop.Name));
 
 				if (isAllowed)
 				{
