@@ -183,7 +183,7 @@ namespace RestSharp
 		/// <param name="obj">The object with properties to add as parameters</param>
 		/// <param name="includedProperties">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		IRestRequest AddObject (object obj, string[] includedProperties);
+		IRestRequest AddObject (object obj, params string[] includedProperties);
 
 		/// <summary>
 		/// Calls AddParameter() for all public, readable properties of obj
