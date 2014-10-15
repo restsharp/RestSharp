@@ -77,7 +77,7 @@ namespace RestSharp.Serializers
 					{
 						itemTypeName = type.Name;
 					}
-					var instance = new XElement(itemTypeName);
+					var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 					Map(instance, item);
 					root.Add(instance);
 				}
@@ -155,7 +155,7 @@ namespace RestSharp.Serializers
 								? setting.Name 
 								: type.Name;
 						}
-						var instance = new XElement(itemTypeName);
+						var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 						Map(instance, item);
 						element.Add(instance);
 					}

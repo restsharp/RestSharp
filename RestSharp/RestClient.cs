@@ -270,6 +270,11 @@ namespace RestSharp
             var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
             foreach (var p in urlParms)
             {
+				if (p.Value == null)
+				{
+					throw new ArgumentException(string.Format("Cannot build uri when url segment parameter '{0}' value is null.", p.Name), "request");
+				}
+
                 assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
             }
 
