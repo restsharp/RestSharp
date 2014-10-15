@@ -213,32 +213,37 @@ namespace RestSharp
 		/// <returns>This request</returns>
 		public IRestRequest AddBody (object obj, string xmlNamespace)
 		{
+		    return this.AddBody(obj, xmlNamespace, false);
+		}
+
+		private IRestRequest AddBody(object obj, string xmlNamespace, bool isPreserialized)
+		{
 			string serialized;
 			string contentType;
 
-			switch (RequestFormat)
+			switch (this.RequestFormat)
 			{
 				case DataFormat.Json:
-					serialized = JsonSerializer.Serialize(obj);
-					contentType = JsonSerializer.ContentType;
+					serialized = isPreserialized ? obj.ToString() : this.JsonSerializer.Serialize(obj);
+					contentType = this.JsonSerializer.ContentType;
 					break;
 
 				case DataFormat.Xml:
-					XmlSerializer.Namespace = xmlNamespace;
-					serialized = XmlSerializer.Serialize(obj);
-					contentType = XmlSerializer.ContentType;
+					this.XmlSerializer.Namespace = xmlNamespace;
+					serialized = isPreserialized ? obj.ToString() : this.XmlSerializer.Serialize(obj);
+					contentType = this.XmlSerializer.ContentType;
 					break;
 
 				default:
-					serialized = "";
-					contentType = "";
+					serialized = string.Empty;
+					contentType = string.Empty;
 					break;
 			}
 
 			// passing the content type as the parameter name because there can only be
 			// one parameter with ParameterType.RequestBody so name isn't used otherwise
 			// it's a hack, but it works :)
-			return AddParameter(contentType, serialized, ParameterType.RequestBody);
+			return this.AddParameter(contentType, serialized, ParameterType.RequestBody);
 		}
 
 		/// <summary>
@@ -251,7 +256,12 @@ namespace RestSharp
 			return AddBody(obj, "");
 		}
 
-		/// <summary>
+        public IRestRequest AddBody(string serializedJson)
+	    {
+            return this.AddBody(serializedJson, "", true);
+	    }
+
+	    /// <summary>
 		/// Calls AddParameter() for all public, readable properties specified in the includedProperties list
 		/// </summary>
 		/// <example>

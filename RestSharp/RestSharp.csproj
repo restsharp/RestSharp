@@ -46,6 +46,8 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,6 +60,7 @@
     <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
     <NoWarn>1591,1573,1658,1584,1574,1572</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
@@ -105,6 +108,8 @@
     <Compile Include="Compression\ZLib\ZLibCodec.cs" />
     <Compile Include="Compression\ZLib\ZLibConstants.cs" />
     <Compile Include="Compression\ZLib\ZLibStream.cs" />
+    <Compile Include="Deserializers\TypeResolverDelegate.cs" />
+    <Compile Include="Deserializers\DeserializerBase.cs" />
     <Compile Include="Deserializers\JsonDeserializer.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />

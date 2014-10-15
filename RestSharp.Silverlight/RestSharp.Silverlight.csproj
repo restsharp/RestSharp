@@ -148,6 +148,12 @@
     <Compile Include="..\RestSharp\Deserializers\IDeserializer.cs">
       <Link>Deserializers\IDeserializer.cs</Link>
     </Compile>
+	<Compile Include="..\restsharp\deserializers\TypeResolverDelegate.cs">
+      <Link>Deserializers\TypeResolverDelegate.cs</Link>
+    </Compile>
+	<Compile Include="..\restsharp\deserializers\DeserializerBase.cs">
+      <Link>Deserializers\DeserializerBase.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Deserializers\JsonDeserializer.cs">
       <Link>Deserializers\JsonDeserializer.cs</Link>
     </Compile>
@@ -267,7 +273,7 @@
     </Compile>
     <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
       <Link>RestRequestAsyncHandle.cs</Link>
-    </Compile>
+    </Compile>    
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

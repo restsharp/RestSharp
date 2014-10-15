@@ -14,33 +14,38 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using RestSharp.Deserializers;
-using RestSharp.Tests.SampleClasses;
-using Xunit;
-
 namespace RestSharp.Tests
 {
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Globalization;
+	using System.IO;
+	using System.Linq;	
+
+	using RestSharp.Deserializers;
+	using RestSharp.Tests.Fakes;
+	using RestSharp.Tests.SampleClasses;
+
+	using Xunit;
+	using Xunit.Sdk;
+
 	public class JsonTests
 	{
 		private const string AlternativeCulture = "pt-PT";
 
 		private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-        [Fact]
-        public void Can_Deserialize_Select_Tokens()
-        {
-            var data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
-            var response = new RestResponse { Content = data };
-            var json = new JsonDeserializer();
-            var output = json.Deserialize<StatusComplexList>(response);
-            Assert.Equal(4, output.Count);
-        }
+		[Fact]
+		public void Can_Deserialize_Select_Tokens()
+		{
+			var data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
+			var response = new RestResponse { Content = data };
+			var json = new JsonDeserializer();
+			var output = json.Deserialize<StatusComplexList>(response);
+			Assert.Equal(4, output.Count);
+		}
 
 		[Fact]
 		public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
@@ -408,7 +413,7 @@ namespace RestSharp.Tests
 		{
 			using (new CultureChange(AlternativeCulture))
 			{
-					Can_Deserialize_With_Default_Root();
+				this.Can_Deserialize_With_Default_Root();
 			}
 		}
 
@@ -662,7 +667,7 @@ namespace RestSharp.Tests
 		[Fact]
 		public void Can_Deserialize_To_Dictionary_String_String()
 		{
-            var doc = CreateJsonStringDictionary();
+			var doc = CreateJsonStringDictionary();
 			var d = new JsonDeserializer();
 			var response = new RestResponse { Content = doc };
 			var bd = d.Deserialize<Dictionary<string,string>>(response);
@@ -706,21 +711,130 @@ namespace RestSharp.Tests
 			Assert.Equal(42L, payload.ObjectProperty);
 		}
 
+		[Fact]
+		public void Can_Deserialize_Dictionary_of_Lists()
+		{
+			var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
+
+			var json = new JsonDeserializer { RootElement = "response" };
+
+		    var output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
+
+			Assert.NotEmpty(output.EmployeesMail);
+			Assert.NotEmpty(output.EmployeesTime);
+			Assert.NotEmpty(output.EmployeesPay);
+		}
+
+		[Fact]
+		public void Given_UnsetDeserializationResolver_Interface_When_Deserialize_Nested_Inferface_Expect_InvalidOperationException()
+		{
+			var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.None);
+		    var json = new JsonDeserializer();
+
+			Assert.Throws<InvalidOperationException>(() => json.Deserialize<NestedInterface>(new RestResponse() { Content = doc }));
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nested_Interface()
+		{
+			var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.None);
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<IFoo, ActualFoo>() };
+
+			var output = json.Deserialize<NestedInterface>(new RestResponse { Content = doc });
+
+			Assert.Equal(42, output.Foo.Id);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nested_List_When_Generic_Type_Is_Interface()
+		{
+			var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.List);
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<IFoo, ActualFoo>() };
+
+			var output = json.Deserialize<NestedListInterface>(new RestResponse { Content = doc });
+
+			Assert.Equal(42, output.Foo[0].Id);
+		}
+
+		[Fact]
+		public void Can_Deserialize_Nested_Abstract_Class()
+		{
+			var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.None);            
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<AbstractFoo, ActualAbstractFoo>() };
+
+			var output = json.Deserialize<NestedAbstract>(new RestResponse() { Content = doc });
+
+			Assert.Equal(42, output.Foo.Id);
+		}
+
         [Fact]
-        public void Can_Deserialize_Dictionary_of_Lists()
+        public void Can_Deserialize_Nested_List_When_Generic_Type_Is_Abstract()
         {
-            var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
+            var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.List);            
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<AbstractFoo, ActualAbstractFoo>() };
 
-            var json = new JsonDeserializer();
-            json.RootElement = "response";
+            var output = json.Deserialize<NestedListAbstract>(new RestResponse { Content = doc });
 
-            var output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
-
-            Assert.NotEmpty(output.EmployeesMail);
-            Assert.NotEmpty(output.EmployeesTime);
-            Assert.NotEmpty(output.EmployeesPay);
+            Assert.Equal(42, output.Foo[0].Id);
         }
 
+        [Fact]
+        public void Can_Deserialize_Nested_IList_IFoo()
+        {
+            var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.List);
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<IFoo, ActualFoo>() };
+
+            var output = json.Deserialize<NestedIListIFoo>(new RestResponse { Content = doc });
+
+            Assert.Equal(42, output.Foo[0].Id);
+        }
+
+        [Fact]
+        public void Can_Deserialize_Interface()
+        {
+            var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.None);
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<IFoo, ActualFoo>(), RootElement = "Foo" };
+
+            var output = json.Deserialize<IFoo>(new RestResponse { Content = doc });
+
+            Assert.Equal(42, output.Id);
+        }
+
+        [Fact]
+        public void Can_Deserialize_Abstract()
+        {
+            var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.None);            
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.Resolve<AbstractFoo, ActualAbstractFoo>(), RootElement = "Foo" };
+
+            var output = json.Deserialize<AbstractFoo>(new RestResponse() { Content = doc });
+
+            Assert.Equal(42, output.Id);
+        }
+
+	    [Fact]
+        public void GivenNonMappedResolver_ExpectInvalidOperationExceptionUnable()
+	    {
+	        var doc = this.GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType.None);
+            var json = new JsonDeserializer { DeserializationResolver = x => FakeResolver.ResolveAbstractFoo(x), RootElement = "Foo" };
+
+	        Assert.Throws<InvalidOperationException>(() => { json.Deserialize<IFoo>(new RestResponse { Content = doc }); });            
+	    }
+
+		private string GetInterfaceOrAbstractSampleData(InterfaceOrAbstractSampleDataType dataType)
+		{
+			var listPart = dataType == InterfaceOrAbstractSampleDataType.None ? string.Empty : dataType.ToString().ToLower();
+			var filename = string.Format("interfaceorabstract{0}.txt", listPart);            
+			var doc = File.ReadAllText(Path.Combine("SampleData", filename));
+
+			return doc;
+		}
+
+		private enum InterfaceOrAbstractSampleDataType
+		{
+			List,
+			None
+		}
+		
 		private string CreateJsonWithUnderscores()
 		{
 			var doc = new JsonObject();
@@ -919,6 +1033,6 @@ namespace RestSharp.Tests
 			var response = new RestResponse { Content = doc };
 			var d = new JsonDeserializer();
 			return d.Deserialize<T>(response);
-		}
+		}	    
 	}
 }

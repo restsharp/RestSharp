@@ -1,14 +1,9 @@
 ﻿#if FRAMEWORK || PocketPC
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using RestSharp.Deserializers;
-
 namespace RestSharp
 {
-	public partial class RestClient
+    using System;    
+
+    public partial class RestClient
 	{
 
 
@@ -100,10 +95,10 @@ namespace RestSharp
 		/// <typeparam name="T">Target deserialization type</typeparam>
 		/// <param name="request">Request to execute</param>
 		/// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
-		public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
+		public virtual IRestResponse<T> Execute<T>(IRestRequest request)
 		{
 			return Deserialize<T>(request, Execute(request));
-		}
+		}         
 
 		public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
 		{

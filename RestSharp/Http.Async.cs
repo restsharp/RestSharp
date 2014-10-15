@@ -385,6 +385,9 @@ namespace RestSharp
 			webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif
 
+#if !SILVERLIGHT
+#endif
+
 #if !WINDOWS_PHONE && !SILVERLIGHT
 			webRequest.PreAuthenticate = PreAuthenticate;
 #endif

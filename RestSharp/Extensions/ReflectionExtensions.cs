@@ -54,8 +54,16 @@ namespace RestSharp.Extensions
 		/// <returns></returns>
 		public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic) {
 			while (toCheck != typeof(object)) {
+				// http://msdn.microsoft.com/en-us/library/system.type.basetype.aspx
+				// BaseType returns the Type from which the current Type directly inherits, or null if the current Type represents the Object class or an interface.
+				if (toCheck == null)
+				{
+					break;
+				}
+
 				var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-				if (generic == cur) {
+				if (generic == cur)
+				{
 					return true;
 				}
 				toCheck = toCheck.BaseType;

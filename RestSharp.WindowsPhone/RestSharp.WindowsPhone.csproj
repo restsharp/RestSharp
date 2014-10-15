@@ -201,6 +201,12 @@
     <Compile Include="..\restsharp\deserializers\IDeserializer.cs">
       <Link>Deserializers\IDeserializer.cs</Link>
     </Compile>
+	<Compile Include="..\restsharp\deserializers\TypeResolverDelegate.cs">
+      <Link>Deserializers\TypeResolverDelegate.cs</Link>
+    </Compile>
+	<Compile Include="..\restsharp\deserializers\DeserializerBase.cs">
+      <Link>Deserializers\DeserializerBase.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\deserializers\JsonDeserializer.cs">
       <Link>Deserializers\JsonDeserializer.cs</Link>
     </Compile>
@@ -320,7 +326,7 @@
     </Compile>
     <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
       <Link>RestRequestAsyncHandle.cs</Link>
-    </Compile>
+    </Compile>    
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +343,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\packages\Unity.3.5.1404.0\lib\wp80\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention">
+      <HintPath>..\packages\Unity.3.5.1404.0\lib\wp80\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
