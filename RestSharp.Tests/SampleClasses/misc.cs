@@ -48,6 +48,11 @@ namespace RestSharp.Tests
 		public Order Order { get; set; }
 
 		public Disposition Disposition { get; set; }
+        public Band FavoriteBand { get; set; }
+        public class Band
+        {
+            public string Name { get; set; }
+        }
 
 	}
 

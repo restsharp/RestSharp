@@ -96,8 +96,8 @@ namespace RestSharp.Deserializers
 			foreach (var prop in props)
 			{
 				var type = prop.PropertyType;
-
-				if (!type.IsPublic || !prop.CanWrite)
+                var typeIsPublic = type.IsPublic || type.IsNestedPublic;
+				if (!typeIsPublic || !prop.CanWrite)
 					continue;
 
 				var name = prop.Name.AsNamespaced(Namespace);

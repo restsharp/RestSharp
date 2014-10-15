@@ -290,7 +290,18 @@ namespace RestSharp.Tests
 
 			Assert.Equal(date, output.StartDate);
 		}
+        [Fact]
+        public void Can_Deserialize_Nested_Class()
+        {
+            var doc = CreateElementsXml();
+            var response = new RestResponse { Content = doc };
 
+            var d = new XmlAttributeDeserializer();
+            var p = d.Deserialize<PersonForXml>(response);
+
+            Assert.NotNull(p.FavoriteBand);
+            Assert.Equal("Goldfinger",p.FavoriteBand.Name);
+        }
 		[Fact]
 		public void Can_Deserialize_Elements_On_Default_Root()
 		{
@@ -838,6 +849,10 @@ namespace RestSharp.Tests
 							));
 			}
 			root.Add(friends);
+
+            root.Add(new XElement("FavoriteBand",
+                 new XElement("Name", "Goldfinger")
+             ));
 
 			doc.Add(root);
 			return doc.ToString();

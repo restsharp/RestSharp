@@ -253,7 +253,11 @@ namespace RestSharp.Tests
 								new XElement(ns + "Since", DateTime.Now.Year - i)
 							));
 			}
-			root.Add(friends);
+            root.Add(friends);
+
+            root.Add(new XElement(ns + "FavoriteBand",
+                        new XElement(ns + "Name", "Goldfinger")
+                    ));
 
 			doc.Add(root);
 			return doc.ToString();
