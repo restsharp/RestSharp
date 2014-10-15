@@ -152,7 +152,6 @@
     <Compile Include="Serializers\XmlSerializer.cs" />
     <Compile Include="Http.Async.cs" />
     <Compile Include="RestClient.Sync.cs" />
-    <None Include="packages.config" />
     <None Include="T4Helper\T4Helper.tt">
       <LastGenOutput>T4Helper.log</LastGenOutput>
     </None>
