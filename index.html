@@ -56,7 +56,7 @@ var client = new RestClient("http://example.com");
 
 var request = new RestRequest("resource/{id}", Method.POST);
 request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
-request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
+request.AddUrlSegment("id", "123"); // replaces matching token in request.Resource
 
 // easily add HTTP Headers
 request.AddHeader("header", "value");
