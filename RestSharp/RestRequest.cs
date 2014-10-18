@@ -357,12 +357,15 @@ namespace RestSharp
 		/// <returns></returns>
 		public IRestRequest AddHeader (string name, string value)
 		{
+#if !SILVERLIGHT
 			const string portSplit = @":\d+";
 			Func<string, bool> invalidHost = host => Uri.CheckHostName(Regex.Split(host, portSplit)[0]) == UriHostNameType.Unknown;
+
 			if (name == "Host" && invalidHost(value))
 			{
 				throw new ArgumentException("The specified value is not a valid Host header string.", "value");
 			}
+#endif
 			return AddParameter(name, value, ParameterType.HttpHeader);
 		}
 

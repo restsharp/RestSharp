@@ -41,6 +41,8 @@ namespace RestSharp.Tests {
 		[InlineData(".")]
 		[InlineData(".:2345")]
 		[InlineData(":5678")]
+		[InlineData("")]
+		[InlineData("foo:bar:baz")]
 		public void Cannot_Set_Invalid_Host_Header(string value)
 		{
 			var request = new RestRequest();
