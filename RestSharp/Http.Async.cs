@@ -85,7 +85,8 @@ namespace RestSharp
 		/// <summary>
 		/// Execute an async POST-style request with the specified HTTP Method.  
 		/// </summary>
-		/// <param name="httpMethod">The HTTP method to execute.</param>
+        /// <param name="action"></param>
+        /// <param name="httpMethod">The HTTP method to execute.</param>
 		/// <returns></returns>
 		public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
 		{
@@ -99,7 +100,8 @@ namespace RestSharp
 		/// <summary>
 		/// Execute an async GET-style request with the specified HTTP Method.  
 		/// </summary>
-		/// <param name="httpMethod">The HTTP method to execute.</param>
+        /// <param name="action"></param>
+        /// <param name="httpMethod">The HTTP method to execute.</param>
 		/// <returns></returns>
 		public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
 		{
