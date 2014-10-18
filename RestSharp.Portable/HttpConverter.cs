@@ -11,6 +11,8 @@ namespace RestSharp
         public IHttpRequest ConvertTo(IRestClient restClient, IRestRequest request)
         {
             var http = new HttpRequest();
+            
+            MergeClientProperties(restClient, request);
 
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
