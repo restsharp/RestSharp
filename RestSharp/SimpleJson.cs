@@ -1348,7 +1348,11 @@ namespace RestSharp
 #endif
                     if (type == typeof(Guid) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid)))
                         return new Guid(str);
-                    return str;
+
+					if (type == typeof(string))
+						return str;
+
+					return Convert.ChangeType (str, type);
                 }
                 else
                 {
