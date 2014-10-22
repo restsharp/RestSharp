@@ -10,7 +10,7 @@ using System;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("John Sheehan, RestSharp Community")]
 [assembly: AssemblyProduct("RestSharp")]
-[assembly: AssemblyCopyright("Copyright © RestSharp Project 2009-2012")]
+[assembly: AssemblyCopyright("Copyright © RestSharp Project 2009-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
@@ -33,5 +33,5 @@ using System;
 
 class SharedAssembylInfo
 {
-    public const string Version = "104.4.0";
+    public const string Version = "104.5.1";
 }

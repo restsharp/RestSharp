@@ -55,8 +55,8 @@ namespace RestSharp.Extensions
 			if (input == null)
 				throw new ArgumentNullException("input");
 
-			if (input.Length <= maxLength)
-				return Uri.EscapeDataString(input);
+		    if (input.Length <= maxLength)
+		        return Uri.EscapeUriString(input);
 
 			StringBuilder sb = new StringBuilder(input.Length * 2);
 			int index = 0;
@@ -64,7 +64,7 @@ namespace RestSharp.Extensions
 			{
 				int length = Math.Min(input.Length - index, maxLength);
 				string subString = input.Substring(index, length);
-				sb.Append(Uri.EscapeDataString(subString));
+                sb.Append(Uri.EscapeUriString(subString));
 				index += subString.Length;
 			}
 
@@ -114,6 +114,7 @@ namespace RestSharp.Extensions
 		/// Parses most common JSON date formats
 		/// </summary>
 		/// <param name="input">JSON value to parse</param>
+		/// <param name="culture"></param>
 		/// <returns>DateTime</returns>
 		public static DateTime ParseJsonDate(this string input, CultureInfo culture)
 		{
@@ -246,6 +247,7 @@ namespace RestSharp.Extensions
 		/// Converts a string to pascal case
 		/// </summary>
 		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
+        /// <param name="culture"></param>
 		/// <returns>string</returns>
 		public static string ToPascalCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
 		{
@@ -257,7 +259,8 @@ namespace RestSharp.Extensions
 		/// </summary>
 		/// <param name="text">String to convert</param>
 		/// <param name="removeUnderscores">Option to remove underscores</param>
-		/// <returns></returns>
+        /// <param name="culture"></param>
+        /// <returns></returns>
 		public static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture)
 		{
 			if (String.IsNullOrEmpty(text))
@@ -291,6 +294,7 @@ namespace RestSharp.Extensions
 		/// Converts a string to camel case
 		/// </summary>
 		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
+		/// <param name="culture"></param>
 		/// <returns>String</returns>
 		public static string ToCamelCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
 		{
@@ -356,6 +360,19 @@ namespace RestSharp.Extensions
 		}
 
 		/// <summary>
+		/// Add spaces to a pascal-cased string
+		/// </summary>
+		/// <param name="pascalCasedWord">String to convert</param>
+		/// <returns>string</returns>
+		public static string AddSpaces(this string pascalCasedWord)
+		{
+			return
+				Regex.Replace(
+					Regex.Replace(Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1 $2"), @"([a-z\d])([A-Z])",
+						"$1 $2"), @"[-\s]", " ");
+		}
+
+		/// <summary>
 		/// Return possible variants of a name for name matching.
 		/// </summary>
 		/// <param name="name">String to convert</param>
@@ -391,6 +408,12 @@ namespace RestSharp.Extensions
 
 			// try name with underscore prefix, using camel case
 			yield return name.ToCamelCase(culture).AddUnderscorePrefix();
+
+			// try name with spaces
+			yield return name.AddSpaces();
+
+			// try name with spaces with lower case
+			yield return name.AddSpaces().ToLower(culture);
 		}
 	}
 }

@@ -422,14 +422,28 @@ namespace RestSharp
 						where p.Type == ParameterType.RequestBody
 						select p).FirstOrDefault();
 
+            // Only add the body if there aren't any files to make it a multipart form request
+            // If there are files, then add the body to the HTTP Parameters
 			if (body != null)
 			{
-				object val = body.Value;
-				if (val is byte[])
-					http.RequestBodyBytes = (byte[])val;
-				else
-					http.RequestBody = body.Value.ToString();
-				http.RequestContentType = body.Name;
+                http.RequestContentType = body.Name; 
+
+                if (!http.Files.Any())
+			    {
+			        object val = body.Value;
+			        if (val is byte[])
+			            http.RequestBodyBytes = (byte[]) val;
+			        else
+			            http.RequestBody = body.Value.ToString();
+			    }
+			    else
+			    {
+			        http.Parameters.Add(new HttpParameter
+			                            {
+			                                Name = body.Name,
+			                                Value = body.Value.ToString()
+			                            });
+			    }
 			}
 #if FRAMEWORK
 			ConfigureProxy(http);

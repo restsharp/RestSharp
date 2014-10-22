@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
 
@@ -288,16 +289,17 @@ namespace RestSharp
 			return AddBody(obj, xmlNamespace);
 		}
 
+		
 		/// <summary>
-		/// Calls AddParameter() for all public, readable properties specified in the white list
+		/// Calls AddParameter() for all public, readable properties specified in the includedProperties list
 		/// </summary>
 		/// <example>
 		/// request.AddObject(product, "ProductId", "Price", ...);
 		/// </example>
 		/// <param name="obj">The object with properties to add as parameters</param>
-		/// <param name="whitelist">The names of the properties to include</param>
+		/// <param name="includedProperties">The names of the properties to include</param>
 		/// <returns>This request</returns>
-		public IRestRequest AddObject (object obj, params string[] whitelist)
+		public IRestRequest AddObject (object obj, params string[] includedProperties)
 		{
 			// automatically create parameters from object props
 			var type = obj.GetType();
@@ -305,7 +307,7 @@ namespace RestSharp
 
 			foreach (var prop in props)
 			{
-				bool isAllowed = whitelist.Length == 0 || (whitelist.Length > 0 && whitelist.Contains(prop.Name));
+				bool isAllowed = includedProperties.Length == 0 || (includedProperties.Length > 0 && includedProperties.Contains(prop.Name));
 
 				if (isAllowed)
 				{
@@ -393,6 +395,15 @@ namespace RestSharp
 		/// <returns></returns>
 		public IRestRequest AddHeader (string name, string value)
 		{
+#if !SILVERLIGHT
+			const string portSplit = @":\d+";
+			Func<string, bool> invalidHost = host => Uri.CheckHostName(Regex.Split(host, portSplit)[0]) == UriHostNameType.Unknown;
+
+			if (name == "Host" && invalidHost(value))
+			{
+				throw new ArgumentException("The specified value is not a valid Host header string.", "value");
+			}
+#endif
 			return AddParameter(name, value, ParameterType.HttpHeader);
 		}
 
@@ -416,6 +427,17 @@ namespace RestSharp
 		public IRestRequest AddUrlSegment (string name, string value)
 		{
 			return AddParameter(name, value, ParameterType.UrlSegment);
+		}
+
+		/// <summary>
+		/// Shortcut to AddParameter(name, value, QueryString) overload
+		/// </summary>
+		/// <param name="name">Name of the parameter to add</param>
+		/// <param name="value">Value of the parameter to add</param>
+		/// <returns></returns>
+		public IRestRequest AddQueryParameter (string name, string value)
+		{
+			return AddParameter(name, value, ParameterType.QueryString);
 		}
 
 		/// <summary>

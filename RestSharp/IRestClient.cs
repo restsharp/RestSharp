@@ -71,21 +71,26 @@ namespace RestSharp
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="request"></param>
-		RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);
+        /// <param name="request"></param>
+        /// <param name="callback"></param>
+        RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
+		/// <param name="callback"></param>
 		RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
+
+#if FRAMEWORK || PocketPC		
+		IRestResponse Execute(IRestRequest request);
+		IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
+#endif
 
 #if FRAMEWORK
 		/// <summary>
 		/// X509CertificateCollection to be sent with request
 		/// </summary>
 		X509CertificateCollection ClientCertificates { get; set; }
-		IRestResponse Execute(IRestRequest request);
-		IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
 		
 		IWebProxy Proxy { get; set; }
 #endif

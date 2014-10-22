@@ -242,10 +242,13 @@ namespace RestSharp
 				FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", _lineBreak);
 		}
 		
-		private static string GetMultipartFormData (HttpParameter param)
+		private string GetMultipartFormData (HttpParameter param)
 		{
-			return string.Format ("--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}",
-				FormBoundary, param.Name, param.Value, _lineBreak);
+		    string format = param.Name == RequestContentType
+		        ? "--{0}{3}Content-Type: {1}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
+		        : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
+
+			return string.Format (format, FormBoundary, param.Name, param.Value, _lineBreak);
 		}
 		
 		private static string GetMultipartFooter ()
