@@ -1,4 +1,4 @@
-﻿#region Licensed
+#region Licensed
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -253,7 +253,11 @@ namespace RestSharp.Tests
 								new XElement(ns + "Since", DateTime.Now.Year - i)
 							));
 			}
-			root.Add(friends);
+            root.Add(friends);
+
+            root.Add(new XElement(ns + "FavoriteBand",
+                        new XElement(ns + "Name", "Goldfinger")
+                    ));
 
 			doc.Add(root);
 			return doc.ToString();
