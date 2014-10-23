@@ -207,7 +207,8 @@ namespace RestSharp
 		}
 
 		/// <summary>
-		/// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
+		/// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer.
+		/// The default format is XML. Change RequestFormat if you wish to use a different serialization format.
 		/// </summary>
 		/// <param name="obj">The object to serialize</param>
 		/// <param name="xmlNamespace">The XML namespace to use when serializing</param>
@@ -244,6 +245,7 @@ namespace RestSharp
 
 		/// <summary>
 		/// Serializes obj to data format specified by RequestFormat and adds it to the request body.
+		/// The default format is XML. Change RequestFormat if you wish to use a different serialization format.
 		/// </summary>
 		/// <param name="obj">The object to serialize</param>
 		/// <returns>This request</returns>
@@ -252,6 +254,42 @@ namespace RestSharp
 			return AddBody(obj, "");
 		}
 
+		/// <summary>
+		/// Serializes obj to JSON format and adds it to the request body.
+		/// </summary>
+		/// <param name="obj">The object to serialize</param>
+		/// <returns>This request</returns>
+		public IRestRequest AddJsonBody(object obj)
+		{
+			RequestFormat = DataFormat.Json;
+			return AddBody(obj, "");
+		}
+
+		/// <summary>
+		/// Serializes obj to XML format and adds it to the request body.
+		/// </summary>
+		/// <param name="obj">The object to serialize</param>
+		/// <returns>This request</returns>
+		public IRestRequest AddXmlBody(object obj)
+		{
+			RequestFormat = DataFormat.Xml;
+			return AddBody(obj, "");
+		}
+
+		/// <summary>
+		/// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
+		/// Serializes obj to XML format and passes xmlNamespace then adds it to the request body.
+		/// </summary>
+		/// <param name="obj">The object to serialize</param>
+		/// <param name="xmlNamespace">The XML namespace to use when serializing</param>
+		/// <returns>This request</returns>
+		public IRestRequest AddXmlBody(object obj, string xmlNamespace)
+		{
+			RequestFormat = DataFormat.Xml;
+			return AddBody(obj, xmlNamespace);
+		}
+
+		
 		/// <summary>
 		/// Calls AddParameter() for all public, readable properties specified in the includedProperties list
 		/// </summary>
