@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4 || MONODROID || MONOTOUCH || WP8 || SILVERLIGHT
 using System.Threading.Tasks;
 #endif
 using System.Text;
@@ -168,7 +168,7 @@ namespace RestSharp
 			callback(restResponse, asyncHandle);
 		}
 
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4 || MONODROID || MONOTOUCH || WP8 || SILVERLIGHT
 		/// <summary>
 		/// Executes a GET-style request asynchronously, authenticating if needed
 		/// </summary>
