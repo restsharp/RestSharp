@@ -37,13 +37,25 @@ namespace RestSharp.Tests
         }
 
         [Fact]
+        public void Can_Deserialize_Into_Struct()
+        {
+            const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
+            var xml = new XmlDeserializer();
+            var output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+
+            Assert.NotNull(output);
+            Assert.Equal("oneOneOne", output.One);
+            Assert.Equal("twoTwoTwo", output.Two);
+            Assert.Equal(3, output.Three);
+        }
+        [Fact]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             var xmlpath = PathFor("xmllists.xml");
             var doc = XDocument.Load(xmlpath);
 
             var xml = new XmlDeserializer();
-            var output = xml.Deserialize<SimpleTypesListSample>(new RestResponse() { Content = doc.ToString() });
+            var output = xml.Deserialize<SimpleTypesListSample>(new RestResponse { Content = doc.ToString() });
 
             Assert.NotEmpty(output.Names);
             Assert.NotEmpty(output.Numbers);
@@ -216,7 +228,7 @@ namespace RestSharp.Tests
         {
             var culture = CultureInfo.InvariantCulture;
             var doc = CreateXmlWithoutEmptyValues(culture);
-            var xml = new XmlDeserializer() { Culture = culture };
+            var xml = new XmlDeserializer { Culture = culture };
             var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
             Assert.NotNull(output.Id);
