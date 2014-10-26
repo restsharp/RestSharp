@@ -32,6 +32,19 @@ namespace RestSharp.Tests
         private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
         [Fact]
+        public void Can_Deserialize_Into_Struct()
+        {
+            const string content = "{\"one\":\"oneOneOne\", \"two\":\"twoTwoTwo\", \"three\":3}";
+            var json = new JsonDeserializer();
+            var output = json.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+
+            Assert.NotNull(output);
+            Assert.Equal("oneOneOne", output.One);
+            Assert.Equal("twoTwoTwo", output.Two);
+            Assert.Equal(3, output.Three);
+        }
+
+        [Fact]
         public void Can_Deserialize_Select_Tokens()
         {
             var data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
