@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RestSharp.Tests.SampleClasses
 {
@@ -28,6 +26,7 @@ namespace RestSharp.Tests.SampleClasses
     public class Payment
     {
         public PaymentType Type { get; set; }
+
         public Int32 Amount { get; set; }
     }
 

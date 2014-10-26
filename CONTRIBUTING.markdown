@@ -8,8 +8,9 @@ Follow these guidelines, in no particular order, to improve your chances of havi
 
  * Make each pull request atomic and exclusive; don't send pull requests for a laundry list of changes.
  * Even better, commit in small manageable chunks.
- * Tabs, not spaces. Bracket style doesn't matter. Do not reformat code you didn't touch.
+ * Spaces, not tabs. Bracket style doesn't matter. Do not reformat code you didn't touch.
  * Changes to XmlDeserializer or JsonDeserializer must be accompanied by a unit test covering the change.
+ * In general, changes should be accompanied by unit tests to show what was broken and how your patch fixes it.
  * No regions except for license header
  * Code must build for .NET 3.5 Client Profile, Silverlight 4 and Windows Phone 7
  * If you didn't write the code you must provide a reference to where you obtained it and preferably the license. 

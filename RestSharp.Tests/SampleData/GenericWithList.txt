@@ -1,9 +1,9 @@
 ﻿{
    "Data":
-	{
-		"Items":
-		[
-			{"Nickname":"Foe sho"}
-		]
-	}
+    {
+        "Items":
+        [
+            {"Nickname":"Foe sho"}
+        ]
+    }
 }

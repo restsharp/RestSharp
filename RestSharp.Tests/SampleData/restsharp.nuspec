@@ -12,7 +12,7 @@
     <iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
     <tags>REST HTTP API JSON XML</tags>
     <releaseNotes><![CDATA[
-			For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.markdown
-			]]></releaseNotes>
+            For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.markdown
+            ]]></releaseNotes>
   </metadata>
 </package>

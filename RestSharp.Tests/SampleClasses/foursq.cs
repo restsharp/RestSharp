@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace RestSharp.Tests.SampleClasses
 {
-	public class VenuesResponse
-	{
-		public List<Group> Groups { get; set; }
-	}
+    public class VenuesResponse
+    {
+        public List<Group> Groups { get; set; }
+    }
 
-	public class Group
-	{
-		public string Name { get; set; }
-	}
+    public class Group
+    {
+        public string Name { get; set; }
+    }
 }
