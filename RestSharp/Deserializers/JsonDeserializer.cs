@@ -49,7 +49,7 @@ namespace RestSharp.Deserializers
             else
             {
                 var root = FindRoot(response.Content);
-                Map(target, (IDictionary<string, object>)root);
+                target = (T)Map(target, (IDictionary<string, object>)root);
             }
 
             return target;
@@ -67,7 +67,7 @@ namespace RestSharp.Deserializers
             return data;
         }
 
-        private void Map(object target, IDictionary<string, object> data)
+        private object Map(object target, IDictionary<string, object> data)
         {
             var objType = target.GetType();
             var props = objType.GetProperties().Where(p => p.CanWrite).ToList();
@@ -108,6 +108,8 @@ namespace RestSharp.Deserializers
                 if (value != null)
                     prop.SetValue(target, ConvertValue(type, value), null);
             }
+
+            return target;
         }
 
         private IDictionary BuildDictionary(Type type, object parent)
@@ -204,23 +206,27 @@ namespace RestSharp.Deserializers
             {
                 return value.ChangeType(type, Culture);
             }
-            else if (type.IsEnum)
+
+            if (type.IsEnum)
             {
                 return type.FindEnumValue(stringValue, Culture);
             }
-            else if (type == typeof(Uri))
+
+            if (type == typeof(Uri))
             {
                 return new Uri(stringValue, UriKind.RelativeOrAbsolute);
             }
-            else if (type == typeof(string))
+
+            if (type == typeof(string))
             {
                 return stringValue;
             }
-            else if (type == typeof(DateTime)
+
+            if (type == typeof(DateTime)
 #if !PocketPC
-                    || type == typeof(DateTimeOffset)
+ || type == typeof(DateTimeOffset)
 #endif
-                    )
+)
             {
                 DateTime dt;
 
@@ -241,7 +247,8 @@ namespace RestSharp.Deserializers
                 {
                     return dt;
                 }
-                else if (type == typeof(DateTimeOffset))
+
+                if (type == typeof(DateTimeOffset))
                 {
                     return (DateTimeOffset)dt;
                 }
@@ -270,7 +277,8 @@ namespace RestSharp.Deserializers
                 {
                     return BuildList(type, value);
                 }
-                else if (genericTypeDef == typeof(Dictionary<,>))
+
+                if (genericTypeDef == typeof(Dictionary<,>))
                 {
                     var keyType = type.GetGenericArguments()[0];
 

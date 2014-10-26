@@ -70,7 +70,7 @@ namespace RestSharp.Deserializers
             }
             else
             {
-                Map(x, root);
+                x = (T)Map(x, root);
             }
 
             return x;
@@ -100,7 +100,7 @@ namespace RestSharp.Deserializers
             }
         }
 
-        protected virtual void Map(object x, XElement root)
+        protected virtual object Map(object x, XElement root)
         {
             var objType = x.GetType();
             var props = objType.GetProperties();
@@ -281,6 +281,8 @@ namespace RestSharp.Deserializers
                     }
                 }
             }
+
+            return x;
         }
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
@@ -325,9 +327,7 @@ namespace RestSharp.Deserializers
             }
 
             var list = (IList)Activator.CreateInstance(type);
-
             var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
-
             var name = t.Name;
 
             if (!elements.Any())
@@ -441,7 +441,7 @@ namespace RestSharp.Deserializers
             }
 
             // try looking for element that matches sanitized property name (Order by depth)
-            var element = 
+            var element =
                 root.Descendants()
                     .OrderBy(d => d.Ancestors().Count())
                     .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ?? root.Descendants()

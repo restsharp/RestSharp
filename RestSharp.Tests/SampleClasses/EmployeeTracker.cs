@@ -10,6 +10,7 @@ namespace RestSharp.Tests.SampleClasses
         /// Value:  Messages sent to employee.
         /// </summary>
         public Dictionary<String, List<String>> EmployeesMail { get; set; }
+
         /// <summary>
         /// Key:    Employee name.
         /// Value:  Hours worked this each week.

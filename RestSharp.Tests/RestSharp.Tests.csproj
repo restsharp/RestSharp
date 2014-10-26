@@ -84,6 +84,7 @@
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
+    <Compile Include="SampleClasses\Struct.cs" />
     <Compile Include="XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
     <Compile Include="JsonTests.cs" />
