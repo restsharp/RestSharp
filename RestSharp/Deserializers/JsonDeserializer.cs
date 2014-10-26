@@ -149,8 +149,8 @@ namespace RestSharp.Deserializers
                 {
                     if (itemType.IsPrimitive)
                     {
-                        var value = element.ToString();
-                        list.Add(value.ChangeType(itemType, Culture));
+                        var item = ConvertValue(itemType, element);
+                        list.Add(item);
                     }
                     else if (itemType == typeof(string))
                     {
