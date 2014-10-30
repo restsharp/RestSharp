@@ -66,8 +66,7 @@ namespace RestSharp
         /// Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
-        public RestClient(string baseUrl)
-            : this()
+        public RestClient(string baseUrl) : this()
         {
             BaseUrl = baseUrl;
         }
@@ -130,6 +129,9 @@ namespace RestSharp
         /// <returns>IDeserializer instance</returns>
         private IDeserializer GetHandler(string contentType)
         {
+            if (contentType == null)
+                throw new ArgumentNullException("contentType");
+
             if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
             {
                 return ContentHandlers["*"];
@@ -391,7 +393,7 @@ namespace RestSharp
                 select new HttpHeader
                 {
                     Name = p.Name,
-                    Value = p.Value.ToString()
+                    Value = Convert.ToString(p.Value)
                 };
 
             foreach (var header in headers)
@@ -404,7 +406,7 @@ namespace RestSharp
                 select new HttpCookie
                 {
                     Name = p.Name,
-                    Value = p.Value.ToString()
+                    Value = Convert.ToString(p.Value)
                 };
 
             foreach (var cookie in cookies)
@@ -418,7 +420,7 @@ namespace RestSharp
                 select new HttpParameter
                 {
                     Name = p.Name,
-                    Value = p.Value.ToString()
+                    Value = Convert.ToString(p.Value)
                 };
 
             foreach (var parameter in @params)
@@ -451,17 +453,18 @@ namespace RestSharp
                 if (!http.Files.Any())
                 {
                     object val = body.Value;
+
                     if (val is byte[])
                         http.RequestBodyBytes = (byte[]) val;
                     else
-                        http.RequestBody = body.Value.ToString();
+                        http.RequestBody = Convert.ToString(body.Value);
                 }
                 else
                 {
                     http.Parameters.Add(new HttpParameter
                     {
                         Name = body.Name,
-                        Value = body.Value.ToString()
+                        Value = Convert.ToString(body.Value)
                     });
                 }
             }
@@ -482,20 +485,22 @@ namespace RestSharp
 
         private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
         {
-            var restResponse = new RestResponse();
-            restResponse.Content = httpResponse.Content;
-            restResponse.ContentEncoding = httpResponse.ContentEncoding;
-            restResponse.ContentLength = httpResponse.ContentLength;
-            restResponse.ContentType = httpResponse.ContentType;
-            restResponse.ErrorException = httpResponse.ErrorException;
-            restResponse.ErrorMessage = httpResponse.ErrorMessage;
-            restResponse.RawBytes = httpResponse.RawBytes;
-            restResponse.ResponseStatus = httpResponse.ResponseStatus;
-            restResponse.ResponseUri = httpResponse.ResponseUri;
-            restResponse.Server = httpResponse.Server;
-            restResponse.StatusCode = httpResponse.StatusCode;
-            restResponse.StatusDescription = httpResponse.StatusDescription;
-            restResponse.Request = request;
+            var restResponse = new RestResponse
+            {
+                Content = httpResponse.Content,
+                ContentEncoding = httpResponse.ContentEncoding,
+                ContentLength = httpResponse.ContentLength,
+                ContentType = httpResponse.ContentType,
+                ErrorException = httpResponse.ErrorException,
+                ErrorMessage = httpResponse.ErrorMessage,
+                RawBytes = httpResponse.RawBytes,
+                ResponseStatus = httpResponse.ResponseStatus,
+                ResponseUri = httpResponse.ResponseUri,
+                Server = httpResponse.Server,
+                StatusCode = httpResponse.StatusCode,
+                StatusDescription = httpResponse.StatusDescription,
+                Request = request
+            };
 
             foreach (var header in httpResponse.Headers)
             {
@@ -547,6 +552,7 @@ namespace RestSharp
                 if (response.ErrorException == null)
                 {
                     IDeserializer handler = GetHandler(raw.ContentType);
+
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
                     if (handler != null)
