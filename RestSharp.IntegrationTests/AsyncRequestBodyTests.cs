@@ -8,7 +8,7 @@ namespace RestSharp.IntegrationTests
 {
     public class AsyncRequestBodyTests
     {
-        private const string BASE_URL = "http://localhost:8080/";
+        private const string BASE_URL = "http://localhost:8888/";
 
         [Fact]
         public void Can_Not_Be_Added_To_GET_Request()

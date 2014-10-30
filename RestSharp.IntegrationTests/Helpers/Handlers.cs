@@ -25,7 +25,7 @@ namespace RestSharp.IntegrationTests.Helpers
         }
 
         /// <summary>
-        /// Response to a request like this:  http://localhost:8080/assets/koala.jpg
+        /// Response to a request like this:  http://localhost:8888/assets/koala.jpg
         /// by streaming the file located at "assets\koala.jpg" back to the client.
         /// </summary>
         public static void FileHandler(HttpListenerContext context)
@@ -39,7 +39,7 @@ namespace RestSharp.IntegrationTests.Helpers
         /// <summary>
         /// T should be a class that implements methods whose names match the urls being called, and take one parameter, an HttpListenerContext.
         /// e.g.
-        /// urls exercised:  "http://localhost:8080/error"  and "http://localhost:8080/get_list"
+        /// urls exercised:  "http://localhost:8888/error"  and "http://localhost:8888/get_list"
         /// 
         /// class MyHandler
         /// {

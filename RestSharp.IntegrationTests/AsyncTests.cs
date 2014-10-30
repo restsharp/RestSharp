@@ -12,7 +12,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_GET_Async()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             const string val = "Basic async test";
 
             var resetEvent = new ManualResetEvent(false);
@@ -36,7 +36,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_GET_Async_Without_Async_Handle()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             const string val = "Basic async test";
 
             var resetEvent = new ManualResetEvent(false);
@@ -60,7 +60,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_GET_TaskAsync()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             const string val = "Basic async task test";
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
@@ -79,7 +79,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             const string ExceptionMessage = "Thrown from OnBeforeDeserialization";
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
@@ -117,7 +117,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_ExecuteGetTaskAsync_With_Response_Type()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
@@ -134,7 +134,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_GetTaskAsync_With_Response_Type()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
@@ -151,7 +151,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Cancel_GET_TaskAsync()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             const string val = "Basic async task test";
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
@@ -170,7 +170,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Cancel_GET_TaskAsync_With_Response_Type()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             const string val = "Basic async task test";
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
@@ -189,7 +189,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_GET_Request_Errors_TaskAsync()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
             {
@@ -206,7 +206,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_GET_Request_Errors_TaskAsync_With_Response_Type()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
             {
@@ -223,7 +223,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Timeout_GET_TaskAsync()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
@@ -248,7 +248,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Timeout_PUT_TaskAsync()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {

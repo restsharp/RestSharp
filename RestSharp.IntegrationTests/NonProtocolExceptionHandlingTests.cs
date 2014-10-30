@@ -29,7 +29,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_Server_Timeout_Error()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
@@ -46,7 +46,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_Server_Timeout_Error_Async()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
             var resetEvent = new ManualResetEvent(false);
 
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
@@ -75,7 +75,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_Server_Timeout_Error_With_Deserializer()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {

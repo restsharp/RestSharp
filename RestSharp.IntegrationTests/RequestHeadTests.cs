@@ -8,7 +8,7 @@ namespace RestSharp.IntegrationTests
 {
     public class RequestHeadTests
     {
-        private const string BASE_URL = "http://localhost:8080/";
+        private const string BASE_URL = "http://localhost:8888/";
 
         public RequestHeadTests()
         {

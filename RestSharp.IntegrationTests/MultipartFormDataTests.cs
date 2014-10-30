@@ -10,7 +10,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void MultipartFormDataAsync()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
@@ -32,8 +32,8 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void MultipartFormData()
         {
-            //const string baseUrl = "http://localhost:8080/";
-            const string baseUrl = "http://localhost:8080/";
+            //const string baseUrl = "http://localhost:8888/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {

@@ -10,7 +10,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_Binary_File_Download()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.FileHandler))
             {
@@ -26,7 +26,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Writes_Response_To_Stream()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.FileHandler))
             {

@@ -11,7 +11,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Handle_Gzip_Compressed_Content()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, GzipEchoValue("This is some gzipped content")))
             {
@@ -26,7 +26,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Handle_Deflate_Compressed_Content()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, DeflateEchoValue("This is some deflated content")))
             {
@@ -41,7 +41,7 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Handle_Uncompressed_Content()
         {
-            const string baseUrl = "http://localhost:8080/";
+            const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue("This is some sample content")))
             {
