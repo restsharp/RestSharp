@@ -113,7 +113,19 @@ namespace RestSharp.Deserializers
                 if (!typeIsPublic || !prop.CanWrite)
                     continue;
 
-                var name = prop.Name.AsNamespaced(Namespace);
+                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+                XName name;
+
+                if (attributes.Length > 0)
+                {
+                    var attribute = (DeserializeAsAttribute)attributes[0];
+                    name = attribute.Name.AsNamespaced(Namespace);
+                }
+                else
+                {
+                    name = prop.Name.AsNamespaced(Namespace);
+                }
+
                 var value = GetValueFromXml(root, name, prop);
 
                 if (value == null)

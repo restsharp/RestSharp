@@ -75,8 +75,8 @@ namespace RestSharp.Deserializers
             foreach (var prop in props)
             {
                 var type = prop.PropertyType;
-                string name = String.Empty;
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+                string name;
 
                 if (attributes.Length > 0)
                 {
