@@ -107,7 +107,6 @@
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
-    <Compile Include="SimpleJson.cs" />
     <Compile Include="UrlBuilderTests.cs" />
     <Compile Include="XmlDeserializerTests.cs" />
   </ItemGroup>
