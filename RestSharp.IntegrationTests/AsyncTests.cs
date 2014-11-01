@@ -12,12 +12,12 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_GET_Async()
         {
-            const string baseUrl = "http://localhost:8888/";
+            Uri baseUrl = new Uri("http://localhost:8888/");
             const string val = "Basic async test";
 
             var resetEvent = new ManualResetEvent(false);
 
-            using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue(val)))
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("");
@@ -36,12 +36,12 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Perform_GET_Async_Without_Async_Handle()
         {
-            const string baseUrl = "http://localhost:8888/";
+            Uri baseUrl = new Uri("http://localhost:8888/");
             const string val = "Basic async test";
 
             var resetEvent = new ManualResetEvent(false);
 
-            using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue(val)))
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("");

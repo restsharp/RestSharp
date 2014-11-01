@@ -66,9 +66,23 @@ namespace RestSharp
         /// Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
-        public RestClient(string baseUrl) : this()
+        public RestClient(Uri baseUrl)
+            : this()
         {
             BaseUrl = baseUrl;
+        }
+
+        /// <summary>
+        /// Sets the BaseUrl property for requests made by this client instance
+        /// </summary>
+        /// <param name="baseUrl"></param>
+        public RestClient(string baseUrl)
+            : this()
+        {
+            if (String.IsNullOrEmpty(baseUrl))
+                throw new ArgumentNullException("baseUrl");
+
+            BaseUrl = new Uri(baseUrl);
         }
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
@@ -212,28 +226,15 @@ namespace RestSharp
         /// </summary>
         public IAuthenticator Authenticator { get; set; }
 
-        private string _baseUrl;
 
         /// <summary>
         /// Combined with Request.Resource to construct URL for request
         /// Should include scheme and domain without trailing slash.
         /// </summary>
         /// <example>
-        /// client.BaseUrl = "http://example.com";
+        /// client.BaseUrl = new Uri("http://example.com");
         /// </example>
-        public virtual string BaseUrl
-        {
-            get { return _baseUrl; }
-            set
-            {
-                _baseUrl = value;
-
-                if (_baseUrl != null && _baseUrl.EndsWith("/"))
-                {
-                    _baseUrl = _baseUrl.Substring(0, _baseUrl.Length - 1);
-                }
-            }
-        }
+        public virtual Uri BaseUrl { get; set; }
 
         public bool PreAuthenticate { get; set; }
 
@@ -254,6 +255,7 @@ namespace RestSharp
         {
             var assembled = request.Resource;
             var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            var builder = new UriBuilder(BaseUrl);
 
             foreach (var p in urlParms)
             {
@@ -264,29 +266,35 @@ namespace RestSharp
                         "request");
                 }
 
-                assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                if (!string.IsNullOrEmpty(assembled))
+                    assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+
+                builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
             }
+
+            this.BaseUrl = new Uri(builder.ToString());
 
             if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
             {
                 assembled = assembled.Substring(1);
             }
 
-            if (!string.IsNullOrEmpty(BaseUrl))
+            if (BaseUrl != null && !String.IsNullOrEmpty(BaseUrl.AbsoluteUri))
             {
+                if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+                    assembled = String.Concat("/", assembled);
+
                 assembled = string.IsNullOrEmpty(assembled)
-                    ? this.BaseUrl
-                    : string.Format("{0}/{1}", this.BaseUrl, assembled);
+                    ? BaseUrl.AbsoluteUri
+                    : string.Format("{0}{1}", BaseUrl, assembled);
             }
 
             IEnumerable<Parameter> parameters;
 
             if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
             {
-                // build and attach querystring if this is a get-style request
-                parameters =
-                    request.Parameters.Where(
-                        p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString).ToList();
+                parameters = request.Parameters.Where(
+                    p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString).ToList();
             }
             else
             {
@@ -294,13 +302,12 @@ namespace RestSharp
             }
 
             if (!parameters.Any())
-            {
                 return new Uri(assembled);
-            }
 
-            // build and attach querystring 
+            // build and attach querystring
             var data = EncodeParameters(parameters);
             var separator = assembled.Contains("?") ? "&" : "?";
+
             assembled = string.Concat(assembled, separator, data);
 
             return new Uri(assembled);
@@ -308,17 +315,14 @@ namespace RestSharp
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
-            return string.Join("&", parameters.Select(x => EncodeParameter(x)).ToArray());
+            return string.Join("&", parameters.Select(EncodeParameter).ToArray());
         }
 
         private static string EncodeParameter(Parameter parameter)
         {
-            if (parameter.Value == null)
-            {
-                return string.Concat(parameter.Name.UrlEncode(), "=");
-            }
-
-            return string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
+            return parameter.Value == null
+                ? string.Concat(parameter.Name.UrlEncode(), "=")
+                : string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
         }
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
@@ -389,12 +393,12 @@ namespace RestSharp
             }
 
             var headers = from p in request.Parameters
-                where p.Type == ParameterType.HttpHeader
-                select new HttpHeader
-                {
-                    Name = p.Name,
-                    Value = Convert.ToString(p.Value)
-                };
+                          where p.Type == ParameterType.HttpHeader
+                          select new HttpHeader
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
             foreach (var header in headers)
             {
@@ -402,12 +406,12 @@ namespace RestSharp
             }
 
             var cookies = from p in request.Parameters
-                where p.Type == ParameterType.Cookie
-                select new HttpCookie
-                {
-                    Name = p.Name,
-                    Value = Convert.ToString(p.Value)
-                };
+                          where p.Type == ParameterType.Cookie
+                          select new HttpCookie
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
             foreach (var cookie in cookies)
             {
@@ -415,13 +419,13 @@ namespace RestSharp
             }
 
             var @params = from p in request.Parameters
-                where p.Type == ParameterType.GetOrPost
-                      && p.Value != null
-                select new HttpParameter
-                {
-                    Name = p.Name,
-                    Value = Convert.ToString(p.Value)
-                };
+                          where p.Type == ParameterType.GetOrPost
+                                && p.Value != null
+                          select new HttpParameter
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
             foreach (var parameter in @params)
             {
@@ -441,8 +445,8 @@ namespace RestSharp
             }
 
             var body = (from p in request.Parameters
-                where p.Type == ParameterType.RequestBody
-                select p).FirstOrDefault();
+                        where p.Type == ParameterType.RequestBody
+                        select p).FirstOrDefault();
 
             // Only add the body if there aren't any files to make it a multipart form request
             // If there are files, then add the body to the HTTP Parameters
@@ -455,7 +459,7 @@ namespace RestSharp
                     object val = body.Value;
 
                     if (val is byte[])
-                        http.RequestBodyBytes = (byte[]) val;
+                        http.RequestBodyBytes = (byte[])val;
                     else
                         http.RequestBody = Convert.ToString(body.Value);
                 }
