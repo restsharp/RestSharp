@@ -31,5 +31,5 @@ using System.Reflection;
 
 class SharedAssembylInfo
 {
-    public const string Version = "104.5.1";
+    public const string Version = "105.0.0";
 }
