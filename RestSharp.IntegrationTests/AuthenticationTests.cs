@@ -14,8 +14,8 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Can_Authenticate_With_Basic_Http_Auth()
         {
-            const string baseUrl = "http://localhost:8888/";
-            using (SimpleServer.Create(baseUrl, UsernamePasswordEchoHandler))
+            Uri baseUrl = new Uri("http://localhost:8888/");
+            using(SimpleServer.Create(baseUrl.AbsoluteUri, UsernamePasswordEchoHandler))
             {
                 var client = new RestClient(baseUrl)
                 {
@@ -39,7 +39,7 @@ namespace RestSharp.IntegrationTests
         //[Fact]
         public void Can_Authenticate_With_OAuth()
         {
-            var baseUrl = "https://api.twitter.com";
+            var baseUrl = new Uri("https://api.twitter.com");
             var client = new RestClient(baseUrl);
 
             client.Authenticator = OAuth1Authenticator.ForRequestToken(

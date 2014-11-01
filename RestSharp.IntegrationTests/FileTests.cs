@@ -10,9 +10,9 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_Binary_File_Download()
         {
-            const string baseUrl = "http://localhost:8888/";
+            Uri baseUrl = new Uri("http://localhost:8888/");
 
-            using (SimpleServer.Create(baseUrl, Handlers.FileHandler))
+            using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.FileHandler))
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("Assets/Koala.jpg");
