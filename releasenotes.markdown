@@ -1,5 +1,26 @@
 # RestSharp Release Notes
 
+## 105.0.0
+
+To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.5.0...105.0.0).
+
+### New Features/Improvements
+
+* Converted the BaseUrl to be a URI rather than a string **(potential breaking change)**
+* Updated the SimpleJson package to the latest version **(potential breaking change)**
+* Converted the use of tabs to spaces
+* Added support for the DeserializeAs attribute on XML
+* Added ability to deserialize into structs
+* Added additional methods on RestRequest
+  * `IRestRequest.AddJsonBody`
+  * `IRestRequest.AddXmlBody`
+  * `IRestRequest.AddQueryParameter`
+* Added support for multi-part form request to allow both a request body and files
+
+### Bug Fixes
+
+* Fixed potential Null Reference Exceptions on the parameters in RestClient (ToString usage)
+
 ## 104.5.0
 
 To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.4.0...104.5.0).
