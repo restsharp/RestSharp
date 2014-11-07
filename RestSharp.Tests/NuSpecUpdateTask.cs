@@ -60,7 +60,11 @@ namespace RestSharp.Tests
                 private Build.NuSpecUpdateTask _subject = new Build.NuSpecUpdateTask();
                 private bool _result;
 
+#if SIGNED
+                private string _expectedId = "RestSharpSigned";
+#else
                 private string _expectedId = "RestSharp";
+#endif
                 private string _expectedDescription = "Simple REST and HTTP API Client";
                 private string _expectedAuthors = "John Sheehan, RestSharp Community";
                 private string _expectedOwners = "John Sheehan, RestSharp Community";

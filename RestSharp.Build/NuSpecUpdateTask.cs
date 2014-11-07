@@ -40,7 +40,11 @@ namespace RestSharp.Build
 
             var name = this._assembly.GetName();
 
+#if SIGNED
+            this.Id = name.Name + "Signed";
+#else
             this.Id = name.Name;
+#endif
             this.Authors = this.GetAuthors(this._assembly);
             this.Description = this.GetDescription(this._assembly);
             this.Version = this.GetVersion(this._assembly);

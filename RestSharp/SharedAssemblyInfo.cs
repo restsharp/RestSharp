@@ -23,13 +23,23 @@ using System.Reflection;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(SharedAssembylInfo.Version + ".0")]
-[assembly: AssemblyInformationalVersion(SharedAssembylInfo.Version)]
 
 #if !PocketPC
+#if SIGNED
+[assembly: AssemblyInformationalVersion(SharedAssembylInfo.FileVersion)]
+[assembly: AssemblyFileVersion(SharedAssembylInfo.FileVersion + ".0")]
+#else
+[assembly: AssemblyInformationalVersion(SharedAssembylInfo.Version)]
 [assembly: AssemblyFileVersion(SharedAssembylInfo.Version + ".0")]
+#endif
 #endif
 
 class SharedAssembylInfo
 {
+#if SIGNED
+    public const string Version = "100.0.0";
+    public const string FileVersion = "105.0.0";
+#else
     public const string Version = "105.0.0";
+#endif
 }

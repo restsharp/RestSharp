@@ -26,13 +26,15 @@ namespace RestSharp.IntegrationTests
         [Fact]
         public void Handles_GET_Request_404_Error_With_Body()
         {
-            const string baseUrl = "http://localhost:8888/";
+            Uri baseUrl = new Uri("http://localhost:8080/");
 
-            //using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
-            using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
             {
-                var client = new RestClient(new Uri("http://nonexistantdomainimguessing.org"));
-                var request = new RestRequest("404WithBody");
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("404");
+
+                request.AddBody("This is the body");
+
                 var response = client.Execute(request);
 
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
