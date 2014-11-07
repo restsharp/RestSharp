@@ -49,7 +49,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS_PHONE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS_PHONE;WP8</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -61,7 +61,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>Bin\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS_PHONE</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS_PHONE;WP8</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -222,6 +222,9 @@
     </Compile>
     <Compile Include="..\RestSharp\Extensions\ResponseExtensions.cs">
       <Link>Extensions\ResponseExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
+      <Link>Extensions\ResponseStatusExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
