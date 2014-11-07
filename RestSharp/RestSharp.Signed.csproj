@@ -41,7 +41,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\DebugSigned\</OutputPath>
-	<IntermediateOutputPath>obj\DebugSigned\</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\DebugSigned\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;FRAMEWORK, SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -54,7 +54,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\ReleaseSigned\</OutputPath>
-	<IntermediateOutputPath>obj\ReleaseSigned\</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\ReleaseSigned\</IntermediateOutputPath>
     <DefineConstants>TRACE;FRAMEWORK, SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -199,6 +199,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.Signed.csproj">
+      <Project>{ccc30138-3d68-44d8-af1a-d22f769ee8dc}</Project>
+      <Name>RestSharp.Build.Signed</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
@@ -212,7 +218,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <UsingTask TaskName="NuSpecUpdateTask" AssemblyFile="$(SolutionDir).nuget\RestSharp.Build.dll" />
+  <UsingTask TaskName="NuSpecUpdateTask" AssemblyFile="$(SolutionDir).nuget\Signed\RestSharp.Build.dll" />
   <Target Name="AfterBuild" Condition="$(Configuration) == Release">
     <NuSpecUpdateTask SpecFile="$(SolutionDir)restsharp.nuspec" SourceAssemblyFile="$(TargetDir)RestSharp.dll" />
   </Target>
