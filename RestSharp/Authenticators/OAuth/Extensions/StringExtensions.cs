@@ -72,15 +72,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             var sb = new StringBuilder();
             foreach (var b in bytes)
             {
-                // [DC]: Support proper encoding of special characters (\n\r\t\b)
-                if ((b > 7 && b < 11) || b == 13)
-                {
-                    sb.Append(string.Format("%0{0:X}", b));
-                }
-                else
-                {
-                    sb.Append(string.Format("%{0:X}", b));
-                }
+                sb.Append(String.Format("%{0:X2}", b));
             }
             return sb.ToString();
         }
