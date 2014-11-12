@@ -2,7 +2,7 @@
 
 ## 105.0.0
 
-To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.5.0...105.0.0).
+To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/104.5.0...105.0).
 
 ### New Features/Improvements
 
