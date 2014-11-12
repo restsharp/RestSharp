@@ -55,7 +55,7 @@ namespace RestSharp.Extensions
                 throw new ArgumentNullException("input");
 
             if (input.Length <= maxLength)
-                return Uri.EscapeUriString(input);
+                return Uri.EscapeDataString(input);
 
             StringBuilder sb = new StringBuilder(input.Length * 2);
             int index = 0;
@@ -65,7 +65,7 @@ namespace RestSharp.Extensions
                 int length = Math.Min(input.Length - index, maxLength);
                 string subString = input.Substring(index, length);
 
-                sb.Append(Uri.EscapeUriString(subString));
+                sb.Append(Uri.EscapeDataString(subString));
                 index += subString.Length;
             }
 
