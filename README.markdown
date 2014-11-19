@@ -38,7 +38,7 @@ request.AddObject(object, "PersonId", "Name", ...);
 request.AddHeader("header", "value");
 
 // add files to upload (works with compatible verbs)
-request.AddFile(path);
+request.AddFile("file", path);
 
 // execute the request
 IRestResponse response = client.Execute(request);
