@@ -34,12 +34,13 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("404");
+                var request = new RestRequest("404") { Timeout = 500 };
                 var response = client.Execute(request);
 
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The operation has timed out");
+                Assert.Equal(response.ErrorException.Message,
+                    "The request was aborted: The operation has timed out.");
             }
         }
 
@@ -56,7 +57,7 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("404"); // {ReadWriteTimeout = 500}; // {Timeout = 500};
+                var request = new RestRequest("404") { Timeout = 500 };
 
                 client.ExecuteAsync(request, responseParam =>
                                              {
@@ -86,13 +87,14 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("404");
+                var request = new RestRequest("404") { Timeout = 500 };
                 var response = client.Execute<Response>(request);
 
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The operation has timed out");
+                Assert.Equal(response.ErrorException.Message,
+                    "The request was aborted: The operation has timed out.");
             }
         }
 
