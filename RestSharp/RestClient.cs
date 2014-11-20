@@ -255,7 +255,8 @@ namespace RestSharp
         {
             var assembled = request.Resource;
             var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            var builder = new UriBuilder(BaseUrl);
+
+            UriBuilder builder = BaseUrl != null ? new UriBuilder(BaseUrl) : null; 
 
             foreach (var p in urlParms)
             {
@@ -269,10 +270,16 @@ namespace RestSharp
                 if (!string.IsNullOrEmpty(assembled))
                     assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
 
-                builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                if (builder != null)
+                {
+                    builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                }
             }
 
-            this.BaseUrl = new Uri(builder.ToString());
+            if (builder != null)
+            {
+                this.BaseUrl = new Uri(builder.ToString());
+            }
 
             if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
             {
