@@ -274,7 +274,7 @@ namespace RestSharp
             if (Timeout != 0)
             {
                 ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
-                    new WaitOrTimerCallback(TimeoutCallback), timeOutState, Timeout, true);
+                    TimeoutCallback, timeOutState, Timeout, true);
             }
 #endif
         }
@@ -304,10 +304,8 @@ namespace RestSharp
 
         private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
         {
-            var response = new HttpResponse();
-            response.ResponseStatus = ResponseStatus.None;
-
-            HttpWebResponse raw = null;
+            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
+            HttpWebResponse raw;
 
             try
             {
@@ -318,7 +316,7 @@ namespace RestSharp
             {
                 if (ex.Status == WebExceptionStatus.RequestCanceled)
                 {
-                    throw ex;
+                    throw;
                 }
 
                 // Check to see if this is an HTTP error or a transport error.
@@ -333,12 +331,16 @@ namespace RestSharp
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 
             callback(raw);
-            raw.Close();
+
+            if (raw != null)
+            {
+                raw.Close();
+            }
         }
 
         private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
