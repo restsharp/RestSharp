@@ -276,7 +276,7 @@ namespace RestSharp
                 ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
                     TimeoutCallback, timeOutState, Timeout, true);
             }
-			else {
+			else {//might be there other way but this will do the trick
 				ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
 					TimeoutCallback, timeOutState, defualtTimeout, true);
 			}
@@ -446,6 +446,7 @@ namespace RestSharp
                 webRequest.Timeout = Timeout;
             }
 			else {
+				//might be there other way but this will do the trick
 				webRequest.Timeout = defualtTimeout;
 			}
             if (ReadWriteTimeout != 0)
