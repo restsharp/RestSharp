@@ -276,6 +276,10 @@ namespace RestSharp
                 ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
                     TimeoutCallback, timeOutState, Timeout, true);
             }
+			else {
+				ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
+					TimeoutCallback, timeOutState, defualtTimeout, true);
+			}
 #endif
         }
 
@@ -433,7 +437,7 @@ namespace RestSharp
             {
                 webRequest.ClientCertificates.AddRange(ClientCertificates);
             }
-
+	
             webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
             ServicePointManager.Expect100Continue = false;
 
@@ -441,7 +445,9 @@ namespace RestSharp
             {
                 webRequest.Timeout = Timeout;
             }
-
+			else {
+				webRequest.Timeout = defualtTimeout;
+			}
             if (ReadWriteTimeout != 0)
             {
                 webRequest.ReadWriteTimeout = ReadWriteTimeout;
