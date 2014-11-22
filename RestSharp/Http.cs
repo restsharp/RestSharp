@@ -92,7 +92,10 @@ namespace RestSharp
         /// Timeout in milliseconds to be used for the request
         /// </summary>
         public int Timeout { get; set; }
-
+		/// <summary>
+		/// The defualt timeout in milliseconds to be used for the request 
+		/// </summary>
+		public const int defualtTimeout =60000;
         /// <summary>
         /// The number of milliseconds before the writing or reading times out.
         /// </summary>
