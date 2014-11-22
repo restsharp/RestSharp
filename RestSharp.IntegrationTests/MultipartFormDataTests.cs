@@ -42,9 +42,9 @@ namespace RestSharp.IntegrationTests
 
                 var response = client.Execute(request);
 
-                Console.WriteLine(response.Content);
+                //Console.WriteLine(response.Content);
 
-                Assert.True(response.Content == Expected);
+                Assert.Equal(Expected, response.Content);
             }
         }
 
