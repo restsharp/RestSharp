@@ -73,7 +73,7 @@ namespace RestSharp.IntegrationTests
 
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The request was aborted: The operation has timed out.");
+                Assert.Equal("The operation has timed out", response.ErrorException.Message);
             }
         }
 
@@ -128,7 +128,7 @@ namespace RestSharp.IntegrationTests
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The request was aborted: The operation has timed out.");
+                Assert.Equal("The operation has timed out", response.ErrorException.Message);
             }
         }
 

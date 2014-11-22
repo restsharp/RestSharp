@@ -22,7 +22,7 @@ namespace RestSharp.IntegrationTests
                 client.ExecuteAsync(request, (restResponse, handle) =>
                 {
                     Console.WriteLine(restResponse.Content);
-                    Assert.True(restResponse.Content == Expected);
+                    Assert.Equal(Expected, restResponse.Content);
                 });
             }
         }
