@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading;
 using RestSharp.IntegrationTests.Helpers;
 using Xunit;
@@ -21,6 +22,39 @@ namespace RestSharp.IntegrationTests
             Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
         }
 
+        public class StupidClass
+        {
+            public string Property { get; set; }
+        }
+
+        [Fact]
+        public void Task_Handles_Non_Existent_Domain()
+        {
+            var client = new RestClient("http://192.168.1.200:8001");
+            var request = new RestRequest("/")
+            {
+                RequestFormat = DataFormat.Json,
+                Method = Method.GET
+            };
+
+            AggregateException agg = Assert.Throws<AggregateException>(
+                delegate
+                {
+                    var response = client.ExecuteTaskAsync<StupidClass>(request);
+
+                    response.Wait();
+                });
+
+            Assert.IsType(typeof(WebException), agg.InnerException);
+            Assert.Equal("Unable to connect to the remote server", agg.InnerException.Message);
+
+            //var client = new RestClient("http://nonexistantdomainimguessing.org");
+            //var request = new RestRequest("foo");
+            //var response = client.ExecuteTaskAsync(request);
+
+            //Assert.Equal(ResponseStatus.Error, response.Result.ResponseStatus);
+        }
+
         /// <summary>
         /// Tests that RestSharp properly handles a non-protocol error.
         /// Simulates a server timeout, then verifies that the ErrorException
@@ -39,12 +73,11 @@ namespace RestSharp.IntegrationTests
 
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message,
-                    "The request was aborted: The operation has timed out.");
+                Assert.Equal(response.ErrorException.Message, "The request was aborted: The operation has timed out.");
             }
         }
 
-        [Fact(Skip = "There's an issue with this test. Looks like the behavior changed a bit for timeouts.")]
+        [Fact]
         // The asserts get trapped by a catch block and then added to the response.
         // Then the second assert is hit and it just hangs indefinitely.
         // Not sure why it can't break out.
@@ -52,25 +85,27 @@ namespace RestSharp.IntegrationTests
         {
             const string baseUrl = "http://localhost:8888/";
             var resetEvent = new ManualResetEvent(false);
-            IRestResponse response = null;
 
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("404") { Timeout = 500 };
+                IRestResponse response = null;
 
-                client.ExecuteAsync(request, responseParam =>
+                client.ExecuteAsync(request, responseCb =>
                                              {
-                                                 response = responseParam;
+                                                 response = responseCb;
                                                  resetEvent.Set();
                                              });
 
                 resetEvent.WaitOne();
 
                 Assert.NotNull(response);
-                Assert.NotNull(response.ErrorException);
-                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The operation has timed out");
+                Assert.Equal(response.ResponseStatus, ResponseStatus.TimedOut);
+
+                //Assert.NotNull(response.ErrorException);
+                //Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
+                //Assert.Equal(response.ErrorException.Message, "The operation has timed out");
             }
         }
 
@@ -93,8 +128,7 @@ namespace RestSharp.IntegrationTests
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message,
-                    "The request was aborted: The operation has timed out.");
+                Assert.Equal(response.ErrorException.Message, "The request was aborted: The operation has timed out.");
             }
         }
 

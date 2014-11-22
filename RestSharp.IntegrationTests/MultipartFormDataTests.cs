@@ -15,13 +15,11 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("/");
+                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
 
-                request.Method = Method.POST;
-                request.AlwaysMultipartFormData = true;
                 AddParameters(request);
 
-                var restRequestAsyncHandle = client.ExecuteAsync(request, (restResponse, handle) =>
+                client.ExecuteAsync(request, (restResponse, handle) =>
                 {
                     Console.WriteLine(restResponse.Content);
                     Assert.True(restResponse.Content == Expected);
@@ -38,10 +36,8 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("/");
+                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
 
-                request.Method = Method.POST;
-                request.AlwaysMultipartFormData = true;
                 AddParameters(request);
 
                 var response = client.Execute(request);
