@@ -135,15 +135,20 @@ namespace RestSharp.Authenticators.OAuth
         /// <seealso cref="http://oauth.net/core/1.0#encoding_parameters" />
         public static string UrlEncodeStrict(string value)
         {
-            // [JD]: We need to escape the apostrophe as well or the signature will fail
-            var original = value;
-            var ret = original.Where(
-                c => !Unreserved.Contains(c) && c != '%').Aggregate(
-                    value, (current, c) => current.Replace(
-                        c.ToString(), c.ToString().PercentEncode()
-                ));
-
-            return ret.Replace("%%", "%25%"); // Revisit to encode actual %'s
+            // From oauth spec above: -
+            // Characters not in the unreserved character set ([RFC3986]
+            // (Berners-Lee, T., "Uniform Resource Identifiers (URI):
+            // Generic Syntax," .) section 2.3) MUST be encoded.
+            // ...
+            // unreserved = ALPHA, DIGIT, '-', '.', '_', '~'
+            String result = "";
+            value.ForEach(c =>
+            {
+                result += Unreserved.Contains(c) 
+                    ? c.ToString() 
+                    :  c.ToString().PercentEncode();
+            });
+            return result;
         }
 
         /// <summary>
