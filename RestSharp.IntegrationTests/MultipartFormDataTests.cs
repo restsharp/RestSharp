@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using RestSharp.IntegrationTests.Helpers;
 using Xunit;
@@ -44,7 +45,11 @@ namespace RestSharp.IntegrationTests
 
                 //Console.WriteLine(response.Content);
 
+#if APPVEYOR
+                Assert.Equal(Expected.Length, response.Content.Length);
+#else
                 Assert.Equal(Expected, response.Content);
+#endif
             }
         }
 

@@ -44,45 +44,43 @@ namespace RestSharp
         public RestClient()
         {
 #if WINDOWS_PHONE
-            UseSynchronizationContext = true;
+            this.UseSynchronizationContext = true;
 #endif
-            ContentHandlers = new Dictionary<string, IDeserializer>();
-            AcceptTypes = new List<string>();
-            DefaultParameters = new List<Parameter>();
+            this.ContentHandlers = new Dictionary<string, IDeserializer>();
+            this.AcceptTypes = new List<string>();
+            this.DefaultParameters = new List<Parameter>();
 
             // register default handlers
-            AddHandler("application/json", new JsonDeserializer());
-            AddHandler("application/xml", new XmlDeserializer());
-            AddHandler("text/json", new JsonDeserializer());
-            AddHandler("text/x-json", new JsonDeserializer());
-            AddHandler("text/javascript", new JsonDeserializer());
-            AddHandler("text/xml", new XmlDeserializer());
-            AddHandler("*", new XmlDeserializer());
+            this.AddHandler("application/json", new JsonDeserializer());
+            this.AddHandler("application/xml", new XmlDeserializer());
+            this.AddHandler("text/json", new JsonDeserializer());
+            this.AddHandler("text/x-json", new JsonDeserializer());
+            this.AddHandler("text/javascript", new JsonDeserializer());
+            this.AddHandler("text/xml", new XmlDeserializer());
+            this.AddHandler("*", new XmlDeserializer());
 
-            FollowRedirects = true;
+            this.FollowRedirects = true;
         }
 
         /// <summary>
         /// Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
-        public RestClient(Uri baseUrl)
-            : this()
+        public RestClient(Uri baseUrl) : this()
         {
-            BaseUrl = baseUrl;
+            this.BaseUrl = baseUrl;
         }
 
         /// <summary>
         /// Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
-        public RestClient(string baseUrl)
-            : this()
+        public RestClient(string baseUrl) : this()
         {
             if (String.IsNullOrEmpty(baseUrl))
                 throw new ArgumentNullException("baseUrl");
 
-            BaseUrl = new Uri(baseUrl);
+            this.BaseUrl = new Uri(baseUrl);
         }
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
@@ -102,11 +100,11 @@ namespace RestSharp
         /// <param name="deserializer">Deserializer to use to process content</param>
         public void AddHandler(string contentType, IDeserializer deserializer)
         {
-            ContentHandlers[contentType] = deserializer;
+            this.ContentHandlers[contentType] = deserializer;
 
             if (contentType != "*")
             {
-                AcceptTypes.Add(contentType);
+                this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
 
@@ -121,8 +119,8 @@ namespace RestSharp
         /// <param name="contentType">MIME content type to remove</param>
         public void RemoveHandler(string contentType)
         {
-            ContentHandlers.Remove(contentType);
-            AcceptTypes.Remove(contentType);
+            this.ContentHandlers.Remove(contentType);
+            this.AcceptTypes.Remove(contentType);
             this.RemoveDefaultParameter("Accept");
         }
 
@@ -131,8 +129,8 @@ namespace RestSharp
         /// </summary>
         public void ClearHandlers()
         {
-            ContentHandlers.Clear();
-            AcceptTypes.Clear();
+            this.ContentHandlers.Clear();
+            this.AcceptTypes.Clear();
             this.RemoveDefaultParameter("Accept");
         }
 
@@ -146,7 +144,7 @@ namespace RestSharp
             if (contentType == null)
                 throw new ArgumentNullException("contentType");
 
-            if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
+            if (string.IsNullOrEmpty(contentType) && this.ContentHandlers.ContainsKey("*"))
             {
                 return ContentHandlers["*"];
             }
@@ -158,13 +156,13 @@ namespace RestSharp
 
             IDeserializer handler = null;
 
-            if (ContentHandlers.ContainsKey(contentType))
+            if (this.ContentHandlers.ContainsKey(contentType))
             {
-                handler = ContentHandlers[contentType];
+                handler = this.ContentHandlers[contentType];
             }
-            else if (ContentHandlers.ContainsKey("*"))
+            else if (this.ContentHandlers.ContainsKey("*"))
             {
-                handler = ContentHandlers["*"];
+                handler = this.ContentHandlers["*"];
             }
 
             return handler;
@@ -226,7 +224,6 @@ namespace RestSharp
         /// </summary>
         public IAuthenticator Authenticator { get; set; }
 
-
         /// <summary>
         /// Combined with Request.Resource to construct URL for request
         /// Should include scheme and domain without trailing slash.
@@ -242,7 +239,7 @@ namespace RestSharp
         {
             if (Authenticator != null)
             {
-                Authenticator.Authenticate(client, request);
+                this.Authenticator.Authenticate(client, request);
             }
         }
 
@@ -253,9 +250,12 @@ namespace RestSharp
         /// <returns>Assembled System.Uri</returns>
         public Uri BuildUri(IRestRequest request)
         {
+            if (this.BaseUrl == null)
+                throw new MissingFieldException("RestClient", "BaseUrl");
+
             var assembled = request.Resource;
             var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            var builder = new UriBuilder(BaseUrl);
+            var builder = new UriBuilder(this.BaseUrl);
 
             foreach (var p in urlParms)
             {
@@ -279,14 +279,14 @@ namespace RestSharp
                 assembled = assembled.Substring(1);
             }
 
-            if (BaseUrl != null && !String.IsNullOrEmpty(BaseUrl.AbsoluteUri))
+            if (this.BaseUrl != null && !string.IsNullOrEmpty(this.BaseUrl.AbsoluteUri))
             {
-                if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
-                    assembled = String.Concat("/", assembled);
+                if (!this.BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+                    assembled = string.Concat("/", assembled);
 
                 assembled = string.IsNullOrEmpty(assembled)
-                    ? BaseUrl.AbsoluteUri
-                    : string.Format("{0}{1}", BaseUrl, assembled);
+                    ? this.BaseUrl.AbsoluteUri
+                    : string.Format("{0}{1}", this.BaseUrl, assembled);
             }
 
             IEnumerable<Parameter> parameters;
@@ -358,18 +358,21 @@ namespace RestSharp
             }
 
             http.Url = BuildUri(request);
-            http.PreAuthenticate = PreAuthenticate;
+            http.PreAuthenticate = this.PreAuthenticate;
 
             var userAgent = UserAgent ?? http.UserAgent;
+
             http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
 
             var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+
             if (timeout > 0)
             {
                 http.Timeout = timeout;
             }
 
             var readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
+
             if (readWriteTimeout > 0)
             {
                 http.ReadWriteTimeout = readWriteTimeout;
@@ -378,10 +381,11 @@ namespace RestSharp
 #if !SILVERLIGHT
             http.FollowRedirects = FollowRedirects;
 #endif
+
 #if FRAMEWORK
             if (ClientCertificates != null)
             {
-                http.ClientCertificates = ClientCertificates;
+                http.ClientCertificates = this.ClientCertificates;
             }
 
             http.MaxRedirects = MaxRedirects;
@@ -395,10 +399,10 @@ namespace RestSharp
             var headers = from p in request.Parameters
                           where p.Type == ParameterType.HttpHeader
                           select new HttpHeader
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+                                 {
+                                     Name = p.Name,
+                                     Value = Convert.ToString(p.Value)
+                                 };
 
             foreach (var header in headers)
             {
@@ -408,10 +412,10 @@ namespace RestSharp
             var cookies = from p in request.Parameters
                           where p.Type == ParameterType.Cookie
                           select new HttpCookie
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+                                 {
+                                     Name = p.Name,
+                                     Value = Convert.ToString(p.Value)
+                                 };
 
             foreach (var cookie in cookies)
             {
@@ -422,10 +426,10 @@ namespace RestSharp
                           where p.Type == ParameterType.GetOrPost
                                 && p.Value != null
                           select new HttpParameter
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+                                 {
+                                     Name = p.Name,
+                                     Value = Convert.ToString(p.Value)
+                                 };
 
             foreach (var parameter in @params)
             {
@@ -435,13 +439,13 @@ namespace RestSharp
             foreach (var file in request.Files)
             {
                 http.Files.Add(new HttpFile
-                {
-                    Name = file.Name,
-                    ContentType = file.ContentType,
-                    Writer = file.Writer,
-                    FileName = file.FileName,
-                    ContentLength = file.ContentLength
-                });
+                               {
+                                   Name = file.Name,
+                                   ContentType = file.ContentType,
+                                   Writer = file.Writer,
+                                   FileName = file.FileName,
+                                   ContentLength = file.ContentLength
+                               });
             }
 
             var body = (from p in request.Parameters
@@ -466,10 +470,10 @@ namespace RestSharp
                 else
                 {
                     http.Parameters.Add(new HttpParameter
-                    {
-                        Name = body.Name,
-                        Value = Convert.ToString(body.Value)
-                    });
+                                        {
+                                            Name = body.Name,
+                                            Value = Convert.ToString(body.Value)
+                                        });
                 }
             }
 #if FRAMEWORK
@@ -490,51 +494,51 @@ namespace RestSharp
         private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
         {
             var restResponse = new RestResponse
-            {
-                Content = httpResponse.Content,
-                ContentEncoding = httpResponse.ContentEncoding,
-                ContentLength = httpResponse.ContentLength,
-                ContentType = httpResponse.ContentType,
-                ErrorException = httpResponse.ErrorException,
-                ErrorMessage = httpResponse.ErrorMessage,
-                RawBytes = httpResponse.RawBytes,
-                ResponseStatus = httpResponse.ResponseStatus,
-                ResponseUri = httpResponse.ResponseUri,
-                Server = httpResponse.Server,
-                StatusCode = httpResponse.StatusCode,
-                StatusDescription = httpResponse.StatusDescription,
-                Request = request
-            };
+                               {
+                                   Content = httpResponse.Content,
+                                   ContentEncoding = httpResponse.ContentEncoding,
+                                   ContentLength = httpResponse.ContentLength,
+                                   ContentType = httpResponse.ContentType,
+                                   ErrorException = httpResponse.ErrorException,
+                                   ErrorMessage = httpResponse.ErrorMessage,
+                                   RawBytes = httpResponse.RawBytes,
+                                   ResponseStatus = httpResponse.ResponseStatus,
+                                   ResponseUri = httpResponse.ResponseUri,
+                                   Server = httpResponse.Server,
+                                   StatusCode = httpResponse.StatusCode,
+                                   StatusDescription = httpResponse.StatusDescription,
+                                   Request = request
+                               };
 
             foreach (var header in httpResponse.Headers)
             {
                 restResponse.Headers.Add(new Parameter
-                {
-                    Name = header.Name,
-                    Value = header.Value,
-                    Type = ParameterType.HttpHeader
-                });
+                                         {
+                                             Name = header.Name,
+                                             Value = header.Value,
+                                             Type = ParameterType.HttpHeader
+                                         });
             }
 
             foreach (var cookie in httpResponse.Cookies)
             {
                 restResponse.Cookies.Add(new RestResponseCookie
-                {
-                    Comment = cookie.Comment,
-                    CommentUri = cookie.CommentUri,
-                    Discard = cookie.Discard,
-                    Domain = cookie.Domain,
-                    Expired = cookie.Expired,
-                    Expires = cookie.Expires,
-                    HttpOnly = cookie.HttpOnly,
-                    Name = cookie.Name,
-                    Path = cookie.Path,
-                    Port = cookie.Port,
-                    Secure = cookie.Secure,
-                    TimeStamp = cookie.TimeStamp,
-                    Value = cookie.Value,
-                    Version = cookie.Version
-                });
+                                         {
+                                             Comment = cookie.Comment,
+                                             CommentUri = cookie.CommentUri,
+                                             Discard = cookie.Discard,
+                                             Domain = cookie.Domain,
+                                             Expired = cookie.Expired,
+                                             Expires = cookie.Expires,
+                                             HttpOnly = cookie.HttpOnly,
+                                             Name = cookie.Name,
+                                             Path = cookie.Path,
+                                             Port = cookie.Port,
+                                             Secure = cookie.Secure,
+                                             TimeStamp = cookie.TimeStamp,
+                                             Value = cookie.Value,
+                                             Version = cookie.Version
+                                         });
             }
 
             return restResponse;
@@ -555,7 +559,7 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    IDeserializer handler = GetHandler(raw.ContentType);
+                    IDeserializer handler = this.GetHandler(raw.ContentType);
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
