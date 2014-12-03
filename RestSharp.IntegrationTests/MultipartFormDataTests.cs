@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
+using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
     public class MultipartFormDataTests
     {
-        [Fact]
+        [Test]
         public void MultipartFormDataAsync()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -28,7 +27,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        [Fact]
+        [Test]
         public void MultipartFormData()
         {
             //const string baseUrl = "http://localhost:8888/";
@@ -46,9 +45,9 @@ namespace RestSharp.IntegrationTests
                 //Console.WriteLine(response.Content);
 
 #if APPVEYOR
-                Assert.Equal(Expected.Length, response.Content.Length);
+                Assert.AreEqual(Expected, response.Content);
 #else
-                Assert.Equal(Expected, response.Content);
+                Assert.AreEqual(Expected, response.Content);
 #endif
             }
         }
