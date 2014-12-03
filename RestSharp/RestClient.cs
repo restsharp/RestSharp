@@ -251,7 +251,7 @@ namespace RestSharp
         public Uri BuildUri(IRestRequest request)
         {
             if (this.BaseUrl == null)
-                throw new Exception("RestClient must contain a value for BaseUrl");
+                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
 
             var assembled = request.Resource;
             var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);

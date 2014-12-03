@@ -54,7 +54,14 @@ namespace RestSharp.IntegrationTests
             request.AddParameter("a name with spaces", "somedata");
         }
 
-        private const string Expected = "-------------------------------28947758029299\r\nContent-Disposition: form-data; name=\"foo\"\r\n\r\nbar\r\n-------------------------------28947758029299\r\nContent-Disposition: form-data; name=\"a name with spaces\"\r\n\r\nsomedata\r\n-------------------------------28947758029299--\r\n";
+        private const string Expected =
+            "-------------------------------28947758029299\r\n" +
+            "Content-Disposition: form-data; name=\"foo\"\r\n\r\n" +
+            "bar\r\n" +
+            "-------------------------------28947758029299\r\n" +
+            "Content-Disposition: form-data; name=\"a name with spaces\"\r\n\r\n" +
+            "somedata\r\n" +
+            "-------------------------------28947758029299--\r\n";
 
         private void EchoHandler(HttpListenerContext obj)
         {
