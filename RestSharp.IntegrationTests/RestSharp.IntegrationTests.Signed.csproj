@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\DebugSigned\</OutputPath>
-	<IntermediateOutputPath>obj\DebugSigned\</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\DebugSigned\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;FRAMEWORK, NET4, SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,7 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\ReleaseSigned\</OutputPath>
-	<IntermediateOutputPath>obj\ReleaseSigned\</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\ReleaseSigned\</IntermediateOutputPath>
     <DefineConstants>TRACE;FRAMEWORK, NET4, SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,6 +52,9 @@
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
