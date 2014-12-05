@@ -17,8 +17,10 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
+#if FRAMEWORK
 using System.Security.Cryptography.X509Certificates;
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#endif
+#if NET4 || MONODROID || MONOTOUCH || WP8 || PORTABLE
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -151,7 +153,7 @@ namespace RestSharp
         IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
 #endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4 || MONODROID || MONOTOUCH || WP8 || PORTABLE
         /// <summary>
         /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>

@@ -19,7 +19,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+#if FRAMEWORK
 using System.Security.Cryptography.X509Certificates;
+#endif
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
@@ -33,6 +35,8 @@ namespace RestSharp
         // silverlight friendly way to get current version
 #if PocketPC
         static readonly Version version = Assembly.GetExecutingAssembly().GetName().Version;
+#elif PORTABLE
+		private static readonly Version version = new AssemblyName(typeof(RestClient).GetTypeInfo().Assembly.FullName).Version;
 #else
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
 #endif
@@ -378,7 +382,7 @@ namespace RestSharp
                 http.ReadWriteTimeout = readWriteTimeout;
             }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             http.FollowRedirects = FollowRedirects;
 #endif
 

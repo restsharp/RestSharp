@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
 
@@ -151,7 +152,7 @@ namespace RestSharp.Serializers
                 var nsName = name.AsNamespaced(Namespace);
                 var element = new XElement(nsName);
 
-                if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
+                if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType || propType == typeof(string))
                 {
                     if (useAttribute)
                     {
@@ -202,7 +203,7 @@ namespace RestSharp.Serializers
 
             if (obj is bool)
             {
-                output = ((bool)obj).ToString(CultureInfo.InvariantCulture).ToLower();
+                output = ((bool)obj).ToString().ToLowerInvariant();
             }
 
             if (IsNumeric(obj))

@@ -19,7 +19,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+#if FRAMEWORK
 using System.Security.Cryptography.X509Certificates;
+#endif
 using System.Text;
 using RestSharp.Extensions;
 
@@ -120,7 +122,7 @@ namespace RestSharp
         /// </summary>
         public IList<HttpFile> Files { get; private set; }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         /// <summary>
         /// Whether or not HTTP 3xx response redirects should be automatically followed
         /// </summary>
@@ -443,7 +445,7 @@ namespace RestSharp
                     response.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
                 }
 
-                webResponse.Close();
+                ((IDisposable)webResponse).Dispose();
             }
         }
 

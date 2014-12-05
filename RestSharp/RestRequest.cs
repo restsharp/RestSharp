@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
@@ -118,6 +119,7 @@ namespace RestSharp
             //resource.PathAndQuery not supported by Silverlight :(
         }
 
+#if !PORTABLE
         /// <summary>
         /// Adds a file to the Files collection to be included with a POST or PUT request 
         /// (other methods do not support file uploads).
@@ -144,6 +146,7 @@ namespace RestSharp
                 }
             });
         }
+#endif
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name
@@ -316,7 +319,7 @@ namespace RestSharp
                             var elementType = propType.GetElementType();
 
                             if (((Array)val).Length > 0 &&
-                                (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
+                                (elementType.GetTypeInfo().IsPrimitive || elementType.GetTypeInfo().IsValueType || elementType == typeof(string)))
                             {
                                 // convert the array to an array of strings
                                 var values =

@@ -1,5 +1,7 @@
 using System;
+#if !PORTABLE
 using System.Security.Cryptography;
+#endif
 using System.Text;
 
 namespace RestSharp.Authenticators.OAuth.Extensions
@@ -26,11 +28,13 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
+#if !PORTABLE
         public static string HashWith(this string input, HashAlgorithm algorithm)
         {
             var data = Encoding.UTF8.GetBytes(input);
             var hash = algorithm.ComputeHash(data);
             return Convert.ToBase64String(hash);
         }
+#endif
     }
 }

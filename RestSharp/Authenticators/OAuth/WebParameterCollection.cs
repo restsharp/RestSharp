@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+#if !PORTABLE
 using System.Collections.Specialized;
+#endif
 
 namespace RestSharp.Authenticators.OAuth
 {
@@ -8,7 +10,7 @@ namespace RestSharp.Authenticators.OAuth
         public WebParameterCollection(IEnumerable<WebPair> parameters)
             : base(parameters) { }
 
-#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC && !PORTABLE
         public WebParameterCollection(NameValueCollection collection)
             : base(collection) { }
 #endif
