@@ -18,6 +18,8 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,69 +27,31 @@ using System.Threading.Tasks;
 
 namespace RestSharp
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public interface IRestClient
     {
-        /// <summary>
-        /// 
-        /// </summary>
 #if !PocketPC
         CookieContainer CookieContainer { get; set; }
 #endif
-        /// <summary>
-        /// 
-        /// </summary>
         string UserAgent { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         int Timeout { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         int ReadWriteTimeout { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         bool UseSynchronizationContext { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         IAuthenticator Authenticator { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         Uri BaseUrl { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        Encoding Encoding { get; set; }
+
         bool PreAuthenticate { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         IList<Parameter> DefaultParameters { get; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="callback"></param>
         RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="callback"></param>
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
 #if FRAMEWORK || PocketPC

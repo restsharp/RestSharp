@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace RestSharp
 {
@@ -56,6 +57,8 @@ namespace RestSharp
 #if !PocketPC
         bool UseDefaultCredentials { get; set; }
 #endif
+
+        Encoding Encoding { get; set; }
 
         IList<HttpHeader> Headers { get; }
 

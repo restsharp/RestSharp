@@ -20,6 +20,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
@@ -37,6 +38,78 @@ namespace RestSharp
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
 #endif
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
+
+
+        /// <summary>
+        /// Maximum number of redirects to follow if FollowRedirects is true
+        /// </summary>
+        public int? MaxRedirects { get; set; }
+
+#if FRAMEWORK
+        /// <summary>
+        /// X509CertificateCollection to be sent with request
+        /// </summary>
+        public X509CertificateCollection ClientCertificates { get; set; }
+
+        /// <summary>
+        /// Proxy to use for requests made by this client instance.
+        /// Passed on to underlying WebRequest if set.
+        /// </summary>
+        public IWebProxy Proxy { get; set; }
+#endif
+
+        /// <summary>
+        /// Default is true. Determine whether or not requests that result in 
+        /// HTTP status codes of 3xx should follow returned redirect
+        /// </summary>
+        public bool FollowRedirects { get; set; }
+
+#if !PocketPC
+        /// <summary>
+        /// The CookieContainer used for requests made by this client instance
+        /// </summary>
+        public CookieContainer CookieContainer { get; set; }
+#endif
+
+        /// <summary>
+        /// UserAgent to use for requests made by this client instance
+        /// </summary>
+        public string UserAgent { get; set; }
+
+        /// <summary>
+        /// Timeout in milliseconds to use for requests made by this client instance
+        /// </summary>
+        public int Timeout { get; set; }
+
+        /// <summary>
+        /// The number of milliseconds before the writing or reading times out.
+        /// </summary>
+        public int ReadWriteTimeout { get; set; }
+
+        /// <summary>
+        /// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
+        /// </summary>
+        public bool UseSynchronizationContext { get; set; }
+
+        /// <summary>
+        /// Authenticator to use for requests made by this client instance
+        /// </summary>
+        public IAuthenticator Authenticator { get; set; }
+
+        /// <summary>
+        /// Combined with Request.Resource to construct URL for request
+        /// Should include scheme and domain without trailing slash.
+        /// </summary>
+        /// <example>
+        /// client.BaseUrl = new Uri("http://example.com");
+        /// </example>
+        public virtual Uri BaseUrl { get; set; }
+
+        private Encoding encoding = Encoding.UTF8;
+
+        public Encoding Encoding { get { return this.encoding; } set { this.encoding = value; } }
+
+        public bool PreAuthenticate { get; set; }
 
         /// <summary>
         /// Default constructor that registers default content handlers
@@ -168,73 +241,6 @@ namespace RestSharp
             return handler;
         }
 
-        /// <summary>
-        /// Maximum number of redirects to follow if FollowRedirects is true
-        /// </summary>
-        public int? MaxRedirects { get; set; }
-
-#if FRAMEWORK
-        /// <summary>
-        /// X509CertificateCollection to be sent with request
-        /// </summary>
-        public X509CertificateCollection ClientCertificates { get; set; }
-
-        /// <summary>
-        /// Proxy to use for requests made by this client instance.
-        /// Passed on to underlying WebRequest if set.
-        /// </summary>
-        public IWebProxy Proxy { get; set; }
-#endif
-
-        /// <summary>
-        /// Default is true. Determine whether or not requests that result in 
-        /// HTTP status codes of 3xx should follow returned redirect
-        /// </summary>
-        public bool FollowRedirects { get; set; }
-
-#if !PocketPC
-        /// <summary>
-        /// The CookieContainer used for requests made by this client instance
-        /// </summary>
-        public CookieContainer CookieContainer { get; set; }
-#endif
-
-        /// <summary>
-        /// UserAgent to use for requests made by this client instance
-        /// </summary>
-        public string UserAgent { get; set; }
-
-        /// <summary>
-        /// Timeout in milliseconds to use for requests made by this client instance
-        /// </summary>
-        public int Timeout { get; set; }
-
-        /// <summary>
-        /// The number of milliseconds before the writing or reading times out.
-        /// </summary>
-        public int ReadWriteTimeout { get; set; }
-
-        /// <summary>
-        /// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
-        /// </summary>
-        public bool UseSynchronizationContext { get; set; }
-
-        /// <summary>
-        /// Authenticator to use for requests made by this client instance
-        /// </summary>
-        public IAuthenticator Authenticator { get; set; }
-
-        /// <summary>
-        /// Combined with Request.Resource to construct URL for request
-        /// Should include scheme and domain without trailing slash.
-        /// </summary>
-        /// <example>
-        /// client.BaseUrl = new Uri("http://example.com");
-        /// </example>
-        public virtual Uri BaseUrl { get; set; }
-
-        public bool PreAuthenticate { get; set; }
-
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
         {
             if (Authenticator != null)
@@ -327,6 +333,7 @@ namespace RestSharp
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
         {
+            http.Encoding = this.Encoding;
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
 #if !PocketPC
             http.UseDefaultCredentials = request.UseDefaultCredentials;
@@ -477,7 +484,7 @@ namespace RestSharp
                 }
             }
 #if FRAMEWORK
-            ConfigureProxy(http);
+            this.ConfigureProxy(http);
 #endif
         }
 
@@ -491,7 +498,7 @@ namespace RestSharp
         }
 #endif
 
-        private RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
+        private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
         {
             var restResponse = new RestResponse
                                {
@@ -549,6 +556,7 @@ namespace RestSharp
             request.OnBeforeDeserialization(raw);
 
             IRestResponse<T> response = new RestResponse<T>();
+
             try
             {
                 response = raw.toAsyncResponse<T>();
