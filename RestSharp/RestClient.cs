@@ -321,7 +321,11 @@ namespace RestSharp
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
+#if !PocketPC
             return string.Join("&", parameters.Select(EncodeParameter).ToArray());
+#else
+            return string.Join("&", parameters.Select(x => EncodeParameter(x)).ToArray());
+#endif
         }
 
         private static string EncodeParameter(Parameter parameter)

@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using RestSharp.Extensions;
@@ -219,10 +220,8 @@ namespace RestSharp
                 length += this.Encoding.GetByteCount(LINE_BREAK);
             }
 
-            foreach (var param in Parameters)
-            {
-                length += this.Encoding.GetByteCount(GetMultipartFormData(param));
-            }
+            length = this.Parameters.Aggregate(length,
+                (current, param) => current + this.Encoding.GetByteCount(this.GetMultipartFormData(param)));
 
             length += this.Encoding.GetByteCount(GetMultipartFooter());
             return length;
@@ -304,7 +303,6 @@ namespace RestSharp
 
         private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
         {
-            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
             HttpWebResponse raw;
 
             try

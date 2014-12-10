@@ -244,17 +244,17 @@ namespace RestSharp
 #endif
         }
 
-        private const string FormBoundary = "-----------------------------28947758029299";
+        private const string FORM_BOUNDARY = "-----------------------------28947758029299";
 
         private static string GetMultipartFormContentType()
         {
-            return string.Format("multipart/form-data; boundary={0}", FormBoundary);
+            return string.Format("multipart/form-data; boundary={0}", FORM_BOUNDARY);
         }
 
         private static string GetMultipartFileHeader(HttpFile file)
         {
             return string.Format("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
-                FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LINE_BREAK);
+                FORM_BOUNDARY, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LINE_BREAK);
         }
 
         private string GetMultipartFormData(HttpParameter param)
@@ -263,12 +263,12 @@ namespace RestSharp
                 ? "--{0}{3}Content-Type: {1}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
-            return string.Format(format, FormBoundary, param.Name, param.Value, LINE_BREAK);
+            return string.Format(format, FORM_BOUNDARY, param.Name, param.Value, LINE_BREAK);
         }
 
         private static string GetMultipartFooter()
         {
-            return string.Format("--{0}--{1}", FormBoundary, LINE_BREAK);
+            return string.Format("--{0}--{1}", FORM_BOUNDARY, LINE_BREAK);
         }
 
         private readonly IDictionary<string, Action<HttpWebRequest, string>> restrictedHeaderActions;
