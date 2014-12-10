@@ -18,7 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+#if FRAMEWORK
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 namespace RestSharp
 {
@@ -43,7 +45,7 @@ namespace RestSharp
 
         int ReadWriteTimeout { get; set; }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         bool FollowRedirects { get; set; }
 #endif
 

@@ -24,9 +24,10 @@ using RestSharp.Authenticators.OAuth.Extensions;
 using System.Net;
 #elif SILVERLIGHT
 using System.Windows.Browser;
-#else
+#elif !PORTABLE
 using RestSharp.Contrib;
 #endif
+using RestSharp.Extensions;
 
 namespace RestSharp.Authenticators
 {
@@ -270,7 +271,7 @@ namespace RestSharp.Authenticators
                         !parameter.Name.IsNullOrBlank() &&
                         (parameter.Name.StartsWith("oauth_") || parameter.Name.StartsWith("x_auth_"))))
                     {
-                        request.AddParameter(parameter.Name, HttpUtility.UrlDecode(parameter.Value));
+                        request.AddParameter(parameter.Name, parameter.Value.UrlDecode());
                     }
                     break;
 

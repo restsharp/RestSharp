@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -34,7 +35,11 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
         {
+#if !PORTABLE
             return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
+#else
+	        return prop.GetCustomAttribute<T>();
+#endif
         }
 
         /// <summary>
@@ -45,7 +50,11 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
+#if !PORTABLE
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;
+#else
+			return type.GetTypeInfo().GetCustomAttribute<T>();
+#endif
         }
 
         /// <summary>
@@ -58,18 +67,45 @@ namespace RestSharp.Extensions
         {
             while (toCheck != typeof(object))
             {
-                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                var cur = toCheck.GetTypeInfo().IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
 
                 if (generic == cur)
                 {
                     return true;
                 }
 
-                toCheck = toCheck.BaseType;
+                toCheck = toCheck.GetTypeInfo().BaseType;
             }
 
             return false;
         }
+
+#if !PORTABLE && !WINDOWS_PHONE
+	    public static Type GetTypeInfo(this Type type)
+	    {
+		    return type;
+	    }
+#endif
+
+#if PORTABLE
+		public static Type[] GetGenericArguments(this Type type)
+		{
+			return type.GenericTypeArguments;
+		}
+		public static IEnumerable<Type> GetInterfaces(this Type type)
+		{
+			return type.GetTypeInfo().ImplementedInterfaces;
+		}
+		public static IEnumerable<PropertyInfo> GetProperties(this Type type)
+		{
+			return type.GetTypeInfo().DeclaredProperties.Where(p => p.IsPublic());
+		}
+	    public static bool IsPublic(this PropertyInfo property)
+	    {
+		    return (property.GetMethod != null && property.GetMethod.IsPublic) ||
+		           (property.SetMethod != null && property.SetMethod.IsPublic);
+	    }
+#endif
 
         public static object ChangeType(this object source, Type newType)
         {
@@ -82,7 +118,7 @@ namespace RestSharp.Extensions
 
         public static object ChangeType(this object source, Type newType, CultureInfo culture)
         {
-#if FRAMEWORK || SILVERLIGHT || WINDOWS_PHONE
+#if FRAMEWORK || SILVERLIGHT || WINDOWS_PHONE || PORTABLE
             return Convert.ChangeType(source, newType, culture);
 #else
             return Convert.ChangeType(source, newType, null);
@@ -99,12 +135,12 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
-#if FRAMEWORK && !PocketPC
+#if (FRAMEWORK && !PocketPC) || PORTABLE
             var ret = Enum.GetValues(type)
                           .Cast<Enum>()
                           .FirstOrDefault(v => v.ToString()
                                                 .GetNameVariants(culture)
-                                                .Contains(value, StringComparer.Create(culture, true)));
+												.Any(n => culture.CompareInfo.Compare(n, value, CompareOptions.OrdinalIgnoreCase) == 0));
 
             if (ret == null)
             {

@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if !PORTABLE
 using System.Collections.Specialized;
+#endif
 using System.Linq;
 
 namespace RestSharp.Authenticators.OAuth
@@ -30,7 +32,7 @@ namespace RestSharp.Authenticators.OAuth
             _parameters = new List<WebPair>(parameters);
         }
 
-#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC && !PORTABLE
         public WebPairCollection(NameValueCollection collection)
             : this()
         {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
+using RestSharp.Extensions;
 
 namespace RestSharp.Authenticators.OAuth.Extensions
 {
@@ -48,8 +49,18 @@ namespace RestSharp.Authenticators.OAuth.Extensions
                 action(item);
             }
         }
+		
+#if PORTABLE
+		public static void ForEach(this string items, Action<char> action)
+		{
+			foreach (char item in items)
+			{
+				action(item);
+			}
+		}
+#endif
 
-#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC && !PORTABLE
 
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {

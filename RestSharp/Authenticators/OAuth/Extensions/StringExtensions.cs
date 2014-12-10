@@ -40,17 +40,6 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             return String.Concat(input, value);
         }
 
-        public static string UrlEncode(this string value)
-        {
-            // [DC] This is more correct than HttpUtility; it escapes spaces as %20, not +
-            return Uri.EscapeDataString(value);
-        }
-
-        public static string UrlDecode(this string value)
-        {
-            return Uri.UnescapeDataString(value);
-        }
-
         public static Uri AsUri(this string value)
         {
             return new Uri(value);
@@ -94,9 +83,16 @@ namespace RestSharp.Authenticators.OAuth.Extensions
                     pair => pair[0], pair => pair[1]
                 );
         }
+		
+#if PORTABLE
+        public static bool Contains(this string value, char character)
+        {
+            return value.IndexOf(character) != -1;
+        }
+#endif
 
         private const RegexOptions Options =
-#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC && !PORTABLE
             RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #else
             RegexOptions.IgnoreCase;

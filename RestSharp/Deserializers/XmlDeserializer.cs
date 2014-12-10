@@ -108,7 +108,7 @@ namespace RestSharp.Deserializers
             foreach (var prop in props)
             {
                 var type = prop.PropertyType;
-                var typeIsPublic = type.IsPublic || type.IsNestedPublic;
+                var typeIsPublic = type.GetTypeInfo().IsPublic || type.GetTypeInfo().IsNestedPublic;
 
                 if (!typeIsPublic || !prop.CanWrite)
                     continue;
@@ -116,9 +116,10 @@ namespace RestSharp.Deserializers
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
                 XName name;
 
-                if (attributes.Length > 0)
+	            var firstAttribute = attributes.FirstOrDefault();
+				if (firstAttribute != null)
                 {
-                    var attribute = (DeserializeAsAttribute)attributes[0];
+                    var attribute = (DeserializeAsAttribute)firstAttribute;
                     name = attribute.Name.AsNamespaced(Namespace);
                 }
                 else
@@ -131,7 +132,7 @@ namespace RestSharp.Deserializers
                 if (value == null)
                 {
                     // special case for inline list items
-                    if (type.IsGenericType)
+                    if (type.GetTypeInfo().IsGenericType)
                     {
                         var genericType = type.GetGenericArguments()[0];
                         var first = GetElementByName(root, genericType.Name);
@@ -149,7 +150,7 @@ namespace RestSharp.Deserializers
                 }
 
                 // check for nullable and extract underlying type
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     // if the value is empty, set the property to null...
                     if (value == null || String.IsNullOrEmpty(value.ToString()))
@@ -166,11 +167,11 @@ namespace RestSharp.Deserializers
                     var toConvert = value.ToString().ToLower();
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
-                else if (type.IsPrimitive)
+                else if (type.GetTypeInfo().IsPrimitive)
                 {
                     prop.SetValue(x, value.ChangeType(type, Culture), null);
                 }
-                else if (type.IsEnum)
+                else if (type.GetTypeInfo().IsEnum)
                 {
                     var converted = type.FindEnumValue(value.ToString(), Culture);
                     prop.SetValue(x, converted, null);
@@ -245,7 +246,7 @@ namespace RestSharp.Deserializers
                     var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
                     prop.SetValue(x, timeSpan, null);
                 }
-                else if (type.IsGenericType)
+                else if (type.GetTypeInfo().IsGenericType)
                 {
                     var t = type.GetGenericArguments()[0];
                     var list = (IList)Activator.CreateInstance(type);
@@ -299,7 +300,7 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC && !PORTABLE
             var converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))
@@ -329,13 +330,13 @@ namespace RestSharp.Deserializers
         {
             Type t;
 
-            if (type.IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
             {
                 t = type.GetGenericArguments()[0];
             }
             else
             {
-                t = type.BaseType.GetGenericArguments()[0];
+                t = type.GetTypeInfo().BaseType.GetGenericArguments()[0];
             }
 
             var list = (IList)Activator.CreateInstance(type);
@@ -369,7 +370,7 @@ namespace RestSharp.Deserializers
 
             // get properties too, not just list items
             // only if this isn't a generic type
-            if (!type.IsGenericType)
+            if (!type.GetTypeInfo().IsGenericType)
             {
                 Map(list, root.Element(propName.AsNamespaced(Namespace)) ?? root); // when using RootElement, the heirarchy is different
             }
@@ -385,7 +386,7 @@ namespace RestSharp.Deserializers
             {
                 item = element.Value;
             }
-            else if (t.IsPrimitive)
+            else if (t.GetTypeInfo().IsPrimitive)
             {
                 item = element.Value.ChangeType(t, Culture);
             }

@@ -8,7 +8,7 @@ namespace RestSharp.Authenticators.OAuth
 #if !Smartphone && !PocketPC
     [DebuggerDisplay("{Name}:{Value}")]
 #endif
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC && !PORTABLE
     [Serializable]
 #endif
     internal class WebParameter : WebPair
