@@ -206,12 +206,12 @@ namespace RestSharp.Authenticators
             // or implement a seperate class for each OAuth version
             if (!request.AlwaysMultipartFormData && !request.Files.Any())
             {
-                foreach (var p in client.DefaultParameters.Where(p => p.Type == ParameterType.GetOrPost))
+                foreach (var p in client.DefaultParameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString))
                 {
                     parameters.Add(new WebPair(p.Name, p.Value.ToString()));
                 }
 
-                foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost))
+                foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString))
                 {
                     parameters.Add(new WebPair(p.Name, p.Value.ToString()));
                 }
@@ -220,12 +220,13 @@ namespace RestSharp.Authenticators
             {
                 // if we are sending a multipart request, only the "oauth_" parameters should be included in the signature
                 foreach (var p in client.DefaultParameters.Where(
-                    p => p.Type == ParameterType.GetOrPost && p.Name.StartsWith("oauth_")))
+                    p => (p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString) && p.Name.StartsWith("oauth_")))
                 {
                     parameters.Add(new WebPair(p.Name, p.Value.ToString()));
                 }
 
-                foreach (var p in request.Parameters.Where(p => p.Type == ParameterType.GetOrPost && p.Name.StartsWith("oauth_")))
+                foreach (var p in request.Parameters.Where(
+                    p => (p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString) && p.Name.StartsWith("oauth_")))
                 {
                     parameters.Add(new WebPair(p.Name, p.Value.ToString()));
                 }
