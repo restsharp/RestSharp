@@ -86,7 +86,7 @@ namespace RestSharp.IntegrationTests
             //Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Fact]
+        [Fact(Skip = "Provide your own consumer key/secret before running")]
         public void Can_Authenticate_Twitter()
         {
             // To pass this test, place a file config.json in the RestSharp.IntegrationTests folder
