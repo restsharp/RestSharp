@@ -41,3 +41,4 @@ Backup/
 *.htm
 *.orig
 DownloadSigned/
+RestSharp.IntegrationTests/config.json

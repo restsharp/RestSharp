@@ -9,6 +9,7 @@ using RestSharp.Authenticators.OAuth;
 using RestSharp.Contrib;
 using RestSharp.IntegrationTests.Models;
 using Xunit;
+using System.IO;
 
 namespace RestSharp.IntegrationTests
 {
@@ -20,7 +21,7 @@ namespace RestSharp.IntegrationTests
             const string consumerKey = "";
             const string consumerSecret = "";
 
-            var baseUrl = new Uri("http://api.twitter.com");
+            var baseUrl = new Uri("https://api.twitter.com");
             var client = new RestClient(baseUrl);
 
             client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
@@ -83,6 +84,40 @@ namespace RestSharp.IntegrationTests
 
             //Assert.NotNull(response);
             //Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact(Skip = "Provide your own consumer key/secret before running")]
+        public void Can_Authenticate_Twitter()
+        {
+            // To pass this test, place a file config.json in the RestSharp.IntegrationTests folder
+            // with the following content:
+            //
+            // {
+            //     "ConsumerKey": "",
+            //     "ConsumerSecret": "",
+            //     "AccessToken": "",
+            //     "AccessSecret": ""
+            // }
+            //
+            // The tokens can be found on the "Keys and Access Tokens" tab on the application
+            // management page for your app: https://apps.twitter.com/
+
+            Assert.True(File.Exists(@"..\..\config.json"));
+
+            var config = SimpleJson.DeserializeObject(File.ReadAllText(@"..\..\config.json")) as JsonObject;
+
+            var client = new RestClient("https://api.twitter.com/1.1");
+            client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+                (string)config["ConsumerKey"], (string)config["ConsumerSecret"], 
+                (string)config["AccessToken"], (string)config["AccessSecret"]);
+
+            var request = new RestRequest("account/verify_credentials.json");
+            request.AddParameter("include_entities", "true", ParameterType.QueryString);
+
+            var response = client.Execute(request);
+
+            Assert.NotNull(response);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         #region Netflix test classes
