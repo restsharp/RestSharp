@@ -34,8 +34,7 @@ namespace RestSharp
     /// </summary>
     public partial class Http : IHttp, IHttpFactory
     {
-        private const string _lineBreak = "\r\n";
-        private static readonly Encoding _defaultEncoding = Encoding.UTF8;
+        private const string LINE_BREAK = "\r\n";
 
         ///<summary>
         /// Creates an IHttp
@@ -148,6 +147,9 @@ namespace RestSharp
         /// </summary>
         public bool UseDefaultCredentials { get; set; }
 #endif
+        private Encoding encoding = Encoding.UTF8;
+
+        public Encoding Encoding { get { return this.encoding; } set { this.encoding = value; } }
 
         /// <summary>
         /// HTTP headers to be sent with request
@@ -201,15 +203,15 @@ namespace RestSharp
         /// </summary>
         public Http()
         {
-            Headers = new List<HttpHeader>();
-            Files = new List<HttpFile>();
-            Parameters = new List<HttpParameter>();
-            Cookies = new List<HttpCookie>();
+            this.Headers = new List<HttpHeader>();
+            this.Files = new List<HttpFile>();
+            this.Parameters = new List<HttpParameter>();
+            this.Cookies = new List<HttpCookie>();
 
-            _restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
+            restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
 
-            AddSharedHeaderActions();
-            AddSyncHeaderActions();
+            this.AddSharedHeaderActions();
+            this.AddSyncHeaderActions();
         }
 
         partial void AddSyncHeaderActions();
@@ -218,10 +220,10 @@ namespace RestSharp
 
         private void AddSharedHeaderActions()
         {
-            _restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
-            _restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
+            restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
+            restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 #if NET4
-            _restrictedHeaderActions.Add("Date", (r, v) =>
+            restrictedHeaderActions.Add("Date", (r, v) =>
                 {
                     DateTime parsed;
 
@@ -231,28 +233,28 @@ namespace RestSharp
                     }
                 });
 
-            _restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
+            restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
 #else
-            _restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
-            _restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
+            restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
+            restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
 #endif
 
 #if FRAMEWORK
-            _restrictedHeaderActions.Add("Range", (r, v) => { AddRange(r, v); });
+            restrictedHeaderActions.Add("Range", (r, v) => { AddRange(r, v); });
 #endif
         }
 
-        private const string FormBoundary = "-----------------------------28947758029299";
+        private const string FORM_BOUNDARY = "-----------------------------28947758029299";
 
         private static string GetMultipartFormContentType()
         {
-            return string.Format("multipart/form-data; boundary={0}", FormBoundary);
+            return string.Format("multipart/form-data; boundary={0}", FORM_BOUNDARY);
         }
 
         private static string GetMultipartFileHeader(HttpFile file)
         {
             return string.Format("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
-                FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", _lineBreak);
+                FORM_BOUNDARY, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LINE_BREAK);
         }
 
         private string GetMultipartFormData(HttpParameter param)
@@ -261,15 +263,15 @@ namespace RestSharp
                 ? "--{0}{3}Content-Type: {1}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
-            return string.Format(format, FormBoundary, param.Name, param.Value, _lineBreak);
+            return string.Format(format, FORM_BOUNDARY, param.Name, param.Value, LINE_BREAK);
         }
 
         private static string GetMultipartFooter()
         {
-            return string.Format("--{0}--{1}", FormBoundary, _lineBreak);
+            return string.Format("--{0}--{1}", FORM_BOUNDARY, LINE_BREAK);
         }
 
-        private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
+        private readonly IDictionary<string, Action<HttpWebRequest, string>> restrictedHeaderActions;
 
         // handle restricted headers the .NET way - thanks @dimebrain!
         // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
@@ -277,9 +279,9 @@ namespace RestSharp
         {
             foreach (var header in Headers)
             {
-                if (_restrictedHeaderActions.ContainsKey(header.Name))
+                if (restrictedHeaderActions.ContainsKey(header.Name))
                 {
-                    _restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
+                    restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
                 }
                 else
                 {
@@ -356,9 +358,9 @@ namespace RestSharp
             }
         }
 
-        private static void WriteStringTo(Stream stream, string toWrite)
+        private void WriteStringTo(Stream stream, string toWrite)
         {
-            var bytes = _defaultEncoding.GetBytes(toWrite);
+            var bytes = this.Encoding.GetBytes(toWrite);
             stream.Write(bytes, 0, bytes.Length);
         }
 
@@ -376,7 +378,7 @@ namespace RestSharp
 
                 // Write the file data directly to the Stream, rather than serializing it to a string.
                 file.Writer(requestStream);
-                WriteStringTo(requestStream, _lineBreak);
+                WriteStringTo(requestStream, LINE_BREAK);
             }
 
             WriteStringTo(requestStream, GetMultipartFooter());

@@ -148,13 +148,13 @@ namespace RestSharp
 
         partial void AddSyncHeaderActions()
         {
-            _restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
-            _restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
-            _restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
-            _restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
-            _restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
-            _restrictedHeaderActions.Add("Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; });
-            _restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
+            restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
+            restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+            restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
+            restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
+            restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
+            restrictedHeaderActions.Add("Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; });
+            restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
         }
 
         private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
@@ -234,7 +234,7 @@ namespace RestSharp
             if (!HasBody)
                 return;
 
-            var bytes = RequestBodyBytes == null ? _defaultEncoding.GetBytes(RequestBody) : RequestBodyBytes;
+            var bytes = this.RequestBodyBytes ?? this.Encoding.GetBytes(this.RequestBody);
 
             webRequest.ContentLength = bytes.Length;
 

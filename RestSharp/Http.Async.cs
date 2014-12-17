@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using RestSharp.Extensions;
@@ -40,7 +41,7 @@ namespace RestSharp
     /// </summary>
     public partial class Http
     {
-        private TimeOutState _timeoutState;
+        private TimeOutState timeoutState;
 
         public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
         {
@@ -129,11 +130,11 @@ namespace RestSharp
                 }
                 else
                 {
-                    _timeoutState = new TimeOutState { Request = webRequest };
+                    this.timeoutState = new TimeOutState { Request = webRequest };
 
                     var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
 
-                    SetTimeout(asyncResult, _timeoutState);
+                    SetTimeout(asyncResult, this.timeoutState);
                 }
             }
             catch (Exception ex)
@@ -151,7 +152,7 @@ namespace RestSharp
 
             if (webException != null && webException.Status == WebExceptionStatus.RequestCanceled)
             {
-                response.ResponseStatus = _timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
+                response.ResponseStatus = this.timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
                 return response;
             }
 
@@ -182,7 +183,7 @@ namespace RestSharp
         private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
         {
             IAsyncResult asyncResult;
-            _timeoutState = new TimeOutState { Request = webRequest };
+            this.timeoutState = new TimeOutState { Request = webRequest };
 
             if (HasBody || HasFiles || AlwaysMultipartFormData)
             {
@@ -196,7 +197,7 @@ namespace RestSharp
                 asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
             }
 
-            SetTimeout(asyncResult, _timeoutState);
+            SetTimeout(asyncResult, this.timeoutState);
         }
 
         private long CalculateContentLength()
@@ -206,7 +207,7 @@ namespace RestSharp
 
             if (!HasFiles && !AlwaysMultipartFormData)
             {
-                return _defaultEncoding.GetByteCount(RequestBody);
+                return encoding.GetByteCount(RequestBody);
             }
 
             // calculate length for multipart form
@@ -214,17 +215,15 @@ namespace RestSharp
 
             foreach (var file in Files)
             {
-                length += _defaultEncoding.GetByteCount(GetMultipartFileHeader(file));
+                length += this.Encoding.GetByteCount(GetMultipartFileHeader(file));
                 length += file.ContentLength;
-                length += _defaultEncoding.GetByteCount(_lineBreak);
+                length += this.Encoding.GetByteCount(LINE_BREAK);
             }
 
-            foreach (var param in Parameters)
-            {
-                length += _defaultEncoding.GetByteCount(GetMultipartFormData(param));
-            }
+            length = this.Parameters.Aggregate(length,
+                (current, param) => current + this.Encoding.GetByteCount(this.GetMultipartFormData(param)));
 
-            length += _defaultEncoding.GetByteCount(GetMultipartFooter());
+            length += this.Encoding.GetByteCount(GetMultipartFooter());
             return length;
         }
 
@@ -232,7 +231,7 @@ namespace RestSharp
         {
             var webRequest = (HttpWebRequest)result.AsyncState;
 
-            if (_timeoutState.TimedOut)
+            if (this.timeoutState.TimedOut)
             {
                 var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
                 ExecuteCallback(response, callback);
@@ -265,7 +264,7 @@ namespace RestSharp
             }
 
             IAsyncResult asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
-            SetTimeout(asyncResult, _timeoutState);
+            SetTimeout(asyncResult, this.timeoutState);
         }
 
         private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
@@ -304,7 +303,6 @@ namespace RestSharp
 
         private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
         {
-            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
             HttpWebResponse raw;
 
             try
@@ -349,7 +347,7 @@ namespace RestSharp
 
             try
             {
-                if (_timeoutState.TimedOut)
+                if (this.timeoutState.TimedOut)
                 {
                     response.ResponseStatus = ResponseStatus.TimedOut;
                     ExecuteCallback(response, callback);
@@ -376,12 +374,12 @@ namespace RestSharp
         partial void AddAsyncHeaderActions()
         {
 #if SILVERLIGHT
-            _restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+            restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
 #endif
 #if WINDOWS_PHONE
             // WP7 doesn't as of Beta doesn't support a way to set Content-Length either directly
             // or indirectly
-            _restrictedHeaderActions.Add("Content-Length", (r, v) => { });
+            restrictedHeaderActions.Add("Content-Length", (r, v) => { });
 #endif
         }
 
