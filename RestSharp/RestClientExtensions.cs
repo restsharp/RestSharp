@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-#if NET4
+#if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading.Tasks;
 #endif
 
@@ -131,7 +131,7 @@ namespace RestSharp
             return client.ExecuteAsync(request, callback);
         }
 
-#if NET4
+#if NET4 || MONODROID || MONOTOUCH || WP8
         public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             return client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
