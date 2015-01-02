@@ -222,7 +222,7 @@ namespace RestSharp
         {
             restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
             restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4
             restrictedHeaderActions.Add("Date", (r, v) =>
                 {
                     DateTime parsed;
