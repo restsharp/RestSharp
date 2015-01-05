@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -41,6 +41,9 @@
   <ItemGroup>
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
+      <Link>Extensions\ResponseStatusExtensions.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\FileParameter.cs">
       <Link>FileParameter.cs</Link>
@@ -252,7 +255,6 @@
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

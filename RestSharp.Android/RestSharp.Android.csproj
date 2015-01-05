@@ -42,6 +42,9 @@
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
+      <Link>Extensions\ResponseStatusExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\FileParameter.cs">
       <Link>FileParameter.cs</Link>
     </Compile>
@@ -252,7 +255,6 @@
     <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
