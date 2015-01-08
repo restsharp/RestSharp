@@ -87,30 +87,16 @@ namespace RestSharp.IntegrationTests
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("success");
 
-                request.OnBeforeDeserialization += response =>
+                request.OnBeforeDeserialization += r =>
                                                    {
                                                        throw new Exception(ExceptionMessage);
                                                    };
 
                 var task = client.ExecuteTaskAsync<Response>(request);
-
-                try
-                {
-                    // In the broken version of the code, an exception thrown in OnBeforeDeserialization causes the task to 
-                    // never complete. In order to test that condition, we'll wait for 5 seconds for the task to complete. 
-                    // Since we're connecting to a local server, if the task hasn't completed in 5 seconds, it's safe to assume 
-                    // that it will never complete.
-                    Assert.True(task.Wait(TimeSpan.FromSeconds(5)),
-                        "It looks like the async task is stuck and is never going to complete.");
-                }
-                catch (AggregateException e)
-                {
-                    Assert.Equal(1, e.InnerExceptions.Count);
-                    Assert.Equal(ExceptionMessage, e.InnerExceptions.First().Message);
-                    return;
-                }
-
-                Assert.True(false, "The exception thrown from OnBeforeDeserialization should have bubbled up.");
+                task.Wait();
+                var response = task.Result;
+                Assert.Equal(ExceptionMessage, response.ErrorMessage);
+                Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
             }
         }
 
@@ -233,15 +219,12 @@ namespace RestSharp.IntegrationTests
                 //Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
-                AggregateException agg = Assert.Throws<AggregateException>(
-                    delegate
-                    {
-                        var task = client.ExecuteTaskAsync(request);
-                        task.Wait();
-                    });
 
-                Assert.IsType(typeof(WebException), agg.InnerException);
-                Assert.Equal("The request timed-out.", agg.InnerException.Message);
+                var task = client.ExecuteTaskAsync(request);
+                task.Wait();
+                var response = task.Result;
+                Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+
             }
         }
 
@@ -258,15 +241,10 @@ namespace RestSharp.IntegrationTests
                 //Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
-                AggregateException agg = Assert.Throws<AggregateException>(
-                    delegate
-                    {
-                        var task = client.ExecuteTaskAsync(request);
-                        task.Wait();
-                    });
-
-                Assert.IsType(typeof(WebException), agg.InnerException);
-                Assert.Equal("The request timed-out.", agg.InnerException.Message);
+                var task = client.ExecuteTaskAsync(request);
+                task.Wait();
+                var response = task.Result;
+                Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
             }
         }
 
