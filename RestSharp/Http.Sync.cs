@@ -212,6 +212,12 @@ namespace RestSharp
 
                 throw;
             }
+            finally
+            {
+                // In Android the connections might start to hang (never return 
+                // responces) after 3 sequential connection failures (i.e: exceptions)
+                request.Abort();
+            }
         }
 
         private void PreparePostData(HttpWebRequest webRequest)
