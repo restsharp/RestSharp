@@ -120,7 +120,7 @@ namespace RestSharp.Deserializers
             foreach (var child in (IDictionary<string, object>)parent)
             {
                 var key = child.Key;
-                object item = null;
+                object item;
 
                 if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
                 {
@@ -197,7 +197,7 @@ namespace RestSharp.Deserializers
                 type = type.GetGenericArguments()[0];
             }
 
-            if (type == typeof(System.Object) && value != null)
+            if (type == typeof(Object) && value != null)
             {
                 type = value.GetType();
             }
@@ -224,9 +224,9 @@ namespace RestSharp.Deserializers
 
             if (type == typeof(DateTime)
 #if !PocketPC
- || type == typeof(DateTimeOffset)
+                || type == typeof(DateTimeOffset)
 #endif
-)
+                )
             {
                 DateTime dt;
 
