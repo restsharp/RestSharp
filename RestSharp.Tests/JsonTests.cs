@@ -32,6 +32,18 @@ namespace RestSharp.Tests
         private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
         [Fact]
+        public void Can_Deserialize_Exponential_Notation()
+        {
+            const string content = "{ \"Value\": 4.8e-04 }";
+            var json = new JsonDeserializer();
+            var output = json.Deserialize<DecimalNumber>(new RestResponse { Content = content });
+            var expected = Decimal.Parse("4.8e-04", NumberStyles.Float);
+
+            Assert.NotNull(output);
+            Assert.Equal(expected, output.Value);
+        }
+
+        [Fact]
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "{\"one\":\"oneOneOne\", \"two\":\"twoTwoTwo\", \"three\":3}";

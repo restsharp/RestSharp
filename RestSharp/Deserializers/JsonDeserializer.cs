@@ -259,6 +259,9 @@ namespace RestSharp.Deserializers
                 if (value is double)
                     return (decimal)((double)value);
 
+                if (stringValue.Contains("e"))
+                    return Decimal.Parse(stringValue, NumberStyles.Float, Culture);
+
                 return Decimal.Parse(stringValue, Culture);
             }
             else if (type == typeof(Guid))
