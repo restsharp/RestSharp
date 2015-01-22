@@ -443,7 +443,8 @@ namespace RestSharp
             }
 
             webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
-            ServicePointManager.Expect100Continue = false;
+
+            webRequest.ServicePoint.Expect100Continue = false;
 
             if (Timeout != 0)
             {
