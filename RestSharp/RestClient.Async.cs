@@ -275,14 +275,7 @@ namespace RestSharp
                         {
                             taskCompletionSource.TrySetCanceled();
                         }
-                        else if (response.ErrorException != null)
-                        {
-                            taskCompletionSource.TrySetException(response.ErrorException);
-                        }
-                        else if (response.ResponseStatus != ResponseStatus.Completed)
-                        {
-                            taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
-                        }
+                        //Don't run TrySetException, since we should set Error properties and swallow exceptions to be consistent with sync methods
                         else
                         {
                             taskCompletionSource.TrySetResult(response);
@@ -384,14 +377,7 @@ namespace RestSharp
                         {
                             taskCompletionSource.TrySetCanceled();
                         }
-                        else if (response.ErrorException != null)
-                        {
-                            taskCompletionSource.TrySetException(response.ErrorException);
-                        }
-                        else if (response.ResponseStatus != ResponseStatus.Completed)
-                        {
-                            taskCompletionSource.TrySetException(response.ResponseStatus.ToWebException());
-                        }
+                        //Don't run TrySetException, since we should set Error properties and swallow exceptions to be consistent with sync methods
                         else
                         {
                             taskCompletionSource.TrySetResult(response);

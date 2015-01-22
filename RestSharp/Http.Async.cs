@@ -368,7 +368,17 @@ namespace RestSharp
 
         private static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
         {
+            PopulateErrorForIncompleteResponse(response);
             callback(response);
+        }
+
+        private static void PopulateErrorForIncompleteResponse(HttpResponse response)
+        {
+            if (response.ResponseStatus != ResponseStatus.Completed && response.ErrorException == null)
+            {
+                response.ErrorException = response.ResponseStatus.ToWebException();
+                response.ErrorMessage = response.ErrorException.Message;
+            }
         }
 
         partial void AddAsyncHeaderActions()
