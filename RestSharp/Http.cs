@@ -464,17 +464,18 @@ namespace RestSharp
 #if FRAMEWORK
         private void AddRange(HttpWebRequest r, string range)
         {
-            System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(range, "=(\\d+)-(\\d+)$");
+            System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
 
             if (!m.Success)
             {
                 return;
             }
 
-            int from = Convert.ToInt32(m.Groups[1].Value);
-            int to = Convert.ToInt32(m.Groups[2].Value);
+            string rangeSpecifier = m.Groups[1].Value;
+            int from = Convert.ToInt32(m.Groups[2].Value);
+            int to = Convert.ToInt32(m.Groups[3].Value);
 
-            r.AddRange(from, to);
+            r.AddRange(rangeSpecifier, from, to);
         }
 #endif
     }
