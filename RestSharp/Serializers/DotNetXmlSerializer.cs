@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace RestSharp.Serializers
@@ -15,7 +17,10 @@ namespace RestSharp.Serializers
         public DotNetXmlSerializer()
         {
             ContentType = "application/xml";
-            Encoding = Encoding.UTF8;
+            Settings = new XmlWriterSettings();
+#pragma warning disable 0618
+            Settings.Encoding = Encoding.UTF8;
+#pragma warning restore 0618
         }
 
         /// <summary>
@@ -40,9 +45,19 @@ namespace RestSharp.Serializers
             ns.Add(string.Empty, Namespace);
 
             var serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
-            var writer = new EncodingStringWriter(Encoding);
+            var writer = new StringWriter();
 
-            serializer.Serialize(writer, obj, ns);
+#pragma warning disable 0618
+            if (Encoding != Settings.Encoding
+                && Encoding != Encoding.UTF8)
+            {
+                Settings.Encoding = Encoding;
+            }
+#pragma warning restore 0618
+
+            var xmlWriter = XmlWriter.Create(writer, Settings);
+
+            serializer.Serialize(xmlWriter, obj, ns);
 
             return writer.ToString();
         }
@@ -70,24 +85,13 @@ namespace RestSharp.Serializers
         /// <summary>
         /// Encoding for serialized content
         /// </summary>
+        [ObsoleteAttribute("You should use Settings.Encoding instead.", false)]
         public Encoding Encoding { get; set; }
 
         /// <summary>
-        /// Need to subclass StringWriter in order to override Encoding
+        /// Settings for serialized content
         /// </summary>
-        private class EncodingStringWriter : StringWriter
-        {
-            private readonly Encoding encoding;
+        public XmlWriterSettings Settings { get; set; }
 
-            public EncodingStringWriter(Encoding encoding)
-            {
-                this.encoding = encoding;
-            }
-
-            public override Encoding Encoding
-            {
-                get { return encoding; }
-            }
-        }
     }
 }
