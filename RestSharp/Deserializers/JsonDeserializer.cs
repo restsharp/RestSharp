@@ -7,6 +7,8 @@ using RestSharp.Extensions;
 
 namespace RestSharp.Deserializers
 {
+    using System.Xml;
+
     public class JsonDeserializer : IDeserializer
     {
         public string RootElement { get; set; }
@@ -270,7 +272,13 @@ namespace RestSharp.Deserializers
             }
             else if (type == typeof(TimeSpan))
             {
-                return TimeSpan.Parse(stringValue);
+                TimeSpan timeSpan;
+                if (TimeSpan.TryParse(stringValue, out timeSpan))
+                {
+                    return timeSpan;
+                }
+                // 
+                return XmlConvert.ToTimeSpan(stringValue);
             }
             else if (type.IsGenericType)
             {

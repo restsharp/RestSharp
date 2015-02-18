@@ -233,6 +233,18 @@ namespace RestSharp.Tests
         public TimeSpan? NullableWithoutValue { get; set; }
 
         public TimeSpan? NullableWithValue { get; set; }
+
+        public TimeSpan? IsoSecond { get; set; }
+
+        public TimeSpan? IsoMinute { get; set; }
+
+        public TimeSpan? IsoHour { get; set; }
+
+        public TimeSpan? IsoDay { get; set; }
+
+        public TimeSpan? IsoMonth { get; set; }
+
+        public TimeSpan? IsoYear { get; set; }
     }
 
     public class JsonEnumsTestStructure

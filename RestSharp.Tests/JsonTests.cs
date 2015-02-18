@@ -539,6 +539,14 @@ namespace RestSharp.Tests
             Assert.Null(payload.NullableWithoutValue);
             Assert.NotNull(payload.NullableWithValue);
             Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+            Assert.Equal(new TimeSpan(0, 0, 10), payload.IsoSecond);
+            Assert.Equal(new TimeSpan(0, 3, 23), payload.IsoMinute);
+            Assert.Equal(new TimeSpan(5, 4, 9), payload.IsoHour);
+            Assert.Equal(new TimeSpan(1, 19, 27, 13), payload.IsoDay);
+            // 2 months + 4 days = 64 days
+            Assert.Equal(new TimeSpan(64, 3, 14, 19), payload.IsoMonth);
+            // 1 year = 365 days
+            Assert.Equal(new TimeSpan(365, 9, 27, 48), payload.IsoYear);
         }
 
         [Fact]
