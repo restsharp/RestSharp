@@ -277,7 +277,8 @@ namespace RestSharp.Deserializers
                 {
                     return timeSpan;
                 }
-                // 
+
+                // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }
             else if (type.IsGenericType)
