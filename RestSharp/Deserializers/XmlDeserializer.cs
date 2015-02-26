@@ -470,33 +470,33 @@ namespace RestSharp.Deserializers
 
         protected virtual XAttribute GetAttributeByName(XElement root, XName name)
         {
-            var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
-            var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
+            var lower_name = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
+            var camel_name = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
             if (root.Attribute(name) != null)
             {
                 return root.Attribute(name);
             }
 
-            if (root.Attribute(lowerName) != null)
+            if (root.Attribute(lower_name) != null)
             {
-                return root.Attribute(lowerName);
+                return root.Attribute(lower_name);
             }
 
-            if (root.Attribute(camelName) != null)
+            if (root.Attribute(camel_name) != null)
             {
-                return root.Attribute(camelName);
+                return root.Attribute(camel_name);
             }
 
             // try looking for element that matches sanitized property name
-            var element = root.Attributes().FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName);
-
-            if (element != null)
-            {
-                return element;
-            }
-
-            return null;
+            return root.Descendants()
+                       .OrderBy(d => d.Ancestors().Count())
+                       .Attributes()
+                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
+                   root.Descendants()
+                       .OrderBy(d => d.Ancestors().Count())
+                       .Attributes()
+                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
         }
     }
 }
