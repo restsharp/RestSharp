@@ -7,7 +7,7 @@ if not exist Download\package\lib\net35 mkdir Download\package\lib\net35\
 if not exist Download\package\lib\net35-client mkdir Download\package\lib\net35-client\
 if not exist Download\package\lib\net4 mkdir Download\package\lib\net4\
 if not exist Download\package\lib\net4-client mkdir Download\package\lib\net4-client\
-if not exist Download\package\lib\sl4-wp71 mkdir Download\package\lib\sl4-wp71\
+if not exist Download\package\lib\windowsphone8 mkdir Download\package\lib\windowsphone8\
 if not exist Download\package\lib\sl4 mkdir Download\package\lib\sl4\
 
 copy RestSharp\bin\Release\RestSharp.dll Download\
@@ -33,7 +33,7 @@ copy RestSharp.Net4\bin\Release\RestSharp.dll Download\Package\lib\net4\
 copy RestSharp.Net4\bin\Release\RestSharp.dll Download\Package\lib\net4-client\
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll Download\Package\lib\sl4\
-copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\sl4-wp71\
+copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\windowsphone8\
 
 copy RestSharp\bin\Release\RestSharp.xml Download\Package\lib\net35\
 copy RestSharp\bin\Release\RestSharp.xml Download\Package\lib\net35-client\
@@ -42,7 +42,7 @@ copy RestSharp.Net4\bin\Release\RestSharp.xml Download\Package\lib\net4\
 copy RestSharp.Net4\bin\Release\RestSharp.xml Download\Package\lib\net4-client\
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Package\lib\sl4\
-copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\sl4-wp71\
+copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\windowsphone8\
 
 tools\nuget.exe update -self
 tools\nuget.exe pack restsharp-computed.nuspec -BasePath Download\Package -Output Download
