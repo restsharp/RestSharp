@@ -19,6 +19,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using RestSharp.Deserializers;
 
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading;
@@ -104,6 +105,10 @@ namespace RestSharp
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
         RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
+
+        void AddHandler(string contentType, IDeserializer deserializer);
+
+        void RemoveHandler(string contentType);
 
 #if FRAMEWORK
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
