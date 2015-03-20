@@ -37,22 +37,14 @@ namespace RestSharp.IntegrationTests
                 Method = Method.GET
             };
 
-            AggregateException agg = Assert.Throws<AggregateException>(
-                delegate
-                {
-                    var response = client.ExecuteTaskAsync<StupidClass>(request);
+            var task = client.ExecuteTaskAsync<StupidClass>(request);
+            task.Wait();
 
-                    response.Wait();
-                });
+            var response = task.Result;
 
-            Assert.IsType(typeof(WebException), agg.InnerException);
-            Assert.Equal("Unable to connect to the remote server", agg.InnerException.Message);
-
-            //var client = new RestClient("http://nonexistantdomainimguessing.org");
-            //var request = new RestRequest("foo");
-            //var response = client.ExecuteTaskAsync(request);
-
-            //Assert.Equal(ResponseStatus.Error, response.Result.ResponseStatus);
+            Assert.IsType(typeof(WebException), response.ErrorException);
+            Assert.Equal("Unable to connect to the remote server", response.ErrorException.Message);
+            Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
         }
 
         /// <summary>
@@ -73,14 +65,11 @@ namespace RestSharp.IntegrationTests
 
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal("The operation has timed out", response.ErrorException.Message);
+                Assert.Contains("The operation has timed out", response.ErrorException.Message);
             }
         }
 
         [Fact]
-        // The asserts get trapped by a catch block and then added to the response.
-        // Then the second assert is hit and it just hangs indefinitely.
-        // Not sure why it can't break out.
         public void Handles_Server_Timeout_Error_Async()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -102,10 +91,31 @@ namespace RestSharp.IntegrationTests
 
                 Assert.NotNull(response);
                 Assert.Equal(response.ResponseStatus, ResponseStatus.TimedOut);
+                Assert.NotNull(response.ErrorException);
+                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
+                Assert.Equal(response.ErrorException.Message, "The request timed-out.");
+            }
+        }
 
-                //Assert.NotNull(response.ErrorException);
-                //Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                //Assert.Equal(response.ErrorException.Message, "The operation has timed out");
+        [Fact]
+        public void Handles_Server_Timeout_Error_AsyncTask()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, TimeoutHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("404") { Timeout = 500 };
+
+                var task =  client.ExecuteTaskAsync(request);
+                task.Wait();
+                IRestResponse response = task.Result;
+                Assert.NotNull(response);
+                Assert.Equal(response.ResponseStatus, ResponseStatus.TimedOut);
+
+                Assert.NotNull(response.ErrorException);
+                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
+                Assert.Equal(response.ErrorException.Message, "The request timed-out.");
             }
         }
 
@@ -128,7 +138,7 @@ namespace RestSharp.IntegrationTests
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
                 Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal("The operation has timed out", response.ErrorException.Message);
+                Assert.Contains("The operation has timed out", response.ErrorException.Message);
             }
         }
 
