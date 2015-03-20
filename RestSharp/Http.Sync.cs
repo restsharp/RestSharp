@@ -199,9 +199,12 @@ namespace RestSharp
             }
             catch (WebException ex)
             {
+
+#if MONODROID 
                 // In Android the connections might start to hang (never return 
                 // responces) after 3 sequential connection failures (i.e: exceptions)
                 request.Abort();
+#endif
 
                 // Check to see if this is an HTTP error or a transport error.
                 // In cases where an HTTP error occurs ( status code >= 400 )
