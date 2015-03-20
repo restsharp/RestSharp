@@ -32,6 +32,18 @@ namespace RestSharp.Tests
         private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
         [Fact]
+        public void Can_Deserialize_Exponential_Notation()
+        {
+            const string content = "{ \"Value\": 4.8e-04 }";
+            var json = new JsonDeserializer();
+            var output = json.Deserialize<DecimalNumber>(new RestResponse { Content = content });
+            var expected = Decimal.Parse("4.8e-04", NumberStyles.Float);
+
+            Assert.NotNull(output);
+            Assert.Equal(expected, output.Value);
+        }
+
+        [Fact]
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "{\"one\":\"oneOneOne\", \"two\":\"twoTwoTwo\", \"three\":3}";
@@ -59,9 +71,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
         {
             var doc = File.ReadAllText(Path.Combine("SampleData", "4sq.txt"));
-            var json = new JsonDeserializer();
-
-            json.RootElement = "response";
+            var json = new JsonDeserializer { RootElement = "response" };
 
             var output = json.Deserialize<VenuesResponse>(new RestResponse { Content = doc });
 
@@ -125,9 +135,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_From_Root_Element()
         {
             var doc = File.ReadAllText(Path.Combine("SampleData", "sojson.txt"));
-            var json = new JsonDeserializer();
-
-            json.RootElement = "User";
+            var json = new JsonDeserializer { RootElement = "User" };
 
             var output = json.Deserialize<SOUser>(new RestResponse { Content = doc });
 
@@ -139,7 +147,7 @@ namespace RestSharp.Tests
         {
             var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
             var json = new JsonDeserializer();
-            var output = json.Deserialize<Dictionary<string, object>>(new RestResponse() { Content = doc });
+            var output = json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
 
             Assert.Equal(output.Keys.Count, 3);
 
@@ -165,7 +173,7 @@ namespace RestSharp.Tests
             Guid ID2 = new Guid("809399fa-21c4-4dca-8dcd-34cb697fbca0");
             var data = new JsonObject();
 
-            data["Ids"] = new JsonArray() { ID1, ID2 };
+            data["Ids"] = new JsonArray { ID1, ID2 };
 
             var d = new JsonDeserializer();
             var response = new RestResponse { Content = data.ToString() };
@@ -252,7 +260,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Custom_Formatted_Date()
         {
             var culture = CultureInfo.InvariantCulture;
-            var format = "dd yyyy MMM, hh:mm ss tt";
+            const string format = "dd yyyy MMM, hh:mm ss tt";
             var date = new DateTime(2010, 2, 8, 11, 11, 11);
             var formatted = new { StartDate = date.ToString(format, culture) };
             var data = SimpleJson.SerializeObject(formatted);
@@ -418,9 +426,7 @@ namespace RestSharp.Tests
         {
             var data = File.ReadAllText(Path.Combine("SampleData", "underscore_prefix.txt"));
             var response = new RestResponse { Content = data };
-            var json = new JsonDeserializer();
-
-            json.RootElement = "User";
+            var json = new JsonDeserializer { RootElement = "User" };
 
             var output = json.Deserialize<SOUser>(response);
 
@@ -687,7 +693,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Decimal_With_Four_Zeros_After_Floating_Point()
         {
             const string json = "{\"Value\":0.00005557}";
-            var response = new RestResponse() { Content = json };
+            var response = new RestResponse { Content = json };
             var d = new JsonDeserializer();
             var result = d.Deserialize<DecimalNumber>(response);
 
@@ -706,9 +712,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Dictionary_of_Lists()
         {
             var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
-            var json = new JsonDeserializer();
-
-            json.RootElement = "response";
+            var json = new JsonDeserializer { RootElement = "response" };
 
             var output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
 
@@ -808,9 +812,10 @@ namespace RestSharp.Tests
 
         private string CreateIsoDateJson()
         {
-            var bd = new Birthdate();
-
-            bd.Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc);
+            var bd = new Birthdate
+            {
+                Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc)
+            };
 
             return SimpleJson.SerializeObject(bd);
         }

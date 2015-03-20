@@ -258,7 +258,7 @@ namespace RestSharp
 #endif
             webRequest.PreAuthenticate = PreAuthenticate;
 
-            ServicePointManager.Expect100Continue = false;
+            webRequest.ServicePoint.Expect100Continue = false;
 
             AppendHeaders(webRequest);
             AppendCookies(webRequest);
