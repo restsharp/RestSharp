@@ -19,6 +19,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using RestSharp.Deserializers;
 
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading;
@@ -32,6 +33,8 @@ namespace RestSharp
 #if !PocketPC
         CookieContainer CookieContainer { get; set; }
 #endif
+        int? MaxRedirects { get; set; }
+
         string UserAgent { get; set; }
 
         int Timeout { get; set; }
@@ -58,6 +61,8 @@ namespace RestSharp
         IRestResponse Execute(IRestRequest request);
 
         IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
+
+        byte[] DownloadData(IRestRequest request);
 #endif
 
 #if FRAMEWORK
@@ -68,6 +73,8 @@ namespace RestSharp
 
         IWebProxy Proxy { get; set; }
 #endif
+
+        bool FollowRedirects { get; set; }
 
         Uri BuildUri(IRestRequest request);
 
@@ -104,6 +111,12 @@ namespace RestSharp
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
         RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
+
+        void AddHandler(string contentType, IDeserializer deserializer);
+
+        void RemoveHandler(string contentType);
+
+        void ClearHandlers();
 
 #if FRAMEWORK
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
