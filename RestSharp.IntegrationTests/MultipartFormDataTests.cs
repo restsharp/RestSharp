@@ -1,13 +1,26 @@
-﻿using System;
-using System.Net;
-using NUnit.Framework;
-using RestSharp.IntegrationTests.Helpers;
-
-namespace RestSharp.IntegrationTests
+﻿namespace RestSharp.IntegrationTests
 {
+    using System;
+    using System.IO;
+    using System.Net;
+
+    using RestSharp.IntegrationTests.Helpers;
+
+    using Xunit;
+
     public class MultipartFormDataTests
     {
-        [Test]
+        private readonly string expected =
+            "-------------------------------28947758029299" + Environment.NewLine +
+            "Content-Disposition: form-data; name=\"foo\"" + Environment.NewLine + Environment.NewLine +
+            "bar" + Environment.NewLine +
+            "-------------------------------28947758029299" + Environment.NewLine +
+            "Content-Disposition: form-data; name=\"a name with spaces\"" + Environment.NewLine + Environment.NewLine +
+            "somedata" + Environment.NewLine +
+            "-------------------------------28947758029299--" + Environment.NewLine;
+
+
+        [Fact]
         public void MultipartFormDataAsync()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -17,20 +30,19 @@ namespace RestSharp.IntegrationTests
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
 
-                AddParameters(request);
+                this.AddParameters(request);
 
                 client.ExecuteAsync(request, (restResponse, handle) =>
                 {
                     Console.WriteLine(restResponse.Content);
-                    Assert.AreEqual(Expected, restResponse.Content);
+                    Assert.Equal(this.expected, restResponse.Content);
                 });
             }
         }
 
-        [Test]
+        [Fact]
         public void MultipartFormData()
         {
-            //const string baseUrl = "http://localhost:8888/";
             const string baseUrl = "http://localhost:8888/";
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
@@ -38,38 +50,27 @@ namespace RestSharp.IntegrationTests
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
 
-                AddParameters(request);
+                this.AddParameters(request);
 
                 var response = client.Execute(request);
 
-                //Console.WriteLine(response.Content);
-
-                Assert.AreEqual(Expected, response.Content);
+                Assert.Equal(this.expected, response.Content);
             }
+        }
+
+        private static void EchoHandler(HttpListenerContext obj)
+        {
+            obj.Response.StatusCode = 200;
+
+            var streamReader = new StreamReader(obj.Request.InputStream);
+
+            obj.Response.OutputStream.WriteStringUtf8(streamReader.ReadToEnd());
         }
 
         private void AddParameters(RestRequest request)
         {
             request.AddParameter("foo", "bar");
             request.AddParameter("a name with spaces", "somedata");
-        }
-
-        private const string Expected =
-            "-------------------------------28947758029299\r\n" +
-            "Content-Disposition: form-data; name=\"foo\"\r\n\r\n" +
-            "bar\r\n" +
-            "-------------------------------28947758029299\r\n" +
-            "Content-Disposition: form-data; name=\"a name with spaces\"\r\n\r\n" +
-            "somedata\r\n" +
-            "-------------------------------28947758029299--\r\n";
-
-        private void EchoHandler(HttpListenerContext obj)
-        {
-            obj.Response.StatusCode = 200;
-
-            var streamReader = new System.IO.StreamReader(obj.Request.InputStream);
-
-            obj.Response.OutputStream.WriteStringUtf8(streamReader.ReadToEnd());
         }
     }
 }
