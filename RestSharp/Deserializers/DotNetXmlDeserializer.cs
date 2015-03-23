@@ -16,6 +16,7 @@
 
 using System.IO;
 using System.Text;
+using System.Xml;
 
 namespace RestSharp.Deserializers
 {
@@ -30,6 +31,13 @@ namespace RestSharp.Deserializers
 
         public string RootElement { get; set; }
 
+        public XmlReaderSettings Settings { get; set; }
+
+        public DotNetXmlDeserializer()
+        {
+            Settings = new XmlReaderSettings();
+        }
+
         public T Deserialize<T>(IRestResponse response)
         {
             if (string.IsNullOrEmpty(response.Content))
@@ -40,7 +48,9 @@ namespace RestSharp.Deserializers
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
             {
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-                return (T)serializer.Deserialize(stream);
+
+                var reader = XmlReader.Create(stream, Settings);
+                return (T)serializer.Deserialize(reader);
             }
         }
     }
