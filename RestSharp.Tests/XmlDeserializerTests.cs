@@ -547,6 +547,20 @@ namespace RestSharp.Tests
         }
 
         [Fact]
+        public void Can_Deserialize_Goodreads_Xml()
+        {
+            var xmlpath = PathFor("Goodreads.xml");
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+            var d = new XmlDeserializer();
+            var output = d.Deserialize<GoodReadsReviewCollection>(response);
+
+            Assert.Equal(2, output.Reviews.Count);
+            Assert.Equal("1208943892", output.Reviews[0].Id); // This fails without fixing the XmlDeserializer
+            Assert.Equal("1198344567", output.Reviews[1].Id);
+        }
+
+        [Fact]
         public void Can_Deserialize_Boolean_From_Number()
         {
             var xmlpath = PathFor("boolean_from_number.xml");
