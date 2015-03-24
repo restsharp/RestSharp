@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InterfaceImplementationTests.cs" />
+    <Compile Include="AddRangeTests.cs" />
     <Compile Include="OAuthTests.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
