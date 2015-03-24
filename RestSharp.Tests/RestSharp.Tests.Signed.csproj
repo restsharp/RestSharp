@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
+    <Compile Include="SampleClasses\Goodreads.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
     <Compile Include="SampleClasses\Struct.cs" />
     <Compile Include="XmlAttributeDeserializerTests.cs" />
@@ -123,6 +124,7 @@
     <Content Include="SampleData\boolean_from_number.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\Goodreads.xml" />
     <Content Include="SampleData\iso8601datetimes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
