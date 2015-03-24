@@ -136,17 +136,9 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="path">Full path to file to upload</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, string path);
-
-        /// <summary>
-        /// Adds the bytes to the Files collection with the specified file name
-        /// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
-        /// <param name="bytes">The file data</param>
-        /// <param name="fileName">The file name to use for the uploaded file</param>
-        /// <returns>This request</returns>
-        IRestRequest AddFile(string name, byte[] bytes, string fileName);
+        IRestRequest AddFile(string name, string path, string contentType = null);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -156,7 +148,17 @@ namespace RestSharp
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType);
+        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null);
+
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name and content type
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
+        /// <returns>This request</returns>
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null);
 #endif
 
         /// <summary>

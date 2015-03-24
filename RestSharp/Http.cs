@@ -240,7 +240,7 @@ namespace RestSharp
 #endif
 
 #if FRAMEWORK
-            restrictedHeaderActions.Add("Range", (r, v) => { AddRange(r, v); });
+            restrictedHeaderActions.Add("Range", AddRange);
 #endif
         }
 
