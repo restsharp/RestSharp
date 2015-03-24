@@ -120,8 +120,9 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="path">Full path to file to upload</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, string path)
+        public IRestRequest AddFile(string name, string path, string contentType = null)
         {
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
@@ -137,37 +138,9 @@ namespace RestSharp
                                             {
                                                 file.BaseStream.CopyTo(s);
                                             }
-                                        }
+                                        },
+                                ContentType = contentType
                            });
-        }
-
-        /// <summary>
-        /// Adds a file to the Files collection to be included with a POST or PUT request with the specified content type
-        /// (other methods do not support file uploads).
-        /// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
-        /// <param name="path">Full path to file to upload</param>
-        /// <param name="contentType">The MIME type of the file to upload</param>
-        /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, string path, string contentType)
-        {
-            FileInfo f = new FileInfo(path);
-            long fileLength = f.Length;
-
-            return AddFile(new FileParameter
-            {
-                Name = name,
-                FileName = Path.GetFileName(path),
-                ContentLength = fileLength,
-                Writer = s =>
-                {
-                    using (var file = new StreamReader(path))
-                    {
-                        file.BaseStream.CopyTo(s);
-                    }
-                },
-                ContentType = contentType
-            });
         }
 
         /// <summary>
@@ -176,21 +149,9 @@ namespace RestSharp
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="bytes">The file data</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
-        /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, byte[] bytes, string fileName)
-        {
-            return this.AddFile(FileParameter.Create(name, bytes, fileName));
-        }
-
-        /// <summary>
-        /// Adds the bytes to the Files collection with the specified file name and content type
-        /// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
-        /// <param name="bytes">The file data</param>
-        /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType)
+        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null)
         {
             return this.AddFile(FileParameter.Create(name, bytes, fileName, contentType));
         }
@@ -201,21 +162,9 @@ namespace RestSharp
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
-        /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName)
-        {
-            return this.AddFile(name, writer, fileName, null);
-        }
-
-        /// <summary>
-        /// Adds the bytes to the Files collection with the specified file name and content type
-        /// </summary>
-        /// <param name="name">The parameter name to use in the request</param>
-        /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
-        /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType)
+        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null)
         {
             return AddFile(new FileParameter
                            {
