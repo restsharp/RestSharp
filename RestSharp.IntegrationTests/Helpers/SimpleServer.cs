@@ -1,58 +1,57 @@
-﻿using System;
-using System.Net;
-using System.Threading;
-
-namespace RestSharp.IntegrationTests.Helpers
+﻿namespace RestSharp.IntegrationTests.Helpers
 {
+    using System;
+    using System.Net;
+    using System.Threading;
+
     public class SimpleServer : IDisposable
     {
-        private readonly HttpListener _listener;
-        private readonly Action<HttpListenerContext> _handler;
-        private Thread _processor;
+        private readonly HttpListener listener;
+        private readonly Action<HttpListenerContext> handler;
+        private Thread processor;
 
-        public static SimpleServer Create(string url, Action<HttpListenerContext> handler,
+        public static SimpleServer Create(
+            string url,
+            Action<HttpListenerContext> handler,
             AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
         {
-            var listener = new HttpListener
-            {
-                Prefixes = {url},
-                AuthenticationSchemes = authenticationSchemes
-            };
+            var listener = new HttpListener { Prefixes = { url }, AuthenticationSchemes = authenticationSchemes };
             var server = new SimpleServer(listener, handler);
 
             server.Start();
-
             return server;
         }
 
         private SimpleServer(HttpListener listener, Action<HttpListenerContext> handler)
         {
-            _listener = listener;
-            _handler = handler;
+            this.listener = listener;
+            this.handler = handler;
         }
 
         public void Start()
         {
-            if (!_listener.IsListening)
+            if (this.listener.IsListening)
             {
-                _listener.Start();
-
-                _processor = new Thread(() =>
-                {
-                    var context = _listener.GetContext();
-                    _handler(context);
-                    context.Response.Close();
-                }) {Name = "WebServer"};
-
-                _processor.Start();
+                return;
             }
+
+            this.listener.Start();
+
+            this.processor = new Thread(() =>
+            {
+                var context = this.listener.GetContext();
+                this.handler(context);
+                context.Response.Close();
+            }) { Name = "WebServer" };
+
+            this.processor.Start();
         }
 
         public void Dispose()
         {
-            _processor.Abort();
-            _listener.Stop();
-            _listener.Close();
+            this.processor.Abort();
+            this.listener.Stop();
+            this.listener.Close();
         }
     }
 }
