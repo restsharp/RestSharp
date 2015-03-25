@@ -2,13 +2,20 @@
 {
     using System;
     using System.Net;
+    using System.Security;
     using System.Threading;
 
     public class SimpleServer : IDisposable
     {
         private readonly HttpListener listener;
         private readonly Action<HttpListenerContext> handler;
-        private Thread processor;
+        private Thread thread;
+
+        private SimpleServer(HttpListener listener, Action<HttpListenerContext> handler)
+        {
+            this.listener = listener;
+            this.handler = handler;
+        }
 
         public static SimpleServer Create(
             string url,
@@ -22,12 +29,6 @@
             return server;
         }
 
-        private SimpleServer(HttpListener listener, Action<HttpListenerContext> handler)
-        {
-            this.listener = listener;
-            this.handler = handler;
-        }
-
         public void Start()
         {
             if (this.listener.IsListening)
@@ -37,20 +38,43 @@
 
             this.listener.Start();
 
-            this.processor = new Thread(() =>
+            this.thread = new Thread(() =>
             {
                 var context = this.listener.GetContext();
                 this.handler(context);
                 context.Response.Close();
             }) { Name = "WebServer" };
 
-            this.processor.Start();
+            this.thread.Start();
         }
 
         public void Dispose()
         {
-            this.processor.Abort();
-            this.listener.Stop();
+            try
+            {
+                this.thread.Abort();
+            }
+            catch (ThreadStateException threadStateException)
+            {
+                Console.WriteLine("Issue aborting thread - {0}.", threadStateException.Message);
+            }
+            catch (SecurityException securityException)
+            {
+                Console.WriteLine("Issue aborting thread - {0}.", securityException.Message);
+            }
+
+            if (this.listener.IsListening)
+            {
+                try
+                {
+                    this.listener.Stop();
+                }
+                catch (ObjectDisposedException objectDisposedException)
+                {
+                    Console.WriteLine("Issue stopping listener - {0}", objectDisposedException.Message);
+                }
+            }
+
             this.listener.Close();
         }
     }
