@@ -3,13 +3,13 @@
 namespace RestSharp.Authenticators.OAuth
 {
 #if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
-	[Serializable]
+    [Serializable]
 #endif
-	public enum OAuthType
-	{
-		RequestToken,
-		AccessToken,
-		ProtectedResource,
-		ClientAuthentication
-	}
+    public enum OAuthType
+    {
+        RequestToken,
+        AccessToken,
+        ProtectedResource,
+        ClientAuthentication
+    }
 }

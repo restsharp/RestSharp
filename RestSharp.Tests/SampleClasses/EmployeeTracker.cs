@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RestSharp.Tests.SampleClasses
 {
@@ -12,6 +10,7 @@ namespace RestSharp.Tests.SampleClasses
         /// Value:  Messages sent to employee.
         /// </summary>
         public Dictionary<String, List<String>> EmployeesMail { get; set; }
+
         /// <summary>
         /// Key:    Employee name.
         /// Value:  Hours worked this each week.
@@ -28,6 +27,7 @@ namespace RestSharp.Tests.SampleClasses
     public class Payment
     {
         public PaymentType Type { get; set; }
+
         public Int32 Amount { get; set; }
     }
 

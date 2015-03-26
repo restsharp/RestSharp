@@ -8,7 +8,7 @@ namespace RestSharp.IntegrationTests
 {
     public class RequestHeadTests
     {
-        private const string BASE_URL = "http://localhost:8080/";
+        private const string BASE_URL = "http://localhost:8888/";
 
         public RequestHeadTests()
         {
@@ -30,8 +30,11 @@ namespace RestSharp.IntegrationTests
                 client.Execute(request);
 
                 Assert.NotNull(RequestHeadCapturer.CapturedHeaders);
+
                 var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
-                Assert.False(keys.Contains("Authorization"), "Authorization header was present in HTTP request from client, even though server does not use the Negotiate scheme");
+
+                Assert.False(keys.Contains("Authorization"),
+                    "Authorization header was present in HTTP request from client, even though server does not use the Negotiate scheme");
             }
         }
 
@@ -39,6 +42,7 @@ namespace RestSharp.IntegrationTests
         public void Passes_Default_Credentials_When_UseDefaultCredentials_Is_True()
         {
             const Method httpMethod = Method.GET;
+
             using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate))
             {
                 var client = new RestClient(BASE_URL);
@@ -46,13 +50,15 @@ namespace RestSharp.IntegrationTests
                 {
                     UseDefaultCredentials = true
                 };
-
                 var response = client.Execute(request);
 
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.NotNull(RequestHeadCapturer.CapturedHeaders);
+
                 var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
-                Assert.True(keys.Contains("Authorization"), "Authorization header not present in HTTP request from client, even though UseDefaultCredentials = true");
+
+                Assert.True(keys.Contains("Authorization"),
+                    "Authorization header not present in HTTP request from client, even though UseDefaultCredentials = true");
             }
         }
 
@@ -60,6 +66,7 @@ namespace RestSharp.IntegrationTests
         public void Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False()
         {
             const Method httpMethod = Method.GET;
+
             using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate))
             {
                 var client = new RestClient(BASE_URL);
@@ -69,7 +76,6 @@ namespace RestSharp.IntegrationTests
                     // changes, it's better to explicitly set it here.
                     UseDefaultCredentials = false
                 };
-
                 var response = client.Execute(request);
 
                 Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

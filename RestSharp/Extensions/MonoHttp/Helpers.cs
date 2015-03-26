@@ -2,7 +2,7 @@
 // System.Web.Util.Helpers
 //
 // Authors:
-//	Marek Habersack (mhabersack@novell.com)
+// Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2009 Novell, Inc (http://novell.com)
 
@@ -26,13 +26,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 using System.Globalization;
 
 namespace RestSharp.Contrib
 {
-	class Helpers
-	{
-		public static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
-	}
+    class Helpers
+    {
+        public static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
+    }
 }

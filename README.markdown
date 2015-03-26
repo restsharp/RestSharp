@@ -1,13 +1,13 @@
-# RestSharp - Simple .NET REST Client
+# RestSharp - Simple .NET REST Client [![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
 
 ### [Official Site/Blog][1] - [@RestSharp][2]  
-### Please use the [Google Group][3] for feature requests and troubleshooting usage.
-### License: Apache License 2.0  
+### License: Apache License 2.0
 
 ### Features
 
-* Supports .NET 3.5+, Silverlight 4, Windows Phone 7, Mono, MonoTouch, Mono for Android, Compact Framework 3.5
+* Supports .NET 3.5+, Silverlight 4, Windows Phone 8, Mono, MonoTouch, Mono for Android
 * Easy installation using [NuGet](http://nuget.org/packages/RestSharp) for most .NET flavors
+* Supports strong naming using [NuGet](http://nuget.org/packages/RestSharpSigned) for most .NET flavors
 * Automatic XML and JSON deserialization
 * Supports custom serialization and deserialization via ISerializer and IDeserializer
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
@@ -37,7 +37,7 @@ request.AddObject(object, "PersonId", "Name", ...);
 request.AddHeader("header", "value");
 
 // add files to upload (works with compatible verbs)
-request.AddFile(path);
+request.AddFile("file", path);
 
 // execute the request
 IRestResponse response = client.Execute(request);

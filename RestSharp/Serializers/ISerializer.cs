@@ -16,12 +16,16 @@
 
 namespace RestSharp.Serializers
 {
-	public interface ISerializer
-	{
-		string Serialize(object obj);
-		string RootElement { get; set; }
-		string Namespace { get; set; }
-		string DateFormat { get; set; }
-		string ContentType { get; set; }
-	}
+    public interface ISerializer
+    {
+        string Serialize(object obj);
+
+        string RootElement { get; set; }
+
+        string Namespace { get; set; }
+
+        string DateFormat { get; set; }
+
+        string ContentType { get; set; }
+    }
 }

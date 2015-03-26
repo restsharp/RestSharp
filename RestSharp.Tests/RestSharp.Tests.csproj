@@ -44,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -55,6 +56,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
@@ -74,15 +76,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
     </Reference>
-    <Reference Include="xunit.runner.tdnet, Version=1.8.0.1545, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.1.9.0.1566\lib\xunit.runner.tdnet.dll</HintPath>
+    <Reference Include="xunit.runner.tdnet">
+      <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.runner.tdnet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InterfaceImplementationTests.cs" />
+    <Compile Include="AddRangeTests.cs" />
+    <Compile Include="OAuthTests.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
+    <Compile Include="SampleClasses\Goodreads.cs" />
     <Compile Include="SampleClasses\GoogleWeatherWithAttributes.cs" />
+    <Compile Include="SampleClasses\Struct.cs" />
     <Compile Include="XmlAttributeDeserializerTests.cs" />
     <Compile Include="CultureChange.cs" />
     <Compile Include="JsonTests.cs" />
@@ -117,6 +123,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\boolean_from_number.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\Goodreads.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\iso8601datetimes.txt">

@@ -17,7 +17,7 @@
 // <website>https://github.com/facebook-csharp-sdk/simple-json</website>
 //-----------------------------------------------------------------------
 
-// VERSION: 0.26.0
+// VERSION: 0.38.0
 
 // NOTE: uncomment the following line to make SimpleJson class internal.
 //#define SIMPLE_JSON_INTERNAL
@@ -30,6 +30,9 @@
 
 // NOTE: uncomment the following line to enable DataContract support.
 //#define SIMPLE_JSON_DATACONTRACT
+
+// NOTE: uncomment the following line to enable IReadOnlyCollection<T> and IReadOnlyList<T> support.
+//#define SIMPLE_JSON_READONLY_COLLECTIONS
 
 // NOTE: uncomment the following line to disable linq expressions/compiled lambda (better performance) instead of method.invoke().
 // define if you are using .net framework <= 3.0 or < WP7.5
@@ -512,6 +515,22 @@ namespace RestSharp
         private const int TOKEN_NULL = 11;
         private const int BUILDER_CAPACITY = 2000;
 
+        private static readonly char[] EscapeTable;
+        private static readonly char[] EscapeCharacters = new char[] { '"', '\\', '\b', '\f', '\n', '\r', '\t' };
+        private static readonly string EscapeCharactersString = new string(EscapeCharacters);
+
+        static SimpleJson()
+        {
+            EscapeTable = new char[93];
+            EscapeTable['"']  = '"';
+            EscapeTable['\\'] = '\\';
+            EscapeTable['\b'] = 'b';
+            EscapeTable['\f'] = 'f';
+            EscapeTable['\n'] = 'n';
+            EscapeTable['\r'] = 'r';
+            EscapeTable['\t'] = 't';
+        }
+
         /// <summary>
         /// Parses the string json into a value
         /// </summary>
@@ -816,17 +835,9 @@ namespace RestSharp
                         {
                             // parse the 32 bit hex into an integer codepoint
                             uint codePoint;
-
-#if PocketPC
-                            try {
-                                codePoint = UInt32.Parse(new string(json, index, 4), NumberStyles.HexNumber);
-                            } catch (Exception ex) {
-                                return "";
-                            }
-#else
                             if (!(success = UInt32.TryParse(new string(json, index, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codePoint)))
                                 return "";
-#endif
+
                             // convert the integer codepoint to a unicode char and add to string
                             if (0xD800 <= codePoint && codePoint <= 0xDBFF)  // if high surrogate
                             {
@@ -834,18 +845,8 @@ namespace RestSharp
                                 remainingLength = json.Length - index;
                                 if (remainingLength >= 6)
                                 {
-                                    uint lowCodePoint = 0;
-
-#if PocketPC
-                                    bool lowCodePointPassed = false;
-                                    try {
-                                        lowCodePoint = UInt32.Parse(new string(json, index + 2, 4), NumberStyles.HexNumber);
-                                        lowCodePointPassed = true;
-                                    } catch (Exception) { }
-                                    if (new string(json, index, 2) == "\\u" && lowCodePointPassed)
-#else
+                                    uint lowCodePoint;
                                     if (new string(json, index, 2) == "\\u" && UInt32.TryParse(new string(json, index + 2, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out lowCodePoint))
-#endif
                                     {
                                         if (0xDC00 <= lowCodePoint && lowCodePoint <= 0xDFFF)    // if low surrogate
                                         {
@@ -901,33 +902,13 @@ namespace RestSharp
             if (str.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || str.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
             {
                 double number;
-#if PocketPC
-                try {
-                    number = double.Parse(new string(json, index, charLength), NumberStyles.Any);
-                    success = true;
-                } catch (Exception) {
-                    number = 0;
-                    success = false;
-                }
-#else
                 success = double.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
-#endif
                 returnNumber = number;
             }
             else
             {
                 long number;
-#if PocketPC
-                try {
-                    number = long.Parse(new string(json, index, charLength), NumberStyles.Any);
-                    success = true;
-                } catch (Exception) {
-                    number = 0;
-                    success = false;
-                }
-#else
                 success = long.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
-#endif
                 returnNumber = number;
             }
             index = lastIndex + 1;
@@ -1111,29 +1092,50 @@ namespace RestSharp
 
         static bool SerializeString(string aString, StringBuilder builder)
         {
-            builder.Append("\"");
+            // Happy path if there's nothing to be escaped. IndexOfAny is highly optimized (and unmanaged)
+            if (aString.IndexOfAny(EscapeCharacters) == -1)
+            {
+                builder.Append('"');
+                builder.Append(aString);
+                builder.Append('"');
+
+                return true;
+            }
+
+            builder.Append('"');
+            int safeCharacterCount = 0;
             char[] charArray = aString.ToCharArray();
+
             for (int i = 0; i < charArray.Length; i++)
             {
                 char c = charArray[i];
-                if (c == '"')
-                    builder.Append("\\\"");
-                else if (c == '\\')
-                    builder.Append("\\\\");
-                else if (c == '\b')
-                    builder.Append("\\b");
-                else if (c == '\f')
-                    builder.Append("\\f");
-                else if (c == '\n')
-                    builder.Append("\\n");
-                else if (c == '\r')
-                    builder.Append("\\r");
-                else if (c == '\t')
-                    builder.Append("\\t");
+
+                // Non ascii characters are fine, buffer them up and send them to the builder
+                // in larger chunks if possible. The escape table is a 1:1 translation table
+                // with \0 [default(char)] denoting a safe character.
+                if (c >= EscapeTable.Length || EscapeTable[c] == default(char))
+                {
+                    safeCharacterCount++;
+                }
                 else
-                    builder.Append(c);
+                {
+                    if (safeCharacterCount > 0)
+                    {
+                        builder.Append(charArray, i - safeCharacterCount, safeCharacterCount);
+                        safeCharacterCount = 0;
+                    }
+
+                    builder.Append('\\');
+                    builder.Append(EscapeTable[c]);
+                }
             }
-            builder.Append("\"");
+
+            if (safeCharacterCount > 0)
+            {
+                builder.Append(charArray, charArray.Length - safeCharacterCount, safeCharacterCount);
+            }
+
+            builder.Append('"');
             return true;
         }
 
@@ -1342,13 +1344,25 @@ namespace RestSharp
                 {
                     if (type == typeof(DateTime) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTime)))
                         return DateTime.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-#if !PocketPC
                     if (type == typeof(DateTimeOffset) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTimeOffset)))
                         return DateTimeOffset.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-#endif
                     if (type == typeof(Guid) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid)))
                         return new Guid(str);
-                    return str;
+                    if (type == typeof(Uri))
+                    {
+                        bool isValid =  Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
+
+                        Uri result;
+                        if (isValid && Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out result))
+                            return result;
+
+												return null;
+                    }
+                  
+									if (type == typeof(string))  
+										return str;
+
+									return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
                 }
                 else
                 {
@@ -1435,9 +1449,8 @@ namespace RestSharp
                         }
                         else if (ReflectionUtils.IsTypeGenericeCollectionInterface(type) || ReflectionUtils.IsAssignableFrom(typeof(IList), type))
                         {
-                            Type innerType = ReflectionUtils.GetGenericTypeArguments(type)[0];
-                            Type genericType = typeof(List<>).MakeGenericType(innerType);
-                            list = (IList)ConstructorCache[genericType](jsonObject.Count);
+                            Type innerType = ReflectionUtils.GetGenericListElementType(type);
+                            list = (IList)(ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
                             foreach (object o in jsonObject)
                                 list.Add(DeserializeObject(o, innerType));
                         }
@@ -1462,10 +1475,8 @@ namespace RestSharp
             bool returnValue = true;
             if (input is DateTime)
                 output = ((DateTime)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
-#if !PocketPC
             else if (input is DateTimeOffset)
                 output = ((DateTimeOffset)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
-#endif
             else if (input is Guid)
                 output = ((Guid)input).ToString("D");
             else if (input is Uri)
@@ -1602,6 +1613,18 @@ namespace RestSharp
 
             public delegate TValue ThreadSafeDictionaryValueFactory<TKey, TValue>(TKey key);
 
+#if SIMPLE_JSON_TYPEINFO
+            public static TypeInfo GetTypeInfo(Type type)
+            {
+                return type.GetTypeInfo();
+            }
+#else
+            public static Type GetTypeInfo(Type type)
+            {
+                return type;
+            }
+#endif
+
             public static Attribute GetAttribute(MemberInfo info, Type type)
             {
 #if SIMPLE_JSON_TYPEINFO
@@ -1613,6 +1636,25 @@ namespace RestSharp
                     return null;
                 return Attribute.GetCustomAttribute(info, type);
 #endif
+            }
+
+            public static Type GetGenericListElementType(Type type)
+            {
+                IEnumerable<Type> interfaces;
+#if SIMPLE_JSON_TYPEINFO
+                interfaces = type.GetTypeInfo().ImplementedInterfaces;
+#else
+                interfaces = type.GetInterfaces();
+#endif
+                foreach (Type implementedInterface in interfaces)
+                {
+                    if (IsTypeGeneric(implementedInterface) &&
+                        implementedInterface.GetGenericTypeDefinition() == typeof (IList<>))
+                    {
+                        return GetGenericTypeArguments(implementedInterface)[0];
+                    }
+                }
+                return GetGenericTypeArguments(type)[0];
             }
 
             public static Attribute GetAttribute(Type objectType, Type attributeType)
@@ -1638,27 +1680,31 @@ namespace RestSharp
 #endif
             }
 
+            public static bool IsTypeGeneric(Type type)
+            {
+                return GetTypeInfo(type).IsGenericType;
+            }
+
             public static bool IsTypeGenericeCollectionInterface(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
-                if (!type.GetTypeInfo().IsGenericType)
-#else
-                if (!type.IsGenericType)
-#endif
+                if (!IsTypeGeneric(type))
                     return false;
 
                 Type genericDefinition = type.GetGenericTypeDefinition();
 
-                return (genericDefinition == typeof(IList<>) || genericDefinition == typeof(ICollection<>) || genericDefinition == typeof(IEnumerable<>));
+                return (genericDefinition == typeof(IList<>)
+                    || genericDefinition == typeof(ICollection<>)
+                    || genericDefinition == typeof(IEnumerable<>)
+#if SIMPLE_JSON_READONLY_COLLECTIONS
+                    || genericDefinition == typeof(IReadOnlyCollection<>)
+                    || genericDefinition == typeof(IReadOnlyList<>)
+#endif
+                    );
             }
 
             public static bool IsAssignableFrom(Type type1, Type type2)
             {
-#if SIMPLE_JSON_TYPEINFO
-                return type1.GetTypeInfo().IsAssignableFrom(type2.GetTypeInfo());
-#else
-                return type1.IsAssignableFrom(type2);
-#endif
+                return GetTypeInfo(type1).IsAssignableFrom(GetTypeInfo(type2));
             }
 
             public static bool IsTypeDictionary(Type type)
@@ -1666,29 +1712,20 @@ namespace RestSharp
 #if SIMPLE_JSON_TYPEINFO
                 if (typeof(IDictionary<,>).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
                     return true;
-
-                if (!type.GetTypeInfo().IsGenericType)
-                    return false;
 #else
                 if (typeof(System.Collections.IDictionary).IsAssignableFrom(type))
                     return true;
-
-                if (!type.IsGenericType)
-                    return false;
 #endif
+                if (!GetTypeInfo(type).IsGenericType)
+                    return false;
+
                 Type genericDefinition = type.GetGenericTypeDefinition();
                 return genericDefinition == typeof(IDictionary<,>);
             }
 
             public static bool IsNullableType(Type type)
             {
-                return
-#if SIMPLE_JSON_TYPEINFO
- type.GetTypeInfo().IsGenericType
-#else
- type.IsGenericType
-#endif
- && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+                return GetTypeInfo(type).IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
             }
 
             public static object ToNullableType(object obj, Type nullableType)
@@ -1698,11 +1735,7 @@ namespace RestSharp
 
             public static bool IsValueType(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
-                return type.GetTypeInfo().IsValueType;
-#else
-                return type.IsValueType;
-#endif
+                return GetTypeInfo(type).IsValueType;
             }
 
             public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
@@ -1746,7 +1779,7 @@ namespace RestSharp
             public static IEnumerable<PropertyInfo> GetProperties(Type type)
             {
 #if SIMPLE_JSON_TYPEINFO
-                return type.GetTypeInfo().DeclaredProperties;
+                return type.GetRuntimeProperties();
 #else
                 return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 #endif
@@ -1755,7 +1788,7 @@ namespace RestSharp
             public static IEnumerable<FieldInfo> GetFields(Type type)
             {
 #if SIMPLE_JSON_TYPEINFO
-                return type.GetTypeInfo().DeclaredFields;
+                return type.GetRuntimeFields();
 #else
                 return type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 #endif
@@ -1839,7 +1872,7 @@ namespace RestSharp
 
             public static GetDelegate GetGetMethod(PropertyInfo propertyInfo)
             {
-#if SIMPLE_JSON_NO_LINQ_EXPRESSION || PocketPC
+#if SIMPLE_JSON_NO_LINQ_EXPRESSION
                 return GetGetMethodByReflection(propertyInfo);
 #else
                 return GetGetMethodByExpression(propertyInfo);
@@ -1848,7 +1881,7 @@ namespace RestSharp
 
             public static GetDelegate GetGetMethod(FieldInfo fieldInfo)
             {
-#if SIMPLE_JSON_NO_LINQ_EXPRESSION || PocketPC
+#if SIMPLE_JSON_NO_LINQ_EXPRESSION
                 return GetGetMethodByReflection(fieldInfo);
 #else
                 return GetGetMethodByExpression(fieldInfo);
@@ -1866,7 +1899,7 @@ namespace RestSharp
                 return delegate(object source) { return fieldInfo.GetValue(source); };
             }
 
-#if !SIMPLE_JSON_NO_LINQ_EXPRESSION && !PocketPC
+#if !SIMPLE_JSON_NO_LINQ_EXPRESSION
 
             public static GetDelegate GetGetMethodByExpression(PropertyInfo propertyInfo)
             {

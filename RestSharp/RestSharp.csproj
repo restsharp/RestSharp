@@ -46,6 +46,8 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>1591,1584,1572,1574,1658</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,6 +60,7 @@
     <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
     <NoWarn>1591,1573,1658,1584,1574,1572</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
@@ -112,6 +115,7 @@
     <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />
     <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
     <Compile Include="Extensions\ResponseExtensions.cs" />
+    <Compile Include="Extensions\ResponseStatusExtensions.cs" />
     <Compile Include="RestClientExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Http.Sync.cs" />
@@ -183,6 +187,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.csproj">
+      <Project>{ccc30138-3d68-44d8-af1a-d22f769ee8dc}</Project>
+      <Name>RestSharp.Build</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

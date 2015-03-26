@@ -1,7 +1,5 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System;
+﻿using System;
+using System.Reflection;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -10,7 +8,7 @@ using System;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("John Sheehan, RestSharp Community")]
 [assembly: AssemblyProduct("RestSharp")]
-[assembly: AssemblyCopyright("Copyright © RestSharp Project 2009-2012")]
+[assembly: AssemblyCopyright("Copyright © RestSharp Project 2009-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
@@ -24,14 +22,24 @@ using System;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(SharedAssembylInfo.Version + ".0")]
-[assembly: AssemblyInformationalVersion(SharedAssembylInfo.Version)]
+[assembly: AssemblyVersion(SharedAssemblyInfo.Version + ".0")]
 
 #if !PocketPC
-[assembly: AssemblyFileVersion(SharedAssembylInfo.Version + ".0")]
+#if SIGNED
+[assembly: AssemblyInformationalVersion(SharedAssemblyInfo.FileVersion)]
+[assembly: AssemblyFileVersion(SharedAssemblyInfo.FileVersion + ".0")]
+#else
+[assembly: AssemblyInformationalVersion(SharedAssemblyInfo.Version)]
+[assembly: AssemblyFileVersion(SharedAssemblyInfo.Version + ".0")]
+#endif
 #endif
 
-class SharedAssembylInfo
+class SharedAssemblyInfo
 {
-    public const string Version = "104.4.0";
+#if SIGNED
+    public const string Version = "100.0.0";
+    public const string FileVersion = "105.0.1";
+#else
+    public const string Version = "105.0.1";
+#endif
 }

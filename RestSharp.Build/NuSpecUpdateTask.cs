@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using Microsoft.Build.Utilities;
 using System.Reflection;
 using System.Xml.Linq;
-using System.IO;
+using Microsoft.Build.Utilities;
 
 namespace RestSharp.Build
 {
@@ -25,10 +23,7 @@ namespace RestSharp.Build
 
         public string SourceAssemblyFile { get; set; }
 
-        public NuSpecUpdateTask()
-            : this(null)
-        {
-        }
+        public NuSpecUpdateTask() : this(null) { }
 
         public NuSpecUpdateTask(Assembly assembly)
         {
@@ -37,29 +32,33 @@ namespace RestSharp.Build
 
         public override bool Execute()
         {
-            if (string.IsNullOrEmpty(this.SpecFile)) return false;
+            if (string.IsNullOrEmpty(this.SpecFile))
+                return false;
 
             var path = Path.GetFullPath(this.SourceAssemblyFile);
             this._assembly = this._assembly ?? Assembly.LoadFile(path);
 
             var name = this._assembly.GetName();
 
+#if SIGNED
+            this.Id = name.Name + "Signed";
+#else
             this.Id = name.Name;
+#endif
             this.Authors = this.GetAuthors(this._assembly);
             this.Description = this.GetDescription(this._assembly);
             this.Version = this.GetVersion(this._assembly);
 
-            this.GenerateComputedSpecFile();            
-            
+            this.GenerateComputedSpecFile();
+
             return true;
         }
 
         private void GenerateComputedSpecFile()
         {
             var doc = XDocument.Load(this.SpecFile);
-            
             var metaNode = doc.Descendants("metadata").First();
-            
+
             this.ReplaceToken(metaNode, "id", this.Id);
             this.ReplaceToken(metaNode, "authors", this.Authors);
             this.ReplaceToken(metaNode, "owners", this.Authors);
@@ -111,12 +110,13 @@ namespace RestSharp.Build
         private TAttr GetAttribute<TAttr>(Assembly asm) where TAttr : Attribute
         {
             var attrs = asm.GetCustomAttributes(typeof(TAttr), false);
+
             if (attrs.Length > 0)
             {
                 return attrs[0] as TAttr;
             }
 
             return null;
-        }        
+        }
     }
 }
