@@ -32,5 +32,10 @@ namespace RestSharp
         /// Name of the parameter
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Additional key/value pairs to append to Content-Disposition (key1: val1; key2: val2; ...)
+        /// </summary>
+        public string AdditionalDisposition { get; set; }
     }
 }

@@ -175,6 +175,74 @@ namespace RestSharp
                            });
         }
 
+        /// <summary>
+        /// Adds a file to the Files collection to be included with a POST or PUT request 
+        /// (other methods do not support file uploads).
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="path">Full path to file to upload</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
+        /// <param name="additionalDisposition">Additional key/value pairs to append to Content-Disposition (key1: val1; key2: val2; ...)</param>
+        /// <returns>This request</returns>
+        public IRestRequest AddFile(string name, string path, string contentType = null, string additionalDisposition = null)
+        {
+            FileInfo f = new FileInfo(path);
+            long fileLength = f.Length;
+
+            return AddFile(new FileParameter
+            {
+                Name = name,
+                FileName = Path.GetFileName(path),
+                ContentLength = fileLength,
+                Writer = s =>
+                {
+                    using (var file = new StreamReader(path))
+                    {
+                        file.BaseStream.CopyTo(s);
+                    }
+                },
+                ContentType = contentType,
+                AdditionalDisposition = additionalDisposition
+            });
+        }
+
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="bytes">The file data</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
+        /// <param name="additionalDisposition">Additional key/value pairs to append to Content-Disposition (key1: val1; key2: val2; ...)</param>
+        /// <returns>This request</returns>
+        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null, string additionalDisposition = null)
+        {
+            var fileParameter = FileParameter.Create(name, bytes, fileName, contentType);
+            fileParameter.AdditionalDisposition = additionalDisposition;
+            return this.AddFile(fileParameter);
+        }
+
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name and content type
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
+        /// <param name="additionalDisposition">Additional key/value pairs to append to Content-Disposition (key1: val1; key2: val2; ...)</param>
+        /// <returns>This request</returns>
+        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null, string additionalDisposition = null)
+        {
+            return AddFile(new FileParameter
+            {
+                Name = name,
+                Writer = writer,
+                FileName = fileName,
+                ContentType = contentType,
+                AdditionalDisposition = additionalDisposition
+            });
+        }
+
         private IRestRequest AddFile(FileParameter file)
         {
             this.Files.Add(file);

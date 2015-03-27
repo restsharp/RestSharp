@@ -253,8 +253,8 @@ namespace RestSharp
 
         private static string GetMultipartFileHeader(HttpFile file)
         {
-            return string.Format("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
-                FORM_BOUNDARY, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LINE_BREAK);
+            return string.Format("--{0}{5}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}{5}Content-Type: {3}{5}{5}",
+                FORM_BOUNDARY, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", file.AdditionalDisposition, LINE_BREAK);
         }
 
         private string GetMultipartFormData(HttpParameter param)

@@ -68,5 +68,28 @@ namespace RestSharp
         /// Name of the parameter
         /// </summary>
         public string Name { get; set; }
+
+        private string _additionalDisposition;
+
+        /// <summary>
+        /// Additional key/value pairs to append to Content-Disposition (key1: val1; key2: val2; ...)
+        /// </summary>
+        public string AdditionalDisposition
+        {
+            get
+            {
+                return this._additionalDisposition;
+            }
+
+            set
+            {
+                if (value != null && value.Length > 0 && value.TrimStart()[0] != ';')
+                {
+                    value = "; " + value;
+                }
+
+                this._additionalDisposition = value;
+            }
+        }
     }
 }
