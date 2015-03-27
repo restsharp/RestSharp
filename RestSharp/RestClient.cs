@@ -455,7 +455,8 @@ namespace RestSharp
                                    ContentType = file.ContentType,
                                    Writer = file.Writer,
                                    FileName = file.FileName,
-                                   ContentLength = file.ContentLength
+                                   ContentLength = file.ContentLength,
+                                   AdditionalDisposition = file.AdditionalDisposition
                                });
             }
 
