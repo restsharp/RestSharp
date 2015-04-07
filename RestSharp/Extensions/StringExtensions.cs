@@ -91,6 +91,20 @@ namespace RestSharp.Extensions
         }
 #endif
 
+#if PORTABLE 
+        // Compatibility Method ToLower(CutureInfo) is not supported in PCL
+        public static string ToLower(this string input, CultureInfo culture)
+        {
+            return input.ToLower();
+        }
+
+        // Compatibility Method ToLower(CutureInfo) is not supported in PCL
+        public static string ToUpper(this string input, CultureInfo culture)
+        {
+            return input.ToUpper();
+        }
+#endif
+
         /// <summary>
         /// Check that a string is not null or empty
         /// </summary>
@@ -296,7 +310,7 @@ namespace RestSharp.Extensions
                         string restOfWord = word.Substring(1);
 
                         if (restOfWord.IsUpperCase())
-                            restOfWord = restOfWord.ToLower();
+                            restOfWord = restOfWord.ToLower(culture);
 
                         char firstChar = char.ToUpper(word[0], culture);
 
@@ -307,7 +321,7 @@ namespace RestSharp.Extensions
                 return String.Join(joinString, words);
             }
 
-            return String.Concat(words[0].Substring(0, 1).ToUpper(), words[0].Substring(1));
+            return String.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
         }
 
         /// <summary>
@@ -416,19 +430,19 @@ namespace RestSharp.Extensions
             yield return name.ToCamelCase(culture);
 
             // try lower cased name
-            yield return name.ToLower();
+            yield return name.ToLower(culture);
 
             // try name with underscores
             yield return name.AddUnderscores();
 
             // try name with underscores with lower case
-            yield return name.AddUnderscores().ToLower();
+            yield return name.AddUnderscores().ToLower(culture);
 
             // try name with dashes
             yield return name.AddDashes();
 
             // try name with dashes with lower case
-            yield return name.AddDashes().ToLower();
+            yield return name.AddDashes().ToLower(culture);
 
             // try name with underscore prefix
             yield return name.AddUnderscorePrefix();
@@ -440,7 +454,7 @@ namespace RestSharp.Extensions
             yield return name.AddSpaces();
 
             // try name with spaces with lower case
-            yield return name.AddSpaces().ToLower();
+            yield return name.AddSpaces().ToLower(culture);
         }
     }
 }
