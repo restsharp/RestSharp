@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XmlLists>
+	<Names xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+		<a:string>John</a:string>
+		<a:string>Bob</a:string>
+		<a:string>Albert</a:string>
+		<a:string>Jeff</a:string>
+		<a:string>Charlie</a:string>
+	</Names>
+	<Numbers xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+		<a:number>1</a:number>
+		<a:number>2</a:number>
+		<a:number>3</a:number>
+		<a:number>5</a:number>
+		<a:number>7</a:number>
+		<a:number>11</a:number>
+	</Numbers>
+</XmlLists>

@@ -299,7 +299,8 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+            //TODO: Not Portable Supported: Not sure we can support this in Portable since TypeDescriptor is not supported                            
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC && !PORTABLE
             var converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))
@@ -454,11 +455,11 @@ namespace RestSharp.Deserializers
 
             // try looking for element that matches sanitized property name (Order by depth)
             return root.Descendants()
-                       .OrderBy(d => d.Ancestors().Count())
-                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ?? 
+                .OrderBy(d => d.Ancestors().Count())
+                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
                    root.Descendants()
-                       .OrderBy(d => d.Ancestors().Count())
-                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
+                .OrderBy(d => d.Ancestors().Count())
+                .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
         }
 
         protected virtual XAttribute GetAttributeByName(XElement root, XName name)
