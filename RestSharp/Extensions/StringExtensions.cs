@@ -29,7 +29,7 @@ using System.Windows.Browser;
 #if WINDOWS_PHONE
 #endif
 
-#if FRAMEWORK || MONOTOUCH || MONODROID
+#if FRAMEWORK || MONOTOUCH || MONODROID && !PORTABLE
 using RestSharp.Contrib;
 #endif
 
@@ -37,7 +37,7 @@ namespace RestSharp.Extensions
 {
     public static class StringExtensions
     {
-#if !PocketPC
+#if !PocketPC && !PORTABLE
         public static string UrlDecode(this string input)
         {
             return HttpUtility.UrlDecode(input);
@@ -72,7 +72,7 @@ namespace RestSharp.Extensions
             return sb.ToString();
         }
 
-#if !PocketPC
+#if !PocketPC && !PORTABLE
         public static string HtmlDecode(this string input)
         {
             return HttpUtility.HtmlDecode(input);
@@ -84,10 +84,24 @@ namespace RestSharp.Extensions
         }
 #endif
 
-#if FRAMEWORK
+#if FRAMEWORK && !PORTABLE
         public static string HtmlAttributeEncode(this string input)
         {
             return HttpUtility.HtmlAttributeEncode(input);
+        }
+#endif
+
+#if PORTABLE 
+        // Compatibility Method ToLower(CutureInfo) is not supported in PCL
+        public static string ToLower(this string input, CultureInfo culture)
+        {
+            return input.ToLower();
+        }
+
+        // Compatibility Method ToLower(CutureInfo) is not supported in PCL
+        public static string ToUpper(this string input, CultureInfo culture)
+        {
+            return input.ToUpper();
         }
 #endif
 
