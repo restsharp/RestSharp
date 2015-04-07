@@ -24,15 +24,7 @@ namespace RestSharp.Extensions
     /// </summary>
     public static class MiscExtensions
     {
-
-#if PORTABLE
-        public static string ToString(this object input, System.Globalization.CultureInfo info)
-        {
-            return input.ToString();
-        }
-#endif
-
-#if !WINDOWS_PHONE && !PocketPC && !PORTABLE
+#if !WINDOWS_PHONE && !PocketPC
         /// <summary>
         /// Save a byte array to a file
         /// </summary>
@@ -75,11 +67,11 @@ namespace RestSharp.Extensions
         {
             var buffer = new byte[32768];
 
-            while(true)
+            while (true)
             {
                 var read = input.Read(buffer, 0, buffer.Length);
 
-                if(read <= 0)
+                if (read <= 0)
                     return;
 
                 output.Write(buffer, 0, read);
@@ -100,19 +92,19 @@ namespace RestSharp.Extensions
             // Ansi as default
             Encoding encoding = Encoding.UTF8;
 
-#if FRAMEWORK || PORTABLE
+#if FRAMEWORK
             return encoding.GetString(buffer, 0, buffer.Length);
 #else
             if (buffer == null || buffer.Length == 0)
                 return "";
 
             /*
-                EF BB BF		UTF-8 
-                FF FE UTF-16	little endian 
-                FE FF UTF-16	big endian 
-                FF FE 00 00		UTF-32, little endian 
-                00 00 FE FF		UTF-32, big-endian 
-                */
+                EF BB BF            UTF-8 
+                FF FE UTF-16        little endian 
+                FE FF UTF-16        big endian 
+                FF FE 00 00         UTF-32, little endian 
+                00 00 FE FF         UTF-32, big-endian 
+            */
 
             if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf)
             {

@@ -76,7 +76,6 @@ namespace RestSharp
     {
         None,
         Completed,
-        Cancelled,
         Error,
         TimedOut,
         Aborted
