@@ -24,7 +24,15 @@ namespace RestSharp.Extensions
     /// </summary>
     public static class MiscExtensions
     {
-#if !WINDOWS_PHONE && !PocketPC
+
+#if PORTABLE
+        public static string ToString(this object input, System.Globalization.CultureInfo info)
+        {
+            return input.ToString();
+        }
+#endif
+
+#if !WINDOWS_PHONE && !PocketPC && !PORTABLE
         /// <summary>
         /// Save a byte array to a file
         /// </summary>
@@ -92,7 +100,7 @@ namespace RestSharp.Extensions
             // Ansi as default
             Encoding encoding = Encoding.UTF8;
 
-#if FRAMEWORK
+#if FRAMEWORK || PORTABLE
             return encoding.GetString(buffer, 0, buffer.Length);
 #else
             if (buffer == null || buffer.Length == 0)
