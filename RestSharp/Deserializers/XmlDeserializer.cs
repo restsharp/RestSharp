@@ -299,7 +299,8 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+            //TODO: Not Portable Supported: Not sure we can support this in Portable since TypeDescriptor is not supported                            
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC && !PORTABLE
             var converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))

@@ -195,7 +195,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -212,3 +211,4 @@
     <NuSpecUpdateTask SpecFile="$(SolutionDir)restsharp.nuspec" SourceAssemblyFile="$(TargetDir)RestSharp.dll" />
   </Target>
 </Project>
+

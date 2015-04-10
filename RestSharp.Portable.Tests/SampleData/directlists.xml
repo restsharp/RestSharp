@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ArrayOfDatabase xmlns="http://schemas.datacontract.org/2004/07/Test.Database" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Database>
+		<Collation>sv</Collation>
+		<DataSource>lusrvsql3</DataSource>
+		<InitialCatalog>Pomtest</InitialCatalog>
+		<Name>Pomtest</Name>
+		<Password />
+		<UserId />
+		<Version i:nil="true" />
+	</Database>
+	<Database>
+		<Collation>sv</Collation>
+		<DataSource>lusrvsql3</DataSource>
+		<InitialCatalog>testdb</InitialCatalog>
+		<Name>Test</Name>
+		<Password />
+		<UserId />
+		<Version i:nil="true" />
+	</Database>
+</ArrayOfDatabase>
