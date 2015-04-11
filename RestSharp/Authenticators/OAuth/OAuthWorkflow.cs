@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using RestSharp.Authenticators.OAuth.Extensions;
 #if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
-using RestSharp.Contrib;
+using RestSharp.Extensions.MonoHttp;
 #endif
 
 namespace RestSharp.Authenticators.OAuth

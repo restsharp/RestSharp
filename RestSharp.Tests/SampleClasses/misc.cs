@@ -14,12 +14,13 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using RestSharp.Serializers;
-
-namespace RestSharp.Tests
+namespace RestSharp.Tests.SampleClasses
 {
+    using System;
+    using System.Collections.Generic;
+
+    using RestSharp.Serializers;
+
     public class PersonForXml
     {
         public string Name { get; set; }
@@ -40,11 +41,11 @@ namespace RestSharp.Tests
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy { get { return Ignore; } }
+        public string IgnoreProxy { get { return this.Ignore; } }
 
         protected string ReadOnly { get { return null; } }
 
-        public string ReadOnlyProxy { get { return ReadOnly; } }
+        public string ReadOnlyProxy { get { return this.ReadOnly; } }
 
         public FoeList Foes { get; set; }
 
@@ -102,11 +103,11 @@ namespace RestSharp.Tests
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy { get { return Ignore; } }
+        public string IgnoreProxy { get { return this.Ignore; } }
 
         protected string ReadOnly { get { return null; } }
 
-        public string ReadOnlyProxy { get { return ReadOnly; } }
+        public string ReadOnlyProxy { get { return this.ReadOnly; } }
 
         public Dictionary<string, Foe> Foes { get; set; }
 

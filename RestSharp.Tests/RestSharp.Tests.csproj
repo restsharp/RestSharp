@@ -102,7 +102,7 @@
     <Compile Include="SampleClasses\googleweather.cs" />
     <Compile Include="SampleClasses\JsonLists.cs" />
     <Compile Include="SampleClasses\ListSamples.cs" />
-    <Compile Include="SampleClasses\Lastfm.cs" />
+    <Compile Include="SampleClasses\LastFm\Lastfm.cs" />
     <Compile Include="SampleClasses\misc.cs" />
     <Compile Include="SampleClasses\nullables.cs" />
     <Compile Include="SampleClasses\eventful.cs" />

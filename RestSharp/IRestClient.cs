@@ -28,6 +28,8 @@ using System.Threading.Tasks;
 
 namespace RestSharp
 {
+    using RestSharp.Authenticators;
+
     public interface IRestClient
     {
 #if !PocketPC

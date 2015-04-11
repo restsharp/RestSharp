@@ -23,6 +23,8 @@ using Xunit;
 
 namespace RestSharp.Tests
 {
+    using RestSharp.Tests.SampleClasses;
+
     public class SerializerTests
     {
         public SerializerTests()

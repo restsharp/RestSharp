@@ -29,15 +29,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Text;
-
-namespace RestSharp.Contrib
+namespace RestSharp.Extensions.MonoHttp
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.IO;
+    using System.Text;
 
     //#if !MONOTOUCH
     //    // CAS - no InheritanceDemand here as the class is sealed
@@ -49,13 +48,13 @@ namespace RestSharp.Contrib
         {
             public override string ToString()
             {
-                int count = Count;
+                int count = this.Count;
 
                 if (count == 0)
                     return "";
 
                 StringBuilder sb = new StringBuilder();
-                string[] keys = AllKeys;
+                string[] keys = this.AllKeys;
 
                 for (int i = 0; i < count; i++)
                 {

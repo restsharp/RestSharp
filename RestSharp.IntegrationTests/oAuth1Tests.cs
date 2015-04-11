@@ -6,7 +6,7 @@ using System.Net;
 using System.Xml.Serialization;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
-using RestSharp.Contrib;
+using RestSharp.Extensions.MonoHttp;
 using RestSharp.IntegrationTests.Models;
 using Xunit;
 using System.IO;

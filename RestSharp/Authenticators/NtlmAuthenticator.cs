@@ -14,13 +14,14 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Net;
 
 #if FRAMEWORK
 
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
+    using System;
+    using System.Net;
+
     /// <summary>
     /// Tries to Authenticate with the credentials of the currently logged in user, or impersonate a user
     /// </summary>
@@ -56,7 +57,7 @@ namespace RestSharp
 
         public void Authenticate(IRestClient client, IRestRequest request)
         {
-            request.Credentials = credentials;
+            request.Credentials = this.credentials;
         }
     }
 }

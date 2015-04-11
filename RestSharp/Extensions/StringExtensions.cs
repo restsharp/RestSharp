@@ -30,7 +30,7 @@ using System.Windows.Browser;
 #endif
 
 #if FRAMEWORK || MONOTOUCH || MONODROID
-using RestSharp.Contrib;
+using RestSharp.Extensions.MonoHttp;
 #endif
 
 namespace RestSharp.Extensions
