@@ -14,12 +14,12 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Linq;
-using System.Text;
-
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
+    using System;
+    using System.Linq;
+    using System.Text;
+
     public class HttpBasicAuthenticator : IAuthenticator
     {
         private readonly string _authHeader;
@@ -27,7 +27,7 @@ namespace RestSharp
         public HttpBasicAuthenticator(string username, string password)
         {
             var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)));
-            _authHeader = string.Format("Basic {0}", token);
+            this._authHeader = string.Format("Basic {0}", token);
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
@@ -42,7 +42,7 @@ namespace RestSharp
             // only add the Authorization parameter if it hasn't been added by a previous Execute
             if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
             {
-                request.AddParameter("Authorization", _authHeader, ParameterType.HttpHeader);
+                request.AddParameter("Authorization", this._authHeader, ParameterType.HttpHeader);
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 
+using RestSharp;
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
@@ -34,12 +36,15 @@ using System.Reflection;
 #endif
 #endif
 
-class SharedAssemblyInfo
+namespace RestSharp
 {
+    class SharedAssemblyInfo
+    {
 #if SIGNED
     public const string Version = "100.0.0";
     public const string FileVersion = "105.0.1";
 #else
-    public const string Version = "105.0.1";
+        public const string Version = "105.0.1";
 #endif
+    }
 }

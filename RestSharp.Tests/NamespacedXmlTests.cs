@@ -18,11 +18,14 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
-using RestSharp.Tests.SampleClasses.Lastfm;
+
 using Xunit;
 
 namespace RestSharp.Tests
 {
+    using RestSharp.Tests.SampleClasses;
+    using RestSharp.Tests.SampleClasses.LastFm;
+
     public class NamespacedXmlTests
     {
         private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";

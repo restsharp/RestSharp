@@ -14,7 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
     public class SimpleAuthenticator : IAuthenticator
     {
@@ -25,16 +25,16 @@ namespace RestSharp
 
         public SimpleAuthenticator(string usernameKey, string username, string passwordKey, string password)
         {
-            _usernameKey = usernameKey;
-            _username = username;
-            _passwordKey = passwordKey;
-            _password = password;
+            this._usernameKey = usernameKey;
+            this._username = username;
+            this._passwordKey = passwordKey;
+            this._password = password;
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
         {
-            request.AddParameter(_usernameKey, _username);
-            request.AddParameter(_passwordKey, _password);
+            request.AddParameter(this._usernameKey, this._username);
+            request.AddParameter(this._passwordKey, this._password);
         }
     }
 }

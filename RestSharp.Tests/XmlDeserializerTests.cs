@@ -525,7 +525,7 @@ namespace RestSharp.Tests
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
-            var output = d.Deserialize<SampleClasses.Lastfm.Event>(response);
+            var output = d.Deserialize<SampleClasses.LastFm.Event>(response);
 
             //Assert.NotEmpty(output.artists);
             Assert.Equal("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);

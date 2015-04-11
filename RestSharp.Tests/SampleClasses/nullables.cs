@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace RestSharp.Tests
+﻿namespace RestSharp.Tests.SampleClasses
 {
+    using System;
+
     public class NullableValues
     {
         public int? Id { get; set; }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace RestSharp.Tests.SampleClasses.Lastfm
+﻿namespace RestSharp.Tests.SampleClasses.LastFm
 {
+    using System;
+    using System.Collections.Generic;
+
     public class Event : LastfmBase
     {
         public string id { get; set; }

@@ -25,7 +25,7 @@ using System.Net;
 #elif SILVERLIGHT
 using System.Windows.Browser;
 #else
-using RestSharp.Contrib;
+using RestSharp.Extensions.MonoHttp;
 #endif
 
 namespace RestSharp.Authenticators

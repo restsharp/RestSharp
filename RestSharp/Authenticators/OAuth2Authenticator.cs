@@ -14,11 +14,11 @@
 //   limitations under the License. 
 #endregion
 
-using System;
-using System.Linq;
-
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
+    using System;
+    using System.Linq;
+
     /// <summary>
     /// Base class for OAuth 2 Authenticators.
     /// </summary>
@@ -45,7 +45,7 @@ namespace RestSharp
         /// </param>
         protected OAuth2Authenticator(string accessToken)
         {
-            _accessToken = accessToken;
+            this._accessToken = accessToken;
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace RestSharp
         /// </summary>
         public string AccessToken
         {
-            get { return _accessToken; }
+            get { return this._accessToken; }
         }
 
         public abstract void Authenticate(IRestClient client, IRestRequest request);
@@ -78,7 +78,7 @@ namespace RestSharp
 
         public override void Authenticate(IRestClient client, IRestRequest request)
         {
-            request.AddParameter("oauth_token", AccessToken, ParameterType.GetOrPost);
+            request.AddParameter("oauth_token", this.AccessToken, ParameterType.GetOrPost);
         }
     }
 
@@ -117,7 +117,7 @@ namespace RestSharp
             : base(accessToken)
         {
             // Conatenate during constructor so that it is only done once. can improve performance.
-            _authorizationValue = tokenType + " " + accessToken;
+            this._authorizationValue = tokenType + " " + accessToken;
         }
 
         public override void Authenticate(IRestClient client, IRestRequest request)
@@ -125,7 +125,7 @@ namespace RestSharp
             // only add the Authorization parameter if it hasn't been added.
             if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
             {
-                request.AddParameter("Authorization", _authorizationValue, ParameterType.HttpHeader);
+                request.AddParameter("Authorization", this._authorizationValue, ParameterType.HttpHeader);
             }
         }
     }

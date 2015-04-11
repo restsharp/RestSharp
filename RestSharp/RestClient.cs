@@ -26,6 +26,8 @@ using RestSharp.Extensions;
 
 namespace RestSharp
 {
+    using RestSharp.Authenticators;
+
     /// <summary>
     /// Client to translate RestRequests into Http requests and process response result
     /// </summary>
