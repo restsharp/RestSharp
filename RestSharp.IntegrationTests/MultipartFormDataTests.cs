@@ -1,8 +1,11 @@
 ﻿namespace RestSharp.IntegrationTests
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Net;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using RestSharp.IntegrationTests.Helpers;
 
@@ -55,6 +58,59 @@
                 var response = client.Execute(request);
 
                 Assert.Equal(this.expected, response.Content);
+            }
+        }
+
+        [Fact]
+        public void AlwaysMultipartFormData_WithParameter()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("?json_route=/posts")
+                                  {
+                                      AlwaysMultipartFormData = true,
+                                      Method = Method.POST,
+                                  };
+                request.AddParameter("title", "test", ParameterType.RequestBody);
+
+                var response = client.Execute(request);
+                Assert.Null(response.ErrorException);
+            }
+        }
+
+        [Fact]
+        public void AlwaysMultipartFormData_WithParameter_Async()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("?json_route=/posts")
+                                  {
+                                      AlwaysMultipartFormData = true,
+                                      Method = Method.POST,
+                                  };
+                request.AddParameter("title", "test", ParameterType.RequestBody);
+                IRestResponse syncResponse = null;
+
+                using (var eventWaitHandle = new AutoResetEvent(false))
+                {
+                    client.ExecuteAsync(
+                        request,
+                        response =>
+                            {
+                                syncResponse = response;
+                                eventWaitHandle.Set();
+                            });
+
+                    eventWaitHandle.WaitOne();
+                }
+
+                Assert.Null(syncResponse.ErrorException);
             }
         }
 
