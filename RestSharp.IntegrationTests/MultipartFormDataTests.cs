@@ -1,11 +1,9 @@
 ﻿namespace RestSharp.IntegrationTests
 {
     using System;
-    using System.Diagnostics;
     using System.IO;
     using System.Net;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using RestSharp.IntegrationTests.Helpers;
 
@@ -62,7 +60,7 @@
         }
 
         [Fact]
-        public void AlwaysMultipartFormData_WithParameter()
+        public void AlwaysMultipartFormData_WithParameter_Execute()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -82,7 +80,7 @@
         }
 
         [Fact]
-        public void AlwaysMultipartFormData_WithParameter_Async()
+        public void AlwaysMultipartFormData_WithParameter_ExecuteTaskAsync()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -95,6 +93,31 @@
                                       Method = Method.POST,
                                   };
                 request.AddParameter("title", "test", ParameterType.RequestBody);
+
+                var task = client.ExecuteTaskAsync(request).ContinueWith(
+                    x =>
+                        {
+                            Assert.Null(x.Result.ErrorException);
+                        });
+
+                task.Wait();
+            }
+        }
+
+        [Fact]
+        public void AlwaysMultipartFormData_WithParameter_ExecuteAsync()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("?json_route=/posts")
+                {
+                    AlwaysMultipartFormData = true,
+                    Method = Method.POST,
+                };
+                request.AddParameter("title", "test", ParameterType.RequestBody);
                 IRestResponse syncResponse = null;
 
                 using (var eventWaitHandle = new AutoResetEvent(false))
@@ -102,10 +125,10 @@
                     client.ExecuteAsync(
                         request,
                         response =>
-                            {
-                                syncResponse = response;
-                                eventWaitHandle.Set();
-                            });
+                        {
+                            syncResponse = response;
+                            eventWaitHandle.Set();
+                        });
 
                     eventWaitHandle.WaitOne();
                 }
