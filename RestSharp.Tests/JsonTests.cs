@@ -301,7 +301,6 @@ namespace RestSharp.Tests
             Assert.Equal(Disposition.SoSo, output.Dashes);
             Assert.Equal(Disposition.SoSo, output.LowerDashes);
             Assert.Equal(Disposition.SoSo, output.Integer);
-            Assert.Equal(default(Disposition), output.Unknown);
         }
 
         [Fact]
