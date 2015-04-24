@@ -108,11 +108,13 @@ namespace RestSharp.Extensions
 
             if (ret == null)
             {
+                if (!value.All(Char.IsDigit))
+                    return null;
                 var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
 
                 if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
                 {
-                    ret = (Enum)Enum.ToObject(type, enumValueAsUnderlyingType);
+                    ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
                 }
             }
 
