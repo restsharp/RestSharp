@@ -140,7 +140,7 @@ namespace RestSharp
         {
             var webRequest = ConfigureWebRequest(method, Url);
 
-            PreparePostData(webRequest);
+            PreparePostBody(webRequest);
 
             WriteRequestBody(webRequest);
             return GetResponse(webRequest);
@@ -214,33 +214,29 @@ namespace RestSharp
             }
         }
 
-        private void PreparePostData(HttpWebRequest webRequest)
-        {
-            if (HasFiles || AlwaysMultipartFormData)
-            {
-                webRequest.ContentType = GetMultipartFormContentType();
-
-                using (var requestStream = webRequest.GetRequestStream())
-                {
-                    WriteMultipartFormData(requestStream);
-                }
-            }
-
-            PreparePostBody(webRequest);
-        }
-
         private void WriteRequestBody(HttpWebRequest webRequest)
         {
-            if (!HasBody)
-                return;
-
-            var bytes = this.RequestBodyBytes ?? this.Encoding.GetBytes(this.RequestBody);
-
-            webRequest.ContentLength = bytes.Length;
+            if (HasBody || HasFiles || AlwaysMultipartFormData)
+            {
+#if !WINDOWS_PHONE && !PocketPC
+                webRequest.ContentLength = CalculateContentLength();
+#endif
+            }
 
             using (var requestStream = webRequest.GetRequestStream())
             {
-                requestStream.Write(bytes, 0, bytes.Length);
+                if (HasFiles || AlwaysMultipartFormData)
+                {
+                    WriteMultipartFormData(requestStream);
+                }
+                else if (RequestBodyBytes != null)
+                {
+                    requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
+                }
+                else
+                {
+                    WriteStringTo(requestStream, RequestBody);
+                }
             }
         }
 
