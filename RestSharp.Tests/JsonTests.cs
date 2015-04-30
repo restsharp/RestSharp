@@ -37,7 +37,7 @@ namespace RestSharp.Tests
             const string content = "{ \"Value\": 4.8e-04 }";
             var json = new JsonDeserializer();
             var output = json.Deserialize<DecimalNumber>(new RestResponse { Content = content });
-            var expected = Decimal.Parse("4.8e-04", NumberStyles.Float);
+            var expected = Decimal.Parse("4.8e-04", NumberStyles.Float, CultureInfo.InvariantCulture);
 
             Assert.NotNull(output);
             Assert.Equal(expected, output.Value);
