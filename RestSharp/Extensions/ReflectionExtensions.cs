@@ -108,7 +108,9 @@ namespace RestSharp.Extensions
 
             if (ret == null)
             {
-                var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
+                long underlyingValue;
+                Int64.TryParse(value, out underlyingValue);
+                var enumValueAsUnderlyingType = Convert.ChangeType(underlyingValue, Enum.GetUnderlyingType(type), culture);
 
                 if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
                 {

@@ -264,6 +264,8 @@ namespace RestSharp.Tests
         public Disposition LowerDashes { get; set; }
 
         public Disposition Integer { get; set; }
+
+        public Disposition Unknown { get; set; }
     }
 
     public class DecimalNumber
