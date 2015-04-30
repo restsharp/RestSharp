@@ -1,5 +1,9 @@
 # RestSharp Release Notes
 
+## 105.1.0
+
+To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/105.0...105.1.0).
+
 ## 105.0.1
 
 To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/105.0...105.0.1).

@@ -38,8 +38,8 @@ class SharedAssemblyInfo
 {
 #if SIGNED
     public const string Version = "100.0.0";
-    public const string FileVersion = "105.0.1";
+    public const string FileVersion = "105.1.0";
 #else
-    public const string Version = "105.0.1";
+    public const string Version = "105.1.0";
 #endif
 }
