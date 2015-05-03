@@ -1,5 +1,5 @@
 #region License
-//   Copyright 2015 Roman Kravchik
+//   Author: Roman Kravchik
 //   Based on HttpBasicAuthenticator class by John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,23 +23,29 @@ namespace RestSharp
 {
    /// <summary>
    /// JSON WEB TOKEN (JWT) Authenticator class. 
-   /// <remarks>https://tools.ietf.org/html/draft-jones-json-web-token</remarks>
+   /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
    /// </summary>
    public class JwtAuthenticator : IAuthenticator
    {
-      private readonly string _authHeader;
-      
+      readonly string authHeader;
+
       public JwtAuthenticator(string accessToken)
       {
-         _authHeader = string.Format("Bearer {0}", accessToken);
+          if (accessToken == null)
+          {
+              throw new ArgumentNullException("accessToken");
+          }
+
+         authHeader = string.Format("Bearer {0}", accessToken);
       }
-      
+
       public void Authenticate(IRestClient client, IRestRequest request)
       {
          // only add the Authorization parameter if it hasn't been added by a previous Execute
-         if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
+         if (!request.Parameters.Any(p => p.Type.Equals(ParameterType.HttpHeader) && 
+                                     p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
             {
-                request.AddParameter("Authorization", _authHeader, ParameterType.HttpHeader);
+                request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
             }
       }
    }
