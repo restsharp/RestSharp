@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Net;
+    using System.Threading;
 
     using RestSharp.IntegrationTests.Helpers;
 
@@ -55,6 +56,84 @@
                 var response = client.Execute(request);
 
                 Assert.Equal(this.expected, response.Content);
+            }
+        }
+
+        [Fact]
+        public void AlwaysMultipartFormData_WithParameter_Execute()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("?json_route=/posts")
+                                  {
+                                      AlwaysMultipartFormData = true,
+                                      Method = Method.POST,
+                                  };
+                request.AddParameter("title", "test", ParameterType.RequestBody);
+
+                var response = client.Execute(request);
+                Assert.Null(response.ErrorException);
+            }
+        }
+
+        [Fact]
+        public void AlwaysMultipartFormData_WithParameter_ExecuteTaskAsync()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("?json_route=/posts")
+                                  {
+                                      AlwaysMultipartFormData = true,
+                                      Method = Method.POST,
+                                  };
+                request.AddParameter("title", "test", ParameterType.RequestBody);
+
+                var task = client.ExecuteTaskAsync(request).ContinueWith(
+                    x =>
+                        {
+                            Assert.Null(x.Result.ErrorException);
+                        });
+
+                task.Wait();
+            }
+        }
+
+        [Fact]
+        public void AlwaysMultipartFormData_WithParameter_ExecuteAsync()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("?json_route=/posts")
+                {
+                    AlwaysMultipartFormData = true,
+                    Method = Method.POST,
+                };
+                request.AddParameter("title", "test", ParameterType.RequestBody);
+                IRestResponse syncResponse = null;
+
+                using (var eventWaitHandle = new AutoResetEvent(false))
+                {
+                    client.ExecuteAsync(
+                        request,
+                        response =>
+                        {
+                            syncResponse = response;
+                            eventWaitHandle.Set();
+                        });
+
+                    eventWaitHandle.WaitOne();
+                }
+
+                Assert.Null(syncResponse.ErrorException);
             }
         }
 
