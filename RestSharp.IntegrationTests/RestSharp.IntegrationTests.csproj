@@ -96,6 +96,7 @@
     <Compile Include="RequestBodyTests.cs" />
     <Compile Include="StatusCodeTests.cs" />
     <Compile Include="RequestHeadTests.cs" />
+    <Compile Include="StructuredSyntaxSuffixTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Koala.jpg">
