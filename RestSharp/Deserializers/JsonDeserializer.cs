@@ -123,7 +123,7 @@ namespace RestSharp.Deserializers
             foreach (var child in (IDictionary<string, object>)parent)
             {
                 var key = keyType != typeof (string) ? 
-                    Convert.ChangeType(child.Key, keyType) : 
+                    Convert.ChangeType(child.Key, keyType, CultureInfo.InvariantCulture) : 
                     child.Key;
 
                 object item;
