@@ -157,6 +157,20 @@ namespace RestSharp.Tests
         }
 
         [Fact]
+        public void Can_Deserialize_To_Dictionary_Int_Object()
+        {
+            var doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary_KeysType.txt"));
+            var json = new JsonDeserializer();
+            var output = json.Deserialize<Dictionary<int, object>>(new RestResponse { Content = doc });
+
+            Assert.Equal(output.Keys.Count, 2);
+
+            var firstKeysVal = output.FirstOrDefault().Value;
+
+            Assert.IsAssignableFrom<System.Collections.IDictionary>(firstKeysVal);
+        }
+
+        [Fact]
         public void Can_Deserialize_Generic_Members()
         {
             var doc = File.ReadAllText(Path.Combine("SampleData", "GenericWithList.txt"));

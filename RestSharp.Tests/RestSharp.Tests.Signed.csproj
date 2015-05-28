@@ -139,6 +139,9 @@
     <Content Include="SampleData\iso8601datetimes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\jsondictionary_KeysType.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\jsondictionary.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
