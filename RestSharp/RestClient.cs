@@ -24,6 +24,10 @@ using System.Text;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
+
 namespace RestSharp
 {
     /// <summary>
@@ -56,6 +60,11 @@ namespace RestSharp
         /// Passed on to underlying WebRequest if set.
         /// </summary>
         public IWebProxy Proxy { get; set; }
+
+        /// <summary>
+        /// The cache policy to use for requests initiated by this client instance.
+        /// </summary>
+        public RequestCachePolicy CachePolicy { get; set; }
 #endif
 
         /// <summary>
@@ -400,6 +409,8 @@ namespace RestSharp
             }
 
             http.MaxRedirects = MaxRedirects;
+
+            http.CachePolicy = CachePolicy;
 #endif
 
             if (request.Credentials != null)

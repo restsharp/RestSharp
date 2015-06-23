@@ -461,6 +461,13 @@ namespace RestSharp
                 webRequest.Proxy = Proxy;
             }
 
+#if FRAMEWORK
+            if (CachePolicy != null)
+            {
+                webRequest.CachePolicy = CachePolicy;
+            }
+#endif
+
             if (FollowRedirects && MaxRedirects.HasValue)
             {
                 webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;

@@ -25,6 +25,9 @@ using RestSharp.Deserializers;
 using System.Threading;
 using System.Threading.Tasks;
 #endif
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
 
 namespace RestSharp
 {
@@ -72,6 +75,8 @@ namespace RestSharp
         X509CertificateCollection ClientCertificates { get; set; }
 
         IWebProxy Proxy { get; set; }
+
+        RequestCachePolicy CachePolicy { get; set; }
 #endif
 
         bool FollowRedirects { get; set; }

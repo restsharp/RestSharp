@@ -21,6 +21,10 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
+
 namespace RestSharp
 {
     public interface IHttp
@@ -73,6 +77,10 @@ namespace RestSharp
         string RequestContentType { get; set; }
 
         bool PreAuthenticate { get; set; }
+
+#if FRAMEWORK
+        RequestCachePolicy CachePolicy { get; set; }
+#endif
 
         /// <summary>
         /// An alternative to RequestBody, for when the caller already has the byte array.
