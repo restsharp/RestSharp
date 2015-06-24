@@ -26,6 +26,9 @@ using RestSharp.Extensions;
 #if WINDOWS_PHONE
 using RestSharp.Compression.ZLib;
 #endif
+#if FRAMEWORK
+using System.Net.Cache;
+#endif
 
 namespace RestSharp
 {
@@ -196,6 +199,13 @@ namespace RestSharp
         /// Proxy info to be sent with request
         /// </summary>
         public IWebProxy Proxy { get; set; }
+#endif
+
+#if FRAMEWORK
+        /// <summary>
+        /// Caching policy for requests created with this wrapper.
+        /// </summary>
+        public RequestCachePolicy CachePolicy { get; set; }
 #endif
 
         /// <summary>
