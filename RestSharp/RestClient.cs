@@ -21,6 +21,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
@@ -139,6 +140,8 @@ namespace RestSharp
             this.AddHandler("text/x-json", new JsonDeserializer());
             this.AddHandler("text/javascript", new JsonDeserializer());
             this.AddHandler("text/xml", new XmlDeserializer());
+            this.AddHandler("*+json", new JsonDeserializer());
+            this.AddHandler("*+xml", new XmlDeserializer());
             this.AddHandler("*", new XmlDeserializer());
 
             this.FollowRedirects = true;
@@ -184,7 +187,7 @@ namespace RestSharp
         {
             this.ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*")
+            if (contentType != "*" && !structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
@@ -236,19 +239,33 @@ namespace RestSharp
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
 
-            IDeserializer handler = null;
-
             if (this.ContentHandlers.ContainsKey(contentType))
+                return this.ContentHandlers[contentType];
+
+            // https://tools.ietf.org/html/rfc6839#page-4
+            Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
+
+            if (structuredSyntaxSuffixMatch.Success)
             {
-                handler = this.ContentHandlers[contentType];
-            }
-            else if (this.ContentHandlers.ContainsKey("*"))
-            {
-                handler = this.ContentHandlers["*"];
+                string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
+
+                if (this.ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                    return this.ContentHandlers[structuredSyntaxSuffixWildcard];
             }
 
-            return handler;
+            if (this.ContentHandlers.ContainsKey("*"))
+                return this.ContentHandlers["*"];
+
+            return null;
         }
+
+#if SILVERLIGHT
+        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
+#else
+        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
+#endif
 
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
         {
