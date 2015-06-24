@@ -117,11 +117,15 @@ namespace RestSharp.Deserializers
         private IDictionary BuildDictionary(Type type, object parent)
         {
             var dict = (IDictionary)Activator.CreateInstance(type);
+            var keyType = type.GetGenericArguments()[0];
             var valueType = type.GetGenericArguments()[1];
 
             foreach (var child in (IDictionary<string, object>)parent)
             {
-                var key = child.Key;
+                var key = keyType != typeof (string) ? 
+                    Convert.ChangeType(child.Key, keyType, CultureInfo.InvariantCulture) : 
+                    child.Key;
+
                 object item;
 
                 if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
