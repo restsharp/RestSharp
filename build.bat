@@ -4,9 +4,23 @@ if "%config%" == "" (
    set config=Release
 )
 
+
+set monoAndroid=%2
+
+if /I "%monoAndroid%" == "monoandroid-business" set includeMono=1
+if  /I "%monoAndroid%" == "monoandroid" set includeMono=1
+
+
 REM Build
 %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe RestSharp.sln /p:Configuration=%config% /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:true /p:BuildInParallel=true /p:RestorePackages=true /t:Clean,Rebuild
 if not "%errorlevel%"=="0" goto failure
+
+
+if /I "%monoAndroid%" == "monoandroid-business" ( 
+	echo  To build MonoAndroid project by batch you need a Xamarin Business Level license. Otherwise, compile manually from VS before running build.bat.
+	%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe RestSharp.Android\RestSharp.Android.csproj /p:Configuration=%config% /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:true /p:BuildInParallel=true /p:RestorePackages=true /t:Clean,Rebuild
+	if not "%errorlevel%"=="0" goto failure
+) 
 
 REM Unit tests
 REM "%GallioEcho%" RestSharp.IntegrationTests\bin\Release\RestSharp.IntegrationTests.dll
@@ -59,6 +73,13 @@ copy RestSharp.Net452\bin\Release\RestSharp.xml Download\Package\lib\net452-clie
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Package\lib\sl4\
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\windowsphone8\
+
+if "%includeMono%"=="1" (
+	if not exist Download\package\lib\MonoAndroid10 mkdir Download\package\lib\MonoAndroid10\
+	copy RestSharp.Android\bin\Release\RestSharp.Android.dll Download\package\lib\MonoAndroid10
+	copy RestSharp.Android\bin\Release\RestSharp.Android.xml Download\package\lib\MonoAndroid10
+)
+
 
 %nuget% pack "restsharp-computed.nuspec" -BasePath Download\Package -Output Download
 if not "%errorlevel%"=="0" goto failure
