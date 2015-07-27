@@ -40,7 +40,7 @@
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                string path = Path.Combine(Environment.CurrentDirectory, "Assets\\TestFile.txt");
+                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
                 request.AddFile("fileName", path);
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
@@ -61,7 +61,7 @@
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                string path = Path.Combine(Environment.CurrentDirectory, "Assets\\TestFile.txt");
+                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
 
                 request.AddFile("fileName", path);
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
