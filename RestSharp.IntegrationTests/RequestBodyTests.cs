@@ -30,6 +30,22 @@ namespace RestSharp.IntegrationTests
         }
 
         [Fact]
+        public void Can_Have_No_Body_Added_To_POST_Request()
+        {
+            const Method httpMethod = Method.POST;
+
+            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
+            {
+                var client = new RestClient(BASE_URL);
+                var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+
+                client.Execute(request);
+
+                AssertHasNoRequestBody();
+            }
+        }
+
+        [Fact]
         public void Can_Be_Added_To_POST_Request()
         {
             const Method httpMethod = Method.POST;
