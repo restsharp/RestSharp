@@ -37,6 +37,11 @@ namespace RestSharp
         public ParameterType Type { get; set; }
 
         /// <summary>
+        /// MIME content type of the parameter
+        /// </summary>
+        public string ContentType { get; set; }
+
+        /// <summary>
         /// Return a human-readable representation of this parameter
         /// </summary>
         /// <returns>String</returns>

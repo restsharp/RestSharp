@@ -102,6 +102,7 @@
     <Content Include="Assets\Koala.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\TestFile.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
