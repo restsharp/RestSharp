@@ -64,6 +64,9 @@
     <Compile Include="..\restsharp\authenticators\IAuthenticator.cs">
       <Link>Authenticators\IAuthenticator.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Authenticators\JwtAuthenticator.cs">
+      <Link>Authenticators\JwtAuthenticator.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\authenticators\NtlmAuthenticator.cs">
       <Link>Authenticators\NtlmAuthenticator.cs</Link>
     </Compile>

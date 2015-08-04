@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using Xunit;
 using System.Linq;
+using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
+    [TestFixture]
     public class JwtAuthTests
     {
         readonly string testJwt;
@@ -14,30 +15,27 @@ namespace RestSharp.Tests
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
-            
-            testJwt = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" + "." +
+
+            this.testJwt = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" + "." +
                 "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo" +
                 "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ" + "." +
                 "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
-            
-            expectedAuthHeaderContent = String.Format("Bearer {0}", testJwt);
+
+            this.expectedAuthHeaderContent = String.Format("Bearer {0}", this.testJwt);
         }
         
-        [Fact]
+        [Test]
         public void Throw_Argument_Null_Exception()
         {
             var exception = Assert.Throws<ArgumentNullException>(() => new JwtAuthenticator(null));
             
-            Assert.Equal("accessToken", exception.ParamName);
+            Assert.AreEqual("accessToken", exception.ParamName);
         }
 
-        [Fact]
+        [Test]
         public void Can_Set_ValidFormat_Auth_Header()
         {
-            var client = new RestClient() {
-                Authenticator = new JwtAuthenticator(testJwt)
-            };
-
+            var client = new RestClient { Authenticator = new JwtAuthenticator(this.testJwt) };
             var request = new RestRequest();
 
             //In real case client.Execute(request) will invoke Authenticate method
@@ -46,17 +44,13 @@ namespace RestSharp.Tests
             var authParam = request.Parameters.Single(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase));
 
             Assert.True(authParam.Type == ParameterType.HttpHeader);
-
-            Assert.Equal(expectedAuthHeaderContent, authParam.Value);
+            Assert.AreEqual(this.expectedAuthHeaderContent, authParam.Value);
         }
 
-        [Fact]
+        [Test]
         public void Check_Only_Header_Authorization()
         {
-            var client = new RestClient() {
-                Authenticator = new JwtAuthenticator(testJwt)
-            };
-
+            var client = new RestClient { Authenticator = new JwtAuthenticator(this.testJwt) };
             var request = new RestRequest();
 
             //Paranoic server needs "two-factor authentication": jwt header and query param key for example
@@ -66,23 +60,23 @@ namespace RestSharp.Tests
             client.Authenticator.Authenticate(client, request);
 
             var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
-            Assert.Equal(2, paramList.Count);
+
+            Assert.AreEqual(2, paramList.Count);
 
             var queryAuthParam = paramList.Single(p => p.Type.Equals(ParameterType.QueryString));
             var headerAuthParam = paramList.Single(p => p.Type.Equals(ParameterType.HttpHeader));
 
-            Assert.Equal("manualAuth", queryAuthParam.Value);
-            Assert.Equal(expectedAuthHeaderContent, headerAuthParam.Value);
+            Assert.AreEqual("manualAuth", queryAuthParam.Value);
+            Assert.AreEqual(this.expectedAuthHeaderContent, headerAuthParam.Value);
         }
 
-        [Fact]
+        [Test]
         public void Set_Auth_Header_Only_Once()
         {
             var client = new RestClient();
-
             var request = new RestRequest();
 
-            request.AddHeader("Authorization", expectedAuthHeaderContent);
+            request.AddHeader("Authorization", this.expectedAuthHeaderContent);
 
             client.Authenticator = new JwtAuthenticator("second_header_auth_token");
 
@@ -91,13 +85,13 @@ namespace RestSharp.Tests
 
             var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
 
-            Assert.Equal(1, paramList.Count);
+            Assert.AreEqual(1, paramList.Count);
 
             var authParam = paramList[0];
 
             Assert.True(authParam.Type == ParameterType.HttpHeader);
-            Assert.Equal(expectedAuthHeaderContent, authParam.Value);
-            Assert.NotEqual("second_header_auth_token", authParam.Value);
+            Assert.AreEqual(this.expectedAuthHeaderContent, authParam.Value);
+            Assert.AreNotEqual("second_header_auth_token", authParam.Value);
         }
     }
 }

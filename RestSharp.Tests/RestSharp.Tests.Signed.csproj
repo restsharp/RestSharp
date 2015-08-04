@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="AddRangeTests.cs" />
     <Compile Include="InterfaceImplementationTests.cs" />
+    <Compile Include="JwtAuthTests.cs" />
     <Compile Include="OAuthTests.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
