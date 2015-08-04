@@ -16,9 +16,11 @@
 
 using System;
 using System.Threading;
+
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading.Tasks;
 #endif
+
 using System.Net;
 
 namespace RestSharp
@@ -287,6 +289,8 @@ namespace RestSharp
                         async.Abort();
                         taskCompletionSource.TrySetCanceled();
                     });
+
+                taskCompletionSource.Task.ContinueWith(t => t.Dispose(), token);
             }
             catch (Exception ex)
             {
@@ -389,6 +393,8 @@ namespace RestSharp
                         async.Abort();
                         taskCompletionSource.TrySetCanceled();
                     });
+
+                taskCompletionSource.Task.ContinueWith(t => t.Dispose(), token);
             }
             catch (Exception ex)
             {
