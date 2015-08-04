@@ -200,7 +200,7 @@ namespace RestSharp.Extensions
 #else
             DateTime date;
 
-            if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.None, out date))
+            if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out date))
             {
                 return date;
             }
