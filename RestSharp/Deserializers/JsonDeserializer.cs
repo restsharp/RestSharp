@@ -238,7 +238,7 @@ namespace RestSharp.Deserializers
 
                 if (DateFormat.HasValue())
                 {
-                    dt = DateTime.ParseExact(stringValue, DateFormat, Culture);
+                    dt = DateTime.ParseExact(stringValue, DateFormat, Culture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
                 }
                 else
                 {

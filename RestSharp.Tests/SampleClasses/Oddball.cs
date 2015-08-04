@@ -1,6 +1,7 @@
 ﻿
 namespace RestSharp.Tests.SampleClasses
 {
+    [Deserializers.DeserializeAs(Name = "oddballRootName")]
     public class Oddball
     {
         public string Sid { get; set; }

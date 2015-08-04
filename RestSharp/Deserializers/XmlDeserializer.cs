@@ -342,6 +342,10 @@ namespace RestSharp.Deserializers
             var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
             var name = t.Name;
 
+            var attribute = t.GetAttribute<DeserializeAsAttribute>();
+            if (attribute != null)
+                name = attribute.Name;
+
             if (!elements.Any())
             {
                 var lowerName = name.ToLower().AsNamespaced(Namespace);
