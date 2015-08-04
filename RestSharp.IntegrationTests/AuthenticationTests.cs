@@ -16,12 +16,13 @@ namespace RestSharp.IntegrationTests
         public void Can_Authenticate_With_Basic_Http_Auth()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
+
             using(SimpleServer.Create(baseUrl.AbsoluteUri, UsernamePasswordEchoHandler))
             {
                 var client = new RestClient(baseUrl)
-                {
-                    Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
-                };
+                             {
+                                 Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
+                             };
                 var request = new RestRequest("test");
                 var response = client.Execute(request);
 
@@ -78,6 +79,7 @@ namespace RestSharp.IntegrationTests
             qs = HttpUtility.ParseQueryString(response.Content);
             oauthToken = qs["oauth_token"];
             oauthTokenSecret = qs["oauth_token_secret"];
+
             Assert.NotNull(oauthToken);
             Assert.NotNull(oauthTokenSecret);
 
@@ -96,7 +98,9 @@ namespace RestSharp.IntegrationTests
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
         //    var client = new RestClient(baseUrl);
+
         //    client.Authenticator = new OAuthAuthenticator(baseUrl, "key", "secret");
+
         //    var request = new RestRequest("request_token.php");
         //    var response = client.Execute(request);
 
@@ -109,7 +113,9 @@ namespace RestSharp.IntegrationTests
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
         //    var client = new RestClient(baseUrl);
+
         //    client.Authenticator = new OAuthAuthenticator(baseUrl, "key", "secret", "requestkey", "requestsecret");
+
         //    var request = new RestRequest("access_token.php");
         //    var response = client.Execute(request);
 
@@ -123,10 +129,14 @@ namespace RestSharp.IntegrationTests
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
         //    var client = new RestClient(baseUrl);
+
         //    client.Authenticator = new OAuthAuthenticator(baseUrl, "key", "secret", "accesskey", "accesssecret");
+
         //    var request = new RestRequest("echo_api.php");
+
         //    request.AddParameter("foo", "bar");
         //    request.AddParameter("fizz", "pop");
+
         //    var response = client.Execute(request);
 
         //    Assert.NotNull(response);
@@ -138,7 +148,9 @@ namespace RestSharp.IntegrationTests
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
         //    var client = new RestClient(baseUrl);
+
         //    client.Authenticator = new OAuthAuthenticator(baseUrl, "key", "secret", "accesskey", "accesssecret");
+
         //    var request = new RestRequest("echo_api.php");
         //    var response = client.Execute(request);
 

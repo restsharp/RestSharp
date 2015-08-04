@@ -20,7 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 using System.Net;
-using RestSharp.Extensions;
 
 namespace RestSharp
 {
@@ -83,6 +82,7 @@ namespace RestSharp
             Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
         {
             var http = HttpFactory.Create();
+
             AuthenticateIfNeeded(this, request);
 
             ConfigureHttp(request, http);

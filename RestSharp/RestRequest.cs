@@ -182,6 +182,34 @@ namespace RestSharp
         }
 
         /// <summary>
+        /// Add bytes to the Files collection as if it was a file of specific type
+        /// </summary>
+        /// <param name="name">A form parameter name</param>
+        /// <param name="bytes">The file data</param>
+        /// <param name="filename">The file name to use for the uploaded file</param>
+        /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
+        /// <returns></returns>
+        public IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip")
+        {
+            long length = bytes.Length;
+
+            return AddFile(new FileParameter
+                           {
+                               Name = name,
+                               FileName = filename,
+                               ContentLength = length,
+                               ContentType = contentType,
+                               Writer = s =>
+                                        {
+                                            using (var file = new StreamReader(new MemoryStream(bytes)))
+                                            {
+                                                file.BaseStream.CopyTo(s);
+                                            }
+                                        }
+                           });
+        }
+
+        /// <summary>
         /// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
         /// The default format is XML. Change RequestFormat if you wish to use a different serialization format.
         /// </summary>

@@ -159,6 +159,16 @@ namespace RestSharp
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
         IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null);
+
+        /// <summary>
+        /// Add bytes to the Files collection as if it was a file of specific type
+        /// </summary>
+        /// <param name="name">A form parameter name</param>
+        /// <param name="bytes">The file data</param>
+        /// <param name="filename">The file name to use for the uploaded file</param>
+        /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
+        /// <returns></returns>
+        IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip");
 #endif
 
         /// <summary>
