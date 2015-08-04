@@ -20,23 +20,24 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
-using Xunit;
 
 namespace RestSharp.Tests
 {
+    [TestFixture]
     public class XmlDeserializerTests
     {
-        private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
-        private readonly string _sampleDataPath = Path.Combine(Environment.CurrentDirectory, "SampleData");
+        private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+        private readonly string sampleDataPath = Path.Combine(Environment.CurrentDirectory, "SampleData");
 
         private string PathFor(string sampleFile)
         {
-            return Path.Combine(_sampleDataPath, sampleFile);
+            return Path.Combine(this.sampleDataPath, sampleFile);
         }
 
-        [Fact]
+        [Test]
         public void Can_Use_DeserializeAs_Attribute()
         {
             const string content =
@@ -45,12 +46,12 @@ namespace RestSharp.Tests
             var output = xml.Deserialize<Oddball>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
-            Assert.Equal("1", output.Sid);
-            Assert.Equal("Jackson", output.FriendlyName);
-            Assert.Equal("oddball", output.GoodPropertyName);
+            Assert.AreEqual("1", output.Sid);
+            Assert.AreEqual("Jackson", output.FriendlyName);
+            Assert.AreEqual("oddball", output.GoodPropertyName);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
@@ -58,178 +59,164 @@ namespace RestSharp.Tests
             var output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
-            Assert.Equal("oneOneOne", output.One);
-            Assert.Equal("twoTwoTwo", output.Two);
-            Assert.Equal(3, output.Three);
+            Assert.AreEqual("oneOneOne", output.One);
+            Assert.AreEqual("twoTwoTwo", output.Two);
+            Assert.AreEqual(3, output.Three);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
-            var xmlpath = PathFor("xmllists.xml");
+            var xmlpath = this.PathFor("xmllists.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<SimpleTypesListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.Names);
-            Assert.NotEmpty(output.Numbers);
+            Assert.IsNotEmpty(output.Names);
+            Assert.IsNotEmpty(output.Numbers);
             Assert.False(output.Names[0].Length == 0);
             Assert.False(output.Numbers.Sum() == 0);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_To_List_Inheritor_From_Custom_Root_With_Attributes()
         {
-            var xmlpath = PathFor("ListWithAttributes.xml");
+            var xmlpath = this.PathFor("ListWithAttributes.xml");
             var doc = XDocument.Load(xmlpath);
-
-            var xml = new XmlDeserializer();
-            xml.RootElement = "Calls";
+            var xml = new XmlDeserializer { RootElement = "Calls" };
             var output = xml.Deserialize<TwilioCallList>(new RestResponse { Content = doc.ToString() });
 
-            Assert.Equal(3, output.NumPages);
-            Assert.NotEmpty(output);
-            Assert.Equal(2, output.Count);
+            Assert.AreEqual(3, output.NumPages);
+            Assert.IsNotEmpty(output);
+            Assert.AreEqual(2, output.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_To_Standalone_List_Without_Matching_Class_Case()
         {
-            var xmlpath = PathFor("InlineListSample.xml");
+            var xmlpath = this.PathFor("InlineListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<List<Image>>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output);
-            Assert.Equal(4, output.Count);
+            Assert.IsNotEmpty(output);
+            Assert.AreEqual(4, output.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_To_Standalone_List_With_Matching_Class_Case()
         {
-            var xmlpath = PathFor("InlineListSample.xml");
+            var xmlpath = this.PathFor("InlineListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<List<image>>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output);
-            Assert.Equal(4, output.Count);
+            Assert.IsNotEmpty(output);
+            Assert.AreEqual(4, output.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Directly_To_Lists_Off_Root_Element()
         {
-            var xmlpath = PathFor("directlists.xml");
+            var xmlpath = this.PathFor("directlists.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<List<Database>>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output);
-            Assert.Equal(2, output.Count);
+            Assert.IsNotEmpty(output);
+            Assert.AreEqual(2, output.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name()
         {
-            var xmlpath = PathFor("InlineListSample.xml");
+            var xmlpath = this.PathFor("InlineListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.Images);
-            Assert.Equal(4, output.Images.Count);
+            Assert.IsNotEmpty(output.Images);
+            Assert.AreEqual(4, output.Images.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name()
         {
-            var xmlpath = PathFor("InlineListSample.xml");
+            var xmlpath = this.PathFor("InlineListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.images);
-            Assert.Equal(4, output.images.Count);
+            Assert.IsNotEmpty(output.images);
+            Assert.AreEqual(4, output.images.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_With_Additional_Property()
         {
-            var xmlpath = PathFor("InlineListSample.xml");
+            var xmlpath = this.PathFor("InlineListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.Equal(4, output.Count);
+            Assert.AreEqual(4, output.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Nested_List_Items_Without_Matching_Class_Name()
         {
-            var xmlpath = PathFor("NestedListSample.xml");
+            var xmlpath = this.PathFor("NestedListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.Images);
-            Assert.Equal(4, output.Images.Count);
+            Assert.IsNotEmpty(output.Images);
+            Assert.AreEqual(4, output.Images.Count);
         }
 
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Nested_List_Items_With_Matching_Class_Name()
         {
-            var xmlpath = PathFor("NestedListSample.xml");
+            var xmlpath = this.PathFor("NestedListSample.xml");
             var doc = XDocument.Load(xmlpath);
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.NotEmpty(output.images);
-            Assert.Equal(4, output.images.Count);
+            Assert.IsNotEmpty(output.images);
+            Assert.AreEqual(4, output.images.Count);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Nested_List_Without_Elements_To_Empty_List()
         {
             var doc = CreateXmlWithEmptyNestedList();
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc });
 
             Assert.NotNull(output.images);
             Assert.NotNull(output.Images);
-            Assert.Empty(output.images);
-            Assert.Empty(output.Images);
+            Assert.IsEmpty(output.images);
+            Assert.IsEmpty(output.Images);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Inline_List_Without_Elements_To_Empty_List()
         {
             var doc = CreateXmlWithEmptyInlineList();
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc });
 
             Assert.NotNull(output.images);
             Assert.NotNull(output.Images);
-            Assert.Empty(output.images);
-            Assert.Empty(output.Images);
+            Assert.IsEmpty(output.images);
+            Assert.IsEmpty(output.Images);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
         {
             var doc = CreateXmlWithNullValues();
-
             var xml = new XmlDeserializer();
             var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
@@ -238,7 +225,7 @@ namespace RestSharp.Tests
             Assert.Null(output.UniqueId);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Elements_to_Nullable_Values()
         {
             var culture = CultureInfo.InvariantCulture;
@@ -249,12 +236,12 @@ namespace RestSharp.Tests
             Assert.NotNull(output.Id);
             Assert.NotNull(output.StartDate);
             Assert.NotNull(output.UniqueId);
-            Assert.Equal(123, output.Id);
-            Assert.Equal(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
-            Assert.Equal(new Guid(GuidString), output.UniqueId);
+            Assert.AreEqual(123, output.Id);
+            Assert.AreEqual(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
+            Assert.AreEqual(new Guid(GUID_STRING), output.UniqueId);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_TimeSpan()
         {
             var culture = CultureInfo.InvariantCulture;
@@ -277,17 +264,17 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer { Culture = culture, };
             var payload = d.Deserialize<TimeSpanTestStructure>(response);
 
-            Assert.Equal(new TimeSpan(468006), payload.Tick);
-            Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
-            Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
-            Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
-            Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+            Assert.AreEqual(new TimeSpan(468006), payload.Tick);
+            Assert.AreEqual(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
+            Assert.AreEqual(new TimeSpan(0, 0, 8), payload.Second);
+            Assert.AreEqual(new TimeSpan(0, 55, 2), payload.Minute);
+            Assert.AreEqual(new TimeSpan(21, 30, 7), payload.Hour);
             Assert.Null(payload.NullableWithoutValue);
             Assert.NotNull(payload.NullableWithValue);
-            Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+            Assert.AreEqual(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Custom_Formatted_Date()
         {
             var culture = CultureInfo.InvariantCulture;
@@ -300,17 +287,17 @@ namespace RestSharp.Tests
             doc.Add(root);
 
             var xml = new XmlDeserializer
-            {
-                DateFormat = format,
-                Culture = culture
-            };
+                      {
+                          DateFormat = format,
+                          Culture = culture
+                      };
             var response = new RestResponse { Content = doc.ToString() };
             var output = xml.Deserialize<PersonForXml>(response);
 
-            Assert.Equal(date, output.StartDate);
+            Assert.AreEqual(date, output.StartDate);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Elements_On_Default_Root()
         {
             var doc = CreateElementsXml();
@@ -318,26 +305,26 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer();
             var p = d.Deserialize<PersonForXml>(response);
 
-            Assert.Equal("John Sheehan", p.Name);
-            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.Equal(28, p.Age);
-            Assert.Equal(long.MaxValue, p.BigNumber);
-            Assert.Equal(99.9999m, p.Percent);
-            Assert.Equal(false, p.IsCool);
-            Assert.Equal(new Guid(GuidString), p.UniqueId);
-            Assert.Equal(Guid.Empty, p.EmptyGuid);
-            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
-            Assert.Equal(Order.Third, p.Order);
-            Assert.Equal(Disposition.SoSo, p.Disposition);
+            Assert.AreEqual("John Sheehan", p.Name);
+            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.AreEqual(28, p.Age);
+            Assert.AreEqual(long.MaxValue, p.BigNumber);
+            Assert.AreEqual(99.9999m, p.Percent);
+            Assert.AreEqual(false, p.IsCool);
+            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(Guid.Empty, p.EmptyGuid);
+            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.AreEqual(Order.Third, p.Order);
+            Assert.AreEqual(Disposition.SoSo, p.Disposition);
             Assert.NotNull(p.Friends);
-            Assert.Equal(10, p.Friends.Count);
+            Assert.AreEqual(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.Equal("The Fonz", p.BestFriend.Name);
-            Assert.Equal(1952, p.BestFriend.Since);
+            Assert.AreEqual("The Fonz", p.BestFriend.Name);
+            Assert.AreEqual(1952, p.BestFriend.Since);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Attributes_On_Default_Root()
         {
             var doc = CreateAttributesXml();
@@ -345,21 +332,21 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer();
             var p = d.Deserialize<PersonForXml>(response);
 
-            Assert.Equal("John Sheehan", p.Name);
-            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.Equal(28, p.Age);
-            Assert.Equal(long.MaxValue, p.BigNumber);
-            Assert.Equal(99.9999m, p.Percent);
-            Assert.Equal(false, p.IsCool);
-            Assert.Equal(new Guid(GuidString), p.UniqueId);
-            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.AreEqual("John Sheehan", p.Name);
+            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.AreEqual(28, p.Age);
+            Assert.AreEqual(long.MaxValue, p.BigNumber);
+            Assert.AreEqual(99.9999m, p.Percent);
+            Assert.AreEqual(false, p.IsCool);
+            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.BestFriend);
-            Assert.Equal("The Fonz", p.BestFriend.Name);
-            Assert.Equal(1952, p.BestFriend.Since);
+            Assert.AreEqual("The Fonz", p.BestFriend.Name);
+            Assert.AreEqual(1952, p.BestFriend.Since);
         }
 
-        [Fact]
+        [Test]
         public void Ignore_Protected_Property_That_Exists_In_Data()
         {
             var doc = CreateElementsXml();
@@ -370,7 +357,7 @@ namespace RestSharp.Tests
             Assert.Null(p.IgnoreProxy);
         }
 
-        [Fact]
+        [Test]
         public void Ignore_ReadOnly_Property_That_Exists_In_Data()
         {
             var doc = CreateElementsXml();
@@ -381,7 +368,7 @@ namespace RestSharp.Tests
             Assert.Null(p.ReadOnlyProxy);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Names_With_Underscores_On_Default_Root()
         {
             var doc = CreateUnderscoresXml();
@@ -389,26 +376,26 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer();
             var p = d.Deserialize<PersonForXml>(response);
 
-            Assert.Equal("John Sheehan", p.Name);
-            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.Equal(28, p.Age);
-            Assert.Equal(long.MaxValue, p.BigNumber);
-            Assert.Equal(99.9999m, p.Percent);
-            Assert.Equal(false, p.IsCool);
-            Assert.Equal(new Guid(GuidString), p.UniqueId);
-            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.AreEqual("John Sheehan", p.Name);
+            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.AreEqual(28, p.Age);
+            Assert.AreEqual(long.MaxValue, p.BigNumber);
+            Assert.AreEqual(99.9999m, p.Percent);
+            Assert.AreEqual(false, p.IsCool);
+            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.Equal(10, p.Friends.Count);
+            Assert.AreEqual(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.Equal("The Fonz", p.BestFriend.Name);
-            Assert.Equal(1952, p.BestFriend.Since);
+            Assert.AreEqual("The Fonz", p.BestFriend.Name);
+            Assert.AreEqual(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.Equal(5, p.Foes.Count);
-            Assert.Equal("Yankees", p.Foes.Team);
+            Assert.AreEqual(5, p.Foes.Count);
+            Assert.AreEqual("Yankees", p.Foes.Team);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Names_With_Dashes_On_Default_Root()
         {
             var doc = CreateDashesXml();
@@ -416,26 +403,26 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer();
             var p = d.Deserialize<PersonForXml>(response);
 
-            Assert.Equal("John Sheehan", p.Name);
-            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.Equal(28, p.Age);
-            Assert.Equal(long.MaxValue, p.BigNumber);
-            Assert.Equal(99.9999m, p.Percent);
-            Assert.Equal(false, p.IsCool);
-            Assert.Equal(new Guid(GuidString), p.UniqueId);
-            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.AreEqual("John Sheehan", p.Name);
+            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.AreEqual(28, p.Age);
+            Assert.AreEqual(long.MaxValue, p.BigNumber);
+            Assert.AreEqual(99.9999m, p.Percent);
+            Assert.AreEqual(false, p.IsCool);
+            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.Equal(10, p.Friends.Count);
+            Assert.AreEqual(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.Equal("The Fonz", p.BestFriend.Name);
-            Assert.Equal(1952, p.BestFriend.Since);
+            Assert.AreEqual("The Fonz", p.BestFriend.Name);
+            Assert.AreEqual(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.Equal(5, p.Foes.Count);
-            Assert.Equal("Yankees", p.Foes.Team);
+            Assert.AreEqual(5, p.Foes.Count);
+            Assert.AreEqual("Yankees", p.Foes.Team);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Names_With_Underscores_Without_Matching_Case_On_Default_Root()
         {
             var doc = CreateLowercaseUnderscoresXml();
@@ -443,26 +430,26 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer();
             var p = d.Deserialize<PersonForXml>(response);
 
-            Assert.Equal("John Sheehan", p.Name);
-            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.Equal(28, p.Age);
-            Assert.Equal(long.MaxValue, p.BigNumber);
-            Assert.Equal(99.9999m, p.Percent);
-            Assert.Equal(false, p.IsCool);
-            Assert.Equal(new Guid(GuidString), p.UniqueId);
-            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.AreEqual("John Sheehan", p.Name);
+            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.AreEqual(28, p.Age);
+            Assert.AreEqual(long.MaxValue, p.BigNumber);
+            Assert.AreEqual(99.9999m, p.Percent);
+            Assert.AreEqual(false, p.IsCool);
+            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.Equal(10, p.Friends.Count);
+            Assert.AreEqual(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.Equal("The Fonz", p.BestFriend.Name);
-            Assert.Equal(1952, p.BestFriend.Since);
+            Assert.AreEqual("The Fonz", p.BestFriend.Name);
+            Assert.AreEqual(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.Equal(5, p.Foes.Count);
-            Assert.Equal("Yankees", p.Foes.Team);
+            Assert.AreEqual(5, p.Foes.Count);
+            Assert.AreEqual("Yankees", p.Foes.Team);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Lower_Cased_Root_Elements_With_Dashes()
         {
             var doc = CreateDashesXml();
@@ -470,26 +457,26 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer();
             var p = d.Deserialize<PersonForXml>(response);
 
-            Assert.Equal("John Sheehan", p.Name);
-            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.Equal(28, p.Age);
-            Assert.Equal(long.MaxValue, p.BigNumber);
-            Assert.Equal(99.9999m, p.Percent);
-            Assert.Equal(false, p.IsCool);
-            Assert.Equal(new Guid(GuidString), p.UniqueId);
-            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.AreEqual("John Sheehan", p.Name);
+            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.AreEqual(28, p.Age);
+            Assert.AreEqual(long.MaxValue, p.BigNumber);
+            Assert.AreEqual(99.9999m, p.Percent);
+            Assert.AreEqual(false, p.IsCool);
+            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.Equal(10, p.Friends.Count);
+            Assert.AreEqual(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.Equal("The Fonz", p.BestFriend.Name);
-            Assert.Equal(1952, p.BestFriend.Since);
+            Assert.AreEqual("The Fonz", p.BestFriend.Name);
+            Assert.AreEqual(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.Equal(5, p.Foes.Count);
-            Assert.Equal("Yankees", p.Foes.Team);
+            Assert.AreEqual(5, p.Foes.Count);
+            Assert.AreEqual("Yankees", p.Foes.Team);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Root_Elements_Without_Matching_Case_And_Dashes()
         {
             var doc = CreateLowerCasedRootElementWithDashesXml();
@@ -498,72 +485,72 @@ namespace RestSharp.Tests
             var p = d.Deserialize<List<IncomingInvoice>>(response);
 
             Assert.NotNull(p);
-            Assert.Equal(1, p.Count);
-            Assert.Equal(45, p[0].ConceptId);
+            Assert.AreEqual(1, p.Count);
+            Assert.AreEqual(45, p[0].ConceptId);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Eventful_Xml()
         {
-            var xmlpath = PathFor("eventful.xml");
+            var xmlpath = this.PathFor("eventful.xml");
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
             var output = d.Deserialize<VenueSearch>(response);
 
-            Assert.NotEmpty(output.venues);
-            Assert.Equal(3, output.venues.Count);
-            Assert.Equal("Tivoli", output.venues[0].name);
-            Assert.Equal("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
-            Assert.Equal("V0-001-000266914-3", output.venues[2].id);
+            Assert.IsNotEmpty(output.venues);
+            Assert.AreEqual(3, output.venues.Count);
+            Assert.AreEqual("Tivoli", output.venues[0].name);
+            Assert.AreEqual("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
+            Assert.AreEqual("V0-001-000266914-3", output.venues[2].id);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Lastfm_Xml()
         {
-            var xmlpath = PathFor("Lastfm.xml");
+            var xmlpath = this.PathFor("Lastfm.xml");
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
             var output = d.Deserialize<SampleClasses.Lastfm.Event>(response);
 
-            //Assert.NotEmpty(output.artists);
-            Assert.Equal("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
-            Assert.Equal("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
+            //Assert.IsNotEmpty(output.artists);
+            Assert.AreEqual("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
+            Assert.AreEqual("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Google_Weather_Xml()
         {
-            var xmlpath = PathFor("GoogleWeather.xml");
+            var xmlpath = this.PathFor("GoogleWeather.xml");
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
             var output = d.Deserialize<xml_api_reply>(response);
 
-            Assert.NotEmpty(output.weather);
-            Assert.Equal(4, output.weather.Count);
-            Assert.Equal("Sunny", output.weather[0].condition.data);
+            Assert.IsNotEmpty(output.weather);
+            Assert.AreEqual(4, output.weather.Count);
+            Assert.AreEqual("Sunny", output.weather[0].condition.data);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Goodreads_Xml()
         {
-            var xmlpath = PathFor("Goodreads.xml");
+            var xmlpath = this.PathFor("Goodreads.xml");
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
             var output = d.Deserialize<GoodReadsReviewCollection>(response);
 
-            Assert.Equal(2, output.Reviews.Count);
-            Assert.Equal("1208943892", output.Reviews[0].Id); // This fails without fixing the XmlDeserializer
-            Assert.Equal("1198344567", output.Reviews[1].Id);
+            Assert.AreEqual(2, output.Reviews.Count);
+            Assert.AreEqual("1208943892", output.Reviews[0].Id); // This fails without fixing the XmlDeserializer
+            Assert.AreEqual("1198344567", output.Reviews[1].Id);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Boolean_From_Number()
         {
-            var xmlpath = PathFor("boolean_from_number.xml");
+            var xmlpath = this.PathFor("boolean_from_number.xml");
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
@@ -572,10 +559,10 @@ namespace RestSharp.Tests
             Assert.True(output.Value);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Boolean_From_String()
         {
-            var xmlpath = PathFor("boolean_from_string.xml");
+            var xmlpath = this.PathFor("boolean_from_string.xml");
             var doc = XDocument.Load(xmlpath);
             var response = new RestResponse { Content = doc.ToString() };
             var d = new XmlDeserializer();
@@ -584,7 +571,7 @@ namespace RestSharp.Tests
             Assert.True(output.Value);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values()
         {
             var doc = CreateXmlWithAttributesAndNullValues();
@@ -596,7 +583,7 @@ namespace RestSharp.Tests
             Assert.Null(output.UniqueId);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Mixture_Of_Empty_Elements_With_Attributes_And_Populated_Elements()
         {
             var doc = CreateXmlWithAttributesAndNullValuesAndPopulatedValues();
@@ -605,10 +592,10 @@ namespace RestSharp.Tests
 
             Assert.Null(output.Id);
             Assert.Null(output.StartDate);
-            Assert.Equal(new Guid(GuidString), output.UniqueId);
+            Assert.AreEqual(new Guid(GUID_STRING), output.UniqueId);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_DateTimeOffset()
         {
             var culture = CultureInfo.InvariantCulture;
@@ -628,10 +615,10 @@ namespace RestSharp.Tests
             var d = new XmlDeserializer { Culture = culture, };
             var payload = d.Deserialize<DateTimeTestStructure>(response);
 
-            Assert.Equal(dateTimeOffset, payload.DateTimeOffset);
+            Assert.AreEqual(dateTimeOffset, payload.DateTimeOffset);
             Assert.Null(payload.NullableDateTimeOffsetWithNull);
             Assert.True(payload.NullableDateTimeOffsetWithValue.HasValue);
-            Assert.Equal(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
+            Assert.AreEqual(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
         }
 
         private static string CreateUnderscoresXml()
@@ -647,20 +634,20 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("Is_Cool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XAttribute("Read_Only", "dummy"));
-            root.Add(new XElement("Unique_Id", new Guid(GuidString)));
+            root.Add(new XElement("Unique_Id", new Guid(GUID_STRING)));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("Url_Path", "/foo/bar"));
             root.Add(new XElement("Best_Friend",
-                     new XElement("Name", "The Fonz"),
-                     new XAttribute("Since", 1952)));
+                new XElement("Name", "The Fonz"),
+                new XAttribute("Since", 1952)));
 
             var friends = new XElement("Friends");
 
             for (int i = 0; i < 10; i++)
             {
                 friends.Add(new XElement("Friend",
-                            new XElement("Name", "Friend" + i),
-                            new XAttribute("Since", DateTime.Now.Year - i)));
+                    new XElement("Name", "Friend" + i),
+                    new XAttribute("Since", DateTime.Now.Year - i)));
             }
 
             root.Add(friends);
@@ -693,20 +680,20 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("is_cool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XAttribute("read_only", "dummy"));
-            root.Add(new XElement("unique_id", new Guid(GuidString)));
+            root.Add(new XElement("unique_id", new Guid(GUID_STRING)));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("url_path", "/foo/bar"));
             root.Add(new XElement("best_friend",
-                     new XElement("name", "The Fonz"),
-                     new XAttribute("Since", 1952)));
+                new XElement("name", "The Fonz"),
+                new XAttribute("Since", 1952)));
 
             var friends = new XElement("Friends");
 
             for (int i = 0; i < 10; i++)
             {
                 friends.Add(new XElement("Friend",
-                            new XElement("Name", "Friend" + i),
-                            new XAttribute("Since", DateTime.Now.Year - i)));
+                    new XElement("Name", "Friend" + i),
+                    new XAttribute("Since", DateTime.Now.Year - i)));
             }
 
             root.Add(friends);
@@ -739,20 +726,20 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("Is-Cool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XAttribute("Read-Only", "dummy"));
-            root.Add(new XElement("Unique-Id", new Guid(GuidString)));
+            root.Add(new XElement("Unique-Id", new Guid(GUID_STRING)));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("Url-Path", "/foo/bar"));
             root.Add(new XElement("Best-Friend",
-                     new XElement("Name", "The Fonz"),
-                     new XAttribute("Since", 1952)));
+                new XElement("Name", "The Fonz"),
+                new XAttribute("Since", 1952)));
 
             var friends = new XElement("Friends");
 
             for (int i = 0; i < 10; i++)
             {
                 friends.Add(new XElement("Friend",
-                            new XElement("Name", "Friend" + i),
-                            new XAttribute("Since", DateTime.Now.Year - i)));
+                    new XElement("Name", "Friend" + i),
+                    new XAttribute("Since", DateTime.Now.Year - i)));
             }
 
             root.Add(friends);
@@ -796,23 +783,23 @@ namespace RestSharp.Tests
             root.Add(new XElement("IsCool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XElement("ReadOnly", "dummy"));
-            root.Add(new XElement("UniqueId", new Guid(GuidString)));
+            root.Add(new XElement("UniqueId", new Guid(GUID_STRING)));
             root.Add(new XElement("EmptyGuid", ""));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("UrlPath", "/foo/bar"));
             root.Add(new XElement("Order", "third"));
             root.Add(new XElement("Disposition", "so-so"));
             root.Add(new XElement("BestFriend",
-                     new XElement("Name", "The Fonz"),
-                     new XElement("Since", 1952)));
+                new XElement("Name", "The Fonz"),
+                new XElement("Since", 1952)));
 
             var friends = new XElement("Friends");
 
             for (int i = 0; i < 10; i++)
             {
                 friends.Add(new XElement("Friend",
-                            new XElement("Name", "Friend" + i),
-                            new XElement("Since", DateTime.Now.Year - i)));
+                    new XElement("Name", "Friend" + i),
+                    new XElement("Since", DateTime.Now.Year - i)));
             }
 
             root.Add(friends);
@@ -834,12 +821,12 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("IsCool", false));
             root.Add(new XAttribute("Ignore", "dummy"));
             root.Add(new XAttribute("ReadOnly", "dummy"));
-            root.Add(new XAttribute("UniqueId", new Guid(GuidString)));
+            root.Add(new XAttribute("UniqueId", new Guid(GUID_STRING)));
             root.Add(new XAttribute("Url", "http://example.com"));
             root.Add(new XAttribute("UrlPath", "/foo/bar"));
             root.Add(new XElement("BestFriend",
-                     new XAttribute("Name", "The Fonz"),
-                     new XAttribute("Since", 1952)));
+                new XAttribute("Name", "The Fonz"),
+                new XAttribute("Since", 1952)));
 
             doc.Add(root);
 
@@ -852,8 +839,8 @@ namespace RestSharp.Tests
             var root = new XElement("NullableValues");
 
             root.Add(new XElement("Id", null),
-                     new XElement("StartDate", null),
-                     new XElement("UniqueId", null));
+                new XElement("StartDate", null),
+                new XElement("UniqueId", null));
 
             doc.Add(root);
 
@@ -866,8 +853,8 @@ namespace RestSharp.Tests
             var root = new XElement("NullableValues");
 
             root.Add(new XElement("Id", 123),
-                     new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString(culture)),
-                     new XElement("UniqueId", new Guid(GuidString)));
+                new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString(culture)),
+                new XElement("UniqueId", new Guid(GUID_STRING)));
 
             doc.Add(root);
 
@@ -904,8 +891,8 @@ namespace RestSharp.Tests
             idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
 
             root.Add(idElement,
-                     new XElement("StartDate", null),
-                     new XElement("UniqueId", null));
+                new XElement("StartDate", null),
+                new XElement("UniqueId", null));
 
             doc.Add(root);
 
@@ -921,8 +908,8 @@ namespace RestSharp.Tests
             idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
 
             root.Add(idElement,
-                     new XElement("StartDate", null),
-                     new XElement("UniqueId", new Guid(GuidString)));
+                new XElement("StartDate", null),
+                new XElement("UniqueId", new Guid(GUID_STRING)));
 
             doc.Add(root);
 

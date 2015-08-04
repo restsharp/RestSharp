@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Xunit;
+using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
@@ -28,9 +28,10 @@ namespace RestSharp.Tests
 
         public class Execute
         {
+            [TestFixture(Category = "NuSpecUpdateTask",)]
             public class WhenSpecFileNotSpecified
             {
-                [Fact]
+                [Test]
                 public void ReturnsFalse()
                 {
                     var task = new Build.NuSpecUpdateTask();
@@ -38,85 +39,89 @@ namespace RestSharp.Tests
                 }
             }
 
+            [TestFixture(Category = "NuSpecUpdateTask")]
             public class WhenInformationalVersionIsNotDefined : BaseNuSpecUpdateTest
             {
                 protected override void Setup() { }
 
-                [Fact]
+                [Test]
                 public void PullsVersionAttributeInstead()
                 {
-                    var task = new Build.NuSpecUpdateTask();
+                    var task = new Build.NuSpecUpdateTask
+                               {
+                                   SpecFile = FileName,
+                                   SourceAssemblyFile = "RestSharp.Tests.dll"
+                               };
 
-                    task.SpecFile = this.FileName;
-                    task.SourceAssemblyFile = "RestSharp.Tests.dll";
                     task.Execute();
 
-                    Assert.Equal("1.0.0.0", task.Version);
+                    Assert.AreEqual("1.0.0.0", task.Version);
                 }
             }
 
+            [TestFixture(Category = "NuSpecUpdateTask")]
             public class WhenSpecFileIsValid : BaseNuSpecUpdateTest
             {
-                private Build.NuSpecUpdateTask _subject = new Build.NuSpecUpdateTask();
-                private bool _result;
+                private readonly Build.NuSpecUpdateTask subject = new Build.NuSpecUpdateTask();
+                private bool result;
 
 #if SIGNED
-                private string _expectedId = "RestSharpSigned";
+                private string expectedId = "RestSharpSigned";
 #else
-                private string _expectedId = "RestSharp";
+                private const string EXPECTED_ID = "RestSharp";
 #endif
-                private string _expectedDescription = "Simple REST and HTTP API Client";
-                private string _expectedAuthors = "John Sheehan, RestSharp Community";
-                private string _expectedOwners = "John Sheehan, RestSharp Community";
-                private Regex _expectedVersion = new Regex(@"^\d+\.\d+\.\d+(-\w+)?$", RegexOptions.Compiled);
+                private const string EXPECTED_DESCRIPTION = "Simple REST and HTTP API Client";
+                private const string EXPECTED_AUTHORS = "John Sheehan, RestSharp Community";
+                private const string EXPECTED_OWNERS = "John Sheehan, RestSharp Community";
+                private readonly Regex expectedVersion = new Regex(@"^\d+\.\d+\.\d+(-\w+)?$", RegexOptions.Compiled);
 
                 protected override void Setup()
                 {
-                    this._subject.SpecFile = this.FileName;
-                    this._subject.SourceAssemblyFile = "RestSharp.dll";
-                    this._result = this._subject.Execute();
+                    this.subject.SpecFile = FileName;
+                    this.subject.SourceAssemblyFile = "RestSharp.dll";
+                    this.result = this.subject.Execute();
                 }
 
-                [Fact]
+                [Test]
                 public void ReturnsTrue()
                 {
-                    Assert.True(this._result);
+                    Assert.True(this.result);
                 }
 
-                [Fact]
+                [Test]
                 public void PullsIdFromAssembly()
                 {
-                    Assert.Equal(this._expectedId, this._subject.Id);
+                    Assert.AreEqual(EXPECTED_ID, this.subject.Id);
                 }
 
-                [Fact]
+                [Test]
                 public void PullsDescriptionFromAssembly()
                 {
-                    Assert.Equal(this._expectedDescription, this._subject.Description);
+                    Assert.AreEqual(EXPECTED_DESCRIPTION, this.subject.Description);
                 }
 
-                [Fact]
+                [Test]
                 public void PullsVersionFromAssemblyInfo()
                 {
-                    Assert.True(this._expectedVersion.IsMatch(this._subject.Version));
+                    Assert.True(this.expectedVersion.IsMatch(this.subject.Version));
                 }
 
-                [Fact]
+                [Test]
                 public void PullsAuthorsFromAssemblyInfo()
                 {
-                    Assert.Equal(this._expectedAuthors, this._subject.Authors);
+                    Assert.AreEqual(EXPECTED_AUTHORS, this.subject.Authors);
                 }
 
-                [Fact]
+                [Test]
                 public void UpdatesSpecFile()
                 {
-                    var doc = XDocument.Load(this.ComputedFileName);
+                    var doc = XDocument.Load(ComputedFileName);
 
-                    Assert.Equal(this._expectedId, doc.Descendants("id").First().Value);
-                    Assert.Equal(this._expectedDescription, doc.Descendants("description").First().Value);
-                    Assert.Equal(this._expectedAuthors, doc.Descendants("authors").First().Value);
-                    Assert.Equal(this._expectedOwners, doc.Descendants("owners").First().Value);
-                    Assert.True(this._expectedVersion.IsMatch(doc.Descendants("version").First().Value));
+                    Assert.AreEqual(EXPECTED_ID, doc.Descendants("id").First().Value);
+                    Assert.AreEqual(EXPECTED_DESCRIPTION, doc.Descendants("description").First().Value);
+                    Assert.AreEqual(EXPECTED_AUTHORS, doc.Descendants("authors").First().Value);
+                    Assert.AreEqual(EXPECTED_OWNERS, doc.Descendants("owners").First().Value);
+                    Assert.True(this.expectedVersion.IsMatch(doc.Descendants("version").First().Value));
                 }
             }
         }

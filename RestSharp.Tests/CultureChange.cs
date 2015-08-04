@@ -13,7 +13,7 @@ namespace RestSharp.Tests
             if (culture == null)
                 throw new ArgumentNullException("culture");
 
-            PreviousCulture = Thread.CurrentThread.CurrentCulture;
+            this.PreviousCulture = Thread.CurrentThread.CurrentCulture;
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
         }
@@ -22,11 +22,11 @@ namespace RestSharp.Tests
 
         public void Dispose()
         {
-            if (PreviousCulture != null)
+            if (this.PreviousCulture != null)
             {
-                Thread.CurrentThread.CurrentCulture = PreviousCulture;
+                Thread.CurrentThread.CurrentCulture = this.PreviousCulture;
 
-                PreviousCulture = null;
+                this.PreviousCulture = null;
             }
         }
 
