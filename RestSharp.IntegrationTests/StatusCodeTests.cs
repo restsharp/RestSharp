@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
+    [TestFixture]
     public class StatusCodeTests
     {
-        [Fact]
+        [Test]
         public void Handles_GET_Request_404_Error()
         {
             Uri baseUrl = new Uri("http://localhost:8080/");
@@ -19,11 +20,11 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("404");
                 var response = client.Execute(request);
 
-                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+                Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
             }
         }
 
-        [Fact]
+        [Test]
         public void Handles_GET_Request_404_Error_With_Body()
         {
             Uri baseUrl = new Uri("http://localhost:8080/");
@@ -37,16 +38,16 @@ namespace RestSharp.IntegrationTests
 
                 var response = client.Execute(request);
 
-                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+                Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
             }
         }
 
-        void UrlToStatusCodeHandler(HttpListenerContext obj)
+        private static void UrlToStatusCodeHandler(HttpListenerContext obj)
         {
             obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
         }
 
-        [Fact]
+        [Test]
         public void Handles_Different_Root_Element_On_Http_Error()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -54,25 +55,24 @@ namespace RestSharp.IntegrationTests
             using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("error");
+                var request = new RestRequest("error") { RootElement = "Success" };
 
-                request.RootElement = "Success";
                 request.OnBeforeDeserialization = resp =>
-                {
-                    if (resp.StatusCode == HttpStatusCode.BadRequest)
-                    {
-                        request.RootElement = "Error";
-                    }
-                };
+                                                  {
+                                                      if (resp.StatusCode == HttpStatusCode.BadRequest)
+                                                      {
+                                                          request.RootElement = "Error";
+                                                      }
+                                                  };
 
                 var response = client.Execute<Response>(request);
 
-                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-                Assert.Equal("Not found!", response.Data.Message);
+                Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+                Assert.AreEqual("Not found!", response.Data.Message);
             }
         }
 
-        [Fact]
+        [Test]
         public void Handles_Default_Root_Element_On_No_Error()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -80,21 +80,20 @@ namespace RestSharp.IntegrationTests
             using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
             {
                 var client = new RestClient(baseUrl);
-                var request = new RestRequest("success");
+                var request = new RestRequest("success") { RootElement = "Success" };
 
-                request.RootElement = "Success";
                 request.OnBeforeDeserialization = resp =>
-                {
-                    if (resp.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        request.RootElement = "Error";
-                    }
-                };
+                                                  {
+                                                      if (resp.StatusCode == HttpStatusCode.NotFound)
+                                                      {
+                                                          request.RootElement = "Error";
+                                                      }
+                                                  };
 
                 var response = client.Execute<Response>(request);
 
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                Assert.Equal("Works!", response.Data.Message);
+                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+                Assert.AreEqual("Works!", response.Data.Message);
             }
         }
     }

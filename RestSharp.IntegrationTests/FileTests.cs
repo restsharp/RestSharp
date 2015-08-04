@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
+using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
+    [TestFixture]
     public class FileTests
     {
-        [Fact]
+        [Test]
         public void Handles_Binary_File_Download()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -19,11 +20,11 @@ namespace RestSharp.IntegrationTests
                 var response = client.DownloadData(request);
                 var expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Assets\\Koala.jpg");
 
-                Assert.Equal(expected, response);
+                Assert.AreEqual(expected, response);
             }
         }
 
-        [Fact]
+        [Test]
         public void Writes_Response_To_Stream()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -35,10 +36,10 @@ namespace RestSharp.IntegrationTests
                 using (var writer = File.OpenWrite(tempFile))
                 {
                     var client = new RestClient(baseUrl);
-                    var request = new RestRequest("Assets/Koala.jpg");
-
-                    request.ResponseWriter = (responseStream) => responseStream.CopyTo(writer);
-
+                    var request = new RestRequest("Assets/Koala.jpg")
+                                  {
+                                      ResponseWriter = (responseStream) => responseStream.CopyTo(writer)
+                                  };
                     var response = client.DownloadData(request);
 
                     Assert.Null(response);
@@ -47,7 +48,7 @@ namespace RestSharp.IntegrationTests
                 var fromTemp = File.ReadAllBytes(tempFile);
                 var expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Assets\\Koala.jpg");
 
-                Assert.Equal(expected, fromTemp);
+                Assert.AreEqual(expected, fromTemp);
             }
         }
     }

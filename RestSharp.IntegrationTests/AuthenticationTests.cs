@@ -2,16 +2,17 @@
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using NUnit.Framework;
 using RestSharp.Authenticators;
 using RestSharp.Contrib;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
+    [TestFixture]
     public class AuthenticationTests
     {
-        [Fact]
+        [Test]
         public void Can_Authenticate_With_Basic_Http_Auth()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -24,7 +25,7 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("test");
                 var response = client.Execute(request);
 
-                Assert.Equal("testuser|testpassword", response.Content);
+                Assert.AreEqual("testuser|testpassword", response.Content);
             }
         }
 
@@ -36,60 +37,61 @@ namespace RestSharp.IntegrationTests
             context.Response.OutputStream.WriteStringUtf8(string.Join("|", parts));
         }
 
-        //[Fact]
+        //[Test]
         public void Can_Authenticate_With_OAuth()
         {
             var baseUrl = new Uri("https://api.twitter.com");
-            var client = new RestClient(baseUrl);
-
-            client.Authenticator = OAuth1Authenticator.ForRequestToken(
-                "CONSUMER_KEY", "CONSUMER_SECRET");
-
+            var client = new RestClient(baseUrl)
+                         {
+                             Authenticator = OAuth1Authenticator.ForRequestToken("CONSUMER_KEY", "CONSUMER_SECRET")
+                         };
             var request = new RestRequest("oauth/request_token");
             var response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             var qs = HttpUtility.ParseQueryString(response.Content);
-            var oauth_token = qs["oauth_token"];
-            var oauth_token_secret = qs["oauth_token_secret"];
+            var oauthToken = qs["oauth_token"];
+            var oauthTokenSecret = qs["oauth_token_secret"];
 
-            Assert.NotNull(oauth_token);
-            Assert.NotNull(oauth_token_secret);
+            Assert.NotNull(oauthToken);
+            Assert.NotNull(oauthTokenSecret);
 
-            request = new RestRequest("oauth/authorize?oauth_token=" + oauth_token);
+            request = new RestRequest("oauth/authorize?oauth_token=" + oauthToken);
 
             var url = client.BuildUri(request).ToString();
 
             Process.Start(url);
 
-            var verifier = "123456"; // <-- Breakpoint here (set verifier in debugger)
+            const string verifier = "123456"; // <-- Breakpoint here (set verifier in debugger)
 
             request = new RestRequest("oauth/access_token");
             client.Authenticator = OAuth1Authenticator.ForAccessToken(
-                "P5QziWtocYmgWAhvlegxw", "jBs07SIxJ0kodeU9QtLEs1W1LRgQb9u5Lc987BA94", oauth_token, oauth_token_secret, verifier);
+                "P5QziWtocYmgWAhvlegxw", "jBs07SIxJ0kodeU9QtLEs1W1LRgQb9u5Lc987BA94", oauthToken,
+                oauthTokenSecret, verifier);
             response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             qs = HttpUtility.ParseQueryString(response.Content);
-            oauth_token = qs["oauth_token"];
-            oauth_token_secret = qs["oauth_token_secret"];
-            Assert.NotNull(oauth_token);
-            Assert.NotNull(oauth_token_secret);
+            oauthToken = qs["oauth_token"];
+            oauthTokenSecret = qs["oauth_token_secret"];
+            Assert.NotNull(oauthToken);
+            Assert.NotNull(oauthTokenSecret);
 
             request = new RestRequest("account/verify_credentials.xml");
             client.Authenticator = OAuth1Authenticator.ForProtectedResource(
-                "P5QziWtocYmgWAhvlegxw", "jBs07SIxJ0kodeU9QtLEs1W1LRgQb9u5Lc987BA94", oauth_token, oauth_token_secret);
+                "P5QziWtocYmgWAhvlegxw", "jBs07SIxJ0kodeU9QtLEs1W1LRgQb9u5Lc987BA94", oauthToken,
+                oauthTokenSecret);
             response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
-        //[Fact]
+        //[Test]
         //public void Can_Obtain_OAuth_Request_Token()
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
@@ -99,10 +101,10 @@ namespace RestSharp.IntegrationTests
         //    var response = client.Execute(request);
 
         //    Assert.NotNull(response);
-        //    Assert.Equal("oauth_token=requestkey&oauth_token_secret=requestsecret", response.Content);
+        //    Assert.AreEqual("oauth_token=requestkey&oauth_token_secret=requestsecret", response.Content);
         //}
 
-        //[Fact]
+        //[Test]
         //public void Can_Obtain_OAuth_Access_Token()
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
@@ -112,11 +114,11 @@ namespace RestSharp.IntegrationTests
         //    var response = client.Execute(request);
 
         //    Assert.NotNull(response);
-        //    Assert.Equal("oauth_token=accesskey&oauth_token_secret=accesssecret", response.Content);
+        //    Assert.AreEqual("oauth_token=accesskey&oauth_token_secret=accesssecret", response.Content);
 
         //}
 
-        //[Fact]
+        //[Test]
         //public void Can_Make_Authenticated_OAuth_Call_With_Parameters()
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
@@ -128,10 +130,10 @@ namespace RestSharp.IntegrationTests
         //    var response = client.Execute(request);
 
         //    Assert.NotNull(response);
-        //    Assert.Equal("fizz=pop&foo=bar", response.Content);
+        //    Assert.AreEqual("fizz=pop&foo=bar", response.Content);
         //}
 
-        //[Fact]
+        //[Test]
         //public void Can_Make_Authenticated_OAuth_Call()
         //{
         //    var baseUrl = "http://term.ie/oauth/example";
@@ -141,7 +143,7 @@ namespace RestSharp.IntegrationTests
         //    var response = client.Execute(request);
 
         //    Assert.NotNull(response);
-        //    Assert.Equal(string.Empty, response.Content);
+        //    Assert.AreEqual(string.Empty, response.Content);
 
         //}
     }

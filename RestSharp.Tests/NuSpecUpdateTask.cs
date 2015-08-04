@@ -28,7 +28,7 @@ namespace RestSharp.Tests
 
         public class Execute
         {
-            [TestFixture(Category = "NuSpecUpdateTask",)]
+            [TestFixture(Category = "NuSpecUpdateTask")]
             public class WhenSpecFileNotSpecified
             {
                 [Test]

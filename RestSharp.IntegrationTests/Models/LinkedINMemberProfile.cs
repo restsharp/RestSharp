@@ -2,9 +2,9 @@
 {
     /// <summary>
     /// Model for used by the LinkedIN integration tests.
-    /// <see cref="oAuth1Tests.Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN"/>.
+    /// <see cref="OAuth1Tests.Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN"/>.
     /// </summary>
-    public class LinkedINMemberProfile
+    public class LinkedInMemberProfile
     {
         public string Id { get; set; }
 
