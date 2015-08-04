@@ -511,7 +511,8 @@ namespace RestSharp
                     http.Parameters.Add(new HttpParameter
                                         {
                                             Name = body.Name,
-                                            Value = Convert.ToString(body.Value)
+                                            Value = Convert.ToString(body.Value),
+                                            ContentType = body.ContentType
                                         });
                 }
             }

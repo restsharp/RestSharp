@@ -251,7 +251,7 @@ namespace RestSharp
                     {
                         requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
                     }
-                    else
+                    else if (RequestBody != null)
                     {
                         WriteStringTo(requestStream, RequestBody);
                     }
