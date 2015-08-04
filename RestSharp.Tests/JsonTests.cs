@@ -221,24 +221,30 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_DateTime_With_DateTimeStyles()
         {
-            DateTime Item0 = new DateTime(2010, 2, 8, 11, 11, 11, DateTimeKind.Local);
-            DateTime Item1 = new DateTime(2011, 2, 8, 11, 11, 11, DateTimeKind.Utc);
-            DateTime Item2 = new DateTime(2012, 2, 8, 11, 11, 11, DateTimeKind.Unspecified);
+            DateTime item0 = new DateTime(2010, 2, 8, 11, 11, 11, DateTimeKind.Local);
+            DateTime item1 = new DateTime(2011, 2, 8, 11, 11, 11, DateTimeKind.Utc);
+            DateTime item2 = new DateTime(2012, 2, 8, 11, 11, 11, DateTimeKind.Unspecified);
             var data = new JsonObject();
 
-            data["Items"] = new JsonArray { Item0.ToString(), Item1.ToString(), Item2.ToString(), "/Date(1309421746929+0000)/" };
+            data["Items"] = new JsonArray
+                            {
+                                item0.ToString(),
+                                item1.ToString(),
+                                item2.ToString(),
+                                "/Date(1309421746929+0000)/"
+                            };
 
             var d = new JsonDeserializer();
             var response = new RestResponse { Content = data.ToString() };
             var p = d.Deserialize<GenericWithList<DateTime>>(response);
 
-            Assert.NotEqual(Item0.Kind, p.Items[0].Kind);
-            Assert.Equal(Item1.Kind, p.Items[1].Kind);
-            Assert.Equal(DateTimeKind.Utc, p.Items[2].Kind);
-            Assert.Equal(DateTimeKind.Utc, p.Items[3].Kind);
+            Assert.AreNotEqual(item0.Kind, p.Items[0].Kind);
+            Assert.AreEqual(item1.Kind, p.Items[1].Kind);
+            Assert.AreEqual(DateTimeKind.Utc, p.Items[2].Kind);
+            Assert.AreEqual(DateTimeKind.Utc, p.Items[3].Kind);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Null_Elements_to_Nullable_Values()
         {
             var doc = this.CreateJsonWithNullValues();

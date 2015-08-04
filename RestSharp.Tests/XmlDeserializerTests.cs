@@ -60,10 +60,10 @@ namespace RestSharp.Tests
             List<Oddball> output = xml.Deserialize<List<Oddball>>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
-            Assert.Equal("1", output[0].Sid);
+            Assert.AreEqual("1", output[0].Sid);
         }
 
-        [Fact]
+        [Test]
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
