@@ -290,7 +290,7 @@ namespace RestSharp
                         taskCompletionSource.TrySetCanceled();
                     });
 
-#if !SILVERLIGHT
+#if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => t.Dispose(), token);
 #endif
             }
@@ -396,7 +396,7 @@ namespace RestSharp
                         taskCompletionSource.TrySetCanceled();
                     });
 
-#if !SILVERLIGHT
+#if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => t.Dispose(), token);
 #endif
             }
