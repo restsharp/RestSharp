@@ -1,14 +1,15 @@
 ﻿using System;
 using System.IO.Compression;
 using System.Net;
+using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
+    [TestFixture]
     public class CompressionTests
     {
-        [Fact]
+        [Test]
         public void Can_Handle_Gzip_Compressed_Content()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -19,11 +20,11 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("");
                 var response = client.Execute(request);
 
-                Assert.Equal("This is some gzipped content", response.Content);
+                Assert.AreEqual("This is some gzipped content", response.Content);
             }
         }
 
-        [Fact]
+        [Test]
         public void Can_Handle_Deflate_Compressed_Content()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -34,11 +35,11 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("");
                 var response = client.Execute(request);
 
-                Assert.Equal("This is some deflated content", response.Content);
+                Assert.AreEqual("This is some deflated content", response.Content);
             }
         }
 
-        [Fact]
+        [Test]
         public void Can_Handle_Uncompressed_Content()
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
@@ -49,7 +50,7 @@ namespace RestSharp.IntegrationTests
                 var request = new RestRequest("");
                 var response = client.Execute(request);
 
-                Assert.Equal("This is some sample content", response.Content);
+                Assert.AreEqual("This is some sample content", response.Content);
             }
         }
 

@@ -17,15 +17,14 @@
             this.handler = handler;
         }
 
-        public static SimpleServer Create(
-            string url,
-            Action<HttpListenerContext> handler,
+        public static SimpleServer Create(string url, Action<HttpListenerContext> handler,
             AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
         {
             var listener = new HttpListener { Prefixes = { url }, AuthenticationSchemes = authenticationSchemes };
             var server = new SimpleServer(listener, handler);
 
             server.Start();
+
             return server;
         }
 
@@ -39,11 +38,16 @@
             this.listener.Start();
 
             this.thread = new Thread(() =>
-            {
-                var context = this.listener.GetContext();
-                this.handler(context);
-                context.Response.Close();
-            }) { Name = "WebServer" };
+                                     {
+                                         var context = this.listener.GetContext();
+
+                                         this.handler(context);
+
+                                         context.Response.Close();
+                                     })
+                          {
+                              Name = "WebServer"
+                          };
 
             this.thread.Start();
         }

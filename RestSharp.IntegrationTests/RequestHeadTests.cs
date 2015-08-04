@@ -1,31 +1,30 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
+using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
+    [TestFixture]
     public class RequestHeadTests
     {
         private const string BASE_URL = "http://localhost:8888/";
 
-        public RequestHeadTests()
+        [SetUp]
+        public void SetupRequestHeadTests()
         {
             RequestHeadCapturer.Initialize();
         }
 
-        [Fact]
+        [Test]
         public void Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate()
         {
             const Method httpMethod = Method.GET;
             using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestHeadCapturer>()))
             {
                 var client = new RestClient(BASE_URL);
-                var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
-                {
-                    UseDefaultCredentials = true
-                };
+                var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod) { UseDefaultCredentials = true };
 
                 client.Execute(request);
 
@@ -38,7 +37,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        [Fact]
+        [Test]
         public void Passes_Default_Credentials_When_UseDefaultCredentials_Is_True()
         {
             const Method httpMethod = Method.GET;
@@ -46,13 +45,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate))
             {
                 var client = new RestClient(BASE_URL);
-                var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
-                {
-                    UseDefaultCredentials = true
-                };
+                var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod) { UseDefaultCredentials = true };
                 var response = client.Execute(request);
 
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
                 Assert.NotNull(RequestHeadCapturer.CapturedHeaders);
 
                 var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
@@ -62,7 +58,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        [Fact]
+        [Test]
         public void Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False()
         {
             const Method httpMethod = Method.GET;
@@ -72,13 +68,14 @@ namespace RestSharp.IntegrationTests
                 var client = new RestClient(BASE_URL);
                 var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
                 {
-                    // UseDefaultCredentials is currently false by default, but to make the test more robust in case that ever
+                    // UseDefaultCredentials is currently false by default,
+                    // but to make the test more robust in case that ever
                     // changes, it's better to explicitly set it here.
                     UseDefaultCredentials = false
                 };
                 var response = client.Execute(request);
 
-                Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+                Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
                 Assert.Null(RequestHeadCapturer.CapturedHeaders);
             }
         }
@@ -97,6 +94,7 @@ namespace RestSharp.IntegrationTests
             public static void Capture(HttpListenerContext context)
             {
                 var request = context.Request;
+
                 CapturedHeaders = request.Headers;
             }
         }

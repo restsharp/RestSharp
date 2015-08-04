@@ -1,17 +1,18 @@
-﻿namespace RestSharp.Tests
-{
-    using Xunit;
+﻿using NUnit.Framework;
 
+namespace RestSharp.Tests
+{
+    [TestFixture]
     public class AddRangeTests
     {
-        [Fact]
+        [Test]
         public void ShouldParseOutRangeSpecifier()
         {
             var restClient = new RestClient("http://localhost");
             var req = new RestRequest("bob", Method.GET);
             
             req.AddHeader("Range", "pages=1-2");
-            var resp = restClient.Execute(req);
+            restClient.Execute(req);
         }
     }
 }

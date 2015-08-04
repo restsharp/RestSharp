@@ -1,78 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Serialization;
+using NUnit.Framework;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Contrib;
 using RestSharp.IntegrationTests.Models;
-using Xunit;
-using System.IO;
 
 namespace RestSharp.IntegrationTests
 {
-    public class oAuth1Tests
+    [TestFixture]
+    public class OAuth1Tests
     {
-        [Fact(Skip = "Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_With_OAuth()
         {
             const string consumerKey = "";
             const string consumerSecret = "";
 
             var baseUrl = new Uri("https://api.twitter.com");
-            var client = new RestClient(baseUrl);
-
-            client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
-
+            var client = new RestClient(baseUrl)
+                         {
+                             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
+                         };
             var request = new RestRequest("oauth/request_token", Method.POST);
             var response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             var qs = HttpUtility.ParseQueryString(response.Content);
-            var oauth_token = qs["oauth_token"];
-            var oauth_token_secret = qs["oauth_token_secret"];
+            var oauthToken = qs["oauth_token"];
+            var oauthTokenSecret = qs["oauth_token_secret"];
 
-            Assert.NotNull(oauth_token);
-            Assert.NotNull(oauth_token_secret);
+            Assert.NotNull(oauthToken);
+            Assert.NotNull(oauthTokenSecret);
 
             request = new RestRequest("oauth/authorize");
-            request.AddParameter("oauth_token", oauth_token);
+            request.AddParameter("oauth_token", oauthToken);
 
             var url = client.BuildUri(request).ToString();
 
             Process.Start(url);
 
-            var verifier = "123456"; // <-- Breakpoint here (set verifier in debugger)
+            const string verifier = "123456"; // <-- Breakpoint here (set verifier in debugger)
 
             request = new RestRequest("oauth/access_token", Method.POST);
-            client.Authenticator = OAuth1Authenticator.ForAccessToken(
-                consumerKey, consumerSecret, oauth_token, oauth_token_secret, verifier
-            );
+            client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, consumerSecret, oauthToken,
+                oauthTokenSecret, verifier);
             response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             qs = HttpUtility.ParseQueryString(response.Content);
-            oauth_token = qs["oauth_token"];
-            oauth_token_secret = qs["oauth_token_secret"];
+            oauthToken = qs["oauth_token"];
+            oauthTokenSecret = qs["oauth_token_secret"];
 
-            Assert.NotNull(oauth_token);
-            Assert.NotNull(oauth_token_secret);
+            Assert.NotNull(oauthToken);
+            Assert.NotNull(oauthTokenSecret);
 
             request = new RestRequest("account/verify_credentials.xml");
-            client.Authenticator = OAuth1Authenticator.ForProtectedResource(
-                consumerKey, consumerSecret, oauth_token, oauth_token_secret
-            );
+            client.Authenticator = OAuth1Authenticator.ForProtectedResource(consumerKey, consumerSecret, oauthToken,
+                oauthTokenSecret);
 
             response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             //request = new RestRequest("statuses/update.json", Method.POST);
             //request.AddParameter("status", "Hello world! " + DateTime.Now.Ticks.ToString());
@@ -83,10 +83,11 @@ namespace RestSharp.IntegrationTests
             //response = client.Execute(request);
 
             //Assert.NotNull(response);
-            //Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            //Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Fact(Skip = "Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_Twitter()
         {
             // To pass this test, place a file config.json in the RestSharp.IntegrationTests folder
@@ -105,19 +106,23 @@ namespace RestSharp.IntegrationTests
             Assert.True(File.Exists(@"..\..\config.json"));
 
             var config = SimpleJson.DeserializeObject(File.ReadAllText(@"..\..\config.json")) as JsonObject;
-
-            var client = new RestClient("https://api.twitter.com/1.1");
-            client.Authenticator = OAuth1Authenticator.ForProtectedResource(
-                (string)config["ConsumerKey"], (string)config["ConsumerSecret"], 
-                (string)config["AccessToken"], (string)config["AccessSecret"]);
+            var client = new RestClient("https://api.twitter.com/1.1")
+                         {
+                             Authenticator = OAuth1Authenticator.ForProtectedResource(
+                                (string) config["ConsumerKey"],
+                                (string) config["ConsumerSecret"],
+                                (string) config["AccessToken"],
+                                (string) config["AccessSecret"])
+                         };
 
             var request = new RestRequest("account/verify_credentials.json");
+
             request.AddParameter("include_entities", "true", ParameterType.QueryString);
 
             var response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         #region Netflix test classes
@@ -135,7 +140,7 @@ namespace RestSharp.IntegrationTests
         private class QueueItem
         {
             [XmlElement("id")]
-            public string ID { get; set; }
+            public string Id { get; set; }
 
             [XmlElement("position")]
             public int Position { get; set; }
@@ -143,7 +148,7 @@ namespace RestSharp.IntegrationTests
 
         #endregion
 
-        //[Fact]
+        //[Test]
         public void Can_Authenticate_Netflix_With_OAuth()
         {
             const string consumerKey = "";
@@ -151,29 +156,29 @@ namespace RestSharp.IntegrationTests
 
             var baseUrl = new Uri("http://api.netflix.com");
             var client = new RestClient(baseUrl)
-            {
-                Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
-            };
+                         {
+                             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
+                         };
             var request = new RestRequest("oauth/request_token");
             var response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             var qs = HttpUtility.ParseQueryString(response.Content);
-            var oauth_token = qs["oauth_token"];
-            var oauth_token_secret = qs["oauth_token_secret"];
+            var oauthToken = qs["oauth_token"];
+            var oauthTokenSecret = qs["oauth_token_secret"];
             var applicationName = qs["application_name"];
 
-            Assert.NotNull(oauth_token);
-            Assert.NotNull(oauth_token_secret);
+            Assert.NotNull(oauthToken);
+            Assert.NotNull(oauthTokenSecret);
             Assert.NotNull(applicationName);
 
             var baseSslUrl = new Uri("https://api-user.netflix.com");
             var sslClient = new RestClient(baseSslUrl);
 
             request = new RestRequest("oauth/login");
-            request.AddParameter("oauth_token", oauth_token);
+            request.AddParameter("oauth_token", oauthToken);
             request.AddParameter("oauth_consumer_key", consumerKey);
             request.AddParameter("application_name", applicationName);
 
@@ -182,47 +187,47 @@ namespace RestSharp.IntegrationTests
             Process.Start(url);
 
             request = new RestRequest("oauth/access_token"); // <-- Breakpoint here, login to netflix
-            client.Authenticator = OAuth1Authenticator.ForAccessToken(
-                consumerKey, consumerSecret, oauth_token, oauth_token_secret
-            );
+            client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, consumerSecret, oauthToken,
+                oauthTokenSecret);
             response = client.Execute(request);
 
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             qs = HttpUtility.ParseQueryString(response.Content);
-            oauth_token = qs["oauth_token"];
-            oauth_token_secret = qs["oauth_token_secret"];
+            oauthToken = qs["oauth_token"];
+            oauthTokenSecret = qs["oauth_token_secret"];
 
-            var user_id = qs["user_id"];
+            var userId = qs["user_id"];
 
-            Assert.NotNull(oauth_token);
-            Assert.NotNull(oauth_token_secret);
-            Assert.NotNull(user_id);
+            Assert.NotNull(oauthToken);
+            Assert.NotNull(oauthTokenSecret);
+            Assert.NotNull(userId);
 
-            client.Authenticator = OAuth1Authenticator.ForProtectedResource(consumerKey, consumerSecret, oauth_token, oauth_token_secret);
+            client.Authenticator = OAuth1Authenticator.ForProtectedResource(consumerKey, consumerSecret, oauthToken,
+                oauthTokenSecret);
             request = new RestRequest("users/{user_id}/queues/disc");
-            request.AddUrlSegment("user_id", user_id);
+            request.AddUrlSegment("user_id", userId);
             request.AddParameter("max_results", "2");
 
             var queueResponse = client.Execute<Queue>(request);
 
             Assert.NotNull(queueResponse);
-            Assert.Equal(HttpStatusCode.OK, queueResponse.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, queueResponse.StatusCode);
             Assert.NotNull(queueResponse.Data);
-            Assert.Equal(2, queueResponse.Data.Items.Count);
+            Assert.AreEqual(2, queueResponse.Data.Items.Count);
         }
 
-        [Fact]
+        [Test]
         public void Properly_Encodes_Parameter_Names()
         {
             var postData = new WebParameterCollection { { "name[first]", "Chuck" }, { "name[last]", "Testa" } };
             var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
 
-            Assert.Equal("name%5Bfirst%5D", sortedParams[0].Name);
+            Assert.AreEqual("name%5Bfirst%5D", sortedParams[0].Name);
         }
 
-        [Fact]
+        [Test]
         public void Use_RFC_3986_Encoding_For_Auth_Signature_Base()
         {
             // reserved characters for 2396 and 3986
@@ -234,10 +239,11 @@ namespace RestSharp.IntegrationTests
             var escapedString = OAuthTools.UrlEncodeRelaxed(reservedCharacterString);
 
             // assert
-            Assert.Equal("%3B%2F%3F%3A%40%26%3D%2B%24%2C%21%2A%27%28%29", escapedString);
+            Assert.AreEqual("%3B%2F%3F%3A%40%26%3D%2B%24%2C%21%2A%27%28%29", escapedString);
         }
 
-        [Fact(Skip = "Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_LinkedIN_With_OAuth()
         {
             const string consumerKey = "TODO_CONSUMER_KEY_HERE";
@@ -245,15 +251,15 @@ namespace RestSharp.IntegrationTests
 
             // request token
             var client = new RestClient
-            {
-                BaseUrl = new Uri("https://api.linkedin.com/uas/oauth"),
-                Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret, "http://localhost")
-            };
+                         {
+                             BaseUrl = new Uri("https://api.linkedin.com/uas/oauth"),
+                             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret, "http://localhost")
+                         };
             var requestTokenRequest = new RestRequest("requestToken");
             var requestTokenResponse = client.Execute(requestTokenRequest);
 
             Assert.NotNull(requestTokenResponse);
-            Assert.Equal(HttpStatusCode.OK, requestTokenResponse.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, requestTokenResponse.StatusCode);
 
             var requestTokenResponseParameters = HttpUtility.ParseQueryString(requestTokenResponse.Content);
             var requestToken = requestTokenResponseParameters["oauth_token"];
@@ -269,13 +275,14 @@ namespace RestSharp.IntegrationTests
 
             Process.Start(redirectUri.ToString());
 
-            var requestUrl = "TODO: put browser URL here";
+            const string requestUrl = "TODO: put browser URL here";
             // replace this via the debugger with the return url from LinkedIN. Simply copy it from the opened browser
 
             if (!Debugger.IsAttached)
             {
                 Debugger.Launch();
             }
+
             Debugger.Break();
 
             // get the access token
@@ -289,7 +296,7 @@ namespace RestSharp.IntegrationTests
             var requestActionTokenResponse = client.Execute(requestAccessTokenRequest);
 
             Assert.NotNull(requestActionTokenResponse);
-            Assert.Equal(HttpStatusCode.OK, requestActionTokenResponse.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, requestActionTokenResponse.StatusCode);
 
             var requestActionTokenResponseParameters = HttpUtility.ParseQueryString(requestActionTokenResponse.Content);
             var accessToken = requestActionTokenResponseParameters["oauth_token"];
@@ -299,7 +306,8 @@ namespace RestSharp.IntegrationTests
             Assert.NotNull(accessSecret);
         }
 
-        [Fact(Skip = "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test")]
         public void Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN()
         {
             const string consumerKey = "TODO_CONSUMER_KEY_HERE";
@@ -309,25 +317,27 @@ namespace RestSharp.IntegrationTests
 
             // arrange
             var client = new RestClient
-            {
-                BaseUrl = new Uri("http://api.linkedin.com/v1"),
-                Authenticator = OAuth1Authenticator.ForProtectedResource(consumerKey, consumerSecret, accessToken, accessSecret)
-            };
+                         {
+                             BaseUrl = new Uri("http://api.linkedin.com/v1"),
+                             Authenticator = OAuth1Authenticator.ForProtectedResource(consumerKey, consumerSecret,
+                                accessToken, accessSecret)
+                         };
             var request = new RestRequest("people/~:(id,first-name,last-name)");
 
             // act
-            var response = client.Execute<LinkedINMemberProfile>(request);
+            var response = client.Execute<LinkedInMemberProfile>(request);
 
             // assert
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Data);
             Assert.NotNull(response.Data.Id);
             Assert.NotNull(response.Data.FirstName);
             Assert.NotNull(response.Data.LastName);
         }
 
-        [Fact(Skip = "Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Query_Vimeo()
         {
             const string consumerKey = "TODO_CONSUMER_KEY_HERE";
@@ -335,10 +345,10 @@ namespace RestSharp.IntegrationTests
 
             // arrange
             var client = new RestClient
-            {
-                BaseUrl = new Uri("http://vimeo.com/api/rest/v2"),
-                Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
-            };
+                         {
+                             BaseUrl = new Uri("http://vimeo.com/api/rest/v2"),
+                             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
+                         };
             var request = new RestRequest();
 
             request.AddParameter("format", "json");
@@ -351,7 +361,7 @@ namespace RestSharp.IntegrationTests
 
             // assert
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Content);
             Assert.False(response.Content.Contains("\"stat\":\"fail\""));
             Assert.True(response.Content.Contains("\"stat\":\"ok\""));

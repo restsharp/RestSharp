@@ -1,25 +1,25 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading;
+using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
-using Xunit;
 
 namespace RestSharp.IntegrationTests
 {
+    [TestFixture]
     public class NonProtocolExceptionHandlingTests
     {
         /// <summary>
         /// Success of this test is based largely on the behavior of your current DNS.
         /// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
         /// </summary>
-        [Fact]
+        [Test]
         public void Handles_Non_Existent_Domain()
         {
             var client = new RestClient("http://nonexistantdomainimguessing.org");
             var request = new RestRequest("foo");
             var response = client.Execute(request);
 
-            Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
         }
 
         public class StupidClass
@@ -27,7 +27,7 @@ namespace RestSharp.IntegrationTests
             public string Property { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void Task_Handles_Non_Existent_Domain()
         {
             var client = new RestClient("http://192.168.1.200:8001");
@@ -42,9 +42,9 @@ namespace RestSharp.IntegrationTests
 
             var response = task.Result;
 
-            Assert.IsType(typeof(WebException), response.ErrorException);
-            Assert.Equal("Unable to connect to the remote server", response.ErrorException.Message);
-            Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+            Assert.IsInstanceOf<WebException>(response.ErrorException);
+            Assert.AreEqual("Unable to connect to the remote server", response.ErrorException.Message);
+            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace RestSharp.IntegrationTests
         /// Simulates a server timeout, then verifies that the ErrorException
         /// property is correctly populated.
         /// </summary>
-        [Fact]
+        [Test]
         public void Handles_Server_Timeout_Error()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -64,12 +64,12 @@ namespace RestSharp.IntegrationTests
                 var response = client.Execute(request);
 
                 Assert.NotNull(response.ErrorException);
-                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Contains("The operation has timed out", response.ErrorException.Message);
+                Assert.IsInstanceOf<WebException>(response.ErrorException);
+                Assert.IsTrue(response.ErrorException.Message.Contains("The operation has timed out"));
             }
         }
 
-        [Fact]
+        [Test]
         public void Handles_Server_Timeout_Error_Async()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -90,14 +90,14 @@ namespace RestSharp.IntegrationTests
                 resetEvent.WaitOne();
 
                 Assert.NotNull(response);
-                Assert.Equal(response.ResponseStatus, ResponseStatus.TimedOut);
+                Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
                 Assert.NotNull(response.ErrorException);
-                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The request timed-out.");
+                Assert.IsInstanceOf<WebException>(response.ErrorException);
+                Assert.AreEqual(response.ErrorException.Message, "The request timed-out.");
             }
         }
 
-        [Fact]
+        [Test]
         public void Handles_Server_Timeout_Error_AsyncTask()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -106,16 +106,18 @@ namespace RestSharp.IntegrationTests
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("404") { Timeout = 500 };
-
                 var task =  client.ExecuteTaskAsync(request);
+
                 task.Wait();
+
                 IRestResponse response = task.Result;
+
                 Assert.NotNull(response);
-                Assert.Equal(response.ResponseStatus, ResponseStatus.TimedOut);
+                Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
 
                 Assert.NotNull(response.ErrorException);
-                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Equal(response.ErrorException.Message, "The request timed-out.");
+                Assert.IsInstanceOf<WebException>(response.ErrorException);
+                Assert.AreEqual(response.ErrorException.Message, "The request timed-out.");
             }
         }
 
@@ -124,7 +126,7 @@ namespace RestSharp.IntegrationTests
         /// Simulates a server timeout, then verifies that the ErrorException
         /// property is correctly populated.
         /// </summary>
-        [Fact]
+        [Test]
         public void Handles_Server_Timeout_Error_With_Deserializer()
         {
             const string baseUrl = "http://localhost:8888/";
@@ -137,8 +139,8 @@ namespace RestSharp.IntegrationTests
 
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
-                Assert.IsAssignableFrom(typeof(WebException), response.ErrorException);
-                Assert.Contains("The operation has timed out", response.ErrorException.Message);
+                Assert.IsInstanceOf<WebException>(response.ErrorException);
+                Assert.IsTrue(response.ErrorException.Message.Contains("The operation has timed out"));
             }
         }
 

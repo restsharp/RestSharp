@@ -17,66 +17,66 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Xml.Linq;
+using NUnit.Framework;
 using RestSharp.Serializers;
-using Xunit;
 
 namespace RestSharp.Tests
 {
+    [TestFixture]
     public class SerializerTests
     {
         public SerializerTests()
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
         }
 
-        [Fact]
+        [Test]
         public void Serializes_Properties_In_Specified_Order()
         {
-            var ordered = new OrderedProperties();
-
-            ordered.Name = "Name";
-            ordered.Age = 99;
-            ordered.StartDate = new DateTime(2010, 1, 1);
+            var ordered = new OrderedProperties
+                          {
+                              Name = "Name",
+                              Age = 99,
+                              StartDate = new DateTime(2010, 1, 1)
+                          };
 
             var xml = new XmlSerializer();
             var doc = xml.Serialize(ordered);
             var expected = GetSortedPropsXDoc();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_simple_POCO()
         {
             var poco = new Person
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                Items = new List<Item>
-                {
-                    new Item {Name = "One", Value = 1},
-                    new Item {Name = "Two", Value = 2},
-                    new Item {Name = "Three", Value = 3}
-                }
-            };
+                       {
+                           Name = "Foo",
+                           Age = 50,
+                           Price = 19.95m,
+                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                           Items = new List<Item>
+                                   {
+                                       new Item { Name = "One", Value = 1 },
+                                       new Item { Name = "Two", Value = 2 },
+                                       new Item { Name = "Three", Value = 3 }
+                                   }
+                       };
             var xml = new XmlSerializer();
             var doc = xml.Serialize(poco);
             var expected = GetSimplePocoXDoc();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_Enum()
         {
-            var enumClass = new ClassWithEnum
-            {
-                Color = Color.Red
-            };
+            var enumClass = new ClassWithEnum { Color = Color.Red };
             var xml = new XmlSerializer();
             var doc = xml.Serialize(enumClass);
             var expected = new XDocument();
@@ -85,143 +85,143 @@ namespace RestSharp.Tests
             root.Add(new XElement("Color", "Red"));
             expected.Add(root);
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_simple_POCO_With_DateFormat_Specified()
         {
             var poco = new Person
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-            };
+                       {
+                           Name = "Foo",
+                           Age = 50,
+                           Price = 19.95m,
+                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+                       };
             var xml = new XmlSerializer { DateFormat = DateFormat.Iso8601 };
             var doc = xml.Serialize(poco);
             var expected = GetSimplePocoXDocWithIsoDate();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
         {
             var poco = new Person
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                IsCool = false
-            };
+                       {
+                           Name = "Foo",
+                           Age = 50,
+                           Price = 19.95m,
+                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                           IsCool = false
+                       };
             var xml = new XmlSerializer { DateFormat = DateFormat.Iso8601 };
             var doc = xml.Serialize(poco);
             var expected = GetSimplePocoXDocWithXmlProperty();
 
-            Assert.Equal(expected.ToString(), doc);
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_simple_POCO_With_Different_Root_Element()
         {
             var poco = new Person
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-            };
+                       {
+                           Name = "Foo",
+                           Age = 50,
+                           Price = 19.95m,
+                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+                       };
             var xml = new XmlSerializer {RootElement = "Result"};
             var doc = xml.Serialize(poco);
             var expected = GetSimplePocoXDocWithRoot();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_simple_POCO_With_Attribute_Options_Defined()
         {
             var poco = new WackyPerson
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-            };
+                       {
+                           Name = "Foo",
+                           Age = 50,
+                           Price = 19.95m,
+                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+                       };
             var xml = new XmlSerializer();
             var doc = xml.Serialize(poco);
             var expected = GetSimplePocoXDocWackyNames();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_simple_POCO_With_Attribute_Options_Defined_And_Property_Containing_IList_Elements()
         {
             var poco = new WackyPerson
-            {
-                Name = "Foo",
-                Age = 50,
-                Price = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                ContactData = new ContactData
-                {
-                    EmailAddresses = new List<EmailAddress>
-                    {
-                        new EmailAddress
-                        {
-                            Address = "test@test.com",
-                            Location = "Work"
-                        }
-                    }
-                }
-            };
+                       {
+                           Name = "Foo",
+                           Age = 50,
+                           Price = 19.95m,
+                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                           ContactData = new ContactData
+                                         {
+                                             EmailAddresses = new List<EmailAddress>
+                                                              {
+                                                                  new EmailAddress
+                                                                  {
+                                                                      Address = "test@test.com",
+                                                                      Location = "Work"
+                                                                  }
+                                                              }
+                                         }
+                       };
             var xml = new XmlSerializer();
             var doc = xml.Serialize(poco);
             var expected = GetSimplePocoXDocWackyNamesWithIListProperty();
 
-            Assert.Equal(expected.ToString(), doc.ToString());
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
-        [Fact]
+        [Test]
         public void Can_serialize_a_list_which_is_the_root_element()
         {
             var pocoList = new PersonList
-            {
-                new Person
-                {
-                    Name = "Foo",
-                    Age = 50,
-                    Price = 19.95m,
-                    StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item>
-                    {
-                        new Item {Name = "One", Value = 1},
-                        new Item {Name = "Two", Value = 2},
-                        new Item {Name = "Three", Value = 3}
-                    }
-                },
-                new Person
-                {
-                    Name = "Bar",
-                    Age = 23,
-                    Price = 23.23m,
-                    StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                    Items = new List<Item>
-                    {
-                        new Item {Name = "One", Value = 1},
-                        new Item {Name = "Two", Value = 2},
-                        new Item {Name = "Three", Value = 3}
-                    }
-                }
-            };
+                           {
+                               new Person
+                               {
+                                   Name = "Foo",
+                                   Age = 50,
+                                   Price = 19.95m,
+                                   StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                                   Items = new List<Item>
+                                           {
+                                               new Item { Name = "One", Value = 1 },
+                                               new Item { Name = "Two", Value = 2 },
+                                               new Item { Name = "Three", Value = 3 }
+                                           }
+                               },
+                               new Person
+                               {
+                                   Name = "Bar",
+                                   Age = 23,
+                                   Price = 23.23m,
+                                   StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
+                                   Items = new List<Item>
+                                           {
+                                               new Item { Name = "One", Value = 1 },
+                                               new Item { Name = "Two", Value = 2 },
+                                               new Item { Name = "Three", Value = 3 }
+                                           }
+                               }
+                           };
             var xml = new XmlSerializer();
             var doc = xml.Serialize(pocoList);
             var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
 
-            Assert.Equal(expected.ToString(), doc);
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
         private class Person
@@ -283,7 +283,7 @@ namespace RestSharp.Tests
         {
             public ContactData()
             {
-                EmailAddresses = new List<EmailAddress>();
+                this.EmailAddresses = new List<EmailAddress>();
             }
 
             [SerializeAs(Name = "email-addresses")]
@@ -300,7 +300,7 @@ namespace RestSharp.Tests
             public string Location { get; set; }
         }
 
-        private XDocument GetSimplePocoXDoc()
+        private static XDocument GetSimplePocoXDoc()
         {
             var doc = new XDocument();
             var root = new XElement("Person");
@@ -308,36 +308,36 @@ namespace RestSharp.Tests
             root.Add(new XElement("Name", "Foo"),
                 new XElement("Age", 50),
                 new XElement("Price", 19.95m),
-                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(CultureInfo.InvariantCulture)));
 
             var items = new XElement("Items");
 
             items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
             items.Add(new XElement("Item", new XElement("Name", "Two"), new XElement("Value", 2)));
             items.Add(new XElement("Item", new XElement("Name", "Three"), new XElement("Value", 3)));
-            root.Add(items);
 
+            root.Add(items);
             doc.Add(root);
 
             return doc;
         }
 
-        private XDocument GetSimplePocoXDocWithIsoDate()
+        private static XDocument GetSimplePocoXDocWithIsoDate()
         {
             var doc = new XDocument();
             var root = new XElement("Person");
 
             root.Add(new XElement("Name", "Foo"),
-                    new XElement("Age", 50),
-                    new XElement("Price", 19.95m),
-                    new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString("s")));
+                new XElement("Age", 50),
+                new XElement("Price", 19.95m),
+                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString("s")));
 
             doc.Add(root);
 
             return doc;
         }
 
-        private XDocument GetSimplePocoXDocWithXmlProperty()
+        private static XDocument GetSimplePocoXDocWithXmlProperty()
         {
             var doc = new XDocument();
             var root = new XElement("Person");
@@ -353,16 +353,16 @@ namespace RestSharp.Tests
             return doc;
         }
 
-        private XDocument GetSimplePocoXDocWithRoot()
+        private static XDocument GetSimplePocoXDocWithRoot()
         {
             var doc = new XDocument();
             var root = new XElement("Result");
             var start = new XElement("Person");
 
             start.Add(new XElement("Name", "Foo"),
-                    new XElement("Age", 50),
-                    new XElement("Price", 19.95m),
-                    new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+                new XElement("Age", 50),
+                new XElement("Price", 19.95m),
+                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(CultureInfo.InvariantCulture)));
 
             root.Add(start);
             doc.Add(root);
@@ -370,48 +370,48 @@ namespace RestSharp.Tests
             return doc;
         }
 
-        private XDocument GetSimplePocoXDocWackyNames()
+        private static XDocument GetSimplePocoXDocWackyNames()
         {
             var doc = new XDocument();
             var root = new XElement("Person");
 
             root.Add(new XAttribute("WackyName", "Foo"),
-                    new XElement("Age", 50),
-                    new XAttribute("Price", 19.95m),
-                    new XAttribute("start_date", new DateTime(2009, 12, 18, 10, 2, 23).ToString()));
+                new XElement("Age", 50),
+                new XAttribute("Price", 19.95m),
+                new XAttribute("start_date", new DateTime(2009, 12, 18, 10, 2, 23).ToString(CultureInfo.InvariantCulture)));
 
             doc.Add(root);
 
             return doc;
         }
 
-        private XDocument GetSimplePocoXDocWackyNamesWithIListProperty()
+        private static XDocument GetSimplePocoXDocWackyNamesWithIListProperty()
         {
             var doc = new XDocument();
             var root = new XElement("Person");
 
             root.Add(new XAttribute("WackyName", "Foo"),
-                    new XElement("Age", 50),
-                    new XAttribute("Price", 19.95m),
-                    new XAttribute("start_date", new DateTime(2009, 12, 18, 10, 2, 23).ToString()),
-                    new XElement("contact-data",
-                        new XElement("email-addresses",
-                            new XElement("email-address",
-                                new XElement("address", "test@test.com"),
-                                new XElement("location", "Work")
-                                ))));
+                new XElement("Age", 50),
+                new XAttribute("Price", 19.95m),
+                new XAttribute("start_date",
+                    new DateTime(2009, 12, 18, 10, 2, 23).ToString(CultureInfo.InvariantCulture)),
+                new XElement("contact-data",
+                    new XElement("email-addresses",
+                        new XElement("email-address",
+                            new XElement("address", "test@test.com"),
+                            new XElement("location", "Work")))));
 
             doc.Add(root);
 
             return doc;
         }
 
-        private XDocument GetSortedPropsXDoc()
+        private static XDocument GetSortedPropsXDoc()
         {
             var doc = new XDocument();
             var root = new XElement("OrderedProperties");
 
-            root.Add(new XElement("StartDate", new DateTime(2010, 1, 1).ToString()));
+            root.Add(new XElement("StartDate", new DateTime(2010, 1, 1).ToString(CultureInfo.InvariantCulture)));
             root.Add(new XElement("Name", "Name"));
             root.Add(new XElement("Age", 99));
 
@@ -420,7 +420,7 @@ namespace RestSharp.Tests
             return doc;
         }
 
-        private XDocument GetPeopleXDoc(CultureInfo culture)
+        private static XDocument GetPeopleXDoc(IFormatProvider culture)
         {
             var doc = new XDocument();
             var root = new XElement("People");
