@@ -290,7 +290,9 @@ namespace RestSharp
                         taskCompletionSource.TrySetCanceled();
                     });
 
+#if !SILVERLIGHT
                 taskCompletionSource.Task.ContinueWith(t => t.Dispose(), token);
+#endif
             }
             catch (Exception ex)
             {
@@ -394,7 +396,9 @@ namespace RestSharp
                         taskCompletionSource.TrySetCanceled();
                     });
 
+#if !SILVERLIGHT
                 taskCompletionSource.Task.ContinueWith(t => t.Dispose(), token);
+#endif
             }
             catch (Exception ex)
             {
