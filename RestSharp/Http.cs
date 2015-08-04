@@ -270,10 +270,10 @@ namespace RestSharp
         private string GetMultipartFormData(HttpParameter param)
         {
             string format = param.Name == RequestContentType
-                ? "--{0}{3}Content-Type: {1}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
+                ? "--{0}{3}Content-Type: {4}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
-            return string.Format(format, FORM_BOUNDARY, param.Name, param.Value, LINE_BREAK);
+            return string.Format(format, FORM_BOUNDARY, param.Name, param.Value, LINE_BREAK, param.ContentType);
         }
 
         private static string GetMultipartFooter()

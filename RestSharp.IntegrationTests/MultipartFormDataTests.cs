@@ -19,7 +19,60 @@ namespace RestSharp.IntegrationTests
             "somedata" + Environment.NewLine +
             "-------------------------------28947758029299--" + Environment.NewLine;
 
+        private readonly string expectedFileAndBodyRequestContent =
+            "-------------------------------28947758029299" + Environment.NewLine +
+            "Content-Type: application/json" + Environment.NewLine +
+            "Content-Disposition: form-data; name=\"controlName\"" + Environment.NewLine + Environment.NewLine +
+            "test" + Environment.NewLine +
+            "-------------------------------28947758029299" + Environment.NewLine +
+            "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" + Environment.NewLine +
+            "Content-Type: application/octet-stream" + Environment.NewLine + Environment.NewLine +
+            "This is a test file for RestSharp." + Environment.NewLine +
+            "-------------------------------28947758029299--" + Environment.NewLine;
+
         [Test]
+        public void MultipartFormData_WithParameterAndFile_Async()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
+                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
+
+                request.AddFile("fileName", path);
+                request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+
+                var task = client.ExecuteTaskAsync(request).ContinueWith(x =>
+                                                                         {
+                                                                             Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
+                                                                         });
+
+                task.Wait();
+            }
+        }
+
+        [Test]
+        public void MultipartFormData_WithParameterAndFile()
+        {
+            const string baseUrl = "http://localhost:8888/";
+
+            using (SimpleServer.Create(baseUrl, EchoHandler))
+            {
+                var client = new RestClient(baseUrl);
+                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
+                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
+
+                request.AddFile("fileName", path);
+                request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+
+                var response = client.Execute(request);
+
+                Assert.AreEqual(this.expectedFileAndBodyRequestContent, response.Content);
+            }
+        }
+
         public void MultipartFormDataAsync()
         {
             const string baseUrl = "http://localhost:8888/";
