@@ -66,7 +66,7 @@ namespace RestSharp.Tests
                 private bool result;
 
 #if SIGNED
-                private string expectedId = "RestSharpSigned";
+                private const string EXPECTED_ID = "RestSharpSigned";
 #else
                 private const string EXPECTED_ID = "RestSharp";
 #endif
