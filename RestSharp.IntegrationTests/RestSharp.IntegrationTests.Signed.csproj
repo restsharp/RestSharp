@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{47D3EBB9-0300-4AF8-BAC5-740D51454A63}</ProjectGuid>
+    <ProjectGuid>{3AC3B97E-D5AF-4462-BF5D-0EC28F4619C6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RestSharp.IntegrationTests</RootNamespace>
@@ -98,7 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RestSharp.Net4\RestSharp.Net4.Signed.csproj">
-      <Project>{5ff943a5-260f-4042-b4ce-c4977bad4ebb}</Project>
+      <Project>{ed71eee1-29e5-437a-a4c7-06da0ec1aa92}</Project>
       <Name>RestSharp.Net4.Signed</Name>
     </ProjectReference>
   </ItemGroup>

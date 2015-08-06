@@ -277,12 +277,21 @@ namespace RestSharp.Deserializers
             }
             else if (type == typeof(TimeSpan))
             {
+#if PocketPC
+                try
+                {
+                    TimeSpan timeSpan = TimeSpan.Parse(stringValue);
+
+                    return timeSpan;
+                }
+                catch (Exception) { }
+#else
                 TimeSpan timeSpan;
                 if (TimeSpan.TryParse(stringValue, out timeSpan))
                 {
                     return timeSpan;
                 }
-
+#endif
                 // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }

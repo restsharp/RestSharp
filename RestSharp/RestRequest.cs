@@ -122,7 +122,11 @@ namespace RestSharp
         /// <param name="path">Full path to file to upload</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
+#if PocketPC
+        public IRestRequest AddFile(string name, string path, string contentType)
+#else
         public IRestRequest AddFile(string name, string path, string contentType = null)
+#endif
         {
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
@@ -151,7 +155,11 @@ namespace RestSharp
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
+#if PocketPC
+        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType)
+#else
         public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null)
+#endif
         {
             return this.AddFile(FileParameter.Create(name, bytes, fileName, contentType));
         }
@@ -164,7 +172,11 @@ namespace RestSharp
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
+#if PocketPC
+        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType)
+#else
         public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null)
+#endif
         {
             return AddFile(new FileParameter
                            {
@@ -189,8 +201,15 @@ namespace RestSharp
         /// <param name="filename">The file name to use for the uploaded file</param>
         /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
         /// <returns></returns>
+#if PocketPC
+        public IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType)
+        {
+            if (string.IsNullOrEmpty(contentType))
+                contentType = "application/x-gzip";
+#else
         public IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip")
         {
+#endif
             long length = bytes.Length;
 
             return AddFile(new FileParameter
