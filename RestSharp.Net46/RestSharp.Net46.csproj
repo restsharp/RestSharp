@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\RestSharp.Net4\Extensions\RestClientExtensions.cs">
+      <Link>Extensions\RestClientExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
       <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
     </Compile>
@@ -269,7 +272,6 @@
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
-    <Compile Include="Extensions\RestClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
