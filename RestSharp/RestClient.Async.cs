@@ -35,11 +35,7 @@ namespace RestSharp
         public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback)
         {
-#if PocketPC
-            string method = request.Method.ToString();
-#else
             string method = Enum.GetName(typeof(Method), request.Method);
-#endif
 
             switch (request.Method)
             {
@@ -93,7 +89,6 @@ namespace RestSharp
 
             Action<HttpResponse> response_cb = r => this.ProcessResponse(request, r, asyncHandle, callback);
 
-#if !PocketPC
             if (this.UseSynchronizationContext && SynchronizationContext.Current != null)
             {
                 var ctx = SynchronizationContext.Current;
@@ -101,7 +96,6 @@ namespace RestSharp
 
                 response_cb = resp => ctx.Post(s => cb(resp), null);
             }
-#endif
 
             asyncHandle.WebRequest = getWebRequest(http, response_cb, httpMethod);
             return asyncHandle;

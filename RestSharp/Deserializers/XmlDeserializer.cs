@@ -197,7 +197,6 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, value, null);
                 }
-#if !PocketPC
                 else if (type == typeof(DateTimeOffset))
                 {
                     var toConvert = value.ToString();
@@ -228,7 +227,6 @@ namespace RestSharp.Deserializers
                         }
                     }
                 }
-#endif
                 else if (type == typeof(Decimal))
                 {
                     value = Decimal.Parse(value.ToString(), Culture);
@@ -299,7 +297,7 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+#if !SILVERLIGHT && !WINDOWS_PHONE
             var converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))

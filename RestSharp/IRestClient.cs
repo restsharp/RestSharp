@@ -33,9 +33,8 @@ namespace RestSharp
 {
     public interface IRestClient
     {
-#if !PocketPC
         CookieContainer CookieContainer { get; set; }
-#endif
+
         int? MaxRedirects { get; set; }
 
         string UserAgent { get; set; }
@@ -60,7 +59,7 @@ namespace RestSharp
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
-#if FRAMEWORK || PocketPC
+#if FRAMEWORK
         IRestResponse Execute(IRestRequest request);
 
         IRestResponse<T> Execute<T>(IRestRequest request) where T : new();

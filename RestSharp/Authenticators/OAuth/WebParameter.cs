@@ -5,10 +5,10 @@ using System.Diagnostics;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !Smartphone && !PocketPC
+#if !Smartphone
     [DebuggerDisplay("{Name}:{Value}")]
 #endif
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+#if !SILVERLIGHT && !WINDOWS_PHONE
     [Serializable]
 #endif
     internal class WebParameter : WebPair

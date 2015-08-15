@@ -96,7 +96,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         }
 
         private const RegexOptions Options =
-#if !WINDOWS_PHONE && !SILVERLIGHT && !PocketPC
+#if !WINDOWS_PHONE && !SILVERLIGHT
             RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #else
             RegexOptions.IgnoreCase;

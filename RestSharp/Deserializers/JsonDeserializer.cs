@@ -228,11 +228,7 @@ namespace RestSharp.Deserializers
                 return stringValue;
             }
 
-            if (type == typeof(DateTime)
-#if !PocketPC
-                || type == typeof(DateTimeOffset)
-#endif
-                )
+            if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
             {
                 DateTime dt;
 
@@ -247,9 +243,6 @@ namespace RestSharp.Deserializers
                     dt = stringValue.ParseJsonDate(Culture);
                 }
 
-#if PocketPC
-                return dt;
-#else
                 if (type == typeof(DateTime))
                 {
                     return dt;
@@ -259,7 +252,6 @@ namespace RestSharp.Deserializers
                 {
                     return (DateTimeOffset)dt;
                 }
-#endif
             }
             else if (type == typeof(Decimal))
             {
@@ -277,21 +269,13 @@ namespace RestSharp.Deserializers
             }
             else if (type == typeof(TimeSpan))
             {
-#if PocketPC
-                try
-                {
-                    TimeSpan timeSpan = TimeSpan.Parse(stringValue);
-
-                    return timeSpan;
-                }
-                catch (Exception) { }
-#else
                 TimeSpan timeSpan;
+
                 if (TimeSpan.TryParse(stringValue, out timeSpan))
                 {
                     return timeSpan;
                 }
-#endif
+
                 // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }

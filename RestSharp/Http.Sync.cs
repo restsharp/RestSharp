@@ -14,12 +14,12 @@
 //   limitations under the License. 
 #endregion
 
-#if FRAMEWORK || PocketPC
+#if FRAMEWORK
 using System;
 using System.Net;
 
-#if !MONOTOUCH && !MONODROID && !PocketPC
-using System.Web;
+#if !MONOTOUCH && !MONODROID
+
 #endif
 
 using RestSharp.Extensions;
@@ -102,11 +102,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsGet(string httpMethod)
         {
-#if PocketPC
-            return GetStyleMethodInternal(httpMethod.ToUpper());
-#else
             return GetStyleMethodInternal(httpMethod.ToUpperInvariant());
-#endif
         }
 
         /// <summary>
@@ -116,11 +112,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsPost(string httpMethod)
         {
-#if PocketPC
-            return PostPutInternal(httpMethod.ToUpper());
-#else
             return PostPutInternal(httpMethod.ToUpperInvariant());
-#endif
         }
 
         private HttpResponse GetStyleMethodInternal(string method)
@@ -225,7 +217,7 @@ namespace RestSharp
         {
             if (HasBody || HasFiles || AlwaysMultipartFormData)
             {
-#if !WINDOWS_PHONE && !PocketPC
+#if !WINDOWS_PHONE
                 webRequest.ContentLength = CalculateContentLength();
 #endif
             }
@@ -252,11 +244,9 @@ namespace RestSharp
         private HttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
             var webRequest = (HttpWebRequest)WebRequest.Create(url);
-#if !PocketPC
-            webRequest.UseDefaultCredentials = UseDefaultCredentials;
-#endif
-            webRequest.PreAuthenticate = PreAuthenticate;
 
+            webRequest.UseDefaultCredentials = UseDefaultCredentials;
+            webRequest.PreAuthenticate = PreAuthenticate;
             webRequest.ServicePoint.Expect100Continue = false;
 
             AppendHeaders(webRequest);

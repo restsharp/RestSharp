@@ -37,13 +37,9 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version
-#if PocketPC
-        static readonly Version version = Assembly.GetExecutingAssembly().GetName().Version;
-#else
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-#endif
-        public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
+        public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
         /// <summary>
         /// Maximum number of redirects to follow if FollowRedirects is true
@@ -74,12 +70,10 @@ namespace RestSharp
         /// </summary>
         public bool FollowRedirects { get; set; }
 
-#if !PocketPC
         /// <summary>
         /// The CookieContainer used for requests made by this client instance
         /// </summary>
         public CookieContainer CookieContainer { get; set; }
-#endif
 
         /// <summary>
         /// UserAgent to use for requests made by this client instance
@@ -347,11 +341,7 @@ namespace RestSharp
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
-#if !PocketPC
             return string.Join("&", parameters.Select(EncodeParameter).ToArray());
-#else
-            return string.Join("&", parameters.Select(x => EncodeParameter(x)).ToArray());
-#endif
         }
 
         private static string EncodeParameter(Parameter parameter)
@@ -365,13 +355,10 @@ namespace RestSharp
         {
             http.Encoding = this.Encoding;
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
-#if !PocketPC
             http.UseDefaultCredentials = request.UseDefaultCredentials;
-#endif
             http.ResponseWriter = request.ResponseWriter;
-#if !PocketPC
             http.CookieContainer = CookieContainer;
-#endif
+
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (var p in DefaultParameters)
             {
@@ -384,11 +371,7 @@ namespace RestSharp
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-#if PocketPC
-            if (request.Parameters.All(p2 => p2.Name.ToLower() != "accept"))
-#else
             if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
-#endif
             {
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
                 request.AddParameter("Accept", accepts, ParameterType.HttpHeader);

@@ -167,7 +167,8 @@ namespace RestSharp
                 throw new ArgumentOutOfRangeException("index");
             int i = 0;
             foreach (KeyValuePair<string, object> o in obj)
-                if (i++ == index) return o.Value;
+                if (i++ == index)
+                    return o.Value;
             return null;
         }
 
@@ -278,7 +279,8 @@ namespace RestSharp
         /// <param name="arrayIndex">Index of the array.</param>
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
-            if (array == null) throw new ArgumentNullException("array");
+            if (array == null)
+                throw new ArgumentNullException("array");
             int num = Count;
             foreach (KeyValuePair<string, object> kvp in this)
             {
@@ -526,7 +528,7 @@ namespace RestSharp
         static SimpleJson()
         {
             EscapeTable = new char[93];
-            EscapeTable['"']  = '"';
+            EscapeTable['"'] = '"';
             EscapeTable['\\'] = '\\';
             EscapeTable['\b'] = 'b';
             EscapeTable['\f'] = 'f';
@@ -560,7 +562,7 @@ namespace RestSharp
         /// <returns>
         /// Returns true if successfull otherwise false.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Need to support .NET 2")]
         public static bool TryDeserializeObject(string json, out object obj)
         {
             bool success = true;
@@ -591,12 +593,12 @@ namespace RestSharp
 
         public static T DeserializeObject<T>(string json, IJsonSerializerStrategy jsonSerializerStrategy)
         {
-            return (T)DeserializeObject(json, typeof(T), jsonSerializerStrategy);
+            return (T) DeserializeObject(json, typeof(T), jsonSerializerStrategy);
         }
 
         public static T DeserializeObject<T>(string json)
         {
-            return (T)DeserializeObject(json, typeof(T), null);
+            return (T) DeserializeObject(json, typeof(T), null);
         }
 
         /// <summary>
@@ -854,8 +856,8 @@ namespace RestSharp
                                     {
                                         if (0xDC00 <= lowCodePoint && lowCodePoint <= 0xDFFF)    // if low surrogate
                                         {
-                                            s.Append((char)codePoint);
-                                            s.Append((char)lowCodePoint);
+                                            s.Append((char) codePoint);
+                                            s.Append((char) lowCodePoint);
                                             index += 6; // skip 6 chars
                                             continue;
                                         }
@@ -864,7 +866,7 @@ namespace RestSharp
                                 success = false;    // invalid surrogate pair
                                 return "";
                             }
-                            s.Append(ConvertFromUtf32((int)codePoint));
+                            s.Append(ConvertFromUtf32((int) codePoint));
                             // skip 4 chars
                             index += 4;
                         }
@@ -891,9 +893,9 @@ namespace RestSharp
             if (0xD800 <= utf32 && utf32 <= 0xDFFF)
                 throw new ArgumentOutOfRangeException("utf32", "The argument must not be in surrogate pair range.");
             if (utf32 < 0x10000)
-                return new string((char)utf32, 1);
+                return new string((char) utf32, 1);
             utf32 -= 0x10000;
-            return new string(new char[] { (char)((utf32 >> 10) + 0xD800), (char)(utf32 % 0x0400 + 0xDC00) });
+            return new string(new char[] { (char) ((utf32 >> 10) + 0xD800), (char) (utf32 % 0x0400 + 0xDC00) });
         }
 
         static object ParseNumber(char[] json, ref int index, ref bool success)
@@ -923,14 +925,16 @@ namespace RestSharp
         {
             int lastIndex;
             for (lastIndex = index; lastIndex < json.Length; lastIndex++)
-                if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1) break;
+                if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1)
+                    break;
             return lastIndex - 1;
         }
 
         static void EatWhitespace(char[] json, ref int index)
         {
             for (; index < json.Length; index++)
-                if (" \t\n\r\b\f".IndexOf(json[index]) == -1) break;
+                if (" \t\n\r\b\f".IndexOf(json[index]) == -1)
+                    break;
         }
 
         static int LookAhead(char[] json, int index)
@@ -1036,7 +1040,7 @@ namespace RestSharp
                         else if (IsNumeric(value))
                             success = SerializeNumber(value, builder);
                         else if (value is bool)
-                            builder.Append((bool)value ? "true" : "false");
+                            builder.Append((bool) value ? "true" : "false");
                         else if (value == null)
                             builder.Append("null");
                         else
@@ -1068,7 +1072,8 @@ namespace RestSharp
                 if (stringKey != null)
                     SerializeString(stringKey, builder);
                 else
-                    if (!SerializeValue(jsonSerializerStrategy, value, builder)) return false;
+                    if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                        return false;
                 builder.Append(":");
                 if (!SerializeValue(jsonSerializerStrategy, value, builder))
                     return false;
@@ -1146,17 +1151,17 @@ namespace RestSharp
         static bool SerializeNumber(object number, StringBuilder builder)
         {
             if (number is long)
-                builder.Append(((long)number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((long) number).ToString(CultureInfo.InvariantCulture));
             else if (number is ulong)
-                builder.Append(((ulong)number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((ulong) number).ToString(CultureInfo.InvariantCulture));
             else if (number is int)
-                builder.Append(((int)number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((int) number).ToString(CultureInfo.InvariantCulture));
             else if (number is uint)
-                builder.Append(((uint)number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((uint) number).ToString(CultureInfo.InvariantCulture));
             else if (number is decimal)
-                builder.Append(((decimal)number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((decimal) number).ToString(CultureInfo.InvariantCulture));
             else if (number is float)
-                builder.Append(((float)number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((float) number).ToString(CultureInfo.InvariantCulture));
             else
                 builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
             return true;
@@ -1168,17 +1173,28 @@ namespace RestSharp
         /// </summary>
         static bool IsNumeric(object value)
         {
-            if (value is sbyte) return true;
-            if (value is byte) return true;
-            if (value is short) return true;
-            if (value is ushort) return true;
-            if (value is int) return true;
-            if (value is uint) return true;
-            if (value is long) return true;
-            if (value is ulong) return true;
-            if (value is float) return true;
-            if (value is double) return true;
-            if (value is decimal) return true;
+            if (value is sbyte)
+                return true;
+            if (value is byte)
+                return true;
+            if (value is short)
+                return true;
+            if (value is ushort)
+                return true;
+            if (value is int)
+                return true;
+            if (value is uint)
+                return true;
+            if (value is long)
+                return true;
+            if (value is ulong)
+                return true;
+            if (value is float)
+                return true;
+            if (value is double)
+                return true;
+            if (value is decimal)
+                return true;
             return false;
         }
 
@@ -1226,7 +1242,7 @@ namespace RestSharp
 
 #endif
     }
-    
+
     [GeneratedCode("simple-json", "1.0.0")]
 #if SIMPLE_JSON_INTERNAL
     internal
@@ -1235,7 +1251,7 @@ namespace RestSharp
 #endif
  interface IJsonSerializerStrategy
     {
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Need to support .NET 2")]
         bool TrySerializeNonPrimitiveObject(object input, out object output);
         object DeserializeObject(object value, Type type);
     }
@@ -1331,15 +1347,16 @@ namespace RestSharp
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public virtual object DeserializeObject(object value, Type type)
         {
-            if (type == null) throw new ArgumentNullException("type");
+            if (type == null)
+                throw new ArgumentNullException("type");
             string str = value as string;
 
-            if (type == typeof (Guid) && string.IsNullOrEmpty(str))
+            if (type == typeof(Guid) && string.IsNullOrEmpty(str))
                 return default(Guid);
 
             if (value == null)
                 return null;
-            
+
             object obj = null;
 
             if (str != null)
@@ -1348,27 +1365,27 @@ namespace RestSharp
                 {
                     if (type == typeof(DateTime) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTime)))
                         return DateTime.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-#if !PocketPC
+
                     if (type == typeof(DateTimeOffset) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTimeOffset)))
                         return DateTimeOffset.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-#endif
+
                     if (type == typeof(Guid) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid)))
                         return new Guid(str);
                     if (type == typeof(Uri))
                     {
-                        bool isValid =  Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
+                        bool isValid = Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
 
                         Uri result;
                         if (isValid && Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out result))
                             return result;
 
-												return null;
+                        return null;
                     }
-                  
-									if (type == typeof(string))  
-										return str;
 
-									return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
+                    if (type == typeof(string))
+                        return str;
+
+                    return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
                 }
                 else
                 {
@@ -1385,7 +1402,7 @@ namespace RestSharp
             }
             else if (value is bool)
                 return value;
-            
+
             bool valueIsLong = value is long;
             bool valueIsDouble = value is double;
             if ((valueIsLong && type == typeof(long)) || (valueIsDouble && type == typeof(double)))
@@ -1412,7 +1429,7 @@ namespace RestSharp
 
                         Type genericType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
 
-                        IDictionary dict = (IDictionary)ConstructorCache[genericType]();
+                        IDictionary dict = (IDictionary) ConstructorCache[genericType]();
 
                         foreach (KeyValuePair<string, object> kvp in jsonObject)
                             dict.Add(kvp.Key, DeserializeObject(kvp.Value, valueType));
@@ -1448,7 +1465,7 @@ namespace RestSharp
 
                         if (type.IsArray)
                         {
-                            list = (IList)ConstructorCache[type](jsonObject.Count);
+                            list = (IList) ConstructorCache[type](jsonObject.Count);
                             int i = 0;
                             foreach (object o in jsonObject)
                                 list[i++] = DeserializeObject(o, type.GetElementType());
@@ -1456,7 +1473,7 @@ namespace RestSharp
                         else if (ReflectionUtils.IsTypeGenericeCollectionInterface(type) || ReflectionUtils.IsAssignableFrom(typeof(IList), type))
                         {
                             Type innerType = ReflectionUtils.GetGenericListElementType(type);
-                            list = (IList)(ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
+                            list = (IList) (ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
                             foreach (object o in jsonObject)
                                 list.Add(DeserializeObject(o, innerType));
                         }
@@ -1475,23 +1492,23 @@ namespace RestSharp
             return Convert.ToDouble(p, CultureInfo.InvariantCulture);
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Need to support .NET 2")]
         protected virtual bool TrySerializeKnownTypes(object input, out object output)
         {
             bool returnValue = true;
+
             if (input is DateTime)
-                output = ((DateTime)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
-#if !PocketPC
+                output = ((DateTime) input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
             else if (input is DateTimeOffset)
-                output = ((DateTimeOffset)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
-#endif
+                output = ((DateTimeOffset) input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
             else if (input is Guid)
-                output = ((Guid)input).ToString("D");
+                output = ((Guid) input).ToString("D");
             else if (input is Uri)
                 output = input.ToString();
             else
             {
                 Enum inputEnum = input as Enum;
+
                 if (inputEnum != null)
                     output = SerializeEnum(inputEnum);
                 else
@@ -1500,12 +1517,14 @@ namespace RestSharp
                     output = null;
                 }
             }
+
             return returnValue;
         }
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Need to support .NET 2")]
         protected virtual bool TrySerializeUnknownTypes(object input, out object output)
         {
-            if (input == null) throw new ArgumentNullException("input");
+            if (input == null)
+                throw new ArgumentNullException("input");
             output = null;
             Type type = input.GetType();
             if (type.FullName == null)
@@ -1604,7 +1623,7 @@ namespace RestSharp
     namespace Reflection
     {
         // This class is meant to be copied into other libraries. So we want to exclude it from Code Analysis rules
- 	    // that might be in place in the target project.
+        // that might be in place in the target project.
         [GeneratedCode("reflection-utils", "1.0.0")]
 #if SIMPLE_JSON_REFLECTION_UTILS_PUBLIC
         public
@@ -1657,7 +1676,7 @@ namespace RestSharp
                 foreach (Type implementedInterface in interfaces)
                 {
                     if (IsTypeGeneric(implementedInterface) &&
-                        implementedInterface.GetGenericTypeDefinition() == typeof (IList<>))
+                        implementedInterface.GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         return GetGenericTypeArguments(implementedInterface)[0];
                     }
@@ -1707,7 +1726,7 @@ namespace RestSharp
                     || genericDefinition == typeof(IReadOnlyCollection<>)
                     || genericDefinition == typeof(IReadOnlyList<>)
 #endif
-                    );
+);
             }
 
             public static bool IsAssignableFrom(Type type1, Type type2)

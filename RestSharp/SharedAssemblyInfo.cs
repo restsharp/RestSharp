@@ -24,14 +24,12 @@ using System.Reflection;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(SharedAssemblyInfo.Version + ".0")]
 
-#if !PocketPC
 #if SIGNED
 [assembly: AssemblyInformationalVersion(SharedAssemblyInfo.FileVersion)]
 [assembly: AssemblyFileVersion(SharedAssemblyInfo.FileVersion + ".0")]
 #else
 [assembly: AssemblyInformationalVersion(SharedAssemblyInfo.Version)]
 [assembly: AssemblyFileVersion(SharedAssemblyInfo.Version + ".0")]
-#endif
 #endif
 
 class SharedAssemblyInfo

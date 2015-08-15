@@ -31,9 +31,7 @@ namespace RestSharp
     {
         Action<Stream> ResponseWriter { get; set; }
 
-#if !PocketPC
         CookieContainer CookieContainer { get; set; }
-#endif
 
         ICredentials Credentials { get; set; }
 
@@ -58,9 +56,7 @@ namespace RestSharp
         int? MaxRedirects { get; set; }
 #endif
 
-#if !PocketPC
         bool UseDefaultCredentials { get; set; }
-#endif
 
         Encoding Encoding { get; set; }
 
@@ -109,7 +105,7 @@ namespace RestSharp
 
         HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
 
-#if FRAMEWORK || PocketPC
+#if FRAMEWORK
         HttpResponse Delete();
 
         HttpResponse Get();

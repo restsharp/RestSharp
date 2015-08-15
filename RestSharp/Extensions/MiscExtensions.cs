@@ -24,7 +24,7 @@ namespace RestSharp.Extensions
     /// </summary>
     public static class MiscExtensions
     {
-#if !WINDOWS_PHONE && !PocketPC
+#if !WINDOWS_PHONE
         /// <summary>
         /// Save a byte array to a file
         /// </summary>
