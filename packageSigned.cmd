@@ -4,6 +4,7 @@ if not exist DownloadSigned\Net4 mkdir DownloadSigned\Net4\
 if not exist DownloadSigned\Net45 mkdir DownloadSigned\Net45\
 if not exist DownloadSigned\Net451 mkdir DownloadSigned\Net451\
 if not exist DownloadSigned\Net452 mkdir DownloadSigned\Net452\
+if not exist DownloadSigned\Net46 mkdir DownloadSigned\Net46\
 if not exist DownloadSigned\Silverlight mkdir DownloadSigned\Silverlight\
 if not exist DownloadSigned\WindowsPhone mkdir DownloadSigned\WindowsPhone\
 if not exist DownloadSigned\package\lib\net35 mkdir DownloadSigned\package\lib\net35\
@@ -16,6 +17,8 @@ if not exist DownloadSigned\package\lib\net451 mkdir DownloadSigned\package\lib\
 if not exist DownloadSigned\package\lib\net451-client mkdir DownloadSigned\package\lib\net451-client\
 if not exist DownloadSigned\package\lib\net452 mkdir DownloadSigned\package\lib\net452\
 if not exist DownloadSigned\package\lib\net452-client mkdir DownloadSigned\package\lib\net452-client\
+if not exist DownloadSigned\package\lib\net46 mkdir DownloadSigned\package\lib\net46\
+if not exist DownloadSigned\package\lib\net46-client mkdir DownloadSigned\package\lib\net46-client\
 if not exist DownloadSigned\package\lib\windowsphone8 mkdir DownloadSigned\package\lib\windowsphone8\
 if not exist DownloadSigned\package\lib\sl4 mkdir DownloadSigned\package\lib\sl4\
 
@@ -33,6 +36,9 @@ copy RestSharp.Net451\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Net451\
 
 copy RestSharp.Net451\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Net452\
 copy RestSharp.Net451\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Net452\
+
+copy RestSharp.Net46\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Net46\
+copy RestSharp.Net46\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Net46\
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll DownloadSigned\Silverlight\
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml DownloadSigned\Silverlight\
@@ -59,6 +65,9 @@ copy RestSharp.Net451\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib
 copy RestSharp.Net452\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib\net452\
 copy RestSharp.Net452\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib\net452-client\
 
+copy RestSharp.Net46\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib\net46\
+copy RestSharp.Net46\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib\net46-client\
+
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll DownloadSigned\Package\lib\sl4\
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll DownloadSigned\Package\lib\windowsphone8\
 
@@ -76,6 +85,9 @@ copy RestSharp.Net451\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Package\lib
 
 copy RestSharp.Net452\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Package\lib\net452\
 copy RestSharp.Net452\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Package\lib\net452-client\
+
+copy RestSharp.Net46\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Package\lib\net46\
+copy RestSharp.Net46\bin\ReleaseSigned\RestSharp.xml DownloadSigned\Package\lib\net46-client\
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml DownloadSigned\Package\lib\sl4\
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml DownloadSigned\Package\lib\windowsphone8\

@@ -4,6 +4,7 @@ if not exist Download\Net4 mkdir Download\Net4\
 if not exist Download\Net45 mkdir Download\Net45\
 if not exist Download\Net451 mkdir Download\Net451\
 if not exist Download\Net452 mkdir Download\Net452\
+if not exist Download\Net46 mkdir Download\Net46\
 if not exist Download\Silverlight mkdir Download\Silverlight\
 if not exist Download\WindowsPhone mkdir Download\WindowsPhone\
 if not exist Download\package\lib\net35 mkdir Download\package\lib\net35\
@@ -16,6 +17,8 @@ if not exist Download\package\lib\net451 mkdir Download\package\lib\net451\
 if not exist Download\package\lib\net451-client mkdir Download\package\lib\net451-client\
 if not exist Download\package\lib\net452 mkdir Download\package\lib\net452\
 if not exist Download\package\lib\net452-client mkdir Download\package\lib\net452-client\
+if not exist Download\package\lib\net46 mkdir Download\package\lib\net46\
+if not exist Download\package\lib\net46-client mkdir Download\package\lib\net46-client\
 if not exist Download\package\lib\windowsphone8 mkdir Download\package\lib\windowsphone8\
 if not exist Download\package\lib\sl4 mkdir Download\package\lib\sl4\
 
@@ -33,6 +36,9 @@ copy RestSharp.Net451\bin\Release\RestSharp.xml Download\Net451\
 
 copy RestSharp.Net452\bin\Release\RestSharp.dll Download\Net452\
 copy RestSharp.Net452\bin\Release\RestSharp.xml Download\Net452\
+
+copy RestSharp.Net46\bin\Release\RestSharp.dll Download\Net46\
+copy RestSharp.Net46\bin\Release\RestSharp.xml Download\Net46\
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll Download\Silverlight\
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Silverlight\
@@ -59,6 +65,9 @@ copy RestSharp.Net451\bin\Release\RestSharp.dll Download\Package\lib\net451-clie
 copy RestSharp.Net452\bin\Release\RestSharp.dll Download\Package\lib\net452\
 copy RestSharp.Net452\bin\Release\RestSharp.dll Download\Package\lib\net452-client\
 
+copy RestSharp.Net46\bin\Release\RestSharp.dll Download\Package\lib\net46\
+copy RestSharp.Net46\bin\Release\RestSharp.dll Download\Package\lib\net46-client\
+
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.dll Download\Package\lib\sl4\
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.dll Download\Package\lib\windowsphone8\
 
@@ -76,6 +85,9 @@ copy RestSharp.Net451\bin\Release\RestSharp.xml Download\Package\lib\net451-clie
 
 copy RestSharp.Net452\bin\Release\RestSharp.xml Download\Package\lib\net452\
 copy RestSharp.Net452\bin\Release\RestSharp.xml Download\Package\lib\net452-client\
+
+copy RestSharp.Net46\bin\Release\RestSharp.xml Download\Package\lib\net46\
+copy RestSharp.Net46\bin\Release\RestSharp.xml Download\Package\lib\net46-client\
 
 copy RestSharp.Silverlight\bin\Release\RestSharp.Silverlight.xml Download\Package\lib\sl4\
 copy RestSharp.WindowsPhone\bin\Release\RestSharp.WindowsPhone.xml Download\Package\lib\windowsphone8\
