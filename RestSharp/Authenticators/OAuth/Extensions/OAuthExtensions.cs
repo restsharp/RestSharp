@@ -8,9 +8,13 @@ namespace RestSharp.Authenticators.OAuth.Extensions
     {
         public static string ToRequestValue(this OAuthSignatureMethod signatureMethod)
         {
-            var value = signatureMethod.ToString().ToUpper();
-            var shaIndex = value.IndexOf("SHA1");
-            return shaIndex > -1 ? value.Insert(shaIndex, "-") : value;
+            string value = signatureMethod.ToString()
+                                          .ToUpper();
+            int shaIndex = value.IndexOf("SHA1");
+
+            return shaIndex > -1
+                ? value.Insert(shaIndex, "-")
+                : value;
         }
 
         public static OAuthSignatureMethod FromRequestValue(this string signatureMethod)
@@ -19,8 +23,10 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             {
                 case "HMAC-SHA1":
                     return OAuthSignatureMethod.HmacSha1;
+
                 case "RSA-SHA1":
                     return OAuthSignatureMethod.RsaSha1;
+
                 default:
                     return OAuthSignatureMethod.PlainText;
             }
@@ -28,8 +34,9 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string HashWith(this string input, HashAlgorithm algorithm)
         {
-            var data = Encoding.UTF8.GetBytes(input);
-            var hash = algorithm.ComputeHash(data);
+            byte[] data = Encoding.UTF8.GetBytes(input);
+            byte[] hash = algorithm.ComputeHash(data);
+
             return Convert.ToBase64String(hash);
         }
     }

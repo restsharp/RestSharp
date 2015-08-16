@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,37 +13,35 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
+
+#if WINDOWS_PHONE
+using System.Net;
+#endif
 
 #if SILVERLIGHT
 using System.Windows.Browser;
 #endif
 
-#if WINDOWS_PHONE
-#endif
-
-#if FRAMEWORK || MONOTOUCH || MONODROID
-using RestSharp.Contrib;
+#if !SILVERLIGHT && !WINDOWS_PHONE
+using RestSharp.Extensions.MonoHttp;
 #endif
 
 namespace RestSharp.Extensions
 {
     public static class StringExtensions
     {
-#if !PocketPC
         public static string UrlDecode(this string input)
         {
             return HttpUtility.UrlDecode(input);
         }
-#endif
 
         /// <summary>
         /// Uses Uri.EscapeDataString() based on recommendations on MSDN
@@ -51,11 +50,16 @@ namespace RestSharp.Extensions
         public static string UrlEncode(this string input)
         {
             const int maxLength = 32766;
+
             if (input == null)
+            {
                 throw new ArgumentNullException("input");
+            }
 
             if (input.Length <= maxLength)
+            {
                 return Uri.EscapeDataString(input);
+            }
 
             StringBuilder sb = new StringBuilder(input.Length * 2);
             int index = 0;
@@ -72,7 +76,6 @@ namespace RestSharp.Extensions
             return sb.ToString();
         }
 
-#if !PocketPC
         public static string HtmlDecode(this string input)
         {
             return HttpUtility.HtmlDecode(input);
@@ -82,7 +85,6 @@ namespace RestSharp.Extensions
         {
             return HttpUtility.HtmlEncode(input);
         }
-#endif
 
 #if FRAMEWORK
         public static string HtmlAttributeEncode(this string input)
@@ -108,7 +110,8 @@ namespace RestSharp.Extensions
         /// <returns>string</returns>
         public static string RemoveUnderscoresAndDashes(this string input)
         {
-            return input.Replace("_", "").Replace("-", ""); // avoiding regex
+            return input.Replace("_", "")
+                        .Replace("-", ""); // avoiding regex
         }
 
         /// <summary>
@@ -123,18 +126,13 @@ namespace RestSharp.Extensions
             input = input.Replace("\r", "");
             input = input.RemoveSurroundingQuotes();
 
-            long? unix = null;
+            long unix;
 
-            try
+            if (long.TryParse(input, out unix))
             {
-                unix = Int64.Parse(input);
-            }
-            catch (Exception) { };
+                DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            if (unix.HasValue)
-            {
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return epoch.AddSeconds(unix.Value);
+                return epoch.AddSeconds(unix);
             }
 
             if (input.Contains("/Date("))
@@ -145,6 +143,7 @@ namespace RestSharp.Extensions
             if (input.Contains("new Date("))
             {
                 input = input.Replace(" ", "");
+
                 // because all whitespace is removed, match against newDate( instead of new Date(
                 return ExtractDate(input, @"newDate\((-?\d+)*\)", culture);
             }
@@ -170,7 +169,7 @@ namespace RestSharp.Extensions
 
         private static DateTime ParseFormattedDate(string input, CultureInfo culture)
         {
-            var formats = new[]
+            string[] formats =
             {
                 "u",
                 "s",
@@ -182,22 +181,6 @@ namespace RestSharp.Extensions
                 "M/d/yyyy h:mm:ss tt" // default format for invariant culture
             };
 
-#if PocketPC
-            foreach (string format in formats)
-            {
-                try
-                {
-                    return DateTime.ParseExact(input, format, culture);
-                }
-                catch (Exception) { }
-            }
-
-            try
-            {
-                return DateTime.Parse(input, culture);
-            }
-            catch (Exception) { }
-#else
             DateTime date;
 
             if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out date))
@@ -209,7 +192,6 @@ namespace RestSharp.Extensions
             {
                 return date;
             }
-#endif
 
             return default(DateTime);
         }
@@ -217,30 +199,25 @@ namespace RestSharp.Extensions
         private static DateTime ExtractDate(string input, string pattern, CultureInfo culture)
         {
             DateTime dt = DateTime.MinValue;
-            var regex = new Regex(pattern);
+            Regex regex = new Regex(pattern);
 
             if (regex.IsMatch(input))
             {
-                var matches = regex.Matches(input);
-                var match = matches[0];
-                var ms = Convert.ToInt64(match.Groups[1].Value);
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                MatchCollection matches = regex.Matches(input);
+                Match match = matches[0];
+                long ms = Convert.ToInt64(match.Groups[1].Value);
+                DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
                 dt = epoch.AddMilliseconds(ms);
 
                 // adjust if time zone modifier present
-                if (match.Groups.Count > 2 && !String.IsNullOrEmpty(match.Groups[3].Value))
+                if (match.Groups.Count > 2 && !string.IsNullOrEmpty(match.Groups[3].Value))
                 {
-                    var mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
+                    DateTime mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
 
-                    if (match.Groups[2].Value == "+")
-                    {
-                        dt = dt.Add(mod.TimeOfDay);
-                    }
-                    else
-                    {
-                        dt = dt.Subtract(mod.TimeOfDay);
-                    }
+                    dt = match.Groups[2].Value == "+"
+                        ? dt.Add(mod.TimeOfDay)
+                        : dt.Subtract(mod.TimeOfDay);
                 }
             }
 
@@ -278,12 +255,16 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
+            {
                 return text;
+            }
 
             text = text.Replace("_", " ");
 
-            string joinString = removeUnderscores ? String.Empty : "_";
+            string joinString = removeUnderscores
+                ? string.Empty
+                : "_";
             string[] words = text.Split(' ');
 
             if (words.Length > 1 || words[0].IsUpperCase())
@@ -296,18 +277,20 @@ namespace RestSharp.Extensions
                         string restOfWord = word.Substring(1);
 
                         if (restOfWord.IsUpperCase())
+                        {
                             restOfWord = restOfWord.ToLower(culture);
+                        }
 
                         char firstChar = char.ToUpper(word[0], culture);
 
-                        words[i] = String.Concat(firstChar, restOfWord);
+                        words[i] = string.Concat(firstChar, restOfWord);
                     }
                 }
 
-                return String.Join(joinString, words);
+                return string.Join(joinString, words);
             }
 
-            return String.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
+            return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
         }
 
         /// <summary>
@@ -328,7 +311,7 @@ namespace RestSharp.Extensions
         /// <returns>string</returns>
         public static string MakeInitialLowerCase(this string word)
         {
-            return String.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
+            return string.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
         }
 
         /// <summary>
@@ -407,8 +390,10 @@ namespace RestSharp.Extensions
         /// <returns>IEnumerable&lt;string&gt;</returns>
         public static IEnumerable<string> GetNameVariants(this string name, CultureInfo culture)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
+            {
                 yield break;
+            }
 
             yield return name;
 

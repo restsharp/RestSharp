@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +13,16 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
+
+#if FRAMEWORK
+using System.Linq;
+#endif
 
 namespace RestSharp.Extensions
 {
@@ -56,9 +61,11 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic)
         {
-            while (toCheck != typeof(object))
+            while (toCheck != null && toCheck != typeof(object))
             {
-                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                Type cur = toCheck.IsGenericType
+                    ? toCheck.GetGenericTypeDefinition()
+                    : toCheck;
 
                 if (generic == cur)
                 {
@@ -73,7 +80,7 @@ namespace RestSharp.Extensions
 
         public static object ChangeType(this object source, Type newType)
         {
-#if FRAMEWORK && !PocketPC
+#if FRAMEWORK
             return Convert.ChangeType(source, newType);
 #else
             return Convert.ChangeType(source, newType, null);
@@ -99,20 +106,20 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
-#if FRAMEWORK && !PocketPC
-            var ret = Enum.GetValues(type)
-                          .Cast<Enum>()
-                          .FirstOrDefault(v => v.ToString()
-                                                .GetNameVariants(culture)
-                                                .Contains(value, StringComparer.Create(culture, true)));
+#if FRAMEWORK
+            Enum ret = Enum.GetValues(type)
+                           .Cast<Enum>()
+                           .FirstOrDefault(v => v.ToString()
+                                                 .GetNameVariants(culture)
+                                                 .Contains(value, StringComparer.Create(culture, true)));
 
             if (ret == null)
             {
-                var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
+                object enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
 
                 if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
                 {
-                    ret = (Enum)Enum.ToObject(type, enumValueAsUnderlyingType);
+                    ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
                 }
             }
 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 
@@ -37,17 +38,29 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
+                DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())
+                                                       .Parent;
 
-                request.AddFile("fileName", path);
+                if (directoryInfo != null)
+                {
+                    string path = Path.Combine(directoryInfo.FullName,
+                        "Assets\\TestFile.txt");
+
+                    request.AddFile("fileName", path);
+                }
+
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-                var task = client.ExecuteTaskAsync(request).ContinueWith(x =>
-                                                                         {
-                                                                             Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
-                                                                         });
+                Task task = client.ExecuteTaskAsync(request)
+                                  .ContinueWith(x =>
+                                                {
+                                                    Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
+                                                });
 
                 task.Wait();
             }
@@ -60,14 +73,24 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
+                DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())
+                                                       .Parent;
 
-                request.AddFile("fileName", path);
+                if (directoryInfo != null)
+                {
+                    string path = Path.Combine(directoryInfo.FullName, "Assets\\TestFile.txt");
+
+                    request.AddFile("fileName", path);
+                }
+
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-                var response = client.Execute(request);
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual(this.expectedFileAndBodyRequestContent, response.Content);
             }
@@ -79,8 +102,11 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
 
                 AddParameters(request);
 
@@ -99,12 +125,15 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
 
                 AddParameters(request);
 
-                var response = client.Execute(request);
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual(this.expected, response.Content);
             }
@@ -117,16 +146,16 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("?json_route=/posts")
-                                  {
-                                      AlwaysMultipartFormData = true,
-                                      Method = Method.POST,
-                                  };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("?json_route=/posts")
+                                      {
+                                          AlwaysMultipartFormData = true,
+                                          Method = Method.POST,
+                                      };
 
                 request.AddParameter("title", "test", ParameterType.RequestBody);
 
-                var response = client.Execute(request);
+                IRestResponse response = client.Execute(request);
 
                 Assert.Null(response.ErrorException);
             }
@@ -139,16 +168,17 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("?json_route=/posts")
-                                  {
-                                      AlwaysMultipartFormData = true,
-                                      Method = Method.POST,
-                                  };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("?json_route=/posts")
+                                      {
+                                          AlwaysMultipartFormData = true,
+                                          Method = Method.POST,
+                                      };
 
                 request.AddParameter("title", "test", ParameterType.RequestBody);
 
-                var task = client.ExecuteTaskAsync(request).ContinueWith(x => { Assert.Null(x.Result.ErrorException); });
+                Task task = client.ExecuteTaskAsync(request)
+                                  .ContinueWith(x => { Assert.Null(x.Result.ErrorException); });
 
                 task.Wait();
             }
@@ -161,18 +191,18 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("?json_route=/posts")
-                              {
-                                  AlwaysMultipartFormData = true,
-                                  Method = Method.POST,
-                              };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("?json_route=/posts")
+                                      {
+                                          AlwaysMultipartFormData = true,
+                                          Method = Method.POST,
+                                      };
 
                 request.AddParameter("title", "test", ParameterType.RequestBody);
 
                 IRestResponse syncResponse = null;
 
-                using (var eventWaitHandle = new AutoResetEvent(false))
+                using (AutoResetEvent eventWaitHandle = new AutoResetEvent(false))
                 {
                     client.ExecuteAsync(request, response =>
                                                  {
@@ -191,7 +221,7 @@ namespace RestSharp.IntegrationTests
         {
             obj.Response.StatusCode = 200;
 
-            var streamReader = new StreamReader(obj.Request.InputStream);
+            StreamReader streamReader = new StreamReader(obj.Request.InputStream);
 
             obj.Response.OutputStream.WriteStringUtf8(streamReader.ReadToEnd());
         }

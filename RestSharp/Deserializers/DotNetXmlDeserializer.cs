@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +13,12 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace RestSharp.Deserializers
 {
@@ -37,10 +40,11 @@ namespace RestSharp.Deserializers
                 return default(T);
             }
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
+            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
             {
-                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-                return (T)serializer.Deserialize(stream);
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+
+                return (T) serializer.Deserialize(stream);
             }
         }
     }

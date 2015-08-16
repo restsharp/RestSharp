@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System.IO;
@@ -24,7 +26,7 @@ namespace RestSharp.Extensions
     /// </summary>
     public static class MiscExtensions
     {
-#if !WINDOWS_PHONE && !PocketPC
+#if !WINDOWS_PHONE
         /// <summary>
         /// Save a byte array to a file
         /// </summary>
@@ -65,14 +67,16 @@ namespace RestSharp.Extensions
         /// <param name="output">The output stream.</param>
         public static void CopyTo(this Stream input, Stream output)
         {
-            var buffer = new byte[32768];
+            byte[] buffer = new byte[32768];
 
             while (true)
             {
-                var read = input.Read(buffer, 0, buffer.Length);
+                int read = input.Read(buffer, 0, buffer.Length);
 
                 if (read <= 0)
+                {
                     return;
+                }
 
                 output.Write(buffer, 0, read);
             }
@@ -87,7 +91,9 @@ namespace RestSharp.Extensions
         public static string AsString(this byte[] buffer)
         {
             if (buffer == null)
+            {
                 return "";
+            }
 
             // Ansi as default
             Encoding encoding = Encoding.UTF8;
@@ -95,7 +101,7 @@ namespace RestSharp.Extensions
 #if FRAMEWORK
             return encoding.GetString(buffer, 0, buffer.Length);
 #else
-            if (buffer == null || buffer.Length == 0)
+            if (buffer.Length == 0)
                 return "";
 
             /*

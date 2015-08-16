@@ -30,10 +30,13 @@ namespace RestSharp.IntegrationTests.Helpers
         /// </summary>
         public static void FileHandler(HttpListenerContext context)
         {
-            var pathToFile = Path.Combine(context.Request.Url.Segments.Select(s => s.Replace("/", "")).ToArray());
+            string pathToFile = Path.Combine(context.Request.Url.Segments.Select(s => s.Replace("/", ""))
+                                                    .ToArray());
 
-            using (var reader = new StreamReader(pathToFile))
+            using (StreamReader reader = new StreamReader(pathToFile))
+            {
                 reader.BaseStream.CopyTo(context.Response.OutputStream);
+            }
         }
 
         /// <summary>
@@ -57,20 +60,20 @@ namespace RestSharp.IntegrationTests.Helpers
         public static Action<HttpListenerContext> Generic<T>() where T : new()
         {
             return ctx =>
-            {
-                var methodName = ctx.Request.Url.Segments.Last();
-                var method = typeof(T).GetMethod(methodName,
-                    BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+                   {
+                       string methodName = ctx.Request.Url.Segments.Last();
+                       MethodInfo method = typeof(T).GetMethod(methodName,
+                           BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
-                if (method.IsStatic)
-                {
-                    method.Invoke(null, new object[] { ctx });
-                }
-                else
-                {
-                    method.Invoke(new T(), new object[] { ctx });
-                }
-            };
+                       if (method.IsStatic)
+                       {
+                           method.Invoke(null, new object[] { ctx });
+                       }
+                       else
+                       {
+                           method.Invoke(new T(), new object[] { ctx });
+                       }
+                   };
         }
     }
 }

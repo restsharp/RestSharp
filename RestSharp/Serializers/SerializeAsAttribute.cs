@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -25,14 +27,14 @@ namespace RestSharp.Serializers
     /// Currently not supported with the JsonSerializer
     /// When specified at the property level the class-level specification is overridden
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false)]
     public sealed class SerializeAsAttribute : Attribute
     {
         public SerializeAsAttribute()
         {
-            NameStyle = NameStyle.AsIs;
-            Index = int.MaxValue;
-            Culture = CultureInfo.InvariantCulture;
+            this.NameStyle = NameStyle.AsIs;
+            this.Index = int.MaxValue;
+            this.Culture = CultureInfo.InvariantCulture;
         }
 
         /// <summary>
@@ -67,15 +69,15 @@ namespace RestSharp.Serializers
         /// <returns>String</returns>
         public string TransformName(string input)
         {
-            var name = this.Name ?? input;
+            string name = this.Name ?? input;
 
-            switch (NameStyle)
+            switch (this.NameStyle)
             {
                 case NameStyle.CamelCase:
-                    return name.ToCamelCase(Culture);
+                    return name.ToCamelCase(this.Culture);
 
                 case NameStyle.PascalCase:
-                    return name.ToPascalCase(Culture);
+                    return name.ToPascalCase(this.Culture);
 
                 case NameStyle.LowerCase:
                     return name.ToLower();

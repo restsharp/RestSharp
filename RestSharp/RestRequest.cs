@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -19,9 +21,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
-using RestSharp.Extensions;
 using RestSharp.Serializers;
+
+#if FRAMEWORK
+using RestSharp.Extensions;
+#endif
 
 namespace RestSharp
 {
@@ -63,6 +69,8 @@ namespace RestSharp
         /// </summary>
         public RestRequest()
         {
+            this.RequestFormat = DataFormat.Xml;
+            this.Method = Method.GET;
             this.Parameters = new List<Parameter>();
             this.Files = new List<FileParameter>();
             this.XmlSerializer = new XmlSerializer();
@@ -109,7 +117,9 @@ namespace RestSharp
         /// <param name="resource">Resource to use for this request</param>
         /// <param name="method">Method to use for this request</param>
         public RestRequest(Uri resource, Method method)
-            : this(resource.IsAbsoluteUri ? resource.AbsolutePath + resource.Query : resource.OriginalString, method)
+            : this(resource.IsAbsoluteUri
+                ? resource.AbsolutePath + resource.Query
+                : resource.OriginalString, method)
         {
             //resource.PathAndQuery not supported by Silverlight :(
         }
@@ -127,19 +137,19 @@ namespace RestSharp
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
 
-            return AddFile(new FileParameter
+            return this.AddFile(new FileParameter
                            {
                                Name = name,
                                FileName = Path.GetFileName(path),
                                ContentLength = fileLength,
                                Writer = s =>
                                         {
-                                            using (var file = new StreamReader(path))
+                                            using (StreamReader file = new StreamReader(path))
                                             {
                                                 file.BaseStream.CopyTo(s);
                                             }
                                         },
-                                ContentType = contentType
+                               ContentType = contentType
                            });
         }
 
@@ -166,18 +176,19 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null)
         {
-            return AddFile(new FileParameter
-                           {
-                               Name = name,
-                               Writer = writer,
-                               FileName = fileName,
-                               ContentType = contentType
-                           });
+            return this.AddFile(new FileParameter
+                                {
+                                    Name = name,
+                                    Writer = writer,
+                                    FileName = fileName,
+                                    ContentType = contentType
+                                });
         }
 
         private IRestRequest AddFile(FileParameter file)
         {
             this.Files.Add(file);
+
             return this;
         }
 
@@ -193,20 +204,20 @@ namespace RestSharp
         {
             long length = bytes.Length;
 
-            return AddFile(new FileParameter
-                           {
-                               Name = name,
-                               FileName = filename,
-                               ContentLength = length,
-                               ContentType = contentType,
-                               Writer = s =>
-                                        {
-                                            using (var file = new StreamReader(new MemoryStream(bytes)))
-                                            {
-                                                file.BaseStream.CopyTo(s);
-                                            }
-                                        }
-                           });
+            return this.AddFile(new FileParameter
+                                {
+                                    Name = name,
+                                    FileName = filename,
+                                    ContentLength = length,
+                                    ContentType = contentType,
+                                    Writer = s =>
+                                             {
+                                                 using (StreamReader file = new StreamReader(new MemoryStream(bytes)))
+                                                 {
+                                                     file.BaseStream.CopyTo(s);
+                                                 }
+                                             }
+                                });
         }
 
         /// <summary>
@@ -221,17 +232,17 @@ namespace RestSharp
             string serialized;
             string contentType;
 
-            switch (RequestFormat)
+            switch (this.RequestFormat)
             {
                 case DataFormat.Json:
-                    serialized = JsonSerializer.Serialize(obj);
-                    contentType = JsonSerializer.ContentType;
+                    serialized = this.JsonSerializer.Serialize(obj);
+                    contentType = this.JsonSerializer.ContentType;
                     break;
 
                 case DataFormat.Xml:
                     this.XmlSerializer.Namespace = xmlNamespace;
-                    serialized = XmlSerializer.Serialize(obj);
-                    contentType = XmlSerializer.ContentType;
+                    serialized = this.XmlSerializer.Serialize(obj);
+                    contentType = this.XmlSerializer.ContentType;
                     break;
 
                 default:
@@ -265,6 +276,7 @@ namespace RestSharp
         public IRestRequest AddJsonBody(object obj)
         {
             this.RequestFormat = DataFormat.Json;
+
             return this.AddBody(obj, "");
         }
 
@@ -276,6 +288,7 @@ namespace RestSharp
         public IRestRequest AddXmlBody(object obj)
         {
             this.RequestFormat = DataFormat.Xml;
+
             return this.AddBody(obj, "");
         }
 
@@ -289,6 +302,7 @@ namespace RestSharp
         public IRestRequest AddXmlBody(object obj, string xmlNamespace)
         {
             this.RequestFormat = DataFormat.Xml;
+
             return this.AddBody(obj, xmlNamespace);
         }
 
@@ -304,42 +318,45 @@ namespace RestSharp
         public IRestRequest AddObject(object obj, params string[] includedProperties)
         {
             // automatically create parameters from object props
-            var type = obj.GetType();
-            var props = type.GetProperties();
+            Type type = obj.GetType();
+            PropertyInfo[] props = type.GetProperties();
 
-            foreach (var prop in props)
+            foreach (PropertyInfo prop in props)
             {
                 bool isAllowed = includedProperties.Length == 0 ||
                                  (includedProperties.Length > 0 && includedProperties.Contains(prop.Name));
 
                 if (!isAllowed)
+                {
                     continue;
+                }
 
-                var propType = prop.PropertyType;
-                var val = prop.GetValue(obj, null);
+                Type propType = prop.PropertyType;
+                object val = prop.GetValue(obj, null);
 
                 if (val == null)
+                {
                     continue;
+                }
 
                 if (propType.IsArray)
                 {
-                    var elementType = propType.GetElementType();
+                    Type elementType = propType.GetElementType();
 
-                    if (((Array)val).Length > 0 &&
+                    if (((Array) val).Length > 0 &&
                         elementType != null &&
-                        (elementType.IsPrimitive|| elementType.IsValueType || elementType == typeof(string)))
+                        (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
                     {
                         // convert the array to an array of strings
-                        var values = (from object item in ((Array)val)
-                                      select item.ToString())
-                                     .ToArray<string>();
+                        string[] values = (from object item in ((Array) val)
+                                           select item.ToString()).ToArray<string>();
 
                         val = string.Join(",", values);
                     }
                     else
                     {
                         // try to cast it
-                        val = string.Join(",", (string[])val);
+                        val = string.Join(",", (string[]) val);
                     }
                 }
 
@@ -357,6 +374,7 @@ namespace RestSharp
         public IRestRequest AddObject(object obj)
         {
             this.AddObject(obj, new string[] { });
+
             return this;
         }
 
@@ -368,6 +386,7 @@ namespace RestSharp
         public IRestRequest AddParameter(Parameter p)
         {
             this.Parameters.Add(p);
+
             return this;
         }
 
@@ -423,12 +442,12 @@ namespace RestSharp
         public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type)
         {
             return this.AddParameter(new Parameter
-            {
-                Name = name,
-                Value = value,
-                ContentType = contentType,
-                Type = type
-            });
+                                     {
+                                         Name = name,
+                                         Value = value,
+                                         ContentType = contentType,
+                                         Type = type
+                                     });
         }
 
         /// <summary>
@@ -496,17 +515,11 @@ namespace RestSharp
         /// </summary>
         public List<FileParameter> Files { get; private set; }
 
-        private Method method = Method.GET;
-
         /// <summary>
         /// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
         /// Default is GET
         /// </summary>
-        public Method Method
-        {
-            get { return this.method; }
-            set { this.method = value; }
-        }
+        public Method Method { get; set; }
 
         /// <summary>
         /// The Resource URL to make the request against.
@@ -522,17 +535,11 @@ namespace RestSharp
         /// </example>
         public string Resource { get; set; }
 
-        private DataFormat requestFormat = DataFormat.Xml;
-
         /// <summary>
         /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
         /// By default XmlSerializer is used.
         /// </summary>
-        public DataFormat RequestFormat
-        {
-            get { return this.requestFormat; }
-            set { this.requestFormat = value; }
-        }
+        public DataFormat RequestFormat { get; set; }
 
         /// <summary>
         /// Used by the default deserializers to determine where to start deserializing from.

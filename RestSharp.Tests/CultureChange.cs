@@ -11,14 +11,14 @@ namespace RestSharp.Tests
         public CultureChange(string culture)
         {
             if (culture == null)
+            {
                 throw new ArgumentNullException("culture");
+            }
 
             this.PreviousCulture = Thread.CurrentThread.CurrentCulture;
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
         }
-
-        #region IDisposable Members
 
         public void Dispose()
         {
@@ -29,7 +29,5 @@ namespace RestSharp.Tests
                 this.PreviousCulture = null;
             }
         }
-
-        #endregion
     }
 }

@@ -102,7 +102,7 @@
     <Compile Include="SampleClasses\nullables.cs" />
     <Compile Include="SampleClasses\eventful.cs" />
     <Compile Include="SampleClasses\Oddball.cs" />
-    <Compile Include="SampleClasses\SOUser.cs" />
+    <Compile Include="SampleClasses\SoUser.cs" />
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
@@ -118,6 +118,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\boolean_from_number.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\deserialize_as_list.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\Goodreads.xml">
@@ -226,9 +229,9 @@
       <Project>{CCC30138-3D68-44D8-AF1A-D22F769EE8DC}</Project>
       <Name>RestSharp.Build</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RestSharp\RestSharp.csproj">
-      <Project>{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}</Project>
-      <Name>RestSharp</Name>
+    <ProjectReference Include="..\RestSharp\RestSharp.Net35.csproj">
+      <Project>{2ececfbf-5f3e-40ee-a963-72336dc7abe2}</Project>
+      <Name>RestSharp.Net35</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

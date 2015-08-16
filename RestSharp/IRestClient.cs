@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,30 +13,32 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Net;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading;
 using System.Threading.Tasks;
 #endif
+
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp
 {
     public interface IRestClient
     {
-#if !PocketPC
         CookieContainer CookieContainer { get; set; }
-#endif
+
         int? MaxRedirects { get; set; }
 
         string UserAgent { get; set; }
@@ -60,7 +63,7 @@ namespace RestSharp
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
-#if FRAMEWORK || PocketPC
+#if FRAMEWORK
         IRestResponse Execute(IRestRequest request);
 
         IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
@@ -89,7 +92,8 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
-        RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod);
+        RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse,
+            RestRequestAsyncHandle> callback, string httpMethod);
 
         /// <summary>
         /// Executes a POST-style request and callback asynchronously, authenticating if needed
@@ -97,7 +101,8 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
-        RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod);
+        RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse,
+            RestRequestAsyncHandle> callback, string httpMethod);
 
         /// <summary>
         /// Executes a GET-style request and callback asynchronously, authenticating if needed
@@ -106,7 +111,8 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
-        RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
+        RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>,
+            RestRequestAsyncHandle> callback, string httpMethod);
 
         /// <summary>
         /// Executes a GET-style request and callback asynchronously, authenticating if needed
@@ -115,7 +121,8 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
-        RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod);
+        RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>,
+            RestRequestAsyncHandle> callback, string httpMethod);
 
         void AddHandler(string contentType, IDeserializer deserializer);
 

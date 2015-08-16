@@ -4,7 +4,8 @@ namespace RestSharp.Authenticators.OAuth
 {
     internal class HttpPostParameter : WebParameter
     {
-        public HttpPostParameter(string name, string value) : base(name, value) { }
+        public HttpPostParameter(string name, string value)
+            : base(name, value) { }
 
         public virtual HttpPostParameterType Type { get; private set; }
 
@@ -18,25 +19,26 @@ namespace RestSharp.Authenticators.OAuth
 
         public static HttpPostParameter CreateFile(string name, string fileName, string filePath, string contentType)
         {
-            var parameter = new HttpPostParameter(name, string.Empty)
-            {
-                Type = HttpPostParameterType.File,
-                FileName = fileName,
-                FilePath = filePath,
-                ContentType = contentType,
-            };
+            HttpPostParameter parameter = new HttpPostParameter(name, string.Empty)
+                                          {
+                                              Type = HttpPostParameterType.File,
+                                              FileName = fileName,
+                                              FilePath = filePath,
+                                              ContentType = contentType,
+                                          };
+
             return parameter;
         }
 
         public static HttpPostParameter CreateFile(string name, string fileName, Stream fileStream, string contentType)
         {
-            var parameter = new HttpPostParameter(name, string.Empty)
-            {
-                Type = HttpPostParameterType.File,
-                FileName = fileName,
-                FileStream = fileStream,
-                ContentType = contentType,
-            };
+            HttpPostParameter parameter = new HttpPostParameter(name, string.Empty)
+                                          {
+                                              Type = HttpPostParameterType.File,
+                                              FileName = fileName,
+                                              FileStream = fileStream,
+                                              ContentType = contentType,
+                                          };
 
             return parameter;
         }

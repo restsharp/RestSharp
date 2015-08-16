@@ -1,4 +1,5 @@
-﻿namespace RestSharp.Tests.SampleClasses
+﻿
+namespace RestSharp.Tests.SampleClasses
 {
     public enum ByteEnum : byte
     {
@@ -24,7 +25,7 @@
         EnumMax = 65535
     }
 
-    public enum IntEnum : int
+    public enum IntEnum
     {
         EnumMin = -2147483648,
         EnumMax = 2147483647

@@ -13,12 +13,12 @@ namespace RestSharp.IntegrationTests
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
 
-            using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.FileHandler))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.FileHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("Assets/Koala.jpg");
-                var response = client.DownloadData(request);
-                var expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Assets\\Koala.jpg");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("Assets/Koala.jpg");
+                byte[] response = client.DownloadData(request);
+                byte[] expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Assets\\Koala.jpg");
 
                 Assert.AreEqual(expected, response);
             }
@@ -33,20 +33,20 @@ namespace RestSharp.IntegrationTests
             {
                 string tempFile = Path.GetTempFileName();
 
-                using (var writer = File.OpenWrite(tempFile))
+                using (FileStream writer = File.OpenWrite(tempFile))
                 {
-                    var client = new RestClient(baseUrl);
-                    var request = new RestRequest("Assets/Koala.jpg")
-                                  {
-                                      ResponseWriter = (responseStream) => responseStream.CopyTo(writer)
-                                  };
-                    var response = client.DownloadData(request);
+                    RestClient client = new RestClient(baseUrl);
+                    RestRequest request = new RestRequest("Assets/Koala.jpg")
+                                          {
+                                              ResponseWriter = (responseStream) => responseStream.CopyTo(writer)
+                                          };
+                    byte[] response = client.DownloadData(request);
 
                     Assert.Null(response);
                 }
 
-                var fromTemp = File.ReadAllBytes(tempFile);
-                var expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Assets\\Koala.jpg");
+                byte[] fromTemp = File.ReadAllBytes(tempFile);
+                byte[] expected = File.ReadAllBytes(Environment.CurrentDirectory + "\\Assets\\Koala.jpg");
 
                 Assert.AreEqual(expected, fromTemp);
             }

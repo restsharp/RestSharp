@@ -26,10 +26,12 @@
 //
 // ------------------------------------------------------------------
 
+
 #if WINDOWS_PHONE
 
 using System;
 using System.IO;
+using System.Text;
 
 namespace RestSharp.Compression.ZLib
 {
@@ -73,7 +75,7 @@ namespace RestSharp.Compression.ZLib
     ///
     /// <seealso cref="DeflateStream" />
     /// <seealso cref="ZlibStream" />
-    internal class GZipStream : System.IO.Stream
+    internal class GZipStream : Stream
     {
         // GZip format
         // source: http://tools.ietf.org/html/rfc1952
@@ -128,15 +130,15 @@ namespace RestSharp.Compression.ZLib
         /// property will return null (Nothing in VB).
         /// </para>
         /// </remarks>
-        public String Comment
+        public string Comment
         {
-            get { return _Comment; }
+            get { return this.comment; }
             set
             {
-                if (_disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                _Comment = value;
+                this.comment = value;
             }
         }
 
@@ -157,44 +159,44 @@ namespace RestSharp.Compression.ZLib
         /// bytestream, the property will return null (Nothing in VB).
         /// </para>
         /// </remarks>
-        public String FileName
+        public string FileName
         {
-            get { return _FileName; }
+            get { return this.fileName; }
             set
             {
-                if (_disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                _FileName = value;
+                this.fileName = value;
 
-                if (_FileName == null)
+                if (this.fileName == null)
                     return;
 
-                if (_FileName.IndexOf("/") != -1)
+                if (this.fileName.IndexOf("/") != -1)
                 {
-                    _FileName = _FileName.Replace("/", "\\");
+                    this.fileName = this.fileName.Replace("/", "\\");
                 }
 
-                if (_FileName.EndsWith("\\"))
+                if (this.fileName.EndsWith("\\"))
                     throw new Exception("Illegal filename");
 
-                if (_FileName.IndexOf("\\") != -1)
+                if (this.fileName.IndexOf("\\") != -1)
                 {
                     // trim any leading path
-                    _FileName = Path.GetFileName(_FileName);
+                    this.fileName = Path.GetFileName(this.fileName);
                 }
             }
         }
 
-        /// <summary>
-        /// The last modified time for the GZIP stream.
-        /// </summary>
-        ///
-        /// <remarks> GZIP allows the storage of a last modified time with each GZIP entry.
-        /// When compressing data, you can set this before the first call to Write().  When
-        /// decompressing, you can retrieve this value any time after the first call to
-        /// Read().  </remarks>
-        public DateTime? LastModified;
+        // / <summary>
+        // / The last modified time for the GZIP stream.
+        // / </summary>
+        // /
+        // / <remarks> GZIP allows the storage of a last modified time with each GZIP entry.
+        // / When compressing data, you can set this before the first call to Write().  When
+        // / decompressing, you can retrieve this value any time after the first call to
+        // / Read().  </remarks>
+        //public DateTime? LastModified;
 
         /// <summary>
         /// The CRC on the GZIP stream. 
@@ -202,14 +204,13 @@ namespace RestSharp.Compression.ZLib
         /// <remarks>
         /// This is used for internal error checking. You probably don't need to look at this property.
         /// </remarks>
-        public int Crc32 { get { return _Crc32; } }
+        public int Crc32 { get; private set; }
 
-        internal ZlibBaseStream _baseStream;
-        bool _disposed;
-        bool _firstReadDone;
-        string _FileName;
-        string _Comment;
-        int _Crc32;
+        internal ZlibBaseStream BaseStream;
+        bool disposed;
+        bool firstReadDone;
+        string fileName;
+        string comment;
 
         /// <summary>
         /// Create a GZipStream using the specified CompressionMode and the specified CompressionLevel,
@@ -273,7 +274,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="level">A tuning knob to trade speed for effectiveness.</param>
         public GZipStream(Stream stream)
         {
-            _baseStream = new ZlibBaseStream(stream, ZlibStreamFlavor.GZIP, false);
+            this.BaseStream = new ZlibBaseStream(stream, ZlibStreamFlavor.Gzip, false);
         }
 
         #region Zlib properties
@@ -283,11 +284,13 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         virtual public FlushType FlushMode
         {
-            get { return (this._baseStream._flushMode); }
+            get { return (this.BaseStream.FlushMode); }
             set
             {
-                if (_disposed) throw new ObjectDisposedException("GZipStream");
-                this._baseStream._flushMode = value;
+                if (this.disposed)
+                    throw new ObjectDisposedException("GZipStream");
+
+                this.BaseStream.FlushMode = value;
             }
         }
 
@@ -309,32 +312,32 @@ namespace RestSharp.Compression.ZLib
         /// </remarks>
         public int BufferSize
         {
-            get { return this._baseStream._bufferSize; }
+            get { return this.BaseStream.BufferSize; }
             set
             {
-                if (_disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                if (this._baseStream._workingBuffer != null)
+                if (this.BaseStream.workingBuffer != null)
                     throw new ZlibException("The working buffer is already set.");
 
-                if (value < ZlibConstants.WorkingBufferSizeMin)
-                    throw new ZlibException(String.Format("Don't be silly. {0} bytes?? Use a bigger buffer.", value));
+                if (value < ZlibConstants.WORKING_BUFFER_SIZE_MIN)
+                    throw new ZlibException(string.Format("Don't be silly. {0} bytes?? Use a bigger buffer.", value));
 
-                this._baseStream._bufferSize = value;
+                this.BaseStream.BufferSize = value;
             }
         }
 
         /// <summary> Returns the total number of bytes input so far.</summary>
         virtual public long TotalIn
         {
-            get { return this._baseStream._z.TotalBytesIn; }
+            get { return this.BaseStream.z.TotalBytesIn; }
         }
 
         /// <summary> Returns the total number of bytes output so far.</summary>
         virtual public long TotalOut
         {
-            get { return this._baseStream._z.TotalBytesOut; }
+            get { return this.BaseStream.z.TotalBytesOut; }
         }
 
         #endregion
@@ -352,15 +355,15 @@ namespace RestSharp.Compression.ZLib
         {
             try
             {
-                if (!_disposed)
+                if (!this.disposed)
                 {
-                    if (disposing && (this._baseStream != null))
+                    if (disposing && (this.BaseStream != null))
                     {
-                        this._baseStream.Close();
-                        this._Crc32 = _baseStream.Crc32;
+                        this.BaseStream.Close();
+                        this.Crc32 = this.BaseStream.Crc32;
                     }
 
-                    _disposed = true;
+                    this.disposed = true;
                 }
             }
             finally
@@ -379,10 +382,10 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (_disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                return _baseStream._stream.CanRead;
+                return this.BaseStream.Stream.CanRead;
             }
         }
 
@@ -407,10 +410,10 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (_disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                return _baseStream._stream.CanWrite;
+                return this.BaseStream.Stream.CanWrite;
             }
         }
 
@@ -419,10 +422,10 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override void Flush()
         {
-            if (_disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("GZipStream");
 
-            _baseStream.Flush();
+            this.BaseStream.Flush();
         }
 
         /// <summary>
@@ -446,8 +449,8 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (this._baseStream._streamMode == ZlibBaseStream.StreamMode.Reader)
-                    return this._baseStream._z.TotalBytesIn + this._baseStream._gzipHeaderByteCount;
+                if (this.BaseStream.streamMode == ZlibBaseStream.StreamMode.Reader)
+                    return this.BaseStream.z.TotalBytesIn + this.BaseStream.GzipHeaderByteCount;
 
                 return 0;
             }
@@ -485,19 +488,19 @@ namespace RestSharp.Compression.ZLib
         /// <returns>the number of bytes actually read</returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("GZipStream");
 
-            int n = _baseStream.Read(buffer, offset, count);
+            int n = this.BaseStream.Read(buffer, offset, count);
 
             // Console.WriteLine("GZipStream::Read(buffer, off({0}), c({1}) = {2}", offset, count, n);
             // Console.WriteLine( Util.FormatByteArray(buffer, offset, n) );
 
-            if (!_firstReadDone)
+            if (!this.firstReadDone)
             {
-                _firstReadDone = true;
-                FileName = _baseStream._GzipFileName;
-                Comment = _baseStream._GzipComment;
+                this.firstReadDone = true;
+                this.FileName = this.BaseStream.GzipFileName;
+                this.Comment = this.BaseStream.GzipComment;
             }
 
             return n;
@@ -525,75 +528,80 @@ namespace RestSharp.Compression.ZLib
 
         #endregion
 
-        internal static System.DateTime _unixEpoch = new System.DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        internal static System.Text.Encoding iso8859dash1 = System.Text.Encoding.GetEncoding("iso-8859-1");
+        internal static DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        internal static Encoding Iso8859Dash1 = Encoding.GetEncoding("iso-8859-1");
 
-        private int EmitHeader()
-        {
-            byte[] commentBytes = (Comment == null) ? null : iso8859dash1.GetBytes(Comment);
-            byte[] filenameBytes = (FileName == null) ? null : iso8859dash1.GetBytes(FileName);
+        //private int EmitHeader()
+        //{
+        //    byte[] commentBytes = (Comment == null) ? null : Iso8859Dash1.GetBytes(Comment);
+        //    byte[] filenameBytes = (FileName == null) ? null : Iso8859Dash1.GetBytes(FileName);
 
-            int cbLength = (Comment == null) ? 0 : commentBytes.Length + 1;
-            int fnLength = (FileName == null) ? 0 : filenameBytes.Length + 1;
+        //    int cbLength = (Comment == null) ? 0 : commentBytes.Length + 1;
+        //    int fnLength = (FileName == null) ? 0 : filenameBytes.Length + 1;
 
-            int bufferLength = 10 + cbLength + fnLength;
-            byte[] header = new byte[bufferLength];
-            int i = 0;
-            // ID
-            header[i++] = 0x1F;
-            header[i++] = 0x8B;
+        //    int bufferLength = 10 + cbLength + fnLength;
+        //    byte[] header = new byte[bufferLength];
+        //    int i = 0;
 
-            // compression method
-            header[i++] = 8;
-            byte flag = 0;
+        //    // ID
+        //    header[i++] = 0x1F;
+        //    header[i++] = 0x8B;
 
-            if (Comment != null)
-                flag ^= 0x10;
+        //    // compression method
+        //    header[i++] = 8;
 
-            if (FileName != null)
-                flag ^= 0x8;
+        //    byte flag = 0;
 
-            // flag
-            header[i++] = flag;
+        //    if (Comment != null)
+        //        flag ^= 0x10;
 
-            // mtime
-            if (!LastModified.HasValue)
-                LastModified = DateTime.Now;
+        //    if (FileName != null)
+        //        flag ^= 0x8;
 
-            System.TimeSpan delta = LastModified.Value - _unixEpoch;
-            Int32 timet = (Int32)delta.TotalSeconds;
-            Array.Copy(BitConverter.GetBytes(timet), 0, header, i, 4);
-            i += 4;
+        //    // flag
+        //    header[i++] = flag;
 
-            // xflg
-            header[i++] = 0;    // this field is totally useless
-            // OS
-            header[i++] = 0xFF; // 0xFF == unspecified
+        //    // mtime
+        //    if (!LastModified.HasValue)
+        //        LastModified = DateTime.Now;
 
-            // extra field length - only if FEXTRA is set, which it is not.
-            //header[i++]= 0;
-            //header[i++]= 0;
+        //    TimeSpan delta = LastModified.Value - UnixEpoch;
+        //    int timet = (int) delta.TotalSeconds;
+        //    Array.Copy(BitConverter.GetBytes(timet), 0, header, i, 4);
 
-            // filename
-            if (fnLength != 0)
-            {
-                Array.Copy(filenameBytes, 0, header, i, fnLength - 1);
-                i += fnLength - 1;
-                header[i++] = 0; // terminate
-            }
+        //    i += 4;
 
-            // comment
-            if (cbLength != 0)
-            {
-                Array.Copy(commentBytes, 0, header, i, cbLength - 1);
-                i += cbLength - 1;
-                header[i++] = 0; // terminate
-            }
+        //    // xflg
+        //    header[i++] = 0;    // this field is totally useless
+        //    // OS
+        //    header[i++] = 0xFF; // 0xFF == unspecified
 
-            _baseStream._stream.Write(header, 0, header.Length);
+        //    // extra field length - only if FEXTRA is set, which it is not.
+        //    //header[i++]= 0;
+        //    //header[i++]= 0;
 
-            return header.Length; // bytes written
-        }
+        //    // filename
+        //    if (fnLength != 0)
+        //    {
+        //        Array.Copy(filenameBytes, 0, header, i, fnLength - 1);
+
+        //        i += fnLength - 1;
+        //        header[i++] = 0; // terminate
+        //    }
+
+        //    // comment
+        //    if (cbLength != 0)
+        //    {
+        //        Array.Copy(commentBytes, 0, header, i, cbLength - 1);
+
+        //        i += cbLength - 1;
+        //        header[i++] = 0; // terminate
+        //    }
+
+        //    BaseStream.stream.Write(header, 0, header.Length);
+
+        //    return header.Length; // bytes written
+        //}
 
         public override void Write(byte[] buffer, int offset, int count)
         {

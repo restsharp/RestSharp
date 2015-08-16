@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +13,15 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
+
+#if FRAMEWORK
 
 using System;
 using System.Net;
 
-#if FRAMEWORK
-
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
     /// <summary>
     /// Tries to Authenticate with the credentials of the currently logged in user, or impersonate a user
@@ -49,14 +51,16 @@ namespace RestSharp
         public NtlmAuthenticator(ICredentials credentials)
         {
             if (credentials == null)
+            {
                 throw new ArgumentNullException("credentials");
+            }
 
             this.credentials = credentials;
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
         {
-            request.Credentials = credentials;
+            request.Credentials = this.credentials;
         }
     }
 }

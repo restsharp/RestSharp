@@ -12,7 +12,7 @@ namespace RestSharp.Serializers
         /// </summary>
         public JsonSerializer()
         {
-            ContentType = "application/json";
+            this.ContentType = "application/json";
         }
 
         /// <summary>

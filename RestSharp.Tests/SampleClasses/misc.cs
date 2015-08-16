@@ -1,4 +1,5 @@
 ﻿#region Licensed
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +13,14 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using RestSharp.Serializers;
 
-namespace RestSharp.Tests
+namespace RestSharp.Tests.SampleClasses
 {
     public class PersonForXml
     {
@@ -40,11 +42,20 @@ namespace RestSharp.Tests
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy { get { return Ignore; } }
+        public string IgnoreProxy
+        {
+            get { return this.Ignore; }
+        }
 
-        protected string ReadOnly { get { return null; } }
+        protected string ReadOnly
+        {
+            get { return null; }
+        }
 
-        public string ReadOnlyProxy { get { return ReadOnly; } }
+        public string ReadOnlyProxy
+        {
+            get { return this.ReadOnly; }
+        }
 
         public FoeList Foes { get; set; }
 
@@ -66,7 +77,6 @@ namespace RestSharp.Tests
         {
             public string Name { get; set; }
         }
-
     }
 
     public class IncomingInvoice
@@ -102,11 +112,20 @@ namespace RestSharp.Tests
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy { get { return Ignore; } }
+        public string IgnoreProxy
+        {
+            get { return this.Ignore; }
+        }
 
-        protected string ReadOnly { get { return null; } }
+        protected string ReadOnly
+        {
+            get { return null; }
+        }
 
-        public string ReadOnlyProxy { get { return ReadOnly; } }
+        public string ReadOnlyProxy
+        {
+            get { return this.ReadOnly; }
+        }
 
         public Dictionary<string, Foe> Foes { get; set; }
 
@@ -118,14 +137,18 @@ namespace RestSharp.Tests
     public enum Order
     {
         First,
+
         Second,
+
         Third
     }
 
     public enum Disposition
     {
         Friendly,
+
         SoSo,
+
         SteerVeryClear
     }
 

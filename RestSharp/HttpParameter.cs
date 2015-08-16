@@ -1,5 +1,4 @@
-﻿
-namespace RestSharp
+﻿namespace RestSharp
 {
     /// <summary>
     /// Representation of an HTTP parameter (QueryString or Form value)

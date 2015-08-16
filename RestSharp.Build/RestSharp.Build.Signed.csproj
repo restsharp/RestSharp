@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CCC30138-3D68-44D8-AF1A-D22F769EE8DC}</ProjectGuid>
+    <ProjectGuid>{60CF35B5-ABE3-47E4-BA0C-0ABAF1618475}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RestSharp.Build</RootNamespace>

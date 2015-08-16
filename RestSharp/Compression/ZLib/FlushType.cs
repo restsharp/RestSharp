@@ -1,4 +1,5 @@
-﻿#if WINDOWS_PHONE
+﻿
+#if WINDOWS_PHONE
 
 using System;
 using System.Net;

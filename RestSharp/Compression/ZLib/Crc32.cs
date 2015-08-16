@@ -32,10 +32,11 @@
 //
 // ------------------------------------------------------------------
 
+
 #if WINDOWS_PHONE
 
 using System;
-using Interop = System.Runtime.InteropServices;
+using System.IO;
 
 namespace RestSharp.Compression.ZLib
 {
@@ -45,29 +46,60 @@ namespace RestSharp.Compression.ZLib
     /// directly by applications wishing to create, read, or manipulate zip archive
     /// files.
     /// </summary>
-    internal class CRC32
+    internal class Crc32
     {
-        /// <summary>
-        /// indicates the total number of bytes read on the CRC stream.
-        /// This is used when writing the ZipDirEntry when compressing files.
-        /// </summary>
-        public Int64 TotalBytesRead
+        // private member vars
+        private static readonly uint[] crc32Table;
+        private const int BUFFER_SIZE = 8192;
+        private uint runningCrc32Result = 0xFFFFFFFF;
+
+        // pre-initialize the crc table for speed of lookup.
+        static Crc32()
         {
-            get
+            unchecked
             {
-                return _TotalBytesRead;
+                // This is the official polynomial used by CRC32 in PKZip.
+                // Often the polynomial is shown reversed as 0x04C11DB7.
+                const uint dwPolynomial = 0xEDB88320;
+
+                crc32Table = new uint[256];
+
+                for (uint i = 0; i < 256; i++)
+                {
+                    uint dwCrc = i;
+
+                    for (uint j = 8; j > 0; j--)
+                    {
+                        if ((dwCrc & 1) == 1)
+                        {
+                            dwCrc = (dwCrc >> 1) ^ dwPolynomial;
+                        }
+                        else
+                        {
+                            dwCrc >>= 1;
+                        }
+                    }
+
+                    crc32Table[i] = dwCrc;
+                }
             }
         }
 
         /// <summary>
+        /// indicates the total number of bytes read on the CRC stream.
+        /// This is used when writing the ZipDirEntry when compressing files.
+        /// </summary>
+        public long TotalBytesRead { get; private set; }
+
+        /// <summary>
         /// Indicates the current CRC for all blocks slurped in.
         /// </summary>
-        public Int32 Crc32Result
+        public int Crc32Result
         {
             get
             {
                 // return one's complement of the running result
-                return unchecked((Int32)(~_RunningCrc32Result));
+                return unchecked((int) (~this.runningCrc32Result));
             }
         }
 
@@ -76,9 +108,9 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         /// <param name="input">The stream over which to calculate the CRC32</param>
         /// <returns>the CRC32 calculation</returns>
-        public Int32 GetCrc32(System.IO.Stream input)
+        public int GetCrc32(Stream input)
         {
-            return GetCrc32AndCopy(input, null);
+            return this.GetCrc32AndCopy(input, null);
         }
 
         /// <summary>
@@ -88,7 +120,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="input">The stream over which to calculate the CRC32</param>
         /// <param name="output">The stream into which to deflate the input</param>
         /// <returns>the CRC32 calculation</returns>
-        public Int32 GetCrc32AndCopy(System.IO.Stream input, System.IO.Stream output)
+        public int GetCrc32AndCopy(Stream input, Stream output)
         {
             if (input == null)
                 throw new ZlibException("The input stream must not be null.");
@@ -98,21 +130,28 @@ namespace RestSharp.Compression.ZLib
                 //UInt32 crc32Result;
                 //crc32Result = 0xFFFFFFFF;
                 byte[] buffer = new byte[BUFFER_SIZE];
-                int readSize = BUFFER_SIZE;
+                const int readSize = BUFFER_SIZE;
 
-                _TotalBytesRead = 0;
+                this.TotalBytesRead = 0;
                 int count = input.Read(buffer, 0, readSize);
-                if (output != null) output.Write(buffer, 0, count);
-                _TotalBytesRead += count;
+
+                if (output != null)
+                    output.Write(buffer, 0, count);
+
+                this.TotalBytesRead += count;
+
                 while (count > 0)
                 {
-                    SlurpBlock(buffer, 0, count);
+                    this.SlurpBlock(buffer, 0, count);
                     count = input.Read(buffer, 0, readSize);
-                    if (output != null) output.Write(buffer, 0, count);
-                    _TotalBytesRead += count;
+
+                    if (output != null)
+                        output.Write(buffer, 0, count);
+
+                    this.TotalBytesRead += count;
                 }
 
-                return (Int32)(~_RunningCrc32Result);
+                return (int) (~this.runningCrc32Result);
             }
         }
 
@@ -120,17 +159,17 @@ namespace RestSharp.Compression.ZLib
         /// Get the CRC32 for the given (word,byte) combo.  This is a computation
         /// defined by PKzip.
         /// </summary>
-        /// <param name="W">The word to start with.</param>
-        /// <param name="B">The byte to combine it with.</param>
+        /// <param name="w">The word to start with.</param>
+        /// <param name="b">The byte to combine it with.</param>
         /// <returns>The CRC-ized result.</returns>
-        public Int32 ComputeCrc32(Int32 W, byte B)
+        public int ComputeCrc32(int w, byte b)
         {
-            return _InternalComputeCrc32((UInt32)W, B);
+            return this.InternalComputeCrc32((uint) w, b);
         }
 
-        internal Int32 _InternalComputeCrc32(UInt32 W, byte B)
+        internal int InternalComputeCrc32(uint w, byte b)
         {
-            return (Int32)(crc32Table[(W ^ B) & 0xFF] ^ (W >> 8));
+            return (int) (crc32Table[(w ^ b) & 0xFF] ^ (w >> 8));
         }
 
         /// <summary>
@@ -148,53 +187,12 @@ namespace RestSharp.Compression.ZLib
             for (int i = 0; i < count; i++)
             {
                 int x = offset + i;
-                _RunningCrc32Result = ((_RunningCrc32Result) >> 8) ^ crc32Table[(block[x]) ^ ((_RunningCrc32Result) & 0x000000FF)];
+
+                this.runningCrc32Result = ((this.runningCrc32Result) >> 8) ^ crc32Table[(block[x]) ^ ((this.runningCrc32Result) & 0x000000FF)];
             }
 
-            _TotalBytesRead += count;
+            this.TotalBytesRead += count;
         }
-
-
-        // pre-initialize the crc table for speed of lookup.
-        static CRC32()
-        {
-            unchecked
-            {
-                // This is the official polynomial used by CRC32 in PKZip.
-                // Often the polynomial is shown reversed as 0x04C11DB7.
-                UInt32 dwPolynomial = 0xEDB88320;
-                UInt32 i, j;
-
-                crc32Table = new UInt32[256];
-
-                UInt32 dwCrc;
-
-                for (i = 0; i < 256; i++)
-                {
-                    dwCrc = i;
-
-                    for (j = 8; j > 0; j--)
-                    {
-                        if ((dwCrc & 1) == 1)
-                        {
-                            dwCrc = (dwCrc >> 1) ^ dwPolynomial;
-                        }
-                        else
-                        {
-                            dwCrc >>= 1;
-                        }
-                    }
-
-                    crc32Table[i] = dwCrc;
-                }
-            }
-        }
-
-        // private member vars
-        private Int64 _TotalBytesRead;
-        private static UInt32[] crc32Table;
-        private const int BUFFER_SIZE = 8192;
-        private UInt32 _RunningCrc32Result = 0xFFFFFFFF;
     }
 
     /// <summary>
@@ -216,27 +214,13 @@ namespace RestSharp.Compression.ZLib
     /// DotNetZip library.
     /// </para>
     /// </remarks>
-    internal class CrcCalculatorStream : System.IO.Stream, System.IDisposable
+    internal class CrcCalculatorStream : Stream, IDisposable
     {
-        private static readonly Int64 UnsetLengthLimit = -99;
+        private const long UNSET_LENGTH_LIMIT = -99;
 
-        private System.IO.Stream _innerStream;
-        private CRC32 _Crc32;
-        private Int64 _lengthLimit = -99;
-        private bool _leaveOpen;
-
-        /// <summary>
-        /// Gets the total number of bytes run through the CRC32 calculator.
-        /// </summary>
-        ///
-        /// <remarks>
-        /// This is either the total number of bytes read, or the total number of bytes
-        /// written, depending on the direction of this stream.
-        /// </remarks>
-        public Int64 TotalBytesSlurped
-        {
-            get { return _Crc32.TotalBytesRead; }
-        }
+        private readonly Stream innerStream;
+        private readonly Crc32 crc32;
+        private readonly long lengthLimit;
 
         /// <summary>
         /// The default constructor.
@@ -246,8 +230,8 @@ namespace RestSharp.Compression.ZLib
         /// open upon Close().
         /// </remarks>
         /// <param name="stream">The underlying stream</param>
-        public CrcCalculatorStream(System.IO.Stream stream)
-            : this(true, CrcCalculatorStream.UnsetLengthLimit, stream) { }
+        public CrcCalculatorStream(Stream stream)
+            : this(true, UNSET_LENGTH_LIMIT, stream) { }
 
         /// <summary>
         /// The constructor allows the caller to specify how to handle the underlying
@@ -256,8 +240,8 @@ namespace RestSharp.Compression.ZLib
         /// <param name="stream">The underlying stream</param>
         /// <param name="leaveOpen">true to leave the underlying stream 
         /// open upon close of the CrcCalculatorStream.; false otherwise.</param>
-        public CrcCalculatorStream(System.IO.Stream stream, bool leaveOpen)
-            : this(leaveOpen, CrcCalculatorStream.UnsetLengthLimit, stream) { }
+        public CrcCalculatorStream(Stream stream, bool leaveOpen)
+            : this(leaveOpen, UNSET_LENGTH_LIMIT, stream) { }
 
         /// <summary>
         /// A constructor allowing the specification of the length of the stream to read.
@@ -268,7 +252,7 @@ namespace RestSharp.Compression.ZLib
         /// </remarks>
         /// <param name="stream">The underlying stream</param>
         /// <param name="length">The length of the stream to slurp</param>
-        public CrcCalculatorStream(System.IO.Stream stream, Int64 length)
+        public CrcCalculatorStream(Stream stream, long length)
             : this(true, length, stream)
         {
             if (length < 0)
@@ -283,7 +267,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="length">The length of the stream to slurp</param>
         /// <param name="leaveOpen">true to leave the underlying stream 
         /// open upon close of the CrcCalculatorStream.; false otherwise.</param>
-        public CrcCalculatorStream(System.IO.Stream stream, Int64 length, bool leaveOpen)
+        public CrcCalculatorStream(Stream stream, long length, bool leaveOpen)
             : this(leaveOpen, length, stream)
         {
             if (length < 0)
@@ -296,32 +280,34 @@ namespace RestSharp.Compression.ZLib
         // is no length set.  So we validate the length limit in those ctors that use an
         // explicit param, otherwise we don't validate, because it could be our special
         // value.
-        private CrcCalculatorStream(bool leaveOpen, Int64 length, System.IO.Stream stream)
-            : base()
+        private CrcCalculatorStream(bool leaveOpen, long length, Stream stream)
         {
-            _innerStream = stream;
-            _Crc32 = new CRC32();
-            _lengthLimit = length;
-            _leaveOpen = leaveOpen;
+            this.innerStream = stream;
+            this.crc32 = new Crc32();
+            this.lengthLimit = length;
+            this.LeaveOpen = leaveOpen;
         }
+
+        /// <summary>
+        /// Gets the total number of bytes run through the CRC32 calculator.
+        /// </summary>
+        ///
+        /// <remarks>
+        /// This is either the total number of bytes read, or the total number of bytes
+        /// written, depending on the direction of this stream.
+        /// </remarks>
+        public long TotalBytesSlurped { get { return this.crc32.TotalBytesRead; } }
 
         /// <summary>
         /// Provides the current CRC for all blocks slurped in.
         /// </summary>
-        public Int32 Crc
-        {
-            get { return _Crc32.Crc32Result; }
-        }
+        public int Crc { get { return this.crc32.Crc32Result; } }
 
         /// <summary>
         /// Indicates whether the underlying stream will be left open when the
         /// CrcCalculatorStream is Closed.
         /// </summary>
-        public bool LeaveOpen
-        {
-            get { return _leaveOpen; }
-            set { _leaveOpen = value; }
-        }
+        public bool LeaveOpen { get; set; }
 
         /// <summary>
         /// Read from the stream
@@ -342,17 +328,21 @@ namespace RestSharp.Compression.ZLib
             // calling ReadToEnd() on it, We can "over-read" the zip data and get a
             // corrupt string.  The length limits that, prevents that problem.
 
-            if (_lengthLimit != CrcCalculatorStream.UnsetLengthLimit)
+            if (this.lengthLimit != UNSET_LENGTH_LIMIT)
             {
-                if (_Crc32.TotalBytesRead >= _lengthLimit) return 0; // EOF
-                Int64 bytesRemaining = _lengthLimit - _Crc32.TotalBytesRead;
-                if (bytesRemaining < count) bytesToRead = (int)bytesRemaining;
+                if (this.crc32.TotalBytesRead >= this.lengthLimit)
+                    return 0; // EOF
+
+                long bytesRemaining = this.lengthLimit - this.crc32.TotalBytesRead;
+
+                if (bytesRemaining < count)
+                    bytesToRead = (int) bytesRemaining;
             }
 
-            int n = _innerStream.Read(buffer, offset, bytesToRead);
+            int n = this.innerStream.Read(buffer, offset, bytesToRead);
 
             if (n > 0)
-                _Crc32.SlurpBlock(buffer, offset, n);
+                this.crc32.SlurpBlock(buffer, offset, n);
 
             return n;
         }
@@ -366,9 +356,9 @@ namespace RestSharp.Compression.ZLib
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (count > 0)
-                _Crc32.SlurpBlock(buffer, offset, count);
+                this.crc32.SlurpBlock(buffer, offset, count);
 
-            _innerStream.Write(buffer, offset, count);
+            this.innerStream.Write(buffer, offset, count);
         }
 
         /// <summary>
@@ -376,7 +366,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override bool CanRead
         {
-            get { return _innerStream.CanRead; }
+            get { return this.innerStream.CanRead; }
         }
 
         /// <summary>
@@ -384,7 +374,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override bool CanSeek
         {
-            get { return _innerStream.CanSeek; }
+            get { return this.innerStream.CanSeek; }
         }
 
         /// <summary>
@@ -392,7 +382,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override bool CanWrite
         {
-            get { return _innerStream.CanWrite; }
+            get { return this.innerStream.CanWrite; }
         }
 
         /// <summary>
@@ -400,7 +390,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override void Flush()
         {
-            _innerStream.Flush();
+            this.innerStream.Flush();
         }
 
         /// <summary>
@@ -408,13 +398,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override long Length
         {
-            get
-            {
-                if (_lengthLimit == CrcCalculatorStream.UnsetLengthLimit)
-                    return _innerStream.Length;
-                else
-                    return _lengthLimit;
-            }
+            get { return this.lengthLimit == UNSET_LENGTH_LIMIT ? this.innerStream.Length : this.lengthLimit; }
         }
 
         /// <summary>
@@ -422,7 +406,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override long Position
         {
-            get { return _Crc32.TotalBytesRead; }
+            get { return this.crc32.TotalBytesRead; }
             set { throw new NotImplementedException(); }
         }
 
@@ -432,7 +416,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="offset">N/A</param>
         /// <param name="origin">N/A</param>
         /// <returns>N/A</returns>
-        public override long Seek(long offset, System.IO.SeekOrigin origin)
+        public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotImplementedException();
         }
@@ -446,10 +430,9 @@ namespace RestSharp.Compression.ZLib
             throw new NotImplementedException();
         }
 
-
         void IDisposable.Dispose()
         {
-            Close();
+            this.Close();
         }
 
         /// <summary>
@@ -459,8 +442,8 @@ namespace RestSharp.Compression.ZLib
         {
             base.Close();
 
-            if (!_leaveOpen)
-                _innerStream.Close();
+            if (!this.LeaveOpen)
+                this.innerStream.Close();
         }
     }
 }

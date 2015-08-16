@@ -1,4 +1,5 @@
 #region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +13,13 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Linq;
 
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
     /// <summary>
     /// Base class for OAuth 2 Authenticators.
@@ -35,7 +37,7 @@ namespace RestSharp
         /// <summary>
         /// Access token to be used when authenticating.
         /// </summary>
-        private readonly string _accessToken;
+        private readonly string accessToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2Authenticator"/> class.
@@ -45,7 +47,7 @@ namespace RestSharp
         /// </param>
         protected OAuth2Authenticator(string accessToken)
         {
-            _accessToken = accessToken;
+            this.accessToken = accessToken;
         }
 
         /// <summary>
@@ -53,7 +55,7 @@ namespace RestSharp
         /// </summary>
         public string AccessToken
         {
-            get { return _accessToken; }
+            get { return this.accessToken; }
         }
 
         public abstract void Authenticate(IRestClient client, IRestRequest request);
@@ -93,7 +95,7 @@ namespace RestSharp
         /// <summary>
         /// Stores the Authorization header value as "[tokenType] accessToken". used for performance.
         /// </summary>
-        private readonly string _authorizationValue;
+        private readonly string authorizationValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2AuthorizationRequestHeaderAuthenticator"/> class.
@@ -117,7 +119,7 @@ namespace RestSharp
             : base(accessToken)
         {
             // Conatenate during constructor so that it is only done once. can improve performance.
-            _authorizationValue = tokenType + " " + accessToken;
+            this.authorizationValue = tokenType + " " + accessToken;
         }
 
         public override void Authenticate(IRestClient client, IRestRequest request)
@@ -125,7 +127,7 @@ namespace RestSharp
             // only add the Authorization parameter if it hasn't been added.
             if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
             {
-                request.AddParameter("Authorization", _authorizationValue, ParameterType.HttpHeader);
+                request.AddParameter("Authorization", this.authorizationValue, ParameterType.HttpHeader);
             }
         }
     }

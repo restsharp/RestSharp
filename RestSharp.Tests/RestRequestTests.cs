@@ -16,15 +16,16 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Add_Object_With_IntegerArray_property()
         {
-            var request = new RestRequest();
+            RestRequest request = new RestRequest();
+
             request.AddObject(new { Items = new [] { 2, 3, 4 } });
         }
 
         [Test]
         public void Cannot_Set_Empty_Host_Header()
         {
-            var request = new RestRequest();
-            var exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", string.Empty));
+            RestRequest request = new RestRequest();
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", string.Empty));
 
             Assert.AreEqual("value", exception.ParamName);
         }
@@ -45,8 +46,8 @@ namespace RestSharp.Tests
         [TestCase("foo:bar:baz")]
         public void Cannot_Set_Invalid_Host_Header(string value)
         {
-            var request = new RestRequest();
-            var exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", value));
+            RestRequest request = new RestRequest();
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => request.AddHeader("Host", value));
 
             Assert.AreEqual("value", exception.ParamName);
         }
@@ -66,7 +67,7 @@ namespace RestSharp.Tests
         [TestCase("multi--hyphens")]
         public void Can_Set_Valid_Host_Header(string value)
         {
-            var request = new RestRequest();
+            RestRequest request = new RestRequest();
 
             Assert.DoesNotThrow(() => request.AddHeader("Host", value));
         }

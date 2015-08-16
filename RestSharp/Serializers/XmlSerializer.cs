@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +13,15 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
 
@@ -33,7 +37,7 @@ namespace RestSharp.Serializers
         /// </summary>
         public XmlSerializer()
         {
-            ContentType = "text/xml";
+            this.ContentType = "text/xml";
         }
 
         /// <summary>
@@ -42,8 +46,8 @@ namespace RestSharp.Serializers
         /// <param name="namespace">XML namespace</param>
         public XmlSerializer(string @namespace)
         {
-            Namespace = @namespace;
-            ContentType = "text/xml";
+            this.Namespace = @namespace;
+            this.ContentType = "text/xml";
         }
 
         /// <summary>
@@ -53,26 +57,26 @@ namespace RestSharp.Serializers
         /// <returns>XML as string</returns>
         public string Serialize(object obj)
         {
-            var doc = new XDocument();
-            var t = obj.GetType();
-            var name = t.Name;
-            var options = t.GetAttribute<SerializeAsAttribute>();
+            XDocument doc = new XDocument();
+            Type t = obj.GetType();
+            string name = t.Name;
+            SerializeAsAttribute options = t.GetAttribute<SerializeAsAttribute>();
 
             if (options != null)
             {
                 name = options.TransformName(options.Name ?? name);
             }
 
-            var root = new XElement(name.AsNamespaced(Namespace));
+            XElement root = new XElement(name.AsNamespaced(this.Namespace));
 
             if (obj is IList)
             {
-                var itemTypeName = "";
+                string itemTypeName = "";
 
-                foreach (var item in (IList)obj)
+                foreach (object item in (IList) obj)
                 {
-                    var type = item.GetType();
-                    var opts = type.GetAttribute<SerializeAsAttribute>();
+                    Type type = item.GetType();
+                    SerializeAsAttribute opts = type.GetAttribute<SerializeAsAttribute>();
 
                     if (opts != null)
                     {
@@ -84,18 +88,20 @@ namespace RestSharp.Serializers
                         itemTypeName = type.Name;
                     }
 
-                    var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                    XElement instance = new XElement(itemTypeName.AsNamespaced(this.Namespace));
 
-                    Map(instance, item);
+                    this.Map(instance, item);
                     root.Add(instance);
                 }
             }
             else
-                Map(root, obj);
-
-            if (RootElement.HasValue())
             {
-                var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
+                this.Map(root, obj);
+            }
+
+            if (this.RootElement.HasValue())
+            {
+                XElement wrapper = new XElement(this.RootElement.AsNamespaced(this.Namespace), root);
                 doc.Add(wrapper);
             }
             else
@@ -106,38 +112,42 @@ namespace RestSharp.Serializers
             return doc.ToString();
         }
 
-        private void Map(XElement root, object obj)
+        private void Map(XContainer root, object obj)
         {
-            var objType = obj.GetType();
-            var props = from p in objType.GetProperties()
-                        let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
-                        where p.CanRead && p.CanWrite
-                        orderby indexAttribute == null ? int.MaxValue : indexAttribute.Index
-                        select p;
-            var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            Type objType = obj.GetType();
+            IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
+                                              let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
+                                              where p.CanRead && p.CanWrite
+                                              orderby indexAttribute == null
+                                                  ? int.MaxValue
+                                                  : indexAttribute.Index
+                                              select p;
+            SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
 
-            foreach (var prop in props)
+            foreach (PropertyInfo prop in props)
             {
-                var name = prop.Name;
-                var rawValue = prop.GetValue(obj, null);
+                string name = prop.Name;
+                object rawValue = prop.GetValue(obj, null);
 
                 if (rawValue == null)
                 {
                     continue;
                 }
 
-                var value = GetSerializedValue(rawValue);
-                var propType = prop.PropertyType;
-                var useAttribute = false;
-                var settings = prop.GetAttribute<SerializeAsAttribute>();
+                string value = this.GetSerializedValue(rawValue);
+                Type propType = prop.PropertyType;
+                bool useAttribute = false;
+                SerializeAsAttribute settings = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (settings != null)
                 {
-                    name = settings.Name.HasValue() ? settings.Name : name;
+                    name = settings.Name.HasValue()
+                        ? settings.Name
+                        : name;
                     useAttribute = settings.Attribute;
                 }
 
-                var options = prop.GetAttribute<SerializeAsAttribute>();
+                SerializeAsAttribute options = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (options != null)
                 {
@@ -148,8 +158,8 @@ namespace RestSharp.Serializers
                     name = globalOptions.TransformName(name);
                 }
 
-                var nsName = name.AsNamespaced(Namespace);
-                var element = new XElement(nsName);
+                XName nsName = name.AsNamespaced(this.Namespace);
+                XElement element = new XElement(nsName);
 
                 if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
                 {
@@ -163,28 +173,29 @@ namespace RestSharp.Serializers
                 }
                 else if (rawValue is IList)
                 {
-                    var itemTypeName = "";
+                    string itemTypeName = "";
 
-                    foreach (var item in (IList)rawValue)
+                    foreach (object item in (IList) rawValue)
                     {
                         if (itemTypeName == "")
                         {
-                            var type = item.GetType();
-                            var setting = type.GetAttribute<SerializeAsAttribute>();
+                            Type type = item.GetType();
+                            SerializeAsAttribute setting = type.GetAttribute<SerializeAsAttribute>();
+
                             itemTypeName = setting != null && setting.Name.HasValue()
                                 ? setting.Name
                                 : type.Name;
                         }
 
-                        var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                        XElement instance = new XElement(itemTypeName.AsNamespaced(this.Namespace));
 
-                        Map(instance, item);
+                        this.Map(instance, item);
                         element.Add(instance);
                     }
                 }
                 else
                 {
-                    Map(element, rawValue);
+                    this.Map(element, rawValue);
                 }
 
                 root.Add(element);
@@ -193,16 +204,16 @@ namespace RestSharp.Serializers
 
         private string GetSerializedValue(object obj)
         {
-            var output = obj;
+            object output = obj;
 
-            if (obj is DateTime && DateFormat.HasValue())
+            if (obj is DateTime && this.DateFormat.HasValue())
             {
-                output = ((DateTime)obj).ToString(DateFormat, CultureInfo.InvariantCulture);
+                output = ((DateTime) obj).ToString(this.DateFormat, CultureInfo.InvariantCulture);
             }
 
             if (obj is bool)
             {
-                output = ((bool)obj).ToString(CultureInfo.InvariantCulture).ToLower();
+                output = ((bool) obj).ToString(CultureInfo.InvariantCulture).ToLower();
             }
 
             if (IsNumeric(obj))
@@ -213,67 +224,102 @@ namespace RestSharp.Serializers
             return output.ToString();
         }
 
-        static string SerializeNumber(object number)
+        private static string SerializeNumber(object number)
         {
             if (number is long)
-                return ((long)number).ToString(CultureInfo.InvariantCulture);
+            {
+                return ((long) number).ToString(CultureInfo.InvariantCulture);
+            }
 
             if (number is ulong)
-                return ((ulong)number).ToString(CultureInfo.InvariantCulture);
+            {
+                return ((ulong) number).ToString(CultureInfo.InvariantCulture);
+            }
 
             if (number is int)
-                return ((int)number).ToString(CultureInfo.InvariantCulture);
+            {
+                return ((int) number).ToString(CultureInfo.InvariantCulture);
+            }
 
             if (number is uint)
-                return ((uint)number).ToString(CultureInfo.InvariantCulture);
+            {
+                return ((uint) number).ToString(CultureInfo.InvariantCulture);
+            }
 
             if (number is decimal)
-                return ((decimal)number).ToString(CultureInfo.InvariantCulture);
+            {
+                return ((decimal) number).ToString(CultureInfo.InvariantCulture);
+            }
 
             if (number is float)
-                return ((float)number).ToString(CultureInfo.InvariantCulture);
+            {
+                return ((float) number).ToString(CultureInfo.InvariantCulture);
+            }
 
-            return (Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
+            return (Convert.ToDouble(number, CultureInfo.InvariantCulture)
+                           .ToString("r", CultureInfo.InvariantCulture));
         }
 
         /// <summary>
         /// Determines if a given object is numeric in any way
         /// (can be integer, double, null, etc).
         /// </summary>
-        static bool IsNumeric(object value)
+        private static bool IsNumeric(object value)
         {
             if (value is sbyte)
+            {
                 return true;
+            }
 
             if (value is byte)
+            {
                 return true;
+            }
 
             if (value is short)
+            {
                 return true;
+            }
 
             if (value is ushort)
+            {
                 return true;
+            }
 
             if (value is int)
+            {
                 return true;
+            }
 
             if (value is uint)
+            {
                 return true;
+            }
 
             if (value is long)
+            {
                 return true;
+            }
 
             if (value is ulong)
+            {
                 return true;
+            }
 
             if (value is float)
+            {
                 return true;
+            }
 
             if (value is double)
+            {
                 return true;
+            }
 
             if (value is decimal)
+            {
                 return true;
+            }
 
             return false;
         }

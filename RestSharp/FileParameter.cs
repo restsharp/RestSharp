@@ -18,20 +18,20 @@ namespace RestSharp
         ///<returns>The <see cref="FileParameter"/></returns>
         public static FileParameter Create(string name, byte[] data, string filename, string contentType)
         {
-#if FRAMEWORK && !PocketPC
-            var length = data.LongLength;
+#if FRAMEWORK
+            long length = data.LongLength;
 #else
-            var length = (long)data.Length;
+            long length = data.Length;
 #endif
 
             return new FileParameter
-            {
-                Writer = s => s.Write(data, 0, data.Length),
-                FileName = filename,
-                ContentType = contentType,
-                ContentLength = length,
-                Name = name
-            };
+                   {
+                       Writer = s => s.Write(data, 0, data.Length),
+                       FileName = filename,
+                       ContentType = contentType,
+                       ContentLength = length,
+                       Name = name
+                   };
         }
 
         ///<summary>
@@ -50,10 +50,12 @@ namespace RestSharp
         /// The length of data to be sent
         /// </summary>
         public long ContentLength { get; set; }
+
         /// <summary>
         /// Provides raw data for file
         /// </summary>
         public Action<Stream> Writer { get; set; }
+
         /// <summary>
         /// Name of the file to use when uploading
         /// </summary>

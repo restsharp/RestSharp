@@ -1,4 +1,5 @@
-﻿namespace RestSharp.IntegrationTests.Models
+﻿
+namespace RestSharp.IntegrationTests.Models
 {
     /// <summary>
     /// Model for used by the LinkedIN integration tests.

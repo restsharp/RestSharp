@@ -2,7 +2,7 @@ using System;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !PocketPC
+#if !SILVERLIGHT && !WINDOWS_PHONE
     [Serializable]
 #endif
     public class OAuthWebQueryInfo

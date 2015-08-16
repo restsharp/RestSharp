@@ -63,10 +63,8 @@
 //
 // -----------------------------------------------------------------------
 
-#if WINDOWS_PHONE
 
-using System;
-using Interop = System.Runtime.InteropServices;
+#if WINDOWS_PHONE
 
 namespace RestSharp.Compression.ZLib
 {
@@ -133,11 +131,9 @@ namespace RestSharp.Compression.ZLib
         /// <summary>
         /// used for diagnostics, when something goes wrong!
         /// </summary>
-        public System.String Message;
+        public string Message;
 
-        internal InflateManager istate;
-
-        internal long _Adler32;
+        internal InflateManager Istate;
 
         /// <summary>
         /// The number of Window Bits to use.  
@@ -148,20 +144,22 @@ namespace RestSharp.Compression.ZLib
         /// setting alone if you don't know what it is.  The maximum value is 15 bits, which implies
         /// a 32k window.  
         /// </remarks>
-        public int WindowBits = ZlibConstants.WindowBitsDefault;
+        public int WindowBits = ZlibConstants.WINDOW_BITS_DEFAULT;
 
         /// <summary>
         /// The Adler32 checksum on the data transferred through the codec so far. You probably don't need to look at this.
         /// </summary>
-        public long Adler32 { get { return _Adler32; } }
+        public long Adler32 { get; internal set; }
 
         /// <summary>
         /// Create a ZlibCodec that decompresses.
         /// </summary>
         public ZlibCodec()
         {
-            int rc = InitializeInflate();
-            if (rc != ZlibConstants.Z_OK) throw new ZlibException("Cannot initialize for inflate.");
+            int rc = this.InitializeInflate();
+
+            if (rc != ZlibConstants.Z_OK)
+                throw new ZlibException("Cannot initialize for inflate.");
         }
 
         /// <summary>
@@ -174,7 +172,7 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int InitializeInflate()
         {
-            return InitializeInflate(this.WindowBits);
+            return this.InitializeInflate(this.WindowBits);
         }
 
         /// <summary>
@@ -197,7 +195,7 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int InitializeInflate(bool expectRfc1950Header)
         {
-            return InitializeInflate(this.WindowBits, expectRfc1950Header);
+            return this.InitializeInflate(this.WindowBits, expectRfc1950Header);
         }
 
         /// <summary>
@@ -209,7 +207,8 @@ namespace RestSharp.Compression.ZLib
         public int InitializeInflate(int windowBits)
         {
             this.WindowBits = windowBits;
-            return InitializeInflate(windowBits, true);
+
+            return this.InitializeInflate(windowBits, true);
         }
 
         /// <summary>
@@ -238,8 +237,9 @@ namespace RestSharp.Compression.ZLib
             //if (dstate != null)
             //    throw new ZlibException("You may not call InitializeInflate() after calling InitializeDeflate().");
 
-            istate = new InflateManager(expectRfc1950Header);
-            return istate.Initialize(this, windowBits);
+            this.Istate = new InflateManager(expectRfc1950Header);
+
+            return this.Istate.Initialize(this, windowBits);
         }
 
         /// <summary>
@@ -307,10 +307,10 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int Inflate(FlushType flush)
         {
-            if (istate == null)
+            if (this.Istate == null)
                 throw new ZlibException("No Inflate State!");
 
-            return istate.Inflate(flush);
+            return this.Istate.Inflate(flush);
         }
 
         /// <summary>
@@ -324,12 +324,12 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int EndInflate()
         {
-            if (istate == null)
+            if (this.Istate == null)
                 throw new ZlibException("No Inflate State!");
 
-            int ret = istate.End();
+            int ret = this.Istate.End();
 
-            istate = null;
+            this.Istate = null;
 
             return ret;
         }
@@ -340,10 +340,10 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int SyncInflate()
         {
-            if (istate == null)
+            if (this.Istate == null)
                 throw new ZlibException("No Inflate State!");
 
-            return istate.Sync();
+            return this.Istate.Sync();
         }
 
         /// <summary>
@@ -353,8 +353,8 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if all goes well.</returns>
         public int SetDictionary(byte[] dictionary)
         {
-            if (istate != null)
-                return istate.SetDictionary(dictionary);
+            if (this.Istate != null)
+                return this.Istate.SetDictionary(dictionary);
 
             throw new ZlibException("No Inflate state!");
         }

@@ -4,7 +4,6 @@ using NUnit.Framework;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
 
-
 namespace RestSharp.Tests
 {
     [TestFixture]
@@ -28,7 +27,8 @@ namespace RestSharp.Tests
         [TestCase("\x00\x01\a\b\f\n\r\t\v", @"%00%01%07%08%0C%0A%0D%09%0B")]
         public void UrlStrictEncode_Encodes_Correctly(string value, string expected)
         {
-            var actual = OAuthTools.UrlEncodeStrict(value);
+            string actual = OAuthTools.UrlEncodeStrict(value);
+
             Assert.AreEqual(expected, actual);
         }
 
@@ -38,7 +38,8 @@ namespace RestSharp.Tests
         [TestCase("\r\n\t", "%0D%0A%09")]
         public void PercentEncode_Encodes_Correctly(string value, string expected)
         {
-            var actual = value.PercentEncode();
+            string actual = value.PercentEncode();
+
             Assert.AreEqual(expected, actual);
         }
     }

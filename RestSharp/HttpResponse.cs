@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -26,15 +28,16 @@ namespace RestSharp
     /// </summary>
     public class HttpResponse : IHttpResponse
     {
-        private string _content;
+        private string content;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         public HttpResponse()
         {
-            Headers = new List<HttpHeader>();
-            Cookies = new List<HttpCookie>();
+            this.ResponseStatus = ResponseStatus.None;
+            this.Headers = new List<HttpHeader>();
+            this.Cookies = new List<HttpCookie>();
         }
 
         /// <summary>
@@ -57,8 +60,9 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get { return _content ?? (_content = RawBytes.AsString()); }
+            get { return this.content ?? (this.content = this.RawBytes.AsString()); }
         }
+
         /// <summary>
         /// HTTP response status code
         /// </summary>
@@ -94,17 +98,11 @@ namespace RestSharp
         /// </summary>
         public IList<HttpCookie> Cookies { get; private set; }
 
-        private ResponseStatus _responseStatus = ResponseStatus.None;
-
         /// <summary>
         /// Status of the request. Will return Error for transport errors.
         /// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
         /// </summary>
-        public ResponseStatus ResponseStatus
-        {
-            get { return _responseStatus; }
-            set { _responseStatus = value; }
-        }
+        public ResponseStatus ResponseStatus { get; set; }
 
         /// <summary>
         /// Transport or other non-HTTP error generated while attempting request

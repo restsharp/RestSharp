@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +13,16 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
 using System.Threading;
+using System.Net;
 
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading.Tasks;
 #endif
-
-using System.Net;
 
 namespace RestSharp
 {
@@ -35,11 +36,7 @@ namespace RestSharp
         public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback)
         {
-#if PocketPC
-            string method = request.Method.ToString();
-#else
             string method = Enum.GetName(typeof(Method), request.Method);
-#endif
 
             switch (request.Method)
             {
@@ -83,44 +80,41 @@ namespace RestSharp
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod,
             Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
         {
-            var http = this.HttpFactory.Create();
+            IHttp http = this.HttpFactory.Create();
 
             this.AuthenticateIfNeeded(this, request);
-
             this.ConfigureHttp(request, http);
 
-            var asyncHandle = new RestRequestAsyncHandle();
+            RestRequestAsyncHandle asyncHandle = new RestRequestAsyncHandle();
+            Action<HttpResponse> responseCb = r => ProcessResponse(request, r, asyncHandle, callback);
 
-            Action<HttpResponse> response_cb = r => this.ProcessResponse(request, r, asyncHandle, callback);
-
-#if !PocketPC
             if (this.UseSynchronizationContext && SynchronizationContext.Current != null)
             {
-                var ctx = SynchronizationContext.Current;
-                var cb = response_cb;
+                SynchronizationContext ctx = SynchronizationContext.Current;
+                Action<HttpResponse> cb = responseCb;
 
-                response_cb = resp => ctx.Post(s => cb(resp), null);
+                responseCb = resp => ctx.Post(s => cb(resp), null);
             }
-#endif
 
-            asyncHandle.WebRequest = getWebRequest(http, response_cb, httpMethod);
+            asyncHandle.WebRequest = getWebRequest(http, responseCb, httpMethod);
+
             return asyncHandle;
         }
 
-        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> response_cb, string method)
+        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method)
         {
-            return http.AsGetAsync(response_cb, method);
+            return http.AsGetAsync(responseCb, method);
         }
 
-        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> response_cb, string method)
+        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method)
         {
-            return http.AsPostAsync(response_cb, method);
+            return http.AsPostAsync(responseCb, method);
         }
 
-        private void ProcessResponse(IRestRequest request, HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
+        private static void ProcessResponse(IRestRequest request, HttpResponse httpResponse,
+            RestRequestAsyncHandle asyncHandle, Action<IRestResponse, RestRequestAsyncHandle> callback)
         {
-            var restResponse = ConvertToRestResponse(request, httpResponse);
+            RestResponse restResponse = ConvertToRestResponse(request, httpResponse);
             callback(restResponse, asyncHandle);
         }
 
@@ -165,9 +159,8 @@ namespace RestSharp
                 (response, asyncHandle) => this.DeserializeResponse(request, callback, response, asyncHandle), httpMethod);
         }
 
-        private void DeserializeResponse<T>(IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback, IRestResponse response,
-            RestRequestAsyncHandle asyncHandle)
+        private void DeserializeResponse<T>(IRestRequest request, Action<IRestResponse<T>,
+            RestRequestAsyncHandle> callback, IRestResponse response, RestRequestAsyncHandle asyncHandle)
         {
             IRestResponse<T> restResponse;
 
@@ -178,12 +171,12 @@ namespace RestSharp
             catch (Exception ex)
             {
                 restResponse = new RestResponse<T>
-                {
-                    Request = request,
-                    ResponseStatus = ResponseStatus.Error,
-                    ErrorMessage = ex.Message,
-                    ErrorException = ex
-                };
+                               {
+                                   Request = request,
+                                   ResponseStatus = ResponseStatus.Error,
+                                   ErrorMessage = ex.Message,
+                                   ErrorException = ex
+                               };
             }
 
             callback(restResponse, asyncHandle);
@@ -214,6 +207,7 @@ namespace RestSharp
             }
 
             request.Method = Method.GET;
+
             return this.ExecuteTaskAsync<T>(request, token);
         }
 
@@ -241,6 +235,7 @@ namespace RestSharp
             }
 
             request.Method = Method.POST;
+
             return this.ExecuteTaskAsync<T>(request, token);
         }
 
@@ -267,28 +262,34 @@ namespace RestSharp
                 throw new ArgumentNullException("request");
             }
 
-            var taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
+            TaskCompletionSource<IRestResponse<T>> taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
 
             try
             {
-                var async = this.ExecuteAsync<T>(request, (response, _) =>
+                RestRequestAsyncHandle async = this.ExecuteAsync<T>(
+                    request,
+                    (response, _) =>
                     {
                         if (token.IsCancellationRequested)
                         {
                             taskCompletionSource.TrySetCanceled();
                         }
-                        //Don't run TrySetException, since we should set Error properties and swallow exceptions to be consistent with sync methods
+                        // Don't run TrySetException, since we should set Error properties and swallow exceptions
+                        // to be consistent with sync methods
                         else
                         {
                             taskCompletionSource.TrySetResult(response);
                         }
                     });
 
-                var registration = token.Register(() =>
-                    {
-                        async.Abort();
-                        taskCompletionSource.TrySetCanceled();
-                    });
+#if !WINDOWS_PHONE
+                CancellationTokenRegistration registration =
+#endif
+                    token.Register(() =>
+                                   {
+                                       async.Abort();
+                                       taskCompletionSource.TrySetCanceled();
+                                   });
 
 #if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);
@@ -333,6 +334,7 @@ namespace RestSharp
             }
 
             request.Method = Method.GET;
+
             return this.ExecuteTaskAsync(request, token);
         }
 
@@ -358,6 +360,7 @@ namespace RestSharp
             }
 
             request.Method = Method.POST;
+
             return this.ExecuteTaskAsync(request, token);
         }
 
@@ -373,28 +376,35 @@ namespace RestSharp
                 throw new ArgumentNullException("request");
             }
 
-            var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
+            TaskCompletionSource<IRestResponse> taskCompletionSource = new TaskCompletionSource<IRestResponse>();
 
             try
             {
-                var async = this.ExecuteAsync(request, (response, _) =>
+                RestRequestAsyncHandle async = this.ExecuteAsync(
+                    request,
+                    (response, _) =>
                     {
                         if (token.IsCancellationRequested)
                         {
                             taskCompletionSource.TrySetCanceled();
                         }
-                        //Don't run TrySetException, since we should set Error properties and swallow exceptions to be consistent with sync methods
+                        // Don't run TrySetException, since we should set Error
+                        // properties and swallow exceptions to be consistent
+                        // with sync methods
                         else
                         {
                             taskCompletionSource.TrySetResult(response);
                         }
                     });
 
-                var registration = token.Register(() =>
-                                                  {
-                                                      async.Abort();
-                                                      taskCompletionSource.TrySetCanceled();
-                                                  });
+#if !WINDOWS_PHONE
+                CancellationTokenRegistration registration =
+#endif
+                    token.Register(() =>
+                                   {
+                                       async.Abort();
+                                       taskCompletionSource.TrySetCanceled();
+                                   });
 
 #if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);

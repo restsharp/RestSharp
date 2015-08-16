@@ -17,6 +17,7 @@ namespace RestSharp.IntegrationTests
         }
 
         private const string XML_CONTENT = "<Person><name>Bob</name><age>50</age></Person>";
+
         private const string JSON_CONTENT = @"{ ""name"":""Bob"", ""age"":50 }";
 
         private static void QueryStringBasedContentAndContentTypeHandler(HttpListenerContext obj)
@@ -33,13 +34,13 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, QueryStringBasedContentAndContentTypeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest();
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest();
 
                 request.AddParameter("ct", "application/vnd.somebody.something+json");
                 request.AddParameter("c", JSON_CONTENT);
 
-                var response = client.Execute<Person>(request);
+                IRestResponse<Person> response = client.Execute<Person>(request);
 
                 Assert.AreEqual("Bob", response.Data.Name);
                 Assert.AreEqual(50, response.Data.Age);
@@ -53,13 +54,13 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, QueryStringBasedContentAndContentTypeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest();
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest();
 
                 request.AddParameter("ct", "application/vnd.somebody.something+xml");
                 request.AddParameter("c", XML_CONTENT);
 
-                var response = client.Execute<Person>(request);
+                IRestResponse<Person> response = client.Execute<Person>(request);
 
                 Assert.AreEqual("Bob", response.Data.Name);
                 Assert.AreEqual(50, response.Data.Age);
@@ -73,17 +74,17 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, QueryStringBasedContentAndContentTypeHandler))
             {
-                var client = new RestClient(baseUrl);
+                RestClient client = new RestClient(baseUrl);
 
                 // In spite of the content type (+xml), treat this specific content type as JSON
                 client.AddHandler("application/vnd.somebody.something+xml", new JsonDeserializer());
 
-                var request = new RestRequest();
+                RestRequest request = new RestRequest();
 
                 request.AddParameter("ct", "application/vnd.somebody.something+xml");
                 request.AddParameter("c", JSON_CONTENT);
 
-                var response = client.Execute<Person>(request);
+                IRestResponse<Person> response = client.Execute<Person>(request);
 
                 Assert.AreEqual("Bob", response.Data.Name);
                 Assert.AreEqual(50, response.Data.Age);
@@ -97,17 +98,17 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, QueryStringBasedContentAndContentTypeHandler))
             {
-                var client = new RestClient(baseUrl);
+                RestClient client = new RestClient(baseUrl);
 
                 // In spite of the content type, handle ALL structured syntax suffixes of "+xml" as JSON
                 client.AddHandler("*+xml", new JsonDeserializer());
 
-                var request = new RestRequest();
+                RestRequest request = new RestRequest();
 
                 request.AddParameter("ct", "application/vnd.somebody.something+xml");
                 request.AddParameter("c", JSON_CONTENT);
 
-                var response = client.Execute<Person>(request);
+                IRestResponse<Person> response = client.Execute<Person>(request);
 
                 Assert.AreEqual("Bob", response.Data.Name);
                 Assert.AreEqual(50, response.Data.Age);
@@ -121,13 +122,13 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, QueryStringBasedContentAndContentTypeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest();
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest();
 
                 request.AddParameter("ct", "application/json");
                 request.AddParameter("c", JSON_CONTENT);
 
-                var response = client.Execute<Person>(request);
+                IRestResponse<Person> response = client.Execute<Person>(request);
 
                 Assert.AreEqual("Bob", response.Data.Name);
                 Assert.AreEqual(50, response.Data.Age);
@@ -141,13 +142,13 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, QueryStringBasedContentAndContentTypeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest();
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest();
 
                 request.AddParameter("ct", "text/xml");
                 request.AddParameter("c", XML_CONTENT);
 
-                var response = client.Execute<Person>(request);
+                IRestResponse<Person> response = client.Execute<Person>(request);
 
                 Assert.AreEqual("Bob", response.Data.Name);
                 Assert.AreEqual(50, response.Data.Age);

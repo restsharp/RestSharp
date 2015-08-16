@@ -62,29 +62,31 @@
 //
 // -----------------------------------------------------------------------
 
+
 #if WINDOWS_PHONE
 
 using System;
-using Interop = System.Runtime.InteropServices;
+using System.IO;
+using System.Text;
 
 namespace RestSharp.Compression.ZLib
 {
     /// <summary>
     /// A general purpose exception class for exceptions in the Zlib library.
     /// </summary>
-    internal class ZlibException : System.Exception
+    internal class ZlibException : Exception
     {
         /// <summary>
         /// The ZlibException class captures exception information generated
         /// by the Zlib library. 
         /// </summary>
-        public ZlibException() : base() { }
+        public ZlibException() { }
 
         /// <summary>
         /// This ctor collects a message attached to the exception.
         /// </summary>
         /// <param name="s"></param>
-        public ZlibException(System.String s) : base(s) { }
+        public ZlibException(string s) : base(s) { }
     }
 
     internal class SharedUtils
@@ -95,7 +97,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="number">Number to operate on</param>
         /// <param name="bits">Ammount of bits to shift</param>
         /// <returns>The resulting number from the shift operation</returns>
-        public static int URShift(int number, int bits)
+        public static int UrShift(int number, int bits)
         {
             return (int)((uint)number >> bits);
         }
@@ -106,9 +108,9 @@ namespace RestSharp.Compression.ZLib
         /// <param name="number">Number to operate on</param>
         /// <param name="bits">Ammount of bits to shift</param>
         /// <returns>The resulting number from the shift operation</returns>
-        public static long URShift(long number, int bits)
+        public static long UrShift(long number, int bits)
         {
-            return (long)((UInt64)number >> bits);
+            return (long)((ulong)number >> bits);
         }
 
 #if NOTUSED
@@ -172,7 +174,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="start">The starting index of the target array.</param>
         /// <param name="count">The maximum number of characters to read from the source TextReader.</param>
         /// <returns>The number of characters read. The number will be less than or equal to count depending on the data available in the source TextReader. Returns -1 if the end of the stream is reached.</returns>
-        public static System.Int32 ReadInput(System.IO.TextReader sourceTextReader, byte[] target, int start, int count)
+        public static int ReadInput(TextReader sourceTextReader, byte[] target, int start, int count)
         {
             // Returns 0 bytes if not enough space in target
             if (target.Length == 0)
@@ -191,14 +193,14 @@ namespace RestSharp.Compression.ZLib
             return bytesRead;
         }
 
-        internal static byte[] ToByteArray(System.String sourceString)
+        internal static byte[] ToByteArray(string sourceString)
         {
-            return System.Text.UTF8Encoding.UTF8.GetBytes(sourceString);
+            return Encoding.UTF8.GetBytes(sourceString);
         }
 
         internal static char[] ToCharArray(byte[] byteArray)
         {
-            return System.Text.UTF8Encoding.UTF8.GetChars(byteArray);
+            return Encoding.UTF8.GetChars(byteArray);
         }
     }
 
@@ -215,8 +217,9 @@ namespace RestSharp.Compression.ZLib
     {
         // largest prime smaller than 65536
         private static int BASE = 65521;
+
         // NMAX is the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1
-        private static int NMAX = 5552;
+        private static int nmax = 5552;
 
         static internal long Adler32(long adler, byte[] buf, int index, int len)
         {
@@ -227,11 +230,11 @@ namespace RestSharp.Compression.ZLib
 
             long s1 = adler & 0xffff;
             long s2 = (adler >> 16) & 0xffff;
-            int k;
 
             while (len > 0)
             {
-                k = len < NMAX ? len : NMAX;
+                int k = len < nmax ? len : nmax;
+
                 len -= k;
 
                 while (k >= 16)
@@ -270,16 +273,6 @@ namespace RestSharp.Compression.ZLib
 
             return (s2 << 16) | s1;
         }
-
-        /*
-        private java.util.zip.Adler32 adler=new java.util.zip.Adler32();
-        long adler32(long value, byte[] buf, int index, int len){
-        if(value==1) {adler.reset();}
-        if(buf==null) {adler.reset();}
-        else{adler.update(buf, index, len);}
-        return adler.getValue();
-        }
-        */
     }
 }
 

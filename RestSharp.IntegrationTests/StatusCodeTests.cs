@@ -14,11 +14,11 @@ namespace RestSharp.IntegrationTests
         {
             Uri baseUrl = new Uri("http://localhost:8080/");
 
-            using(SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("404");
-                var response = client.Execute(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("404");
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
             }
@@ -31,12 +31,12 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("404");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("404");
 
                 request.AddBody("This is the body");
 
-                var response = client.Execute(request);
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
             }
@@ -52,10 +52,13 @@ namespace RestSharp.IntegrationTests
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
 
-            using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("error") { RootElement = "Success" };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("error")
+                                      {
+                                          RootElement = "Success"
+                                      };
 
                 request.OnBeforeDeserialization = resp =>
                                                   {
@@ -65,7 +68,7 @@ namespace RestSharp.IntegrationTests
                                                       }
                                                   };
 
-                var response = client.Execute<Response>(request);
+                IRestResponse<Response> response = client.Execute<Response>(request);
 
                 Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
                 Assert.AreEqual("Not found!", response.Data.Message);
@@ -77,10 +80,13 @@ namespace RestSharp.IntegrationTests
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
 
-            using(SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("success") { RootElement = "Success" };
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("success")
+                                      {
+                                          RootElement = "Success"
+                                      };
 
                 request.OnBeforeDeserialization = resp =>
                                                   {
@@ -90,7 +96,7 @@ namespace RestSharp.IntegrationTests
                                                       }
                                                   };
 
-                var response = client.Execute<Response>(request);
+                IRestResponse<Response> response = client.Execute<Response>(request);
 
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
                 Assert.AreEqual("Works!", response.Data.Message);
@@ -100,12 +106,12 @@ namespace RestSharp.IntegrationTests
 
     public class ResponseHandler
     {
-        void error(HttpListenerContext context)
+        private void error(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
             context.Response.Headers.Add("Content-Type", "application/xml");
             context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Error>
         <Message>Not found!</Message>
@@ -113,12 +119,12 @@ namespace RestSharp.IntegrationTests
 </Response>");
         }
 
-        void errorwithbody(HttpListenerContext context)
+        private void errorwithbody(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
             context.Response.Headers.Add("Content-Type", "application/xml");
             context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Error>
         <Message>Not found!</Message>
@@ -126,10 +132,10 @@ namespace RestSharp.IntegrationTests
 </Response>");
         }
 
-        void success(HttpListenerContext context)
+        private void success(HttpListenerContext context)
         {
             context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Success>
         <Message>Works!</Message>

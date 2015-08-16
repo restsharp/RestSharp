@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -19,14 +21,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp
@@ -37,13 +40,9 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version
-#if PocketPC
-        static readonly Version version = Assembly.GetExecutingAssembly().GetName().Version;
-#else
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-#endif
-        public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
+        public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
         /// <summary>
         /// Maximum number of redirects to follow if FollowRedirects is true
@@ -74,12 +73,10 @@ namespace RestSharp
         /// </summary>
         public bool FollowRedirects { get; set; }
 
-#if !PocketPC
         /// <summary>
         /// The CookieContainer used for requests made by this client instance
         /// </summary>
         public CookieContainer CookieContainer { get; set; }
-#endif
 
         /// <summary>
         /// UserAgent to use for requests made by this client instance
@@ -115,9 +112,7 @@ namespace RestSharp
         /// </example>
         public virtual Uri BaseUrl { get; set; }
 
-        private Encoding encoding = Encoding.UTF8;
-
-        public Encoding Encoding { get { return this.encoding; } set { this.encoding = value; } }
+        public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
 
@@ -126,6 +121,7 @@ namespace RestSharp
         /// </summary>
         public RestClient()
         {
+            this.Encoding = Encoding.UTF8;
 #if WINDOWS_PHONE
             this.UseSynchronizationContext = true;
 #endif
@@ -162,8 +158,10 @@ namespace RestSharp
         /// <param name="baseUrl"></param>
         public RestClient(string baseUrl) : this()
         {
-            if (String.IsNullOrEmpty(baseUrl))
+            if (string.IsNullOrEmpty(baseUrl))
+            {
                 throw new ArgumentNullException("baseUrl");
+            }
 
             this.BaseUrl = new Uri(baseUrl);
         }
@@ -187,11 +185,11 @@ namespace RestSharp
         {
             this.ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*" && !structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
+            if (contentType != "*" && !this.structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
-                var accepts = string.Join(", ", AcceptTypes.ToArray());
+                string accepts = string.Join(", ", this.AcceptTypes.ToArray());
 
                 this.RemoveDefaultParameter("Accept");
                 this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
@@ -227,49 +225,61 @@ namespace RestSharp
         private IDeserializer GetHandler(string contentType)
         {
             if (contentType == null)
+            {
                 throw new ArgumentNullException("contentType");
+            }
 
             if (string.IsNullOrEmpty(contentType) && this.ContentHandlers.ContainsKey("*"))
             {
-                return ContentHandlers["*"];
+                return this.ContentHandlers["*"];
             }
 
-            var semicolonIndex = contentType.IndexOf(';');
+            int semicolonIndex = contentType.IndexOf(';');
 
             if (semicolonIndex > -1)
+            {
                 contentType = contentType.Substring(0, semicolonIndex);
+            }
 
             if (this.ContentHandlers.ContainsKey(contentType))
+            {
                 return this.ContentHandlers[contentType];
+            }
 
             // https://tools.ietf.org/html/rfc6839#page-4
-            Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
+            Match structuredSyntaxSuffixMatch = this.structuredSyntaxSuffixRegex.Match(contentType);
 
             if (structuredSyntaxSuffixMatch.Success)
             {
                 string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
 
                 if (this.ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                {
                     return this.ContentHandlers[structuredSyntaxSuffixWildcard];
+                }
             }
 
             if (this.ContentHandlers.ContainsKey("*"))
+            {
                 return this.ContentHandlers["*"];
+            }
 
             return null;
         }
 
 #if SILVERLIGHT
         private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 #else
         private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 #endif
 
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
         {
-            if (Authenticator != null)
+            if (this.Authenticator != null)
             {
                 this.Authenticator.Authenticate(client, request);
             }
@@ -283,13 +293,15 @@ namespace RestSharp
         public Uri BuildUri(IRestRequest request)
         {
             if (this.BaseUrl == null)
+            {
                 throw new NullReferenceException("RestClient must contain a value for BaseUrl");
+            }
 
-            var assembled = request.Resource;
-            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            var builder = new UriBuilder(this.BaseUrl);
+            string assembled = request.Resource;
+            IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            UriBuilder builder = new UriBuilder(this.BaseUrl);
 
-            foreach (var p in urlParms)
+            foreach (Parameter p in urlParms)
             {
                 if (p.Value == null)
                 {
@@ -299,7 +311,9 @@ namespace RestSharp
                 }
 
                 if (!string.IsNullOrEmpty(assembled))
+                {
                     assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                }
 
                 builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
             }
@@ -314,7 +328,9 @@ namespace RestSharp
             if (this.BaseUrl != null && !string.IsNullOrEmpty(this.BaseUrl.AbsoluteUri))
             {
                 if (!this.BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+                {
                     assembled = string.Concat("/", assembled);
+                }
 
                 assembled = string.IsNullOrEmpty(assembled)
                     ? this.BaseUrl.AbsoluteUri
@@ -325,20 +341,28 @@ namespace RestSharp
 
             if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
             {
-                parameters = request.Parameters.Where(
-                    p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString).ToList();
+                parameters = request.Parameters
+                                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                                p.Type == ParameterType.QueryString)
+                                    .ToList();
             }
             else
             {
-                parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString).ToList();
+                parameters = request.Parameters
+                                    .Where(p => p.Type == ParameterType.QueryString)
+                                    .ToList();
             }
 
             if (!parameters.Any())
+            {
                 return new Uri(assembled);
+            }
 
             // build and attach querystring
-            var data = EncodeParameters(parameters);
-            var separator = assembled.Contains("?") ? "&" : "?";
+            string data = EncodeParameters(parameters);
+            string separator = assembled != null && assembled.Contains("?")
+                ? "&"
+                : "?";
 
             assembled = string.Concat(assembled, separator, data);
 
@@ -347,11 +371,8 @@ namespace RestSharp
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
-#if !PocketPC
-            return string.Join("&", parameters.Select(EncodeParameter).ToArray());
-#else
-            return string.Join("&", parameters.Select(x => EncodeParameter(x)).ToArray());
-#endif
+            return string.Join("&", parameters.Select(EncodeParameter)
+                                              .ToArray());
         }
 
         private static string EncodeParameter(Parameter parameter)
@@ -365,15 +386,12 @@ namespace RestSharp
         {
             http.Encoding = this.Encoding;
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
-#if !PocketPC
             http.UseDefaultCredentials = request.UseDefaultCredentials;
-#endif
             http.ResponseWriter = request.ResponseWriter;
-#if !PocketPC
-            http.CookieContainer = CookieContainer;
-#endif
+            http.CookieContainer = this.CookieContainer;
+
             // move RestClient.DefaultParameters into Request.Parameters
-            foreach (var p in DefaultParameters)
+            foreach (Parameter p in this.DefaultParameters)
             {
                 if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
                 {
@@ -384,31 +402,34 @@ namespace RestSharp
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-#if PocketPC
-            if (request.Parameters.All(p2 => p2.Name.ToLower() != "accept"))
-#else
             if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
-#endif
             {
-                var accepts = string.Join(", ", AcceptTypes.ToArray());
+                string accepts = string.Join(", ", this.AcceptTypes.ToArray());
+
                 request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
             }
 
-            http.Url = BuildUri(request);
+            http.Url = this.BuildUri(request);
             http.PreAuthenticate = this.PreAuthenticate;
 
-            var userAgent = UserAgent ?? http.UserAgent;
+            string userAgent = this.UserAgent ?? http.UserAgent;
 
-            http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
+            http.UserAgent = userAgent.HasValue()
+                ? userAgent
+                : "RestSharp/" + version;
 
-            var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+            int timeout = request.Timeout > 0
+                ? request.Timeout
+                : this.Timeout;
 
             if (timeout > 0)
             {
                 http.Timeout = timeout;
             }
 
-            var readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
+            int readWriteTimeout = request.ReadWriteTimeout > 0
+                ? request.ReadWriteTimeout
+                : this.ReadWriteTimeout;
 
             if (readWriteTimeout > 0)
             {
@@ -416,18 +437,17 @@ namespace RestSharp
             }
 
 #if !SILVERLIGHT
-            http.FollowRedirects = FollowRedirects;
+            http.FollowRedirects = this.FollowRedirects;
 #endif
 
 #if FRAMEWORK
-            if (ClientCertificates != null)
+            if (this.ClientCertificates != null)
             {
                 http.ClientCertificates = this.ClientCertificates;
             }
 
-            http.MaxRedirects = MaxRedirects;
-
-            http.CachePolicy = CachePolicy;
+            http.MaxRedirects = this.MaxRedirects;
+            http.CachePolicy = this.CachePolicy;
 #endif
 
             if (request.Credentials != null)
@@ -435,47 +455,46 @@ namespace RestSharp
                 http.Credentials = request.Credentials;
             }
 
-            var headers = from p in request.Parameters
-                          where p.Type == ParameterType.HttpHeader
-                          select new HttpHeader
-                                 {
-                                     Name = p.Name,
-                                     Value = Convert.ToString(p.Value)
-                                 };
+            IEnumerable<HttpHeader> headers = from p in request.Parameters
+                                              where p.Type == ParameterType.HttpHeader
+                                              select new HttpHeader
+                                                     {
+                                                         Name = p.Name,
+                                                         Value = Convert.ToString(p.Value)
+                                                     };
 
-            foreach (var header in headers)
+            foreach (HttpHeader header in headers)
             {
                 http.Headers.Add(header);
             }
 
-            var cookies = from p in request.Parameters
-                          where p.Type == ParameterType.Cookie
-                          select new HttpCookie
-                                 {
-                                     Name = p.Name,
-                                     Value = Convert.ToString(p.Value)
-                                 };
+            IEnumerable<HttpCookie> cookies = from p in request.Parameters
+                                              where p.Type == ParameterType.Cookie
+                                              select new HttpCookie
+                                                     {
+                                                         Name = p.Name,
+                                                         Value = Convert.ToString(p.Value)
+                                                     };
 
-            foreach (var cookie in cookies)
+            foreach (HttpCookie cookie in cookies)
             {
                 http.Cookies.Add(cookie);
             }
 
-            var @params = from p in request.Parameters
-                          where p.Type == ParameterType.GetOrPost
-                                && p.Value != null
-                          select new HttpParameter
-                                 {
-                                     Name = p.Name,
-                                     Value = Convert.ToString(p.Value)
-                                 };
+            IEnumerable<HttpParameter> @params = from p in request.Parameters
+                                                 where p.Type == ParameterType.GetOrPost && p.Value != null
+                                                 select new HttpParameter
+                                                        {
+                                                            Name = p.Name,
+                                                            Value = Convert.ToString(p.Value)
+                                                        };
 
-            foreach (var parameter in @params)
+            foreach (HttpParameter parameter in @params)
             {
                 http.Parameters.Add(parameter);
             }
 
-            foreach (var file in request.Files)
+            foreach (FileParameter file in request.Files)
             {
                 http.Files.Add(new HttpFile
                                {
@@ -487,9 +506,7 @@ namespace RestSharp
                                });
             }
 
-            var body = (from p in request.Parameters
-                        where p.Type == ParameterType.RequestBody
-                        select p).FirstOrDefault();
+            Parameter body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
             // Only add the body if there aren't any files to make it a multipart form request
             // If there are files, then add the body to the HTTP Parameters
@@ -502,9 +519,13 @@ namespace RestSharp
                     object val = body.Value;
 
                     if (val is byte[])
-                        http.RequestBodyBytes = (byte[])val;
+                    {
+                        http.RequestBodyBytes = (byte[]) val;
+                    }
                     else
+                    {
                         http.RequestBody = Convert.ToString(body.Value);
+                    }
                 }
                 else
                 {
@@ -524,33 +545,33 @@ namespace RestSharp
 #if FRAMEWORK
         private void ConfigureProxy(IHttp http)
         {
-            if (Proxy != null)
+            if (this.Proxy != null)
             {
-                http.Proxy = Proxy;
+                http.Proxy = this.Proxy;
             }
         }
 #endif
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
         {
-            var restResponse = new RestResponse
-                               {
-                                   Content = httpResponse.Content,
-                                   ContentEncoding = httpResponse.ContentEncoding,
-                                   ContentLength = httpResponse.ContentLength,
-                                   ContentType = httpResponse.ContentType,
-                                   ErrorException = httpResponse.ErrorException,
-                                   ErrorMessage = httpResponse.ErrorMessage,
-                                   RawBytes = httpResponse.RawBytes,
-                                   ResponseStatus = httpResponse.ResponseStatus,
-                                   ResponseUri = httpResponse.ResponseUri,
-                                   Server = httpResponse.Server,
-                                   StatusCode = httpResponse.StatusCode,
-                                   StatusDescription = httpResponse.StatusDescription,
-                                   Request = request
-                               };
+            RestResponse restResponse = new RestResponse
+                                        {
+                                            Content = httpResponse.Content,
+                                            ContentEncoding = httpResponse.ContentEncoding,
+                                            ContentLength = httpResponse.ContentLength,
+                                            ContentType = httpResponse.ContentType,
+                                            ErrorException = httpResponse.ErrorException,
+                                            ErrorMessage = httpResponse.ErrorMessage,
+                                            RawBytes = httpResponse.RawBytes,
+                                            ResponseStatus = httpResponse.ResponseStatus,
+                                            ResponseUri = httpResponse.ResponseUri,
+                                            Server = httpResponse.Server,
+                                            StatusCode = httpResponse.StatusCode,
+                                            StatusDescription = httpResponse.StatusDescription,
+                                            Request = request
+                                        };
 
-            foreach (var header in httpResponse.Headers)
+            foreach (HttpHeader header in httpResponse.Headers)
             {
                 restResponse.Headers.Add(new Parameter
                                          {
@@ -560,7 +581,7 @@ namespace RestSharp
                                          });
             }
 
-            foreach (var cookie in httpResponse.Cookies)
+            foreach (HttpCookie cookie in httpResponse.Cookies)
             {
                 restResponse.Cookies.Add(new RestResponseCookie
                                          {

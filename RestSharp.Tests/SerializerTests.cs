@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -21,6 +23,7 @@ using System.Threading;
 using System.Xml.Linq;
 using NUnit.Framework;
 using RestSharp.Serializers;
+using RestSharp.Tests.SampleClasses;
 
 namespace RestSharp.Tests
 {
@@ -36,16 +39,15 @@ namespace RestSharp.Tests
         [Test]
         public void Serializes_Properties_In_Specified_Order()
         {
-            var ordered = new OrderedProperties
-                          {
-                              Name = "Name",
-                              Age = 99,
-                              StartDate = new DateTime(2010, 1, 1)
-                          };
-
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(ordered);
-            var expected = GetSortedPropsXDoc();
+            OrderedProperties ordered = new OrderedProperties
+                                        {
+                                            Name = "Name",
+                                            Age = 99,
+                                            StartDate = new DateTime(2010, 1, 1)
+                                        };
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(ordered);
+            XDocument expected = GetSortedPropsXDoc();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -53,22 +55,22 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_simple_POCO()
         {
-            var poco = new Person
-                       {
-                           Name = "Foo",
-                           Age = 50,
-                           Price = 19.95m,
-                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                           Items = new List<Item>
-                                   {
-                                       new Item { Name = "One", Value = 1 },
-                                       new Item { Name = "Two", Value = 2 },
-                                       new Item { Name = "Three", Value = 3 }
-                                   }
-                       };
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDoc();
+            Person poco = new Person
+                          {
+                              Name = "Foo",
+                              Age = 50,
+                              Price = 19.95m,
+                              StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                              Items = new List<Item>
+                                      {
+                                          new Item { Name = "One", Value = 1 },
+                                          new Item { Name = "Two", Value = 2 },
+                                          new Item { Name = "Three", Value = 3 }
+                                      }
+                          };
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(poco);
+            XDocument expected = GetSimplePocoXDoc();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -76,11 +78,11 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_Enum()
         {
-            var enumClass = new ClassWithEnum { Color = Color.Red };
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(enumClass);
-            var expected = new XDocument();
-            var root = new XElement("ClassWithEnum");
+            ClassWithEnum enumClass = new ClassWithEnum { Color = Color.Red };
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(enumClass);
+            XDocument expected = new XDocument();
+            XElement root = new XElement("ClassWithEnum");
 
             root.Add(new XElement("Color", "Red"));
             expected.Add(root);
@@ -91,16 +93,16 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_simple_POCO_With_DateFormat_Specified()
         {
-            var poco = new Person
-                       {
-                           Name = "Foo",
-                           Age = 50,
-                           Price = 19.95m,
-                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-                       };
-            var xml = new XmlSerializer { DateFormat = DateFormat.Iso8601 };
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithIsoDate();
+            Person poco = new Person
+                          {
+                              Name = "Foo",
+                              Age = 50,
+                              Price = 19.95m,
+                              StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+                          };
+            XmlSerializer xml = new XmlSerializer { DateFormat = DateFormat.ISO_8601 };
+            string doc = xml.Serialize(poco);
+            XDocument expected = GetSimplePocoXDocWithIsoDate();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -108,17 +110,17 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
         {
-            var poco = new Person
-                       {
-                           Name = "Foo",
-                           Age = 50,
-                           Price = 19.95m,
-                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                           IsCool = false
-                       };
-            var xml = new XmlSerializer { DateFormat = DateFormat.Iso8601 };
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithXmlProperty();
+            Person poco = new Person
+                          {
+                              Name = "Foo",
+                              Age = 50,
+                              Price = 19.95m,
+                              StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                              IsCool = false
+                          };
+            XmlSerializer xml = new XmlSerializer { DateFormat = DateFormat.ISO_8601 };
+            string doc = xml.Serialize(poco);
+            XDocument expected = GetSimplePocoXDocWithXmlProperty();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -126,16 +128,16 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_simple_POCO_With_Different_Root_Element()
         {
-            var poco = new Person
-                       {
-                           Name = "Foo",
-                           Age = 50,
-                           Price = 19.95m,
-                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-                       };
-            var xml = new XmlSerializer {RootElement = "Result"};
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithRoot();
+            Person poco = new Person
+                          {
+                              Name = "Foo",
+                              Age = 50,
+                              Price = 19.95m,
+                              StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+                          };
+            XmlSerializer xml = new XmlSerializer { RootElement = "Result" };
+            string doc = xml.Serialize(poco);
+            XDocument expected = GetSimplePocoXDocWithRoot();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -143,16 +145,16 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_simple_POCO_With_Attribute_Options_Defined()
         {
-            var poco = new WackyPerson
-                       {
-                           Name = "Foo",
-                           Age = 50,
-                           Price = 19.95m,
-                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-                       };
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWackyNames();
+            WackyPerson poco = new WackyPerson
+                               {
+                                   Name = "Foo",
+                                   Age = 50,
+                                   Price = 19.95m,
+                                   StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+                               };
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(poco);
+            XDocument expected = GetSimplePocoXDocWackyNames();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -160,27 +162,27 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_simple_POCO_With_Attribute_Options_Defined_And_Property_Containing_IList_Elements()
         {
-            var poco = new WackyPerson
-                       {
-                           Name = "Foo",
-                           Age = 50,
-                           Price = 19.95m,
-                           StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                           ContactData = new ContactData
-                                         {
-                                             EmailAddresses = new List<EmailAddress>
-                                                              {
-                                                                  new EmailAddress
-                                                                  {
-                                                                      Address = "test@test.com",
-                                                                      Location = "Work"
-                                                                  }
-                                                              }
-                                         }
-                       };
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWackyNamesWithIListProperty();
+            WackyPerson poco = new WackyPerson
+                               {
+                                   Name = "Foo",
+                                   Age = 50,
+                                   Price = 19.95m,
+                                   StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                                   ContactData = new ContactData
+                                                 {
+                                                     EmailAddresses = new List<EmailAddress>
+                                                                      {
+                                                                          new EmailAddress
+                                                                          {
+                                                                              Address = "test@test.com",
+                                                                              Location = "Work"
+                                                                          }
+                                                                      }
+                                                 }
+                               };
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(poco);
+            XDocument expected = GetSimplePocoXDocWackyNamesWithIListProperty();
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -188,38 +190,38 @@ namespace RestSharp.Tests
         [Test]
         public void Can_serialize_a_list_which_is_the_root_element()
         {
-            var pocoList = new PersonList
-                           {
-                               new Person
-                               {
-                                   Name = "Foo",
-                                   Age = 50,
-                                   Price = 19.95m,
-                                   StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                                   Items = new List<Item>
-                                           {
-                                               new Item { Name = "One", Value = 1 },
-                                               new Item { Name = "Two", Value = 2 },
-                                               new Item { Name = "Three", Value = 3 }
-                                           }
-                               },
-                               new Person
-                               {
-                                   Name = "Bar",
-                                   Age = 23,
-                                   Price = 23.23m,
-                                   StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                                   Items = new List<Item>
-                                           {
-                                               new Item { Name = "One", Value = 1 },
-                                               new Item { Name = "Two", Value = 2 },
-                                               new Item { Name = "Three", Value = 3 }
-                                           }
-                               }
-                           };
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(pocoList);
-            var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
+            PersonList pocoList = new PersonList
+                                  {
+                                      new Person
+                                      {
+                                          Name = "Foo",
+                                          Age = 50,
+                                          Price = 19.95m,
+                                          StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                                          Items = new List<Item>
+                                                  {
+                                                      new Item { Name = "One", Value = 1 },
+                                                      new Item { Name = "Two", Value = 2 },
+                                                      new Item { Name = "Three", Value = 3 }
+                                                  }
+                                      },
+                                      new Person
+                                      {
+                                          Name = "Bar",
+                                          Age = 23,
+                                          Price = 23.23m,
+                                          StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
+                                          Items = new List<Item>
+                                                  {
+                                                      new Item { Name = "One", Value = 1 },
+                                                      new Item { Name = "Two", Value = 2 },
+                                                      new Item { Name = "Three", Value = 3 }
+                                                  }
+                                      }
+                                  };
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(pocoList);
+            XDocument expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
 
             Assert.AreEqual(expected.ToString(), doc);
         }
@@ -249,7 +251,9 @@ namespace RestSharp.Tests
         private enum Color
         {
             Red,
+
             Blue,
+
             Green
         }
 
@@ -302,15 +306,15 @@ namespace RestSharp.Tests
 
         private static XDocument GetSimplePocoXDoc()
         {
-            var doc = new XDocument();
-            var root = new XElement("Person");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Person");
 
             root.Add(new XElement("Name", "Foo"),
                 new XElement("Age", 50),
                 new XElement("Price", 19.95m),
                 new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(CultureInfo.InvariantCulture)));
 
-            var items = new XElement("Items");
+            XElement items = new XElement("Items");
 
             items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
             items.Add(new XElement("Item", new XElement("Name", "Two"), new XElement("Value", 2)));
@@ -324,8 +328,8 @@ namespace RestSharp.Tests
 
         private static XDocument GetSimplePocoXDocWithIsoDate()
         {
-            var doc = new XDocument();
-            var root = new XElement("Person");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Person");
 
             root.Add(new XElement("Name", "Foo"),
                 new XElement("Age", 50),
@@ -339,8 +343,8 @@ namespace RestSharp.Tests
 
         private static XDocument GetSimplePocoXDocWithXmlProperty()
         {
-            var doc = new XDocument();
-            var root = new XElement("Person");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Person");
 
             root.Add(new XElement("Name", "Foo"),
                 new XElement("Age", 50),
@@ -355,9 +359,9 @@ namespace RestSharp.Tests
 
         private static XDocument GetSimplePocoXDocWithRoot()
         {
-            var doc = new XDocument();
-            var root = new XElement("Result");
-            var start = new XElement("Person");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Result");
+            XElement start = new XElement("Person");
 
             start.Add(new XElement("Name", "Foo"),
                 new XElement("Age", 50),
@@ -372,8 +376,8 @@ namespace RestSharp.Tests
 
         private static XDocument GetSimplePocoXDocWackyNames()
         {
-            var doc = new XDocument();
-            var root = new XElement("Person");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Person");
 
             root.Add(new XAttribute("WackyName", "Foo"),
                 new XElement("Age", 50),
@@ -387,8 +391,8 @@ namespace RestSharp.Tests
 
         private static XDocument GetSimplePocoXDocWackyNamesWithIListProperty()
         {
-            var doc = new XDocument();
-            var root = new XElement("Person");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Person");
 
             root.Add(new XAttribute("WackyName", "Foo"),
                 new XElement("Age", 50),
@@ -408,8 +412,8 @@ namespace RestSharp.Tests
 
         private static XDocument GetSortedPropsXDoc()
         {
-            var doc = new XDocument();
-            var root = new XElement("OrderedProperties");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("OrderedProperties");
 
             root.Add(new XElement("StartDate", new DateTime(2010, 1, 1).ToString(CultureInfo.InvariantCulture)));
             root.Add(new XElement("Name", "Name"));
@@ -422,10 +426,10 @@ namespace RestSharp.Tests
 
         private static XDocument GetPeopleXDoc(IFormatProvider culture)
         {
-            var doc = new XDocument();
-            var root = new XElement("People");
-            var element = new XElement("Person");
-            var items = new XElement("Items");
+            XDocument doc = new XDocument();
+            XElement root = new XElement("People");
+            XElement element = new XElement("Person");
+            XElement items = new XElement("Items");
 
             items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
             items.Add(new XElement("Item", new XElement("Name", "Two"), new XElement("Value", 2)));
