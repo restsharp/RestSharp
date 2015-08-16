@@ -93,7 +93,7 @@ namespace RestSharp.Compression.ZLib
             get { return (this.BaseStream.FlushMode); }
             set
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("ZlibStream");
 
                 this.BaseStream.FlushMode = value;
@@ -121,7 +121,7 @@ namespace RestSharp.Compression.ZLib
             get { return this.BaseStream.BufferSize; }
             set
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("ZlibStream");
 
                 if (this.BaseStream.workingBuffer != null)
@@ -161,12 +161,12 @@ namespace RestSharp.Compression.ZLib
         {
             try
             {
-                if (!disposed)
+                if (!this.disposed)
                 {
                     if (disposing && (this.BaseStream != null))
                         this.BaseStream.Close();
 
-                    disposed = true;
+                    this.disposed = true;
                 }
             }
             finally
@@ -185,7 +185,7 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("ZlibStream");
 
                 return this.BaseStream.Stream.CanRead;
@@ -213,7 +213,7 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("ZlibStream");
 
                 return this.BaseStream.Stream.CanWrite;
@@ -225,7 +225,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override void Flush()
         {
-            if (disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("ZlibStream");
 
             this.BaseStream.Flush();
@@ -290,7 +290,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="count">the number of bytes to read.</param>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("ZlibStream");
 
             return this.BaseStream.Read(buffer, offset, count);
@@ -338,7 +338,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="count">the number of bytes to write.</param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("ZlibStream");
 
             this.BaseStream.Write(buffer, offset, count);
@@ -442,7 +442,7 @@ namespace RestSharp.Compression.ZLib
         protected internal DateTime GzipMtime;
         protected internal int GzipHeaderByteCount;
 
-        internal int Crc32 { get { return crc == null ? 0 : crc.Crc32Result; } }
+        internal int Crc32 { get { return this.crc == null ? 0 : this.crc.Crc32Result; } }
 
         public ZlibBaseStream(Stream stream, ZlibStreamFlavor flavor, bool leaveOpen)
         {
@@ -455,7 +455,7 @@ namespace RestSharp.Compression.ZLib
 
             if (flavor == ZlibStreamFlavor.Gzip)
             {
-                crc = new Crc32();
+                this.crc = new Crc32();
             }
         }
 
@@ -463,21 +463,21 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (z == null)
+                if (this.z == null)
                 {
                     bool wantRfc1950Header = (this.Flavor == ZlibStreamFlavor.Zlib);
 
-                    z = new ZlibCodec();
-                    z.InitializeInflate(wantRfc1950Header);
+                    this.z = new ZlibCodec();
+                    this.z.InitializeInflate(wantRfc1950Header);
                 }
 
-                return z;
+                return this.z;
             }
         }
 
         private byte[] WorkingBuffer
         {
-            get { return workingBuffer ?? (workingBuffer = new byte[this.BufferSize]); }
+            get { return this.workingBuffer ?? (this.workingBuffer = new byte[this.BufferSize]); }
         }
 
         // workitem 7813 - totally unnecessary
@@ -494,88 +494,88 @@ namespace RestSharp.Compression.ZLib
         {
             // workitem 7159
             // calculate the CRC on the unccompressed data  (before writing)
-            if (crc != null)
-                crc.SlurpBlock(buffer, offset, count);
+            if (this.crc != null)
+                this.crc.SlurpBlock(buffer, offset, count);
 
-            if (streamMode == StreamMode.Undefined)
-                streamMode = StreamMode.Writer;
-            else if (streamMode != StreamMode.Writer)
+            if (this.streamMode == StreamMode.Undefined)
+                this.streamMode = StreamMode.Writer;
+            else if (this.streamMode != StreamMode.Writer)
                 throw new ZlibException("Cannot Write after Reading.");
 
             if (count == 0)
                 return;
 
             // first reference of z property will initialize the private var _z
-            z.InputBuffer = buffer;
-            z.NextIn = offset;
-            z.AvailableBytesIn = count;
+            this.z.InputBuffer = buffer;
+            this.z.NextIn = offset;
+            this.z.AvailableBytesIn = count;
 
             bool done;
 
             do
             {
-                z.OutputBuffer = WorkingBuffer;
-                z.NextOut = 0;
-                z.AvailableBytesOut = workingBuffer.Length;
+                this.z.OutputBuffer = this.WorkingBuffer;
+                this.z.NextOut = 0;
+                this.z.AvailableBytesOut = this.workingBuffer.Length;
 
                 //int rc = (_wantCompress)
                 //    ? _z.Deflate(_flushMode)
                 //    : _z.Inflate(_flushMode);
-                int rc = z.Inflate(this.FlushMode);
+                int rc = this.z.Inflate(this.FlushMode);
 
                 if (rc != ZlibConstants.Z_OK && rc != ZlibConstants.Z_STREAM_END)
-                    throw new ZlibException("inflating: " + z.Message);
+                    throw new ZlibException("inflating: " + this.z.Message);
 
-                this.Stream.Write(workingBuffer, 0, workingBuffer.Length - z.AvailableBytesOut);
+                this.Stream.Write(this.workingBuffer, 0, this.workingBuffer.Length - this.z.AvailableBytesOut);
 
-                done = z.AvailableBytesIn == 0 && z.AvailableBytesOut != 0;
+                done = this.z.AvailableBytesIn == 0 && this.z.AvailableBytesOut != 0;
 
                 // If GZIP and de-compress, we're done when 8 bytes remain.
                 if (this.Flavor == ZlibStreamFlavor.Gzip)
-                    done = (z.AvailableBytesIn == 8 && z.AvailableBytesOut != 0);
+                    done = (this.z.AvailableBytesIn == 8 && this.z.AvailableBytesOut != 0);
             }
             while (!done);
         }
 
         private void Finish()
         {
-            if (z == null)
+            if (this.z == null)
                 return;
 
-            switch (streamMode)
+            switch (this.streamMode)
             {
                 case StreamMode.Writer:
                     bool done;
 
                     do
                     {
-                        z.OutputBuffer = WorkingBuffer;
-                        z.NextOut = 0;
-                        z.AvailableBytesOut = workingBuffer.Length;
+                        this.z.OutputBuffer = this.WorkingBuffer;
+                        this.z.NextOut = 0;
+                        this.z.AvailableBytesOut = this.workingBuffer.Length;
 
                         //int rc = (_wantCompress)
                         //    ? _z.Deflate(FlushType.Finish)
                         //    : _z.Inflate(FlushType.Finish);
 
-                        int rc = z.Inflate(FlushType.Finish);
+                        int rc = this.z.Inflate(FlushType.Finish);
 
                         if (rc != ZlibConstants.Z_STREAM_END && rc != ZlibConstants.Z_OK)
-                            throw new ZlibException("inflating: " + z.Message);
+                            throw new ZlibException("inflating: " + this.z.Message);
 
-                        if (workingBuffer.Length - z.AvailableBytesOut > 0)
+                        if (this.workingBuffer.Length - this.z.AvailableBytesOut > 0)
                         {
-                            this.Stream.Write(workingBuffer, 0, workingBuffer.Length - z.AvailableBytesOut);
+                            this.Stream.Write(this.workingBuffer, 0, this.workingBuffer.Length - this.z.AvailableBytesOut);
                         }
 
-                        done = z.AvailableBytesIn == 0 && z.AvailableBytesOut != 0;
+                        done = this.z.AvailableBytesIn == 0 && this.z.AvailableBytesOut != 0;
 
                         // If GZIP and de-compress, we're done when 8 bytes remain.
                         if (this.Flavor == ZlibStreamFlavor.Gzip)
-                            done = (z.AvailableBytesIn == 8 && z.AvailableBytesOut != 0);
+                            done = (this.z.AvailableBytesIn == 8 && this.z.AvailableBytesOut != 0);
                     }
                     while (!done);
 
-                    Flush();
+                    this.Flush();
 
                     // workitem 7159
                     if (this.Flavor == ZlibStreamFlavor.Gzip)
@@ -589,24 +589,23 @@ namespace RestSharp.Compression.ZLib
                     if (this.Flavor == ZlibStreamFlavor.Gzip)
                     {
                         // workitem 8501: handle edge case (decompress empty stream)
-                        if (z.TotalBytesOut == 0L)
+                        if (this.z.TotalBytesOut == 0L)
                             return;
 
                         // Read and potentially verify the GZIP trailer: CRC32 and  size mod 2^32
                         byte[] trailer = new byte[8];
 
-                        if (z.AvailableBytesIn != 8)
+                        if (this.z.AvailableBytesIn != 8)
                         {
-                            throw new ZlibException(string.Format("Protocol error. AvailableBytesIn={0}, expected 8",
-                                z.AvailableBytesIn));
+                            throw new ZlibException(string.Format("Protocol error. AvailableBytesIn={0}, expected 8", this.z.AvailableBytesIn));
                         }
 
-                        Array.Copy(z.InputBuffer, z.NextIn, trailer, 0, trailer.Length);
+                        Array.Copy(this.z.InputBuffer, this.z.NextIn, trailer, 0, trailer.Length);
 
                         int crc32Expected = BitConverter.ToInt32(trailer, 0);
-                        int crc32Actual = crc.Crc32Result;
+                        int crc32Actual = this.crc.Crc32Result;
                         int isizeExpected = BitConverter.ToInt32(trailer, 4);
-                        int isizeActual = (int) (z.TotalBytesOut & 0x00000000FFFFFFFF);
+                        int isizeActual = (int) (this.z.TotalBytesOut & 0x00000000FFFFFFFF);
 
                         // Console.WriteLine("GZipStream: slurped trailer  crc(0x{0:X8}) isize({1})", crc32_expected, isize_expected);
                         // Console.WriteLine("GZipStream: calc'd data      crc(0x{0:X8}) isize({1})", crc32_actual, isize_actual);
@@ -623,7 +622,7 @@ namespace RestSharp.Compression.ZLib
 
         private void End()
         {
-            if (Z == null)
+            if (this.Z == null)
                 return;
 
             //if (_wantCompress)
@@ -632,10 +631,10 @@ namespace RestSharp.Compression.ZLib
             //}
             //else
             //{
-            z.EndInflate();
+            this.z.EndInflate();
             //}
 
-            z = null;
+            this.z = null;
         }
 
         public override void Close()
@@ -733,7 +732,7 @@ namespace RestSharp.Compression.ZLib
 
             int timet = BitConverter.ToInt32(header, 4);
 
-            GzipMtime = GZipStream.UnixEpoch.AddSeconds(timet);
+            this.GzipMtime = GZipStream.UnixEpoch.AddSeconds(timet);
             totalBytesRead += n;
 
             if ((header[3] & 0x04) == 0x04)
@@ -754,13 +753,13 @@ namespace RestSharp.Compression.ZLib
             }
 
             if ((header[3] & 0x08) == 0x08)
-                GzipFileName = ReadZeroTerminatedString();
+                this.GzipFileName = this.ReadZeroTerminatedString();
 
             if ((header[3] & 0x10) == 0x010)
-                GzipComment = ReadZeroTerminatedString();
+                this.GzipComment = this.ReadZeroTerminatedString();
 
             if ((header[3] & 0x02) == 0x02)
-                Read(this.Buf1, 0, 1); // CRC16, ignore
+                this.Read(this.Buf1, 0, 1); // CRC16, ignore
 
             return totalBytesRead;
         }
@@ -773,29 +772,29 @@ namespace RestSharp.Compression.ZLib
             // (b) return 0 only upon EOF, or if count = 0
             // (c) if not EOF, then return at least 1 byte, up to <count> bytes
 
-            if (streamMode == StreamMode.Undefined)
+            if (this.streamMode == StreamMode.Undefined)
             {
                 if (!this.Stream.CanRead)
                     throw new ZlibException("The stream is not readable.");
 
                 // for the first read, set up some controls.
-                streamMode = StreamMode.Reader;
+                this.streamMode = StreamMode.Reader;
 
                 // (The first reference to _z goes through the private accessor which
                 // may initialize it.)
-                Z.AvailableBytesIn = 0;
+                this.Z.AvailableBytesIn = 0;
 
                 if (this.Flavor == ZlibStreamFlavor.Gzip)
                 {
-                    GzipHeaderByteCount = _ReadAndValidateGzipHeader();
+                    this.GzipHeaderByteCount = this._ReadAndValidateGzipHeader();
                     // workitem 8501: handle edge case (decompress empty stream)
 
-                    if (GzipHeaderByteCount == 0)
+                    if (this.GzipHeaderByteCount == 0)
                         return 0;
                 }
             }
 
-            if (streamMode != StreamMode.Reader)
+            if (this.streamMode != StreamMode.Reader)
                 throw new ZlibException("Cannot Read after Writing.");
 
             if (count == 0)
@@ -816,58 +815,58 @@ namespace RestSharp.Compression.ZLib
             int rc;
 
             // set up the output of the deflate/inflate codec:
-            z.OutputBuffer = buffer;
-            z.NextOut = offset;
-            z.AvailableBytesOut = count;
+            this.z.OutputBuffer = buffer;
+            this.z.NextOut = offset;
+            this.z.AvailableBytesOut = count;
 
             // This is necessary in case _workingBuffer has been resized. (new byte[])
             // (The first reference to _workingBuffer goes through the private accessor which
             // may initialize it.)
-            z.InputBuffer = WorkingBuffer;
+            this.z.InputBuffer = this.WorkingBuffer;
 
             do
             {
                 // need data in _workingBuffer in order to deflate/inflate.  Here, we check if we have any.
-                if ((z.AvailableBytesIn == 0) && (!nomoreinput))
+                if ((this.z.AvailableBytesIn == 0) && (!this.nomoreinput))
                 {
                     // No data available, so try to Read data from the captive stream.
-                    z.NextIn = 0;
-                    z.AvailableBytesIn = this.Stream.Read(workingBuffer, 0, workingBuffer.Length);
+                    this.z.NextIn = 0;
+                    this.z.AvailableBytesIn = this.Stream.Read(this.workingBuffer, 0, this.workingBuffer.Length);
 
-                    if (z.AvailableBytesIn == 0)
-                        nomoreinput = true;
+                    if (this.z.AvailableBytesIn == 0)
+                        this.nomoreinput = true;
 
                 }
                 // we have data in InputBuffer; now compress or decompress as appropriate
                 //rc = (_wantCompress)
                 //    ? _z.Deflate(_flushMode)
                 //    : _z.Inflate(_flushMode);
-                rc = z.Inflate(this.FlushMode);
+                rc = this.z.Inflate(this.FlushMode);
 
-                if (nomoreinput && (rc == ZlibConstants.Z_BUF_ERROR))
+                if (this.nomoreinput && (rc == ZlibConstants.Z_BUF_ERROR))
                     return 0;
 
                 if (rc != ZlibConstants.Z_OK && rc != ZlibConstants.Z_STREAM_END)
-                    throw new ZlibException(string.Format("inflating:  rc={0}  msg={1}", rc, z.Message));
+                    throw new ZlibException(string.Format("inflating:  rc={0}  msg={1}", rc, this.z.Message));
 
-                if ((nomoreinput || rc == ZlibConstants.Z_STREAM_END) && (z.AvailableBytesOut == count))
+                if ((this.nomoreinput || rc == ZlibConstants.Z_STREAM_END) && (this.z.AvailableBytesOut == count))
                     break; // nothing more to read
             }
             //while (_z.AvailableBytesOut == count && rc == ZlibConstants.Z_OK);
-            while (z.AvailableBytesOut > 0 && !nomoreinput && rc == ZlibConstants.Z_OK);
+            while (this.z.AvailableBytesOut > 0 && !this.nomoreinput && rc == ZlibConstants.Z_OK);
 
 
             // workitem 8557
             // is there more room in output? 
-            if (z.AvailableBytesOut > 0)
+            if (this.z.AvailableBytesOut > 0)
             {
-                if (rc == ZlibConstants.Z_OK && z.AvailableBytesIn == 0)
+                if (rc == ZlibConstants.Z_OK && this.z.AvailableBytesIn == 0)
                 {
                     // deferred
                 }
 
                 // are we completely done reading?
-                if (nomoreinput)
+                if (this.nomoreinput)
                 {
                     // and in compression?
                     /*if (_wantCompress)
@@ -883,11 +882,11 @@ namespace RestSharp.Compression.ZLib
             }
 
 
-            rc = (count - z.AvailableBytesOut);
+            rc = (count - this.z.AvailableBytesOut);
 
             // calculate CRC after reading
-            if (crc != null)
-                crc.SlurpBlock(buffer, offset, rc);
+            if (this.crc != null)
+                this.crc.SlurpBlock(buffer, offset, rc);
 
             return rc;
         }

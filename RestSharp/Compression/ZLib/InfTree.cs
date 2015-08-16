@@ -440,7 +440,7 @@ namespace RestSharp.Compression.ZLib
 
             this.InitWorkArea(19);
             this.Hn[0] = 0;
-            result = huft_build(c, 0, 19, 19, null, null, tb, bb, hp, this.Hn, this.V);
+            result = this.huft_build(c, 0, 19, 19, null, null, tb, bb, hp, this.Hn, this.V);
 
             if (result == Z_DATA_ERROR)
             {
@@ -462,7 +462,7 @@ namespace RestSharp.Compression.ZLib
             // build literal/length tree
             this.InitWorkArea(288);
             this.Hn[0] = 0;
-            result = huft_build(c, 0, nl, 257, Cplens, Cplext, tl, bl, hp, this.Hn, this.V);
+            result = this.huft_build(c, 0, nl, 257, Cplens, Cplext, tl, bl, hp, this.Hn, this.V);
 
             if (result != Z_OK || bl[0] == 0)
             {
@@ -481,7 +481,7 @@ namespace RestSharp.Compression.ZLib
 
             // build distance tree
             this.InitWorkArea(288);
-            result = huft_build(c, nl, nd, 0, Cpdist, Cpdext, td, bd, hp, this.Hn, this.V);
+            result = this.huft_build(c, nl, nd, 0, Cpdist, Cpdext, td, bd, hp, this.Hn, this.V);
 
             if (result != Z_OK || (bd[0] == 0 && nl > 257))
             {

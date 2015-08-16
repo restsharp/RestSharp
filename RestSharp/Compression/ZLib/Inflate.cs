@@ -144,7 +144,7 @@ namespace RestSharp.Compression.ZLib
             this.End = w;
             this.Checkfn = checkfn;
             this.Mode = TYPE;
-            Reset(null);
+            this.Reset(null);
         }
 
         internal void Reset(long[] c)
@@ -206,7 +206,7 @@ namespace RestSharp.Compression.ZLib
                                 this.Codec.NextIn = p;
                                 this.Write = q;
 
-                                return Flush(r);
+                                return this.Flush(r);
                             }
 
                             n--;
@@ -258,7 +258,7 @@ namespace RestSharp.Compression.ZLib
                                 this.Codec.TotalBytesIn += p - this.Codec.NextIn;
                                 this.Codec.NextIn = p;
                                 this.Write = q;
-                                return Flush(r);
+                                return this.Flush(r);
                         }
                         break;
 
@@ -277,7 +277,7 @@ namespace RestSharp.Compression.ZLib
                                 this.Codec.TotalBytesIn += p - this.Codec.NextIn;
                                 this.Codec.NextIn = p;
                                 this.Write = q;
-                                return Flush(r);
+                                return this.Flush(r);
                             }
 
                             n--;
@@ -296,7 +296,7 @@ namespace RestSharp.Compression.ZLib
                             this.Codec.TotalBytesIn += p - this.Codec.NextIn;
                             this.Codec.NextIn = p;
                             this.Write = q;
-                            return Flush(r);
+                            return this.Flush(r);
                         }
 
                         this.Left = (b & 0xffff);
@@ -313,7 +313,7 @@ namespace RestSharp.Compression.ZLib
                             this.Codec.TotalBytesIn += p - this.Codec.NextIn;
                             this.Codec.NextIn = p;
                             this.Write = q;
-                            return Flush(r);
+                            return this.Flush(r);
                         }
 
                         if (m == 0)
@@ -327,7 +327,7 @@ namespace RestSharp.Compression.ZLib
                             if (m == 0)
                             {
                                 this.Write = q;
-                                r = Flush(r);
+                                r = this.Flush(r);
                                 q = this.Write;
                                 m = q < this.Read ? this.Read - q - 1 : this.End - q;
 
@@ -346,7 +346,7 @@ namespace RestSharp.Compression.ZLib
                                     this.Codec.NextIn = p;
                                     this.Write = q;
 
-                                    return Flush(r);
+                                    return this.Flush(r);
                                 }
                             }
                         }
@@ -388,7 +388,7 @@ namespace RestSharp.Compression.ZLib
                                 this.Codec.NextIn = p;
                                 this.Write = q;
 
-                                return Flush(r);
+                                return this.Flush(r);
                             }
 
                             n--;
@@ -410,7 +410,7 @@ namespace RestSharp.Compression.ZLib
                             this.Codec.NextIn = p;
                             this.Write = q;
 
-                            return Flush(r);
+                            return this.Flush(r);
                         }
 
                         t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
@@ -454,7 +454,7 @@ namespace RestSharp.Compression.ZLib
                                     this.Codec.NextIn = p;
                                     this.Write = q;
 
-                                    return Flush(r);
+                                    return this.Flush(r);
                                 }
 
                                 n--;
@@ -494,7 +494,7 @@ namespace RestSharp.Compression.ZLib
                             this.Codec.TotalBytesIn += p - this.Codec.NextIn;
                             this.Codec.NextIn = p;
                             this.Write = q;
-                            return Flush(r);
+                            return this.Flush(r);
                         }
 
                         this.Index = 0;
@@ -531,7 +531,7 @@ namespace RestSharp.Compression.ZLib
                                     this.Codec.NextIn = p;
                                     this.Write = q;
 
-                                    return Flush(r);
+                                    return this.Flush(r);
                                 }
 
                                 n--;
@@ -574,7 +574,7 @@ namespace RestSharp.Compression.ZLib
                                         this.Codec.NextIn = p;
                                         this.Write = q;
 
-                                        return Flush(r);
+                                        return this.Flush(r);
                                     }
 
                                     n--;
@@ -604,7 +604,7 @@ namespace RestSharp.Compression.ZLib
                                     this.Codec.NextIn = p;
                                     this.Write = q;
 
-                                    return Flush(r);
+                                    return this.Flush(r);
                                 }
 
                                 c = c == 16 ? this.Blens[i - 1] : 0;
@@ -645,7 +645,7 @@ namespace RestSharp.Compression.ZLib
                                 this.Codec.NextIn = p;
                                 this.Write = q;
 
-                                return Flush(r);
+                                return this.Flush(r);
                             }
 
                             this.Codes.Init(bl[0], bd[0], this.Hufts, tl[0], this.Hufts, td[0]);
@@ -664,7 +664,7 @@ namespace RestSharp.Compression.ZLib
                         this.Write = q;
 
                         if ((r = this.Codes.Process(this, r)) != ZlibConstants.Z_STREAM_END)
-                            return Flush(r);
+                            return this.Flush(r);
 
                         r = ZlibConstants.Z_OK;
                         p = this.Codec.NextIn;
@@ -685,7 +685,7 @@ namespace RestSharp.Compression.ZLib
 
                     case DRY:
                         this.Write = q;
-                        r = Flush(r);
+                        r = this.Flush(r);
                         q = this.Write;
 
                         //m = q < this.Read ? this.Read - q - 1 : this.End - q;
@@ -699,7 +699,7 @@ namespace RestSharp.Compression.ZLib
                             this.Codec.NextIn = p;
                             this.Write = q;
 
-                            return Flush(r);
+                            return this.Flush(r);
                         }
 
                         this.Mode = DONE;
@@ -715,7 +715,7 @@ namespace RestSharp.Compression.ZLib
                         this.Codec.NextIn = p;
                         this.Write = q;
 
-                        return Flush(r);
+                        return this.Flush(r);
 
                     case BAD:
                         r = ZlibConstants.Z_DATA_ERROR;
@@ -726,7 +726,7 @@ namespace RestSharp.Compression.ZLib
                         this.Codec.NextIn = p;
                         this.Write = q;
 
-                        return Flush(r);
+                        return this.Flush(r);
 
                     default:
                         r = ZlibConstants.Z_STREAM_ERROR;
@@ -737,14 +737,14 @@ namespace RestSharp.Compression.ZLib
                         this.Codec.NextIn = p;
                         this.Write = q;
 
-                        return Flush(r);
+                        return this.Flush(r);
                 }
             }
         }
 
         internal void Free()
         {
-            Reset(null);
+            this.Reset(null);
             this.Window = null;
             this.Hufts = null;
             //ZFREE(z, s);
@@ -949,7 +949,7 @@ namespace RestSharp.Compression.ZLib
                             z.TotalBytesIn += p - z.NextIn;
                             z.NextIn = p;
                             blocks.Write = q;
-                            r = InflateFast(this.Lbits, this.Dbits, this.Ltree, this.LtreeIndex, this.Dtree, this.DtreeIndex, blocks, z);
+                            r = this.InflateFast(this.Lbits, this.Dbits, this.Ltree, this.LtreeIndex, this.Dtree, this.DtreeIndex, blocks, z);
                             p = z.NextIn;
                             n = z.AvailableBytesIn;
                             b = blocks.Bitb;
@@ -1700,7 +1700,7 @@ namespace RestSharp.Compression.ZLib
         {
             this.Codec.TotalBytesIn = this.Codec.TotalBytesOut = 0;
             this.Codec.Message = null;
-            this.Mode = HandleRfc1950HeaderBytes ? METHOD : BLOCKS;
+            this.Mode = this.HandleRfc1950HeaderBytes ? METHOD : BLOCKS;
             this.Blocks.Reset(null);
 
             return ZlibConstants.Z_OK;
@@ -1733,7 +1733,7 @@ namespace RestSharp.Compression.ZLib
             // set window size
             if (w < 8 || w > 15)
             {
-                End();
+                this.End();
                 throw new ZlibException("Bad window size.");
 
                 //return ZlibConstants.Z_STREAM_ERROR;
@@ -1741,10 +1741,10 @@ namespace RestSharp.Compression.ZLib
 
             this.Wbits = w;
 
-            this.Blocks = new InflateBlocks(codec, HandleRfc1950HeaderBytes ? this : null, 1 << w);
+            this.Blocks = new InflateBlocks(codec, this.HandleRfc1950HeaderBytes ? this : null, 1 << w);
 
             // reset state
-            Reset();
+            this.Reset();
 
             return ZlibConstants.Z_OK;
         }
@@ -1902,7 +1902,7 @@ namespace RestSharp.Compression.ZLib
                         r = f;
                         this.Blocks.Reset(this.Was);
 
-                        if (!HandleRfc1950HeaderBytes)
+                        if (!this.HandleRfc1950HeaderBytes)
                         {
                             this.Mode = DONE;
 
@@ -2070,7 +2070,7 @@ namespace RestSharp.Compression.ZLib
 
             r = this.Codec.TotalBytesIn;
             w = this.Codec.TotalBytesOut;
-            Reset();
+            this.Reset();
             this.Codec.TotalBytesIn = r;
             this.Codec.TotalBytesOut = w;
             this.Mode = BLOCKS;

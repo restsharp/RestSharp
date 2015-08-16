@@ -132,13 +132,13 @@ namespace RestSharp.Compression.ZLib
         /// </remarks>
         public string Comment
         {
-            get { return comment; }
+            get { return this.comment; }
             set
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                comment = value;
+                this.comment = value;
             }
         }
 
@@ -161,29 +161,29 @@ namespace RestSharp.Compression.ZLib
         /// </remarks>
         public string FileName
         {
-            get { return fileName; }
+            get { return this.fileName; }
             set
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                fileName = value;
+                this.fileName = value;
 
-                if (fileName == null)
+                if (this.fileName == null)
                     return;
 
-                if (fileName.IndexOf("/") != -1)
+                if (this.fileName.IndexOf("/") != -1)
                 {
-                    fileName = fileName.Replace("/", "\\");
+                    this.fileName = this.fileName.Replace("/", "\\");
                 }
 
-                if (fileName.EndsWith("\\"))
+                if (this.fileName.EndsWith("\\"))
                     throw new Exception("Illegal filename");
 
-                if (fileName.IndexOf("\\") != -1)
+                if (this.fileName.IndexOf("\\") != -1)
                 {
                     // trim any leading path
-                    fileName = Path.GetFileName(fileName);
+                    this.fileName = Path.GetFileName(this.fileName);
                 }
             }
         }
@@ -196,7 +196,7 @@ namespace RestSharp.Compression.ZLib
         /// When compressing data, you can set this before the first call to Write().  When
         /// decompressing, you can retrieve this value any time after the first call to
         /// Read().  </remarks>
-        public DateTime? LastModified;
+        //public DateTime? LastModified;
 
         /// <summary>
         /// The CRC on the GZIP stream. 
@@ -274,7 +274,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="level">A tuning knob to trade speed for effectiveness.</param>
         public GZipStream(Stream stream)
         {
-            BaseStream = new ZlibBaseStream(stream, ZlibStreamFlavor.Gzip, false);
+            this.BaseStream = new ZlibBaseStream(stream, ZlibStreamFlavor.Gzip, false);
         }
 
         #region Zlib properties
@@ -284,13 +284,13 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         virtual public FlushType FlushMode
         {
-            get { return (BaseStream.FlushMode); }
+            get { return (this.BaseStream.FlushMode); }
             set
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                BaseStream.FlushMode = value;
+                this.BaseStream.FlushMode = value;
             }
         }
 
@@ -312,32 +312,32 @@ namespace RestSharp.Compression.ZLib
         /// </remarks>
         public int BufferSize
         {
-            get { return BaseStream.BufferSize; }
+            get { return this.BaseStream.BufferSize; }
             set
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                if (BaseStream.workingBuffer != null)
+                if (this.BaseStream.workingBuffer != null)
                     throw new ZlibException("The working buffer is already set.");
 
                 if (value < ZlibConstants.WORKING_BUFFER_SIZE_MIN)
                     throw new ZlibException(string.Format("Don't be silly. {0} bytes?? Use a bigger buffer.", value));
 
-                BaseStream.BufferSize = value;
+                this.BaseStream.BufferSize = value;
             }
         }
 
         /// <summary> Returns the total number of bytes input so far.</summary>
         virtual public long TotalIn
         {
-            get { return BaseStream.z.TotalBytesIn; }
+            get { return this.BaseStream.z.TotalBytesIn; }
         }
 
         /// <summary> Returns the total number of bytes output so far.</summary>
         virtual public long TotalOut
         {
-            get { return BaseStream.z.TotalBytesOut; }
+            get { return this.BaseStream.z.TotalBytesOut; }
         }
 
         #endregion
@@ -355,15 +355,15 @@ namespace RestSharp.Compression.ZLib
         {
             try
             {
-                if (!disposed)
+                if (!this.disposed)
                 {
-                    if (disposing && (BaseStream != null))
+                    if (disposing && (this.BaseStream != null))
                     {
-                        BaseStream.Close();
-                        Crc32 = BaseStream.Crc32;
+                        this.BaseStream.Close();
+                        this.Crc32 = this.BaseStream.Crc32;
                     }
 
-                    disposed = true;
+                    this.disposed = true;
                 }
             }
             finally
@@ -382,10 +382,10 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                return BaseStream.Stream.CanRead;
+                return this.BaseStream.Stream.CanRead;
             }
         }
 
@@ -410,10 +410,10 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (disposed)
+                if (this.disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                return BaseStream.Stream.CanWrite;
+                return this.BaseStream.Stream.CanWrite;
             }
         }
 
@@ -422,10 +422,10 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public override void Flush()
         {
-            if (disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("GZipStream");
 
-            BaseStream.Flush();
+            this.BaseStream.Flush();
         }
 
         /// <summary>
@@ -449,8 +449,8 @@ namespace RestSharp.Compression.ZLib
         {
             get
             {
-                if (BaseStream.streamMode == ZlibBaseStream.StreamMode.Reader)
-                    return BaseStream.z.TotalBytesIn + BaseStream.GzipHeaderByteCount;
+                if (this.BaseStream.streamMode == ZlibBaseStream.StreamMode.Reader)
+                    return this.BaseStream.z.TotalBytesIn + this.BaseStream.GzipHeaderByteCount;
 
                 return 0;
             }
@@ -488,19 +488,19 @@ namespace RestSharp.Compression.ZLib
         /// <returns>the number of bytes actually read</returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (disposed)
+            if (this.disposed)
                 throw new ObjectDisposedException("GZipStream");
 
-            int n = BaseStream.Read(buffer, offset, count);
+            int n = this.BaseStream.Read(buffer, offset, count);
 
             // Console.WriteLine("GZipStream::Read(buffer, off({0}), c({1}) = {2}", offset, count, n);
             // Console.WriteLine( Util.FormatByteArray(buffer, offset, n) );
 
-            if (!firstReadDone)
+            if (!this.firstReadDone)
             {
-                firstReadDone = true;
-                FileName = BaseStream.GzipFileName;
-                Comment = BaseStream.GzipComment;
+                this.firstReadDone = true;
+                this.FileName = this.BaseStream.GzipFileName;
+                this.Comment = this.BaseStream.GzipComment;
             }
 
             return n;

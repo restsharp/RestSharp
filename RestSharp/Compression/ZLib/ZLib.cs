@@ -195,12 +195,12 @@ namespace RestSharp.Compression.ZLib
 
         internal static byte[] ToByteArray(string sourceString)
         {
-            return UTF8Encoding.UTF8.GetBytes(sourceString);
+            return Encoding.UTF8.GetBytes(sourceString);
         }
 
         internal static char[] ToCharArray(byte[] byteArray)
         {
-            return UTF8Encoding.UTF8.GetChars(byteArray);
+            return Encoding.UTF8.GetChars(byteArray);
         }
     }
 

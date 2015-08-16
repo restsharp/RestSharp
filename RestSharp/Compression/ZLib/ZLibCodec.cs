@@ -156,7 +156,7 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         public ZlibCodec()
         {
-            int rc = InitializeInflate();
+            int rc = this.InitializeInflate();
 
             if (rc != ZlibConstants.Z_OK)
                 throw new ZlibException("Cannot initialize for inflate.");
@@ -172,7 +172,7 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int InitializeInflate()
         {
-            return InitializeInflate(this.WindowBits);
+            return this.InitializeInflate(this.WindowBits);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace RestSharp.Compression.ZLib
         /// <returns>Z_OK if everything goes well.</returns>
         public int InitializeInflate(bool expectRfc1950Header)
         {
-            return InitializeInflate(this.WindowBits, expectRfc1950Header);
+            return this.InitializeInflate(this.WindowBits, expectRfc1950Header);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace RestSharp.Compression.ZLib
         {
             this.WindowBits = windowBits;
 
-            return InitializeInflate(windowBits, true);
+            return this.InitializeInflate(windowBits, true);
         }
 
         /// <summary>
