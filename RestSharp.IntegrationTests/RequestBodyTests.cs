@@ -14,6 +14,7 @@ namespace RestSharp.IntegrationTests
         public void Can_Not_Be_Added_To_GET_Request()
         {
             const Method httpMethod = Method.GET;
+
             using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
             {
                 var client = new RestClient(BASE_URL);

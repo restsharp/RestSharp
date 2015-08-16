@@ -30,10 +30,6 @@ using System.Windows.Threading;
 using System.Windows;
 #endif
 
-#if (FRAMEWORK && !MONOTOUCH && !MONODROID)
-
-#endif
-
 namespace RestSharp
 {
     /// <summary>
@@ -145,12 +141,14 @@ namespace RestSharp
             if (webException != null && webException.Status == WebExceptionStatus.RequestCanceled)
             {
                 response.ResponseStatus = this.timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
+
                 return response;
             }
 
             response.ErrorMessage = ex.Message;
             response.ErrorException = ex;
             response.ResponseStatus = ResponseStatus.Error;
+
             return response;
         }
 
@@ -216,6 +214,7 @@ namespace RestSharp
                 (current, param) => current + this.Encoding.GetByteCount(this.GetMultipartFormData(param)));
 
             length += this.Encoding.GetByteCount(GetMultipartFooter());
+
             return length;
         }
 
@@ -226,7 +225,9 @@ namespace RestSharp
             if (this.timeoutState.TimedOut)
             {
                 var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
+
                 ExecuteCallback(response, callback);
+
                 return;
             }
 
@@ -252,10 +253,12 @@ namespace RestSharp
             catch (Exception ex)
             {
                 ExecuteCallback(CreateErrorResponse(ex), callback);
+
                 return;
             }
 
             IAsyncResult asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+
             SetTimeout(asyncResult, this.timeoutState);
         }
 
@@ -300,6 +303,7 @@ namespace RestSharp
             try
             {
                 var webRequest = (HttpWebRequest)result.AsyncState;
+
                 raw = webRequest.EndGetResponse(result) as HttpWebResponse;
             }
             catch (WebException ex)
@@ -343,14 +347,15 @@ namespace RestSharp
                 {
                     response.ResponseStatus = ResponseStatus.TimedOut;
                     ExecuteCallback(response, callback);
+
                     return;
                 }
 
                 GetRawResponseAsync(result, webResponse =>
-                {
-                    ExtractResponseData(response, webResponse);
-                    ExecuteCallback(response, callback);
-                });
+                                            {
+                                                ExtractResponseData(response, webResponse);
+                                                ExecuteCallback(response, callback);
+                                            });
             }
             catch (Exception ex)
             {
@@ -373,6 +378,7 @@ namespace RestSharp
             }
         }
 
+#if SILVERLIGHT || WINDOW_PHONE
         partial void AddAsyncHeaderActions()
         {
 #if SILVERLIGHT
@@ -384,6 +390,7 @@ namespace RestSharp
             restrictedHeaderActions.Add("Content-Length", (r, v) => { });
 #endif
         }
+#endif
 
         // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
         // TODO: duplication at the moment).
@@ -452,12 +459,10 @@ namespace RestSharp
                 webRequest.Proxy = Proxy;
             }
 
-#if FRAMEWORK
             if (CachePolicy != null)
             {
                 webRequest.CachePolicy = CachePolicy;
             }
-#endif
 
             if (FollowRedirects && MaxRedirects.HasValue)
             {

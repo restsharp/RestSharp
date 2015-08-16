@@ -1,13 +1,7 @@
-#if !Smartphone
 using System;
-using System.Diagnostics;
-#endif
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !Smartphone
-    [DebuggerDisplay("{Name}:{Value}")]
-#endif
 #if !SILVERLIGHT && !WINDOWS_PHONE
     [Serializable]
 #endif

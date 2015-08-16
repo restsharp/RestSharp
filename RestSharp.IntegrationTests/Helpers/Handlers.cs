@@ -57,20 +57,20 @@ namespace RestSharp.IntegrationTests.Helpers
         public static Action<HttpListenerContext> Generic<T>() where T : new()
         {
             return ctx =>
-            {
-                var methodName = ctx.Request.Url.Segments.Last();
-                var method = typeof(T).GetMethod(methodName,
-                    BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+                   {
+                       var methodName = ctx.Request.Url.Segments.Last();
+                       var method = typeof(T).GetMethod(methodName,
+                           BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
-                if (method.IsStatic)
-                {
-                    method.Invoke(null, new object[] { ctx });
-                }
-                else
-                {
-                    method.Invoke(new T(), new object[] { ctx });
-                }
-            };
+                       if (method.IsStatic)
+                       {
+                           method.Invoke(null, new object[] { ctx });
+                       }
+                       else
+                       {
+                           method.Invoke(new T(), new object[] { ctx });
+                       }
+                   };
         }
     }
 }

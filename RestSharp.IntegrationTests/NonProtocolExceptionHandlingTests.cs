@@ -32,12 +32,12 @@ namespace RestSharp.IntegrationTests
         {
             var client = new RestClient("http://192.168.1.200:8001");
             var request = new RestRequest("/")
-            {
-                RequestFormat = DataFormat.Json,
-                Method = Method.GET
-            };
-
+                          {
+                              RequestFormat = DataFormat.Json,
+                              Method = Method.GET
+                          };
             var task = client.ExecuteTaskAsync<StupidClass>(request);
+
             task.Wait();
 
             var response = task.Result;
@@ -73,6 +73,7 @@ namespace RestSharp.IntegrationTests
         public void Handles_Server_Timeout_Error_Async()
         {
             const string baseUrl = "http://localhost:8888/";
+
             var resetEvent = new ManualResetEvent(false);
 
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
@@ -106,7 +107,7 @@ namespace RestSharp.IntegrationTests
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("404") { Timeout = 500 };
-                var task =  client.ExecuteTaskAsync(request);
+                var task = client.ExecuteTaskAsync(request);
 
                 task.Wait();
 

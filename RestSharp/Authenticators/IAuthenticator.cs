@@ -14,7 +14,7 @@
 //   limitations under the License. 
 #endregion
 
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
     public interface IAuthenticator
     {

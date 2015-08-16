@@ -26,6 +26,7 @@ using RestSharp.Extensions;
 #if WINDOWS_PHONE
 using RestSharp.Compression.ZLib;
 #endif
+
 #if FRAMEWORK
 using System.Net.Cache;
 #endif
@@ -132,9 +133,7 @@ namespace RestSharp
         /// X509CertificateCollection to be sent with request
         /// </summary>
         public X509CertificateCollection ClientCertificates { get; set; }
-#endif
 
-#if FRAMEWORK
         /// <summary>
         /// Maximum number of automatic redirects to follow if FollowRedirects is true
         /// </summary>
@@ -196,9 +195,7 @@ namespace RestSharp
         /// Proxy info to be sent with request
         /// </summary>
         public IWebProxy Proxy { get; set; }
-#endif
 
-#if FRAMEWORK
         /// <summary>
         /// Caching policy for requests created with this wrapper.
         /// </summary>
@@ -223,7 +220,9 @@ namespace RestSharp
 
         partial void AddSyncHeaderActions();
 
+#if SILVERLIGHT || WINDOWS_PHONE
         partial void AddAsyncHeaderActions();
+#endif
 
         private void AddSharedHeaderActions()
         {
@@ -231,14 +230,14 @@ namespace RestSharp
             restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 #if NET4
             restrictedHeaderActions.Add("Date", (r, v) =>
-                {
-                    DateTime parsed;
+                                                {
+                                                    DateTime parsed;
 
-                    if (DateTime.TryParse(v, out parsed))
-                    {
-                        r.Date = parsed;
-                    }
-                });
+                                                    if (DateTime.TryParse(v, out parsed))
+                                                    {
+                                                        r.Date = parsed;
+                                                    }
+                                                });
 
             restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
 #else
@@ -309,20 +308,19 @@ namespace RestSharp
             {
 #if FRAMEWORK
                 var cookie = new Cookie
-                {
-                    Name = httpCookie.Name,
-                    Value = httpCookie.Value,
-                    Domain = webRequest.RequestUri.Host
-                };
+                             {
+                                 Name = httpCookie.Name,
+                                 Value = httpCookie.Value,
+                                 Domain = webRequest.RequestUri.Host
+                             };
 
                 webRequest.CookieContainer.Add(cookie);
 #else
                 var cookie = new Cookie
-                {
-                    Name = httpCookie.Name,
-                    Value = httpCookie.Value
-                };
-
+                             {
+                                 Name = httpCookie.Name,
+                                 Value = httpCookie.Value
+                             };
                 var uri = webRequest.RequestUri;
 
                 webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
@@ -365,6 +363,7 @@ namespace RestSharp
         private void WriteStringTo(Stream stream, string toWrite)
         {
             var bytes = this.Encoding.GetBytes(toWrite);
+
             stream.Write(bytes, 0, bytes.Length);
         }
 
@@ -398,12 +397,14 @@ namespace RestSharp
 #endif
                 response.ContentType = webResponse.ContentType;
                 response.ContentLength = webResponse.ContentLength;
+
                 Stream webResponseStream = webResponse.GetResponseStream();
 
 #if WINDOWS_PHONE
                 if (String.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
                 {
                     var gzStream = new GZipStream(webResponseStream);
+
                     ProcessResponseStream(gzStream, response);
                 }
                 else
@@ -413,6 +414,7 @@ namespace RestSharp
 #else
                 ProcessResponseStream(webResponseStream, response);
 #endif
+
                 response.StatusCode = webResponse.StatusCode;
                 response.StatusDescription = webResponse.StatusDescription;
                 response.ResponseUri = webResponse.ResponseUri;
@@ -423,28 +425,29 @@ namespace RestSharp
                     foreach (Cookie cookie in webResponse.Cookies)
                     {
                         response.Cookies.Add(new HttpCookie
-                        {
-                            Comment = cookie.Comment,
-                            CommentUri = cookie.CommentUri,
-                            Discard = cookie.Discard,
-                            Domain = cookie.Domain,
-                            Expired = cookie.Expired,
-                            Expires = cookie.Expires,
-                            HttpOnly = cookie.HttpOnly,
-                            Name = cookie.Name,
-                            Path = cookie.Path,
-                            Port = cookie.Port,
-                            Secure = cookie.Secure,
-                            TimeStamp = cookie.TimeStamp,
-                            Value = cookie.Value,
-                            Version = cookie.Version
-                        });
+                                             {
+                                                 Comment = cookie.Comment,
+                                                 CommentUri = cookie.CommentUri,
+                                                 Discard = cookie.Discard,
+                                                 Domain = cookie.Domain,
+                                                 Expired = cookie.Expired,
+                                                 Expires = cookie.Expires,
+                                                 HttpOnly = cookie.HttpOnly,
+                                                 Name = cookie.Name,
+                                                 Path = cookie.Path,
+                                                 Port = cookie.Port,
+                                                 Secure = cookie.Secure,
+                                                 TimeStamp = cookie.TimeStamp,
+                                                 Value = cookie.Value,
+                                                 Version = cookie.Version
+                                             });
                     }
                 }
 
                 foreach (var headerName in webResponse.Headers.AllKeys)
                 {
                     var headerValue = webResponse.Headers[headerName];
+
                     response.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
                 }
 
@@ -465,7 +468,7 @@ namespace RestSharp
         }
 
 #if FRAMEWORK
-        private void AddRange(HttpWebRequest r, string range)
+        private static void AddRange(HttpWebRequest r, string range)
         {
             System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
 

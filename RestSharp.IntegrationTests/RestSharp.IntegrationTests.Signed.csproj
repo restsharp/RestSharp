@@ -74,7 +74,7 @@
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="FileTests.cs" />
     <Compile Include="Helpers\Handlers.cs" />
-    <Compile Include="Models\LinkedINMemberProfile.cs" />
+    <Compile Include="Models\LinkedInMemberProfile.cs" />
     <Compile Include="MultipartFormDataTests.cs" />
     <Compile Include="oAuth1Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

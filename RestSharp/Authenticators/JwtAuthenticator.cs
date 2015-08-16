@@ -16,10 +16,9 @@
 #endregion
 
 using System;
-using RestSharp;
 using System.Linq;
 
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
    /// <summary>
    /// JSON WEB TOKEN (JWT) Authenticator class. 
@@ -36,7 +35,7 @@ namespace RestSharp
               throw new ArgumentNullException("accessToken");
           }
 
-         authHeader = string.Format("Bearer {0}", accessToken);
+         this.authHeader = string.Format("Bearer {0}", accessToken);
       }
 
       public void Authenticate(IRestClient client, IRestRequest request)
@@ -45,7 +44,7 @@ namespace RestSharp
          if (!request.Parameters.Any(p => p.Type.Equals(ParameterType.HttpHeader) && 
                                      p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
             {
-                request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
+                request.AddParameter("Authorization", this.authHeader, ParameterType.HttpHeader);
             }
       }
    }

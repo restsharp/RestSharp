@@ -16,21 +16,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
+
+#if WINDOWS_PHONE
+using System.Net;
+#endif
 
 #if SILVERLIGHT
 using System.Windows.Browser;
 #endif
 
-#if WINDOWS_PHONE
-#endif
-
-#if FRAMEWORK || MONOTOUCH || MONODROID
-using RestSharp.Contrib;
+#if !SILVERLIGHT && !WINDOWS_PHONE
+using RestSharp.Extensions.MonoHttp;
 #endif
 
 namespace RestSharp.Extensions
@@ -49,6 +48,7 @@ namespace RestSharp.Extensions
         public static string UrlEncode(this string input)
         {
             const int maxLength = 32766;
+
             if (input == null)
                 throw new ArgumentNullException("input");
 
@@ -119,18 +119,13 @@ namespace RestSharp.Extensions
             input = input.Replace("\r", "");
             input = input.RemoveSurroundingQuotes();
 
-            long? unix = null;
+            long unix;
 
-            try
-            {
-                unix = Int64.Parse(input);
-            }
-            catch (Exception) { };
-
-            if (unix.HasValue)
+            if (long.TryParse(input, out unix))
             {
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return epoch.AddSeconds(unix.Value);
+
+                return epoch.AddSeconds(unix);
             }
 
             if (input.Contains("/Date("))
@@ -141,6 +136,7 @@ namespace RestSharp.Extensions
             if (input.Contains("new Date("))
             {
                 input = input.Replace(" ", "");
+
                 // because all whitespace is removed, match against newDate( instead of new Date(
                 return ExtractDate(input, @"newDate\((-?\d+)*\)", culture);
             }
@@ -166,17 +162,17 @@ namespace RestSharp.Extensions
 
         private static DateTime ParseFormattedDate(string input, CultureInfo culture)
         {
-            var formats = new[]
-            {
-                "u",
-                "s",
-                "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
-                "yyyy-MM-ddTHH:mm:ssZ",
-                "yyyy-MM-dd HH:mm:ssZ",
-                "yyyy-MM-ddTHH:mm:ss",
-                "yyyy-MM-ddTHH:mm:sszzzzzz",
-                "M/d/yyyy h:mm:ss tt" // default format for invariant culture
-            };
+            var formats = new []
+                          {
+                              "u",
+                              "s",
+                              "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
+                              "yyyy-MM-ddTHH:mm:ssZ",
+                              "yyyy-MM-dd HH:mm:ssZ",
+                              "yyyy-MM-ddTHH:mm:ss",
+                              "yyyy-MM-ddTHH:mm:sszzzzzz",
+                              "M/d/yyyy h:mm:ss tt" // default format for invariant culture
+                          };
 
             DateTime date;
 
@@ -208,18 +204,11 @@ namespace RestSharp.Extensions
                 dt = epoch.AddMilliseconds(ms);
 
                 // adjust if time zone modifier present
-                if (match.Groups.Count > 2 && !String.IsNullOrEmpty(match.Groups[3].Value))
+                if (match.Groups.Count > 2 && !string.IsNullOrEmpty(match.Groups[3].Value))
                 {
                     var mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
 
-                    if (match.Groups[2].Value == "+")
-                    {
-                        dt = dt.Add(mod.TimeOfDay);
-                    }
-                    else
-                    {
-                        dt = dt.Subtract(mod.TimeOfDay);
-                    }
+                    dt = match.Groups[2].Value == "+" ? dt.Add(mod.TimeOfDay) : dt.Subtract(mod.TimeOfDay);
                 }
             }
 
@@ -257,12 +246,12 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
                 return text;
 
             text = text.Replace("_", " ");
 
-            string joinString = removeUnderscores ? String.Empty : "_";
+            string joinString = removeUnderscores ? string.Empty : "_";
             string[] words = text.Split(' ');
 
             if (words.Length > 1 || words[0].IsUpperCase())
@@ -279,14 +268,14 @@ namespace RestSharp.Extensions
 
                         char firstChar = char.ToUpper(word[0], culture);
 
-                        words[i] = String.Concat(firstChar, restOfWord);
+                        words[i] = string.Concat(firstChar, restOfWord);
                     }
                 }
 
-                return String.Join(joinString, words);
+                return string.Join(joinString, words);
             }
 
-            return String.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
+            return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
         }
 
         /// <summary>
@@ -307,7 +296,7 @@ namespace RestSharp.Extensions
         /// <returns>string</returns>
         public static string MakeInitialLowerCase(this string word)
         {
-            return String.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
+            return string.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
         }
 
         /// <summary>
@@ -386,7 +375,7 @@ namespace RestSharp.Extensions
         /// <returns>IEnumerable&lt;string&gt;</returns>
         public static IEnumerable<string> GetNameVariants(this string name, CultureInfo culture)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 yield break;
 
             yield return name;

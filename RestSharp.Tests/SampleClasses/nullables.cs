@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RestSharp.Tests
+namespace RestSharp.Tests.SampleClasses
 {
     public class NullableValues
     {

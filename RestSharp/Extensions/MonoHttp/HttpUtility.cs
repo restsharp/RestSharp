@@ -36,16 +36,12 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 
-namespace RestSharp.Contrib
+namespace RestSharp.Extensions.MonoHttp
 {
 
-    //#if !MONOTOUCH
-    //    // CAS - no InheritanceDemand here as the class is sealed
-    //    [AspNetHostingPermission(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-    //#endif
     public sealed class HttpUtility
     {
-        sealed class HttpQSCollection : NameValueCollection
+        sealed class HttpQsCollection : NameValueCollection
         {
             public override string ToString()
             {
@@ -754,7 +750,7 @@ namespace RestSharp.Contrib
             if (query[0] == '?')
                 query = query.Substring(1);
 
-            NameValueCollection result = new HttpQSCollection();
+            NameValueCollection result = new HttpQsCollection();
 
             ParseQueryString(query, encoding, result);
 

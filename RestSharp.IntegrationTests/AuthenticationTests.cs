@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using NUnit.Framework;
 using RestSharp.Authenticators;
-using RestSharp.Contrib;
+using RestSharp.Extensions.MonoHttp;
 using RestSharp.IntegrationTests.Helpers;
 
 namespace RestSharp.IntegrationTests
@@ -17,7 +17,7 @@ namespace RestSharp.IntegrationTests
         {
             Uri baseUrl = new Uri("http://localhost:8888/");
 
-            using(SimpleServer.Create(baseUrl.AbsoluteUri, UsernamePasswordEchoHandler))
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UsernamePasswordEchoHandler))
             {
                 var client = new RestClient(baseUrl)
                              {

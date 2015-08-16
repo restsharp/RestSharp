@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 
 namespace RestSharp.Authenticators.OAuth.Extensions
@@ -27,18 +28,14 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             yield return item;
         }
 
-        public static K TryWithKey<T, K>(this IDictionary<T, K> dictionary, T key)
+        public static TK TryWithKey<T, TK>(this IDictionary<T, TK> dictionary, T key)
         {
-            return dictionary.ContainsKey(key) ? dictionary[key] : default(K);
+            return dictionary.ContainsKey(key) ? dictionary[key] : default(TK);
         }
 
         public static IEnumerable<T> ToEnumerable<T>(this object[] items) where T : class
         {
-            foreach (var item in items)
-            {
-                var record = item as T;
-                yield return record;
-            }
+            return items.Select(item => item as T);
         }
 
         public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
@@ -50,7 +47,6 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         }
 
 #if !WINDOWS_PHONE && !SILVERLIGHT
-
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {
             foreach (var key in range.AllKeys)
@@ -62,12 +58,14 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         public static string ToQueryString(this NameValueCollection collection)
         {
             var sb = new StringBuilder();
+
             if (collection.Count > 0)
             {
                 sb.Append("?");
             }
 
             var count = 0;
+
             foreach (var key in collection.AllKeys)
             {
                 sb.AppendFormat("{0}={1}", key, collection[key].UrlEncode());
@@ -77,17 +75,17 @@ namespace RestSharp.Authenticators.OAuth.Extensions
                 {
                     continue;
                 }
+
                 sb.Append("&");
             }
+
             return sb.ToString();
         }
-
 #endif
 
         public static string Concatenate(this WebParameterCollection collection, string separator, string spacer)
         {
             var sb = new StringBuilder();
-
             var total = collection.Count;
             var count = 0;
 
@@ -98,6 +96,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
                 sb.Append(item.Value);
 
                 count++;
+
                 if (count < total)
                 {
                     sb.Append(spacer);

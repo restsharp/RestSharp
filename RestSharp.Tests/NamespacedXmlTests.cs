@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using NUnit.Framework;
 using RestSharp.Deserializers;
+using RestSharp.Tests.SampleClasses;
 using RestSharp.Tests.SampleClasses.Lastfm;
 
 namespace RestSharp.Tests
@@ -31,10 +32,10 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Elements_With_Namespace()
         {
-            var doc = CreateElementsXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer { Namespace = "http://restsharp.org" };
-            var p = d.Deserialize<PersonForXml>(response);
+            string doc = CreateElementsXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
+            PersonForXml p = d.Deserialize<PersonForXml>(response);
 
             Assert.AreEqual("John Sheehan", p.Name);
             Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -55,10 +56,10 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Elements_With_Namespace_Autodetect_Namespace()
         {
-            var doc = CreateElementsXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer();
-            var p = d.Deserialize<PersonForXml>(response);
+            string doc = CreateElementsXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer();
+            PersonForXml p = d.Deserialize<PersonForXml>(response);
 
             Assert.AreEqual("John Sheehan", p.Name);
             Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -79,10 +80,10 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Attributes_With_Namespace()
         {
-            var doc = CreateAttributesXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer { Namespace = "http://restsharp.org" };
-            var p = d.Deserialize<PersonForXml>(response);
+            string doc = CreateAttributesXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
+            PersonForXml p = d.Deserialize<PersonForXml>(response);
 
             Assert.AreEqual("John Sheehan", p.Name);
             Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -101,10 +102,10 @@ namespace RestSharp.Tests
         [Test]
         public void Ignore_Protected_Property_That_Exists_In_Data()
         {
-            var doc = CreateElementsXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer { Namespace = "http://restsharp.org" };
-            var p = d.Deserialize<PersonForXml>(response);
+            string doc = CreateElementsXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
+            PersonForXml p = d.Deserialize<PersonForXml>(response);
 
             Assert.Null(p.IgnoreProxy);
         }
@@ -112,10 +113,10 @@ namespace RestSharp.Tests
         [Test]
         public void Ignore_ReadOnly_Property_That_Exists_In_Data()
         {
-            var doc = CreateElementsXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer { Namespace = "http://restsharp.org" };
-            var p = d.Deserialize<PersonForXml>(response);
+            string doc = CreateElementsXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
+            PersonForXml p = d.Deserialize<PersonForXml>(response);
 
             Assert.Null(p.ReadOnlyProxy);
         }
@@ -123,10 +124,10 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Names_With_Underscores_With_Namespace()
         {
-            var doc = CreateUnderscoresXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer { Namespace = "http://restsharp.org" };
-            var p = d.Deserialize<PersonForXml>(response);
+            string doc = CreateUnderscoresXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
+            PersonForXml p = d.Deserialize<PersonForXml>(response);
 
             Assert.AreEqual("John Sheehan", p.Name);
             Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
@@ -150,10 +151,10 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_List_Of_Primitives_With_Namespace()
         {
-            var doc = CreateListOfPrimitivesXml();
-            var response = new RestResponse { Content = doc };
-            var d = new XmlDeserializer { Namespace = "http://restsharp.org" };
-            var a = d.Deserialize<List<artist>>(response);
+            string doc = CreateListOfPrimitivesXml();
+            RestResponse response = new RestResponse { Content = doc };
+            XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
+            List<artist> a = d.Deserialize<List<artist>>(response);
 
             Assert.AreEqual(2, a.Count);
             Assert.AreEqual("first", a[0].Value);
@@ -162,9 +163,9 @@ namespace RestSharp.Tests
 
         private static string CreateListOfPrimitivesXml()
         {
-            var doc = new XDocument();
-            var ns = XNamespace.Get("http://restsharp.org");
-            var root = new XElement(ns + "artists");
+            XDocument doc = new XDocument();
+            XNamespace ns = XNamespace.Get("http://restsharp.org");
+            XElement root = new XElement(ns + "artists");
 
             root.Add(new XElement(ns + "artist", "first"));
             root.Add(new XElement(ns + "artist", "second"));
@@ -175,9 +176,9 @@ namespace RestSharp.Tests
 
         private static string CreateUnderscoresXml()
         {
-            var doc = new XDocument();
-            var ns = XNamespace.Get("http://restsharp.org");
-            var root = new XElement(ns + "Person");
+            XDocument doc = new XDocument();
+            XNamespace ns = XNamespace.Get("http://restsharp.org");
+            XElement root = new XElement(ns + "Person");
 
             root.Add(new XElement(ns + "Name", "John Sheehan"));
             root.Add(new XElement(ns + "Start_Date", new DateTime(2009, 9, 25, 0, 6, 1)));
@@ -194,7 +195,7 @@ namespace RestSharp.Tests
                 new XElement(ns + "Name", "The Fonz"),
                 new XAttribute(ns + "Since", 1952)));
 
-            var friends = new XElement(ns + "Friends");
+            XElement friends = new XElement(ns + "Friends");
 
             for (int i = 0; i < 10; i++)
             {
@@ -205,7 +206,7 @@ namespace RestSharp.Tests
 
             root.Add(friends);
 
-            var foes = new XElement(ns + "Foes");
+            XElement foes = new XElement(ns + "Foes");
 
             foes.Add(new XAttribute(ns + "Team", "Yankees"));
 
@@ -222,9 +223,9 @@ namespace RestSharp.Tests
 
         private static string CreateElementsXml()
         {
-            var doc = new XDocument();
-            var ns = XNamespace.Get("http://restsharp.org");
-            var root = new XElement(ns + "Person");
+            XDocument doc = new XDocument();
+            XNamespace ns = XNamespace.Get("http://restsharp.org");
+            XElement root = new XElement(ns + "Person");
 
             root.Add(new XElement(ns + "Name", "John Sheehan"));
             root.Add(new XElement(ns + "StartDate", new DateTime(2009, 9, 25, 0, 6, 1)));
@@ -241,7 +242,7 @@ namespace RestSharp.Tests
                 new XElement(ns + "Name", "The Fonz"),
                 new XElement(ns + "Since", 1952)));
 
-            var friends = new XElement(ns + "Friends");
+            XElement friends = new XElement(ns + "Friends");
 
             for (int i = 0; i < 10; i++)
             {
@@ -255,14 +256,15 @@ namespace RestSharp.Tests
                 new XElement(ns + "Name", "Goldfinger")));
 
             doc.Add(root);
+
             return doc.ToString();
         }
 
         private static string CreateAttributesXml()
         {
-            var doc = new XDocument();
-            var ns = XNamespace.Get("http://restsharp.org");
-            var root = new XElement(ns + "Person");
+            XDocument doc = new XDocument();
+            XNamespace ns = XNamespace.Get("http://restsharp.org");
+            XElement root = new XElement(ns + "Person");
 
             root.Add(new XAttribute(ns + "Name", "John Sheehan"));
             root.Add(new XAttribute(ns + "StartDate", new DateTime(2009, 9, 25, 0, 6, 1)));

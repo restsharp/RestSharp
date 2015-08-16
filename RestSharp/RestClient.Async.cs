@@ -87,28 +87,29 @@ namespace RestSharp
 
             var asyncHandle = new RestRequestAsyncHandle();
 
-            Action<HttpResponse> response_cb = r => this.ProcessResponse(request, r, asyncHandle, callback);
+            Action<HttpResponse> responseCb = r => this.ProcessResponse(request, r, asyncHandle, callback);
 
             if (this.UseSynchronizationContext && SynchronizationContext.Current != null)
             {
                 var ctx = SynchronizationContext.Current;
-                var cb = response_cb;
+                var cb = responseCb;
 
-                response_cb = resp => ctx.Post(s => cb(resp), null);
+                responseCb = resp => ctx.Post(s => cb(resp), null);
             }
 
-            asyncHandle.WebRequest = getWebRequest(http, response_cb, httpMethod);
+            asyncHandle.WebRequest = getWebRequest(http, responseCb, httpMethod);
+
             return asyncHandle;
         }
 
-        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> response_cb, string method)
+        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method)
         {
-            return http.AsGetAsync(response_cb, method);
+            return http.AsGetAsync(responseCb, method);
         }
 
-        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> response_cb, string method)
+        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method)
         {
-            return http.AsPostAsync(response_cb, method);
+            return http.AsPostAsync(responseCb, method);
         }
 
         private void ProcessResponse(IRestRequest request, HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle,
@@ -172,12 +173,12 @@ namespace RestSharp
             catch (Exception ex)
             {
                 restResponse = new RestResponse<T>
-                {
-                    Request = request,
-                    ResponseStatus = ResponseStatus.Error,
-                    ErrorMessage = ex.Message,
-                    ErrorException = ex
-                };
+                               {
+                                   Request = request,
+                                   ResponseStatus = ResponseStatus.Error,
+                                   ErrorMessage = ex.Message,
+                                   ErrorException = ex
+                               };
             }
 
             callback(restResponse, asyncHandle);
@@ -208,6 +209,7 @@ namespace RestSharp
             }
 
             request.Method = Method.GET;
+
             return this.ExecuteTaskAsync<T>(request, token);
         }
 
@@ -235,6 +237,7 @@ namespace RestSharp
             }
 
             request.Method = Method.POST;
+
             return this.ExecuteTaskAsync<T>(request, token);
         }
 
@@ -279,10 +282,10 @@ namespace RestSharp
                     });
 
                 var registration = token.Register(() =>
-                    {
-                        async.Abort();
-                        taskCompletionSource.TrySetCanceled();
-                    });
+                                                  {
+                                                      async.Abort();
+                                                      taskCompletionSource.TrySetCanceled();
+                                                  });
 
 #if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);
@@ -327,6 +330,7 @@ namespace RestSharp
             }
 
             request.Method = Method.GET;
+
             return this.ExecuteTaskAsync(request, token);
         }
 
@@ -352,6 +356,7 @@ namespace RestSharp
             }
 
             request.Method = Method.POST;
+
             return this.ExecuteTaskAsync(request, token);
         }
 
@@ -372,17 +377,19 @@ namespace RestSharp
             try
             {
                 var async = this.ExecuteAsync(request, (response, _) =>
-                    {
-                        if (token.IsCancellationRequested)
-                        {
-                            taskCompletionSource.TrySetCanceled();
-                        }
-                        //Don't run TrySetException, since we should set Error properties and swallow exceptions to be consistent with sync methods
-                        else
-                        {
-                            taskCompletionSource.TrySetResult(response);
-                        }
-                    });
+                                                       {
+                                                           if (token.IsCancellationRequested)
+                                                           {
+                                                               taskCompletionSource.TrySetCanceled();
+                                                           }
+                                                           // Don't run TrySetException, since we should set Error
+                                                           // properties and swallow exceptions to be consistent
+                                                           // with sync methods
+                                                           else
+                                                           {
+                                                               taskCompletionSource.TrySetResult(response);
+                                                           }
+                                                       });
 
                 var registration = token.Register(() =>
                                                   {

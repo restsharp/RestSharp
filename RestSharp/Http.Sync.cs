@@ -15,13 +15,9 @@
 #endregion
 
 #if FRAMEWORK
+
 using System;
 using System.Net;
-
-#if !MONOTOUCH && !MONODROID
-
-#endif
-
 using RestSharp.Extensions;
 
 namespace RestSharp
@@ -158,6 +154,7 @@ namespace RestSharp
                 httpResponse.ResponseStatus = ResponseStatus.TimedOut;
                 httpResponse.ErrorMessage = ex.Message;
                 httpResponse.ErrorException = webException;
+
                 return;
             }
 
@@ -173,6 +170,7 @@ namespace RestSharp
             try
             {
                 var webResponse = GetRawResponse(request);
+
                 ExtractResponseData(response, webResponse);
             }
             catch (Exception ex)
@@ -302,6 +300,7 @@ namespace RestSharp
 #endif
 
             webRequest.AllowAutoRedirect = FollowRedirects;
+
             if (FollowRedirects && MaxRedirects.HasValue)
             {
                 webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;

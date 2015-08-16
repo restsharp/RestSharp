@@ -26,13 +26,14 @@ namespace RestSharp
     /// </summary>
     public abstract class RestResponseBase
     {
-        private string _content;
+        private string content;
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public RestResponseBase()
+        protected RestResponseBase()
         {
+            this.ResponseStatus = ResponseStatus.None;
             Headers = new List<Parameter>();
             Cookies = new List<RestResponseCookie>();
         }
@@ -65,16 +66,8 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get
-            {
-                if (_content == null)
-                {
-                    _content = RawBytes.AsString();
-                }
-
-                return _content;
-            }
-            set { _content = value; }
+            get { return this.content ?? (this.content = this.RawBytes.AsString()); }
+            set { this.content = value; }
         }
 
         /// <summary>
@@ -112,17 +105,11 @@ namespace RestSharp
         /// </summary>
         public IList<Parameter> Headers { get; protected internal set; }
 
-        private ResponseStatus _responseStatus = ResponseStatus.None;
-
         /// <summary>
         /// Status of the request. Will return Error for transport errors.
         /// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
         /// </summary>
-        public ResponseStatus ResponseStatus
-        {
-            get { return _responseStatus; }
-            set { _responseStatus = value; }
-        }
+        public ResponseStatus ResponseStatus { get; set; }
 
         /// <summary>
         /// Transport or other non-HTTP error generated while attempting request
@@ -149,22 +136,22 @@ namespace RestSharp
         public static explicit operator RestResponse<T>(RestResponse response)
         {
             return new RestResponse<T>
-            {
-                ContentEncoding = response.ContentEncoding,
-                ContentLength = response.ContentLength,
-                ContentType = response.ContentType,
-                Cookies = response.Cookies,
-                ErrorMessage = response.ErrorMessage,
-                ErrorException = response.ErrorException,
-                Headers = response.Headers,
-                RawBytes = response.RawBytes,
-                ResponseStatus = response.ResponseStatus,
-                ResponseUri = response.ResponseUri,
-                Server = response.Server,
-                StatusCode = response.StatusCode,
-                StatusDescription = response.StatusDescription,
-                Request = response.Request
-            };
+                   {
+                       ContentEncoding = response.ContentEncoding,
+                       ContentLength = response.ContentLength,
+                       ContentType = response.ContentType,
+                       Cookies = response.Cookies,
+                       ErrorMessage = response.ErrorMessage,
+                       ErrorException = response.ErrorException,
+                       Headers = response.Headers,
+                       RawBytes = response.RawBytes,
+                       ResponseStatus = response.ResponseStatus,
+                       ResponseUri = response.ResponseUri,
+                       Server = response.Server,
+                       StatusCode = response.StatusCode,
+                       StatusDescription = response.StatusDescription,
+                       Request = response.Request
+                   };
         }
     }
 

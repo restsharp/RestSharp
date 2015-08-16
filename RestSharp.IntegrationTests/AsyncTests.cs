@@ -81,14 +81,14 @@ namespace RestSharp.IntegrationTests
         public void Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler()
         {
             const string baseUrl = "http://localhost:8888/";
-            const string ExceptionMessage = "Thrown from OnBeforeDeserialization";
+            const string exceptionMessage = "Thrown from OnBeforeDeserialization";
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("success");
 
-                request.OnBeforeDeserialization += r => { throw new Exception(ExceptionMessage); };
+                request.OnBeforeDeserialization += r => { throw new Exception(exceptionMessage); };
 
                 var task = client.ExecuteTaskAsync<Response>(request);
 
@@ -96,7 +96,7 @@ namespace RestSharp.IntegrationTests
 
                 var response = task.Result;
 
-                Assert.AreEqual(ExceptionMessage, response.ErrorMessage);
+                Assert.AreEqual(exceptionMessage, response.ErrorMessage);
                 Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
             }
         }
@@ -217,7 +217,7 @@ namespace RestSharp.IntegrationTests
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
 
-                //Half the value of ResponseHandler.Timeout
+                // Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
                 var task = client.ExecuteTaskAsync(request);
@@ -240,7 +240,7 @@ namespace RestSharp.IntegrationTests
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
 
-                //Half the value of ResponseHandler.Timeout
+                // Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
                 var task = client.ExecuteTaskAsync(request);

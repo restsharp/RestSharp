@@ -18,8 +18,7 @@ using System;
 using System.Net;
 
 #if FRAMEWORK
-
-namespace RestSharp
+namespace RestSharp.Authenticators
 {
     /// <summary>
     /// Tries to Authenticate with the credentials of the currently logged in user, or impersonate a user
@@ -31,7 +30,7 @@ namespace RestSharp
         /// <summary>
         /// Authenticate with the credentials of the currently logged in user
         /// </summary>
-        public NtlmAuthenticator()
+        public NtlmAuthenticator() 
             : this(CredentialCache.DefaultCredentials) { }
 
         /// <summary>
@@ -56,9 +55,8 @@ namespace RestSharp
 
         public void Authenticate(IRestClient client, IRestRequest request)
         {
-            request.Credentials = credentials;
+            request.Credentials = this.credentials;
         }
     }
 }
-
 #endif

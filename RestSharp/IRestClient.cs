@@ -19,12 +19,14 @@ using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading;
 using System.Threading.Tasks;
 #endif
+
 #if FRAMEWORK
 using System.Net.Cache;
 #endif

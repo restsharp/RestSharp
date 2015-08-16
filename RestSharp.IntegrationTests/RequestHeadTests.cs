@@ -21,6 +21,7 @@ namespace RestSharp.IntegrationTests
         public void Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate()
         {
             const Method httpMethod = Method.GET;
+
             using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestHeadCapturer>()))
             {
                 var client = new RestClient(BASE_URL);
@@ -67,12 +68,12 @@ namespace RestSharp.IntegrationTests
             {
                 var client = new RestClient(BASE_URL);
                 var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
-                {
-                    // UseDefaultCredentials is currently false by default,
-                    // but to make the test more robust in case that ever
-                    // changes, it's better to explicitly set it here.
-                    UseDefaultCredentials = false
-                };
+                              {
+                                  // UseDefaultCredentials is currently false by default,
+                                  // but to make the test more robust in case that ever
+                                  // changes, it's better to explicitly set it here.
+                                  UseDefaultCredentials = false
+                              };
                 var response = client.Execute(request);
 
                 Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);

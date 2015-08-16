@@ -40,6 +40,7 @@ namespace RestSharp.Deserializers
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
             {
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+
                 return (T)serializer.Deserialize(stream);
             }
         }

@@ -61,12 +61,12 @@ namespace RestSharp
         /// <summary>
         /// .NET format string for ISO 8601 date format
         /// </summary>
-        public const string Iso8601 = "s";
+        public const string ISO_8601 = "s";
 
         /// <summary>
         /// .NET format string for roundtrip date format
         /// </summary>
-        public const string RoundTrip = "u";
+        public const string ROUND_TRIP = "u";
     }
 
     /// <summary>

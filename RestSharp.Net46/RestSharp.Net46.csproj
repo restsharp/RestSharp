@@ -50,9 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\RestSharp.Net4\Extensions\RestClientExtensions.cs">
-      <Link>Extensions\RestClientExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
       <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
     </Compile>

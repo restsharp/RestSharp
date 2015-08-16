@@ -18,8 +18,6 @@ namespace RestSharp.Tests
             Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
         }
 
-        #region IDisposable Members
-
         public void Dispose()
         {
             if (this.PreviousCulture != null)
@@ -29,7 +27,5 @@ namespace RestSharp.Tests
                 this.PreviousCulture = null;
             }
         }
-
-        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿#if FRAMEWORK
+
 using System;
 
 namespace RestSharp
@@ -13,6 +14,7 @@ namespace RestSharp
         public byte[] DownloadData(IRestRequest request)
         {
             var response = Execute(request);
+
             return response.RawBytes;
         }
 
@@ -46,6 +48,7 @@ namespace RestSharp
         public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
         {
             request.Method = Method.POST; // Required by RestClient.BuildUri... 
+
             return Execute(request, httpMethod, DoExecuteAsPost);
         }
 

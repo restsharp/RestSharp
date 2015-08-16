@@ -63,6 +63,8 @@ namespace RestSharp
         /// </summary>
         public RestRequest()
         {
+            this.RequestFormat = DataFormat.Xml;
+            this.Method = Method.GET;
             this.Parameters = new List<Parameter>();
             this.Files = new List<FileParameter>();
             this.XmlSerializer = new XmlSerializer();
@@ -178,6 +180,7 @@ namespace RestSharp
         private IRestRequest AddFile(FileParameter file)
         {
             this.Files.Add(file);
+
             return this;
         }
 
@@ -289,6 +292,7 @@ namespace RestSharp
         public IRestRequest AddXmlBody(object obj, string xmlNamespace)
         {
             this.RequestFormat = DataFormat.Xml;
+
             return this.AddBody(obj, xmlNamespace);
         }
 
@@ -357,6 +361,7 @@ namespace RestSharp
         public IRestRequest AddObject(object obj)
         {
             this.AddObject(obj, new string[] { });
+
             return this;
         }
 
@@ -368,6 +373,7 @@ namespace RestSharp
         public IRestRequest AddParameter(Parameter p)
         {
             this.Parameters.Add(p);
+
             return this;
         }
 
@@ -423,12 +429,12 @@ namespace RestSharp
         public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type)
         {
             return this.AddParameter(new Parameter
-            {
-                Name = name,
-                Value = value,
-                ContentType = contentType,
-                Type = type
-            });
+                                     {
+                                         Name = name,
+                                         Value = value,
+                                         ContentType = contentType,
+                                         Type = type
+                                     });
         }
 
         /// <summary>
@@ -496,17 +502,11 @@ namespace RestSharp
         /// </summary>
         public List<FileParameter> Files { get; private set; }
 
-        private Method method = Method.GET;
-
         /// <summary>
         /// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
         /// Default is GET
         /// </summary>
-        public Method Method
-        {
-            get { return this.method; }
-            set { this.method = value; }
-        }
+        public Method Method { get; set; }
 
         /// <summary>
         /// The Resource URL to make the request against.
@@ -522,17 +522,11 @@ namespace RestSharp
         /// </example>
         public string Resource { get; set; }
 
-        private DataFormat requestFormat = DataFormat.Xml;
-
         /// <summary>
         /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
         /// By default XmlSerializer is used.
         /// </summary>
-        public DataFormat RequestFormat
-        {
-            get { return this.requestFormat; }
-            set { this.requestFormat = value; }
-        }
+        public DataFormat RequestFormat { get; set; }
 
         /// <summary>
         /// Used by the default deserializers to determine where to start deserializing from.

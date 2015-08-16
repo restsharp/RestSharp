@@ -25,7 +25,7 @@ namespace RestSharp.Serializers
     /// Currently not supported with the JsonSerializer
     /// When specified at the property level the class-level specification is overridden
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false)]
     public sealed class SerializeAsAttribute : Attribute
     {
         public SerializeAsAttribute()

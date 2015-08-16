@@ -30,31 +30,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+
 #if NET_4_0
 using System.Web.Configuration;
 #endif
 
-namespace RestSharp.Contrib
+namespace RestSharp.Extensions.MonoHttp
 {
 #if NET_4_0
     public
 #endif
     class HttpEncoder
     {
-        static char[] hexChars = "0123456789abcdef".ToCharArray();
-        static object entitiesLock = new object();
+        static readonly char[] hexChars = "0123456789abcdef".ToCharArray();
+        static readonly object entitiesLock = new object();
         static SortedDictionary<string, char> entities;
 #if NET_4_0
         static Lazy <HttpEncoder> defaultEncoder;
         static Lazy <HttpEncoder> currentEncoderLazy;
 #else
-        static HttpEncoder defaultEncoder;
+        static readonly HttpEncoder defaultEncoder;
 #endif
-        static HttpEncoder currentEncoder;
+        static readonly HttpEncoder currentEncoder;
 
         static IDictionary<string, char> Entities
         {
@@ -85,6 +87,7 @@ namespace RestSharp.Contrib
             {
                 if (value == null)
                     throw new ArgumentNullException ("value");
+
                 currentEncoder = value;
             }
 #endif
@@ -113,8 +116,6 @@ namespace RestSharp.Contrib
 #endif
         }
 
-        public HttpEncoder() { }
-
 #if NET_4_0
         protected internal virtual
 #else
@@ -122,15 +123,8 @@ namespace RestSharp.Contrib
 #endif
  void HeaderNameValueEncode(string headerName, string headerValue, out string encodedHeaderName, out string encodedHeaderValue)
         {
-            if (String.IsNullOrEmpty(headerName))
-                encodedHeaderName = headerName;
-            else
-                encodedHeaderName = EncodeHeaderString(headerName);
-
-            if (String.IsNullOrEmpty(headerValue))
-                encodedHeaderValue = headerValue;
-            else
-                encodedHeaderValue = EncodeHeaderString(headerValue);
+            encodedHeaderName = string.IsNullOrEmpty(headerName) ? headerName : EncodeHeaderString(headerName);
+            encodedHeaderValue = string.IsNullOrEmpty(headerValue) ? headerValue : EncodeHeaderString(headerValue);
         }
 
         static void StringBuilderAppend(string s, ref StringBuilder sb)
@@ -144,20 +138,14 @@ namespace RestSharp.Contrib
         static string EncodeHeaderString(string input)
         {
             StringBuilder sb = null;
-            char ch;
 
-            for (int i = 0; i < input.Length; i++)
+            foreach (var ch in input)
             {
-                ch = input[i];
-
                 if ((ch < 32 && ch != 9) || ch == 127)
-                    StringBuilderAppend(String.Format("%{0:x2}", (int)ch), ref sb);
+                    StringBuilderAppend(string.Format("%{0:x2}", (int) ch), ref sb);
             }
 
-            if (sb != null)
-                return sb.ToString();
-
-            return input;
+            return sb != null ? sb.ToString() : input;
         }
 
 #if NET_4_0
@@ -223,7 +211,7 @@ namespace RestSharp.Contrib
 #endif
  string UrlPathEncode(string value)
         {
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
                 return value;
 
             MemoryStream result = new MemoryStream();
@@ -233,6 +221,7 @@ namespace RestSharp.Contrib
                 UrlPathEncodeChar(value[i], result);
 
             byte[] bytes = result.ToArray();
+
             return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
         }
 
@@ -256,7 +245,7 @@ namespace RestSharp.Contrib
             int end = offset + count;
 
             for (int i = offset; i < end; i++)
-                UrlEncodeChar((char)bytes[i], result, false);
+                UrlEncodeChar((char) bytes[i], result, false);
 
             return result.ToArray();
         }
@@ -267,7 +256,7 @@ namespace RestSharp.Contrib
                 return null;
 
             if (s.Length == 0)
-                return String.Empty;
+                return string.Empty;
 
             bool needEncode = false;
 
@@ -278,7 +267,7 @@ namespace RestSharp.Contrib
 #if NET_4_0
                     || c == '\''
 #endif
-                    )
+)
                 {
                     needEncode = true;
                     break;
@@ -289,7 +278,6 @@ namespace RestSharp.Contrib
                 return s;
 
             StringBuilder output = new StringBuilder();
-            char ch;
             int len = s.Length;
 
             for (int i = 0; i < len; i++)
@@ -327,12 +315,12 @@ namespace RestSharp.Contrib
                         break;
 
                     default:
-                        ch = s[i];
+                        var ch = s[i];
 
                         if (ch > 159 && ch < 256)
                         {
                             output.Append("&#");
-                            output.Append(((int)ch).ToString(Helpers.InvariantCulture));
+                            output.Append(((int) ch).ToString(Helpers.InvariantCulture));
                             output.Append(";");
                         }
                         else
@@ -355,7 +343,7 @@ namespace RestSharp.Contrib
                 return null;
 
             if (s.Length == 0)
-                return String.Empty;
+                return string.Empty;
 #endif
 
             bool needEncode = false;
@@ -367,7 +355,7 @@ namespace RestSharp.Contrib
 #if NET_4_0
                     || c == '\''
 #endif
-                    )
+)
                 {
                     needEncode = true;
                     break;
@@ -396,9 +384,9 @@ namespace RestSharp.Contrib
                         break;
 
 #if NET_4_0
-                case '\'':
-                    output.Append ("&#39;");
-                    break;
+                    case '\'':
+                        output.Append ("&#39;");
+                        break;
 #endif
 
                     default:
@@ -415,10 +403,11 @@ namespace RestSharp.Contrib
                 return null;
 
             if (s.Length == 0)
-                return String.Empty;
+                return string.Empty;
 
             if (s.IndexOf('&') == -1)
                 return s;
+
 #if NET_4_0
             StringBuilder rawEntity = new StringBuilder ();
 #endif
@@ -432,8 +421,8 @@ namespace RestSharp.Contrib
             // 3 -> '#' found after '&' and getting numbers
             int state = 0;
             int number = 0;
-            bool is_hex_value = false;
-            bool have_trailing_digits = false;
+            bool isHexValue = false;
+            bool haveTrailingDigits = false;
 
             for (int i = 0; i < len; i++)
             {
@@ -461,136 +450,130 @@ namespace RestSharp.Contrib
                 {
                     state = 1;
 
-                    if (have_trailing_digits)
+                    if (haveTrailingDigits)
                     {
                         entity.Append(number.ToString(Helpers.InvariantCulture));
-                        have_trailing_digits = false;
+                        haveTrailingDigits = false;
                     }
 
-                    output.Append(entity.ToString());
+                    output.Append(entity);
                     entity.Length = 0;
                     entity.Append('&');
 
                     continue;
                 }
 
-                if (state == 1)
+                switch (state)
                 {
-                    if (c == ';')
-                    {
-                        state = 0;
-                        output.Append(entity.ToString());
-                        output.Append(c);
-                        entity.Length = 0;
-                    }
-                    else
-                    {
-                        number = 0;
-                        is_hex_value = false;
-                        if (c != '#')
+                    case 1:
+                        if (c == ';')
                         {
-                            state = 2;
+                            state = 0;
+                            output.Append(entity);
+                            output.Append(c);
+                            entity.Length = 0;
                         }
                         else
                         {
-                            state = 3;
+                            number = 0;
+                            isHexValue = false;
+                            state = c != '#' ? 2 : 3;
+                            entity.Append(c);
+#if NET_4_0
+                            rawEntity.Append (c);
+#endif
                         }
+                        break;
 
+                    case 2:
                         entity.Append(c);
+
+                        if (c == ';')
+                        {
+                            string key = entity.ToString();
+
+                            if (key.Length > 1 && Entities.ContainsKey(key.Substring(1, key.Length - 2)))
+                                key = Entities[key.Substring(1, key.Length - 2)].ToString();
+
+                            output.Append(key);
+                            state = 0;
+                            entity.Length = 0;
 #if NET_4_0
-                        rawEntity.Append (c);
+                            rawEntity.Length = 0;
 #endif
-                    }
-                }
-                else if (state == 2)
-                {
-                    entity.Append(c);
+                        }
+                        break;
 
-                    if (c == ';')
-                    {
-                        string key = entity.ToString();
-
-                        if (key.Length > 1 && Entities.ContainsKey(key.Substring(1, key.Length - 2)))
-                            key = Entities[key.Substring(1, key.Length - 2)].ToString();
-
-                        output.Append(key);
-                        state = 0;
-                        entity.Length = 0;
-#if NET_4_0
-                        rawEntity.Length = 0;
-#endif
-                    }
-                }
-                else if (state == 3)
-                {
-                    if (c == ';')
-                    {
+                    case 3:
+                        if (c == ';')
+                        {
 #if NET_4_0
                         if (number == 0)
                             output.Append (rawEntity.ToString () + ";");
                         else
 #endif
-                        if (number > 65535)
+                            if (number > 65535)
+                            {
+                                output.Append("&#");
+                                output.Append(number.ToString(Helpers.InvariantCulture));
+                                output.Append(";");
+                            }
+                            else
+                            {
+                                output.Append((char) number);
+                            }
+
+                            state = 0;
+                            entity.Length = 0;
+#if NET_4_0
+                            rawEntity.Length = 0;
+#endif
+                            haveTrailingDigits = false;
+                        }
+                        else if (isHexValue && Uri.IsHexDigit(c))
                         {
-                            output.Append("&#");
-                            output.Append(number.ToString(Helpers.InvariantCulture));
-                            output.Append(";");
+                            number = number * 16 + Uri.FromHex(c);
+                            haveTrailingDigits = true;
+#if NET_4_0
+                        rawEntity.Append (c);
+#endif
+                        }
+                        else if (char.IsDigit(c))
+                        {
+                            number = number * 10 + (c - '0');
+                            haveTrailingDigits = true;
+#if NET_4_0
+                            rawEntity.Append (c);
+#endif
+                        }
+                        else if (number == 0 && (c == 'x' || c == 'X'))
+                        {
+                            isHexValue = true;
+#if NET_4_0
+                            rawEntity.Append (c);
+#endif
                         }
                         else
                         {
-                            output.Append((char)number);
+                            state = 2;
+
+                            if (haveTrailingDigits)
+                            {
+                                entity.Append(number.ToString(Helpers.InvariantCulture));
+                                haveTrailingDigits = false;
+                            }
+
+                            entity.Append(c);
                         }
-
-                        state = 0;
-                        entity.Length = 0;
-#if NET_4_0
-                        rawEntity.Length = 0;
-#endif
-                        have_trailing_digits = false;
-                    }
-                    else if (is_hex_value && Uri.IsHexDigit(c))
-                    {
-                        number = number * 16 + Uri.FromHex(c);
-                        have_trailing_digits = true;
-#if NET_4_0
-                        rawEntity.Append (c);
-#endif
-                    }
-                    else if (Char.IsDigit(c))
-                    {
-                        number = number * 10 + ((int)c - '0');
-                        have_trailing_digits = true;
-#if NET_4_0
-                        rawEntity.Append (c);
-#endif
-                    }
-                    else if (number == 0 && (c == 'x' || c == 'X'))
-                    {
-                        is_hex_value = true;
-#if NET_4_0
-                        rawEntity.Append (c);
-#endif
-                    }
-                    else
-                    {
-                        state = 2;
-
-                        if (have_trailing_digits)
-                        {
-                            entity.Append(number.ToString(Helpers.InvariantCulture));
-                            have_trailing_digits = false;
-                        }
-
-                        entity.Append(c);
-                    }
+                        break;
                 }
             }
 
             if (entity.Length > 0)
             {
-                output.Append(entity.ToString());
+                output.Append(entity);
             }
-            else if (have_trailing_digits)
+            else if (haveTrailingDigits)
             {
                 output.Append(number.ToString(Helpers.InvariantCulture));
             }
@@ -602,9 +585,9 @@ namespace RestSharp.Contrib
         {
             return (c == '!' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_'
 #if !NET_4_0
-                    || c == '\''
+ || c == '\''
 #endif
-                    );
+);
         }
 
         internal static void UrlEncodeChar(char c, Stream result, bool isUnicode)
@@ -614,32 +597,35 @@ namespace RestSharp.Contrib
                 //FIXME: what happens when there is an internal error?
                 //if (!isUnicode)
                 //    throw new ArgumentOutOfRangeException ("c", c, "c must be less than 256");
-                int idx;
-                int i = (int)c;
+                int i = c;
 
-                result.WriteByte((byte)'%');
-                result.WriteByte((byte)'u');
-                idx = i >> 12;
-                result.WriteByte((byte)hexChars[idx]);
+                result.WriteByte((byte) '%');
+                result.WriteByte((byte) 'u');
+
+                int idx = i >> 12;
+
+                result.WriteByte((byte) hexChars[idx]);
                 idx = (i >> 8) & 0x0F;
-                result.WriteByte((byte)hexChars[idx]);
+                result.WriteByte((byte) hexChars[idx]);
                 idx = (i >> 4) & 0x0F;
-                result.WriteByte((byte)hexChars[idx]);
+                result.WriteByte((byte) hexChars[idx]);
                 idx = i & 0x0F;
-                result.WriteByte((byte)hexChars[idx]);
+                result.WriteByte((byte) hexChars[idx]);
 
                 return;
             }
 
             if (c > ' ' && NotEncoded(c))
             {
-                result.WriteByte((byte)c);
+                result.WriteByte((byte) c);
+
                 return;
             }
 
             if (c == ' ')
             {
-                result.WriteByte((byte)'+');
+                result.WriteByte((byte) '+');
+
                 return;
             }
 
@@ -650,22 +636,22 @@ namespace RestSharp.Contrib
             {
                 if (isUnicode && c > 127)
                 {
-                    result.WriteByte((byte)'%');
-                    result.WriteByte((byte)'u');
-                    result.WriteByte((byte)'0');
-                    result.WriteByte((byte)'0');
+                    result.WriteByte((byte) '%');
+                    result.WriteByte((byte) 'u');
+                    result.WriteByte((byte) '0');
+                    result.WriteByte((byte) '0');
                 }
                 else
-                    result.WriteByte((byte)'%');
+                    result.WriteByte((byte) '%');
 
-                int idx = ((int)c) >> 4;
+                int idx = c >> 4;
 
-                result.WriteByte((byte)hexChars[idx]);
-                idx = ((int)c) & 0x0F;
-                result.WriteByte((byte)hexChars[idx]);
+                result.WriteByte((byte) hexChars[idx]);
+                idx = c & 0x0F;
+                result.WriteByte((byte) hexChars[idx]);
             }
             else
-                result.WriteByte((byte)c);
+                result.WriteByte((byte) c);
         }
 
         internal static void UrlPathEncodeChar(char c, Stream result)
@@ -676,282 +662,284 @@ namespace RestSharp.Contrib
 
                 for (int i = 0; i < bIn.Length; i++)
                 {
-                    result.WriteByte((byte)'%');
+                    result.WriteByte((byte) '%');
 
-                    int idx = ((int)bIn[i]) >> 4;
+                    int idx = bIn[i] >> 4;
 
-                    result.WriteByte((byte)hexChars[idx]);
-                    idx = ((int)bIn[i]) & 0x0F;
-                    result.WriteByte((byte)hexChars[idx]);
+                    result.WriteByte((byte) hexChars[idx]);
+                    idx = bIn[i] & 0x0F;
+                    result.WriteByte((byte) hexChars[idx]);
                 }
             }
             else if (c == ' ')
             {
-                result.WriteByte((byte)'%');
-                result.WriteByte((byte)'2');
-                result.WriteByte((byte)'0');
+                result.WriteByte((byte) '%');
+                result.WriteByte((byte) '2');
+                result.WriteByte((byte) '0');
             }
             else
-                result.WriteByte((byte)c);
+                result.WriteByte((byte) c);
         }
 
         static void InitEntities()
         {
             // Build the hash table of HTML entity references.  This list comes
             // from the HTML 4.01 W3C recommendation.
-            entities = new SortedDictionary<string, char>(StringComparer.Ordinal);
-            entities.Add("nbsp", '\u00A0');
-            entities.Add("iexcl", '\u00A1');
-            entities.Add("cent", '\u00A2');
-            entities.Add("pound", '\u00A3');
-            entities.Add("curren", '\u00A4');
-            entities.Add("yen", '\u00A5');
-            entities.Add("brvbar", '\u00A6');
-            entities.Add("sect", '\u00A7');
-            entities.Add("uml", '\u00A8');
-            entities.Add("copy", '\u00A9');
-            entities.Add("ordf", '\u00AA');
-            entities.Add("laquo", '\u00AB');
-            entities.Add("not", '\u00AC');
-            entities.Add("shy", '\u00AD');
-            entities.Add("reg", '\u00AE');
-            entities.Add("macr", '\u00AF');
-            entities.Add("deg", '\u00B0');
-            entities.Add("plusmn", '\u00B1');
-            entities.Add("sup2", '\u00B2');
-            entities.Add("sup3", '\u00B3');
-            entities.Add("acute", '\u00B4');
-            entities.Add("micro", '\u00B5');
-            entities.Add("para", '\u00B6');
-            entities.Add("middot", '\u00B7');
-            entities.Add("cedil", '\u00B8');
-            entities.Add("sup1", '\u00B9');
-            entities.Add("ordm", '\u00BA');
-            entities.Add("raquo", '\u00BB');
-            entities.Add("frac14", '\u00BC');
-            entities.Add("frac12", '\u00BD');
-            entities.Add("frac34", '\u00BE');
-            entities.Add("iquest", '\u00BF');
-            entities.Add("Agrave", '\u00C0');
-            entities.Add("Aacute", '\u00C1');
-            entities.Add("Acirc", '\u00C2');
-            entities.Add("Atilde", '\u00C3');
-            entities.Add("Auml", '\u00C4');
-            entities.Add("Aring", '\u00C5');
-            entities.Add("AElig", '\u00C6');
-            entities.Add("Ccedil", '\u00C7');
-            entities.Add("Egrave", '\u00C8');
-            entities.Add("Eacute", '\u00C9');
-            entities.Add("Ecirc", '\u00CA');
-            entities.Add("Euml", '\u00CB');
-            entities.Add("Igrave", '\u00CC');
-            entities.Add("Iacute", '\u00CD');
-            entities.Add("Icirc", '\u00CE');
-            entities.Add("Iuml", '\u00CF');
-            entities.Add("ETH", '\u00D0');
-            entities.Add("Ntilde", '\u00D1');
-            entities.Add("Ograve", '\u00D2');
-            entities.Add("Oacute", '\u00D3');
-            entities.Add("Ocirc", '\u00D4');
-            entities.Add("Otilde", '\u00D5');
-            entities.Add("Ouml", '\u00D6');
-            entities.Add("times", '\u00D7');
-            entities.Add("Oslash", '\u00D8');
-            entities.Add("Ugrave", '\u00D9');
-            entities.Add("Uacute", '\u00DA');
-            entities.Add("Ucirc", '\u00DB');
-            entities.Add("Uuml", '\u00DC');
-            entities.Add("Yacute", '\u00DD');
-            entities.Add("THORN", '\u00DE');
-            entities.Add("szlig", '\u00DF');
-            entities.Add("agrave", '\u00E0');
-            entities.Add("aacute", '\u00E1');
-            entities.Add("acirc", '\u00E2');
-            entities.Add("atilde", '\u00E3');
-            entities.Add("auml", '\u00E4');
-            entities.Add("aring", '\u00E5');
-            entities.Add("aelig", '\u00E6');
-            entities.Add("ccedil", '\u00E7');
-            entities.Add("egrave", '\u00E8');
-            entities.Add("eacute", '\u00E9');
-            entities.Add("ecirc", '\u00EA');
-            entities.Add("euml", '\u00EB');
-            entities.Add("igrave", '\u00EC');
-            entities.Add("iacute", '\u00ED');
-            entities.Add("icirc", '\u00EE');
-            entities.Add("iuml", '\u00EF');
-            entities.Add("eth", '\u00F0');
-            entities.Add("ntilde", '\u00F1');
-            entities.Add("ograve", '\u00F2');
-            entities.Add("oacute", '\u00F3');
-            entities.Add("ocirc", '\u00F4');
-            entities.Add("otilde", '\u00F5');
-            entities.Add("ouml", '\u00F6');
-            entities.Add("divide", '\u00F7');
-            entities.Add("oslash", '\u00F8');
-            entities.Add("ugrave", '\u00F9');
-            entities.Add("uacute", '\u00FA');
-            entities.Add("ucirc", '\u00FB');
-            entities.Add("uuml", '\u00FC');
-            entities.Add("yacute", '\u00FD');
-            entities.Add("thorn", '\u00FE');
-            entities.Add("yuml", '\u00FF');
-            entities.Add("fnof", '\u0192');
-            entities.Add("Alpha", '\u0391');
-            entities.Add("Beta", '\u0392');
-            entities.Add("Gamma", '\u0393');
-            entities.Add("Delta", '\u0394');
-            entities.Add("Epsilon", '\u0395');
-            entities.Add("Zeta", '\u0396');
-            entities.Add("Eta", '\u0397');
-            entities.Add("Theta", '\u0398');
-            entities.Add("Iota", '\u0399');
-            entities.Add("Kappa", '\u039A');
-            entities.Add("Lambda", '\u039B');
-            entities.Add("Mu", '\u039C');
-            entities.Add("Nu", '\u039D');
-            entities.Add("Xi", '\u039E');
-            entities.Add("Omicron", '\u039F');
-            entities.Add("Pi", '\u03A0');
-            entities.Add("Rho", '\u03A1');
-            entities.Add("Sigma", '\u03A3');
-            entities.Add("Tau", '\u03A4');
-            entities.Add("Upsilon", '\u03A5');
-            entities.Add("Phi", '\u03A6');
-            entities.Add("Chi", '\u03A7');
-            entities.Add("Psi", '\u03A8');
-            entities.Add("Omega", '\u03A9');
-            entities.Add("alpha", '\u03B1');
-            entities.Add("beta", '\u03B2');
-            entities.Add("gamma", '\u03B3');
-            entities.Add("delta", '\u03B4');
-            entities.Add("epsilon", '\u03B5');
-            entities.Add("zeta", '\u03B6');
-            entities.Add("eta", '\u03B7');
-            entities.Add("theta", '\u03B8');
-            entities.Add("iota", '\u03B9');
-            entities.Add("kappa", '\u03BA');
-            entities.Add("lambda", '\u03BB');
-            entities.Add("mu", '\u03BC');
-            entities.Add("nu", '\u03BD');
-            entities.Add("xi", '\u03BE');
-            entities.Add("omicron", '\u03BF');
-            entities.Add("pi", '\u03C0');
-            entities.Add("rho", '\u03C1');
-            entities.Add("sigmaf", '\u03C2');
-            entities.Add("sigma", '\u03C3');
-            entities.Add("tau", '\u03C4');
-            entities.Add("upsilon", '\u03C5');
-            entities.Add("phi", '\u03C6');
-            entities.Add("chi", '\u03C7');
-            entities.Add("psi", '\u03C8');
-            entities.Add("omega", '\u03C9');
-            entities.Add("thetasym", '\u03D1');
-            entities.Add("upsih", '\u03D2');
-            entities.Add("piv", '\u03D6');
-            entities.Add("bull", '\u2022');
-            entities.Add("hellip", '\u2026');
-            entities.Add("prime", '\u2032');
-            entities.Add("Prime", '\u2033');
-            entities.Add("oline", '\u203E');
-            entities.Add("frasl", '\u2044');
-            entities.Add("weierp", '\u2118');
-            entities.Add("image", '\u2111');
-            entities.Add("real", '\u211C');
-            entities.Add("trade", '\u2122');
-            entities.Add("alefsym", '\u2135');
-            entities.Add("larr", '\u2190');
-            entities.Add("uarr", '\u2191');
-            entities.Add("rarr", '\u2192');
-            entities.Add("darr", '\u2193');
-            entities.Add("harr", '\u2194');
-            entities.Add("crarr", '\u21B5');
-            entities.Add("lArr", '\u21D0');
-            entities.Add("uArr", '\u21D1');
-            entities.Add("rArr", '\u21D2');
-            entities.Add("dArr", '\u21D3');
-            entities.Add("hArr", '\u21D4');
-            entities.Add("forall", '\u2200');
-            entities.Add("part", '\u2202');
-            entities.Add("exist", '\u2203');
-            entities.Add("empty", '\u2205');
-            entities.Add("nabla", '\u2207');
-            entities.Add("isin", '\u2208');
-            entities.Add("notin", '\u2209');
-            entities.Add("ni", '\u220B');
-            entities.Add("prod", '\u220F');
-            entities.Add("sum", '\u2211');
-            entities.Add("minus", '\u2212');
-            entities.Add("lowast", '\u2217');
-            entities.Add("radic", '\u221A');
-            entities.Add("prop", '\u221D');
-            entities.Add("infin", '\u221E');
-            entities.Add("ang", '\u2220');
-            entities.Add("and", '\u2227');
-            entities.Add("or", '\u2228');
-            entities.Add("cap", '\u2229');
-            entities.Add("cup", '\u222A');
-            entities.Add("int", '\u222B');
-            entities.Add("there4", '\u2234');
-            entities.Add("sim", '\u223C');
-            entities.Add("cong", '\u2245');
-            entities.Add("asymp", '\u2248');
-            entities.Add("ne", '\u2260');
-            entities.Add("equiv", '\u2261');
-            entities.Add("le", '\u2264');
-            entities.Add("ge", '\u2265');
-            entities.Add("sub", '\u2282');
-            entities.Add("sup", '\u2283');
-            entities.Add("nsub", '\u2284');
-            entities.Add("sube", '\u2286');
-            entities.Add("supe", '\u2287');
-            entities.Add("oplus", '\u2295');
-            entities.Add("otimes", '\u2297');
-            entities.Add("perp", '\u22A5');
-            entities.Add("sdot", '\u22C5');
-            entities.Add("lceil", '\u2308');
-            entities.Add("rceil", '\u2309');
-            entities.Add("lfloor", '\u230A');
-            entities.Add("rfloor", '\u230B');
-            entities.Add("lang", '\u2329');
-            entities.Add("rang", '\u232A');
-            entities.Add("loz", '\u25CA');
-            entities.Add("spades", '\u2660');
-            entities.Add("clubs", '\u2663');
-            entities.Add("hearts", '\u2665');
-            entities.Add("diams", '\u2666');
-            entities.Add("quot", '\u0022');
-            entities.Add("amp", '\u0026');
-            entities.Add("lt", '\u003C');
-            entities.Add("gt", '\u003E');
-            entities.Add("OElig", '\u0152');
-            entities.Add("oelig", '\u0153');
-            entities.Add("Scaron", '\u0160');
-            entities.Add("scaron", '\u0161');
-            entities.Add("Yuml", '\u0178');
-            entities.Add("circ", '\u02C6');
-            entities.Add("tilde", '\u02DC');
-            entities.Add("ensp", '\u2002');
-            entities.Add("emsp", '\u2003');
-            entities.Add("thinsp", '\u2009');
-            entities.Add("zwnj", '\u200C');
-            entities.Add("zwj", '\u200D');
-            entities.Add("lrm", '\u200E');
-            entities.Add("rlm", '\u200F');
-            entities.Add("ndash", '\u2013');
-            entities.Add("mdash", '\u2014');
-            entities.Add("lsquo", '\u2018');
-            entities.Add("rsquo", '\u2019');
-            entities.Add("sbquo", '\u201A');
-            entities.Add("ldquo", '\u201C');
-            entities.Add("rdquo", '\u201D');
-            entities.Add("bdquo", '\u201E');
-            entities.Add("dagger", '\u2020');
-            entities.Add("Dagger", '\u2021');
-            entities.Add("permil", '\u2030');
-            entities.Add("lsaquo", '\u2039');
-            entities.Add("rsaquo", '\u203A');
-            entities.Add("euro", '\u20AC');
+            entities = new SortedDictionary<string, char>(StringComparer.Ordinal)
+                       {
+                           { "nbsp", '\u00A0' },
+                           { "iexcl", '\u00A1' },
+                           { "cent", '\u00A2' },
+                           { "pound", '\u00A3' },
+                           { "curren", '\u00A4' },
+                           { "yen", '\u00A5' },
+                           { "brvbar", '\u00A6' },
+                           { "sect", '\u00A7' },
+                           { "uml", '\u00A8' },
+                           { "copy", '\u00A9' },
+                           { "ordf", '\u00AA' },
+                           { "laquo", '\u00AB' },
+                           { "not", '\u00AC' },
+                           { "shy", '\u00AD' },
+                           { "reg", '\u00AE' },
+                           { "macr", '\u00AF' },
+                           { "deg", '\u00B0' },
+                           { "plusmn", '\u00B1' },
+                           { "sup2", '\u00B2' },
+                           { "sup3", '\u00B3' },
+                           { "acute", '\u00B4' },
+                           { "micro", '\u00B5' },
+                           { "para", '\u00B6' },
+                           { "middot", '\u00B7' },
+                           { "cedil", '\u00B8' },
+                           { "sup1", '\u00B9' },
+                           { "ordm", '\u00BA' },
+                           { "raquo", '\u00BB' },
+                           { "frac14", '\u00BC' },
+                           { "frac12", '\u00BD' },
+                           { "frac34", '\u00BE' },
+                           { "iquest", '\u00BF' },
+                           { "Agrave", '\u00C0' },
+                           { "Aacute", '\u00C1' },
+                           { "Acirc", '\u00C2' },
+                           { "Atilde", '\u00C3' },
+                           { "Auml", '\u00C4' },
+                           { "Aring", '\u00C5' },
+                           { "AElig", '\u00C6' },
+                           { "Ccedil", '\u00C7' },
+                           { "Egrave", '\u00C8' },
+                           { "Eacute", '\u00C9' },
+                           { "Ecirc", '\u00CA' },
+                           { "Euml", '\u00CB' },
+                           { "Igrave", '\u00CC' },
+                           { "Iacute", '\u00CD' },
+                           { "Icirc", '\u00CE' },
+                           { "Iuml", '\u00CF' },
+                           { "ETH", '\u00D0' },
+                           { "Ntilde", '\u00D1' },
+                           { "Ograve", '\u00D2' },
+                           { "Oacute", '\u00D3' },
+                           { "Ocirc", '\u00D4' },
+                           { "Otilde", '\u00D5' },
+                           { "Ouml", '\u00D6' },
+                           { "times", '\u00D7' },
+                           { "Oslash", '\u00D8' },
+                           { "Ugrave", '\u00D9' },
+                           { "Uacute", '\u00DA' },
+                           { "Ucirc", '\u00DB' },
+                           { "Uuml", '\u00DC' },
+                           { "Yacute", '\u00DD' },
+                           { "THORN", '\u00DE' },
+                           { "szlig", '\u00DF' },
+                           { "agrave", '\u00E0' },
+                           { "aacute", '\u00E1' },
+                           { "acirc", '\u00E2' },
+                           { "atilde", '\u00E3' },
+                           { "auml", '\u00E4' },
+                           { "aring", '\u00E5' },
+                           { "aelig", '\u00E6' },
+                           { "ccedil", '\u00E7' },
+                           { "egrave", '\u00E8' },
+                           { "eacute", '\u00E9' },
+                           { "ecirc", '\u00EA' },
+                           { "euml", '\u00EB' },
+                           { "igrave", '\u00EC' },
+                           { "iacute", '\u00ED' },
+                           { "icirc", '\u00EE' },
+                           { "iuml", '\u00EF' },
+                           { "eth", '\u00F0' },
+                           { "ntilde", '\u00F1' },
+                           { "ograve", '\u00F2' },
+                           { "oacute", '\u00F3' },
+                           { "ocirc", '\u00F4' },
+                           { "otilde", '\u00F5' },
+                           { "ouml", '\u00F6' },
+                           { "divide", '\u00F7' },
+                           { "oslash", '\u00F8' },
+                           { "ugrave", '\u00F9' },
+                           { "uacute", '\u00FA' },
+                           { "ucirc", '\u00FB' },
+                           { "uuml", '\u00FC' },
+                           { "yacute", '\u00FD' },
+                           { "thorn", '\u00FE' },
+                           { "yuml", '\u00FF' },
+                           { "fnof", '\u0192' },
+                           { "Alpha", '\u0391' },
+                           { "Beta", '\u0392' },
+                           { "Gamma", '\u0393' },
+                           { "Delta", '\u0394' },
+                           { "Epsilon", '\u0395' },
+                           { "Zeta", '\u0396' },
+                           { "Eta", '\u0397' },
+                           { "Theta", '\u0398' },
+                           { "Iota", '\u0399' },
+                           { "Kappa", '\u039A' },
+                           { "Lambda", '\u039B' },
+                           { "Mu", '\u039C' },
+                           { "Nu", '\u039D' },
+                           { "Xi", '\u039E' },
+                           { "Omicron", '\u039F' },
+                           { "Pi", '\u03A0' },
+                           { "Rho", '\u03A1' },
+                           { "Sigma", '\u03A3' },
+                           { "Tau", '\u03A4' },
+                           { "Upsilon", '\u03A5' },
+                           { "Phi", '\u03A6' },
+                           { "Chi", '\u03A7' },
+                           { "Psi", '\u03A8' },
+                           { "Omega", '\u03A9' },
+                           { "alpha", '\u03B1' },
+                           { "beta", '\u03B2' },
+                           { "gamma", '\u03B3' },
+                           { "delta", '\u03B4' },
+                           { "epsilon", '\u03B5' },
+                           { "zeta", '\u03B6' },
+                           { "eta", '\u03B7' },
+                           { "theta", '\u03B8' },
+                           { "iota", '\u03B9' },
+                           { "kappa", '\u03BA' },
+                           { "lambda", '\u03BB' },
+                           { "mu", '\u03BC' },
+                           { "nu", '\u03BD' },
+                           { "xi", '\u03BE' },
+                           { "omicron", '\u03BF' },
+                           { "pi", '\u03C0' },
+                           { "rho", '\u03C1' },
+                           { "sigmaf", '\u03C2' },
+                           { "sigma", '\u03C3' },
+                           { "tau", '\u03C4' },
+                           { "upsilon", '\u03C5' },
+                           { "phi", '\u03C6' },
+                           { "chi", '\u03C7' },
+                           { "psi", '\u03C8' },
+                           { "omega", '\u03C9' },
+                           { "thetasym", '\u03D1' },
+                           { "upsih", '\u03D2' },
+                           { "piv", '\u03D6' },
+                           { "bull", '\u2022' },
+                           { "hellip", '\u2026' },
+                           { "prime", '\u2032' },
+                           { "Prime", '\u2033' },
+                           { "oline", '\u203E' },
+                           { "frasl", '\u2044' },
+                           { "weierp", '\u2118' },
+                           { "image", '\u2111' },
+                           { "real", '\u211C' },
+                           { "trade", '\u2122' },
+                           { "alefsym", '\u2135' },
+                           { "larr", '\u2190' },
+                           { "uarr", '\u2191' },
+                           { "rarr", '\u2192' },
+                           { "darr", '\u2193' },
+                           { "harr", '\u2194' },
+                           { "crarr", '\u21B5' },
+                           { "lArr", '\u21D0' },
+                           { "uArr", '\u21D1' },
+                           { "rArr", '\u21D2' },
+                           { "dArr", '\u21D3' },
+                           { "hArr", '\u21D4' },
+                           { "forall", '\u2200' },
+                           { "part", '\u2202' },
+                           { "exist", '\u2203' },
+                           { "empty", '\u2205' },
+                           { "nabla", '\u2207' },
+                           { "isin", '\u2208' },
+                           { "notin", '\u2209' },
+                           { "ni", '\u220B' },
+                           { "prod", '\u220F' },
+                           { "sum", '\u2211' },
+                           { "minus", '\u2212' },
+                           { "lowast", '\u2217' },
+                           { "radic", '\u221A' },
+                           { "prop", '\u221D' },
+                           { "infin", '\u221E' },
+                           { "ang", '\u2220' },
+                           { "and", '\u2227' },
+                           { "or", '\u2228' },
+                           { "cap", '\u2229' },
+                           { "cup", '\u222A' },
+                           { "int", '\u222B' },
+                           { "there4", '\u2234' },
+                           { "sim", '\u223C' },
+                           { "cong", '\u2245' },
+                           { "asymp", '\u2248' },
+                           { "ne", '\u2260' },
+                           { "equiv", '\u2261' },
+                           { "le", '\u2264' },
+                           { "ge", '\u2265' },
+                           { "sub", '\u2282' },
+                           { "sup", '\u2283' },
+                           { "nsub", '\u2284' },
+                           { "sube", '\u2286' },
+                           { "supe", '\u2287' },
+                           { "oplus", '\u2295' },
+                           { "otimes", '\u2297' },
+                           { "perp", '\u22A5' },
+                           { "sdot", '\u22C5' },
+                           { "lceil", '\u2308' },
+                           { "rceil", '\u2309' },
+                           { "lfloor", '\u230A' },
+                           { "rfloor", '\u230B' },
+                           { "lang", '\u2329' },
+                           { "rang", '\u232A' },
+                           { "loz", '\u25CA' },
+                           { "spades", '\u2660' },
+                           { "clubs", '\u2663' },
+                           { "hearts", '\u2665' },
+                           { "diams", '\u2666' },
+                           { "quot", '\u0022' },
+                           { "amp", '\u0026' },
+                           { "lt", '\u003C' },
+                           { "gt", '\u003E' },
+                           { "OElig", '\u0152' },
+                           { "oelig", '\u0153' },
+                           { "Scaron", '\u0160' },
+                           { "scaron", '\u0161' },
+                           { "Yuml", '\u0178' },
+                           { "circ", '\u02C6' },
+                           { "tilde", '\u02DC' },
+                           { "ensp", '\u2002' },
+                           { "emsp", '\u2003' },
+                           { "thinsp", '\u2009' },
+                           { "zwnj", '\u200C' },
+                           { "zwj", '\u200D' },
+                           { "lrm", '\u200E' },
+                           { "rlm", '\u200F' },
+                           { "ndash", '\u2013' },
+                           { "mdash", '\u2014' },
+                           { "lsquo", '\u2018' },
+                           { "rsquo", '\u2019' },
+                           { "sbquo", '\u201A' },
+                           { "ldquo", '\u201C' },
+                           { "rdquo", '\u201D' },
+                           { "bdquo", '\u201E' },
+                           { "dagger", '\u2020' },
+                           { "Dagger", '\u2021' },
+                           { "permil", '\u2030' },
+                           { "lsaquo", '\u2039' },
+                           { "rsaquo", '\u203A' },
+                           { "euro", '\u20AC' }
+                       };
         }
     }
 }

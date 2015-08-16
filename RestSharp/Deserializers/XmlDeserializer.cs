@@ -66,11 +66,11 @@ namespace RestSharp.Deserializers
 
             if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
             {
-                x = (T)HandleListDerivative(x, root, objType.Name, objType);
+                x = (T) HandleListDerivative(x, root, objType.Name, objType);
             }
             else
             {
-                x = (T)Map(x, root);
+                x = (T) Map(x, root);
             }
 
             return x;
@@ -89,13 +89,11 @@ namespace RestSharp.Deserializers
                 {
                     e.ReplaceAttributes(
                         e.Attributes()
-                            .Select(
-                                a =>
-                                    a.IsNamespaceDeclaration
-                                        ? null
-                                        : a.Name.Namespace != XNamespace.None
-                                            ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
-                                            : a));
+                         .Select(a => a.IsNamespaceDeclaration
+                                          ? null
+                                          : a.Name.Namespace != XNamespace.None
+                                                ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
+                                                : a));
                 }
             }
         }
@@ -118,7 +116,8 @@ namespace RestSharp.Deserializers
 
                 if (attributes.Length > 0)
                 {
-                    var attribute = (DeserializeAsAttribute)attributes[0];
+                    var attribute = (DeserializeAsAttribute) attributes[0];
+
                     name = attribute.Name.AsNamespaced(Namespace);
                 }
                 else
@@ -135,11 +134,12 @@ namespace RestSharp.Deserializers
                     {
                         var genericType = type.GetGenericArguments()[0];
                         var first = GetElementByName(root, genericType.Name);
-                        var list = (IList)Activator.CreateInstance(type);
+                        var list = (IList) Activator.CreateInstance(type);
 
                         if (first != null)
                         {
                             var elements = root.Elements(first.Name);
+
                             PopulateListFromElements(genericType, elements, list);
                         }
 
@@ -152,7 +152,7 @@ namespace RestSharp.Deserializers
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     // if the value is empty, set the property to null...
-                    if (value == null || String.IsNullOrEmpty(value.ToString()))
+                    if (value == null || string.IsNullOrEmpty(value.ToString()))
                     {
                         prop.SetValue(x, null, null);
                         continue;
@@ -164,6 +164,7 @@ namespace RestSharp.Deserializers
                 if (type == typeof(bool))
                 {
                     var toConvert = value.ToString().ToLower();
+
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
                 else if (type.IsPrimitive)
@@ -173,11 +174,13 @@ namespace RestSharp.Deserializers
                 else if (type.IsEnum)
                 {
                     var converted = type.FindEnumValue(value.ToString(), Culture);
+
                     prop.SetValue(x, converted, null);
                 }
                 else if (type == typeof(Uri))
                 {
                     var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+
                     prop.SetValue(x, uri, null);
                 }
                 else if (type == typeof(string))
@@ -186,14 +189,9 @@ namespace RestSharp.Deserializers
                 }
                 else if (type == typeof(DateTime))
                 {
-                    if (DateFormat.HasValue())
-                    {
-                        value = DateTime.ParseExact(value.ToString(), DateFormat, Culture);
-                    }
-                    else
-                    {
-                        value = DateTime.Parse(value.ToString(), Culture);
-                    }
+                    value = this.DateFormat.HasValue()
+                                ? DateTime.ParseExact(value.ToString(), this.DateFormat, this.Culture)
+                                : DateTime.Parse(value.ToString(), this.Culture);
 
                     prop.SetValue(x, value, null);
                 }
@@ -227,26 +225,28 @@ namespace RestSharp.Deserializers
                         }
                     }
                 }
-                else if (type == typeof(Decimal))
+                else if (type == typeof(decimal))
                 {
-                    value = Decimal.Parse(value.ToString(), Culture);
+                    value = decimal.Parse(value.ToString(), Culture);
                     prop.SetValue(x, value, null);
                 }
                 else if (type == typeof(Guid))
                 {
                     var raw = value.ToString();
+
                     value = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(value.ToString());
                     prop.SetValue(x, value, null);
                 }
                 else if (type == typeof(TimeSpan))
                 {
                     var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
+
                     prop.SetValue(x, timeSpan, null);
                 }
                 else if (type.IsGenericType)
                 {
                     var t = type.GetGenericArguments()[0];
-                    var list = (IList)Activator.CreateInstance(type);
+                    var list = (IList) Activator.CreateInstance(type);
                     var container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
 
                     if (container.HasElements)
@@ -264,6 +264,7 @@ namespace RestSharp.Deserializers
                     // handles classes that derive from List<T>
                     // e.g. a collection that also has attributes
                     var list = HandleListDerivative(x, root, prop.Name, type);
+
                     prop.SetValue(x, list, null);
                 }
                 else
@@ -285,6 +286,7 @@ namespace RestSharp.Deserializers
                             if (element != null)
                             {
                                 var item = CreateAndMap(type, element);
+
                                 prop.SetValue(x, item, null);
                             }
                         }
@@ -303,13 +305,16 @@ namespace RestSharp.Deserializers
             if (converter.CanConvertFrom(typeof(string)))
             {
                 result = (converter.ConvertFromInvariantString(inputString));
+
                 return true;
             }
 
             result = null;
+
             return false;
 #else
             result = null;
+
             return false;
 #endif
         }
@@ -319,40 +324,33 @@ namespace RestSharp.Deserializers
             foreach (var element in elements)
             {
                 var item = CreateAndMap(t, element);
+
                 list.Add(item);
             }
         }
 
         private object HandleListDerivative(object x, XElement root, string propName, Type type)
         {
-            Type t;
-
-            if (type.IsGenericType)
-            {
-                t = type.GetGenericArguments()[0];
-            }
-            else
-            {
-                t = type.BaseType.GetGenericArguments()[0];
-            }
-
-            var list = (IList)Activator.CreateInstance(type);
+            var t = type.IsGenericType ? type.GetGenericArguments()[0] : type.BaseType.GetGenericArguments()[0];
+            var list = (IList) Activator.CreateInstance(type);
             var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
             var name = t.Name;
-
             var attribute = t.GetAttribute<DeserializeAsAttribute>();
+
             if (attribute != null)
                 name = attribute.Name;
 
             if (!elements.Any())
             {
                 var lowerName = name.ToLower().AsNamespaced(Namespace);
+
                 elements = root.Descendants(lowerName);
             }
 
             if (!elements.Any())
             {
                 var camelName = name.ToCamelCase(Culture).AsNamespaced(Namespace);
+
                 elements = root.Descendants(camelName);
             }
 
@@ -364,6 +362,7 @@ namespace RestSharp.Deserializers
             if (!elements.Any())
             {
                 var lowerName = name.ToLower().AsNamespaced(Namespace);
+
                 elements = root.Descendants().Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName);
             }
 
@@ -373,7 +372,8 @@ namespace RestSharp.Deserializers
             // only if this isn't a generic type
             if (!type.IsGenericType)
             {
-                Map(list, root.Element(propName.AsNamespaced(Namespace)) ?? root); // when using RootElement, the heirarchy is different
+                Map(list, root.Element(propName.AsNamespaced(Namespace)) ?? root);
+                // when using RootElement, the heirarchy is different
             }
 
             return list;
@@ -383,7 +383,7 @@ namespace RestSharp.Deserializers
         {
             object item;
 
-            if (t == typeof(String))
+            if (t == typeof(string))
             {
                 item = element.Value;
             }
@@ -457,7 +457,7 @@ namespace RestSharp.Deserializers
             // try looking for element that matches sanitized property name (Order by depth)
             return root.Descendants()
                        .OrderBy(d => d.Ancestors().Count())
-                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ?? 
+                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
                    root.Descendants()
                        .OrderBy(d => d.Ancestors().Count())
                        .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
@@ -466,11 +466,11 @@ namespace RestSharp.Deserializers
         protected virtual XAttribute GetAttributeByName(XElement root, XName name)
         {
             var names = new List<XName>
-            {
-                name.LocalName,
-                name.LocalName.ToLower().AsNamespaced(name.NamespaceName),
-                name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName)
-            };
+                        {
+                            name.LocalName,
+                            name.LocalName.ToLower().AsNamespaced(name.NamespaceName),
+                            name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName)
+                        };
 
             return root.DescendantsAndSelf()
                        .OrderBy(d => d.Ancestors().Count())

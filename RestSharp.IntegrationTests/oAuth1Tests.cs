@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 using NUnit.Framework;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
-using RestSharp.Contrib;
+using RestSharp.Extensions.MonoHttp;
 using RestSharp.IntegrationTests.Models;
 
 namespace RestSharp.IntegrationTests
@@ -106,23 +106,27 @@ namespace RestSharp.IntegrationTests
             Assert.True(File.Exists(@"..\..\config.json"));
 
             var config = SimpleJson.DeserializeObject(File.ReadAllText(@"..\..\config.json")) as JsonObject;
-            var client = new RestClient("https://api.twitter.com/1.1")
-                         {
-                             Authenticator = OAuth1Authenticator.ForProtectedResource(
-                                (string) config["ConsumerKey"],
-                                (string) config["ConsumerSecret"],
-                                (string) config["AccessToken"],
-                                (string) config["AccessSecret"])
-                         };
 
-            var request = new RestRequest("account/verify_credentials.json");
+            if (config != null)
+            {
+                var client = new RestClient("https://api.twitter.com/1.1")
+                             {
+                                 Authenticator = OAuth1Authenticator.ForProtectedResource(
+                                     (string) config["ConsumerKey"],
+                                     (string) config["ConsumerSecret"],
+                                     (string) config["AccessToken"],
+                                     (string) config["AccessSecret"])
+                             };
 
-            request.AddParameter("include_entities", "true", ParameterType.QueryString);
+                var request = new RestRequest("account/verify_credentials.json");
 
-            var response = client.Execute(request);
+                request.AddParameter("include_entities", "true", ParameterType.QueryString);
 
-            Assert.NotNull(response);
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+                var response = client.Execute(request);
+
+                Assert.NotNull(response);
+                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            }
         }
 
         #region Netflix test classes

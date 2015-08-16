@@ -44,7 +44,6 @@ namespace RestSharp.IntegrationTests
             {
                 var client = new RestClient(BASE_URL);
                 var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
-
                 var resetEvent = new ManualResetEvent(false);
 
                 client.ExecuteAsync(request, response => resetEvent.Set());

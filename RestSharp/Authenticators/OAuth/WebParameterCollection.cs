@@ -15,8 +15,7 @@ namespace RestSharp.Authenticators.OAuth
 
         public WebParameterCollection() { }
 
-        public WebParameterCollection(int capacity)
-            : base(capacity) { }
+        public WebParameterCollection(int capacity) : base(capacity) { }
 
         public WebParameterCollection(IDictionary<string, string> collection)
             : base(collection) { }
@@ -24,6 +23,7 @@ namespace RestSharp.Authenticators.OAuth
         public override void Add(string name, string value)
         {
             var parameter = new WebParameter(name, value);
+
             base.Add(parameter);
         }
     }

@@ -39,15 +39,23 @@ namespace RestSharp.IntegrationTests
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
+                var directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
 
-                request.AddFile("fileName", path);
+                if (directoryInfo != null)
+                {
+                    string path = Path.Combine(directoryInfo.FullName,
+                        "Assets\\TestFile.txt");
+
+                    request.AddFile("fileName", path);
+                }
+
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-                var task = client.ExecuteTaskAsync(request).ContinueWith(x =>
-                                                                         {
-                                                                             Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
-                                                                         });
+                var task = client.ExecuteTaskAsync(request)
+                                 .ContinueWith(x =>
+                                               {
+                                                   Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
+                                               });
 
                 task.Wait();
             }
@@ -62,9 +70,16 @@ namespace RestSharp.IntegrationTests
             {
                 var client = new RestClient(baseUrl);
                 var request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Assets\\TestFile.txt");
+                var directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
 
-                request.AddFile("fileName", path);
+                if (directoryInfo != null)
+                {
+                    string path = Path.Combine(directoryInfo.FullName,
+                        "Assets\\TestFile.txt");
+
+                    request.AddFile("fileName", path);
+                }
+
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
                 var response = client.Execute(request);

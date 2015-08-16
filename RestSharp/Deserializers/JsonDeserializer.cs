@@ -35,22 +35,26 @@ namespace RestSharp.Deserializers
                 if (RootElement.HasValue())
                 {
                     var root = FindRoot(response.Content);
+
                     target = (T)BuildList(objType, root);
                 }
                 else
                 {
                     var data = SimpleJson.DeserializeObject(response.Content);
+
                     target = (T)BuildList(objType, data);
                 }
             }
             else if (target is IDictionary)
             {
                 var root = FindRoot(response.Content);
+
                 target = (T)BuildDictionary(target.GetType(), root);
             }
             else
             {
                 var root = FindRoot(response.Content);
+
                 target = (T)Map(target, (IDictionary<string, object>)root);
             }
 
@@ -197,13 +201,13 @@ namespace RestSharp.Deserializers
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Since the type is nullable and no value is provided return null
-                if (String.IsNullOrEmpty(stringValue))
+                if (string.IsNullOrEmpty(stringValue))
                     return null;
 
                 type = type.GetGenericArguments()[0];
             }
 
-            if (type == typeof(Object) && value != null)
+            if (type == typeof(object) && value != null)
             {
                 type = value.GetType();
             }
@@ -253,15 +257,15 @@ namespace RestSharp.Deserializers
                     return (DateTimeOffset)dt;
                 }
             }
-            else if (type == typeof(Decimal))
+            else if (type == typeof(decimal))
             {
                 if (value is double)
                     return (decimal)((double)value);
 
                 if (stringValue.Contains("e"))
-                    return Decimal.Parse(stringValue, NumberStyles.Float, Culture);
+                    return decimal.Parse(stringValue, NumberStyles.Float, Culture);
 
-                return Decimal.Parse(stringValue, Culture);
+                return decimal.Parse(stringValue, Culture);
             }
             else if (type == typeof(Guid))
             {

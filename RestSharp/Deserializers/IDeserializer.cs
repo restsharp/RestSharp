@@ -19,8 +19,11 @@ namespace RestSharp.Deserializers
     public interface IDeserializer
     {
         T Deserialize<T>(IRestResponse response);
+
         string RootElement { get; set; }
+
         string Namespace { get; set; }
+
         string DateFormat { get; set; }
     }
 }

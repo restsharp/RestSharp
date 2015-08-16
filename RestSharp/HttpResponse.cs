@@ -26,13 +26,14 @@ namespace RestSharp
     /// </summary>
     public class HttpResponse : IHttpResponse
     {
-        private string _content;
+        private string content;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         public HttpResponse()
         {
+            this.ResponseStatus = ResponseStatus.None;
             Headers = new List<HttpHeader>();
             Cookies = new List<HttpCookie>();
         }
@@ -57,8 +58,9 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get { return _content ?? (_content = RawBytes.AsString()); }
+            get { return this.content ?? (this.content = RawBytes.AsString()); }
         }
+
         /// <summary>
         /// HTTP response status code
         /// </summary>
@@ -94,17 +96,11 @@ namespace RestSharp
         /// </summary>
         public IList<HttpCookie> Cookies { get; private set; }
 
-        private ResponseStatus _responseStatus = ResponseStatus.None;
-
         /// <summary>
         /// Status of the request. Will return Error for transport errors.
         /// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
         /// </summary>
-        public ResponseStatus ResponseStatus
-        {
-            get { return _responseStatus; }
-            set { _responseStatus = value; }
-        }
+        public ResponseStatus ResponseStatus { get; set; }
 
         /// <summary>
         /// Transport or other non-HTTP error generated while attempting request

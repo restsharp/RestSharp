@@ -71,12 +71,33 @@ namespace RestSharp.Compression.ZLib
         private const int MANY = 1440;
 
         // And'ing with mask[n] masks the lower n bits
-        //UPGRADE_NOTE: Final was removed from the declaration of 'inflate_mask'. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
-        private static readonly int[] inflate_mask = new int[] { 0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff };
+        // UPGRADE_NOTE: Final was removed from the declaration of 'inflate_mask'.
+        // "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
+        private static readonly int[] inflateMask =
+        {
+            0x00000000,
+            0x00000001,
+            0x00000003,
+            0x00000007,
+            0x0000000f,
+            0x0000001f,
+            0x0000003f,
+            0x0000007f,
+            0x000000ff,
+            0x000001ff,
+            0x000003ff,
+            0x000007ff,
+            0x00000fff,
+            0x00001fff,
+            0x00003fff,
+            0x00007fff,
+            0x0000ffff
+        };
 
         // Table for deflate from PKZIP's appnote.txt.
-        //UPGRADE_NOTE: Final was removed from the declaration of 'border'. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
-        internal static readonly int[] border = new int[] { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+        // UPGRADE_NOTE: Final was removed from the declaration of 'border'.
+        // "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
+        internal static readonly int[] Border = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 
         private const int TYPE = 0; // get type bits (3, including end bit)
         private const int LENS = 1; // get lengths for stored
@@ -99,7 +120,7 @@ namespace RestSharp.Compression.ZLib
 
         internal InflateCodes codes = new InflateCodes(); // if CODES, current state 
         internal int last; // true if this block is the last block 
-        internal ZlibCodec _codec; // pointer back to this zlib stream
+        internal ZlibCodec codec; // pointer back to this zlib stream
 
         // mode independent information 
         internal int bitk; // bits in bit buffer 
@@ -109,14 +130,14 @@ namespace RestSharp.Compression.ZLib
         internal int end; // one byte after sliding window 
         internal int read; // window read pointer 
         internal int write; // window write pointer 
-        internal System.Object checkfn; // check function 
+        internal object checkfn; // check function 
         internal long check; // check on output 
 
         internal InfTree inftree = new InfTree();
 
-        internal InflateBlocks(ZlibCodec codec, System.Object checkfn, int w)
+        internal InflateBlocks(ZlibCodec codec, object checkfn, int w)
         {
-            _codec = codec;
+            this.codec = codec;
             hufts = new int[MANY * 3];
             window = new byte[w];
             end = w;
@@ -140,12 +161,11 @@ namespace RestSharp.Compression.ZLib
             read = write = 0;
 
             if (checkfn != null)
-                _codec._Adler32 = check = Adler.Adler32(0L, null, 0, 0);
+                codec.adler32 = check = Adler.Adler32(0L, null, 0, 0);
         }
 
         internal int Process(int r)
         {
-            int t; // temporary storage
             int b; // bit buffer
             int k; // bits in bit buffer
             int p; // input data pointer
@@ -155,16 +175,18 @@ namespace RestSharp.Compression.ZLib
 
             // copy input/output information to locals (UPDATE macro restores)
 
-            p = _codec.NextIn;
-            n = _codec.AvailableBytesIn;
+            p = codec.NextIn;
+            n = codec.AvailableBytesIn;
             b = bitb;
             k = bitk;
             q = write;
-            m = (int)(q < read ? read - q - 1 : end - q);
+            m = q < this.read ? this.read - q - 1 : this.end - q;
 
             // process input based on current state
             while (true)
             {
+                int t; // temporary storage
+
                 switch (mode)
                 {
                     case TYPE:
@@ -176,29 +198,32 @@ namespace RestSharp.Compression.ZLib
                             }
                             else
                             {
-                                bitb = b; bitk = k;
-                                _codec.AvailableBytesIn = n;
-                                _codec.TotalBytesIn += p - _codec.NextIn;
-                                _codec.NextIn = p;
+                                bitb = b;
+                                bitk = k;
+                                codec.AvailableBytesIn = n;
+                                codec.TotalBytesIn += p - codec.NextIn;
+                                codec.NextIn = p;
                                 write = q;
 
                                 return Flush(r);
                             }
 
                             n--;
-                            b |= (_codec.InputBuffer[p++] & 0xff) << k;
+                            b |= (codec.InputBuffer[p++] & 0xff) << k;
                             k += 8;
                         }
 
-                        t = (int)(b & 7);
+                        t = b & 7;
                         last = t & 1;
 
                         switch (SharedUtils.URShift(t, 1))
                         {
                             case 0:  // stored 
-                                b = SharedUtils.URShift(b, (3)); k -= (3);
+                                b = SharedUtils.URShift(b, (3));
+                                k -= (3);
                                 t = k & 7; // go to byte boundary
-                                b = SharedUtils.URShift(b, (t)); k -= (t);
+                                b = SharedUtils.URShift(b, (t));
+                                k -= (t);
                                 mode = LENS; // get length of stored block
                                 break;
 
@@ -207,26 +232,30 @@ namespace RestSharp.Compression.ZLib
                                 int[] bd = new int[1];
                                 int[][] tl = new int[1][];
                                 int[][] td = new int[1][];
-                                InfTree.inflate_trees_fixed(bl, bd, tl, td, _codec);
+                                InfTree.inflate_trees_fixed(bl, bd, tl, td, codec);
                                 codes.Init(bl[0], bd[0], tl[0], 0, td[0], 0);
-                                b = SharedUtils.URShift(b, (3)); k -= (3);
+                                b = SharedUtils.URShift(b, (3));
+                                k -= (3);
                                 mode = CODES;
                                 break;
 
                             case 2:  // dynamic
-                                b = SharedUtils.URShift(b, (3)); k -= (3);
+                                b = SharedUtils.URShift(b, (3));
+                                k -= (3);
                                 mode = TABLE;
                                 break;
 
                             case 3:  // illegal
-                                b = SharedUtils.URShift(b, (3)); k -= (3);
+                                b = SharedUtils.URShift(b, (3));
+                                k -= (3);
                                 mode = BAD;
-                                _codec.Message = "invalid block type";
+                                codec.Message = "invalid block type";
                                 r = ZlibConstants.Z_DATA_ERROR;
-                                bitb = b; bitk = k;
-                                _codec.AvailableBytesIn = n;
-                                _codec.TotalBytesIn += p - _codec.NextIn;
-                                _codec.NextIn = p;
+                                bitb = b;
+                                bitk = k;
+                                codec.AvailableBytesIn = n;
+                                codec.TotalBytesIn += p - codec.NextIn;
+                                codec.NextIn = p;
                                 write = q;
                                 return Flush(r);
                         }
@@ -241,29 +270,30 @@ namespace RestSharp.Compression.ZLib
                             }
                             else
                             {
-                                bitb = b; bitk = k;
-                                _codec.AvailableBytesIn = n;
-                                _codec.TotalBytesIn += p - _codec.NextIn;
-                                _codec.NextIn = p;
+                                bitb = b;
+                                bitk = k;
+                                codec.AvailableBytesIn = n;
+                                codec.TotalBytesIn += p - codec.NextIn;
+                                codec.NextIn = p;
                                 write = q;
                                 return Flush(r);
                             }
 
-                            ;
                             n--;
-                            b |= (_codec.InputBuffer[p++] & 0xff) << k;
+                            b |= (codec.InputBuffer[p++] & 0xff) << k;
                             k += 8;
                         }
 
                         if (((SharedUtils.URShift((~b), 16)) & 0xffff) != (b & 0xffff))
                         {
                             mode = BAD;
-                            _codec.Message = "invalid stored block lengths";
+                            codec.Message = "invalid stored block lengths";
                             r = ZlibConstants.Z_DATA_ERROR;
-                            bitb = b; bitk = k;
-                            _codec.AvailableBytesIn = n;
-                            _codec.TotalBytesIn += p - _codec.NextIn;
-                            _codec.NextIn = p;
+                            bitb = b;
+                            bitk = k;
+                            codec.AvailableBytesIn = n;
+                            codec.TotalBytesIn += p - codec.NextIn;
+                            codec.NextIn = p;
                             write = q;
                             return Flush(r);
                         }
@@ -276,10 +306,11 @@ namespace RestSharp.Compression.ZLib
                     case STORED:
                         if (n == 0)
                         {
-                            bitb = b; bitk = k;
-                            _codec.AvailableBytesIn = n;
-                            _codec.TotalBytesIn += p - _codec.NextIn;
-                            _codec.NextIn = p;
+                            bitb = b;
+                            bitk = k;
+                            codec.AvailableBytesIn = n;
+                            codec.TotalBytesIn += p - codec.NextIn;
+                            codec.NextIn = p;
                             write = q;
                             return Flush(r);
                         }
@@ -288,27 +319,32 @@ namespace RestSharp.Compression.ZLib
                         {
                             if (q == end && read != 0)
                             {
-                                q = 0; m = (int)(q < read ? read - q - 1 : end - q);
+                                q = 0;
+                                m = q < this.read ? this.read - q - 1 : this.end - q;
                             }
 
                             if (m == 0)
                             {
                                 write = q;
                                 r = Flush(r);
-                                q = write; m = (int)(q < read ? read - q - 1 : end - q);
+                                q = write;
+                                m = q < this.read ? this.read - q - 1 : this.end - q;
 
                                 if (q == end && read != 0)
                                 {
-                                    q = 0; m = (int)(q < read ? read - q - 1 : end - q);
+                                    q = 0;
+                                    m = q < this.read ? this.read - q - 1 : this.end - q;
                                 }
 
                                 if (m == 0)
                                 {
-                                    bitb = b; bitk = k;
-                                    _codec.AvailableBytesIn = n;
-                                    _codec.TotalBytesIn += p - _codec.NextIn;
-                                    _codec.NextIn = p;
+                                    bitb = b;
+                                    bitk = k;
+                                    codec.AvailableBytesIn = n;
+                                    codec.TotalBytesIn += p - codec.NextIn;
+                                    codec.NextIn = p;
                                     write = q;
+
                                     return Flush(r);
                                 }
                             }
@@ -323,9 +359,11 @@ namespace RestSharp.Compression.ZLib
                         if (t > m)
                             t = m;
 
-                        Array.Copy(_codec.InputBuffer, p, window, q, t);
-                        p += t; n -= t;
-                        q += t; m -= t;
+                        Array.Copy(codec.InputBuffer, p, window, q, t);
+                        p += t;
+                        n -= t;
+                        q += t;
+                        m -= t;
 
                         if ((left -= t) != 0)
                             break;
@@ -342,17 +380,18 @@ namespace RestSharp.Compression.ZLib
                             }
                             else
                             {
-                                bitb = b; bitk = k;
-                                _codec.AvailableBytesIn = n;
-                                _codec.TotalBytesIn += p - _codec.NextIn;
-                                _codec.NextIn = p;
+                                bitb = b;
+                                bitk = k;
+                                codec.AvailableBytesIn = n;
+                                codec.TotalBytesIn += p - codec.NextIn;
+                                codec.NextIn = p;
                                 write = q;
+
                                 return Flush(r);
                             }
 
-                            ;
                             n--;
-                            b |= (_codec.InputBuffer[p++] & 0xff) << k;
+                            b |= (codec.InputBuffer[p++] & 0xff) << k;
                             k += 8;
                         }
 
@@ -361,13 +400,15 @@ namespace RestSharp.Compression.ZLib
                         if ((t & 0x1f) > 29 || ((t >> 5) & 0x1f) > 29)
                         {
                             mode = BAD;
-                            _codec.Message = "too many length or distance symbols";
+                            codec.Message = "too many length or distance symbols";
                             r = ZlibConstants.Z_DATA_ERROR;
-                            bitb = b; bitk = k;
-                            _codec.AvailableBytesIn = n;
-                            _codec.TotalBytesIn += p - _codec.NextIn;
-                            _codec.NextIn = p;
+                            bitb = b;
+                            bitk = k;
+                            codec.AvailableBytesIn = n;
+                            codec.TotalBytesIn += p - codec.NextIn;
+                            codec.NextIn = p;
                             write = q;
+
                             return Flush(r);
                         }
 
@@ -384,13 +425,14 @@ namespace RestSharp.Compression.ZLib
                                 blens[i] = 0;
                             }
                         }
-
                         {
-                            b = SharedUtils.URShift(b, (14)); k -= (14);
+                            b = SharedUtils.URShift(b, (14));
+                            k -= (14);
                         }
 
                         index = 0;
                         mode = BTREE;
+
                         goto case BTREE;
 
                     case BTREE:
@@ -404,34 +446,36 @@ namespace RestSharp.Compression.ZLib
                                 }
                                 else
                                 {
-                                    bitb = b; bitk = k;
-                                    _codec.AvailableBytesIn = n;
-                                    _codec.TotalBytesIn += p - _codec.NextIn;
-                                    _codec.NextIn = p;
+                                    bitb = b;
+                                    bitk = k;
+                                    codec.AvailableBytesIn = n;
+                                    codec.TotalBytesIn += p - codec.NextIn;
+                                    codec.NextIn = p;
                                     write = q;
+
                                     return Flush(r);
                                 }
 
-                                ;
                                 n--;
-                                b |= (_codec.InputBuffer[p++] & 0xff) << k;
+                                b |= (codec.InputBuffer[p++] & 0xff) << k;
                                 k += 8;
                             }
 
-                            blens[border[index++]] = b & 7;
+                            blens[Border[index++]] = b & 7;
 
                             {
-                                b = SharedUtils.URShift(b, (3)); k -= (3);
+                                b = SharedUtils.URShift(b, (3));
+                                k -= (3);
                             }
                         }
 
                         while (index < 19)
                         {
-                            blens[border[index++]] = 0;
+                            blens[Border[index++]] = 0;
                         }
 
                         bb[0] = 7;
-                        t = inftree.inflate_trees_bits(blens, bb, tb, hufts, _codec);
+                        t = inftree.inflate_trees_bits(blens, bb, tb, hufts, codec);
 
                         if (t != ZlibConstants.Z_OK)
                         {
@@ -443,16 +487,18 @@ namespace RestSharp.Compression.ZLib
                                 mode = BAD;
                             }
 
-                            bitb = b; bitk = k;
-                            _codec.AvailableBytesIn = n;
-                            _codec.TotalBytesIn += p - _codec.NextIn;
-                            _codec.NextIn = p;
+                            bitb = b;
+                            bitk = k;
+                            codec.AvailableBytesIn = n;
+                            codec.TotalBytesIn += p - codec.NextIn;
+                            codec.NextIn = p;
                             write = q;
                             return Flush(r);
                         }
 
                         index = 0;
                         mode = DTREE;
+
                         goto case DTREE;
 
                     case DTREE:
@@ -465,7 +511,7 @@ namespace RestSharp.Compression.ZLib
                                 break;
                             }
 
-                            int i, j, c;
+                            int c;
 
                             t = bb[0];
 
@@ -477,18 +523,18 @@ namespace RestSharp.Compression.ZLib
                                 }
                                 else
                                 {
-                                    bitb = b; bitk = k;
-                                    _codec.AvailableBytesIn = n;
-                                    _codec.TotalBytesIn += p - _codec.NextIn;
-                                    _codec.NextIn = p;
+                                    bitb = b;
+                                    bitk = k;
+                                    codec.AvailableBytesIn = n;
+                                    codec.TotalBytesIn += p - codec.NextIn;
+                                    codec.NextIn = p;
                                     write = q;
 
                                     return Flush(r);
                                 }
 
-                                ;
                                 n--;
-                                b |= (_codec.InputBuffer[p++] & 0xff) << k;
+                                b |= (codec.InputBuffer[p++] & 0xff) << k;
                                 k += 8;
                             }
 
@@ -497,19 +543,20 @@ namespace RestSharp.Compression.ZLib
                                 //System.err.println("null...");
                             }
 
-                            t = hufts[(tb[0] + (b & inflate_mask[t])) * 3 + 1];
-                            c = hufts[(tb[0] + (b & inflate_mask[t])) * 3 + 2];
+                            t = hufts[(tb[0] + (b & inflateMask[t])) * 3 + 1];
+                            c = hufts[(tb[0] + (b & inflateMask[t])) * 3 + 2];
 
                             if (c < 16)
                             {
-                                b = SharedUtils.URShift(b, (t)); k -= (t);
+                                b = SharedUtils.URShift(b, (t));
+                                k -= (t);
                                 blens[index++] = c;
                             }
                             else
                             {
                                 // c == 16..18
-                                i = c == 18 ? 7 : c - 14;
-                                j = c == 18 ? 11 : 3;
+                                int i = c == 18 ? 7 : c - 14;
+                                int j = c == 18 ? 11 : 3;
 
                                 while (k < (t + i))
                                 {
@@ -519,23 +566,26 @@ namespace RestSharp.Compression.ZLib
                                     }
                                     else
                                     {
-                                        bitb = b; bitk = k;
-                                        _codec.AvailableBytesIn = n;
-                                        _codec.TotalBytesIn += p - _codec.NextIn;
-                                        _codec.NextIn = p;
+                                        bitb = b;
+                                        bitk = k;
+                                        codec.AvailableBytesIn = n;
+                                        codec.TotalBytesIn += p - codec.NextIn;
+                                        codec.NextIn = p;
                                         write = q;
+
                                         return Flush(r);
                                     }
 
-                                    ;
                                     n--;
-                                    b |= (_codec.InputBuffer[p++] & 0xff) << k;
+                                    b |= (codec.InputBuffer[p++] & 0xff) << k;
                                     k += 8;
                                 }
 
-                                b = SharedUtils.URShift(b, (t)); k -= (t);
-                                j += (b & inflate_mask[i]);
-                                b = SharedUtils.URShift(b, (i)); k -= (i);
+                                b = SharedUtils.URShift(b, (t));
+                                k -= (t);
+                                j += (b & inflateMask[i]);
+                                b = SharedUtils.URShift(b, (i));
+                                k -= (i);
 
                                 i = index;
                                 t = table;
@@ -544,13 +594,15 @@ namespace RestSharp.Compression.ZLib
                                 {
                                     blens = null;
                                     mode = BAD;
-                                    _codec.Message = "invalid bit length repeat";
+                                    codec.Message = "invalid bit length repeat";
                                     r = ZlibConstants.Z_DATA_ERROR;
-                                    bitb = b; bitk = k;
-                                    _codec.AvailableBytesIn = n;
-                                    _codec.TotalBytesIn += p - _codec.NextIn;
-                                    _codec.NextIn = p;
+                                    bitb = b;
+                                    bitk = k;
+                                    codec.AvailableBytesIn = n;
+                                    codec.TotalBytesIn += p - codec.NextIn;
+                                    codec.NextIn = p;
                                     write = q;
+
                                     return Flush(r);
                                 }
 
@@ -568,13 +620,13 @@ namespace RestSharp.Compression.ZLib
 
                         tb[0] = -1;
                         {
-                            int[] bl = new int[] { 9 };  // must be <= 9 for lookahead assumptions
-                            int[] bd = new int[] { 6 }; // must be <= 9 for lookahead assumptions
+                            int[] bl = { 9 };  // must be <= 9 for lookahead assumptions
+                            int[] bd = { 6 }; // must be <= 9 for lookahead assumptions
                             int[] tl = new int[1];
                             int[] td = new int[1];
 
                             t = table;
-                            t = inftree.inflate_trees_dynamic(257 + (t & 0x1f), 1 + ((t >> 5) & 0x1f), blens, bl, bd, tl, td, hufts, _codec);
+                            t = inftree.inflate_trees_dynamic(257 + (t & 0x1f), 1 + ((t >> 5) & 0x1f), blens, bl, bd, tl, td, hufts, codec);
 
                             if (t != ZlibConstants.Z_OK)
                             {
@@ -585,11 +637,13 @@ namespace RestSharp.Compression.ZLib
                                 }
 
                                 r = t;
-                                bitb = b; bitk = k;
-                                _codec.AvailableBytesIn = n;
-                                _codec.TotalBytesIn += p - _codec.NextIn;
-                                _codec.NextIn = p;
+                                bitb = b;
+                                bitk = k;
+                                codec.AvailableBytesIn = n;
+                                codec.TotalBytesIn += p - codec.NextIn;
+                                codec.NextIn = p;
                                 write = q;
+
                                 return Flush(r);
                             }
 
@@ -597,25 +651,27 @@ namespace RestSharp.Compression.ZLib
                         }
 
                         mode = CODES;
+
                         goto case CODES;
 
                     case CODES:
-                        bitb = b; bitk = k;
-                        _codec.AvailableBytesIn = n;
-                        _codec.TotalBytesIn += p - _codec.NextIn;
-                        _codec.NextIn = p;
+                        bitb = b;
+                        bitk = k;
+                        codec.AvailableBytesIn = n;
+                        codec.TotalBytesIn += p - codec.NextIn;
+                        codec.NextIn = p;
                         write = q;
 
                         if ((r = codes.Process(this, r)) != ZlibConstants.Z_STREAM_END)
                             return Flush(r);
 
                         r = ZlibConstants.Z_OK;
-                        p = _codec.NextIn;
-                        n = _codec.AvailableBytesIn;
+                        p = codec.NextIn;
+                        n = codec.AvailableBytesIn;
                         b = bitb;
                         k = bitk;
                         q = write;
-                        m = (int)(q < read ? read - q - 1 : end - q);
+                        m = q < this.read ? this.read - q - 1 : this.end - q;
 
                         if (last == 0)
                         {
@@ -629,48 +685,57 @@ namespace RestSharp.Compression.ZLib
                     case DRY:
                         write = q;
                         r = Flush(r);
-                        q = write; m = (int)(q < read ? read - q - 1 : end - q);
+                        q = write;
+
+                        m = q < this.read ? this.read - q - 1 : this.end - q;
 
                         if (read != write)
                         {
-                            bitb = b; bitk = k;
-                            _codec.AvailableBytesIn = n;
-                            _codec.TotalBytesIn += p - _codec.NextIn;
-                            _codec.NextIn = p;
+                            bitb = b;
+                            bitk = k;
+                            codec.AvailableBytesIn = n;
+                            codec.TotalBytesIn += p - codec.NextIn;
+                            codec.NextIn = p;
                             write = q;
 
                             return Flush(r);
                         }
 
                         mode = DONE;
+
                         goto case DONE;
 
                     case DONE:
                         r = ZlibConstants.Z_STREAM_END;
                         bitb = b;
                         bitk = k;
-                        _codec.AvailableBytesIn = n;
-                        _codec.TotalBytesIn += p - _codec.NextIn;
-                        _codec.NextIn = p;
+                        codec.AvailableBytesIn = n;
+                        codec.TotalBytesIn += p - codec.NextIn;
+                        codec.NextIn = p;
                         write = q;
+
                         return Flush(r);
 
                     case BAD:
                         r = ZlibConstants.Z_DATA_ERROR;
-                        bitb = b; bitk = k;
-                        _codec.AvailableBytesIn = n;
-                        _codec.TotalBytesIn += p - _codec.NextIn;
-                        _codec.NextIn = p;
+                        bitb = b;
+                        bitk = k;
+                        codec.AvailableBytesIn = n;
+                        codec.TotalBytesIn += p - codec.NextIn;
+                        codec.NextIn = p;
                         write = q;
+
                         return Flush(r);
 
                     default:
                         r = ZlibConstants.Z_STREAM_ERROR;
-                        bitb = b; bitk = k;
-                        _codec.AvailableBytesIn = n;
-                        _codec.TotalBytesIn += p - _codec.NextIn;
-                        _codec.NextIn = p;
+                        bitb = b;
+                        bitk = k;
+                        codec.AvailableBytesIn = n;
+                        codec.TotalBytesIn += p - codec.NextIn;
+                        codec.NextIn = p;
                         write = q;
+
                         return Flush(r);
                 }
             }
@@ -705,28 +770,28 @@ namespace RestSharp.Compression.ZLib
             int q;
 
             // local copies of source and destination pointers
-            p = _codec.NextOut;
+            p = codec.NextOut;
             q = read;
 
             // compute number of bytes to copy as far as end of window
-            n = (int)((q <= write ? write : end) - q);
+            n = (q <= this.write ? this.write : this.end) - q;
 
-            if (n > _codec.AvailableBytesOut)
-                n = _codec.AvailableBytesOut;
+            if (n > codec.AvailableBytesOut)
+                n = codec.AvailableBytesOut;
 
             if (n != 0 && r == ZlibConstants.Z_BUF_ERROR)
                 r = ZlibConstants.Z_OK;
 
             // update counters
-            _codec.AvailableBytesOut -= n;
-            _codec.TotalBytesOut += n;
+            codec.AvailableBytesOut -= n;
+            codec.TotalBytesOut += n;
 
             // update check information
             if (checkfn != null)
-                _codec._Adler32 = check = Adler.Adler32(check, window, q, n);
+                codec.adler32 = check = Adler.Adler32(check, window, q, n);
 
             // copy as far as end of window
-            Array.Copy(window, q, _codec.OutputBuffer, p, n);
+            Array.Copy(window, q, codec.OutputBuffer, p, n);
             p += n;
             q += n;
 
@@ -742,28 +807,28 @@ namespace RestSharp.Compression.ZLib
                 // compute bytes to copy
                 n = write - q;
 
-                if (n > _codec.AvailableBytesOut)
-                    n = _codec.AvailableBytesOut;
+                if (n > codec.AvailableBytesOut)
+                    n = codec.AvailableBytesOut;
 
                 if (n != 0 && r == ZlibConstants.Z_BUF_ERROR)
                     r = ZlibConstants.Z_OK;
 
                 // update counters
-                _codec.AvailableBytesOut -= n;
-                _codec.TotalBytesOut += n;
+                codec.AvailableBytesOut -= n;
+                codec.TotalBytesOut += n;
 
                 // update check information
                 if (checkfn != null)
-                    _codec._Adler32 = check = Adler.Adler32(check, window, q, n);
+                    codec.adler32 = check = Adler.Adler32(check, window, q, n);
 
                 // copy
-                Array.Copy(window, q, _codec.OutputBuffer, p, n);
+                Array.Copy(window, q, codec.OutputBuffer, p, n);
                 p += n;
                 q += n;
             }
 
             // update pointers
-            _codec.NextOut = p;
+            codec.NextOut = p;
             read = q;
 
             // done
@@ -773,8 +838,28 @@ namespace RestSharp.Compression.ZLib
 
     sealed internal class InflateCodes
     {
-        //UPGRADE_NOTE: Final was removed from the declaration of 'inflate_mask'. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
-        private static readonly int[] inflate_mask = new int[] { 0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff };
+        // UPGRADE_NOTE: Final was removed from the declaration of 'inflate_mask'.
+        // "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
+        private static readonly int[] inflateMask =
+        {
+            0x00000000,
+            0x00000001,
+            0x00000003,
+            0x00000007,
+            0x0000000f,
+            0x0000001f,
+            0x0000003f,
+            0x0000007f,
+            0x000000ff,
+            0x000001ff,
+            0x000003ff,
+            0x000007ff,
+            0x00000fff,
+            0x00001fff,
+            0x00003fff,
+            0x00007fff,
+            0x0000ffff
+        };
 
         // waiting for "i:"=input,
         //             "o:"=output,
@@ -796,7 +881,7 @@ namespace RestSharp.Compression.ZLib
         internal int len;
 
         internal int[] tree; // pointer into tree
-        internal int tree_index = 0;
+        internal int tree_index;
         internal int need; // bits needed
         internal int lit;
 
@@ -816,8 +901,8 @@ namespace RestSharp.Compression.ZLib
         internal void Init(int bl, int bd, int[] tl, int tl_index, int[] td, int td_index)
         {
             mode = START;
-            lbits = (byte)bl;
-            dbits = (byte)bd;
+            lbits = (byte) bl;
+            dbits = (byte) bd;
             ltree = tl;
             ltree_index = tl_index;
             dtree = td;
@@ -827,36 +912,38 @@ namespace RestSharp.Compression.ZLib
 
         internal int Process(InflateBlocks blocks, int r)
         {
-            int j; // temporary storage
-            int tindex; // temporary pointer
-            int e; // extra bits or operation
-            int b = 0; // bit buffer
-            int k = 0; // bits in bit buffer
-            int p = 0; // input data pointer
+            int b; // bit buffer
+            int k; // bits in bit buffer
+            int p; // input data pointer
             int n; // bytes available there
             int q; // output window write pointer
             int m; // bytes to end of window or read pointer
-            int f; // pointer to copy strings from
 
-            ZlibCodec z = blocks._codec;
+            ZlibCodec z = blocks.codec;
 
             // copy input/output information to locals (UPDATE macro restores)
             p = z.NextIn;
             n = z.AvailableBytesIn;
             b = blocks.bitb;
             k = blocks.bitk;
-            q = blocks.write; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+            q = blocks.write;
+            m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
 
             // process input and output based on current state
             while (true)
             {
+                int j; // temporary storage
+                int tindex; // temporary pointer
+                int e; // extra bits or operation
+
                 switch (mode)
                 {
                     // waiting for "i:"=input, "o:"=output, "x:"=nothing
                     case START:  // x: set up for LEN
                         if (m >= 258 && n >= 10)
                         {
-                            blocks.bitb = b; blocks.bitk = k;
+                            blocks.bitb = b;
+                            blocks.bitk = k;
                             z.AvailableBytesIn = n;
                             z.TotalBytesIn += p - z.NextIn;
                             z.NextIn = p;
@@ -866,11 +953,13 @@ namespace RestSharp.Compression.ZLib
                             n = z.AvailableBytesIn;
                             b = blocks.bitb;
                             k = blocks.bitk;
-                            q = blocks.write; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                            q = blocks.write;
+                            m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
 
                             if (r != ZlibConstants.Z_OK)
                             {
                                 mode = (r == ZlibConstants.Z_STREAM_END) ? WASH : BADCODE;
+
                                 break;
                             }
                         }
@@ -879,6 +968,7 @@ namespace RestSharp.Compression.ZLib
                         tree = ltree;
                         tree_index = ltree_index;
                         mode = LEN;
+
                         goto case LEN;
 
                     case LEN:  // i: get length/literal/eob next
@@ -890,11 +980,13 @@ namespace RestSharp.Compression.ZLib
                                 r = ZlibConstants.Z_OK;
                             else
                             {
-                                blocks.bitb = b; blocks.bitk = k;
+                                blocks.bitb = b;
+                                blocks.bitk = k;
                                 z.AvailableBytesIn = n;
                                 z.TotalBytesIn += p - z.NextIn;
                                 z.NextIn = p;
                                 blocks.write = q;
+
                                 return blocks.Flush(r);
                             }
 
@@ -903,7 +995,7 @@ namespace RestSharp.Compression.ZLib
                             k += 8;
                         }
 
-                        tindex = (tree_index + (b & inflate_mask[j])) * 3;
+                        tindex = (tree_index + (b & inflateMask[j])) * 3;
 
                         b = SharedUtils.URShift(b, (tree[tindex + 1]));
                         k -= (tree[tindex + 1]);
@@ -914,6 +1006,7 @@ namespace RestSharp.Compression.ZLib
                             // literal
                             lit = tree[tindex + 2];
                             mode = LIT;
+
                             break;
                         }
 
@@ -923,6 +1016,7 @@ namespace RestSharp.Compression.ZLib
                             get_Renamed = e & 15;
                             len = tree[tindex + 2];
                             mode = LENEXT;
+
                             break;
                         }
 
@@ -931,6 +1025,7 @@ namespace RestSharp.Compression.ZLib
                             // next table
                             need = e;
                             tree_index = tindex / 3 + tree[tindex + 2];
+
                             break;
                         }
 
@@ -938,17 +1033,20 @@ namespace RestSharp.Compression.ZLib
                         {
                             // end of block
                             mode = WASH;
+
                             break;
                         }
 
                         mode = BADCODE; // invalid code
                         z.Message = "invalid literal/length code";
                         r = ZlibConstants.Z_DATA_ERROR;
-                        blocks.bitb = b; blocks.bitk = k;
+                        blocks.bitb = b;
+                        blocks.bitk = k;
                         z.AvailableBytesIn = n;
                         z.TotalBytesIn += p - z.NextIn;
                         z.NextIn = p;
                         blocks.write = q;
+
                         return blocks.Flush(r);
 
                     case LENEXT:  // i: getting length extra (have base)
@@ -961,17 +1059,22 @@ namespace RestSharp.Compression.ZLib
                             else
                             {
 
-                                blocks.bitb = b; blocks.bitk = k;
-                                z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                                blocks.bitb = b;
+                                blocks.bitk = k;
+                                z.AvailableBytesIn = n;
+                                z.TotalBytesIn += p - z.NextIn;
+                                z.NextIn = p;
                                 blocks.write = q;
+
                                 return blocks.Flush(r);
                             }
 
-                            n--; b |= (z.InputBuffer[p++] & 0xff) << k;
+                            n--;
+                            b |= (z.InputBuffer[p++] & 0xff) << k;
                             k += 8;
                         }
 
-                        len += (b & inflate_mask[j]);
+                        len += (b & inflateMask[j]);
 
                         b >>= j;
                         k -= j;
@@ -980,6 +1083,7 @@ namespace RestSharp.Compression.ZLib
                         tree = dtree;
                         tree_index = dtree_index;
                         mode = DIST;
+
                         goto case DIST;
 
                     case DIST:  // i: get distance next
@@ -991,17 +1095,22 @@ namespace RestSharp.Compression.ZLib
                                 r = ZlibConstants.Z_OK;
                             else
                             {
-                                blocks.bitb = b; blocks.bitk = k;
-                                z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                                blocks.bitb = b;
+                                blocks.bitk = k;
+                                z.AvailableBytesIn = n;
+                                z.TotalBytesIn += p - z.NextIn;
+                                z.NextIn = p;
                                 blocks.write = q;
+
                                 return blocks.Flush(r);
                             }
 
-                            n--; b |= (z.InputBuffer[p++] & 0xff) << k;
+                            n--;
+                            b |= (z.InputBuffer[p++] & 0xff) << k;
                             k += 8;
                         }
 
-                        tindex = (tree_index + (b & inflate_mask[j])) * 3;
+                        tindex = (tree_index + (b & inflateMask[j])) * 3;
 
                         b >>= tree[tindex + 1];
                         k -= tree[tindex + 1];
@@ -1013,6 +1122,7 @@ namespace RestSharp.Compression.ZLib
                             get_Renamed = e & 15;
                             dist = tree[tindex + 2];
                             mode = DISTEXT;
+
                             break;
                         }
 
@@ -1021,15 +1131,20 @@ namespace RestSharp.Compression.ZLib
                             // next table
                             need = e;
                             tree_index = tindex / 3 + tree[tindex + 2];
+
                             break;
                         }
 
                         mode = BADCODE; // invalid code
                         z.Message = "invalid distance code";
                         r = ZlibConstants.Z_DATA_ERROR;
-                        blocks.bitb = b; blocks.bitk = k;
-                        z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                        blocks.bitb = b;
+                        blocks.bitk = k;
+                        z.AvailableBytesIn = n;
+                        z.TotalBytesIn += p - z.NextIn;
+                        z.NextIn = p;
                         blocks.write = q;
+
                         return blocks.Flush(r);
 
                     case DISTEXT:  // i: getting distance extra
@@ -1041,26 +1156,32 @@ namespace RestSharp.Compression.ZLib
                                 r = ZlibConstants.Z_OK;
                             else
                             {
-                                blocks.bitb = b; blocks.bitk = k;
-                                z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                                blocks.bitb = b;
+                                blocks.bitk = k;
+                                z.AvailableBytesIn = n;
+                                z.TotalBytesIn += p - z.NextIn;
+                                z.NextIn = p;
                                 blocks.write = q;
+
                                 return blocks.Flush(r);
                             }
 
-                            n--; b |= (z.InputBuffer[p++] & 0xff) << k;
+                            n--;
+                            b |= (z.InputBuffer[p++] & 0xff) << k;
                             k += 8;
                         }
 
-                        dist += (b & inflate_mask[j]);
+                        dist += (b & inflateMask[j]);
 
                         b >>= j;
                         k -= j;
 
                         mode = COPY;
+
                         goto case COPY;
 
                     case COPY:  // o: copying bytes in window, waiting for space
-                        f = q - dist;
+                        int f = q - this.dist; // pointer to copy strings from
 
                         while (f < 0)
                         {
@@ -1074,32 +1195,39 @@ namespace RestSharp.Compression.ZLib
                             {
                                 if (q == blocks.end && blocks.read != 0)
                                 {
-                                    q = 0; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                                    q = 0;
+                                    m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
                                 }
 
                                 if (m == 0)
                                 {
-                                    blocks.write = q; r = blocks.Flush(r);
-                                    q = blocks.write; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                                    blocks.write = q;
+                                    r = blocks.Flush(r);
+                                    q = blocks.write;
+                                    m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
 
                                     if (q == blocks.end && blocks.read != 0)
                                     {
-                                        q = 0; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                                        q = 0;
+                                        m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
                                     }
 
                                     if (m == 0)
                                     {
-                                        blocks.bitb = b; blocks.bitk = k;
+                                        blocks.bitb = b;
+                                        blocks.bitk = k;
                                         z.AvailableBytesIn = n;
                                         z.TotalBytesIn += p - z.NextIn;
                                         z.NextIn = p;
                                         blocks.write = q;
+
                                         return blocks.Flush(r);
                                     }
                                 }
                             }
 
-                            blocks.window[q++] = blocks.window[f++]; m--;
+                            blocks.window[q++] = blocks.window[f++];
+                            m--;
 
                             if (f == blocks.end)
                                 f = 0;
@@ -1115,32 +1243,42 @@ namespace RestSharp.Compression.ZLib
                         {
                             if (q == blocks.end && blocks.read != 0)
                             {
-                                q = 0; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                                q = 0;
+                                m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
                             }
 
                             if (m == 0)
                             {
-                                blocks.write = q; r = blocks.Flush(r);
-                                q = blocks.write; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                                blocks.write = q;
+                                r = blocks.Flush(r);
+                                q = blocks.write;
+                                m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
 
                                 if (q == blocks.end && blocks.read != 0)
                                 {
-                                    q = 0; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                                    q = 0;
+                                    m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
                                 }
 
                                 if (m == 0)
                                 {
-                                    blocks.bitb = b; blocks.bitk = k;
-                                    z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                                    blocks.bitb = b;
+                                    blocks.bitk = k;
+                                    z.AvailableBytesIn = n;
+                                    z.TotalBytesIn += p - z.NextIn;
+                                    z.NextIn = p;
                                     blocks.write = q;
+
                                     return blocks.Flush(r);
                                 }
                             }
                         }
 
                         r = ZlibConstants.Z_OK;
-                        blocks.window[q++] = (byte)lit; m--;
+                        blocks.window[q++] = (byte) lit;
+                        m--;
                         mode = START;
+
                         break;
 
                     case WASH:  // o: got eob, possibly more output
@@ -1152,39 +1290,58 @@ namespace RestSharp.Compression.ZLib
                             p--; // can always return one
                         }
 
-                        blocks.write = q; r = blocks.Flush(r);
-                        q = blocks.write; m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
+                        blocks.write = q;
+                        r = blocks.Flush(r);
+                        q = blocks.write;
+                        m = q < blocks.read ? blocks.read - q - 1 : blocks.end - q;
 
                         if (blocks.read != blocks.write)
                         {
-                            blocks.bitb = b; blocks.bitk = k;
-                            z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                            blocks.bitb = b;
+                            blocks.bitk = k;
+                            z.AvailableBytesIn = n;
+                            z.TotalBytesIn += p - z.NextIn;
+                            z.NextIn = p;
                             blocks.write = q;
+
                             return blocks.Flush(r);
                         }
 
                         mode = END;
+
                         goto case END;
 
                     case END:
                         r = ZlibConstants.Z_STREAM_END;
-                        blocks.bitb = b; blocks.bitk = k;
-                        z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                        blocks.bitb = b;
+                        blocks.bitk = k;
+                        z.AvailableBytesIn = n;
+                        z.TotalBytesIn += p - z.NextIn;
+                        z.NextIn = p;
                         blocks.write = q;
+
                         return blocks.Flush(r);
 
                     case BADCODE:  // x: got error
                         r = ZlibConstants.Z_DATA_ERROR;
-                        blocks.bitb = b; blocks.bitk = k;
-                        z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                        blocks.bitb = b;
+                        blocks.bitk = k;
+                        z.AvailableBytesIn = n;
+                        z.TotalBytesIn += p - z.NextIn;
+                        z.NextIn = p;
                         blocks.write = q;
+
                         return blocks.Flush(r);
 
                     default:
                         r = ZlibConstants.Z_STREAM_ERROR;
-                        blocks.bitb = b; blocks.bitk = k;
-                        z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                        blocks.bitb = b;
+                        blocks.bitk = k;
+                        z.AvailableBytesIn = n;
+                        z.TotalBytesIn += p - z.NextIn;
+                        z.NextIn = p;
                         blocks.write = q;
+
                         return blocks.Flush(r);
                 }
             }
@@ -1197,10 +1354,6 @@ namespace RestSharp.Compression.ZLib
 
         internal int InflateFast(int bl, int bd, int[] tl, int tl_index, int[] td, int td_index, InflateBlocks s, ZlibCodec z)
         {
-            int t; // temporary pointer
-            int[] tp; // temporary pointer
-            int tp_index; // temporary pointer
-            int e; // extra bits or operation
             int b; // bit buffer
             int k; // bits in bit buffer
             int p; // input data pointer
@@ -1210,18 +1363,18 @@ namespace RestSharp.Compression.ZLib
             int ml; // mask for literal/length tree
             int md; // mask for distance tree
             int c; // bytes to copy
-            int d; // distance back to copy from
-            int r; // copy source pointer
-
-            int tp_index_t_3; // (tp_index+t)*3
 
             // load input, output, bit values
-            p = z.NextIn; n = z.AvailableBytesIn; b = s.bitb; k = s.bitk;
-            q = s.write; m = q < s.read ? s.read - q - 1 : s.end - q;
+            p = z.NextIn;
+            n = z.AvailableBytesIn;
+            b = s.bitb;
+            k = s.bitk;
+            q = s.write;
+            m = q < s.read ? s.read - q - 1 : s.end - q;
 
             // initialize masks
-            ml = inflate_mask[bl];
-            md = inflate_mask[bd];
+            ml = inflateMask[bl];
+            md = inflateMask[bd];
 
             // do until not enough input or output space for fast loop
             do
@@ -1232,40 +1385,47 @@ namespace RestSharp.Compression.ZLib
                 {
                     // max bits for literal/length code
                     n--;
-                    b |= (z.InputBuffer[p++] & 0xff) << k; k += 8;
+                    b |= (z.InputBuffer[p++] & 0xff) << k;
+                    k += 8;
                 }
 
-                t = b & ml;
-                tp = tl;
-                tp_index = tl_index;
-                tp_index_t_3 = (tp_index + t) * 3;
+                int t = b & ml; // temporary pointer
+                int[] tp = tl; // temporary pointer
+                int tp_index = tl_index; // temporary pointer
+                int tp_index_t_3 = (tp_index + t) * 3; // (tp_index+t)*3
+                int e; // extra bits or operation
 
                 if ((e = tp[tp_index_t_3]) == 0)
                 {
-                    b >>= (tp[tp_index_t_3 + 1]); k -= (tp[tp_index_t_3 + 1]);
+                    b >>= (tp[tp_index_t_3 + 1]);
+                    k -= (tp[tp_index_t_3 + 1]);
 
-                    s.window[q++] = (byte)tp[tp_index_t_3 + 2];
+                    s.window[q++] = (byte) tp[tp_index_t_3 + 2];
                     m--;
+
                     continue;
                 }
 
                 do
                 {
-                    b >>= (tp[tp_index_t_3 + 1]); k -= (tp[tp_index_t_3 + 1]);
+                    b >>= (tp[tp_index_t_3 + 1]);
+                    k -= (tp[tp_index_t_3 + 1]);
 
                     if ((e & 16) != 0)
                     {
                         e &= 15;
-                        c = tp[tp_index_t_3 + 2] + ((int)b & inflate_mask[e]);
+                        c = tp[tp_index_t_3 + 2] + (b & inflateMask[e]);
 
-                        b >>= e; k -= e;
+                        b >>= e;
+                        k -= e;
 
                         // decode distance base of block to copy
                         while (k < (15))
                         {
                             // max bits for distance code
                             n--;
-                            b |= (z.InputBuffer[p++] & 0xff) << k; k += 8;
+                            b |= (z.InputBuffer[p++] & 0xff) << k;
+                            k += 8;
                         }
 
                         t = b & md;
@@ -1276,7 +1436,8 @@ namespace RestSharp.Compression.ZLib
 
                         do
                         {
-                            b >>= (tp[tp_index_t_3 + 1]); k -= (tp[tp_index_t_3 + 1]);
+                            b >>= (tp[tp_index_t_3 + 1]);
+                            k -= (tp[tp_index_t_3 + 1]);
 
                             if ((e & 16) != 0)
                             {
@@ -1287,14 +1448,19 @@ namespace RestSharp.Compression.ZLib
                                 {
                                     // get extra bits (up to 13)
                                     n--;
-                                    b |= (z.InputBuffer[p++] & 0xff) << k; k += 8;
+                                    b |= (z.InputBuffer[p++] & 0xff) << k;
+                                    k += 8;
                                 }
 
-                                d = tp[tp_index_t_3 + 2] + (b & inflate_mask[e]);
-                                b >>= (e); k -= (e);
+                                int d = tp[tp_index_t_3 + 2] + (b & inflateMask[e]); // distance back to copy from
+
+                                b >>= (e);
+                                k -= (e);
 
                                 // do the copy
                                 m -= c;
+
+                                int r; // copy source pointer
 
                                 if (q >= d)
                                 {
@@ -1311,13 +1477,16 @@ namespace RestSharp.Compression.ZLib
                                     else
                                     {
                                         Array.Copy(s.window, r, s.window, q, 2);
-                                        q += 2; r += 2; c -= 2;
+                                        q += 2;
+                                        r += 2;
+                                        c -= 2;
                                     }
                                 }
                                 else
                                 {
                                     // else offset after destination
                                     r = q - d;
+
                                     do
                                     {
                                         r += s.end; // force pointer in window
@@ -1342,7 +1511,9 @@ namespace RestSharp.Compression.ZLib
                                         else
                                         {
                                             Array.Copy(s.window, r, s.window, q, e);
-                                            q += e; r += e; e = 0;
+                                            q += e;
+                                            r += e;
+                                            e = 0;
                                         }
 
                                         r = 0; // copy rest from start of window
@@ -1361,61 +1532,91 @@ namespace RestSharp.Compression.ZLib
                                 else
                                 {
                                     Array.Copy(s.window, r, s.window, q, c);
-                                    q += c; r += c; c = 0;
+                                    q += c;
+                                    r += c;
+                                    c = 0;
                                 }
                                 break;
                             }
-                            else if ((e & 64) == 0)
+
+                            if ((e & 64) == 0)
                             {
                                 t += tp[tp_index_t_3 + 2];
-                                t += (b & inflate_mask[e]);
+                                t += (b & inflateMask[e]);
                                 tp_index_t_3 = (tp_index + t) * 3;
                                 e = tp[tp_index_t_3];
                             }
                             else
                             {
                                 z.Message = "invalid distance code";
-                                c = z.AvailableBytesIn - n; c = (k >> 3) < c ? k >> 3 : c; n += c; p -= c; k -= (c << 3);
-                                s.bitb = b; s.bitk = k;
-                                z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                                c = z.AvailableBytesIn - n;
+                                c = (k >> 3) < c ? k >> 3 : c;
+                                n += c;
+                                p -= c;
+                                k -= (c << 3);
+                                s.bitb = b;
+                                s.bitk = k;
+                                z.AvailableBytesIn = n;
+                                z.TotalBytesIn += p - z.NextIn;
+                                z.NextIn = p;
                                 s.write = q;
+
                                 return ZlibConstants.Z_DATA_ERROR;
                             }
                         }
                         while (true);
+
                         break;
                     }
 
                     if ((e & 64) == 0)
                     {
                         t += tp[tp_index_t_3 + 2];
-                        t += (b & inflate_mask[e]);
+                        t += (b & inflateMask[e]);
                         tp_index_t_3 = (tp_index + t) * 3;
 
                         if ((e = tp[tp_index_t_3]) == 0)
                         {
-                            b >>= (tp[tp_index_t_3 + 1]); k -= (tp[tp_index_t_3 + 1]);
-                            s.window[q++] = (byte)tp[tp_index_t_3 + 2];
+                            b >>= (tp[tp_index_t_3 + 1]);
+                            k -= (tp[tp_index_t_3 + 1]);
+                            s.window[q++] = (byte) tp[tp_index_t_3 + 2];
                             m--;
+
                             break;
                         }
                     }
                     else if ((e & 32) != 0)
                     {
 
-                        c = z.AvailableBytesIn - n; c = (k >> 3) < c ? k >> 3 : c; n += c; p -= c; k -= (c << 3);
-                        s.bitb = b; s.bitk = k;
-                        z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                        c = z.AvailableBytesIn - n;
+                        c = (k >> 3) < c ? k >> 3 : c;
+                        n += c;
+                        p -= c;
+                        k -= (c << 3);
+                        s.bitb = b;
+                        s.bitk = k;
+                        z.AvailableBytesIn = n;
+                        z.TotalBytesIn += p - z.NextIn;
+                        z.NextIn = p;
                         s.write = q;
+
                         return ZlibConstants.Z_STREAM_END;
                     }
                     else
                     {
                         z.Message = "invalid literal/length code";
-                        c = z.AvailableBytesIn - n; c = (k >> 3) < c ? k >> 3 : c; n += c; p -= c; k -= (c << 3);
-                        s.bitb = b; s.bitk = k;
-                        z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+                        c = z.AvailableBytesIn - n;
+                        c = (k >> 3) < c ? k >> 3 : c;
+                        n += c;
+                        p -= c;
+                        k -= (c << 3);
+                        s.bitb = b;
+                        s.bitk = k;
+                        z.AvailableBytesIn = n;
+                        z.TotalBytesIn += p - z.NextIn;
+                        z.NextIn = p;
                         s.write = q;
+
                         return ZlibConstants.Z_DATA_ERROR;
                     }
                 }
@@ -1424,11 +1625,19 @@ namespace RestSharp.Compression.ZLib
             while (m >= 258 && n >= 10);
 
             // not enough input or output--restore pointers and return
-            c = z.AvailableBytesIn - n; c = (k >> 3) < c ? k >> 3 : c; n += c; p -= c; k -= (c << 3);
+            c = z.AvailableBytesIn - n;
+            c = (k >> 3) < c ? k >> 3 : c;
+            n += c;
+            p -= c;
+            k -= (c << 3);
 
-            s.bitb = b; s.bitk = k;
-            z.AvailableBytesIn = n; z.TotalBytesIn += p - z.NextIn; z.NextIn = p;
+            s.bitb = b;
+            s.bitk = k;
+            z.AvailableBytesIn = n;
+            z.TotalBytesIn += p - z.NextIn;
+            z.NextIn = p;
             s.write = q;
+
             return ZlibConstants.Z_OK;
         }
     }
@@ -1454,7 +1663,7 @@ namespace RestSharp.Compression.ZLib
         private const int BAD = 13; // got an error--stay here
 
         internal int mode; // current inflate mode
-        internal ZlibCodec _codec; // pointer back to this zlib stream
+        internal ZlibCodec codec; // pointer back to this zlib stream
 
         // mode dependent information
         internal int method; // if FLAGS, method byte
@@ -1468,11 +1677,12 @@ namespace RestSharp.Compression.ZLib
 
         // mode independent information
         //internal int nowrap; // flag for no wrapper
-        private bool _handleRfc1950HeaderBytes = true;
+        private bool handleRfc1950HeaderBytes = true;
+
         internal bool HandleRfc1950HeaderBytes
         {
-            get { return _handleRfc1950HeaderBytes; }
-            set { _handleRfc1950HeaderBytes = value; }
+            get { return this.handleRfc1950HeaderBytes; }
+            set { this.handleRfc1950HeaderBytes = value; }
         }
 
         internal int wbits; // log2(window size)  (8..15, defaults to 15)
@@ -1482,15 +1692,16 @@ namespace RestSharp.Compression.ZLib
 
         public InflateManager(bool expectRfc1950HeaderBytes)
         {
-            _handleRfc1950HeaderBytes = expectRfc1950HeaderBytes;
+            this.handleRfc1950HeaderBytes = expectRfc1950HeaderBytes;
         }
 
         internal int Reset()
         {
-            _codec.TotalBytesIn = _codec.TotalBytesOut = 0;
-            _codec.Message = null;
+            codec.TotalBytesIn = codec.TotalBytesOut = 0;
+            codec.Message = null;
             mode = HandleRfc1950HeaderBytes ? METHOD : BLOCKS;
             blocks.Reset(null);
+
             return ZlibConstants.Z_OK;
         }
 
@@ -1500,13 +1711,14 @@ namespace RestSharp.Compression.ZLib
                 blocks.Free();
 
             blocks = null;
+
             return ZlibConstants.Z_OK;
         }
 
         internal int Initialize(ZlibCodec codec, int w)
         {
-            _codec = codec;
-            _codec.Message = null;
+            this.codec = codec;
+            codec.Message = null;
             blocks = null;
 
             // handle undocumented nowrap option (no zlib header or check)
@@ -1528,25 +1740,23 @@ namespace RestSharp.Compression.ZLib
 
             wbits = w;
 
-            blocks = new InflateBlocks(codec,
-                HandleRfc1950HeaderBytes ? this : null,
-                1 << w);
+            blocks = new InflateBlocks(codec, HandleRfc1950HeaderBytes ? this : null, 1 << w);
 
             // reset state
             Reset();
+
             return ZlibConstants.Z_OK;
         }
 
         internal int Inflate(FlushType flush)
         {
             int r;
-            int b;
-            int f = (int)flush;
+            int f = (int) flush;
 
-            if (_codec.InputBuffer == null)
+            if (codec.InputBuffer == null)
                 throw new ZlibException("InputBuffer is null. ");
 
-            f = (f == (int)FlushType.Finish)
+            f = (f == (int) FlushType.Finish)
                 ? ZlibConstants.Z_BUF_ERROR
                 : ZlibConstants.Z_OK;
             r = ZlibConstants.Z_BUF_ERROR;
@@ -1556,26 +1766,29 @@ namespace RestSharp.Compression.ZLib
                 switch (mode)
                 {
                     case METHOD:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
 
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
 
-                        if (((method = _codec.InputBuffer[_codec.NextIn++]) & 0xf) != Z_DEFLATED)
+                        if (((method = codec.InputBuffer[codec.NextIn++]) & 0xf) != Z_DEFLATED)
                         {
                             mode = BAD;
-                            _codec.Message = String.Format("unknown compression method (0x{0:X2})", method);
+                            codec.Message = string.Format("unknown compression method (0x{0:X2})", method);
                             marker = 5; // can't try inflateSync
+
                             break;
                         }
 
                         if ((method >> 4) + 8 > wbits)
                         {
                             mode = BAD;
-                            _codec.Message = String.Format("invalid window size ({0})", (method >> 4) + 8);
+                            codec.Message = string.Format("invalid window size ({0})", (method >> 4) + 8);
                             marker = 5; // can't try inflateSync
+
                             break;
                         }
 
@@ -1583,75 +1796,89 @@ namespace RestSharp.Compression.ZLib
                         goto case FLAG;
 
                     case FLAG:
-                        if (_codec.AvailableBytesIn == 0) return r;
+                        if (codec.AvailableBytesIn == 0)
+                            return r;
 
                         r = f;
 
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        b = (_codec.InputBuffer[_codec.NextIn++]) & 0xff;
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        int b = (this.codec.InputBuffer[this.codec.NextIn++]) & 0xff;
 
                         if ((((method << 8) + b) % 31) != 0)
                         {
                             mode = BAD;
-                            _codec.Message = "incorrect header check";
+                            codec.Message = "incorrect header check";
                             marker = 5; // can't try inflateSync
+
                             break;
                         }
 
                         if ((b & PRESET_DICT) == 0)
                         {
                             mode = BLOCKS;
+
                             break;
                         }
 
                         mode = DICT4;
+
                         goto case DICT4;
 
                     case DICT4:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need = ((_codec.InputBuffer[_codec.NextIn++] & 0xff) << 24) & unchecked((int)0xff000000L);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need = ((codec.InputBuffer[codec.NextIn++] & 0xff) << 24) & unchecked((int) 0xff000000L);
                         mode = DICT3;
+
                         goto case DICT3;
 
                     case DICT3:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need += (((_codec.InputBuffer[_codec.NextIn++] & 0xff) << 16) & 0xff0000L);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need += (((codec.InputBuffer[codec.NextIn++] & 0xff) << 16) & 0xff0000L);
                         mode = DICT2;
+
                         goto case DICT2;
 
                     case DICT2:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need += (((_codec.InputBuffer[_codec.NextIn++] & 0xff) << 8) & 0xff00L);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need += (((codec.InputBuffer[codec.NextIn++] & 0xff) << 8) & 0xff00L);
                         mode = DICT1;
+
                         goto case DICT1;
 
                     case DICT1:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need += (_codec.InputBuffer[_codec.NextIn++] & 0xffL);
-                        _codec._Adler32 = need;
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need += (codec.InputBuffer[codec.NextIn++] & 0xffL);
+                        codec.adler32 = need;
                         mode = DICT0;
+
                         return ZlibConstants.Z_NEED_DICT;
 
                     case DICT0:
                         mode = BAD;
-                        _codec.Message = "need dictionary";
+                        codec.Message = "need dictionary";
                         marker = 0; // can try inflateSync
+
                         return ZlibConstants.Z_STREAM_ERROR;
 
                     case BLOCKS:
@@ -1661,6 +1888,7 @@ namespace RestSharp.Compression.ZLib
                         {
                             mode = BAD;
                             marker = 0; // can try inflateSync
+
                             break;
                         }
 
@@ -1676,58 +1904,67 @@ namespace RestSharp.Compression.ZLib
                         if (!HandleRfc1950HeaderBytes)
                         {
                             mode = DONE;
+
                             break;
                         }
 
                         mode = CHECK4;
+
                         goto case CHECK4;
 
                     case CHECK4:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need = ((_codec.InputBuffer[_codec.NextIn++] & 0xff) << 24) & unchecked((int)0xff000000L);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need = ((codec.InputBuffer[codec.NextIn++] & 0xff) << 24) & unchecked((int) 0xff000000L);
                         mode = CHECK3;
+
                         goto case CHECK3;
 
                     case CHECK3:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need += (((_codec.InputBuffer[_codec.NextIn++] & 0xff) << 16) & 0xff0000L);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need += (((codec.InputBuffer[codec.NextIn++] & 0xff) << 16) & 0xff0000L);
                         mode = CHECK2;
+
                         goto case CHECK2;
 
                     case CHECK2:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--;
-                        _codec.TotalBytesIn++;
-                        need += (((_codec.InputBuffer[_codec.NextIn++] & 0xff) << 8) & 0xff00L);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need += (((codec.InputBuffer[codec.NextIn++] & 0xff) << 8) & 0xff00L);
                         mode = CHECK1;
+
                         goto case CHECK1;
 
                     case CHECK1:
-                        if (_codec.AvailableBytesIn == 0)
+                        if (codec.AvailableBytesIn == 0)
                             return r;
 
                         r = f;
-                        _codec.AvailableBytesIn--; _codec.TotalBytesIn++;
-                        need += (_codec.InputBuffer[_codec.NextIn++] & 0xffL);
+                        codec.AvailableBytesIn--;
+                        codec.TotalBytesIn++;
+                        need += (codec.InputBuffer[codec.NextIn++] & 0xffL);
 
                         unchecked
                         {
-                            if (((int)(was[0])) != ((int)(need)))
+                            if (((int) (was[0])) != ((int) (need)))
                             {
                                 mode = BAD;
-                                _codec.Message = "incorrect data check";
+                                codec.Message = "incorrect data check";
                                 marker = 5; // can't try inflateSync
+
                                 break;
                             }
                         }
@@ -1739,7 +1976,7 @@ namespace RestSharp.Compression.ZLib
                         return ZlibConstants.Z_STREAM_END;
 
                     case BAD:
-                        throw new ZlibException(String.Format("Bad state ({0})", _codec.Message));
+                        throw new ZlibException(string.Format("Bad state ({0})", codec.Message));
                         //return ZlibConstants.Z_DATA_ERROR;
 
                     default:
@@ -1757,12 +1994,12 @@ namespace RestSharp.Compression.ZLib
             if (mode != DICT0)
                 throw new ZlibException("Stream error.");
 
-            if (Adler.Adler32(1L, dictionary, 0, dictionary.Length) != _codec._Adler32)
+            if (Adler.Adler32(1L, dictionary, 0, dictionary.Length) != codec.adler32)
             {
                 return ZlibConstants.Z_DATA_ERROR;
             }
 
-            _codec._Adler32 = Adler.Adler32(0, null, 0, 0);
+            codec.adler32 = Adler.Adler32(0, null, 0, 0);
 
             if (length >= (1 << wbits))
             {
@@ -1772,10 +2009,11 @@ namespace RestSharp.Compression.ZLib
 
             blocks.SetDictionary(dictionary, index, length);
             mode = BLOCKS;
+
             return ZlibConstants.Z_OK;
         }
 
-        private static byte[] mark = new byte[] { 0, 0, 0xff, 0xff };
+        private static readonly byte[] mark = { 0, 0, 0xff, 0xff };
 
         internal int Sync()
         {
@@ -1791,20 +2029,20 @@ namespace RestSharp.Compression.ZLib
                 marker = 0;
             }
 
-            if ((n = _codec.AvailableBytesIn) == 0)
+            if ((n = codec.AvailableBytesIn) == 0)
                 return ZlibConstants.Z_BUF_ERROR;
 
-            p = _codec.NextIn;
+            p = codec.NextIn;
             m = marker;
 
             // search
             while (n != 0 && m < 4)
             {
-                if (_codec.InputBuffer[p] == mark[m])
+                if (codec.InputBuffer[p] == mark[m])
                 {
                     m++;
                 }
-                else if (_codec.InputBuffer[p] != 0)
+                else if (codec.InputBuffer[p] != 0)
                 {
                     m = 0;
                 }
@@ -1813,13 +2051,14 @@ namespace RestSharp.Compression.ZLib
                     m = 4 - m;
                 }
 
-                p++; n--;
+                p++;
+                n--;
             }
 
             // restore
-            _codec.TotalBytesIn += p - _codec.NextIn;
-            _codec.NextIn = p;
-            _codec.AvailableBytesIn = n;
+            codec.TotalBytesIn += p - codec.NextIn;
+            codec.NextIn = p;
+            codec.AvailableBytesIn = n;
             marker = m;
 
             // return no joy or set up to restart on a new block
@@ -1828,12 +2067,13 @@ namespace RestSharp.Compression.ZLib
                 return ZlibConstants.Z_DATA_ERROR;
             }
 
-            r = _codec.TotalBytesIn;
-            w = _codec.TotalBytesOut;
+            r = codec.TotalBytesIn;
+            w = codec.TotalBytesOut;
             Reset();
-            _codec.TotalBytesIn = r;
-            _codec.TotalBytesOut = w;
+            codec.TotalBytesIn = r;
+            codec.TotalBytesOut = w;
             mode = BLOCKS;
+
             return ZlibConstants.Z_OK;
         }
 

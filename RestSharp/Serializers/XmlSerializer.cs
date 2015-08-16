@@ -106,7 +106,7 @@ namespace RestSharp.Serializers
             return doc.ToString();
         }
 
-        private void Map(XElement root, object obj)
+        private void Map(XContainer root, object obj)
         {
             var objType = obj.GetType();
             var props = from p in objType.GetProperties()
@@ -171,6 +171,7 @@ namespace RestSharp.Serializers
                         {
                             var type = item.GetType();
                             var setting = type.GetAttribute<SerializeAsAttribute>();
+
                             itemTypeName = setting != null && setting.Name.HasValue()
                                 ? setting.Name
                                 : type.Name;

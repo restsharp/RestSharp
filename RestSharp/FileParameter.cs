@@ -25,13 +25,13 @@ namespace RestSharp
 #endif
 
             return new FileParameter
-            {
-                Writer = s => s.Write(data, 0, data.Length),
-                FileName = filename,
-                ContentType = contentType,
-                ContentLength = length,
-                Name = name
-            };
+                   {
+                       Writer = s => s.Write(data, 0, data.Length),
+                       FileName = filename,
+                       ContentType = contentType,
+                       ContentLength = length,
+                       Name = name
+                   };
         }
 
         ///<summary>
@@ -50,10 +50,12 @@ namespace RestSharp
         /// The length of data to be sent
         /// </summary>
         public long ContentLength { get; set; }
+
         /// <summary>
         /// Provides raw data for file
         /// </summary>
         public Action<Stream> Writer { get; set; }
+
         /// <summary>
         /// Name of the file to use when uploading
         /// </summary>

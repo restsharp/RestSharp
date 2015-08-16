@@ -24,7 +24,7 @@
         EnumMax = 65535
     }
 
-    public enum IntEnum : int
+    public enum IntEnum
     {
         EnumMin = -2147483648,
         EnumMax = 2147483647

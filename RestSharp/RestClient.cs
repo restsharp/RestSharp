@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
@@ -109,9 +110,7 @@ namespace RestSharp
         /// </example>
         public virtual Uri BaseUrl { get; set; }
 
-        private Encoding encoding = Encoding.UTF8;
-
-        public Encoding Encoding { get { return this.encoding; } set { this.encoding = value; } }
+        public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
 
@@ -120,6 +119,7 @@ namespace RestSharp
         /// </summary>
         public RestClient()
         {
+            this.Encoding = Encoding.UTF8;
 #if WINDOWS_PHONE
             this.UseSynchronizationContext = true;
 #endif
@@ -156,7 +156,7 @@ namespace RestSharp
         /// <param name="baseUrl"></param>
         public RestClient(string baseUrl) : this()
         {
-            if (String.IsNullOrEmpty(baseUrl))
+            if (string.IsNullOrEmpty(baseUrl))
                 throw new ArgumentNullException("baseUrl");
 
             this.BaseUrl = new Uri(baseUrl);
@@ -332,7 +332,7 @@ namespace RestSharp
 
             // build and attach querystring
             var data = EncodeParameters(parameters);
-            var separator = assembled.Contains("?") ? "&" : "?";
+            var separator = assembled != null && assembled.Contains("?") ? "&" : "?";
 
             assembled = string.Concat(assembled, separator, data);
 
@@ -374,6 +374,7 @@ namespace RestSharp
             if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
             {
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
+
                 request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
             }
 
@@ -409,7 +410,6 @@ namespace RestSharp
             }
 
             http.MaxRedirects = MaxRedirects;
-
             http.CachePolicy = CachePolicy;
 #endif
 
@@ -445,8 +445,7 @@ namespace RestSharp
             }
 
             var @params = from p in request.Parameters
-                          where p.Type == ParameterType.GetOrPost
-                                && p.Value != null
+                          where p.Type == ParameterType.GetOrPost && p.Value != null
                           select new HttpParameter
                                  {
                                      Name = p.Name,
@@ -470,9 +469,7 @@ namespace RestSharp
                                });
             }
 
-            var body = (from p in request.Parameters
-                        where p.Type == ParameterType.RequestBody
-                        select p).FirstOrDefault();
+            Parameter body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
             // Only add the body if there aren't any files to make it a multipart form request
             // If there are files, then add the body to the HTTP Parameters

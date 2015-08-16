@@ -65,9 +65,6 @@
 
 #if WINDOWS_PHONE
 
-using System;
-using Interop = System.Runtime.InteropServices;
-
 namespace RestSharp.Compression.ZLib
 {
     /// <summary>
@@ -133,11 +130,11 @@ namespace RestSharp.Compression.ZLib
         /// <summary>
         /// used for diagnostics, when something goes wrong!
         /// </summary>
-        public System.String Message;
+        public string Message;
 
         internal InflateManager istate;
 
-        internal long _Adler32;
+        internal long adler32;
 
         /// <summary>
         /// The number of Window Bits to use.  
@@ -148,12 +145,12 @@ namespace RestSharp.Compression.ZLib
         /// setting alone if you don't know what it is.  The maximum value is 15 bits, which implies
         /// a 32k window.  
         /// </remarks>
-        public int WindowBits = ZlibConstants.WindowBitsDefault;
+        public int WindowBits = ZlibConstants.WINDOW_BITS_DEFAULT;
 
         /// <summary>
         /// The Adler32 checksum on the data transferred through the codec so far. You probably don't need to look at this.
         /// </summary>
-        public long Adler32 { get { return _Adler32; } }
+        public long Adler32 { get { return adler32; } }
 
         /// <summary>
         /// Create a ZlibCodec that decompresses.
@@ -161,7 +158,9 @@ namespace RestSharp.Compression.ZLib
         public ZlibCodec()
         {
             int rc = InitializeInflate();
-            if (rc != ZlibConstants.Z_OK) throw new ZlibException("Cannot initialize for inflate.");
+
+            if (rc != ZlibConstants.Z_OK)
+                throw new ZlibException("Cannot initialize for inflate.");
         }
 
         /// <summary>
@@ -209,6 +208,7 @@ namespace RestSharp.Compression.ZLib
         public int InitializeInflate(int windowBits)
         {
             this.WindowBits = windowBits;
+
             return InitializeInflate(windowBits, true);
         }
 
@@ -239,6 +239,7 @@ namespace RestSharp.Compression.ZLib
             //    throw new ZlibException("You may not call InitializeInflate() after calling InitializeDeflate().");
 
             istate = new InflateManager(expectRfc1950Header);
+
             return istate.Initialize(this, windowBits);
         }
 

@@ -34,7 +34,8 @@ namespace RestSharp.Tests
                 [Test]
                 public void ReturnsFalse()
                 {
-                    var task = new Build.NuSpecUpdateTask();
+                    Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask();
+
                     Assert.False(task.Execute());
                 }
             }
@@ -47,7 +48,7 @@ namespace RestSharp.Tests
                 [Test]
                 public void PullsVersionAttributeInstead()
                 {
-                    var task = new Build.NuSpecUpdateTask
+                    Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask
                                {
                                    SpecFile = FileName,
                                    SourceAssemblyFile = "RestSharp.Tests.dll"
@@ -115,7 +116,7 @@ namespace RestSharp.Tests
                 [Test]
                 public void UpdatesSpecFile()
                 {
-                    var doc = XDocument.Load(ComputedFileName);
+                    XDocument doc = XDocument.Load(ComputedFileName);
 
                     Assert.AreEqual(EXPECTED_ID, doc.Descendants("id").First().Value);
                     Assert.AreEqual(EXPECTED_DESCRIPTION, doc.Descendants("description").First().Value);

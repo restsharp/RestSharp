@@ -56,7 +56,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic)
         {
-            while (toCheck != typeof(object))
+            while (toCheck != null && toCheck != typeof(object))
             {
                 var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
 
