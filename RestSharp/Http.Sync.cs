@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 #if FRAMEWORK
@@ -33,7 +35,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Post()
         {
-            return PostPutInternal("POST");
+            return this.PostPutInternal("POST");
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Put()
         {
-            return PostPutInternal("PUT");
+            return this.PostPutInternal("PUT");
         }
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Get()
         {
-            return GetStyleMethodInternal("GET");
+            return this.GetStyleMethodInternal("GET");
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Head()
         {
-            return GetStyleMethodInternal("HEAD");
+            return this.GetStyleMethodInternal("HEAD");
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Options()
         {
-            return GetStyleMethodInternal("OPTIONS");
+            return this.GetStyleMethodInternal("OPTIONS");
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Delete()
         {
-            return GetStyleMethodInternal("DELETE");
+            return this.GetStyleMethodInternal("DELETE");
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Patch()
         {
-            return PostPutInternal("PATCH");
+            return this.PostPutInternal("PATCH");
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace RestSharp
         /// </summary>
         public HttpResponse Merge()
         {
-            return PostPutInternal("MERGE");
+            return this.PostPutInternal("MERGE");
         }
 
         /// <summary>
@@ -99,7 +101,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsGet(string httpMethod)
         {
-            return GetStyleMethodInternal(httpMethod.ToUpperInvariant());
+            return this.GetStyleMethodInternal(httpMethod.ToUpperInvariant());
         }
 
         /// <summary>
@@ -109,41 +111,45 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsPost(string httpMethod)
         {
-            return PostPutInternal(httpMethod.ToUpperInvariant());
+            return this.PostPutInternal(httpMethod.ToUpperInvariant());
         }
 
         private HttpResponse GetStyleMethodInternal(string method)
         {
-            HttpWebRequest webRequest = ConfigureWebRequest(method, Url);
+            HttpWebRequest webRequest = this.ConfigureWebRequest(method, this.Url);
 
-            if (HasBody && (method == "DELETE" || method == "OPTIONS"))
+            if (this.HasBody && (method == "DELETE" || method == "OPTIONS"))
             {
-                webRequest.ContentType = RequestContentType;
-                WriteRequestBody(webRequest);
+                webRequest.ContentType = this.RequestContentType;
+                this.WriteRequestBody(webRequest);
             }
 
-            return GetResponse(webRequest);
+            return this.GetResponse(webRequest);
         }
 
         private HttpResponse PostPutInternal(string method)
         {
-            HttpWebRequest webRequest = ConfigureWebRequest(method, Url);
+            HttpWebRequest webRequest = this.ConfigureWebRequest(method, this.Url);
 
-            PreparePostBody(webRequest);
+            this.PreparePostBody(webRequest);
 
-            WriteRequestBody(webRequest);
-            return GetResponse(webRequest);
+            this.WriteRequestBody(webRequest);
+            return this.GetResponse(webRequest);
         }
 
         partial void AddSyncHeaderActions()
         {
-            restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
-            restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
-            restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
-            restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
-            restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
-            restrictedHeaderActions.Add("Transfer-Encoding", (r, v) => { r.TransferEncoding = v; r.SendChunked = true; });
-            restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
+            this.restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
+            this.restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+            this.restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
+            this.restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
+            this.restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
+            this.restrictedHeaderActions.Add("Transfer-Encoding", (r, v) =>
+                                                                  {
+                                                                      r.TransferEncoding = v;
+                                                                      r.SendChunked = true;
+                                                                  });
+            this.restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
         }
 
         private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
@@ -172,11 +178,11 @@ namespace RestSharp
             {
                 HttpWebResponse webResponse = GetRawResponse(request);
 
-                ExtractResponseData(response, webResponse);
+                this.ExtractResponseData(response, webResponse);
             }
             catch (Exception ex)
             {
-                ExtractErrorResponse(response, ex);
+                this.ExtractErrorResponse(response, ex);
             }
 
             return response;
@@ -186,12 +192,11 @@ namespace RestSharp
         {
             try
             {
-                return (HttpWebResponse)request.GetResponse();
+                return (HttpWebResponse) request.GetResponse();
             }
             catch (WebException ex)
             {
-
-#if MONODROID 
+#if MONODROID
                 // In Android the connections might start to hang (never return 
                 // responces) after 3 sequential connection failures (i.e: exceptions)
                 request.Abort();
@@ -214,26 +219,26 @@ namespace RestSharp
 
         private void WriteRequestBody(HttpWebRequest webRequest)
         {
-            if (HasBody || HasFiles || AlwaysMultipartFormData)
+            if (this.HasBody || this.HasFiles || this.AlwaysMultipartFormData)
             {
 #if !WINDOWS_PHONE
-                webRequest.ContentLength = CalculateContentLength();
+                webRequest.ContentLength = this.CalculateContentLength();
 #endif
             }
 
             using (Stream requestStream = webRequest.GetRequestStream())
             {
-                if (HasFiles || AlwaysMultipartFormData)
+                if (this.HasFiles || this.AlwaysMultipartFormData)
                 {
-                    WriteMultipartFormData(requestStream);
+                    this.WriteMultipartFormData(requestStream);
                 }
-                else if (RequestBodyBytes != null)
+                else if (this.RequestBodyBytes != null)
                 {
-                    requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
+                    requestStream.Write(this.RequestBodyBytes, 0, this.RequestBodyBytes.Length);
                 }
-                else if (RequestBody != null)
+                else if (this.RequestBody != null)
                 {
-                    WriteStringTo(requestStream, RequestBody);
+                    this.WriteStringTo(requestStream, this.RequestBody);
                 }
             }
         }
@@ -242,19 +247,19 @@ namespace RestSharp
         // TODO: duplication at the moment).
         private HttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest webRequest = (HttpWebRequest) WebRequest.Create(url);
 
-            webRequest.UseDefaultCredentials = UseDefaultCredentials;
-            webRequest.PreAuthenticate = PreAuthenticate;
+            webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
+            webRequest.PreAuthenticate = this.PreAuthenticate;
             webRequest.ServicePoint.Expect100Continue = false;
 
-            AppendHeaders(webRequest);
-            AppendCookies(webRequest);
+            this.AppendHeaders(webRequest);
+            this.AppendCookies(webRequest);
 
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
-            if (!HasFiles && !AlwaysMultipartFormData)
+            if (!this.HasFiles && !this.AlwaysMultipartFormData)
             {
                 webRequest.ContentLength = 0;
             }
@@ -262,49 +267,49 @@ namespace RestSharp
             webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
 #if FRAMEWORK
-            if (ClientCertificates != null)
+            if (this.ClientCertificates != null)
             {
-                webRequest.ClientCertificates.AddRange(ClientCertificates);
+                webRequest.ClientCertificates.AddRange(this.ClientCertificates);
             }
 #endif
 
-            if (UserAgent.HasValue())
+            if (this.UserAgent.HasValue())
             {
-                webRequest.UserAgent = UserAgent;
+                webRequest.UserAgent = this.UserAgent;
             }
 
-            if (Timeout != 0)
+            if (this.Timeout != 0)
             {
-                webRequest.Timeout = Timeout;
+                webRequest.Timeout = this.Timeout;
             }
 
-            if (ReadWriteTimeout != 0)
+            if (this.ReadWriteTimeout != 0)
             {
-                webRequest.ReadWriteTimeout = ReadWriteTimeout;
+                webRequest.ReadWriteTimeout = this.ReadWriteTimeout;
             }
 
-            if (Credentials != null)
+            if (this.Credentials != null)
             {
-                webRequest.Credentials = Credentials;
+                webRequest.Credentials = this.Credentials;
             }
 
-            if (Proxy != null)
+            if (this.Proxy != null)
             {
-                webRequest.Proxy = Proxy;
+                webRequest.Proxy = this.Proxy;
             }
 
 #if FRAMEWORK
-            if (CachePolicy != null)
+            if (this.CachePolicy != null)
             {
-                webRequest.CachePolicy = CachePolicy;
+                webRequest.CachePolicy = this.CachePolicy;
             }
 #endif
 
-            webRequest.AllowAutoRedirect = FollowRedirects;
+            webRequest.AllowAutoRedirect = this.FollowRedirects;
 
-            if (FollowRedirects && MaxRedirects.HasValue)
+            if (this.FollowRedirects && this.MaxRedirects.HasValue)
             {
-                webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
+                webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
 
             return webRequest;

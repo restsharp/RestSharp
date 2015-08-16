@@ -21,9 +21,9 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl.AbsoluteUri, UsernamePasswordEchoHandler))
             {
                 RestClient client = new RestClient(baseUrl)
-                             {
-                                 Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
-                             };
+                                    {
+                                        Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
+                                    };
                 RestRequest request = new RestRequest("test");
                 IRestResponse response = client.Execute(request);
 
@@ -34,7 +34,8 @@ namespace RestSharp.IntegrationTests
         private static void UsernamePasswordEchoHandler(HttpListenerContext context)
         {
             string header = context.Request.Headers["Authorization"];
-            string[] parts = Encoding.ASCII.GetString(Convert.FromBase64String(header.Substring("Basic ".Length))).Split(':');
+            string[] parts = Encoding.ASCII.GetString(Convert.FromBase64String(header.Substring("Basic ".Length)))
+                                     .Split(':');
 
             context.Response.OutputStream.WriteStringUtf8(string.Join("|", parts));
         }
@@ -44,9 +45,9 @@ namespace RestSharp.IntegrationTests
         {
             Uri baseUrl = new Uri("https://api.twitter.com");
             RestClient client = new RestClient(baseUrl)
-                         {
-                             Authenticator = OAuth1Authenticator.ForRequestToken("CONSUMER_KEY", "CONSUMER_SECRET")
-                         };
+                                {
+                                    Authenticator = OAuth1Authenticator.ForRequestToken("CONSUMER_KEY", "CONSUMER_SECRET")
+                                };
             RestRequest request = new RestRequest("oauth/request_token");
             IRestResponse response = client.Execute(request);
 
@@ -62,7 +63,8 @@ namespace RestSharp.IntegrationTests
 
             request = new RestRequest("oauth/authorize?oauth_token=" + oauthToken);
 
-            string url = client.BuildUri(request).ToString();
+            string url = client.BuildUri(request)
+                               .ToString();
 
             Process.Start(url);
 

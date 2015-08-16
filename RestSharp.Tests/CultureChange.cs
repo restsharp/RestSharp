@@ -11,7 +11,9 @@ namespace RestSharp.Tests
         public CultureChange(string culture)
         {
             if (culture == null)
+            {
                 throw new ArgumentNullException("culture");
+            }
 
             this.PreviousCulture = Thread.CurrentThread.CurrentCulture;
 

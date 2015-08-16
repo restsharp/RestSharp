@@ -49,10 +49,10 @@ namespace RestSharp.Tests
                 public void PullsVersionAttributeInstead()
                 {
                     Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask
-                               {
-                                   SpecFile = FileName,
-                                   SourceAssemblyFile = "RestSharp.Tests.dll"
-                               };
+                                                  {
+                                                      SpecFile = FileName,
+                                                      SourceAssemblyFile = "RestSharp.Tests.dll"
+                                                  };
 
                     task.Execute();
 
@@ -64,6 +64,7 @@ namespace RestSharp.Tests
             public class WhenSpecFileIsValid : BaseNuSpecUpdateTest
             {
                 private readonly Build.NuSpecUpdateTask subject = new Build.NuSpecUpdateTask();
+
                 private bool result;
 
 #if SIGNED
@@ -71,9 +72,13 @@ namespace RestSharp.Tests
 #else
                 private const string EXPECTED_ID = "RestSharp";
 #endif
+
                 private const string EXPECTED_DESCRIPTION = "Simple REST and HTTP API Client";
+
                 private const string EXPECTED_AUTHORS = "John Sheehan, RestSharp Community";
+
                 private const string EXPECTED_OWNERS = "John Sheehan, RestSharp Community";
+
                 private readonly Regex expectedVersion = new Regex(@"^\d+\.\d+\.\d+(-\w+)?$", RegexOptions.Compiled);
 
                 protected override void Setup()

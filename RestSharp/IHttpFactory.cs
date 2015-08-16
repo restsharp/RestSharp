@@ -6,7 +6,8 @@ namespace RestSharp
         IHttp Create();
     }
 
-    public class SimpleFactory<T> : IHttpFactory where T : IHttp, new()
+    public class SimpleFactory<T> : IHttpFactory
+        where T : IHttp, new()
     {
         public IHttp Create()
         {

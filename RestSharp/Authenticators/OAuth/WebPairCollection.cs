@@ -34,12 +34,12 @@ namespace RestSharp.Authenticators.OAuth
         public WebPairCollection(NameValueCollection collection)
             : this()
         {
-            AddCollection(collection);
+            this.AddCollection(collection);
         }
 
         public virtual void AddRange(NameValueCollection collection)
         {
-            AddCollection(collection);
+            this.AddCollection(collection);
         }
 
         private void AddCollection(NameValueCollection collection)
@@ -51,7 +51,7 @@ namespace RestSharp.Authenticators.OAuth
         public WebPairCollection(IDictionary<string, string> collection)
             : this()
         {
-            AddCollection(collection);
+            this.AddCollection(collection);
         }
 
         public void AddCollection(IDictionary<string, string> collection)
@@ -76,12 +76,12 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual void AddRange(WebPairCollection collection)
         {
-            AddCollection(collection);
+            this.AddCollection(collection);
         }
 
         public virtual void AddRange(IEnumerable<WebPair> collection)
         {
-            AddCollection(collection);
+            this.AddCollection(collection);
         }
 
         public virtual void Sort(Comparison<WebPair> comparison)
@@ -117,7 +117,7 @@ namespace RestSharp.Authenticators.OAuth
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public virtual void Add(WebPair parameter)

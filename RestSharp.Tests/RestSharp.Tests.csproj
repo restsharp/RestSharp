@@ -102,7 +102,7 @@
     <Compile Include="SampleClasses\nullables.cs" />
     <Compile Include="SampleClasses\eventful.cs" />
     <Compile Include="SampleClasses\Oddball.cs" />
-    <Compile Include="SampleClasses\SOUser.cs" />
+    <Compile Include="SampleClasses\SoUser.cs" />
     <Compile Include="SampleClasses\TwilioCallList.cs" />
     <Compile Include="SampleClasses\twitter.cs" />
     <Compile Include="SerializerTests.cs" />
@@ -118,6 +118,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\boolean_from_number.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\deserialize_as_list.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\Goodreads.xml">

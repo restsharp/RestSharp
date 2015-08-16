@@ -13,7 +13,7 @@ namespace RestSharp
         /// <returns>Response data</returns>
         public byte[] DownloadData(IRestRequest request)
         {
-            IRestResponse response = Execute(request);
+            IRestResponse response = this.Execute(request);
 
             return response.RawBytes;
         }
@@ -25,7 +25,7 @@ namespace RestSharp
         /// <returns>RestResponse</returns>
         public virtual IRestResponse Execute(IRestRequest request)
         {
-            string method = Enum.GetName(typeof (Method), request.Method);
+            string method = Enum.GetName(typeof(Method), request.Method);
 
             switch (request.Method)
             {
@@ -33,42 +33,41 @@ namespace RestSharp
                 case Method.PUT:
                 case Method.PATCH:
                 case Method.MERGE:
-                    return Execute(request, method, DoExecuteAsPost);
+                    return this.Execute(request, method, DoExecuteAsPost);
 
                 default:
-                    return Execute(request, method, DoExecuteAsGet);
+                    return this.Execute(request, method, DoExecuteAsGet);
             }
         }
 
         public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
         {
-            return Execute(request, httpMethod, DoExecuteAsGet);
+            return this.Execute(request, httpMethod, DoExecuteAsGet);
         }
 
         public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
         {
             request.Method = Method.POST; // Required by RestClient.BuildUri... 
 
-            return Execute(request, httpMethod, DoExecuteAsPost);
+            return this.Execute(request, httpMethod, DoExecuteAsPost);
         }
 
         private IRestResponse Execute(IRestRequest request, string httpMethod,
             Func<IHttp, string, HttpResponse> getResponse)
         {
-            AuthenticateIfNeeded(this, request);
+            this.AuthenticateIfNeeded(this, request);
 
             IRestResponse response = new RestResponse();
 
             try
             {
-                IHttp http = HttpFactory.Create();
+                IHttp http = this.HttpFactory.Create();
 
-                ConfigureHttp(request, http);
+                this.ConfigureHttp(request, http);
 
                 response = ConvertToRestResponse(request, getResponse(http, httpMethod));
                 response.Request = request;
                 response.Request.IncreaseNumAttempts();
-
             }
             catch (Exception ex)
             {
@@ -98,17 +97,17 @@ namespace RestSharp
         /// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
         public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
         {
-            return Deserialize<T>(request, Execute(request));
+            return this.Deserialize<T>(request, this.Execute(request));
         }
 
         public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
         {
-            return Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
+            return this.Deserialize<T>(request, this.ExecuteAsGet(request, httpMethod));
         }
 
         public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
         {
-            return Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
+            return this.Deserialize<T>(request, this.ExecuteAsPost(request, httpMethod));
         }
     }
 }

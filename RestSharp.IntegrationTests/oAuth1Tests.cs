@@ -45,7 +45,8 @@ namespace RestSharp.IntegrationTests
             request = new RestRequest("oauth/authorize");
             request.AddParameter("oauth_token", oauthToken);
 
-            string url = client.BuildUri(request).ToString();
+            string url = client.BuildUri(request)
+                               .ToString();
 
             Process.Start(url);
 
@@ -187,7 +188,8 @@ namespace RestSharp.IntegrationTests
             request.AddParameter("oauth_consumer_key", consumerKey);
             request.AddParameter("application_name", applicationName);
 
-            string url = sslClient.BuildUri(request).ToString();
+            string url = sslClient.BuildUri(request)
+                                  .ToString();
 
             Process.Start(url);
 
@@ -226,7 +228,11 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Properly_Encodes_Parameter_Names()
         {
-            WebParameterCollection postData = new WebParameterCollection { { "name[first]", "Chuck" }, { "name[last]", "Testa" } };
+            WebParameterCollection postData = new WebParameterCollection
+                                              {
+                                                  {"name[first]", "Chuck"},
+                                                  {"name[last]", "Testa"}
+                                              };
             WebParameterCollection sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
 
             Assert.AreEqual("name%5Bfirst%5D", sortedParams[0].Name);
@@ -237,9 +243,9 @@ namespace RestSharp.IntegrationTests
         {
             // reserved characters for 2396 and 3986
             // http://www.ietf.org/rfc/rfc2396.txt
-            string[] reserved2396Characters = new[] { ";", "/", "?", ":", "@", "&", "=", "+", "$", "," };
+            string[] reserved2396Characters = { ";", "/", "?", ":", "@", "&", "=", "+", "$", "," };
             // http://www.ietf.org/rfc/rfc3986.txt
-            string[] additionalReserved3986Characters = new[] { "!", "*", "'", "(", ")" };
+            string[] additionalReserved3986Characters = { "!", "*", "'", "(", ")" };
             string reservedCharacterString = string.Join(string.Empty,
                 reserved2396Characters.Union(additionalReserved3986Characters));
 

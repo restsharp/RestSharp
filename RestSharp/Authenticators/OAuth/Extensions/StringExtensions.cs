@@ -81,7 +81,10 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         public static IDictionary<string, string> ParseQueryString(this string query)
         {
             // [DC]: This method does not URL decode, and cannot handle decoded input
-            if (query.StartsWith("?")) query = query.Substring(1);
+            if (query.StartsWith("?"))
+            {
+                query = query.Substring(1);
+            }
 
             if (query.Equals(string.Empty))
             {
@@ -91,7 +94,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             string[] parts = query.Split('&');
 
             return parts.Select(part => part.Split('='))
-                                            .ToDictionary(pair => pair[0], pair => pair[1]);
+                        .ToDictionary(pair => pair[0], pair => pair[1]);
         }
     }
 }

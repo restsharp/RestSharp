@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -133,7 +135,7 @@ namespace RestSharp.Tests
                               Price = 19.95m,
                               StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
                           };
-            XmlSerializer xml = new XmlSerializer {RootElement = "Result"};
+            XmlSerializer xml = new XmlSerializer { RootElement = "Result" };
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDocWithRoot();
 
@@ -249,7 +251,9 @@ namespace RestSharp.Tests
         private enum Color
         {
             Red,
+
             Blue,
+
             Green
         }
 

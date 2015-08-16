@@ -61,7 +61,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("404") { Timeout = 500 };
+                RestRequest request = new RestRequest("404")
+                                      {
+                                          Timeout = 500
+                                      };
                 IRestResponse response = client.Execute(request);
 
                 Assert.NotNull(response.ErrorException);
@@ -80,7 +83,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, TimeoutHandler))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("404") { Timeout = 500 };
+                RestRequest request = new RestRequest("404")
+                                      {
+                                          Timeout = 500
+                                      };
                 IRestResponse response = null;
 
                 client.ExecuteAsync(request, responseCb =>

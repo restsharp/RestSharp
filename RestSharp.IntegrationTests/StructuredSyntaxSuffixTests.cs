@@ -17,6 +17,7 @@ namespace RestSharp.IntegrationTests
         }
 
         private const string XML_CONTENT = "<Person><name>Bob</name><age>50</age></Person>";
+
         private const string JSON_CONTENT = @"{ ""name"":""Bob"", ""age"":50 }";
 
         private static void QueryStringBasedContentAndContentTypeHandler(HttpListenerContext obj)

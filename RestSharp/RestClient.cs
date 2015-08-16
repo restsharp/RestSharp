@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -157,7 +159,9 @@ namespace RestSharp
         public RestClient(string baseUrl) : this()
         {
             if (string.IsNullOrEmpty(baseUrl))
+            {
                 throw new ArgumentNullException("baseUrl");
+            }
 
             this.BaseUrl = new Uri(baseUrl);
         }
@@ -181,11 +185,11 @@ namespace RestSharp
         {
             this.ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*" && !structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
+            if (contentType != "*" && !this.structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
-                string accepts = string.Join(", ", AcceptTypes.ToArray());
+                string accepts = string.Join(", ", this.AcceptTypes.ToArray());
 
                 this.RemoveDefaultParameter("Accept");
                 this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
@@ -221,49 +225,61 @@ namespace RestSharp
         private IDeserializer GetHandler(string contentType)
         {
             if (contentType == null)
+            {
                 throw new ArgumentNullException("contentType");
+            }
 
             if (string.IsNullOrEmpty(contentType) && this.ContentHandlers.ContainsKey("*"))
             {
-                return ContentHandlers["*"];
+                return this.ContentHandlers["*"];
             }
 
             int semicolonIndex = contentType.IndexOf(';');
 
             if (semicolonIndex > -1)
+            {
                 contentType = contentType.Substring(0, semicolonIndex);
+            }
 
             if (this.ContentHandlers.ContainsKey(contentType))
+            {
                 return this.ContentHandlers[contentType];
+            }
 
             // https://tools.ietf.org/html/rfc6839#page-4
-            Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
+            Match structuredSyntaxSuffixMatch = this.structuredSyntaxSuffixRegex.Match(contentType);
 
             if (structuredSyntaxSuffixMatch.Success)
             {
                 string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
 
                 if (this.ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                {
                     return this.ContentHandlers[structuredSyntaxSuffixWildcard];
+                }
             }
 
             if (this.ContentHandlers.ContainsKey("*"))
+            {
                 return this.ContentHandlers["*"];
+            }
 
             return null;
         }
 
 #if SILVERLIGHT
         private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 #else
         private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 #endif
 
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
         {
-            if (Authenticator != null)
+            if (this.Authenticator != null)
             {
                 this.Authenticator.Authenticate(client, request);
             }
@@ -277,7 +293,9 @@ namespace RestSharp
         public Uri BuildUri(IRestRequest request)
         {
             if (this.BaseUrl == null)
+            {
                 throw new NullReferenceException("RestClient must contain a value for BaseUrl");
+            }
 
             string assembled = request.Resource;
             IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
@@ -293,7 +311,9 @@ namespace RestSharp
                 }
 
                 if (!string.IsNullOrEmpty(assembled))
+                {
                     assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                }
 
                 builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
             }
@@ -308,7 +328,9 @@ namespace RestSharp
             if (this.BaseUrl != null && !string.IsNullOrEmpty(this.BaseUrl.AbsoluteUri))
             {
                 if (!this.BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+                {
                     assembled = string.Concat("/", assembled);
+                }
 
                 assembled = string.IsNullOrEmpty(assembled)
                     ? this.BaseUrl.AbsoluteUri
@@ -319,20 +341,28 @@ namespace RestSharp
 
             if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
             {
-                parameters = request.Parameters.Where(
-                    p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString).ToList();
+                parameters = request.Parameters
+                                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                                p.Type == ParameterType.QueryString)
+                                    .ToList();
             }
             else
             {
-                parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString).ToList();
+                parameters = request.Parameters
+                                    .Where(p => p.Type == ParameterType.QueryString)
+                                    .ToList();
             }
 
             if (!parameters.Any())
+            {
                 return new Uri(assembled);
+            }
 
             // build and attach querystring
             string data = EncodeParameters(parameters);
-            string separator = assembled != null && assembled.Contains("?") ? "&" : "?";
+            string separator = assembled != null && assembled.Contains("?")
+                ? "&"
+                : "?";
 
             assembled = string.Concat(assembled, separator, data);
 
@@ -341,7 +371,8 @@ namespace RestSharp
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
-            return string.Join("&", parameters.Select(EncodeParameter).ToArray());
+            return string.Join("&", parameters.Select(EncodeParameter)
+                                              .ToArray());
         }
 
         private static string EncodeParameter(Parameter parameter)
@@ -357,10 +388,10 @@ namespace RestSharp
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
             http.ResponseWriter = request.ResponseWriter;
-            http.CookieContainer = CookieContainer;
+            http.CookieContainer = this.CookieContainer;
 
             // move RestClient.DefaultParameters into Request.Parameters
-            foreach (Parameter p in DefaultParameters)
+            foreach (Parameter p in this.DefaultParameters)
             {
                 if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
                 {
@@ -373,26 +404,32 @@ namespace RestSharp
             // Add Accept header based on registered deserializers if none has been set by the caller.
             if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
             {
-                string accepts = string.Join(", ", AcceptTypes.ToArray());
+                string accepts = string.Join(", ", this.AcceptTypes.ToArray());
 
                 request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
             }
 
-            http.Url = BuildUri(request);
+            http.Url = this.BuildUri(request);
             http.PreAuthenticate = this.PreAuthenticate;
 
-            string userAgent = UserAgent ?? http.UserAgent;
+            string userAgent = this.UserAgent ?? http.UserAgent;
 
-            http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
+            http.UserAgent = userAgent.HasValue()
+                ? userAgent
+                : "RestSharp/" + version;
 
-            int timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+            int timeout = request.Timeout > 0
+                ? request.Timeout
+                : this.Timeout;
 
             if (timeout > 0)
             {
                 http.Timeout = timeout;
             }
 
-            int readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
+            int readWriteTimeout = request.ReadWriteTimeout > 0
+                ? request.ReadWriteTimeout
+                : this.ReadWriteTimeout;
 
             if (readWriteTimeout > 0)
             {
@@ -400,17 +437,17 @@ namespace RestSharp
             }
 
 #if !SILVERLIGHT
-            http.FollowRedirects = FollowRedirects;
+            http.FollowRedirects = this.FollowRedirects;
 #endif
 
 #if FRAMEWORK
-            if (ClientCertificates != null)
+            if (this.ClientCertificates != null)
             {
                 http.ClientCertificates = this.ClientCertificates;
             }
 
-            http.MaxRedirects = MaxRedirects;
-            http.CachePolicy = CachePolicy;
+            http.MaxRedirects = this.MaxRedirects;
+            http.CachePolicy = this.CachePolicy;
 #endif
 
             if (request.Credentials != null)
@@ -482,9 +519,13 @@ namespace RestSharp
                     object val = body.Value;
 
                     if (val is byte[])
-                        http.RequestBodyBytes = (byte[])val;
+                    {
+                        http.RequestBodyBytes = (byte[]) val;
+                    }
                     else
+                    {
                         http.RequestBody = Convert.ToString(body.Value);
+                    }
                 }
                 else
                 {
@@ -504,9 +545,9 @@ namespace RestSharp
 #if FRAMEWORK
         private void ConfigureProxy(IHttp http)
         {
-            if (Proxy != null)
+            if (this.Proxy != null)
             {
-                http.Proxy = Proxy;
+                http.Proxy = this.Proxy;
             }
         }
 #endif

@@ -1,5 +1,4 @@
-﻿
-namespace RestSharp.Tests.Fakes
+﻿namespace RestSharp.Tests.Fakes
 {
     public class NullHttp : Http
     {

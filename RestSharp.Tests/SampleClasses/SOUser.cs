@@ -1,7 +1,6 @@
-﻿
-namespace RestSharp.Tests.SampleClasses
+﻿namespace RestSharp.Tests.SampleClasses
 {
-    public class SOUser
+    public class SoUser
     {
         public int Id { get; set; }
 

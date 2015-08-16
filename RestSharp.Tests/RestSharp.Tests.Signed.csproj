@@ -127,6 +127,9 @@
     <Content Include="SampleData\boolean_from_number.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\deserialize_as_list.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\Goodreads.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -34,8 +36,8 @@ namespace RestSharp
         public HttpResponse()
         {
             this.ResponseStatus = ResponseStatus.None;
-            Headers = new List<HttpHeader>();
-            Cookies = new List<HttpCookie>();
+            this.Headers = new List<HttpHeader>();
+            this.Cookies = new List<HttpCookie>();
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get { return this.content ?? (this.content = RawBytes.AsString()); }
+            get { return this.content ?? (this.content = this.RawBytes.AsString()); }
         }
 
         /// <summary>

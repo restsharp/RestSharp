@@ -1,4 +1,5 @@
-﻿namespace RestSharp.Tests.SampleClasses
+﻿
+namespace RestSharp.Tests.SampleClasses
 {
     public enum ByteEnum : byte
     {

@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -29,6 +31,7 @@ using RestSharp.Compression.ZLib;
 #if FRAMEWORK
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 #endif
 
 namespace RestSharp
@@ -54,7 +57,7 @@ namespace RestSharp
         /// </summary>
         protected bool HasParameters
         {
-            get { return Parameters.Any(); }
+            get { return this.Parameters.Any(); }
         }
 
         /// <summary>
@@ -62,7 +65,7 @@ namespace RestSharp
         /// </summary>
         protected bool HasCookies
         {
-            get { return Cookies.Any(); }
+            get { return this.Cookies.Any(); }
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace RestSharp
         /// </summary>
         protected bool HasBody
         {
-            get { return RequestBodyBytes != null || !string.IsNullOrEmpty(RequestBody); }
+            get { return this.RequestBodyBytes != null || !string.IsNullOrEmpty(this.RequestBody); }
         }
 
         /// <summary>
@@ -78,7 +81,7 @@ namespace RestSharp
         /// </summary>
         protected bool HasFiles
         {
-            get { return Files.Any(); }
+            get { return this.Files.Any(); }
         }
 
         /// <summary>
@@ -148,7 +151,11 @@ namespace RestSharp
 
         private Encoding encoding = Encoding.UTF8;
 
-        public Encoding Encoding { get { return this.encoding; } set { this.encoding = value; } }
+        public Encoding Encoding
+        {
+            get { return this.encoding; }
+            set { this.encoding = value; }
+        }
 
         /// <summary>
         /// HTTP headers to be sent with request
@@ -211,8 +218,8 @@ namespace RestSharp
             this.Files = new List<HttpFile>();
             this.Parameters = new List<HttpParameter>();
             this.Cookies = new List<HttpCookie>();
-
-            restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
+            this.restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(
+                StringComparer.OrdinalIgnoreCase);
 
             this.AddSharedHeaderActions();
             this.AddSyncHeaderActions();
@@ -226,8 +233,8 @@ namespace RestSharp
 
         private void AddSharedHeaderActions()
         {
-            restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
-            restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
+            this.restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
+            this.restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 #if NET4
             restrictedHeaderActions.Add("Date", (r, v) =>
                                                 {
@@ -241,12 +248,12 @@ namespace RestSharp
 
             restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
 #else
-            restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
-            restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
+            this.restrictedHeaderActions.Add("Date", (r, v) => { /* Set by system */ });
+            this.restrictedHeaderActions.Add("Host", (r, v) => { /* Set by system */ });
 #endif
 
 #if FRAMEWORK
-            restrictedHeaderActions.Add("Range", AddRange);
+            this.restrictedHeaderActions.Add("Range", AddRange);
 #endif
         }
 
@@ -266,7 +273,7 @@ namespace RestSharp
 
         private string GetMultipartFormData(HttpParameter param)
         {
-            string format = param.Name == RequestContentType
+            string format = param.Name == this.RequestContentType
                 ? "--{0}{3}Content-Type: {4}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
@@ -284,11 +291,11 @@ namespace RestSharp
         // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
         private void AppendHeaders(HttpWebRequest webRequest)
         {
-            foreach (HttpHeader header in Headers)
+            foreach (HttpHeader header in this.Headers)
             {
-                if (restrictedHeaderActions.ContainsKey(header.Name))
+                if (this.restrictedHeaderActions.ContainsKey(header.Name))
                 {
-                    restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
+                    this.restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
                 }
                 else
                 {
@@ -305,15 +312,15 @@ namespace RestSharp
         {
             webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
 
-            foreach (HttpCookie httpCookie in Cookies)
+            foreach (HttpCookie httpCookie in this.Cookies)
             {
 #if FRAMEWORK
                 Cookie cookie = new Cookie
-                             {
-                                 Name = httpCookie.Name,
-                                 Value = httpCookie.Value,
-                                 Domain = webRequest.RequestUri.Host
-                             };
+                                {
+                                    Name = httpCookie.Name,
+                                    Value = httpCookie.Value,
+                                    Domain = webRequest.RequestUri.Host
+                                };
 
                 webRequest.CookieContainer.Add(cookie);
 #else
@@ -333,10 +340,12 @@ namespace RestSharp
         {
             StringBuilder querystring = new StringBuilder();
 
-            foreach (HttpParameter p in Parameters)
+            foreach (HttpParameter p in this.Parameters)
             {
                 if (querystring.Length > 1)
+                {
                     querystring.Append("&");
+                }
 
                 querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
             }
@@ -346,18 +355,18 @@ namespace RestSharp
 
         private void PreparePostBody(HttpWebRequest webRequest)
         {
-            if (HasFiles || AlwaysMultipartFormData)
+            if (this.HasFiles || this.AlwaysMultipartFormData)
             {
                 webRequest.ContentType = GetMultipartFormContentType();
             }
-            else if (HasParameters)
+            else if (this.HasParameters)
             {
                 webRequest.ContentType = "application/x-www-form-urlencoded";
-                RequestBody = EncodeParameters();
+                this.RequestBody = this.EncodeParameters();
             }
-            else if (HasBody)
+            else if (this.HasBody)
             {
-                webRequest.ContentType = RequestContentType;
+                webRequest.ContentType = this.RequestContentType;
             }
         }
 
@@ -370,22 +379,22 @@ namespace RestSharp
 
         private void WriteMultipartFormData(Stream requestStream)
         {
-            foreach (HttpParameter param in Parameters)
+            foreach (HttpParameter param in this.Parameters)
             {
-                WriteStringTo(requestStream, GetMultipartFormData(param));
+                this.WriteStringTo(requestStream, this.GetMultipartFormData(param));
             }
 
-            foreach (HttpFile file in Files)
+            foreach (HttpFile file in this.Files)
             {
                 // Add just the first part of this param, since we will write the file data directly to the Stream
-                WriteStringTo(requestStream, GetMultipartFileHeader(file));
+                this.WriteStringTo(requestStream, GetMultipartFileHeader(file));
 
                 // Write the file data directly to the Stream, rather than serializing it to a string.
                 file.Writer(requestStream);
-                WriteStringTo(requestStream, LINE_BREAK);
+                this.WriteStringTo(requestStream, LINE_BREAK);
             }
 
-            WriteStringTo(requestStream, GetMultipartFooter());
+            this.WriteStringTo(requestStream, GetMultipartFooter());
         }
 
         private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
@@ -413,7 +422,7 @@ namespace RestSharp
                     ProcessResponseStream(webResponseStream, response);
                 }
 #else
-                ProcessResponseStream(webResponseStream, response);
+                this.ProcessResponseStream(webResponseStream, response);
 #endif
 
                 response.StatusCode = webResponse.StatusCode;
@@ -449,7 +458,11 @@ namespace RestSharp
                 {
                     string headerValue = webResponse.Headers[headerName];
 
-                    response.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
+                    response.Headers.Add(new HttpHeader
+                                         {
+                                             Name = headerName,
+                                             Value = headerValue
+                                         });
                 }
 
                 webResponse.Close();
@@ -458,20 +471,20 @@ namespace RestSharp
 
         private void ProcessResponseStream(Stream webResponseStream, HttpResponse response)
         {
-            if (ResponseWriter == null)
+            if (this.ResponseWriter == null)
             {
                 response.RawBytes = webResponseStream.ReadAsBytes();
             }
             else
             {
-                ResponseWriter(webResponseStream);
+                this.ResponseWriter(webResponseStream);
             }
         }
 
 #if FRAMEWORK
         private static void AddRange(HttpWebRequest r, string range)
         {
-            System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
+            Match m = Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
 
             if (!m.Success)
             {

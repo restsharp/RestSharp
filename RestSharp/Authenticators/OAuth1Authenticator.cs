@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -20,9 +22,9 @@ using System.Linq;
 using System.Text;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
-
 #if !SILVERLIGHT && !WINDOWS_PHONE
 using RestSharp.Extensions.MonoHttp;
+
 #endif
 
 #if WINDOWS_PHONE
@@ -183,34 +185,38 @@ namespace RestSharp.Authenticators
         {
             OAuthWorkflow workflow = new OAuthWorkflow
                                      {
-                                         ConsumerKey = ConsumerKey,
-                                         ConsumerSecret = ConsumerSecret,
-                                         ParameterHandling = ParameterHandling,
-                                         SignatureMethod = SignatureMethod,
-                                         SignatureTreatment = SignatureTreatment,
-                                         Verifier = Verifier,
-                                         Version = Version,
-                                         CallbackUrl = CallbackUrl,
-                                         SessionHandle = SessionHandle,
-                                         Token = Token,
-                                         TokenSecret = TokenSecret,
-                                         ClientUsername = ClientUsername,
-                                         ClientPassword = ClientPassword
+                                         ConsumerKey = this.ConsumerKey,
+                                         ConsumerSecret = this.ConsumerSecret,
+                                         ParameterHandling = this.ParameterHandling,
+                                         SignatureMethod = this.SignatureMethod,
+                                         SignatureTreatment = this.SignatureTreatment,
+                                         Verifier = this.Verifier,
+                                         Version = this.Version,
+                                         CallbackUrl = this.CallbackUrl,
+                                         SessionHandle = this.SessionHandle,
+                                         Token = this.Token,
+                                         TokenSecret = this.TokenSecret,
+                                         ClientUsername = this.ClientUsername,
+                                         ClientPassword = this.ClientPassword
                                      };
 
-            AddOAuthData(client, request, workflow);
+            this.AddOAuthData(client, request, workflow);
         }
 
         private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
         {
-            string url = client.BuildUri(request).ToString();
+            string url = client.BuildUri(request)
+                               .ToString();
             int queryStringStart = url.IndexOf('?');
 
             if (queryStringStart != -1)
+            {
                 url = url.Substring(0, queryStringStart);
+            }
 
             OAuthWebQueryInfo oauth;
-            string method = request.Method.ToString().ToUpperInvariant();
+            string method = request.Method.ToString()
+                                   .ToUpperInvariant();
             WebParameterCollection parameters = new WebParameterCollection();
 
             // include all GET and POST parameters before generating the signature
@@ -225,7 +231,6 @@ namespace RestSharp.Authenticators
                           .Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
                           .Select(p => new WebPair(p.Name, p.Value.ToString())));
 
-
                 parameters.AddRange(
                     request.Parameters
                            .Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
@@ -238,17 +243,17 @@ namespace RestSharp.Authenticators
                 parameters.AddRange(
                     client.DefaultParameters
                           .Where(p => (p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
-                                                 && p.Name.StartsWith("oauth_"))
+                                      && p.Name.StartsWith("oauth_"))
                           .Select(p => new WebPair(p.Name, p.Value.ToString())));
 
                 parameters.AddRange(
                     request.Parameters
                            .Where(p => (p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
-                                                  && p.Name.StartsWith("oauth_"))
+                                       && p.Name.StartsWith("oauth_"))
                            .Select(p => new WebPair(p.Name, p.Value.ToString())));
             }
 
-            switch (Type)
+            switch (this.Type)
             {
                 case OAuthType.RequestToken:
                     workflow.RequestTokenUrl = url;
@@ -273,11 +278,11 @@ namespace RestSharp.Authenticators
                     throw new ArgumentOutOfRangeException();
             }
 
-            switch (ParameterHandling)
+            switch (this.ParameterHandling)
             {
                 case OAuthParameterHandling.HttpAuthorizationHeader:
                     parameters.Add("oauth_signature", oauth.Signature);
-                    request.AddHeader("Authorization", GetAuthorizationHeader(parameters));
+                    request.AddHeader("Authorization", this.GetAuthorizationHeader(parameters));
                     break;
 
                 case OAuthParameterHandling.UrlOrPostParameters:
@@ -301,9 +306,9 @@ namespace RestSharp.Authenticators
         {
             StringBuilder sb = new StringBuilder("OAuth ");
 
-            if (!Realm.IsNullOrBlank())
+            if (!this.Realm.IsNullOrBlank())
             {
-                sb.Append("realm=\"{0}\",".FormatWith(OAuthTools.UrlEncodeRelaxed(Realm)));
+                sb.Append("realm=\"{0}\",".FormatWith(OAuthTools.UrlEncodeRelaxed(this.Realm)));
             }
 
             parameters.Sort((l, r) => l.Name.CompareTo(r.Name));
@@ -319,7 +324,9 @@ namespace RestSharp.Authenticators
             {
                 parameterCount++;
 
-                string format = parameterCount < oathParameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
+                string format = parameterCount < oathParameters.Count
+                    ? "{0}=\"{1}\","
+                    : "{0}=\"{1}\"";
 
                 sb.Append(format.FormatWith(parameter.Name, parameter.Value));
             }

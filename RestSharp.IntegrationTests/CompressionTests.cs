@@ -54,7 +54,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        static Action<HttpListenerContext> GzipEchoValue(string value)
+        private static Action<HttpListenerContext> GzipEchoValue(string value)
         {
             return context =>
                    {
@@ -67,7 +67,7 @@ namespace RestSharp.IntegrationTests
                    };
         }
 
-        static Action<HttpListenerContext> DeflateEchoValue(string value)
+        private static Action<HttpListenerContext> DeflateEchoValue(string value)
         {
             return context =>
                    {

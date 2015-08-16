@@ -8,10 +8,13 @@ namespace RestSharp.Authenticators.OAuth.Extensions
     {
         public static string ToRequestValue(this OAuthSignatureMethod signatureMethod)
         {
-            string value = signatureMethod.ToString().ToUpper();
+            string value = signatureMethod.ToString()
+                                          .ToUpper();
             int shaIndex = value.IndexOf("SHA1");
 
-            return shaIndex > -1 ? value.Insert(shaIndex, "-") : value;
+            return shaIndex > -1
+                ? value.Insert(shaIndex, "-")
+                : value;
         }
 
         public static OAuthSignatureMethod FromRequestValue(this string signatureMethod)

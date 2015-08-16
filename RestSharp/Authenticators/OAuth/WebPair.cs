@@ -5,8 +5,8 @@ namespace RestSharp.Authenticators.OAuth
     {
         public WebPair(string name, string value)
         {
-            Name = name;
-            Value = value;
+            this.Name = name;
+            this.Value = value;
         }
 
         public string Value { get; set; }

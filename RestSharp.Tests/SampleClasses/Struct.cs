@@ -1,5 +1,4 @@
-﻿
-namespace RestSharp.Tests.SampleClasses
+﻿namespace RestSharp.Tests.SampleClasses
 {
     public struct SimpleStruct
     {

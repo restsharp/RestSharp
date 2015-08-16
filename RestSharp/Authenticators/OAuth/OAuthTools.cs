@@ -13,12 +13,17 @@ namespace RestSharp.Authenticators.OAuth
     internal static class OAuthTools
     {
         private const string ALPHA_NUMERIC = UPPER + LOWER + DIGIT;
+
         private const string DIGIT = "1234567890";
+
         private const string LOWER = "abcdefghijklmnopqrstuvwxyz";
+
         private const string UNRESERVED = ALPHA_NUMERIC + "-._~";
+
         private const string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         private static readonly Random random;
+
         private static readonly object randomLock = new object();
 
 #if !SILVERLIGHT && !WINDOWS_PHONE
@@ -186,10 +191,14 @@ namespace RestSharp.Authenticators.OAuth
             IEnumerable<WebPair> exclusions = copy.Where(n => n.Name.EqualsIgnoreCase("oauth_signature"));
 
             copy.RemoveAll(exclusions);
-            copy.ForEach(p => { p.Name = UrlEncodeStrict(p.Name); p.Value = UrlEncodeStrict(p.Value); });
+            copy.ForEach(p =>
+                         {
+                             p.Name = UrlEncodeStrict(p.Name);
+                             p.Value = UrlEncodeStrict(p.Value);
+                         });
             copy.Sort((x, y) => string.CompareOrdinal(x.Name, y.Name) != 0
-                                    ? string.CompareOrdinal(x.Name, y.Name)
-                                    : string.CompareOrdinal(x.Value, y.Value));
+                ? string.CompareOrdinal(x.Name, y.Name)
+                : string.CompareOrdinal(x.Value, y.Value));
 
             return copy;
         }
@@ -216,7 +225,9 @@ namespace RestSharp.Authenticators.OAuth
             bool secure = url.Scheme == "https" && url.Port == 443;
 
             sb.Append(requestUrl);
-            sb.Append(!basic && !secure ? qualified : "");
+            sb.Append(!basic && !secure
+                ? qualified
+                : "");
             sb.Append(url.AbsolutePath);
 
             return sb.ToString(); //.ToLower();
@@ -319,22 +330,22 @@ namespace RestSharp.Authenticators.OAuth
             switch (signatureMethod)
             {
                 case OAuthSignatureMethod.HmacSha1:
-                    {
-                        HMACSHA1 crypto = new HMACSHA1();
-                        string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                {
+                    HMACSHA1 crypto = new HMACSHA1();
+                    string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-                        crypto.Key = encoding.GetBytes(key);
-                        signature = signatureBase.HashWith(crypto);
+                    crypto.Key = encoding.GetBytes(key);
+                    signature = signatureBase.HashWith(crypto);
 
-                        break;
-                    }
+                    break;
+                }
 
                 case OAuthSignatureMethod.PlainText:
-                    {
-                        signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                {
+                    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-                        break;
-                    }
+                    break;
+                }
 
                 default:
                     throw new NotImplementedException("Only HMAC-SHA1 is currently supported.");

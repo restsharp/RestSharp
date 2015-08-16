@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -34,8 +36,8 @@ namespace RestSharp
         protected RestResponseBase()
         {
             this.ResponseStatus = ResponseStatus.None;
-            Headers = new List<Parameter>();
-            Cookies = new List<RestResponseCookie>();
+            this.Headers = new List<Parameter>();
+            this.Cookies = new List<RestResponseCookie>();
         }
 
         /// <summary>

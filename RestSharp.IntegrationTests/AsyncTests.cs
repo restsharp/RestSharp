@@ -254,19 +254,19 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        static void UrlToStatusCodeHandler(HttpListenerContext obj)
+        private static void UrlToStatusCodeHandler(HttpListenerContext obj)
         {
             obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
         }
 
         public class ResponseHandler
         {
-            void error(HttpListenerContext context)
+            private void error(HttpListenerContext context)
             {
                 context.Response.StatusCode = 400;
                 context.Response.Headers.Add("Content-Type", "application/xml");
                 context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                    @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Error>
         <Message>Not found!</Message>
@@ -274,10 +274,10 @@ namespace RestSharp.IntegrationTests
 </Response>");
             }
 
-            void success(HttpListenerContext context)
+            private void success(HttpListenerContext context)
             {
                 context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                    @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Success>
         <Message>Works!</Message>
@@ -285,7 +285,7 @@ namespace RestSharp.IntegrationTests
 </Response>");
             }
 
-            void timeout(HttpListenerContext context)
+            private void timeout(HttpListenerContext context)
             {
                 Thread.Sleep(1000);
             }

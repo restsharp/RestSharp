@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -115,7 +117,9 @@ namespace RestSharp
         /// <param name="resource">Resource to use for this request</param>
         /// <param name="method">Method to use for this request</param>
         public RestRequest(Uri resource, Method method)
-            : this(resource.IsAbsoluteUri ? resource.AbsolutePath + resource.Query : resource.OriginalString, method)
+            : this(resource.IsAbsoluteUri
+                ? resource.AbsolutePath + resource.Query
+                : resource.OriginalString, method)
         {
             //resource.PathAndQuery not supported by Silverlight :(
         }
@@ -133,7 +137,7 @@ namespace RestSharp
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
 
-            return AddFile(new FileParameter
+            return this.AddFile(new FileParameter
                            {
                                Name = name,
                                FileName = Path.GetFileName(path),
@@ -145,7 +149,7 @@ namespace RestSharp
                                                 file.BaseStream.CopyTo(s);
                                             }
                                         },
-                                ContentType = contentType
+                               ContentType = contentType
                            });
         }
 
@@ -172,13 +176,13 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null)
         {
-            return AddFile(new FileParameter
-                           {
-                               Name = name,
-                               Writer = writer,
-                               FileName = fileName,
-                               ContentType = contentType
-                           });
+            return this.AddFile(new FileParameter
+                                {
+                                    Name = name,
+                                    Writer = writer,
+                                    FileName = fileName,
+                                    ContentType = contentType
+                                });
         }
 
         private IRestRequest AddFile(FileParameter file)
@@ -200,20 +204,20 @@ namespace RestSharp
         {
             long length = bytes.Length;
 
-            return AddFile(new FileParameter
-                           {
-                               Name = name,
-                               FileName = filename,
-                               ContentLength = length,
-                               ContentType = contentType,
-                               Writer = s =>
-                                        {
-                                            using (StreamReader file = new StreamReader(new MemoryStream(bytes)))
-                                            {
-                                                file.BaseStream.CopyTo(s);
-                                            }
-                                        }
-                           });
+            return this.AddFile(new FileParameter
+                                {
+                                    Name = name,
+                                    FileName = filename,
+                                    ContentLength = length,
+                                    ContentType = contentType,
+                                    Writer = s =>
+                                             {
+                                                 using (StreamReader file = new StreamReader(new MemoryStream(bytes)))
+                                                 {
+                                                     file.BaseStream.CopyTo(s);
+                                                 }
+                                             }
+                                });
         }
 
         /// <summary>
@@ -228,17 +232,17 @@ namespace RestSharp
             string serialized;
             string contentType;
 
-            switch (RequestFormat)
+            switch (this.RequestFormat)
             {
                 case DataFormat.Json:
-                    serialized = JsonSerializer.Serialize(obj);
-                    contentType = JsonSerializer.ContentType;
+                    serialized = this.JsonSerializer.Serialize(obj);
+                    contentType = this.JsonSerializer.ContentType;
                     break;
 
                 case DataFormat.Xml:
                     this.XmlSerializer.Namespace = xmlNamespace;
-                    serialized = XmlSerializer.Serialize(obj);
-                    contentType = XmlSerializer.ContentType;
+                    serialized = this.XmlSerializer.Serialize(obj);
+                    contentType = this.XmlSerializer.ContentType;
                     break;
 
                 default:
@@ -323,33 +327,36 @@ namespace RestSharp
                                  (includedProperties.Length > 0 && includedProperties.Contains(prop.Name));
 
                 if (!isAllowed)
+                {
                     continue;
+                }
 
                 Type propType = prop.PropertyType;
                 object val = prop.GetValue(obj, null);
 
                 if (val == null)
+                {
                     continue;
+                }
 
                 if (propType.IsArray)
                 {
                     Type elementType = propType.GetElementType();
 
-                    if (((Array)val).Length > 0 &&
+                    if (((Array) val).Length > 0 &&
                         elementType != null &&
-                        (elementType.IsPrimitive|| elementType.IsValueType || elementType == typeof(string)))
+                        (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
                     {
                         // convert the array to an array of strings
-                        string[] values = (from object item in ((Array)val)
-                                      select item.ToString())
-                                     .ToArray<string>();
+                        string[] values = (from object item in ((Array) val)
+                                           select item.ToString()).ToArray<string>();
 
                         val = string.Join(",", values);
                     }
                     else
                     {
                         // try to cast it
-                        val = string.Join(",", (string[])val);
+                        val = string.Join(",", (string[]) val);
                     }
                 }
 

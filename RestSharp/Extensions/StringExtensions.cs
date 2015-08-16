@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -50,10 +52,14 @@ namespace RestSharp.Extensions
             const int maxLength = 32766;
 
             if (input == null)
+            {
                 throw new ArgumentNullException("input");
+            }
 
             if (input.Length <= maxLength)
+            {
                 return Uri.EscapeDataString(input);
+            }
 
             StringBuilder sb = new StringBuilder(input.Length * 2);
             int index = 0;
@@ -104,7 +110,8 @@ namespace RestSharp.Extensions
         /// <returns>string</returns>
         public static string RemoveUnderscoresAndDashes(this string input)
         {
-            return input.Replace("_", "").Replace("-", ""); // avoiding regex
+            return input.Replace("_", "")
+                        .Replace("-", ""); // avoiding regex
         }
 
         /// <summary>
@@ -208,7 +215,9 @@ namespace RestSharp.Extensions
                 {
                     DateTime mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
 
-                    dt = match.Groups[2].Value == "+" ? dt.Add(mod.TimeOfDay) : dt.Subtract(mod.TimeOfDay);
+                    dt = match.Groups[2].Value == "+"
+                        ? dt.Add(mod.TimeOfDay)
+                        : dt.Subtract(mod.TimeOfDay);
                 }
             }
 
@@ -247,11 +256,15 @@ namespace RestSharp.Extensions
         public static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture)
         {
             if (string.IsNullOrEmpty(text))
+            {
                 return text;
+            }
 
             text = text.Replace("_", " ");
 
-            string joinString = removeUnderscores ? string.Empty : "_";
+            string joinString = removeUnderscores
+                ? string.Empty
+                : "_";
             string[] words = text.Split(' ');
 
             if (words.Length > 1 || words[0].IsUpperCase())
@@ -264,7 +277,9 @@ namespace RestSharp.Extensions
                         string restOfWord = word.Substring(1);
 
                         if (restOfWord.IsUpperCase())
+                        {
                             restOfWord = restOfWord.ToLower(culture);
+                        }
 
                         char firstChar = char.ToUpper(word[0], culture);
 
@@ -376,7 +391,9 @@ namespace RestSharp.Extensions
         public static IEnumerable<string> GetNameVariants(this string name, CultureInfo culture)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 yield break;
+            }
 
             yield return name;
 

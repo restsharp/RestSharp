@@ -39,8 +39,12 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
+                DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())
+                                                       .Parent;
 
                 if (directoryInfo != null)
                 {
@@ -53,10 +57,10 @@ namespace RestSharp.IntegrationTests
                 request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
                 Task task = client.ExecuteTaskAsync(request)
-                                 .ContinueWith(x =>
-                                               {
-                                                   Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
-                                               });
+                                  .ContinueWith(x =>
+                                                {
+                                                    Assert.AreEqual(this.expectedFileAndBodyRequestContent, x.Result.Content);
+                                                });
 
                 task.Wait();
             }
@@ -70,13 +74,16 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
-                DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
+                DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())
+                                                       .Parent;
 
                 if (directoryInfo != null)
                 {
-                    string path = Path.Combine(directoryInfo.FullName,
-                        "Assets\\TestFile.txt");
+                    string path = Path.Combine(directoryInfo.FullName, "Assets\\TestFile.txt");
 
                     request.AddFile("fileName", path);
                 }
@@ -96,7 +103,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
 
                 AddParameters(request);
 
@@ -116,7 +126,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl, EchoHandler))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("/", Method.POST) { AlwaysMultipartFormData = true };
+                RestRequest request = new RestRequest("/", Method.POST)
+                                      {
+                                          AlwaysMultipartFormData = true
+                                      };
 
                 AddParameters(request);
 
@@ -135,10 +148,10 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("?json_route=/posts")
-                                  {
-                                      AlwaysMultipartFormData = true,
-                                      Method = Method.POST,
-                                  };
+                                      {
+                                          AlwaysMultipartFormData = true,
+                                          Method = Method.POST,
+                                      };
 
                 request.AddParameter("title", "test", ParameterType.RequestBody);
 
@@ -164,7 +177,8 @@ namespace RestSharp.IntegrationTests
 
                 request.AddParameter("title", "test", ParameterType.RequestBody);
 
-                Task task = client.ExecuteTaskAsync(request).ContinueWith(x => { Assert.Null(x.Result.ErrorException); });
+                Task task = client.ExecuteTaskAsync(request)
+                                  .ContinueWith(x => { Assert.Null(x.Result.ErrorException); });
 
                 task.Wait();
             }

@@ -14,8 +14,8 @@ namespace RestSharp.Serializers
         /// </summary>
         public DotNetXmlSerializer()
         {
-            ContentType = "application/xml";
-            Encoding = Encoding.UTF8;
+            this.ContentType = "application/xml";
+            this.Encoding = Encoding.UTF8;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace RestSharp.Serializers
         public DotNetXmlSerializer(string @namespace)
             : this()
         {
-            Namespace = @namespace;
+            this.Namespace = @namespace;
         }
 
         /// <summary>
@@ -37,10 +37,10 @@ namespace RestSharp.Serializers
         {
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
 
-            ns.Add(string.Empty, Namespace);
+            ns.Add(string.Empty, this.Namespace);
 
             System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
-            EncodingStringWriter writer = new EncodingStringWriter(Encoding);
+            EncodingStringWriter writer = new EncodingStringWriter(this.Encoding);
 
             serializer.Serialize(writer, obj, ns);
 
@@ -86,7 +86,7 @@ namespace RestSharp.Serializers
 
             public override Encoding Encoding
             {
-                get { return encoding; }
+                get { return this.encoding; }
             }
         }
     }

@@ -4,7 +4,6 @@ using NUnit.Framework;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
 
-
 namespace RestSharp.Tests
 {
     [TestFixture]

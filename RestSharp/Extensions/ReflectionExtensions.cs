@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -61,7 +63,9 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
-                Type cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                Type cur = toCheck.IsGenericType
+                    ? toCheck.GetGenericTypeDefinition()
+                    : toCheck;
 
                 if (generic == cur)
                 {
@@ -104,10 +108,10 @@ namespace RestSharp.Extensions
         {
 #if FRAMEWORK
             Enum ret = Enum.GetValues(type)
-                          .Cast<Enum>()
-                          .FirstOrDefault(v => v.ToString()
-                                                .GetNameVariants(culture)
-                                                .Contains(value, StringComparer.Create(culture, true)));
+                           .Cast<Enum>()
+                           .FirstOrDefault(v => v.ToString()
+                                                 .GetNameVariants(culture)
+                                                 .Contains(value, StringComparer.Create(culture, true)));
 
             if (ret == null)
             {
@@ -115,7 +119,7 @@ namespace RestSharp.Extensions
 
                 if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
                 {
-                    ret = (Enum)Enum.ToObject(type, enumValueAsUnderlyingType);
+                    ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
                 }
             }
 

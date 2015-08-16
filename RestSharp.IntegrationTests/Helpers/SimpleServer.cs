@@ -8,7 +8,9 @@
     public class SimpleServer : IDisposable
     {
         private readonly HttpListener listener;
+
         private readonly Action<HttpListenerContext> handler;
+
         private Thread thread;
 
         private SimpleServer(HttpListener listener, Action<HttpListenerContext> handler)
@@ -20,7 +22,11 @@
         public static SimpleServer Create(string url, Action<HttpListenerContext> handler,
             AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
         {
-            HttpListener listener = new HttpListener { Prefixes = { url }, AuthenticationSchemes = authenticationSchemes };
+            HttpListener listener = new HttpListener
+                                    {
+                                        Prefixes = { url },
+                                        AuthenticationSchemes = authenticationSchemes
+                                    };
             SimpleServer server = new SimpleServer(listener, handler);
 
             server.Start();

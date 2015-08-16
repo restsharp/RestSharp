@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -84,7 +86,7 @@ namespace RestSharp
             this.ConfigureHttp(request, http);
 
             RestRequestAsyncHandle asyncHandle = new RestRequestAsyncHandle();
-            Action<HttpResponse> responseCb = r => this.ProcessResponse(request, r, asyncHandle, callback);
+            Action<HttpResponse> responseCb = r => ProcessResponse(request, r, asyncHandle, callback);
 
             if (this.UseSynchronizationContext && SynchronizationContext.Current != null)
             {
@@ -109,8 +111,8 @@ namespace RestSharp
             return http.AsPostAsync(responseCb, method);
         }
 
-        private void ProcessResponse(IRestRequest request, HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
+        private static void ProcessResponse(IRestRequest request, HttpResponse httpResponse,
+            RestRequestAsyncHandle asyncHandle, Action<IRestResponse, RestRequestAsyncHandle> callback)
         {
             RestResponse restResponse = ConvertToRestResponse(request, httpResponse);
             callback(restResponse, asyncHandle);
@@ -157,9 +159,8 @@ namespace RestSharp
                 (response, asyncHandle) => this.DeserializeResponse(request, callback, response, asyncHandle), httpMethod);
         }
 
-        private void DeserializeResponse<T>(IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback, IRestResponse response,
-            RestRequestAsyncHandle asyncHandle)
+        private void DeserializeResponse<T>(IRestRequest request, Action<IRestResponse<T>,
+            RestRequestAsyncHandle> callback, IRestResponse response, RestRequestAsyncHandle asyncHandle)
         {
             IRestResponse<T> restResponse;
 

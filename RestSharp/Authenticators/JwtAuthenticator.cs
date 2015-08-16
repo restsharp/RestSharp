@@ -1,4 +1,5 @@
 #region License
+
 //   Author: Roman Kravchik
 //   Based on HttpBasicAuthenticator class by John Sheehan
 //
@@ -13,6 +14,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -26,7 +28,7 @@ namespace RestSharp.Authenticators
     /// </summary>
     public class JwtAuthenticator : IAuthenticator
     {
-        readonly string authHeader;
+        private readonly string authHeader;
 
         public JwtAuthenticator(string accessToken)
         {

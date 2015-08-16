@@ -55,7 +55,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("error") { RootElement = "Success" };
+                RestRequest request = new RestRequest("error")
+                                      {
+                                          RootElement = "Success"
+                                      };
 
                 request.OnBeforeDeserialization = resp =>
                                                   {
@@ -80,7 +83,10 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
             {
                 RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("success") { RootElement = "Success" };
+                RestRequest request = new RestRequest("success")
+                                      {
+                                          RootElement = "Success"
+                                      };
 
                 request.OnBeforeDeserialization = resp =>
                                                   {
@@ -100,12 +106,12 @@ namespace RestSharp.IntegrationTests
 
     public class ResponseHandler
     {
-        void error(HttpListenerContext context)
+        private void error(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
             context.Response.Headers.Add("Content-Type", "application/xml");
             context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Error>
         <Message>Not found!</Message>
@@ -113,12 +119,12 @@ namespace RestSharp.IntegrationTests
 </Response>");
         }
 
-        void errorwithbody(HttpListenerContext context)
+        private void errorwithbody(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
             context.Response.Headers.Add("Content-Type", "application/xml");
             context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Error>
         <Message>Not found!</Message>
@@ -126,10 +132,10 @@ namespace RestSharp.IntegrationTests
 </Response>");
         }
 
-        void success(HttpListenerContext context)
+        private void success(HttpListenerContext context)
         {
             context.Response.OutputStream.WriteStringUtf8(
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Success>
         <Message>Works!</Message>

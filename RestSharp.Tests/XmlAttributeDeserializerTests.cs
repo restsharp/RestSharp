@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -30,6 +32,7 @@ namespace RestSharp.Tests
     public class XmlAttributeDeserializerTests
     {
         private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+
         private readonly string sampleDataPath = Path.Combine(Environment.CurrentDirectory, "SampleData");
 
         private string PathFor(string sampleFile)
@@ -43,7 +46,8 @@ namespace RestSharp.Tests
             string xmlpath = this.PathFor("xmllists.xml");
             XDocument doc = XDocument.Load(xmlpath);
             XmlAttributeDeserializer xml = new XmlAttributeDeserializer();
-            SimpleTypesListSample output = xml.Deserialize<SimpleTypesListSample>(new RestResponse { Content = doc.ToString() });
+            SimpleTypesListSample output = xml.Deserialize<SimpleTypesListSample>(
+                new RestResponse { Content = doc.ToString() });
 
             Assert.IsNotEmpty(output.Names);
             Assert.IsNotEmpty(output.Numbers);
@@ -202,7 +206,10 @@ namespace RestSharp.Tests
         {
             CultureInfo culture = CultureInfo.InvariantCulture;
             string doc = CreateXmlWithoutEmptyValues(culture);
-            XmlAttributeDeserializer xml = new XmlAttributeDeserializer { Culture = culture };
+            XmlAttributeDeserializer xml = new XmlAttributeDeserializer
+                                           {
+                                               Culture = culture
+                                           };
             NullableValues output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
             Assert.NotNull(output.Id);
@@ -261,12 +268,17 @@ namespace RestSharp.Tests
 
             doc.Add(root);
 
-            XmlAttributeDeserializer xml = new XmlAttributeDeserializer { DateFormat = format, Culture = culture };
+            XmlAttributeDeserializer xml = new XmlAttributeDeserializer
+                                           {
+                                               DateFormat = format,
+                                               Culture = culture
+                                           };
             RestResponse response = new RestResponse { Content = doc.ToString() };
             PersonForXml output = xml.Deserialize<PersonForXml>(response);
 
             Assert.AreEqual(date, output.StartDate);
         }
+
         [Test]
         public void Can_Deserialize_Nested_Class()
         {
@@ -278,6 +290,7 @@ namespace RestSharp.Tests
             Assert.NotNull(p.FavoriteBand);
             Assert.AreEqual("Goldfinger", p.FavoriteBand.Name);
         }
+
         [Test]
         public void Can_Deserialize_Elements_On_Default_Root()
         {
@@ -469,7 +482,6 @@ namespace RestSharp.Tests
             Assert.AreEqual(1, p.Count);
             Assert.AreEqual(45, p[0].ConceptId);
         }
-
 
         [Test]
         public void Can_Deserialize_Eventful_Xml()
@@ -901,6 +913,5 @@ namespace RestSharp.Tests
 
             return doc.ToString();
         }
-
     }
 }

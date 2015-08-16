@@ -1,4 +1,5 @@
 ﻿#region License
+
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
+
 #endregion
 
 using System;
@@ -137,7 +139,7 @@ namespace RestSharp.Tests
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "sojson.txt"));
             JsonDeserializer json = new JsonDeserializer { RootElement = "User" };
-            SOUser output = json.Deserialize<SOUser>(new RestResponse { Content = doc });
+            SoUser output = json.Deserialize<SoUser>(new RestResponse { Content = doc });
 
             Assert.AreEqual("John Sheehan", output.DisplayName);
         }
@@ -147,7 +149,8 @@ namespace RestSharp.Tests
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
             JsonDeserializer json = new JsonDeserializer();
-            Dictionary<string, object> output = json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
+            Dictionary<string, object> output =
+                json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
 
             Assert.AreEqual(output.Keys.Count, 3);
 
@@ -161,7 +164,8 @@ namespace RestSharp.Tests
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary_KeysType.txt"));
             JsonDeserializer json = new JsonDeserializer();
-            Dictionary<int, object> output = json.Deserialize<Dictionary<int, object>>(new RestResponse { Content = doc });
+            Dictionary<int, object> output =
+                json.Deserialize<Dictionary<int, object>>(new RestResponse { Content = doc });
 
             Assert.AreEqual(output.Keys.Count, 2);
 
@@ -175,7 +179,8 @@ namespace RestSharp.Tests
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "GenericWithList.txt"));
             JsonDeserializer json = new JsonDeserializer();
-            Generic<GenericWithList<Foe>> output = json.Deserialize<Generic<GenericWithList<Foe>>>(new RestResponse { Content = doc });
+            Generic<GenericWithList<Foe>> output =
+                json.Deserialize<Generic<GenericWithList<Foe>>>(new RestResponse { Content = doc });
 
             Assert.AreEqual("Foe sho", output.Data.Items[0].Nickname);
         }
@@ -190,7 +195,7 @@ namespace RestSharp.Tests
             data["Ids"] = new JsonArray { id1, id2 };
 
             JsonDeserializer d = new JsonDeserializer();
-            RestResponse response = new RestResponse { Content = data.ToString() };
+            RestResponse response = new RestResponse { Content = data.ToString()  };
             GuidList p = d.Deserialize<GuidList>(response);
 
             Assert.AreEqual(2, p.Ids.Count);
@@ -205,7 +210,11 @@ namespace RestSharp.Tests
             DateTime item2 = item1.AddSeconds(12345);
             JsonObject data = new JsonObject();
 
-            data["Items"] = new JsonArray { item1.ToString("u"), item2.ToString("u") };
+            data["Items"] = new JsonArray
+                            {
+                                item1.ToString("u"),
+                                item2.ToString("u")
+                            };
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = data.ToString() };
@@ -305,7 +314,11 @@ namespace RestSharp.Tests
             var formatted = new { StartDate = date.ToString(format, culture) };
             string data = SimpleJson.SerializeObject(formatted);
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer { DateFormat = format, Culture = culture };
+            JsonDeserializer json = new JsonDeserializer
+                                    {
+                                        DateFormat = format,
+                                        Culture = culture
+                                    };
             PersonForJson output = json.Deserialize<PersonForJson>(response);
 
             Assert.AreEqual(date, output.StartDate);
@@ -467,7 +480,7 @@ namespace RestSharp.Tests
             string data = File.ReadAllText(Path.Combine("SampleData", "underscore_prefix.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer { RootElement = "User" };
-            SOUser output = json.Deserialize<SOUser>(response);
+            SoUser output = json.Deserialize<SoUser>(response);
 
             Assert.AreEqual("John Sheehan", output.DisplayName);
             Assert.AreEqual(1786, output.Id);
@@ -760,7 +773,6 @@ namespace RestSharp.Tests
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
             JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
-
             EmployeeTracker output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
 
             Assert.IsNotEmpty(output.EmployeesMail);
@@ -858,7 +870,10 @@ namespace RestSharp.Tests
 
         private static string CreateIsoDateJson()
         {
-            Birthdate bd = new Birthdate { Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc) };
+            Birthdate bd = new Birthdate
+                           {
+                               Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc)
+                           };
 
             return SimpleJson.SerializeObject(bd);
         }
@@ -911,8 +926,8 @@ namespace RestSharp.Tests
 
             JsonObject foesArray = new JsonObject
                                    {
-                                       { "dict1", new JsonObject { { "Nickname", "Foe 1" } } },
-                                       {"dict2", new JsonObject { { "Nickname", "Foe 2" } } }
+                                       { "dict1", new JsonObject { { "nickname", "Foe 1" } } },
+                                       { "dict2", new JsonObject { { "nickname", "Foe 2" } } }
                                    };
 
             doc["Foes"] = foesArray;
@@ -969,10 +984,22 @@ namespace RestSharp.Tests
         {
             JsonObject doc = new JsonObject();
 
-            doc["Thing1"] = new JsonArray { "Value1", "Value2" };
+            doc["Thing1"] = new JsonArray
+                            {
+                                "Value1",
+                                "Value2"
+                            };
             doc["Thing2"] = "Thing2";
-            doc["ThingRed"] = new JsonObject { { "Name", "ThingRed" }, { "Color", "Red" } };
-            doc["ThingBlue"] = new JsonObject { { "Name", "ThingBlue" }, { "Color", "Blue" } };
+            doc["ThingRed"] = new JsonObject
+                              {
+                                  { "Name", "ThingRed" },
+                                  { "Color", "Red" }
+                              };
+            doc["ThingBlue"] = new JsonObject
+                               {
+                                   { "Name", "ThingBlue" },
+                                   { "Color", "Blue" }
+                               };
 
             return doc.ToString();
         }

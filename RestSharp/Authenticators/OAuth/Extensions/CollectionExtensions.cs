@@ -30,7 +30,9 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static TK TryWithKey<T, TK>(this IDictionary<T, TK> dictionary, T key)
         {
-            return dictionary.ContainsKey(key) ? dictionary[key] : default(TK);
+            return dictionary.ContainsKey(key)
+                ? dictionary[key]
+                : default(TK);
         }
 
         public static IEnumerable<T> ToEnumerable<T>(this object[] items) where T : class

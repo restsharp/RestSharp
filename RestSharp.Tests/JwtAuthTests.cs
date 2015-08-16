@@ -11,27 +11,28 @@ namespace RestSharp.Tests
     [TestFixture]
     public class JwtAuthTests
     {
-        readonly string testJwt;
-        readonly string expectedAuthHeaderContent;
-        
+        private readonly string testJwt;
+
+        private readonly string expectedAuthHeaderContent;
+
         public JwtAuthTests()
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
 
             this.testJwt = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" + "." +
-                "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo" +
-                "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ" + "." +
-                "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+                           "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo" +
+                           "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ" + "." +
+                           "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
             this.expectedAuthHeaderContent = string.Format("Bearer {0}", this.testJwt);
         }
-        
+
         [Test]
         public void Throw_Argument_Null_Exception()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => new JwtAuthenticator(null));
-            
+
             Assert.AreEqual("accessToken", exception.ParamName);
         }
 

@@ -149,8 +149,8 @@ namespace RestSharp
 #if NET4
         public static RestResponse<dynamic> ExecuteDynamic(this IRestClient client, IRestRequest request)
         {
-            var response = client.Execute<dynamic>(request);
-            var generic = (RestResponse<dynamic>)response;
+            IRestResponse<dynamic> response = client.Execute<dynamic>(request);
+            RestResponse<dynamic> generic = (RestResponse<dynamic>)response;
             dynamic content = SimpleJson.DeserializeObject(response.Content);
 
             generic.Data = content;
@@ -350,7 +350,12 @@ namespace RestSharp
         /// <returns>This request</returns>
         public static void AddDefaultParameter(this IRestClient restClient, string name, object value)
         {
-            restClient.AddDefaultParameter(new Parameter { Name = name, Value = value, Type = ParameterType.GetOrPost });
+            restClient.AddDefaultParameter(new Parameter
+                                           {
+                                               Name = name,
+                                               Value = value,
+                                               Type = ParameterType.GetOrPost
+                                           });
         }
 
         /// <summary>
@@ -368,7 +373,12 @@ namespace RestSharp
         public static void AddDefaultParameter(this IRestClient restClient, string name, object value,
             ParameterType type)
         {
-            restClient.AddDefaultParameter(new Parameter { Name = name, Value = value, Type = type });
+            restClient.AddDefaultParameter(new Parameter
+                                           {
+                                               Name = name,
+                                               Value = value,
+                                               Type = type
+                                           });
         }
 
         /// <summary>

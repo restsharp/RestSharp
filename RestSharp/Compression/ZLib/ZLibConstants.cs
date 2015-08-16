@@ -60,6 +60,7 @@
 //
 // -----------------------------------------------------------------------
 
+
 #if WINDOWS_PHONE
 
 namespace RestSharp.Compression.ZLib
