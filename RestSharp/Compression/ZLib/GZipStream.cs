@@ -188,14 +188,14 @@ namespace RestSharp.Compression.ZLib
             }
         }
 
-        /// <summary>
-        /// The last modified time for the GZIP stream.
-        /// </summary>
-        ///
-        /// <remarks> GZIP allows the storage of a last modified time with each GZIP entry.
-        /// When compressing data, you can set this before the first call to Write().  When
-        /// decompressing, you can retrieve this value any time after the first call to
-        /// Read().  </remarks>
+        // / <summary>
+        // / The last modified time for the GZIP stream.
+        // / </summary>
+        // /
+        // / <remarks> GZIP allows the storage of a last modified time with each GZIP entry.
+        // / When compressing data, you can set this before the first call to Write().  When
+        // / decompressing, you can retrieve this value any time after the first call to
+        // / Read().  </remarks>
         //public DateTime? LastModified;
 
         /// <summary>
