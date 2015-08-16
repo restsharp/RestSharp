@@ -18,11 +18,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp

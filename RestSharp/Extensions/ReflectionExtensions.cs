@@ -16,8 +16,11 @@
 
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
+
+#if FRAMEWORK
+using System.Linq;
+#endif
 
 namespace RestSharp.Extensions
 {
@@ -58,7 +61,7 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
-                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                Type cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
 
                 if (generic == cur)
                 {
@@ -100,7 +103,7 @@ namespace RestSharp.Extensions
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
 #if FRAMEWORK
-            var ret = Enum.GetValues(type)
+            Enum ret = Enum.GetValues(type)
                           .Cast<Enum>()
                           .FirstOrDefault(v => v.ToString()
                                                 .GetNameVariants(culture)
@@ -108,7 +111,7 @@ namespace RestSharp.Extensions
 
             if (ret == null)
             {
-                var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
+                object enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
 
                 if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
                 {

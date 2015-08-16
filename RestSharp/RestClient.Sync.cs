@@ -13,7 +13,7 @@ namespace RestSharp
         /// <returns>Response data</returns>
         public byte[] DownloadData(IRestRequest request)
         {
-            var response = Execute(request);
+            IRestResponse response = Execute(request);
 
             return response.RawBytes;
         }
@@ -25,7 +25,7 @@ namespace RestSharp
         /// <returns>RestResponse</returns>
         public virtual IRestResponse Execute(IRestRequest request)
         {
-            var method = Enum.GetName(typeof (Method), request.Method);
+            string method = Enum.GetName(typeof (Method), request.Method);
 
             switch (request.Method)
             {
@@ -61,7 +61,7 @@ namespace RestSharp
 
             try
             {
-                var http = HttpFactory.Create();
+                IHttp http = HttpFactory.Create();
 
                 ConfigureHttp(request, http);
 

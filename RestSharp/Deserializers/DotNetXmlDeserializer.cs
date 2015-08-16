@@ -16,6 +16,7 @@
 
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace RestSharp.Deserializers
 {
@@ -37,9 +38,9 @@ namespace RestSharp.Deserializers
                 return default(T);
             }
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
+            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
             {
-                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
 
                 return (T)serializer.Deserialize(stream);
             }

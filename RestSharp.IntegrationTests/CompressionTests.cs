@@ -16,9 +16,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, GzipEchoValue("This is some gzipped content")))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("");
-                var response = client.Execute(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("");
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual("This is some gzipped content", response.Content);
             }
@@ -31,9 +31,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, DeflateEchoValue("This is some deflated content")))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("");
-                var response = client.Execute(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("");
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual("This is some deflated content", response.Content);
             }
@@ -46,9 +46,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue("This is some sample content")))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("");
-                var response = client.Execute(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("");
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual("This is some sample content", response.Content);
             }
@@ -60,7 +60,7 @@ namespace RestSharp.IntegrationTests
                    {
                        context.Response.Headers.Add("Content-encoding", "gzip");
 
-                       using (var gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true))
+                       using (GZipStream gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true))
                        {
                            gzip.WriteStringUtf8(value);
                        }
@@ -73,7 +73,7 @@ namespace RestSharp.IntegrationTests
                    {
                        context.Response.Headers.Add("Content-encoding", "deflate");
 
-                       using (var gzip = new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true))
+                       using (DeflateStream gzip = new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true))
                        {
                            gzip.WriteStringUtf8(value);
                        }

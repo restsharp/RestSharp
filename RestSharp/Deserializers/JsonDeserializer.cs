@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using RestSharp.Extensions;
 
 namespace RestSharp.Deserializers
@@ -26,34 +27,34 @@ namespace RestSharp.Deserializers
 
         public T Deserialize<T>(IRestResponse response)
         {
-            var target = Activator.CreateInstance<T>();
+            T target = Activator.CreateInstance<T>();
 
             if (target is IList)
             {
-                var objType = target.GetType();
+                Type objType = target.GetType();
 
                 if (RootElement.HasValue())
                 {
-                    var root = FindRoot(response.Content);
+                    object root = FindRoot(response.Content);
 
                     target = (T)BuildList(objType, root);
                 }
                 else
                 {
-                    var data = SimpleJson.DeserializeObject(response.Content);
+                    object data = SimpleJson.DeserializeObject(response.Content);
 
                     target = (T)BuildList(objType, data);
                 }
             }
             else if (target is IDictionary)
             {
-                var root = FindRoot(response.Content);
+                object root = FindRoot(response.Content);
 
                 target = (T)BuildDictionary(target.GetType(), root);
             }
             else
             {
-                var root = FindRoot(response.Content);
+                object root = FindRoot(response.Content);
 
                 target = (T)Map(target, (IDictionary<string, object>)root);
             }
@@ -63,7 +64,7 @@ namespace RestSharp.Deserializers
 
         private object FindRoot(string content)
         {
-            var data = (IDictionary<string, object>)SimpleJson.DeserializeObject(content);
+            IDictionary<string, object> data = (IDictionary<string, object>)SimpleJson.DeserializeObject(content);
 
             if (RootElement.HasValue() && data.ContainsKey(RootElement))
             {
@@ -75,18 +76,18 @@ namespace RestSharp.Deserializers
 
         private object Map(object target, IDictionary<string, object> data)
         {
-            var objType = target.GetType();
-            var props = objType.GetProperties().Where(p => p.CanWrite).ToList();
+            Type objType = target.GetType();
+            List<PropertyInfo> props = objType.GetProperties().Where(p => p.CanWrite).ToList();
 
-            foreach (var prop in props)
+            foreach (PropertyInfo prop in props)
             {
-                var type = prop.PropertyType;
-                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+                Type type = prop.PropertyType;
+                object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
                 string name;
 
                 if (attributes.Length > 0)
                 {
-                    var attribute = (DeserializeAsAttribute)attributes[0];
+                    DeserializeAsAttribute attribute = (DeserializeAsAttribute)attributes[0];
                     name = attribute.Name;
                 }
                 else
@@ -94,13 +95,13 @@ namespace RestSharp.Deserializers
                     name = prop.Name;
                 }
 
-                var parts = name.Split('.');
-                var currentData = data;
+                string[] parts = name.Split('.');
+                IDictionary<string, object> currentData = data;
                 object value = null;
 
-                for (var i = 0; i < parts.Length; ++i)
+                for (int i = 0; i < parts.Length; ++i)
                 {
-                    var actualName = parts[i].GetNameVariants(Culture).FirstOrDefault(currentData.ContainsKey);
+                    string actualName = parts[i].GetNameVariants(Culture).FirstOrDefault(currentData.ContainsKey);
 
                     if (actualName == null)
                         break;
@@ -120,13 +121,13 @@ namespace RestSharp.Deserializers
 
         private IDictionary BuildDictionary(Type type, object parent)
         {
-            var dict = (IDictionary)Activator.CreateInstance(type);
-            var keyType = type.GetGenericArguments()[0];
-            var valueType = type.GetGenericArguments()[1];
+            IDictionary dict = (IDictionary)Activator.CreateInstance(type);
+            Type keyType = type.GetGenericArguments()[0];
+            Type valueType = type.GetGenericArguments()[1];
 
-            foreach (var child in (IDictionary<string, object>)parent)
+            foreach (KeyValuePair<string, object> child in (IDictionary<string, object>)parent)
             {
-                var key = keyType != typeof (string) ? 
+                object key = keyType != typeof (string) ? 
                     Convert.ChangeType(child.Key, keyType, CultureInfo.InvariantCulture) : 
                     child.Key;
 
@@ -149,17 +150,18 @@ namespace RestSharp.Deserializers
 
         private IList BuildList(Type type, object parent)
         {
-            var list = (IList)Activator.CreateInstance(type);
-            var listType = type.GetInterfaces().First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
-            var itemType = listType.GetGenericArguments()[0];
+            IList list = (IList)Activator.CreateInstance(type);
+            Type listType = type.GetInterfaces().First
+                (x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
+            Type itemType = listType.GetGenericArguments()[0];
 
             if (parent is IList)
             {
-                foreach (var element in (IList)parent)
+                foreach (object element in (IList)parent)
                 {
                     if (itemType.IsPrimitive)
                     {
-                        var item = ConvertValue(itemType, element);
+                        object item = ConvertValue(itemType, element);
                         list.Add(item);
                     }
                     else if (itemType == typeof(string))
@@ -180,7 +182,7 @@ namespace RestSharp.Deserializers
                             continue;
                         }
 
-                        var item = ConvertValue(itemType, element);
+                        object item = ConvertValue(itemType, element);
                         list.Add(item);
                     }
                 }
@@ -195,7 +197,7 @@ namespace RestSharp.Deserializers
 
         private object ConvertValue(Type type, object value)
         {
-            var stringValue = Convert.ToString(value, Culture);
+            string stringValue = Convert.ToString(value, Culture);
 
             // check for nullable and extract underlying type
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -285,7 +287,7 @@ namespace RestSharp.Deserializers
             }
             else if (type.IsGenericType)
             {
-                var genericTypeDef = type.GetGenericTypeDefinition();
+                Type genericTypeDef = type.GetGenericTypeDefinition();
 
                 if (genericTypeDef == typeof(List<>))
                 {
@@ -294,7 +296,7 @@ namespace RestSharp.Deserializers
 
                 if (genericTypeDef == typeof(Dictionary<,>))
                 {
-                    var keyType = type.GetGenericArguments()[0];
+                    Type keyType = type.GetGenericArguments()[0];
 
                     // only supports Dict<string, T>()
                     if (keyType == typeof(string))
@@ -329,7 +331,7 @@ namespace RestSharp.Deserializers
 
         private object CreateAndMap(Type type, object element)
         {
-            var instance = Activator.CreateInstance(type);
+            object instance = Activator.CreateInstance(type);
 
             Map(instance, (IDictionary<string, object>)element);
 

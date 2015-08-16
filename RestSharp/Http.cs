@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Extensions;
 
@@ -29,6 +28,7 @@ using RestSharp.Compression.ZLib;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp
@@ -259,7 +259,8 @@ namespace RestSharp
 
         private static string GetMultipartFileHeader(HttpFile file)
         {
-            return string.Format("--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
+            return string.Format(
+                "--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
                 FORM_BOUNDARY, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LINE_BREAK);
         }
 
@@ -283,7 +284,7 @@ namespace RestSharp
         // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
         private void AppendHeaders(HttpWebRequest webRequest)
         {
-            foreach (var header in Headers)
+            foreach (HttpHeader header in Headers)
             {
                 if (restrictedHeaderActions.ContainsKey(header.Name))
                 {
@@ -304,10 +305,10 @@ namespace RestSharp
         {
             webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
 
-            foreach (var httpCookie in Cookies)
+            foreach (HttpCookie httpCookie in Cookies)
             {
 #if FRAMEWORK
-                var cookie = new Cookie
+                Cookie cookie = new Cookie
                              {
                                  Name = httpCookie.Name,
                                  Value = httpCookie.Value,
@@ -316,12 +317,12 @@ namespace RestSharp
 
                 webRequest.CookieContainer.Add(cookie);
 #else
-                var cookie = new Cookie
+                Cookie cookie = new Cookie
                              {
                                  Name = httpCookie.Name,
                                  Value = httpCookie.Value
                              };
-                var uri = webRequest.RequestUri;
+                Uri uri = webRequest.RequestUri;
 
                 webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
 #endif
@@ -330,9 +331,9 @@ namespace RestSharp
 
         private string EncodeParameters()
         {
-            var querystring = new StringBuilder();
+            StringBuilder querystring = new StringBuilder();
 
-            foreach (var p in Parameters)
+            foreach (HttpParameter p in Parameters)
             {
                 if (querystring.Length > 1)
                     querystring.Append("&");
@@ -362,19 +363,19 @@ namespace RestSharp
 
         private void WriteStringTo(Stream stream, string toWrite)
         {
-            var bytes = this.Encoding.GetBytes(toWrite);
+            byte[] bytes = this.Encoding.GetBytes(toWrite);
 
             stream.Write(bytes, 0, bytes.Length);
         }
 
         private void WriteMultipartFormData(Stream requestStream)
         {
-            foreach (var param in Parameters)
+            foreach (HttpParameter param in Parameters)
             {
                 WriteStringTo(requestStream, GetMultipartFormData(param));
             }
 
-            foreach (var file in Files)
+            foreach (HttpFile file in Files)
             {
                 // Add just the first part of this param, since we will write the file data directly to the Stream
                 WriteStringTo(requestStream, GetMultipartFileHeader(file));
@@ -401,9 +402,9 @@ namespace RestSharp
                 Stream webResponseStream = webResponse.GetResponseStream();
 
 #if WINDOWS_PHONE
-                if (String.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(webResponse.Headers[HttpRequestHeader.ContentEncoding], "gzip", StringComparison.OrdinalIgnoreCase))
                 {
-                    var gzStream = new GZipStream(webResponseStream);
+                    GZipStream gzStream = new GZipStream(webResponseStream);
 
                     ProcessResponseStream(gzStream, response);
                 }
@@ -444,9 +445,9 @@ namespace RestSharp
                     }
                 }
 
-                foreach (var headerName in webResponse.Headers.AllKeys)
+                foreach (string headerName in webResponse.Headers.AllKeys)
                 {
-                    var headerValue = webResponse.Headers[headerName];
+                    string headerValue = webResponse.Headers[headerName];
 
                     response.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
                 }

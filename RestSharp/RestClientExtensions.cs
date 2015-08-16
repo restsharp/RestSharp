@@ -331,7 +331,7 @@ namespace RestSharp
         /// <returns></returns>
         public static void RemoveDefaultParameter(this IRestClient restClient, string name)
         {
-            var parameter = restClient.DefaultParameters.SingleOrDefault(
+            Parameter parameter = restClient.DefaultParameters.SingleOrDefault(
                 p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
             if (parameter != null)

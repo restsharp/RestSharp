@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
@@ -19,12 +20,12 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, UsernamePasswordEchoHandler))
             {
-                var client = new RestClient(baseUrl)
+                RestClient client = new RestClient(baseUrl)
                              {
                                  Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
                              };
-                var request = new RestRequest("test");
-                var response = client.Execute(request);
+                RestRequest request = new RestRequest("test");
+                IRestResponse response = client.Execute(request);
 
                 Assert.AreEqual("testuser|testpassword", response.Content);
             }
@@ -32,8 +33,8 @@ namespace RestSharp.IntegrationTests
 
         private static void UsernamePasswordEchoHandler(HttpListenerContext context)
         {
-            var header = context.Request.Headers["Authorization"];
-            var parts = Encoding.ASCII.GetString(Convert.FromBase64String(header.Substring("Basic ".Length))).Split(':');
+            string header = context.Request.Headers["Authorization"];
+            string[] parts = Encoding.ASCII.GetString(Convert.FromBase64String(header.Substring("Basic ".Length))).Split(':');
 
             context.Response.OutputStream.WriteStringUtf8(string.Join("|", parts));
         }
@@ -41,27 +42,27 @@ namespace RestSharp.IntegrationTests
         //[Test]
         public void Can_Authenticate_With_OAuth()
         {
-            var baseUrl = new Uri("https://api.twitter.com");
-            var client = new RestClient(baseUrl)
+            Uri baseUrl = new Uri("https://api.twitter.com");
+            RestClient client = new RestClient(baseUrl)
                          {
                              Authenticator = OAuth1Authenticator.ForRequestToken("CONSUMER_KEY", "CONSUMER_SECRET")
                          };
-            var request = new RestRequest("oauth/request_token");
-            var response = client.Execute(request);
+            RestRequest request = new RestRequest("oauth/request_token");
+            IRestResponse response = client.Execute(request);
 
             Assert.NotNull(response);
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            var qs = HttpUtility.ParseQueryString(response.Content);
-            var oauthToken = qs["oauth_token"];
-            var oauthTokenSecret = qs["oauth_token_secret"];
+            NameValueCollection qs = HttpUtility.ParseQueryString(response.Content);
+            string oauthToken = qs["oauth_token"];
+            string oauthTokenSecret = qs["oauth_token_secret"];
 
             Assert.NotNull(oauthToken);
             Assert.NotNull(oauthTokenSecret);
 
             request = new RestRequest("oauth/authorize?oauth_token=" + oauthToken);
 
-            var url = client.BuildUri(request).ToString();
+            string url = client.BuildUri(request).ToString();
 
             Process.Start(url);
 

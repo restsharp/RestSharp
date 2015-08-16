@@ -11,7 +11,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static DateTime FromUnixTime(this long seconds)
         {
-            var time = new DateTime(1970, 1, 1);
+            DateTime time = new DateTime(1970, 1, 1);
 
             time = time.AddSeconds(seconds);
 
@@ -20,8 +20,8 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static long ToUnixTime(this DateTime dateTime)
         {
-            var timeSpan = (dateTime - new DateTime(1970, 1, 1));
-            var timestamp = (long) timeSpan.TotalSeconds;
+            TimeSpan timeSpan = (dateTime - new DateTime(1970, 1, 1));
+            long timestamp = (long) timeSpan.TotalSeconds;
 
             return timestamp;
         }

@@ -19,9 +19,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
-using RestSharp.Extensions;
 using RestSharp.Serializers;
+
+#if FRAMEWORK
+using RestSharp.Extensions;
+#endif
 
 namespace RestSharp
 {
@@ -136,7 +140,7 @@ namespace RestSharp
                                ContentLength = fileLength,
                                Writer = s =>
                                         {
-                                            using (var file = new StreamReader(path))
+                                            using (StreamReader file = new StreamReader(path))
                                             {
                                                 file.BaseStream.CopyTo(s);
                                             }
@@ -204,7 +208,7 @@ namespace RestSharp
                                ContentType = contentType,
                                Writer = s =>
                                         {
-                                            using (var file = new StreamReader(new MemoryStream(bytes)))
+                                            using (StreamReader file = new StreamReader(new MemoryStream(bytes)))
                                             {
                                                 file.BaseStream.CopyTo(s);
                                             }
@@ -268,6 +272,7 @@ namespace RestSharp
         public IRestRequest AddJsonBody(object obj)
         {
             this.RequestFormat = DataFormat.Json;
+
             return this.AddBody(obj, "");
         }
 
@@ -279,6 +284,7 @@ namespace RestSharp
         public IRestRequest AddXmlBody(object obj)
         {
             this.RequestFormat = DataFormat.Xml;
+
             return this.AddBody(obj, "");
         }
 
@@ -308,10 +314,10 @@ namespace RestSharp
         public IRestRequest AddObject(object obj, params string[] includedProperties)
         {
             // automatically create parameters from object props
-            var type = obj.GetType();
-            var props = type.GetProperties();
+            Type type = obj.GetType();
+            PropertyInfo[] props = type.GetProperties();
 
-            foreach (var prop in props)
+            foreach (PropertyInfo prop in props)
             {
                 bool isAllowed = includedProperties.Length == 0 ||
                                  (includedProperties.Length > 0 && includedProperties.Contains(prop.Name));
@@ -319,22 +325,22 @@ namespace RestSharp
                 if (!isAllowed)
                     continue;
 
-                var propType = prop.PropertyType;
-                var val = prop.GetValue(obj, null);
+                Type propType = prop.PropertyType;
+                object val = prop.GetValue(obj, null);
 
                 if (val == null)
                     continue;
 
                 if (propType.IsArray)
                 {
-                    var elementType = propType.GetElementType();
+                    Type elementType = propType.GetElementType();
 
                     if (((Array)val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive|| elementType.IsValueType || elementType == typeof(string)))
                     {
                         // convert the array to an array of strings
-                        var values = (from object item in ((Array)val)
+                        string[] values = (from object item in ((Array)val)
                                       select item.ToString())
                                      .ToArray<string>();
 

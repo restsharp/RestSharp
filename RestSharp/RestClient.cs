@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Authenticators;
@@ -28,6 +27,7 @@ using RestSharp.Extensions;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp
@@ -185,7 +185,7 @@ namespace RestSharp
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
-                var accepts = string.Join(", ", AcceptTypes.ToArray());
+                string accepts = string.Join(", ", AcceptTypes.ToArray());
 
                 this.RemoveDefaultParameter("Accept");
                 this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
@@ -228,7 +228,7 @@ namespace RestSharp
                 return ContentHandlers["*"];
             }
 
-            var semicolonIndex = contentType.IndexOf(';');
+            int semicolonIndex = contentType.IndexOf(';');
 
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
@@ -279,11 +279,11 @@ namespace RestSharp
             if (this.BaseUrl == null)
                 throw new NullReferenceException("RestClient must contain a value for BaseUrl");
 
-            var assembled = request.Resource;
-            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            var builder = new UriBuilder(this.BaseUrl);
+            string assembled = request.Resource;
+            IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            UriBuilder builder = new UriBuilder(this.BaseUrl);
 
-            foreach (var p in urlParms)
+            foreach (Parameter p in urlParms)
             {
                 if (p.Value == null)
                 {
@@ -331,8 +331,8 @@ namespace RestSharp
                 return new Uri(assembled);
 
             // build and attach querystring
-            var data = EncodeParameters(parameters);
-            var separator = assembled != null && assembled.Contains("?") ? "&" : "?";
+            string data = EncodeParameters(parameters);
+            string separator = assembled != null && assembled.Contains("?") ? "&" : "?";
 
             assembled = string.Concat(assembled, separator, data);
 
@@ -360,7 +360,7 @@ namespace RestSharp
             http.CookieContainer = CookieContainer;
 
             // move RestClient.DefaultParameters into Request.Parameters
-            foreach (var p in DefaultParameters)
+            foreach (Parameter p in DefaultParameters)
             {
                 if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
                 {
@@ -373,7 +373,7 @@ namespace RestSharp
             // Add Accept header based on registered deserializers if none has been set by the caller.
             if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
             {
-                var accepts = string.Join(", ", AcceptTypes.ToArray());
+                string accepts = string.Join(", ", AcceptTypes.ToArray());
 
                 request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
             }
@@ -381,18 +381,18 @@ namespace RestSharp
             http.Url = BuildUri(request);
             http.PreAuthenticate = this.PreAuthenticate;
 
-            var userAgent = UserAgent ?? http.UserAgent;
+            string userAgent = UserAgent ?? http.UserAgent;
 
             http.UserAgent = userAgent.HasValue() ? userAgent : "RestSharp/" + version;
 
-            var timeout = request.Timeout > 0 ? request.Timeout : Timeout;
+            int timeout = request.Timeout > 0 ? request.Timeout : Timeout;
 
             if (timeout > 0)
             {
                 http.Timeout = timeout;
             }
 
-            var readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
+            int readWriteTimeout = request.ReadWriteTimeout > 0 ? request.ReadWriteTimeout : ReadWriteTimeout;
 
             if (readWriteTimeout > 0)
             {
@@ -418,46 +418,46 @@ namespace RestSharp
                 http.Credentials = request.Credentials;
             }
 
-            var headers = from p in request.Parameters
-                          where p.Type == ParameterType.HttpHeader
-                          select new HttpHeader
-                                 {
-                                     Name = p.Name,
-                                     Value = Convert.ToString(p.Value)
-                                 };
+            IEnumerable<HttpHeader> headers = from p in request.Parameters
+                                              where p.Type == ParameterType.HttpHeader
+                                              select new HttpHeader
+                                                     {
+                                                         Name = p.Name,
+                                                         Value = Convert.ToString(p.Value)
+                                                     };
 
-            foreach (var header in headers)
+            foreach (HttpHeader header in headers)
             {
                 http.Headers.Add(header);
             }
 
-            var cookies = from p in request.Parameters
-                          where p.Type == ParameterType.Cookie
-                          select new HttpCookie
-                                 {
-                                     Name = p.Name,
-                                     Value = Convert.ToString(p.Value)
-                                 };
+            IEnumerable<HttpCookie> cookies = from p in request.Parameters
+                                              where p.Type == ParameterType.Cookie
+                                              select new HttpCookie
+                                                     {
+                                                         Name = p.Name,
+                                                         Value = Convert.ToString(p.Value)
+                                                     };
 
-            foreach (var cookie in cookies)
+            foreach (HttpCookie cookie in cookies)
             {
                 http.Cookies.Add(cookie);
             }
 
-            var @params = from p in request.Parameters
-                          where p.Type == ParameterType.GetOrPost && p.Value != null
-                          select new HttpParameter
-                                 {
-                                     Name = p.Name,
-                                     Value = Convert.ToString(p.Value)
-                                 };
+            IEnumerable<HttpParameter> @params = from p in request.Parameters
+                                                 where p.Type == ParameterType.GetOrPost && p.Value != null
+                                                 select new HttpParameter
+                                                        {
+                                                            Name = p.Name,
+                                                            Value = Convert.ToString(p.Value)
+                                                        };
 
-            foreach (var parameter in @params)
+            foreach (HttpParameter parameter in @params)
             {
                 http.Parameters.Add(parameter);
             }
 
-            foreach (var file in request.Files)
+            foreach (FileParameter file in request.Files)
             {
                 http.Files.Add(new HttpFile
                                {
@@ -513,24 +513,24 @@ namespace RestSharp
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
         {
-            var restResponse = new RestResponse
-                               {
-                                   Content = httpResponse.Content,
-                                   ContentEncoding = httpResponse.ContentEncoding,
-                                   ContentLength = httpResponse.ContentLength,
-                                   ContentType = httpResponse.ContentType,
-                                   ErrorException = httpResponse.ErrorException,
-                                   ErrorMessage = httpResponse.ErrorMessage,
-                                   RawBytes = httpResponse.RawBytes,
-                                   ResponseStatus = httpResponse.ResponseStatus,
-                                   ResponseUri = httpResponse.ResponseUri,
-                                   Server = httpResponse.Server,
-                                   StatusCode = httpResponse.StatusCode,
-                                   StatusDescription = httpResponse.StatusDescription,
-                                   Request = request
-                               };
+            RestResponse restResponse = new RestResponse
+                                        {
+                                            Content = httpResponse.Content,
+                                            ContentEncoding = httpResponse.ContentEncoding,
+                                            ContentLength = httpResponse.ContentLength,
+                                            ContentType = httpResponse.ContentType,
+                                            ErrorException = httpResponse.ErrorException,
+                                            ErrorMessage = httpResponse.ErrorMessage,
+                                            RawBytes = httpResponse.RawBytes,
+                                            ResponseStatus = httpResponse.ResponseStatus,
+                                            ResponseUri = httpResponse.ResponseUri,
+                                            Server = httpResponse.Server,
+                                            StatusCode = httpResponse.StatusCode,
+                                            StatusDescription = httpResponse.StatusDescription,
+                                            Request = request
+                                        };
 
-            foreach (var header in httpResponse.Headers)
+            foreach (HttpHeader header in httpResponse.Headers)
             {
                 restResponse.Headers.Add(new Parameter
                                          {
@@ -540,7 +540,7 @@ namespace RestSharp
                                          });
             }
 
-            foreach (var cookie in httpResponse.Cookies)
+            foreach (HttpCookie cookie in httpResponse.Cookies)
             {
                 restResponse.Cookies.Add(new RestResponseCookie
                                          {

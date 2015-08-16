@@ -14,10 +14,11 @@
 //   limitations under the License. 
 #endregion
 
+#if FRAMEWORK
+
 using System;
 using System.Net;
 
-#if FRAMEWORK
 namespace RestSharp.Authenticators
 {
     /// <summary>
@@ -30,7 +31,7 @@ namespace RestSharp.Authenticators
         /// <summary>
         /// Authenticate with the credentials of the currently logged in user
         /// </summary>
-        public NtlmAuthenticator() 
+        public NtlmAuthenticator()
             : this(CredentialCache.DefaultCredentials) { }
 
         /// <summary>
@@ -59,4 +60,5 @@ namespace RestSharp.Authenticators
         }
     }
 }
+
 #endif

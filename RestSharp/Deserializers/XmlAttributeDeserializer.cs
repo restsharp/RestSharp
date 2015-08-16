@@ -24,10 +24,10 @@ namespace RestSharp.Deserializers
     {
         protected override object GetValueFromXml(XElement root, XName name, PropertyInfo prop)
         {
-            var isAttribute = false;
+            bool isAttribute = false;
 
             //Check for the DeserializeAs attribute on the property
-            var options = prop.GetAttribute<DeserializeAsAttribute>();
+            DeserializeAsAttribute options = prop.GetAttribute<DeserializeAsAttribute>();
 
             if (options != null)
             {
@@ -37,7 +37,7 @@ namespace RestSharp.Deserializers
 
             if (isAttribute)
             {
-                var attributeVal = GetAttributeByName(root, name);
+                XAttribute attributeVal = GetAttributeByName(root, name);
 
                 if (attributeVal != null)
                 {

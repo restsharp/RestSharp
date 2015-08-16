@@ -38,7 +38,6 @@ using System.Text;
 
 namespace RestSharp.Extensions.MonoHttp
 {
-
     public sealed class HttpUtility
     {
         sealed class HttpQsCollection : NameValueCollection
@@ -77,34 +76,15 @@ namespace RestSharp.Extensions.MonoHttp
         {
             if (output == null)
             {
-#if NET_4_0
-                throw new ArgumentNullException ("output");
-#else
                 throw new NullReferenceException(".NET emulation");
-#endif
             }
 
-#if NET_4_0
-            HttpEncoder.Current.HtmlAttributeEncode (s, output);
-#else
             output.Write(HttpEncoder.HtmlAttributeEncode(s));
-#endif
         }
 
         public static string HtmlAttributeEncode(string s)
         {
-#if NET_4_0
-            if (s == null)
-                return null;
-
-            using (var sw = new StringWriter ())
-            {
-                HttpEncoder.Current.HtmlAttributeEncode (s, sw);
-                return sw.ToString ();
-            }
-#else
             return HttpEncoder.HtmlAttributeEncode(s);
-#endif
         }
 
         public static string UrlDecode(string str)
@@ -140,20 +120,21 @@ namespace RestSharp.Extensions.MonoHttp
                 e = Encoding.UTF8;
 
             long len = s.Length;
-            var bytes = new List<byte>();
-            int xchar;
-            char ch;
+            List<byte> bytes = new List<byte>();
 
             for (int i = 0; i < len; i++)
             {
-                ch = s[i];
+                char ch = s[i];
 
                 if (ch == '%' && i + 2 < len && s[i + 1] != '%')
                 {
+                    int xchar;
+
                     if (s[i + 1] == 'u' && i + 5 < len)
                     {
                         // unicode hex sequence
                         xchar = GetChar(s, i + 2, 4);
+
                         if (xchar != -1)
                         {
                             WriteCharBytes(bytes, (char)xchar, e);
@@ -257,7 +238,7 @@ namespace RestSharp.Extensions.MonoHttp
                 return null;
 
             if (count == 0)
-                return String.Empty;
+                return string.Empty;
 
             if (bytes == null)
                 throw new ArgumentNullException("bytes");
@@ -272,12 +253,13 @@ namespace RestSharp.Extensions.MonoHttp
             MemoryStream acc = new MemoryStream();
 
             int end = count + offset;
-            int xchar;
 
             for (int i = offset; i < end; i++)
             {
                 if (bytes[i] == '%' && i + 2 < count && bytes[i + 1] != '%')
                 {
+                    int xchar;
+
                     if (bytes[i + 1] == (byte)'u' && i + 5 < end)
                     {
                         if (acc.Length > 0)
@@ -325,8 +307,6 @@ namespace RestSharp.Extensions.MonoHttp
             {
                 output.Append(GetChars(acc, e));
             }
-
-            acc = null;
 
             return output.ToString();
         }
@@ -409,8 +389,8 @@ namespace RestSharp.Extensions.MonoHttp
             if (s == null)
                 return null;
 
-            if (s == String.Empty)
-                return String.Empty;
+            if (s == string.Empty)
+                return string.Empty;
 
             bool needEncode = false;
             int len = s.Length;
@@ -446,7 +426,7 @@ namespace RestSharp.Extensions.MonoHttp
                 return null;
 
             if (bytes.Length == 0)
-                return String.Empty;
+                return string.Empty;
 
             byte[] r = UrlEncodeToBytes(bytes, 0, bytes.Length);
 
@@ -459,7 +439,7 @@ namespace RestSharp.Extensions.MonoHttp
                 return null;
 
             if (bytes.Length == 0)
-                return String.Empty;
+                return string.Empty;
 
             byte[] r = UrlEncodeToBytes(bytes, offset, count);
 
@@ -572,7 +552,7 @@ namespace RestSharp.Extensions.MonoHttp
 #endif
             }
 
-            if (!String.IsNullOrEmpty(s))
+            if (!string.IsNullOrEmpty(s))
             {
 #if NET_4_0
                 HttpEncoder.Current.HtmlDecode (s, output);
@@ -614,7 +594,7 @@ namespace RestSharp.Extensions.MonoHttp
 #endif
             }
 
-            if (!String.IsNullOrEmpty(s))
+            if (!string.IsNullOrEmpty(s))
             {
 #if NET_4_0
                 HttpEncoder.Current.HtmlEncode (s, output);

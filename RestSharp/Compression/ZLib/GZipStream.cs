@@ -273,7 +273,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="level">A tuning knob to trade speed for effectiveness.</param>
         public GZipStream(Stream stream)
         {
-            BaseStream = new ZlibBaseStream(stream, ZlibStreamFlavor.GZIP, false);
+            BaseStream = new ZlibBaseStream(stream, ZlibStreamFlavor.Gzip, false);
         }
 
         #region Zlib properties
@@ -283,13 +283,13 @@ namespace RestSharp.Compression.ZLib
         /// </summary>
         virtual public FlushType FlushMode
         {
-            get { return (BaseStream.flushMode); }
+            get { return (BaseStream.FlushMode); }
             set
             {
                 if (disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                BaseStream.flushMode = value;
+                BaseStream.FlushMode = value;
             }
         }
 
@@ -311,7 +311,7 @@ namespace RestSharp.Compression.ZLib
         /// </remarks>
         public int BufferSize
         {
-            get { return BaseStream.bufferSize; }
+            get { return BaseStream.BufferSize; }
             set
             {
                 if (disposed)
@@ -323,7 +323,7 @@ namespace RestSharp.Compression.ZLib
                 if (value < ZlibConstants.WORKING_BUFFER_SIZE_MIN)
                     throw new ZlibException(string.Format("Don't be silly. {0} bytes?? Use a bigger buffer.", value));
 
-                BaseStream.bufferSize = value;
+                BaseStream.BufferSize = value;
             }
         }
 
@@ -384,7 +384,7 @@ namespace RestSharp.Compression.ZLib
                 if (disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                return BaseStream.stream.CanRead;
+                return BaseStream.Stream.CanRead;
             }
         }
 
@@ -412,7 +412,7 @@ namespace RestSharp.Compression.ZLib
                 if (disposed)
                     throw new ObjectDisposedException("GZipStream");
 
-                return BaseStream.stream.CanWrite;
+                return BaseStream.Stream.CanWrite;
             }
         }
 
@@ -530,77 +530,77 @@ namespace RestSharp.Compression.ZLib
         internal static DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         internal static Encoding Iso8859Dash1 = Encoding.GetEncoding("iso-8859-1");
 
-        private int EmitHeader()
-        {
-            byte[] commentBytes = (Comment == null) ? null : Iso8859Dash1.GetBytes(Comment);
-            byte[] filenameBytes = (FileName == null) ? null : Iso8859Dash1.GetBytes(FileName);
+        //private int EmitHeader()
+        //{
+        //    byte[] commentBytes = (Comment == null) ? null : Iso8859Dash1.GetBytes(Comment);
+        //    byte[] filenameBytes = (FileName == null) ? null : Iso8859Dash1.GetBytes(FileName);
 
-            int cbLength = (Comment == null) ? 0 : commentBytes.Length + 1;
-            int fnLength = (FileName == null) ? 0 : filenameBytes.Length + 1;
+        //    int cbLength = (Comment == null) ? 0 : commentBytes.Length + 1;
+        //    int fnLength = (FileName == null) ? 0 : filenameBytes.Length + 1;
 
-            int bufferLength = 10 + cbLength + fnLength;
-            byte[] header = new byte[bufferLength];
-            int i = 0;
+        //    int bufferLength = 10 + cbLength + fnLength;
+        //    byte[] header = new byte[bufferLength];
+        //    int i = 0;
 
-            // ID
-            header[i++] = 0x1F;
-            header[i++] = 0x8B;
+        //    // ID
+        //    header[i++] = 0x1F;
+        //    header[i++] = 0x8B;
 
-            // compression method
-            header[i++] = 8;
+        //    // compression method
+        //    header[i++] = 8;
 
-            byte flag = 0;
+        //    byte flag = 0;
 
-            if (Comment != null)
-                flag ^= 0x10;
+        //    if (Comment != null)
+        //        flag ^= 0x10;
 
-            if (FileName != null)
-                flag ^= 0x8;
+        //    if (FileName != null)
+        //        flag ^= 0x8;
 
-            // flag
-            header[i++] = flag;
+        //    // flag
+        //    header[i++] = flag;
 
-            // mtime
-            if (!LastModified.HasValue)
-                LastModified = DateTime.Now;
+        //    // mtime
+        //    if (!LastModified.HasValue)
+        //        LastModified = DateTime.Now;
 
-            TimeSpan delta = LastModified.Value - UnixEpoch;
-            int timet = (int) delta.TotalSeconds;
-            Array.Copy(BitConverter.GetBytes(timet), 0, header, i, 4);
+        //    TimeSpan delta = LastModified.Value - UnixEpoch;
+        //    int timet = (int) delta.TotalSeconds;
+        //    Array.Copy(BitConverter.GetBytes(timet), 0, header, i, 4);
 
-            i += 4;
+        //    i += 4;
 
-            // xflg
-            header[i++] = 0;    // this field is totally useless
-            // OS
-            header[i++] = 0xFF; // 0xFF == unspecified
+        //    // xflg
+        //    header[i++] = 0;    // this field is totally useless
+        //    // OS
+        //    header[i++] = 0xFF; // 0xFF == unspecified
 
-            // extra field length - only if FEXTRA is set, which it is not.
-            //header[i++]= 0;
-            //header[i++]= 0;
+        //    // extra field length - only if FEXTRA is set, which it is not.
+        //    //header[i++]= 0;
+        //    //header[i++]= 0;
 
-            // filename
-            if (fnLength != 0)
-            {
-                Array.Copy(filenameBytes, 0, header, i, fnLength - 1);
+        //    // filename
+        //    if (fnLength != 0)
+        //    {
+        //        Array.Copy(filenameBytes, 0, header, i, fnLength - 1);
 
-                i += fnLength - 1;
-                header[i++] = 0; // terminate
-            }
+        //        i += fnLength - 1;
+        //        header[i++] = 0; // terminate
+        //    }
 
-            // comment
-            if (cbLength != 0)
-            {
-                Array.Copy(commentBytes, 0, header, i, cbLength - 1);
+        //    // comment
+        //    if (cbLength != 0)
+        //    {
+        //        Array.Copy(commentBytes, 0, header, i, cbLength - 1);
 
-                i += cbLength - 1;
-                header[i++] = 0; // terminate
-            }
+        //        i += cbLength - 1;
+        //        header[i++] = 0; // terminate
+        //    }
 
-            BaseStream.stream.Write(header, 0, header.Length);
+        //    BaseStream.stream.Write(header, 0, header.Length);
 
-            return header.Length; // bytes written
-        }
+        //    return header.Length; // bytes written
+        //}
 
         public override void Write(byte[] buffer, int offset, int count)
         {

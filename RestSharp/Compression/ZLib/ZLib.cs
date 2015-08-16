@@ -67,7 +67,6 @@
 using System;
 using System.IO;
 using System.Text;
-using Interop = System.Runtime.InteropServices;
 
 namespace RestSharp.Compression.ZLib
 {
@@ -97,7 +96,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="number">Number to operate on</param>
         /// <param name="bits">Ammount of bits to shift</param>
         /// <returns>The resulting number from the shift operation</returns>
-        public static int URShift(int number, int bits)
+        public static int UrShift(int number, int bits)
         {
             return (int)((uint)number >> bits);
         }
@@ -108,7 +107,7 @@ namespace RestSharp.Compression.ZLib
         /// <param name="number">Number to operate on</param>
         /// <param name="bits">Ammount of bits to shift</param>
         /// <returns>The resulting number from the shift operation</returns>
-        public static long URShift(long number, int bits)
+        public static long UrShift(long number, int bits)
         {
             return (long)((ulong)number >> bits);
         }
@@ -219,7 +218,7 @@ namespace RestSharp.Compression.ZLib
         private static int BASE = 65521;
 
         // NMAX is the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1
-        private static int NMAX = 5552;
+        private static int nmax = 5552;
 
         static internal long Adler32(long adler, byte[] buf, int index, int len)
         {
@@ -233,7 +232,7 @@ namespace RestSharp.Compression.ZLib
 
             while (len > 0)
             {
-                int k = len < NMAX ? len : NMAX;
+                int k = len < nmax ? len : nmax;
 
                 len -= k;
 
@@ -273,16 +272,6 @@ namespace RestSharp.Compression.ZLib
 
             return (s2 << 16) | s1;
         }
-
-        /*
-        private java.util.zip.Adler32 adler=new java.util.zip.Adler32();
-        long adler32(long value, byte[] buf, int index, int len){
-        if(value==1) {adler.reset();}
-        if(buf==null) {adler.reset();}
-        else{adler.update(buf, index, len);}
-        return adler.getValue();
-        }
-        */
     }
 }
 

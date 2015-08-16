@@ -65,7 +65,7 @@ namespace RestSharp.Compression.ZLib
 
                 for (uint i = 0; i < 256; i++)
                 {
-                    var dwCrc = i;
+                    uint dwCrc = i;
 
                     for (uint j = 8; j > 0; j--)
                     {

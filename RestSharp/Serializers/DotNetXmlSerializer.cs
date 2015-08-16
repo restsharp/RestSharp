@@ -35,12 +35,12 @@ namespace RestSharp.Serializers
         /// <returns>XML as string</returns>
         public string Serialize(object obj)
         {
-            var ns = new XmlSerializerNamespaces();
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
 
             ns.Add(string.Empty, Namespace);
 
-            var serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
-            var writer = new EncodingStringWriter(Encoding);
+            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
+            EncodingStringWriter writer = new EncodingStringWriter(Encoding);
 
             serializer.Serialize(writer, obj, ns);
 

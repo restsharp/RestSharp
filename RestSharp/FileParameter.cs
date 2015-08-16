@@ -19,9 +19,9 @@ namespace RestSharp
         public static FileParameter Create(string name, byte[] data, string filename, string contentType)
         {
 #if FRAMEWORK
-            var length = data.LongLength;
+            long length = data.LongLength;
 #else
-            var length = (long)data.Length;
+            long length = data.Length;
 #endif
 
             return new FileParameter

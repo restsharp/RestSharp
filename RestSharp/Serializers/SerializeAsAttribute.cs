@@ -67,7 +67,7 @@ namespace RestSharp.Serializers
         /// <returns>String</returns>
         public string TransformName(string input)
         {
-            var name = this.Name ?? input;
+            string name = this.Name ?? input;
 
             switch (NameStyle)
             {

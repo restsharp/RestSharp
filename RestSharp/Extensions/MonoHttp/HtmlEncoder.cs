@@ -42,20 +42,12 @@ using System.Web.Configuration;
 
 namespace RestSharp.Extensions.MonoHttp
 {
-#if NET_4_0
-    public
-#endif
     class HttpEncoder
     {
         static readonly char[] hexChars = "0123456789abcdef".ToCharArray();
         static readonly object entitiesLock = new object();
         static SortedDictionary<string, char> entities;
-#if NET_4_0
-        static Lazy <HttpEncoder> defaultEncoder;
-        static Lazy <HttpEncoder> currentEncoderLazy;
-#else
         static readonly HttpEncoder defaultEncoder;
-#endif
         static readonly HttpEncoder currentEncoder;
 
         static IDictionary<string, char> Entities
@@ -76,52 +68,26 @@ namespace RestSharp.Extensions.MonoHttp
         {
             get
             {
-#if NET_4_0
-                if (currentEncoder == null)
-                    currentEncoder = currentEncoderLazy.Value;
-#endif
                 return currentEncoder;
             }
-#if NET_4_0
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException ("value");
-
-                currentEncoder = value;
-            }
-#endif
         }
 
         public static HttpEncoder Default
         {
             get
             {
-#if NET_4_0
-                return defaultEncoder.Value;
-#else
                 return defaultEncoder;
-#endif
             }
         }
 
         static HttpEncoder()
         {
-#if NET_4_0
-            defaultEncoder = new Lazy <HttpEncoder> (() => new HttpEncoder ());
-            currentEncoderLazy = new Lazy <HttpEncoder> (new Func <HttpEncoder> (GetCustomEncoderFromConfig));
-#else
             defaultEncoder = new HttpEncoder();
             currentEncoder = defaultEncoder;
-#endif
         }
 
-#if NET_4_0
-        protected internal virtual
-#else
-        internal static
-#endif
- void HeaderNameValueEncode(string headerName, string headerValue, out string encodedHeaderName, out string encodedHeaderValue)
+        internal static void HeaderNameValueEncode(string headerName, string headerValue, out string encodedHeaderName,
+            out string encodedHeaderValue)
         {
             encodedHeaderName = string.IsNullOrEmpty(headerName) ? headerName : EncodeHeaderString(headerName);
             encodedHeaderValue = string.IsNullOrEmpty(headerValue) ? headerValue : EncodeHeaderString(headerValue);
@@ -139,7 +105,7 @@ namespace RestSharp.Extensions.MonoHttp
         {
             StringBuilder sb = null;
 
-            foreach (var ch in input)
+            foreach (char ch in input)
             {
                 if ((ch < 32 && ch != 9) || ch == 127)
                     StringBuilderAppend(string.Format("%{0:x2}", (int) ch), ref sb);
@@ -148,68 +114,7 @@ namespace RestSharp.Extensions.MonoHttp
             return sb != null ? sb.ToString() : input;
         }
 
-#if NET_4_0
-        protected internal virtual void HtmlAttributeEncode (string value, TextWriter output)
-        {
-
-            if (output == null)
-                throw new ArgumentNullException ("output");
-
-            if (String.IsNullOrEmpty (value))
-                return;
-
-            output.Write (HtmlAttributeEncode (value));
-        }
-
-        protected internal virtual void HtmlDecode (string value, TextWriter output)
-        {
-            if (output == null)
-                throw new ArgumentNullException ("output");
-
-            output.Write (HtmlDecode (value));
-        }
-
-        protected internal virtual void HtmlEncode (string value, TextWriter output)
-        {
-            if (output == null)
-                throw new ArgumentNullException ("output");
-
-            output.Write (HtmlEncode (value));
-        }
-
-        protected internal virtual byte[] UrlEncode (byte[] bytes, int offset, int count)
-        {
-            return UrlEncodeToBytes (bytes, offset, count);
-        }
-
-        static HttpEncoder GetCustomEncoderFromConfig ()
-        {
-            var cfg = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
-            string typeName = cfg.EncoderType;
-
-            if (String.Compare (typeName, "System.Web.Util.HttpEncoder", StringComparison.OrdinalIgnoreCase) == 0)
-                return Default;
-
-            Type t = Type.GetType (typeName, false);
-
-            if (t == null)
-                throw new ConfigurationErrorsException (String.Format ("Could not load type '{0}'.", typeName));
-
-            if (!typeof (HttpEncoder).IsAssignableFrom (t))
-                throw new ConfigurationErrorsException (
-                    String.Format ("'{0}' is not allowed here because it does not extend class 'System.Web.Util.HttpEncoder'.", typeName)
-                );
-
-            return Activator.CreateInstance (t, false) as HttpEncoder;
-        }
-#endif
-
-#if NET_4_0
-        protected internal virtual
-#else
-        internal static
-#endif
- string UrlPathEncode(string value)
+        internal static string UrlPathEncode(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -263,11 +168,8 @@ namespace RestSharp.Extensions.MonoHttp
             for (int i = 0; i < s.Length; i++)
             {
                 char c = s[i];
-                if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159
-#if NET_4_0
-                    || c == '\''
-#endif
-)
+
+                if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159)
                 {
                     needEncode = true;
                     break;
@@ -300,12 +202,6 @@ namespace RestSharp.Extensions.MonoHttp
                         output.Append("&quot;");
                         break;
 
-#if NET_4_0
-                    case '\'':
-                        output.Append ("&#39;");
-                        break;
-#endif
-
                     case '\uff1c':
                         output.Append("&#65308;");
                         break;
@@ -315,7 +211,7 @@ namespace RestSharp.Extensions.MonoHttp
                         break;
 
                     default:
-                        var ch = s[i];
+                        char ch = s[i];
 
                         if (ch > 159 && ch < 256)
                         {
@@ -325,6 +221,7 @@ namespace RestSharp.Extensions.MonoHttp
                         }
                         else
                             output.Append(ch);
+
                         break;
                 }
             }
@@ -334,28 +231,19 @@ namespace RestSharp.Extensions.MonoHttp
 
         internal static string HtmlAttributeEncode(string s)
         {
-#if NET_4_0
-            if (String.IsNullOrEmpty (s))
-                return String.Empty;
-#else
-
             if (s == null)
                 return null;
 
             if (s.Length == 0)
                 return string.Empty;
-#endif
 
             bool needEncode = false;
 
             for (int i = 0; i < s.Length; i++)
             {
                 char c = s[i];
-                if (c == '&' || c == '"' || c == '<'
-#if NET_4_0
-                    || c == '\''
-#endif
-)
+
+                if (c == '&' || c == '"' || c == '<')
                 {
                     needEncode = true;
                     break;
@@ -369,6 +257,7 @@ namespace RestSharp.Extensions.MonoHttp
             int len = s.Length;
 
             for (int i = 0; i < len; i++)
+            {
                 switch (s[i])
                 {
                     case '&':
@@ -383,16 +272,11 @@ namespace RestSharp.Extensions.MonoHttp
                         output.Append("&lt;");
                         break;
 
-#if NET_4_0
-                    case '\'':
-                        output.Append ("&#39;");
-                        break;
-#endif
-
                     default:
                         output.Append(s[i]);
                         break;
                 }
+            }
 
             return output.ToString();
         }
@@ -408,9 +292,6 @@ namespace RestSharp.Extensions.MonoHttp
             if (s.IndexOf('&') == -1)
                 return s;
 
-#if NET_4_0
-            StringBuilder rawEntity = new StringBuilder ();
-#endif
             StringBuilder entity = new StringBuilder();
             StringBuilder output = new StringBuilder();
             int len = s.Length;
@@ -433,9 +314,6 @@ namespace RestSharp.Extensions.MonoHttp
                     if (c == '&')
                     {
                         entity.Append(c);
-#if NET_4_0
-                        rawEntity.Append (c);
-#endif
                         state = 1;
                     }
                     else
@@ -479,10 +357,8 @@ namespace RestSharp.Extensions.MonoHttp
                             isHexValue = false;
                             state = c != '#' ? 2 : 3;
                             entity.Append(c);
-#if NET_4_0
-                            rawEntity.Append (c);
-#endif
                         }
+
                         break;
 
                     case 2:
@@ -498,20 +374,12 @@ namespace RestSharp.Extensions.MonoHttp
                             output.Append(key);
                             state = 0;
                             entity.Length = 0;
-#if NET_4_0
-                            rawEntity.Length = 0;
-#endif
                         }
                         break;
 
                     case 3:
                         if (c == ';')
                         {
-#if NET_4_0
-                        if (number == 0)
-                            output.Append (rawEntity.ToString () + ";");
-                        else
-#endif
                             if (number > 65535)
                             {
                                 output.Append("&#");
@@ -525,33 +393,21 @@ namespace RestSharp.Extensions.MonoHttp
 
                             state = 0;
                             entity.Length = 0;
-#if NET_4_0
-                            rawEntity.Length = 0;
-#endif
                             haveTrailingDigits = false;
                         }
                         else if (isHexValue && Uri.IsHexDigit(c))
                         {
                             number = number * 16 + Uri.FromHex(c);
                             haveTrailingDigits = true;
-#if NET_4_0
-                        rawEntity.Append (c);
-#endif
                         }
                         else if (char.IsDigit(c))
                         {
                             number = number * 10 + (c - '0');
                             haveTrailingDigits = true;
-#if NET_4_0
-                            rawEntity.Append (c);
-#endif
                         }
                         else if (number == 0 && (c == 'x' || c == 'X'))
                         {
                             isHexValue = true;
-#if NET_4_0
-                            rawEntity.Append (c);
-#endif
                         }
                         else
                         {
@@ -565,6 +421,7 @@ namespace RestSharp.Extensions.MonoHttp
 
                             entity.Append(c);
                         }
+
                         break;
                 }
             }
@@ -583,11 +440,7 @@ namespace RestSharp.Extensions.MonoHttp
 
         internal static bool NotEncoded(char c)
         {
-            return (c == '!' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_'
-#if !NET_4_0
- || c == '\''
-#endif
-);
+            return (c == '!' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_');
         }
 
         internal static void UrlEncodeChar(char c, Stream result, bool isUnicode)

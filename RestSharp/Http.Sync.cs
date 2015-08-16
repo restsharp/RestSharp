@@ -17,6 +17,7 @@
 #if FRAMEWORK
 
 using System;
+using System.IO;
 using System.Net;
 using RestSharp.Extensions;
 
@@ -113,7 +114,7 @@ namespace RestSharp
 
         private HttpResponse GetStyleMethodInternal(string method)
         {
-            var webRequest = ConfigureWebRequest(method, Url);
+            HttpWebRequest webRequest = ConfigureWebRequest(method, Url);
 
             if (HasBody && (method == "DELETE" || method == "OPTIONS"))
             {
@@ -126,7 +127,7 @@ namespace RestSharp
 
         private HttpResponse PostPutInternal(string method)
         {
-            var webRequest = ConfigureWebRequest(method, Url);
+            HttpWebRequest webRequest = ConfigureWebRequest(method, Url);
 
             PreparePostBody(webRequest);
 
@@ -147,7 +148,7 @@ namespace RestSharp
 
         private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
         {
-            var webException = ex as WebException;
+            WebException webException = ex as WebException;
 
             if (webException != null && webException.Status == WebExceptionStatus.Timeout)
             {
@@ -165,11 +166,11 @@ namespace RestSharp
 
         private HttpResponse GetResponse(HttpWebRequest request)
         {
-            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
+            HttpResponse response = new HttpResponse { ResponseStatus = ResponseStatus.None };
 
             try
             {
-                var webResponse = GetRawResponse(request);
+                HttpWebResponse webResponse = GetRawResponse(request);
 
                 ExtractResponseData(response, webResponse);
             }
@@ -220,7 +221,7 @@ namespace RestSharp
 #endif
             }
 
-            using (var requestStream = webRequest.GetRequestStream())
+            using (Stream requestStream = webRequest.GetRequestStream())
             {
                 if (HasFiles || AlwaysMultipartFormData)
                 {
@@ -241,7 +242,7 @@ namespace RestSharp
         // TODO: duplication at the moment).
         private HttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
-            var webRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
 
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
             webRequest.PreAuthenticate = PreAuthenticate;

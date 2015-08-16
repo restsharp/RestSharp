@@ -16,12 +16,11 @@
 
 using System;
 using System.Threading;
+using System.Net;
 
 #if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading.Tasks;
 #endif
-
-using System.Net;
 
 namespace RestSharp
 {
@@ -79,20 +78,18 @@ namespace RestSharp
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod,
             Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
         {
-            var http = this.HttpFactory.Create();
+            IHttp http = this.HttpFactory.Create();
 
             this.AuthenticateIfNeeded(this, request);
-
             this.ConfigureHttp(request, http);
 
-            var asyncHandle = new RestRequestAsyncHandle();
-
+            RestRequestAsyncHandle asyncHandle = new RestRequestAsyncHandle();
             Action<HttpResponse> responseCb = r => this.ProcessResponse(request, r, asyncHandle, callback);
 
             if (this.UseSynchronizationContext && SynchronizationContext.Current != null)
             {
-                var ctx = SynchronizationContext.Current;
-                var cb = responseCb;
+                SynchronizationContext ctx = SynchronizationContext.Current;
+                Action<HttpResponse> cb = responseCb;
 
                 responseCb = resp => ctx.Post(s => cb(resp), null);
             }
@@ -115,7 +112,7 @@ namespace RestSharp
         private void ProcessResponse(IRestRequest request, HttpResponse httpResponse, RestRequestAsyncHandle asyncHandle,
             Action<IRestResponse, RestRequestAsyncHandle> callback)
         {
-            var restResponse = ConvertToRestResponse(request, httpResponse);
+            RestResponse restResponse = ConvertToRestResponse(request, httpResponse);
             callback(restResponse, asyncHandle);
         }
 
@@ -264,28 +261,34 @@ namespace RestSharp
                 throw new ArgumentNullException("request");
             }
 
-            var taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
+            TaskCompletionSource<IRestResponse<T>> taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
 
             try
             {
-                var async = this.ExecuteAsync<T>(request, (response, _) =>
+                RestRequestAsyncHandle async = this.ExecuteAsync<T>(
+                    request,
+                    (response, _) =>
                     {
                         if (token.IsCancellationRequested)
                         {
                             taskCompletionSource.TrySetCanceled();
                         }
-                        //Don't run TrySetException, since we should set Error properties and swallow exceptions to be consistent with sync methods
+                        // Don't run TrySetException, since we should set Error properties and swallow exceptions
+                        // to be consistent with sync methods
                         else
                         {
                             taskCompletionSource.TrySetResult(response);
                         }
                     });
 
-                var registration = token.Register(() =>
-                                                  {
-                                                      async.Abort();
-                                                      taskCompletionSource.TrySetCanceled();
-                                                  });
+#if !WINDOWS_PHONE
+                CancellationTokenRegistration registration =
+#endif
+                    token.Register(() =>
+                                   {
+                                       async.Abort();
+                                       taskCompletionSource.TrySetCanceled();
+                                   });
 
 #if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);
@@ -372,30 +375,35 @@ namespace RestSharp
                 throw new ArgumentNullException("request");
             }
 
-            var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
+            TaskCompletionSource<IRestResponse> taskCompletionSource = new TaskCompletionSource<IRestResponse>();
 
             try
             {
-                var async = this.ExecuteAsync(request, (response, _) =>
-                                                       {
-                                                           if (token.IsCancellationRequested)
-                                                           {
-                                                               taskCompletionSource.TrySetCanceled();
-                                                           }
-                                                           // Don't run TrySetException, since we should set Error
-                                                           // properties and swallow exceptions to be consistent
-                                                           // with sync methods
-                                                           else
-                                                           {
-                                                               taskCompletionSource.TrySetResult(response);
-                                                           }
-                                                       });
+                RestRequestAsyncHandle async = this.ExecuteAsync(
+                    request,
+                    (response, _) =>
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            taskCompletionSource.TrySetCanceled();
+                        }
+                        // Don't run TrySetException, since we should set Error
+                        // properties and swallow exceptions to be consistent
+                        // with sync methods
+                        else
+                        {
+                            taskCompletionSource.TrySetResult(response);
+                        }
+                    });
 
-                var registration = token.Register(() =>
-                                                  {
-                                                      async.Abort();
-                                                      taskCompletionSource.TrySetCanceled();
-                                                  });
+#if !WINDOWS_PHONE
+                CancellationTokenRegistration registration =
+#endif
+                    token.Register(() =>
+                                   {
+                                       async.Abort();
+                                       taskCompletionSource.TrySetCanceled();
+                                   });
 
 #if !WINDOWS_PHONE
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);

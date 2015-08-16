@@ -15,19 +15,20 @@
 #endregion
 
 using System;
-using System.Linq;
+using System.IO;
 using System.Net;
-using System.Threading;
 using RestSharp.Extensions;
 
+#if !WINDOWS_PHONE
+using System.Linq;
+#endif
+
 #if SILVERLIGHT
-using System.Windows.Browser;
 using System.Net.Browser;
 #endif
 
-#if WINDOWS_PHONE
-using System.Windows.Threading;
-using System.Windows;
+#if !WINDOWS_PHONE && !SILVERLIGHT
+using System.Threading;
 #endif
 
 namespace RestSharp
@@ -107,7 +108,7 @@ namespace RestSharp
 
             try
             {
-                var url = Url;
+                Uri url = Url;
 
                 webRequest = ConfigureAsyncWebRequest(method, url);
 
@@ -120,7 +121,7 @@ namespace RestSharp
                 {
                     this.timeoutState = new TimeOutState { Request = webRequest };
 
-                    var asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
+                    IAsyncResult asyncResult = webRequest.BeginGetResponse(result => ResponseCallback(result, callback), webRequest);
 
                     SetTimeout(asyncResult, this.timeoutState);
                 }
@@ -135,8 +136,8 @@ namespace RestSharp
 
         private HttpResponse CreateErrorResponse(Exception ex)
         {
-            var response = new HttpResponse();
-            var webException = ex as WebException;
+            HttpResponse response = new HttpResponse();
+            WebException webException = ex as WebException;
 
             if (webException != null && webException.Status == WebExceptionStatus.RequestCanceled)
             {
@@ -190,6 +191,7 @@ namespace RestSharp
             SetTimeout(asyncResult, this.timeoutState);
         }
 
+#if !WINDOWS_PHONE
         private long CalculateContentLength()
         {
             if (RequestBodyBytes != null)
@@ -203,7 +205,7 @@ namespace RestSharp
             // calculate length for multipart form
             long length = 0;
 
-            foreach (var file in Files)
+            foreach (HttpFile file in Files)
             {
                 length += this.Encoding.GetByteCount(GetMultipartFileHeader(file));
                 length += file.ContentLength;
@@ -217,14 +219,15 @@ namespace RestSharp
 
             return length;
         }
+#endif
 
         private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
         {
-            var webRequest = (HttpWebRequest)result.AsyncState;
+            HttpWebRequest webRequest = (HttpWebRequest)result.AsyncState;
 
             if (this.timeoutState.TimedOut)
             {
-                var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
+                HttpResponse response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
 
                 ExecuteCallback(response, callback);
 
@@ -234,7 +237,7 @@ namespace RestSharp
             // write body to request stream
             try
             {
-                using (var requestStream = webRequest.EndGetRequestStream(result))
+                using (Stream requestStream = webRequest.EndGetRequestStream(result))
                 {
                     if (HasFiles || AlwaysMultipartFormData)
                     {
@@ -278,7 +281,7 @@ namespace RestSharp
             if (!timedOut)
                 return;
 
-            var timeoutState = state as TimeOutState;
+            TimeOutState timeoutState = state as TimeOutState;
 
             if (timeoutState == null)
             {
@@ -302,7 +305,7 @@ namespace RestSharp
 
             try
             {
-                var webRequest = (HttpWebRequest)result.AsyncState;
+                HttpWebRequest webRequest = (HttpWebRequest)result.AsyncState;
 
                 raw = webRequest.EndGetResponse(result) as HttpWebResponse;
             }
@@ -339,7 +342,7 @@ namespace RestSharp
 
         private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
         {
-            var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
+            HttpResponse response = new HttpResponse { ResponseStatus = ResponseStatus.None };
 
             try
             {
@@ -400,7 +403,7 @@ namespace RestSharp
             WebRequest.RegisterPrefix("http://", WebRequestCreator.ClientHttp);
             WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
-            var webRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
 
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 

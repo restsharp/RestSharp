@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RestSharp.Authenticators.OAuth;
@@ -71,22 +72,22 @@ namespace RestSharp.Authenticators
 
         public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret)
         {
-            var authenticator = new OAuth1Authenticator
-                                {
-                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
-                                    ConsumerKey = consumerKey,
-                                    ConsumerSecret = consumerSecret,
-                                    Type = OAuthType.RequestToken
-                                };
+            OAuth1Authenticator authenticator = new OAuth1Authenticator
+                                                {
+                                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
+                                                    ConsumerKey = consumerKey,
+                                                    ConsumerSecret = consumerSecret,
+                                                    Type = OAuthType.RequestToken
+                                                };
 
             return authenticator;
         }
 
         public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret, string callbackUrl)
         {
-            var authenticator = ForRequestToken(consumerKey, consumerSecret);
+            OAuth1Authenticator authenticator = ForRequestToken(consumerKey, consumerSecret);
 
             authenticator.CallbackUrl = callbackUrl;
 
@@ -96,17 +97,17 @@ namespace RestSharp.Authenticators
         public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token,
             string tokenSecret)
         {
-            var authenticator = new OAuth1Authenticator
-                                {
-                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
-                                    ConsumerKey = consumerKey,
-                                    ConsumerSecret = consumerSecret,
-                                    Token = token,
-                                    TokenSecret = tokenSecret,
-                                    Type = OAuthType.AccessToken
-                                };
+            OAuth1Authenticator authenticator = new OAuth1Authenticator
+                                                {
+                                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
+                                                    ConsumerKey = consumerKey,
+                                                    ConsumerSecret = consumerSecret,
+                                                    Token = token,
+                                                    TokenSecret = tokenSecret,
+                                                    Type = OAuthType.AccessToken
+                                                };
 
             return authenticator;
         }
@@ -114,7 +115,7 @@ namespace RestSharp.Authenticators
         public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token,
             string tokenSecret, string verifier)
         {
-            var authenticator = ForAccessToken(consumerKey, consumerSecret, token, tokenSecret);
+            OAuth1Authenticator authenticator = ForAccessToken(consumerKey, consumerSecret, token, tokenSecret);
 
             authenticator.Verifier = verifier;
 
@@ -124,7 +125,7 @@ namespace RestSharp.Authenticators
         public static OAuth1Authenticator ForAccessTokenRefresh(string consumerKey, string consumerSecret, string token,
             string tokenSecret, string sessionHandle)
         {
-            var authenticator = ForAccessToken(consumerKey, consumerSecret, token, tokenSecret);
+            OAuth1Authenticator authenticator = ForAccessToken(consumerKey, consumerSecret, token, tokenSecret);
 
             authenticator.SessionHandle = sessionHandle;
 
@@ -134,7 +135,7 @@ namespace RestSharp.Authenticators
         public static OAuth1Authenticator ForAccessTokenRefresh(string consumerKey, string consumerSecret, string token,
             string tokenSecret, string verifier, string sessionHandle)
         {
-            var authenticator = ForAccessToken(consumerKey, consumerSecret, token, tokenSecret);
+            OAuth1Authenticator authenticator = ForAccessToken(consumerKey, consumerSecret, token, tokenSecret);
 
             authenticator.SessionHandle = sessionHandle;
             authenticator.Verifier = verifier;
@@ -145,17 +146,17 @@ namespace RestSharp.Authenticators
         public static OAuth1Authenticator ForClientAuthentication(string consumerKey, string consumerSecret,
             string username, string password)
         {
-            var authenticator = new OAuth1Authenticator
-                                {
-                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
-                                    ConsumerKey = consumerKey,
-                                    ConsumerSecret = consumerSecret,
-                                    ClientUsername = username,
-                                    ClientPassword = password,
-                                    Type = OAuthType.ClientAuthentication
-                                };
+            OAuth1Authenticator authenticator = new OAuth1Authenticator
+                                                {
+                                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
+                                                    ConsumerKey = consumerKey,
+                                                    ConsumerSecret = consumerSecret,
+                                                    ClientUsername = username,
+                                                    ClientPassword = password,
+                                                    Type = OAuthType.ClientAuthentication
+                                                };
 
             return authenticator;
         }
@@ -163,54 +164,54 @@ namespace RestSharp.Authenticators
         public static OAuth1Authenticator ForProtectedResource(string consumerKey, string consumerSecret,
             string accessToken, string accessTokenSecret)
         {
-            var authenticator = new OAuth1Authenticator
-                                {
-                                    Type = OAuthType.ProtectedResource,
-                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
-                                    ConsumerKey = consumerKey,
-                                    ConsumerSecret = consumerSecret,
-                                    Token = accessToken,
-                                    TokenSecret = accessTokenSecret
-                                };
+            OAuth1Authenticator authenticator = new OAuth1Authenticator
+                                                {
+                                                    Type = OAuthType.ProtectedResource,
+                                                    ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureTreatment = OAuthSignatureTreatment.Escaped,
+                                                    ConsumerKey = consumerKey,
+                                                    ConsumerSecret = consumerSecret,
+                                                    Token = accessToken,
+                                                    TokenSecret = accessTokenSecret
+                                                };
 
             return authenticator;
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
         {
-            var workflow = new OAuthWorkflow
-                           {
-                               ConsumerKey = ConsumerKey,
-                               ConsumerSecret = ConsumerSecret,
-                               ParameterHandling = ParameterHandling,
-                               SignatureMethod = SignatureMethod,
-                               SignatureTreatment = SignatureTreatment,
-                               Verifier = Verifier,
-                               Version = Version,
-                               CallbackUrl = CallbackUrl,
-                               SessionHandle = SessionHandle,
-                               Token = Token,
-                               TokenSecret = TokenSecret,
-                               ClientUsername = ClientUsername,
-                               ClientPassword = ClientPassword
-                           };
+            OAuthWorkflow workflow = new OAuthWorkflow
+                                     {
+                                         ConsumerKey = ConsumerKey,
+                                         ConsumerSecret = ConsumerSecret,
+                                         ParameterHandling = ParameterHandling,
+                                         SignatureMethod = SignatureMethod,
+                                         SignatureTreatment = SignatureTreatment,
+                                         Verifier = Verifier,
+                                         Version = Version,
+                                         CallbackUrl = CallbackUrl,
+                                         SessionHandle = SessionHandle,
+                                         Token = Token,
+                                         TokenSecret = TokenSecret,
+                                         ClientUsername = ClientUsername,
+                                         ClientPassword = ClientPassword
+                                     };
 
             AddOAuthData(client, request, workflow);
         }
 
         private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
         {
-            var url = client.BuildUri(request).ToString();
-            var queryStringStart = url.IndexOf('?');
+            string url = client.BuildUri(request).ToString();
+            int queryStringStart = url.IndexOf('?');
 
             if (queryStringStart != -1)
                 url = url.Substring(0, queryStringStart);
 
             OAuthWebQueryInfo oauth;
-            var method = request.Method.ToString().ToUpperInvariant();
-            var parameters = new WebParameterCollection();
+            string method = request.Method.ToString().ToUpperInvariant();
+            WebParameterCollection parameters = new WebParameterCollection();
 
             // include all GET and POST parameters before generating the signature
             // according to the RFC 5849 - The OAuth 1.0 Protocol
@@ -298,7 +299,7 @@ namespace RestSharp.Authenticators
 
         private string GetAuthorizationHeader(WebPairCollection parameters)
         {
-            var sb = new StringBuilder("OAuth ");
+            StringBuilder sb = new StringBuilder("OAuth ");
 
             if (!Realm.IsNullOrBlank())
             {
@@ -307,23 +308,23 @@ namespace RestSharp.Authenticators
 
             parameters.Sort((l, r) => l.Name.CompareTo(r.Name));
 
-            var parameterCount = 0;
-            var oathParameters =
+            int parameterCount = 0;
+            List<WebPair> oathParameters =
                 parameters.Where(p => !p.Name.IsNullOrBlank() &&
                                       !p.Value.IsNullOrBlank() &&
                                       (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
                           .ToList();
 
-            foreach (var parameter in oathParameters)
+            foreach (WebPair parameter in oathParameters)
             {
                 parameterCount++;
 
-                var format = parameterCount < oathParameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
+                string format = parameterCount < oathParameters.Count ? "{0}=\"{1}\"," : "{0}=\"{1}\"";
 
                 sb.Append(format.FormatWith(parameter.Name, parameter.Value));
             }
 
-            var authorization = sb.ToString();
+            string authorization = sb.ToString();
 
             return authorization;
         }

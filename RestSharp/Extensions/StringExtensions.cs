@@ -123,7 +123,7 @@ namespace RestSharp.Extensions
 
             if (long.TryParse(input, out unix))
             {
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
                 return epoch.AddSeconds(unix);
             }
@@ -162,17 +162,17 @@ namespace RestSharp.Extensions
 
         private static DateTime ParseFormattedDate(string input, CultureInfo culture)
         {
-            var formats = new []
-                          {
-                              "u",
-                              "s",
-                              "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
-                              "yyyy-MM-ddTHH:mm:ssZ",
-                              "yyyy-MM-dd HH:mm:ssZ",
-                              "yyyy-MM-ddTHH:mm:ss",
-                              "yyyy-MM-ddTHH:mm:sszzzzzz",
-                              "M/d/yyyy h:mm:ss tt" // default format for invariant culture
-                          };
+            string[] formats =
+            {
+                "u",
+                "s",
+                "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
+                "yyyy-MM-ddTHH:mm:ssZ",
+                "yyyy-MM-dd HH:mm:ssZ",
+                "yyyy-MM-ddTHH:mm:ss",
+                "yyyy-MM-ddTHH:mm:sszzzzzz",
+                "M/d/yyyy h:mm:ss tt" // default format for invariant culture
+            };
 
             DateTime date;
 
@@ -192,21 +192,21 @@ namespace RestSharp.Extensions
         private static DateTime ExtractDate(string input, string pattern, CultureInfo culture)
         {
             DateTime dt = DateTime.MinValue;
-            var regex = new Regex(pattern);
+            Regex regex = new Regex(pattern);
 
             if (regex.IsMatch(input))
             {
-                var matches = regex.Matches(input);
-                var match = matches[0];
-                var ms = Convert.ToInt64(match.Groups[1].Value);
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                MatchCollection matches = regex.Matches(input);
+                Match match = matches[0];
+                long ms = Convert.ToInt64(match.Groups[1].Value);
+                DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
                 dt = epoch.AddMilliseconds(ms);
 
                 // adjust if time zone modifier present
                 if (match.Groups.Count > 2 && !string.IsNullOrEmpty(match.Groups[3].Value))
                 {
-                    var mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
+                    DateTime mod = DateTime.ParseExact(match.Groups[3].Value, "HHmm", culture);
 
                     dt = match.Groups[2].Value == "+" ? dt.Add(mod.TimeOfDay) : dt.Subtract(mod.TimeOfDay);
                 }

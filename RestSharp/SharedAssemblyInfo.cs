@@ -22,22 +22,22 @@ using System.Reflection;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(SharedAssemblyInfo.Version + ".0")]
+[assembly: AssemblyVersion(SharedAssemblyInfo.VERSION + ".0")]
 
 #if SIGNED
-[assembly: AssemblyInformationalVersion(SharedAssemblyInfo.FileVersion)]
-[assembly: AssemblyFileVersion(SharedAssemblyInfo.FileVersion + ".0")]
+[assembly: AssemblyInformationalVersion(SharedAssemblyInfo.FILE_VERSION)]
+[assembly: AssemblyFileVersion(SharedAssemblyInfo.FILE_VERSION + ".0")]
 #else
-[assembly: AssemblyInformationalVersion(SharedAssemblyInfo.Version)]
-[assembly: AssemblyFileVersion(SharedAssemblyInfo.Version + ".0")]
+[assembly: AssemblyInformationalVersion(SharedAssemblyInfo.VERSION)]
+[assembly: AssemblyFileVersion(SharedAssemblyInfo.VERSION + ".0")]
 #endif
 
 class SharedAssemblyInfo
 {
 #if SIGNED
-    public const string Version = "100.0.0";
-    public const string FileVersion = "105.1.0";
+    public const string VERSION = "100.0.0";
+    public const string FILE_VERSION = "105.1.0";
 #else
-    public const string Version = "105.1.0";
+    public const string VERSION = "105.1.0";
 #endif
 }

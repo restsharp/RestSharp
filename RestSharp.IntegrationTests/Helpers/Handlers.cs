@@ -30,9 +30,9 @@ namespace RestSharp.IntegrationTests.Helpers
         /// </summary>
         public static void FileHandler(HttpListenerContext context)
         {
-            var pathToFile = Path.Combine(context.Request.Url.Segments.Select(s => s.Replace("/", "")).ToArray());
+            string pathToFile = Path.Combine(context.Request.Url.Segments.Select(s => s.Replace("/", "")).ToArray());
 
-            using (var reader = new StreamReader(pathToFile))
+            using (StreamReader reader = new StreamReader(pathToFile))
                 reader.BaseStream.CopyTo(context.Response.OutputStream);
         }
 
@@ -58,8 +58,8 @@ namespace RestSharp.IntegrationTests.Helpers
         {
             return ctx =>
                    {
-                       var methodName = ctx.Request.Url.Segments.Last();
-                       var method = typeof(T).GetMethod(methodName,
+                       string methodName = ctx.Request.Url.Segments.Last();
+                       MethodInfo method = typeof(T).GetMethod(methodName,
                            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
                        if (method.IsStatic)

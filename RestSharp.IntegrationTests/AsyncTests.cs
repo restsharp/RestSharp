@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 
@@ -16,12 +17,12 @@ namespace RestSharp.IntegrationTests
             Uri baseUrl = new Uri("http://localhost:8888/");
             const string val = "Basic async test";
 
-            var resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue(val)))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("");
 
                 client.ExecuteAsync(request, (response, asyncHandle) =>
                                              {
@@ -40,12 +41,12 @@ namespace RestSharp.IntegrationTests
             Uri baseUrl = new Uri("http://localhost:8888/");
             const string val = "Basic async test";
 
-            var resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
             using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue(val)))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("");
 
                 client.ExecuteAsync(request, response =>
                                              {
@@ -66,9 +67,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("");
-                var task = client.ExecuteTaskAsync(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("");
+                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
 
                 task.Wait();
 
@@ -85,16 +86,16 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("success");
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("success");
 
                 request.OnBeforeDeserialization += r => { throw new Exception(exceptionMessage); };
 
-                var task = client.ExecuteTaskAsync<Response>(request);
+                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request);
 
                 task.Wait();
 
-                var response = task.Result;
+                IRestResponse<Response> response = task.Result;
 
                 Assert.AreEqual(exceptionMessage, response.ErrorMessage);
                 Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
@@ -108,9 +109,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("success");
-                var task = client.ExecuteTaskAsync<Response>(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("success");
+                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request);
 
                 task.Wait();
 
@@ -125,9 +126,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("success");
-                var task = client.GetTaskAsync<Response>(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("success");
+                Task<Response> task = client.GetTaskAsync<Response>(request);
 
                 task.Wait();
 
@@ -143,10 +144,10 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("timeout");
-                var cancellationTokenSource = new CancellationTokenSource();
-                var task = client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("timeout");
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                Task<IRestResponse> task = client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
                 cancellationTokenSource.Cancel();
 
@@ -162,10 +163,10 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.EchoValue(val)))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("timeout");
-                var cancellationTokenSource = new CancellationTokenSource();
-                var task = client.ExecuteTaskAsync<Response>(request, cancellationTokenSource.Token);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("timeout");
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request, cancellationTokenSource.Token);
 
                 cancellationTokenSource.Cancel();
 
@@ -180,9 +181,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("404");
-                var task = client.ExecuteTaskAsync(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("404");
+                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
 
                 task.Wait();
 
@@ -197,9 +198,9 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, UrlToStatusCodeHandler))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("404");
-                var task = client.ExecuteTaskAsync<Response>(request);
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("404");
+                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request);
 
                 task.Wait();
 
@@ -214,17 +215,17 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
+                RestClient client = new RestClient(baseUrl);
+                IRestRequest request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
 
                 // Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
-                var task = client.ExecuteTaskAsync(request);
+                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
 
                 task.Wait();
 
-                var response = task.Result;
+                IRestResponse response = task.Result;
 
                 Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
             }
@@ -237,17 +238,17 @@ namespace RestSharp.IntegrationTests
 
             using (SimpleServer.Create(baseUrl, Handlers.Generic<ResponseHandler>()))
             {
-                var client = new RestClient(baseUrl);
-                var request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
+                RestClient client = new RestClient(baseUrl);
+                IRestRequest request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
 
                 // Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
-                var task = client.ExecuteTaskAsync(request);
+                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
 
                 task.Wait();
 
-                var response = task.Result;
+                IRestResponse response = task.Result;
 
                 Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
             }

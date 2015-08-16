@@ -67,10 +67,10 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string PercentEncode(this string s)
         {
-            var bytes = s.GetBytes();
-            var sb = new StringBuilder();
+            byte[] bytes = s.GetBytes();
+            StringBuilder sb = new StringBuilder();
 
-            foreach (var b in bytes)
+            foreach (byte b in bytes)
             {
                 sb.Append(string.Format("%{0:X2}", b));
             }
@@ -88,7 +88,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
                 return new Dictionary<string, string>();
             }
 
-            var parts = query.Split('&');
+            string[] parts = query.Split('&');
 
             return parts.Select(part => part.Split('='))
                                             .ToDictionary(pair => pair[0], pair => pair[1]);

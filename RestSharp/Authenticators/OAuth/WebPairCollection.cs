@@ -86,7 +86,7 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual void Sort(Comparison<WebPair> comparison)
         {
-            var sorted = new List<WebPair>(this.parameters);
+            List<WebPair> sorted = new List<WebPair>(this.parameters);
 
             sorted.Sort(comparison);
 
@@ -95,15 +95,15 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual bool RemoveAll(IEnumerable<WebPair> parametersToRemove)
         {
-            var array = parametersToRemove.ToArray();
-            var success = array.Aggregate(true, (current, parameter) => current & this.parameters.Remove(parameter));
+            WebPair[] array = parametersToRemove.ToArray();
+            bool success = array.Aggregate(true, (current, parameter) => current & this.parameters.Remove(parameter));
 
             return success && array.Length > 0;
         }
 
         public virtual void Add(string name, string value)
         {
-            var pair = new WebPair(name, value);
+            WebPair pair = new WebPair(name, value);
 
             this.parameters.Add(pair);
         }

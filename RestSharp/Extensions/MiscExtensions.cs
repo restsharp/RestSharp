@@ -65,11 +65,11 @@ namespace RestSharp.Extensions
         /// <param name="output">The output stream.</param>
         public static void CopyTo(this Stream input, Stream output)
         {
-            var buffer = new byte[32768];
+            byte[] buffer = new byte[32768];
 
             while (true)
             {
-                var read = input.Read(buffer, 0, buffer.Length);
+                int read = input.Read(buffer, 0, buffer.Length);
 
                 if (read <= 0)
                     return;
@@ -95,7 +95,7 @@ namespace RestSharp.Extensions
 #if FRAMEWORK
             return encoding.GetString(buffer, 0, buffer.Length);
 #else
-            if (buffer == null || buffer.Length == 0)
+            if (buffer.Length == 0)
                 return "";
 
             /*

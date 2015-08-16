@@ -20,7 +20,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static IEnumerable<T> And<T>(this IEnumerable<T> items, T item)
         {
-            foreach (var i in items)
+            foreach (T i in items)
             {
                 yield return i;
             }
@@ -40,7 +40,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
         {
-            foreach (var item in items)
+            foreach (T item in items)
             {
                 action(item);
             }
@@ -49,7 +49,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 #if !WINDOWS_PHONE && !SILVERLIGHT
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {
-            foreach (var key in range.AllKeys)
+            foreach (string key in range.AllKeys)
             {
                 collection.Add(key, range[key]);
             }
@@ -57,16 +57,16 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string ToQueryString(this NameValueCollection collection)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             if (collection.Count > 0)
             {
                 sb.Append("?");
             }
 
-            var count = 0;
+            int count = 0;
 
-            foreach (var key in collection.AllKeys)
+            foreach (string key in collection.AllKeys)
             {
                 sb.AppendFormat("{0}={1}", key, collection[key].UrlEncode());
                 count++;
@@ -85,11 +85,11 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string Concatenate(this WebParameterCollection collection, string separator, string spacer)
         {
-            var sb = new StringBuilder();
-            var total = collection.Count;
-            var count = 0;
+            StringBuilder sb = new StringBuilder();
+            int total = collection.Count;
+            int count = 0;
 
-            foreach (var item in collection)
+            foreach (WebPair item in collection)
             {
                 sb.Append(item.Name);
                 sb.Append(separator);

@@ -26,7 +26,7 @@ namespace RestSharp.Authenticators
 
         public HttpBasicAuthenticator(string username, string password)
         {
-            var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)));
+            string token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)));
 
             this.authHeader = string.Format("Basic {0}", token);
         }

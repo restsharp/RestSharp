@@ -17,7 +17,6 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
@@ -29,6 +28,7 @@ using System.Threading.Tasks;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp

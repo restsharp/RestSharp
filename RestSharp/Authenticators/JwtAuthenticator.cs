@@ -20,32 +20,32 @@ using System.Linq;
 
 namespace RestSharp.Authenticators
 {
-   /// <summary>
-   /// JSON WEB TOKEN (JWT) Authenticator class. 
-   /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
-   /// </summary>
-   public class JwtAuthenticator : IAuthenticator
-   {
-      readonly string authHeader;
+    /// <summary>
+    /// JSON WEB TOKEN (JWT) Authenticator class. 
+    /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
+    /// </summary>
+    public class JwtAuthenticator : IAuthenticator
+    {
+        readonly string authHeader;
 
-      public JwtAuthenticator(string accessToken)
-      {
-          if (accessToken == null)
-          {
-              throw new ArgumentNullException("accessToken");
-          }
+        public JwtAuthenticator(string accessToken)
+        {
+            if (accessToken == null)
+            {
+                throw new ArgumentNullException("accessToken");
+            }
 
-         this.authHeader = string.Format("Bearer {0}", accessToken);
-      }
+            this.authHeader = string.Format("Bearer {0}", accessToken);
+        }
 
-      public void Authenticate(IRestClient client, IRestRequest request)
-      {
-         // only add the Authorization parameter if it hasn't been added by a previous Execute
-         if (!request.Parameters.Any(p => p.Type.Equals(ParameterType.HttpHeader) && 
-                                     p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
+        public void Authenticate(IRestClient client, IRestRequest request)
+        {
+            // only add the Authorization parameter if it hasn't been added by a previous Execute
+            if (!request.Parameters.Any(p => p.Type.Equals(ParameterType.HttpHeader) &&
+                                             p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
             {
                 request.AddParameter("Authorization", this.authHeader, ParameterType.HttpHeader);
             }
-      }
-   }
+        }
+    }
 }

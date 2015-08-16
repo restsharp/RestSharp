@@ -16,8 +16,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
 
@@ -53,26 +55,26 @@ namespace RestSharp.Serializers
         /// <returns>XML as string</returns>
         public string Serialize(object obj)
         {
-            var doc = new XDocument();
-            var t = obj.GetType();
-            var name = t.Name;
-            var options = t.GetAttribute<SerializeAsAttribute>();
+            XDocument doc = new XDocument();
+            Type t = obj.GetType();
+            string name = t.Name;
+            SerializeAsAttribute options = t.GetAttribute<SerializeAsAttribute>();
 
             if (options != null)
             {
                 name = options.TransformName(options.Name ?? name);
             }
 
-            var root = new XElement(name.AsNamespaced(Namespace));
+            XElement root = new XElement(name.AsNamespaced(Namespace));
 
             if (obj is IList)
             {
-                var itemTypeName = "";
+                string itemTypeName = "";
 
-                foreach (var item in (IList)obj)
+                foreach (object item in (IList)obj)
                 {
-                    var type = item.GetType();
-                    var opts = type.GetAttribute<SerializeAsAttribute>();
+                    Type type = item.GetType();
+                    SerializeAsAttribute opts = type.GetAttribute<SerializeAsAttribute>();
 
                     if (opts != null)
                     {
@@ -84,7 +86,7 @@ namespace RestSharp.Serializers
                         itemTypeName = type.Name;
                     }
 
-                    var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                    XElement instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 
                     Map(instance, item);
                     root.Add(instance);
@@ -95,7 +97,7 @@ namespace RestSharp.Serializers
 
             if (RootElement.HasValue())
             {
-                var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
+                XElement wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
                 doc.Add(wrapper);
             }
             else
@@ -108,28 +110,28 @@ namespace RestSharp.Serializers
 
         private void Map(XContainer root, object obj)
         {
-            var objType = obj.GetType();
-            var props = from p in objType.GetProperties()
+            Type objType = obj.GetType();
+            IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
                         let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
                         where p.CanRead && p.CanWrite
                         orderby indexAttribute == null ? int.MaxValue : indexAttribute.Index
                         select p;
-            var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
 
-            foreach (var prop in props)
+            foreach (PropertyInfo prop in props)
             {
-                var name = prop.Name;
-                var rawValue = prop.GetValue(obj, null);
+                string name = prop.Name;
+                object rawValue = prop.GetValue(obj, null);
 
                 if (rawValue == null)
                 {
                     continue;
                 }
 
-                var value = GetSerializedValue(rawValue);
-                var propType = prop.PropertyType;
-                var useAttribute = false;
-                var settings = prop.GetAttribute<SerializeAsAttribute>();
+                string value = GetSerializedValue(rawValue);
+                Type propType = prop.PropertyType;
+                bool useAttribute = false;
+                SerializeAsAttribute settings = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (settings != null)
                 {
@@ -137,7 +139,7 @@ namespace RestSharp.Serializers
                     useAttribute = settings.Attribute;
                 }
 
-                var options = prop.GetAttribute<SerializeAsAttribute>();
+                SerializeAsAttribute options = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (options != null)
                 {
@@ -148,8 +150,8 @@ namespace RestSharp.Serializers
                     name = globalOptions.TransformName(name);
                 }
 
-                var nsName = name.AsNamespaced(Namespace);
-                var element = new XElement(nsName);
+                XName nsName = name.AsNamespaced(Namespace);
+                XElement element = new XElement(nsName);
 
                 if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
                 {
@@ -163,21 +165,21 @@ namespace RestSharp.Serializers
                 }
                 else if (rawValue is IList)
                 {
-                    var itemTypeName = "";
+                    string itemTypeName = "";
 
-                    foreach (var item in (IList)rawValue)
+                    foreach (object item in (IList)rawValue)
                     {
                         if (itemTypeName == "")
                         {
-                            var type = item.GetType();
-                            var setting = type.GetAttribute<SerializeAsAttribute>();
+                            Type type = item.GetType();
+                            SerializeAsAttribute setting = type.GetAttribute<SerializeAsAttribute>();
 
                             itemTypeName = setting != null && setting.Name.HasValue()
                                 ? setting.Name
                                 : type.Name;
                         }
 
-                        var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                        XElement instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 
                         Map(instance, item);
                         element.Add(instance);
@@ -194,7 +196,7 @@ namespace RestSharp.Serializers
 
         private string GetSerializedValue(object obj)
         {
-            var output = obj;
+            object output = obj;
 
             if (obj is DateTime && DateFormat.HasValue())
             {
