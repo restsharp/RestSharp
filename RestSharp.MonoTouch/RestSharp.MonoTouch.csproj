@@ -9,7 +9,7 @@
     <RootNamespace>RestSharp</RootNamespace>
     <MtouchSdkVersion>3.2</MtouchSdkVersion>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
-    <AssemblyName>RestSharp.MonoTouch</AssemblyName>
+    <AssemblyName>RestSharp</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

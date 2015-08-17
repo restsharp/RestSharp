@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>RestSharp</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>RestSharp.iOS</AssemblyName>
+    <AssemblyName>RestSharp</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
