@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;PCL;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;PCL;NETFX_CORE;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -29,12 +29,135 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>TRACE;PCL;</DefineConstants>
+    <DefineConstants>TRACE;PCL;NETFX_CORE;</DefineConstants>
     <NoWarn>1591,1573,1658,1584,1574,1572</NoWarn>
     <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
+      <Link>Authenticators\HttpBasicAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\IAuthenticator.cs">
+      <Link>Authenticators\IAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\JwtAuthenticator.cs">
+      <Link>Authenticators\JwtAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\NtlmAuthenticator.cs">
+      <Link>Authenticators\NtlmAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\OAuth2Authenticator.cs">
+      <Link>Authenticators\OAuth2Authenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\oauth\extensions\StringExtensions.cs">
+      <Link>Authenticators\OAuth\Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\oauth\extensions\TimeExtensions.cs">
+      <Link>Authenticators\OAuth\Extensions\TimeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\oauth\WebPair.cs">
+      <Link>Authenticators\OAuth\WebPair.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\authenticators\SimpleAuthenticator.cs">
+      <Link>Authenticators\SimpleAuthenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\DeserializeAsAttribute.cs">
+      <Link>Deserializers\DeserializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\DotNetXmlDeserializer.cs">
+      <Link>Deserializers\DotNetXmlDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\IDeserializer.cs">
+      <Link>Deserializers\IDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\deserializers\XmlAttributeDeserializer.cs">
+      <Link>Deserializers\XmlAttributeDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Enum.cs">
+      <Link>Enum.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\extensions\monohttp\Helpers.cs">
+      <Link>Extensions\MonoHttp\Helpers.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\extensions\ResponseExtensions.cs">
+      <Link>Extensions\ResponseExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\FileParameter.cs">
+      <Link>FileParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpCookie.cs">
+      <Link>HttpCookie.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpFile.cs">
+      <Link>HttpFile.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpHeader.cs">
+      <Link>HttpHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpParameter.cs">
+      <Link>HttpParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\HttpResponse.cs">
+      <Link>HttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttp.cs">
+      <Link>IHttp.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttpFactory.cs">
+      <Link>IHttpFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IHttpResponse.cs">
+      <Link>IHttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestClient.cs">
+      <Link>IRestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestRequest.cs">
+      <Link>IRestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\IRestResponse.cs">
+      <Link>IRestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Parameter.cs">
+      <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClientExtensions.cs">
+      <Link>RestClientExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequestAsyncHandle.cs">
+      <Link>RestRequestAsyncHandle.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestResponse.cs">
+      <Link>RestResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestResponseCookie.cs">
+      <Link>RestResponseCookie.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\DotNetXmlSerializer.cs">
+      <Link>Serializers\DotNetXmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\ISerializer.cs">
+      <Link>Serializers\ISerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\JsonSerializer.cs">
+      <Link>Serializers\JsonSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\serializers\SerializeAsAttribute.cs">
+      <Link>Serializers\SerializeAsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\validation\Require.cs">
+      <Link>Validation\Require.cs</Link>
+    </Compile>
+    <Compile Include="..\restsharp\validation\Validate.cs">
+      <Link>Validation\Validate.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="stubs.cs" />
   </ItemGroup>
