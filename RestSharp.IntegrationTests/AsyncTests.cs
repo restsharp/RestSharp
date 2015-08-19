@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NUnit.Framework;
+using RestSharp.IntegrationTests.Helpers;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
-using RestSharp.IntegrationTests.Helpers;
 
 namespace RestSharp.IntegrationTests
 {
@@ -136,6 +136,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
+#if !APPVEYOR
         [Test]
         public void Can_Cancel_GET_TaskAsync()
         {
@@ -154,6 +155,7 @@ namespace RestSharp.IntegrationTests
                 Assert.True(task.IsCanceled);
             }
         }
+#endif
 
         [Test]
         public void Can_Cancel_GET_TaskAsync_With_Response_Type()
