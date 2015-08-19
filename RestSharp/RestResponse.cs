@@ -18,9 +18,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using RestSharp.Extensions;
-using System.Diagnostics;
 
 namespace RestSharp
 {
@@ -133,7 +133,8 @@ namespace RestSharp
         /// <returns></returns>
         protected string DebuggerDisplay()
         {
-            return string.Format("{0}: {1} ({2})", StatusCode, ContentType, ContentLength);
+            return string.Format("StatusCode: {0}, Content-Type: {1}, Content-Length: {2})",
+                this.StatusCode, this.ContentType, this.ContentLength);
         }
     }
 
