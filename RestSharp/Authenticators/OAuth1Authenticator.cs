@@ -22,9 +22,9 @@ using System.Linq;
 using System.Text;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
+
 #if !SILVERLIGHT && !WINDOWS_PHONE
 using RestSharp.Extensions.MonoHttp;
-
 #endif
 
 #if WINDOWS_PHONE

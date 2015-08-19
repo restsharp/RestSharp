@@ -49,29 +49,6 @@
   <PropertyGroup>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug.Xamarin|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\DebugSigned.Xamarin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;FRAMEWORK, NET4, SIGNED</DefineConstants>
-    <DocumentationFile>bin\DebugSigned.Xamarin\RestSharp.xml</DocumentationFile>
-    <NoWarn>1591,1584,1572,1574,1658</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release.Xamarin|AnyCPU'">
-    <OutputPath>bin\ReleaseSigned.Xamarin\</OutputPath>
-    <DefineConstants>TRACE;FRAMEWORK, NET4, SIGNED</DefineConstants>
-    <DocumentationFile>bin\ReleaseSigned.Xamarin\RestSharp.xml</DocumentationFile>
-    <Optimize>true</Optimize>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1591,1573,1658,1584,1574,1572</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />

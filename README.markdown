@@ -5,7 +5,7 @@
 
 ### Features
 
-* Supports .NET 3.5+, Silverlight 4, Windows Phone 8, Mono, MonoTouch, Mono for Android
+* Supports .NET 3.5+, Silverlight 5, Windows Phone 8, Mono, MonoTouch, Mono for Android
 * Easy installation using [NuGet](http://nuget.org/packages/RestSharp) for most .NET flavors
 * Supports strong naming using [NuGet](http://nuget.org/packages/RestSharpSigned) for most .NET flavors
 * Automatic XML and JSON deserialization
