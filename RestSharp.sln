@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1B3F12
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{C5B02FAA-6A0A-4BF9-BBD4-82FD2DCBF669}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		CONTRIBUTING.markdown = CONTRIBUTING.markdown
 		README.markdown = README.markdown
 		readme.txt = readme.txt
