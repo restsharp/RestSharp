@@ -18,14 +18,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using RestSharp.Extensions;
 
 namespace RestSharp
 {
+
     /// <summary>
     /// Base class for common properties shared by RestResponse and RestResponse[[T]]
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay()}")]
     public abstract class RestResponseBase
     {
         private string content;
@@ -122,12 +125,24 @@ namespace RestSharp
         /// The exception thrown during the request, if any
         /// </summary>
         public Exception ErrorException { get; set; }
+
+
+        /// <summary>
+        /// Assists with debugging responses by displaying in the debugger output
+        /// </summary>
+        /// <returns></returns>
+        protected string DebuggerDisplay()
+        {
+            return string.Format("StatusCode: {0}, Content-Type: {1}, Content-Length: {2})",
+                this.StatusCode, this.ContentType, this.ContentLength);
+        }
     }
 
     /// <summary>
     /// Container for data sent back from API including deserialized data
     /// </summary>
     /// <typeparam name="T">Type of data to deserialize to</typeparam>
+    [DebuggerDisplay("{DebuggerDisplay()}")]
     public class RestResponse<T> : RestResponseBase, IRestResponse<T>
     {
         /// <summary>
@@ -160,5 +175,6 @@ namespace RestSharp
     /// <summary>
     /// Container for data sent back from API
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay()}")]
     public class RestResponse : RestResponseBase, IRestResponse { }
 }

@@ -1,1 +1,0 @@
-package.cmd & packageSigned.cmd

@@ -9,7 +9,7 @@
     <RootNamespace>RestSharp</RootNamespace>
     <MtouchSdkVersion>3.2</MtouchSdkVersion>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
-    <AssemblyName>RestSharp.MonoTouch</AssemblyName>
+    <AssemblyName>RestSharp</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +23,8 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv6</MtouchArch>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -34,6 +36,8 @@
     <DefineConstants>MONOTOUCH;FRAMEWORK</DefineConstants>
     <MtouchArch>ARMv6</MtouchArch>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

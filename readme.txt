@@ -18,5 +18,3 @@ all features which Json.NET has (like the ability to support a custom [JsonConve
 by decorating a certain property with an attribute). If you need these features, you
 must take care of the deserialization yourself to get it working.
 
-If you run into any compatibility issues with deserialization, 
-please report it to http://groups.google.com/group/restsharp

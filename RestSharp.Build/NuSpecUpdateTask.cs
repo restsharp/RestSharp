@@ -64,8 +64,11 @@ namespace RestSharp.Build
             ReplaceToken(metaNode, "owners", this.Authors);
             ReplaceToken(metaNode, "description", this.Description);
             ReplaceToken(metaNode, "version", this.Version);
-
+#if SIGNED
+            doc.Save(this.SpecFile.Replace(".nuspec", "-signed-computed.nuspec"));
+#else
             doc.Save(this.SpecFile.Replace(".nuspec", "-computed.nuspec"));
+#endif
         }
 
         private static void ReplaceToken(XContainer metaNode, XName name, string value)
