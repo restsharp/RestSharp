@@ -5,7 +5,9 @@ before_build:
 - appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product iOS
 branches:
   only:
-  - masterbuild:
+  - master
+skip_tags: true
+build:
   project: RestSharp.sln
   verbosity: minimal
 after_build:
