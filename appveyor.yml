@@ -3,7 +3,9 @@ before_build:
 - nuget restore RestSharp.sln
 - appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product Android
 - appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product iOS
-build:
+branches:
+  only:
+  - masterbuild:
   project: RestSharp.sln
   verbosity: minimal
 after_build:
