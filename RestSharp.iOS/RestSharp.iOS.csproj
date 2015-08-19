@@ -20,6 +20,8 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -30,19 +32,23 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug.Xamarin|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug.Xamarin\</OutputPath>
     <DefineConstants>__UNIFIED__;__MOBILE__;__IOS__;DEBUG;MONOTOUCH;FRAMEWORK;MONOTOUCH_UNIFIED</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug.Xamarin\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release.Xamarin|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release.Xamarin\</OutputPath>
     <DefineConstants>__UNIFIED__;__MOBILE__;__IOS__;MONOTOUCH;FRAMEWORK;MONOTOUCH_UNIFIED</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
@@ -50,7 +56,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\RestSharp.XML</DocumentationFile>
+    <DocumentationFile>bin\Release.Xamarin\RestSharp.xml</DocumentationFile>
+    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

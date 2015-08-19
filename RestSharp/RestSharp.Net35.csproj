@@ -64,9 +64,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug.Xamarin|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug.Xamarin\</OutputPath>
     <DefineConstants>TRACE;DEBUG;FRAMEWORK</DefineConstants>
-    <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug.Xamarin\RestSharp.xml</DocumentationFile>
     <NoWarn>1591,1584,1572,1574,1658</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,9 +74,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release.Xamarin|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release.Xamarin\</OutputPath>
     <DefineConstants>TRACE;FRAMEWORK</DefineConstants>
-    <DocumentationFile>bin\Release\RestSharp.xml</DocumentationFile>
+    <DocumentationFile>bin\Release.Xamarin\RestSharp.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1591,1573,1658,1584,1574,1572</NoWarn>

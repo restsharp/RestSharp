@@ -68,7 +68,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug.Xamarin|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\DebugSigned\</OutputPath>
+    <OutputPath>bin\DebugSigned.Xamarin\</OutputPath>
     <DefineConstants>TRACE;DEBUG;SIGNED</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -76,7 +76,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release.Xamarin|AnyCPU'">
-    <OutputPath>bin\ReleaseSigned\</OutputPath>
+    <OutputPath>bin\ReleaseSigned.Xamarin\</OutputPath>
     <DefineConstants>TRACE;SIGNED</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
