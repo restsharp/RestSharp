@@ -38,6 +38,7 @@ if not exist Download\MonoTouch10 mkdir Download\MonoTouch10\
 if not exist Download\package\lib\Xamarin.iOS10 mkdir Download\package\lib\Xamarin.iOS10\
 if not exist Download\package\lib\MonoAndroid10 mkdir Download\package\lib\MonoAndroid10\
 if not exist Download\package\lib\MonoTouch10 mkdir Download\package\lib\MonoTouch10\
+if not exist Download\package\lib\portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10 mkdir Download\package\lib\portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\
 
 REM create the download signed directories
 if not exist DownloadSigned\Net4 mkdir DownloadSigned\Net4\
@@ -74,6 +75,7 @@ copy RestSharp.WindowsPhone.8.1\bin\Release\RestSharp.dll Download\Package\lib\w
 copy RestSharp.iOS\bin\Release\RestSharp.dll Download\package\lib\Xamarin.iOS10\
 copy RestSharp.MonoTouch\bin\Release\RestSharp.dll Download\package\lib\MonoAndroid10\
 copy RestSharp.Android\bin\Release\RestSharp.dll Download\package\lib\MonoAndroid10\
+copy RestSharp.PCL\bin\Release\RestSharp.dll Download\package\lib\portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\
 
 copy RestSharp\bin\Release\RestSharp.xml Download\Package\lib\net35\
 copy RestSharp.Net4\bin\Release\RestSharp.xml Download\Package\lib\net4\
@@ -87,6 +89,7 @@ copy RestSharp.WindowsPhone.8.1\bin\Release\RestSharp.xml Download\Package\lib\w
 copy RestSharp.iOS\bin\Release\RestSharp.xml Download\package\lib\Xamarin.iOS10\
 copy RestSharp.MonoTouch\bin\Release\RestSharp.xml Download\package\lib\MonoAndroid10\
 copy RestSharp.Android\bin\Release\RestSharp.xml Download\package\lib\MonoAndroid10\
+copy RestSharp.PCL\bin\Release\RestSharp.xml Download\package\lib\portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\
 
 copy RestSharp\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib\net35\
 copy RestSharp.Net4\bin\ReleaseSigned\RestSharp.dll DownloadSigned\Package\lib\net4\

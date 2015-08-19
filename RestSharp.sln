@@ -79,6 +79,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.WindowsPhone.8.1"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Silverlight.Signed", "RestSharp.Silverlight\RestSharp.Silverlight.Signed.csproj", "{E08E5B69-4F6D-4DE1-ABB8-77E0441D1AEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.PCL", "RestSharp.PCL\RestSharp.PCL.csproj", "{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug.Appveyor|Any CPU = Debug.Appveyor|Any CPU
@@ -590,6 +592,24 @@ Global
 		{E08E5B69-4F6D-4DE1-ABB8-77E0441D1AEF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E08E5B69-4F6D-4DE1-ABB8-77E0441D1AEF}.Release|x86.ActiveCfg = Release|Any CPU
 		{E08E5B69-4F6D-4DE1-ABB8-77E0441D1AEF}.Release|x86.Build.0 = Release|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug.Appveyor|Any CPU.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug.Appveyor|Any CPU.Build.0 = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug.Appveyor|ARM.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug.Appveyor|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug.Appveyor|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug.Appveyor|x86.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6704A5C4-9BEB-4E8C-A73B-A00B3585A00D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
