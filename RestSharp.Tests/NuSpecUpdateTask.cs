@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using NUnit.Framework;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
@@ -14,7 +14,14 @@ namespace RestSharp.Tests
 
             protected string ComputedFileName
             {
-                get { return this.FileName.Replace(".nuspec", "-computed.nuspec"); }
+                get
+                {
+#if SIGNED
+                    return this.FileName.Replace(".nuspec", "-signed-computed.nuspec");
+#else
+                    return this.FileName.Replace(".nuspec", "-computed.nuspec");
+#endif
+                }
             }
 
             protected BaseNuSpecUpdateTest()
