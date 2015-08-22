@@ -12,19 +12,19 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
-#endregion
+#endregion License
 
+using NUnit.Framework;
+using RestSharp.Deserializers;
+using RestSharp.Tests.SampleClasses;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
-using RestSharp.Deserializers;
-using RestSharp.Tests.SampleClasses;
 
 namespace RestSharp.Tests
 {
@@ -195,7 +195,7 @@ namespace RestSharp.Tests
             data["Ids"] = new JsonArray { id1, id2 };
 
             JsonDeserializer d = new JsonDeserializer();
-            RestResponse response = new RestResponse { Content = data.ToString()  };
+            RestResponse response = new RestResponse { Content = data.ToString() };
             GuidList p = d.Deserialize<GuidList>(response);
 
             Assert.AreEqual(2, p.Ids.Count);
@@ -778,6 +778,18 @@ namespace RestSharp.Tests
             Assert.IsNotEmpty(output.EmployeesMail);
             Assert.IsNotEmpty(output.EmployeesTime);
             Assert.IsNotEmpty(output.EmployeesPay);
+        }
+
+        [Test]
+        public void Can_Deserialize_Dictionary_with_Null()
+        {
+            string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary_null.txt"));
+            JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
+            IDictionary<string, object> output = json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
+
+            IDictionary<string, object> dictionary = (IDictionary<string, object>)output["SomeDictionary"];
+            Assert.AreEqual("abra", dictionary["NonNull"]);
+            Assert.IsNull(dictionary["Null"]);
         }
 
         private static string CreateJsonWithUnderscores()
