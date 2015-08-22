@@ -297,19 +297,11 @@ namespace RestSharp.Deserializers
 
                 if (genericTypeDef == typeof(Dictionary<,>))
                 {
-                    Type keyType = type.GetGenericArguments()[0];
+                    return this.BuildDictionary(type, value);
+                }
 
-                    // only supports Dict<string, T>()
-                    if (keyType == typeof(string))
-                    {
-                        return this.BuildDictionary(type, value);
-                    }
-                }
-                else
-                {
-                    // nested property classes
-                    return this.CreateAndMap(type, value);
-                }
+                // nested property classes
+                return this.CreateAndMap(type, value);
             }
             else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
             {
