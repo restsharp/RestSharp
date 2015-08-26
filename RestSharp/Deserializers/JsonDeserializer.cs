@@ -27,51 +27,30 @@ namespace RestSharp.Deserializers
 
         public T Deserialize<T>(IRestResponse response)
         {
-            T target = Activator.CreateInstance<T>();
+            object json = this.FindRoot(response.Content);
 
-            if (target is IList)
-            {
-                Type objType = target.GetType();
-
-                if (this.RootElement.HasValue())
-                {
-                    object root = this.FindRoot(response.Content);
-
-                    target = (T) this.BuildList(objType, root);
-                }
-                else
-                {
-                    object data = SimpleJson.DeserializeObject(response.Content);
-
-                    target = (T) this.BuildList(objType, data);
-                }
-            }
-            else if (target is IDictionary)
-            {
-                object root = this.FindRoot(response.Content);
-
-                target = (T) this.BuildDictionary(target.GetType(), root);
-            }
-            else
-            {
-                object root = this.FindRoot(response.Content);
-
-                target = (T) this.Map(target, (IDictionary<string, object>) root);
-            }
-
-            return target;
+            return (T)this.ConvertValue(typeof(T), json);
         }
 
         private object FindRoot(string content)
         {
-            IDictionary<string, object> data = (IDictionary<string, object>) SimpleJson.DeserializeObject(content);
+            object json = SimpleJson.DeserializeObject(content);
 
-            if (this.RootElement.HasValue() && data.ContainsKey(this.RootElement))
+            if (this.RootElement.HasValue())
             {
-                return data[this.RootElement];
+                IDictionary<string, object> dictionary = json as IDictionary<string, object>;
+
+                if (dictionary != null)
+                {
+                    object result;
+                    if (dictionary.TryGetValue(this.RootElement, out result))
+                    {
+                        return result;
+                    }
+                }
             }
 
-            return data;
+            return json;
         }
 
         private object Map(object target, IDictionary<string, object> data)
@@ -318,19 +297,11 @@ namespace RestSharp.Deserializers
 
                 if (genericTypeDef == typeof(Dictionary<,>))
                 {
-                    Type keyType = type.GetGenericArguments()[0];
+                    return this.BuildDictionary(type, value);
+                }
 
-                    // only supports Dict<string, T>()
-                    if (keyType == typeof(string))
-                    {
-                        return this.BuildDictionary(type, value);
-                    }
-                }
-                else
-                {
-                    // nested property classes
-                    return this.CreateAndMap(type, value);
-                }
+                // nested property classes
+                return this.CreateAndMap(type, value);
             }
             else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
             {

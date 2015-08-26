@@ -780,6 +780,17 @@ namespace RestSharp.Tests
             Assert.IsNotEmpty(output.EmployeesPay);
         }
 
+        [Test]
+        public void Can_Deserialize_Plain_Values()
+        {
+            const string json = "\"c02bdd1e-cce3-4b9c-8473-165e6e93b92a\"";
+            RestResponse response = new RestResponse { Content = json };
+            JsonDeserializer d = new JsonDeserializer();
+            Guid result = d.Deserialize<Guid>(response);
+
+            Assert.AreEqual(result, new Guid("c02bdd1e-cce3-4b9c-8473-165e6e93b92a"));
+        }
+
         private static string CreateJsonWithUnderscores()
         {
             JsonObject doc = new JsonObject();
