@@ -142,6 +142,9 @@
     <Content Include="SampleData\jsondictionary.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleData\jsondictionary_null.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleData\jsonenumtypes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

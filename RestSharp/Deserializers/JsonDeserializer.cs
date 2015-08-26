@@ -204,8 +204,12 @@ namespace RestSharp.Deserializers
                 type = type.GetGenericArguments()[0];
             }
 
-            if (type == typeof(object) && value != null)
+            if (type == typeof(object))
             {
+                if (value == null)
+                {
+                    return null;
+                }
                 type = value.GetType();
             }
 

@@ -791,6 +791,18 @@ namespace RestSharp.Tests
             Assert.AreEqual(result, new Guid("c02bdd1e-cce3-4b9c-8473-165e6e93b92a"));
         }
 
+        [Test]
+        public void Can_Deserialize_Dictionary_with_Null()
+        {
+            string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary_null.txt"));
+            JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
+            IDictionary<string, object> output = json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
+
+            IDictionary<string, object> dictionary = (IDictionary<string, object>)output["SomeDictionary"];
+            Assert.AreEqual("abra", dictionary["NonNull"]);
+            Assert.IsNull(dictionary["Null"]);
+        }
+
         private static string CreateJsonWithUnderscores()
         {
             JsonObject doc = new JsonObject();
