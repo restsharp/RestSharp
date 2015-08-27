@@ -26,11 +26,15 @@ using System.Globalization;
 using System.Net;
 #endif
 
+#if PCL
+using HttpUtility = System.Net.WebUtility;
+#endif
+
 #if SILVERLIGHT
 using System.Windows.Browser;
 #endif
 
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PCL
 using RestSharp.Extensions.MonoHttp;
 #endif
 
@@ -281,7 +285,12 @@ namespace RestSharp.Extensions
                             restOfWord = restOfWord.ToLower(culture);
                         }
 
+#if !PCL
                         char firstChar = char.ToUpper(word[0], culture);
+#else
+						//TODO: Add culture support
+						char firstChar = char.ToUpper(word[0]);
+#endif
 
                         words[i] = string.Concat(firstChar, restOfWord);
                     }

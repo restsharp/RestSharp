@@ -111,6 +111,7 @@ namespace RestSharp.Deserializers
 
         protected virtual object Map(object x, XElement root)
         {
+#if !PCL
             Type objType = x.GetType();
             PropertyInfo[] props = objType.GetProperties();
 
@@ -316,11 +317,15 @@ namespace RestSharp.Deserializers
             }
 
             return x;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PCL
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))
@@ -350,6 +355,7 @@ namespace RestSharp.Deserializers
 
         private object HandleListDerivative(XElement root, string propName, Type type)
         {
+#if !PCL
             Type t = type.IsGenericType
                 ? type.GetGenericArguments()[0]
                 : type.BaseType.GetGenericArguments()[0];
@@ -405,6 +411,10 @@ namespace RestSharp.Deserializers
             }
 
             return list;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         protected virtual object CreateAndMap(Type t, XElement element)
@@ -415,7 +425,11 @@ namespace RestSharp.Deserializers
             {
                 item = element.Value;
             }
+#if !PCL
             else if (t.IsPrimitive)
+#else
+            else if (t.GetTypeInfo().IsPrimitive)
+#endif
             {
                 item = element.Value.ChangeType(t, this.Culture);
             }

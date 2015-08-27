@@ -8,7 +8,7 @@ namespace RestSharp.Authenticators.OAuth
         public WebParameterCollection(IEnumerable<WebPair> parameters)
             : base(parameters) { }
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PCL
         public WebParameterCollection(NameValueCollection collection)
             : base(collection) { }
 #endif

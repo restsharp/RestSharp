@@ -114,6 +114,7 @@ namespace RestSharp.Serializers
 
         private void Map(XContainer root, object obj)
         {
+#if !PCL
             Type objType = obj.GetType();
             IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
                                               let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
@@ -200,6 +201,10 @@ namespace RestSharp.Serializers
 
                 root.Add(element);
             }
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         private string GetSerializedValue(object obj)

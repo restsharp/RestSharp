@@ -77,9 +77,6 @@
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
-    <Compile Include="..\restsharp\extensions\monohttp\Helpers.cs">
-      <Link>Extensions\MonoHttp\Helpers.cs</Link>
-    </Compile>
     <Compile Include="..\restsharp\extensions\ResponseExtensions.cs">
       <Link>Extensions\ResponseExtensions.cs</Link>
     </Compile>
@@ -158,8 +155,141 @@
     <Compile Include="..\restsharp\validation\Validate.cs">
       <Link>Validation\Validate.cs</Link>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="stubs.cs" />
+    <Compile Include="..\RestSharp\Http.Async.cs">
+      <Link>Http.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.Sync.cs">
+      <Link>Http.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Http.cs">
+      <Link>Http.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Async.cs">
+      <Link>RestClient.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.Sync.cs">
+      <Link>RestClient.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestClient.cs">
+      <Link>RestClient.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\RestRequest.cs">
+      <Link>RestRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth1Authenticator.cs">
+      <Link>Authenticators\OAuth1Authenticator.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameter.cs">
+      <Link>Authenticators\OAuth\HttpPostParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\HttpPostParameterType.cs">
+      <Link>Authenticators\OAuth\HttpPostParameterType.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthParameterHandling.cs">
+      <Link>Authenticators\OAuth\OAuthParameterHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureMethod.cs">
+      <Link>Authenticators\OAuth\OAuthSignatureMethod.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthSignatureTreatment.cs">
+      <Link>Authenticators\OAuth\OAuthSignatureTreatment.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthTools.cs">
+      <Link>Authenticators\OAuth\OAuthTools.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthType.cs">
+      <Link>Authenticators\OAuth\OAuthType.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWebQueryInfo.cs">
+      <Link>Authenticators\OAuth\OAuthWebQueryInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\OAuthWorkflow.cs">
+      <Link>Authenticators\OAuth\OAuthWorkflow.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebPairCollection.cs">
+      <Link>Authenticators\OAuth\WebPairCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameter.cs">
+      <Link>Authenticators\OAuth\WebParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\WebParameterCollection.cs">
+      <Link>Authenticators\OAuth\WebParameterCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\CollectionExtensions.cs">
+      <Link>Authenticators\OAuth\Extensions\CollectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Authenticators\OAuth\Extensions\OAuthExtensions.cs">
+      <Link>Authenticators\OAuth\Extensions\OAuthExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\Crc32.cs">
+      <Link>Compression\ZLib\Crc32.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\FlushType.cs">
+      <Link>Compression\ZLib\FlushType.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\GZipStream.cs">
+      <Link>Compression\ZLib\GZipStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\InfTree.cs">
+      <Link>Compression\ZLib\InfTree.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\Inflate.cs">
+      <Link>Compression\ZLib\Inflate.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\ZLib.cs">
+      <Link>Compression\ZLib\ZLib.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\ZLibCodec.cs">
+      <Link>Compression\ZLib\ZLibCodec.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\ZLibConstants.cs">
+      <Link>Compression\ZLib\ZLibConstants.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Compression\ZLib\ZLibStream.cs">
+      <Link>Compression\ZLib\ZLibStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\JsonDeserializer.cs">
+      <Link>Deserializers\JsonDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Deserializers\XmlDeserializer.cs">
+      <Link>Deserializers\XmlDeserializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\MiscExtensions.cs">
+      <Link>Extensions\MiscExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ReflectionExtensions.cs">
+      <Link>Extensions\ReflectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
+      <Link>Extensions\ResponseStatusExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\StringExtensions.cs">
+      <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
+      <Link>Extensions\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Serializers\XmlSerializer.cs">
+      <Link>Serializers\XmlSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Extensions\CompatibilityExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <None Include="..\RestSharp\RestSharp.Net35.Signed.csproj">
+      <Link>RestSharp.Net35.Signed.csproj</Link>
+    </None>
+    <None Include="..\RestSharp\RestSharp.Net35.csproj">
+      <Link>RestSharp.Net35.csproj</Link>
+    </None>
+    <None Include="..\RestSharp\packages.config">
+      <Link>packages.config</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 </Project>

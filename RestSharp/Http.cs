@@ -465,7 +465,11 @@ namespace RestSharp
                                          });
                 }
 
+#if !PCL
                 webResponse.Close();
+#else
+                webResponse.Dispose();
+#endif
             }
         }
 

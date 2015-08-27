@@ -23,12 +23,16 @@ using System.Text;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
 
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !PCL
 using RestSharp.Extensions.MonoHttp;
 #endif
 
 #if WINDOWS_PHONE
 using System.Net;
+#endif
+
+#if PCL
+using HttpUtility = System.Net.WebUtility;
 #endif
 
 #if SILVERLIGHT

@@ -48,7 +48,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PCL
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {
             foreach (string key in range.AllKeys)
