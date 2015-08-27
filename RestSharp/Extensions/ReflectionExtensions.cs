@@ -39,7 +39,11 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
         {
+#if !PCL
             return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
+#else
+            throw new NotSupportedException();
+#endif
         }
 
         /// <summary>
@@ -50,7 +54,11 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
+#if !PCL
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;
+#else
+            throw new NotSupportedException();
+#endif
         }
 
         /// <summary>
@@ -63,6 +71,7 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
+#if !PCL
                 Type cur = toCheck.IsGenericType
                     ? toCheck.GetGenericTypeDefinition()
                     : toCheck;
@@ -73,6 +82,10 @@ namespace RestSharp.Extensions
                 }
 
                 toCheck = toCheck.BaseType;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
             }
 
             return false;

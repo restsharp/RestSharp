@@ -1,6 +1,9 @@
 using System;
-using System.Security.Cryptography;
 using System.Text;
+
+#if !PCL
+using System.Security.Cryptography;
+#endif
 
 namespace RestSharp.Authenticators.OAuth.Extensions
 {
@@ -32,6 +35,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
+#if !PCL
         public static string HashWith(this string input, HashAlgorithm algorithm)
         {
             byte[] data = Encoding.UTF8.GetBytes(input);
@@ -39,5 +43,6 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
             return Convert.ToBase64String(hash);
         }
+#endif
     }
 }

@@ -134,6 +134,7 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, string path, string contentType = null)
         {
+#if !PCL
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
 
@@ -151,6 +152,9 @@ namespace RestSharp
                                         },
                                ContentType = contentType
                            });
+#else
+            throw new NotSupportedException();
+#endif
         }
 
         /// <summary>
@@ -317,6 +321,7 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddObject(object obj, params string[] includedProperties)
         {
+#if !PCL
             // automatically create parameters from object props
             Type type = obj.GetType();
             PropertyInfo[] props = type.GetProperties();
@@ -364,6 +369,10 @@ namespace RestSharp
             }
 
             return this;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         /// <summary>

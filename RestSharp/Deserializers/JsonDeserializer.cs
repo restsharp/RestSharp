@@ -55,6 +55,7 @@ namespace RestSharp.Deserializers
 
         private object Map(object target, IDictionary<string, object> data)
         {
+#if !PCL
             Type objType = target.GetType();
             List<PropertyInfo> props = objType.GetProperties()
                                               .Where(p => p.CanWrite)
@@ -107,10 +108,15 @@ namespace RestSharp.Deserializers
             }
 
             return target;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         private IDictionary BuildDictionary(Type type, object parent)
         {
+#if !PCL
             IDictionary dict = (IDictionary) Activator.CreateInstance(type);
             Type keyType = type.GetGenericArguments()[0];
             Type valueType = type.GetGenericArguments()[1];
@@ -136,10 +142,15 @@ namespace RestSharp.Deserializers
             }
 
             return dict;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         private IList BuildList(Type type, object parent)
         {
+#if !PCL
             IList list = (IList) Activator.CreateInstance(type);
             Type listType = type.GetInterfaces()
                                 .First
@@ -186,10 +197,15 @@ namespace RestSharp.Deserializers
             }
 
             return list;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         private object ConvertValue(Type type, object value)
         {
+#if !PCL
             string stringValue = Convert.ToString(value, this.Culture);
 
             // check for nullable and extract underlying type
@@ -324,6 +340,10 @@ namespace RestSharp.Deserializers
             }
 
             return null;
+#else
+            //TODO: mix TypeInfo compatibility
+            throw new NotSupportedException();
+#endif
         }
 
         private object CreateAndMap(Type type, object element)

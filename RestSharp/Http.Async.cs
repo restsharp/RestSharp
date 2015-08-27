@@ -183,7 +183,7 @@ namespace RestSharp
 
             if (this.HasBody || this.HasFiles || this.AlwaysMultipartFormData)
             {
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !PCL
                 webRequest.ContentLength = this.CalculateContentLength();
 #endif
                 asyncResult = webRequest.BeginGetRequestStream(
@@ -346,7 +346,11 @@ namespace RestSharp
 
             if (raw != null)
             {
+#if !PCL
                 raw.Close();
+#else
+                raw.Dispose();
+#endif
             }
         }
 
@@ -417,7 +421,7 @@ namespace RestSharp
 
             webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PCL
             webRequest.PreAuthenticate = this.PreAuthenticate;
 #endif
             this.AppendHeaders(webRequest);
@@ -426,7 +430,7 @@ namespace RestSharp
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !PCL
             // WP7 doesn't as of Beta doesn't support a way to set this value either directly
             // or indirectly
             if (!this.HasFiles && !this.AlwaysMultipartFormData)
@@ -440,7 +444,7 @@ namespace RestSharp
                 webRequest.Credentials = this.Credentials;
             }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             if (this.UserAgent.HasValue())
             {
                 webRequest.UserAgent = this.UserAgent;
@@ -483,7 +487,7 @@ namespace RestSharp
             }
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             webRequest.AllowAutoRedirect = this.FollowRedirects;
 #endif
             return webRequest;
