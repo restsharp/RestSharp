@@ -65,6 +65,11 @@ namespace RestSharp
         public bool UseDefaultCredentials { get; set; }
 
         /// <summary>
+        /// List of Allowed Decompresison Methods
+        /// </summary>
+        public IList<DecompressionMethods> AllowedDecompressionMethods { get; private set; }
+
+        /// <summary>
         /// Default constructor
         /// </summary>
         public RestRequest()
@@ -75,6 +80,7 @@ namespace RestSharp
             this.Files = new List<FileParameter>();
             this.XmlSerializer = new XmlSerializer();
             this.JsonSerializer = new JsonSerializer();
+            this.AllowedDecompressionMethods = new[] { DecompressionMethods.None };
 
             this.OnBeforeDeserialization = r => { };
         }
@@ -510,6 +516,21 @@ namespace RestSharp
         public IRestRequest AddQueryParameter(string name, string value)
         {
             return this.AddParameter(name, value, ParameterType.QueryString);
+        }
+
+        /// <summary>
+        /// Add a Decompression Method to the request
+        /// </summary>
+        /// <param name="decompressionMethod">None | GZip | Deflate</param>
+        /// <returns></returns>
+        public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
+        {
+            if (!this.AllowedDecompressionMethods.Contains(decompressionMethod))
+            {
+                this.AllowedDecompressionMethods.Add(decompressionMethod);    
+            }
+            
+            return this;
         }
 
         /// <summary>

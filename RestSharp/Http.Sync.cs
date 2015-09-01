@@ -25,6 +25,8 @@ using RestSharp.Extensions;
 
 namespace RestSharp
 {
+    using RestSharp.Authenticators.OAuth.Extensions;
+
     /// <summary>
     /// HttpWebRequest wrapper (sync methods)
     /// </summary>
@@ -264,7 +266,9 @@ namespace RestSharp
                 webRequest.ContentLength = 0;
             }
 
-            webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
+            // webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
+            // Fabrizio
+            AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });            
 
 #if FRAMEWORK
             if (this.ClientCertificates != null)

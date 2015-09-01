@@ -87,6 +87,8 @@ namespace RestSharp
 
         Uri Url { get; set; }
 
+        IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
+            
         HttpWebRequest DeleteAsync(Action<HttpResponse> action);
 
         HttpWebRequest GetAsync(Action<HttpResponse> action);

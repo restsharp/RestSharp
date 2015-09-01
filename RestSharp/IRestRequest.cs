@@ -131,6 +131,11 @@ namespace RestSharp
         /// </summary>
         bool UseDefaultCredentials { get; set; }
 
+        /// <summary>
+        /// List of Allowed Decompression Methods
+        /// </summary>
+        IList<DecompressionMethods> AllowedDecompressionMethods { get; }
+
 #if FRAMEWORK
         /// <summary>
         /// Adds a file to the Files collection to be included with a POST or PUT request 
@@ -307,6 +312,8 @@ namespace RestSharp
         /// <param name="value">Value of the parameter to add</param>
         /// <returns></returns>
         IRestRequest AddQueryParameter(string name, string value);
+
+        IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod);
 
         Action<IRestResponse> OnBeforeDeserialization { get; set; }
 

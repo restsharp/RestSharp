@@ -193,6 +193,11 @@ namespace RestSharp
         public Uri Url { get; set; }
 
         /// <summary>
+        /// List of Allowed Decompression Methods
+        /// </summary>
+        public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
+
+        /// <summary>
         /// Flag to send authorisation header with the HttpWebRequest
         /// </summary>
         public bool PreAuthenticate { get; set; }

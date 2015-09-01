@@ -542,6 +542,10 @@ namespace RestSharp
                                         });
                 }
             }
+
+            // Fabrizio: Set Request Allowed Decompression Methods to Http Allowed Decompression Methods
+            http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
+            
 #if FRAMEWORK
             this.ConfigureProxy(http);
 #endif
