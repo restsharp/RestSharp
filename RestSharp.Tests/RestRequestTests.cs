@@ -85,8 +85,8 @@ namespace RestSharp.Tests
 
             var parameter = request.Parameters.FirstOrDefault(x => x.Name.Equals(ParameterName));
             Assert.IsNotNull(parameter);
-            Assert.Equals(expectedValue, parameter.Value.ToString());
-            Assert.Equals(ParameterType.UrlSegment, parameter.Type);
+            Assert.AreEqual(expectedValue, parameter.Value.ToString());
+            Assert.AreEqual(ParameterType.UrlSegment, parameter.Type);
         }
     }
 }
