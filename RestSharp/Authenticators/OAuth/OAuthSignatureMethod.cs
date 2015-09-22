@@ -9,6 +9,7 @@ namespace RestSharp.Authenticators.OAuth
     {
         HmacSha1,
         PlainText,
-        RsaSha1
+        RsaSha1,
+        HmacSha256
     }
 }
