@@ -39,9 +39,12 @@ namespace RestSharp
     /// </summary>
     public partial class RestClient : IRestClient
     {
+#if WINDOWS_UWP
+        private static readonly Version version = new AssemblyName(typeof(RestClient).GetTypeInfo().Assembly.FullName).Version;
+#else
         // silverlight friendly way to get current version
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
-
+#endif
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
         /// <summary>
