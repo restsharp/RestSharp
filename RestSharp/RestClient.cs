@@ -339,6 +339,13 @@ namespace RestSharp
 
             assembled = AssembleMatrixParameters(request, assembled);
 
+            assembled = AssembleQueryString(request, assembled);
+
+            return new Uri(assembled);
+        }
+
+        private static string AssembleQueryString(IRestRequest request, string assembled)
+        {
             IEnumerable<Parameter> parameters;
 
             if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
@@ -357,7 +364,7 @@ namespace RestSharp
 
             if (!parameters.Any())
             {
-                return new Uri(assembled);
+                return assembled;
             }
 
             // build and attach querystring
@@ -367,8 +374,7 @@ namespace RestSharp
                 : "?";
 
             assembled = string.Concat(assembled, separator, data);
-
-            return new Uri(assembled);
+            return assembled;
         }
 
         private static string AssembleMatrixParameters(IRestRequest request, string assembled)
