@@ -441,9 +441,9 @@ namespace RestSharp.Extensions.MonoHttp
                             entity.Length = 0;
                             haveTrailingDigits = false;
                         }
-                        else if (isHexValue && Uri.IsHexDigit(c))
+                        else if (isHexValue && IsHexDigit(c))
                         {
-                            number = number * 16 + Uri.FromHex(c);
+                            number = number * 16 + FromHex(c);
                             haveTrailingDigits = true;
                         }
                         else if (char.IsDigit(c))
@@ -482,6 +482,18 @@ namespace RestSharp.Extensions.MonoHttp
             }
 
             return output.ToString();
+        }
+
+        private static bool IsHexDigit(char character)
+        {
+            return character >= '0' && character <= '9'
+                   || character >= 'a' && character <= 'f'
+                   || character >= 'A' && character <= 'F';
+        }
+
+        private static int FromHex(char digit)
+        {
+            return digit > 57 ? (digit <= 70 ? digit - 65 : digit - 97) + 10 : digit - 48;
         }
 
         internal static bool NotEncoded(char c)

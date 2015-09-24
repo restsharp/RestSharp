@@ -464,8 +464,9 @@ namespace RestSharp
                                              Value = headerValue
                                          });
                 }
-
+#if !WINDOWS_UWP
                 webResponse.Close();
+#endif
             }
         }
 

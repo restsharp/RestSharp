@@ -1,6 +1,13 @@
 using System;
-using System.Security.Cryptography;
 using System.Text;
+#if WINDOWS_UWP
+using Windows.Security.Cryptography.Core;
+using Windows.Security.Cryptography;
+using Windows.Storage.Streams;
+#else
+using System.Security.Cryptography;
+#endif
+
 
 namespace RestSharp.Authenticators.OAuth.Extensions
 {
@@ -9,7 +16,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         public static string ToRequestValue(this OAuthSignatureMethod signatureMethod)
         {
             string value = signatureMethod.ToString()
-                                          .ToUpper();
+                .ToUpper();
             int shaIndex = value.IndexOf("SHA1");
 
             return shaIndex > -1
@@ -32,12 +39,29 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
-        public static string HashWith(this string input, HashAlgorithm algorithm)
+
+        public static string HashWithHMACSHA1(this string input, string key)
         {
+#if WINDOWS_UWP
+            MacAlgorithmProvider algorithm = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1);
+
+            IBuffer keyBuffer = CryptographicBuffer.ConvertStringToBinary(key, BinaryStringEncoding.Utf8);
+            CryptographicKey signatureKey = algorithm.CreateKey(keyBuffer);
+
+            IBuffer data = CryptographicBuffer.ConvertStringToBinary(input, BinaryStringEncoding.Utf8);
+
+            IBuffer hash = CryptographicEngine.Sign(signatureKey, data);
+
+            return CryptographicBuffer.EncodeToBase64String(hash);
+#else
+            HMACSHA1 algorithm = new HMACSHA1 {Key = Encoding.UTF8.GetBytes(key)};
+
             byte[] data = Encoding.UTF8.GetBytes(input);
             byte[] hash = algorithm.ComputeHash(data);
 
             return Convert.ToBase64String(hash);
+        
+#endif
         }
     }
 }
