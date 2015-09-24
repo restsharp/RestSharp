@@ -505,6 +505,17 @@ namespace RestSharp
         }
 
         /// <summary>
+        /// Shortcut to AddParameter(name, value, Matrix) overload
+        /// </summary>
+        /// <param name="name">Name of the parameter to add</param>
+        /// <param name="value">Value of the parameter to add</param>
+        /// <returns></returns>
+        public IRestRequest AddMatrixParameter(string name, string value)
+        {
+            return this.AddParameter(name, value, ParameterType.Matrix);
+        }
+
+        /// <summary>
         /// Container of all HTTP parameters to be passed with the request. 
         /// See AddParameter() for explanation of the types of parameters that can be passed
         /// </summary>

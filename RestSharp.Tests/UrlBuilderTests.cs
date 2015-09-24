@@ -188,6 +188,67 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void GET_with_matrix_containing_tokens()
+        {
+            RestRequest request = new RestRequest("resource", Method.GET);
+
+            request.AddParameter("foo", "bar", ParameterType.Matrix);
+
+            RestClient client = new RestClient("http://example.com");
+            Uri expected = new Uri("http://example.com/resource;foo=bar");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void GET_with_matrix_and_no_value()
+        {
+            RestRequest request = new RestRequest("resource", Method.GET);
+
+            request.AddMatrixParameter("foo", null);
+
+            RestClient client = new RestClient("http://example.com");
+            Uri expected = new Uri("http://example.com/resource;foo");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void GET_with_matrix_and_querstring()
+        {
+            RestRequest request = new RestRequest("resource", Method.GET);
+
+            request.AddParameter("query", "queryValue", ParameterType.QueryString);
+            request.AddParameter("matrix", "matrixValue", ParameterType.Matrix);
+
+            RestClient client = new RestClient("http://example.com");
+            Uri expected = new Uri("http://example.com/resource;matrix=matrixValue?query=queryValue");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void GET_where_matrix_parameters_should_appear_before_querystring()
+        {
+
+            RestRequest request = new RestRequest("resource", Method.GET);
+
+            request.AddQueryParameter("query1", "queryValue1");
+            request.AddMatrixParameter("matrix1", "matrixValue1");
+            request.AddParameter("query2", null, ParameterType.QueryString);
+            request.AddParameter("matrix2", null, ParameterType.Matrix);
+
+            RestClient client = new RestClient("http://example.com");
+            Uri expected = new Uri("http://example.com/resource;matrix1=matrixValue1;matrix2?query1=queryValue1&query2=");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
         public void GET_with_multiple_instances_of_same_key()
         {
             RestRequest request = new RestRequest("v1/people/~/network/updates", Method.GET);
