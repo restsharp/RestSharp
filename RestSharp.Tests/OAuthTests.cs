@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Threading;
 using NUnit.Framework;
 using RestSharp.Authenticators.OAuth;
@@ -41,6 +42,27 @@ namespace RestSharp.Tests
             string actual = value.PercentEncode();
 
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P/ltlWS7WvJXpECPs=")]
+        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog", "C+2RY0Hna6VrfK1crCkU/V1e0ECoxoDh41iOOdmEMx8=")]
+        [TestCase("", "+nkCwZfv/QVmBbNZsPKbBT3kAg3JtVn3f3YMBtV83L8=")]
+        [TestCase(" !\"#$%&'()*+,", "xcTgWGBVZaw+ilg6kjWAGt/hCcsVBMMe1CcDEnxnh8Y=")]
+        public void HmacSha256_Hashes_Correctly(string value, string expected)
+        {
+            string consumerSecret = "12345678";
+            string actual = OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, value, consumerSecret);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HmacSha256_Does_Not_Accept_Nulls()
+        {
+            string consumerSecret = "12345678";
+            string actual = OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, null, consumerSecret);
         }
     }
 }
