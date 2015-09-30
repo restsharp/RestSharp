@@ -45,10 +45,10 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P/ltlWS7WvJXpECPs=")]
-        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog", "C+2RY0Hna6VrfK1crCkU/V1e0ECoxoDh41iOOdmEMx8=")]
-        [TestCase("", "+nkCwZfv/QVmBbNZsPKbBT3kAg3JtVn3f3YMBtV83L8=")]
-        [TestCase(" !\"#$%&'()*+,", "xcTgWGBVZaw+ilg6kjWAGt/hCcsVBMMe1CcDEnxnh8Y=")]
+        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P%2FltlWS7WvJXpECPs%3D")]
+        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog", "C%2B2RY0Hna6VrfK1crCkU%2FV1e0ECoxoDh41iOOdmEMx8%3D")]
+        [TestCase("", "%2BnkCwZfv%2FQVmBbNZsPKbBT3kAg3JtVn3f3YMBtV83L8%3D")]
+        [TestCase(" !\"#$%&'()*+,", "xcTgWGBVZaw%2Bilg6kjWAGt%2FhCcsVBMMe1CcDEnxnh8Y%3D")]
         public void HmacSha256_Hashes_Correctly(string value, string expected)
         {
             string consumerSecret = "12345678";
