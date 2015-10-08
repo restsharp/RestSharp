@@ -492,8 +492,8 @@ namespace RestSharp
             }
 
             string rangeSpecifier = m.Groups[1].Value;
-            int from = Convert.ToInt32(m.Groups[2].Value);
-            int to = Convert.ToInt32(m.Groups[3].Value);
+            long from = Convert.ToInt64(m.Groups[2].Value);
+            long to = Convert.ToInt64(m.Groups[3].Value);
 
             r.AddRange(rangeSpecifier, from, to);
         }
