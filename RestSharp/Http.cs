@@ -197,6 +197,15 @@ namespace RestSharp
         /// </summary>
         public bool PreAuthenticate { get; set; }
 
+        /// <summary>
+        /// Flag to reuse same connection in the HttpWebRequest
+        /// </summary>
+        public bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
+        /// <summary>
+        /// Flag to send authorisation header with the HttpWebRequest
+        /// </summary>
+        public bool UseUnsafeConnection { get; set; }
 #if FRAMEWORK
         /// <summary>
         /// Proxy info to be sent with request

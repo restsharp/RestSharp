@@ -57,6 +57,8 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
+        bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
         IList<Parameter> DefaultParameters { get; }
 
         RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);

@@ -419,6 +419,7 @@ namespace RestSharp
 
 #if !WINDOWS_PHONE && !SILVERLIGHT
             webRequest.PreAuthenticate = this.PreAuthenticate;
+            webRequest.UnsafeAuthenticatedConnectionSharing = this.UnsafeAuthenticatedConnectionSharing;
 #endif
             this.AppendHeaders(webRequest);
             this.AppendCookies(webRequest);

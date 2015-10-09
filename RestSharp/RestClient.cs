@@ -116,6 +116,8 @@ namespace RestSharp
 
         public bool PreAuthenticate { get; set; }
 
+        public bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
         /// <summary>
         /// Default constructor that registers default content handlers
         /// </summary>
@@ -411,6 +413,7 @@ namespace RestSharp
 
             http.Url = this.BuildUri(request);
             http.PreAuthenticate = this.PreAuthenticate;
+            http.UnsafeAuthenticatedConnectionSharing = this.UnsafeAuthenticatedConnectionSharing;
 
             string userAgent = this.UserAgent ?? http.UserAgent;
 

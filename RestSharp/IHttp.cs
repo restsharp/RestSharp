@@ -76,6 +76,8 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
+        bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
 #if FRAMEWORK
         RequestCachePolicy CachePolicy { get; set; }
 #endif

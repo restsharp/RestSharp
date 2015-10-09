@@ -251,6 +251,7 @@ namespace RestSharp
 
             webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
             webRequest.PreAuthenticate = this.PreAuthenticate;
+            webRequest.UnsafeAuthenticatedConnectionSharing = this.UnsafeAuthenticatedConnectionSharing;
             webRequest.ServicePoint.Expect100Continue = false;
 
             this.AppendHeaders(webRequest);
