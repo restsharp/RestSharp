@@ -294,6 +294,13 @@ namespace RestSharp.Deserializers
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
 
+                if (genericTypeDef == typeof(IEnumerable<>))
+                {
+                    Type itemType = type.GetGenericArguments()[0];
+                    Type listType = typeof(List<>).MakeGenericType(itemType);
+                    return this.BuildList(listType, value);
+                }
+
                 if (genericTypeDef == typeof(List<>))
                 {
                     return this.BuildList(type, value);
