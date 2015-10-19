@@ -10,7 +10,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         {
             string value = signatureMethod.ToString()
                                           .ToUpper();
-            int shaIndex = value.IndexOf("SHA1");
+            int shaIndex = value.IndexOf("SHA");
 
             return shaIndex > -1
                 ? value.Insert(shaIndex, "-")
