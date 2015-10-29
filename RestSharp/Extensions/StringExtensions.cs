@@ -132,7 +132,10 @@ namespace RestSharp.Extensions
             {
                 DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-                return epoch.AddSeconds(unix);
+				if (unix > DateTime.MaxValue.Second)
+					return epoch.AddMilliseconds(unix);
+				else
+					return epoch.AddSeconds(unix);
             }
 
             if (input.Contains("/Date("))
