@@ -122,6 +122,8 @@ namespace RestSharp.Extensions
         /// <returns>DateTime</returns>
         public static DateTime ParseJsonDate(this string input, CultureInfo culture)
         {
+            const long maxAllowedTimestamp = 253402300799;
+            
             input = input.Replace("\n", "");
             input = input.Replace("\r", "");
             input = input.RemoveSurroundingQuotes();
@@ -132,10 +134,10 @@ namespace RestSharp.Extensions
             {
                 DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-				if (unix > DateTime.MaxValue.Second)
-					return epoch.AddMilliseconds(unix);
-				else
-					return epoch.AddSeconds(unix);
+                if (unix > maxAllowedTimestamp)
+                    return epoch.AddMilliseconds(unix);
+                else
+                    return epoch.AddSeconds(unix);
             }
 
             if (input.Contains("/Date("))
