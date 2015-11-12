@@ -91,8 +91,8 @@ namespace RestSharp.Extensions.MonoHttp
         }
 
         private static char[] GetChars(MemoryStream b, Encoding e)
-        {
-            return e.GetChars(b.GetBuffer(), 0, (int) b.Length);
+        {            
+            return e.GetChars(b.ReadAsBytes(), 0, (int) b.Length);
         }
 
         private static void WriteCharBytes(IList buf, char ch, Encoding e)

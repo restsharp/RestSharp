@@ -1,14 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !WINDOWS_UWP
 using System.Security.Cryptography;
+#else
+using Windows.Security.Cryptography.Core;
+#endif
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
+using System.Runtime.Serialization;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
     [Serializable]
+#endif
+#if WINDOWS_UWP
+    [DataContract]
 #endif
     internal static class OAuthTools
     {
@@ -26,13 +34,13 @@ namespace RestSharp.Authenticators.OAuth
 
         private static readonly object randomLock = new object();
 
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
         private static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
 #endif
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
             byte[] bytes = new byte[4];
 
             rng.GetNonZeroBytes(bytes);
@@ -331,12 +339,15 @@ namespace RestSharp.Authenticators.OAuth
             {
                 case OAuthSignatureMethod.HmacSha1:
                 {
+#if !WINDOWS_UWP
                     HMACSHA1 crypto = new HMACSHA1();
                     string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                     crypto.Key = encoding.GetBytes(key);
                     signature = signatureBase.HashWith(crypto);
-
+#else
+                    signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));         
+#endif               
                     break;
                 }
 

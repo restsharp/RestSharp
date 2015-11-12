@@ -38,8 +38,12 @@ namespace RestSharp.Extensions
         /// <param name="prop">Member to retrieve attribute from</param>
         /// <returns></returns>
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
-        {
+        {           
+#if !WINDOWS_UWP
             return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
+#else
+            return prop.GetCustomAttribute(typeof(T)) as T;
+#endif
         }
 
         /// <summary>
@@ -50,7 +54,12 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
+            //type.GetTypeInfo().getcu
+#if !WINDOWS_UWP
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;
+#else
+            return type.GetTypeInfo().GetCustomAttribute(type) as T;
+#endif
         }
 
         /// <summary>
@@ -63,16 +72,25 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
+#if !WINDOWS_UWP
                 Type cur = toCheck.IsGenericType
                     ? toCheck.GetGenericTypeDefinition()
                     : toCheck;
+#else
+                Type cur = toCheck.GetTypeInfo().IsGenericType
+                    ? toCheck.GetGenericTypeDefinition()
+                    : toCheck;
+#endif
 
                 if (generic == cur)
                 {
                     return true;
                 }
-
+#if !WINDOWS_UWP
                 toCheck = toCheck.BaseType;
+#else
+                toCheck = toCheck.GetTypeInfo().BaseType;
+#endif
             }
 
             return false;

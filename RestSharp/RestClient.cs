@@ -32,6 +32,7 @@ using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
+
 namespace RestSharp
 {
     /// <summary>
@@ -39,8 +40,12 @@ namespace RestSharp
     /// </summary>
     public partial class RestClient : IRestClient
     {
-        // silverlight friendly way to get current version
-        private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
+        // silverlight friendly way to get current version      
+#if !WINDOWS_UWP
+        private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
+#else
+        private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;
+#endif
 
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
