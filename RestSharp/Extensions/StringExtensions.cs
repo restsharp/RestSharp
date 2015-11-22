@@ -281,7 +281,7 @@ namespace RestSharp.Extensions
                             restOfWord = restOfWord.ToLower(culture);
                         }
 
-                        char firstChar = char.ToUpper(word[0], culture);
+                        char firstChar = culture.TextInfo.ToUpper(word[0]);
 
                         words[i] = string.Concat(firstChar, restOfWord);
                     }
@@ -292,6 +292,18 @@ namespace RestSharp.Extensions
 
             return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
         }
+
+#if WINDOWS_UWP
+        private static string ToLower(this string s, CultureInfo culture)
+        {
+            return culture.TextInfo.ToLower(s);
+        }
+
+        private static string ToUpper(this string s, CultureInfo culture)
+        {
+            return culture.TextInfo.ToUpper(s);
+        }
+#endif
 
         /// <summary>
         /// Converts a string to camel case

@@ -92,7 +92,11 @@ namespace RestSharp.Extensions.MonoHttp
 
         private static char[] GetChars(MemoryStream b, Encoding e)
         {
+#if WINDOWS_UWP
+            return e.GetChars(b.ToArray());
+#else
             return e.GetChars(b.GetBuffer(), 0, (int) b.Length);
+#endif
         }
 
         private static void WriteCharBytes(IList buf, char ch, Encoding e)
@@ -758,6 +762,6 @@ namespace RestSharp.Extensions.MonoHttp
             }
         }
 
-        #endregion
+#endregion
     }
 }

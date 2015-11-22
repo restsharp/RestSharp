@@ -23,10 +23,16 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using RestSharp.Extensions;
 using RestSharp.Serializers;
 
 #if FRAMEWORK
 using RestSharp.Extensions;
+#endif
+
+#if WINDOWS_UWP
+using Windows.Storage;
+using Windows.Storage.Streams;
 #endif
 
 namespace RestSharp
@@ -134,6 +140,7 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, string path, string contentType = null)
         {
+            
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
 
@@ -142,15 +149,27 @@ namespace RestSharp
                                Name = name,
                                FileName = Path.GetFileName(path),
                                ContentLength = fileLength,
-                               Writer = s =>
-                                        {
-                                            using (StreamReader file = new StreamReader(path))
-                                            {
-                                                file.BaseStream.CopyTo(s);
-                                            }
-                                        },
+                               Writer = s => { this.WriteFile(path, s); },
                                ContentType = contentType
                            });
+        }
+
+        private void WriteFile(string path, Stream stream)
+        {
+#if WINDOWS_UWP
+            StorageFile storageFile = StorageFile.GetFileFromPathAsync(path).GetResults();
+            IRandomAccessStream randomAccessStream = storageFile.OpenReadAsync().GetResults();
+            
+            using (StreamReader file = new StreamReader(randomAccessStream.AsStreamForRead()))
+            {
+                file.BaseStream.CopyTo(stream);
+            }
+#else
+            using (StreamReader file = new StreamReader(path))
+            {
+                file.BaseStream.CopyTo(stream);
+            }
+#endif
         }
 
         /// <summary>
@@ -345,7 +364,7 @@ namespace RestSharp
 
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
-                        (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
+                        (elementType.IsPrimitive() || elementType.IsValueType() || elementType == typeof(string)))
                     {
                         // convert the array to an array of strings
                         string[] values = (from object item in ((Array) val)
