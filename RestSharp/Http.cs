@@ -129,6 +129,11 @@ namespace RestSharp
         /// Whether or not HTTP 3xx response redirects should be automatically followed
         /// </summary>
         public bool FollowRedirects { get; set; }
+
+        /// <summary>
+        /// Whether or not to use pipelined connections
+        /// </summary>
+        public bool Pipelined { get; set; }
 #endif
 
 #if FRAMEWORK
@@ -141,6 +146,7 @@ namespace RestSharp
         /// Maximum number of automatic redirects to follow if FollowRedirects is true
         /// </summary>
         public int? MaxRedirects { get; set; }
+
 #endif
 
         /// <summary>
