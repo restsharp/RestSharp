@@ -442,7 +442,6 @@ namespace RestSharp
 #if !SILVERLIGHT
             http.FollowRedirects = this.FollowRedirects;
 
-            http.Pipelined = this.Pipelined;
 #endif
 
 #if FRAMEWORK
@@ -453,6 +452,7 @@ namespace RestSharp
 
             http.MaxRedirects = this.MaxRedirects;
             http.CachePolicy = this.CachePolicy;
+            http.Pipelined = this.Pipelined;
 #endif
 
             if (request.Credentials != null)
