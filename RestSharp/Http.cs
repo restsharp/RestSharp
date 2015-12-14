@@ -404,11 +404,9 @@ namespace RestSharp
 #if FRAMEWORK
                 response.ContentEncoding = webResponse.ContentEncoding;
                 response.Server = webResponse.Server;
-#endif
-
-#if !SILVERLIGHT
                 response.ProtocolVersion = webResponse.ProtocolVersion;
 #endif
+
                 response.ContentType = webResponse.ContentType;
                 response.ContentLength = webResponse.ContentLength;
 

@@ -114,7 +114,7 @@ namespace RestSharp
         /// </summary>
         public Exception ErrorException { get; set; }
 
-#if !SILVERLIGHT
+#if FRAMEWORK
         /// <summary>
         /// The HTTP protocol version (1.0, 1.1, 2.0, etc.) 
         /// </summary>
