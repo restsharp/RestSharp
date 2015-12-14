@@ -126,6 +126,12 @@ namespace RestSharp
         /// </summary>
         public Exception ErrorException { get; set; }
 
+#if !SILVERLIGHT
+        /// <summary>
+        /// The HTTP protocol version (1.0, 1.1, 2.0, etc.) 
+        /// </summary>
+        public Version ProtocolVersion { get; set; }
+#endif
 
         /// <summary>
         /// Assists with debugging responses by displaying in the debugger output

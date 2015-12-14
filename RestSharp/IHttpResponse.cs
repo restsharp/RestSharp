@@ -79,5 +79,12 @@ namespace RestSharp
         /// Exception thrown when error is encountered.
         /// </summary>
         Exception ErrorException { get; set; }
+
+#if !SILVERLIGHT
+        /// <summary>
+        /// The HTTP protocol version (1.0, 1.1, 2.0, etc.) 
+        /// </summary>
+        Version ProtocolVersion { get; set; }
+#endif
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RestSharp
 {
@@ -89,6 +90,13 @@ namespace RestSharp
         /// <remarks>Will contain only network transport or framework exceptions thrown during the request.
         /// HTTP protocol errors are handled by RestSharp and will not appear here.</remarks>
         Exception ErrorException { get; set; }
+
+#if !SILVERLIGHT
+        /// <summary>
+        /// The HTTP protocol version (1.0, 1.1, 2.0, etc.) 
+        /// </summary>
+        Version ProtocolVersion { get; set; }
+#endif
     }
 
     /// <summary>
