@@ -59,7 +59,7 @@ namespace RestSharp.Deserializers
 
             if (this.RootElement.HasValue() && doc.Root != null)
             {
-                root = doc.Root.Element(this.RootElement.AsNamespaced(this.Namespace));
+                root = doc.Root.DescendantsAndSelf(this.RootElement.AsNamespaced(this.Namespace)).SingleOrDefault();
             }
 
             // autodetect xml namespace
