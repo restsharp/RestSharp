@@ -292,10 +292,7 @@ namespace RestSharp
         /// <returns>Assembled System.Uri</returns>
         public Uri BuildUri(IRestRequest request)
         {
-            if (this.BaseUrl == null)
-            {
-                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
-            }
+            DoBuildUriValidations(request);
 
             string assembled = request.Resource;
             IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
@@ -303,13 +300,6 @@ namespace RestSharp
 
             foreach (Parameter p in urlParms)
             {
-                if (p.Value == null)
-                {
-                    throw new ArgumentException(
-                        string.Format("Cannot build uri when url segment parameter '{0}' value is null.", p.Name),
-                        "request");
-                }
-
                 if (!string.IsNullOrEmpty(assembled))
                 {
                     assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
@@ -367,6 +357,24 @@ namespace RestSharp
             assembled = string.Concat(assembled, separator, data);
 
             return new Uri(assembled);
+        }
+
+        private void DoBuildUriValidations(IRestRequest request)
+        {
+            if (this.BaseUrl == null)
+            {
+                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
+            }
+
+            var nullValuedParams = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
+                .Select(p => p.Name);
+
+            if (nullValuedParams.Any())
+            {
+                var names = string.Join(", ", nullValuedParams.Select(name => string.Format("'{0}'", name)).ToArray());
+                throw new ArgumentException(
+                        string.Format("Cannot build uri when url segment parameter(s) {0} value is null.", names), "request");
+            }
         }
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
