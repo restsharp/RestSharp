@@ -294,38 +294,14 @@ namespace RestSharp
         {
             DoBuildUriValidations(request);
 
-            string assembled = request.Resource;
-            IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            UriBuilder builder = new UriBuilder(this.BaseUrl);
+            var tuple = ApplyUrlSegmentParamsValuesToBaseUriAndResource(request);
 
-            foreach (Parameter p in urlParms)
-            {
-                if (!string.IsNullOrEmpty(assembled))
-                {
-                    assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
-                }
+            this.BaseUrl = new Uri(tuple.Key);
+            string resource = tuple.Value;
 
-                builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
-            }
+            string mergedUri = MergeBaseUrlAndResource(resource);
 
-            this.BaseUrl = new Uri(builder.ToString());
-
-            if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
-            {
-                assembled = assembled.Substring(1);
-            }
-
-            if (this.BaseUrl != null && !string.IsNullOrEmpty(this.BaseUrl.AbsoluteUri))
-            {
-                if (!this.BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
-                {
-                    assembled = string.Concat("/", assembled);
-                }
-
-                assembled = string.IsNullOrEmpty(assembled)
-                    ? this.BaseUrl.AbsoluteUri
-                    : string.Format("{0}{1}", this.BaseUrl, assembled);
-            }
+            
 
             IEnumerable<Parameter> parameters;
 
@@ -345,18 +321,18 @@ namespace RestSharp
 
             if (!parameters.Any())
             {
-                return new Uri(assembled);
+                return new Uri(mergedUri);
             }
 
             // build and attach querystring
             string data = EncodeParameters(parameters);
-            string separator = assembled != null && assembled.Contains("?")
+            string separator = mergedUri != null && mergedUri.Contains("?")
                 ? "&"
                 : "?";
 
-            assembled = string.Concat(assembled, separator, data);
+            mergedUri = string.Concat(mergedUri, separator, data);
 
-            return new Uri(assembled);
+            return new Uri(mergedUri);
         }
 
         private void DoBuildUriValidations(IRestRequest request)
@@ -377,6 +353,53 @@ namespace RestSharp
             }
         }
 
+        private KeyValuePair<string, String> ApplyUrlSegmentParamsValuesToBaseUriAndResource(IRestRequest request)
+        {
+            string assembled = request.Resource;
+            var hasResource = !string.IsNullOrEmpty(assembled);
+            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            var builder = new UriBuilder(this.BaseUrl);
+
+            foreach (var parameter in urlParms)
+            {
+                var paramPlaceHolder = "{" + parameter.Name + "}";
+                var paramValue = parameter.Value.ToString().UrlEncode();
+
+                if (hasResource)
+                {
+                    assembled = assembled.Replace(paramPlaceHolder, paramValue);
+                }
+
+                builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
+            }
+
+            return new KeyValuePair<string, String>(builder.ToString(), assembled);
+        }
+
+        private string MergeBaseUrlAndResource(string resource)
+        {
+            string assembled = resource;
+
+            if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
+            {
+                assembled = assembled.Substring(1);
+            }
+
+            if (this.BaseUrl != null && !string.IsNullOrEmpty(this.BaseUrl.AbsoluteUri))
+            {
+                if (!this.BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+                {
+                    assembled = string.Concat("/", assembled);
+                }
+
+                assembled = string.IsNullOrEmpty(assembled)
+                    ? this.BaseUrl.AbsoluteUri
+                    : string.Format("{0}{1}", this.BaseUrl, assembled);
+            }
+
+            return assembled;
+
+        }
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
             return string.Join("&", parameters.Select(EncodeParameter)
