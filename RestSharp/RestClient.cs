@@ -301,38 +301,9 @@ namespace RestSharp
 
             string mergedUri = MergeBaseUrlAndResource(resource);
 
-            
+            string finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
 
-            IEnumerable<Parameter> parameters;
-
-            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
-            {
-                parameters = request.Parameters
-                                    .Where(p => p.Type == ParameterType.GetOrPost ||
-                                                p.Type == ParameterType.QueryString)
-                                    .ToList();
-            }
-            else
-            {
-                parameters = request.Parameters
-                                    .Where(p => p.Type == ParameterType.QueryString)
-                                    .ToList();
-            }
-
-            if (!parameters.Any())
-            {
-                return new Uri(mergedUri);
-            }
-
-            // build and attach querystring
-            string data = EncodeParameters(parameters);
-            string separator = mergedUri != null && mergedUri.Contains("?")
-                ? "&"
-                : "?";
-
-            mergedUri = string.Concat(mergedUri, separator, data);
-
-            return new Uri(mergedUri);
+            return new Uri(finalUri);
         }
 
         private void DoBuildUriValidations(IRestRequest request)
@@ -400,6 +371,36 @@ namespace RestSharp
             return assembled;
 
         }
+
+        private static string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
+        {
+            var parameters = GetQueryStringParameters(request);
+
+            if (!parameters.Any())
+            {
+                return mergedUri;
+            }
+
+            string separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
+
+            return string.Concat(mergedUri, separator, EncodeParameters(parameters));
+        }
+
+        private static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
+        {
+            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+            {
+                return request.Parameters
+                                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                                p.Type == ParameterType.QueryString)
+                                    .ToList();
+            }
+
+            return request.Parameters
+                                .Where(p => p.Type == ParameterType.QueryString)
+                                .ToList();
+        }
+
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
             return string.Join("&", parameters.Select(EncodeParameter)
