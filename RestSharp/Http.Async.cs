@@ -486,6 +486,9 @@ namespace RestSharp
 #if !SILVERLIGHT
             webRequest.AllowAutoRedirect = this.FollowRedirects;
 #endif
+#if NET45
+            webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
+#endif
             return webRequest;
         }
 
