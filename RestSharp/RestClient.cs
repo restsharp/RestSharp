@@ -118,6 +118,10 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
 #if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        /// overriding certificate errors in the scope of a request.
+        /// </summary>
         public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 #endif
 
@@ -544,6 +548,9 @@ namespace RestSharp
             }
 #if FRAMEWORK
             this.ConfigureProxy(http);
+#endif
+#if NET45
+            http.RemoteCertificateValidationCallback = this.RemoteCertificateValidationCallback;
 #endif
         }
 
