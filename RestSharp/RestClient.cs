@@ -30,6 +30,7 @@ using RestSharp.Extensions;
 #if FRAMEWORK
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 #endif
 
 namespace RestSharp
@@ -115,6 +116,10 @@ namespace RestSharp
         public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
+
+#if NET45
+        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
 
         /// <summary>
         /// Default constructor that registers default content handlers
