@@ -82,6 +82,17 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_IEnumerable_of_Simple_Types()
+        {
+            const string content = "{\"numbers\":[1,2,3,4,5]}";
+            JsonDeserializer json = new JsonDeserializer { RootElement = "numbers" };
+            var output = json.Deserialize<IEnumerable<int>>(new RestResponse { Content = content });
+
+            Assert.IsNotEmpty(output);
+            Assert.IsTrue(output.Count() == 5);
+        }
+
+        [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "jsonlists.txt"));
