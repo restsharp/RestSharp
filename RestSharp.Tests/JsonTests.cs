@@ -624,6 +624,17 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_Unix_Json_Millisecond_Dates()
+        {
+            string doc = CreateUnixDateMillisecondsJson();
+            JsonDeserializer d = new JsonDeserializer();
+            RestResponse response = new RestResponse { Content = doc };
+            Birthdate bd = d.Deserialize<Birthdate>(response);
+
+            Assert.AreEqual(new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc), bd.Value);
+        }
+
+        [Test]
         public void Can_Deserialize_JsonNet_Dates()
         {
             PersonForJson person = GetPayLoad<PersonForJson>("person.json.txt");
@@ -906,6 +917,15 @@ namespace RestSharp.Tests
             JsonObject doc = new JsonObject();
 
             doc["Value"] = 1309421746;
+
+            return doc.ToString();
+        }
+
+        private static string CreateUnixDateMillisecondsJson()
+        {
+            JsonObject doc = new JsonObject();
+
+            doc["Value"] = 1309421746000;
 
             return doc.ToString();
         }
