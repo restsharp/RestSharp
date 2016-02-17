@@ -65,7 +65,7 @@ request.AddHeader("header", "value");
 request.AddFile(path);
 
 // execute the request
-RestResponse response = client.Execute(request);
+IRestResponse response = client.Execute(request);
 var content = response.Content; // raw content as string
 
 // or automatically deserialize result
