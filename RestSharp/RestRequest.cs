@@ -144,7 +144,7 @@ namespace RestSharp
                                ContentLength = fileLength,
                                Writer = s =>
                                         {
-                                            using (StreamReader file = new StreamReader(path))
+                                            using (StreamReader file = new StreamReader( new FileStream(path, FileMode.Open)))
                                             {
                                                 file.BaseStream.CopyTo(s);
                                             }
@@ -345,9 +345,15 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
+#if !WINDOWS_UWP
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
+#else
+                    if (((Array)val).Length > 0 &&
+                        elementType != null &&
+                        (elementType.GetTypeInfo().IsPrimitive || elementType.GetTypeInfo().IsValueType || elementType == typeof(string)))
+#endif
                     {
                         // convert the array to an array of strings
                         string[] values = (from object item in ((Array) val)
