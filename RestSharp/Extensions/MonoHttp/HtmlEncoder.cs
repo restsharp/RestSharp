@@ -488,6 +488,17 @@ namespace RestSharp.Extensions.MonoHttp
             return output.ToString();
         }
 
+        internal static int FromHex(char c)
+        {
+            return int.Parse(Convert.ToString(c), System.Globalization.NumberStyles.HexNumber);
+        }
+
+        internal static bool IsHexDigit(char c)
+        {
+            String hexValues = "0123456789abcdefABCDEF" ;           
+            return hexValues.IndexOf(c) >= 0; //returns -1 if not found
+        }
+
         internal static bool NotEncoded(char c)
         {
             return (c == '!' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_');

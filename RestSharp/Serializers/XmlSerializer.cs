@@ -213,7 +213,11 @@ namespace RestSharp.Serializers
 
             if (obj is bool)
             {
+#if !WINDOWS_UWP
                 output = ((bool) obj).ToString(CultureInfo.InvariantCulture).ToLower();
+#else
+                output = ((bool)obj).ToString().ToLowerInvariant();                
+#endif
             }
 
             if (IsNumeric(obj))

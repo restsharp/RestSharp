@@ -112,7 +112,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this PropertyInfo prop) where T : Attribute
         {
-#if DNXCORE50
+#if WINDOWS_UWP || DNXCORE50
                     return prop.CustomAttributes.SingleOrDefault(ca => ca.AttributeType == typeof(T)) as T;
 #else
             return prop.GetAttribute<T>();
@@ -127,7 +127,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
-#if DNXCORE50
+#if WINDOWS_UWP || DNXCORE50
             return type.GetTypeInfo().GetCustomAttributes(typeof(T), true).Cast<T>().FirstOrDefault();
 #else
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;

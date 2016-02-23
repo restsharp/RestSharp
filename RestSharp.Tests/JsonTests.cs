@@ -82,6 +82,17 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_IEnumerable_of_Simple_Types()
+        {
+            const string content = "{\"numbers\":[1,2,3,4,5]}";
+            JsonDeserializer json = new JsonDeserializer { RootElement = "numbers" };
+            var output = json.Deserialize<IEnumerable<int>>(new RestResponse { Content = content });
+
+            Assert.IsNotEmpty(output);
+            Assert.IsTrue(output.Count() == 5);
+        }
+
+        [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             string doc = File.ReadAllText(Path.Combine("SampleData", "jsonlists.txt"));
@@ -624,6 +635,17 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_Unix_Json_Millisecond_Dates()
+        {
+            string doc = CreateUnixDateMillisecondsJson();
+            JsonDeserializer d = new JsonDeserializer();
+            RestResponse response = new RestResponse { Content = doc };
+            Birthdate bd = d.Deserialize<Birthdate>(response);
+
+            Assert.AreEqual(new DateTime(2011, 6, 30, 8, 15, 46, DateTimeKind.Utc), bd.Value);
+        }
+
+        [Test]
         public void Can_Deserialize_JsonNet_Dates()
         {
             PersonForJson person = GetPayLoad<PersonForJson>("person.json.txt");
@@ -906,6 +928,15 @@ namespace RestSharp.Tests
             JsonObject doc = new JsonObject();
 
             doc["Value"] = 1309421746;
+
+            return doc.ToString();
+        }
+
+        private static string CreateUnixDateMillisecondsJson()
+        {
+            JsonObject doc = new JsonObject();
+
+            doc["Value"] = 1309421746000;
 
             return doc.ToString();
         }

@@ -320,7 +320,8 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !DNXCORE50
+
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))

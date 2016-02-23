@@ -158,9 +158,10 @@ namespace RestSharp
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null);
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
 
         /// <summary>
         /// Add bytes to the Files collection as if it was a file of specific type

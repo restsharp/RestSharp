@@ -62,9 +62,9 @@ namespace RestSharp.Deserializers
 
             foreach (PropertyInfo prop in props)
             {
+                string name;
                 Type type = prop.PropertyType;
                 object[] attributes = (object[]) prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
-                string name;
 
                 if (attributes.Length > 0)
                 {
@@ -293,6 +293,13 @@ namespace RestSharp.Deserializers
             else if (type.IsGenericType())
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
+
+                if (genericTypeDef == typeof(IEnumerable<>))
+                {
+                    Type itemType = type.GetGenericArguments()[0];
+                    Type listType = typeof(List<>).MakeGenericType(itemType);
+                    return this.BuildList(listType, value);
+                }
 
                 if (genericTypeDef == typeof(List<>))
                 {
