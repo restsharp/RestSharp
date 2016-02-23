@@ -343,10 +343,9 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
-#if !WINDOWS_UWP
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
-                        (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
+                        (elementType.IsPrimitive() || elementType.IsValueType() || elementType == typeof(string)))
                     {
                         // convert the array to an array of strings
                         string[] values = (from object item in ((Array) val)

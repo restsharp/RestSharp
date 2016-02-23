@@ -304,10 +304,14 @@ namespace RestSharp.Extensions
 
                         if (restOfWord.IsUpperCase())
                         {
+#if WINDOWS_UWP || DNXCORE50
+                            restOfWord = restOfWord.ToLower();
+#else
                             restOfWord = restOfWord.ToLower(culture);
+#endif
                         }
 #if WINDOWS_UWP || DNXCORE50
-                        char firstChar = char.ToUpper(word[0]);
+                            char firstChar = char.ToUpper(word[0]);
 #else
                         char firstChar = char.ToUpper(word[0], culture);
 #endif

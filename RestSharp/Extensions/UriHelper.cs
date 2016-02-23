@@ -11,11 +11,10 @@ namespace RestSharp.Extensions
         /// <returns>
         /// A <see cref="T:System.Boolean"/> value that is true if the character is a valid hexadecimal digit; otherwise false.
         /// </returns>
-        /// <param name="uri">uri</param>
         /// <param name="character">The character to validate. </param>
         public static bool IsHexDigit(char character)
         {
-#if DNXCORE50
+#if WINDOWS_UWP || DNXCORE50
             if (character >= 48 && character <= 57 || character >= 65 && character <= 70)
                 return true;
 
@@ -30,7 +29,7 @@ namespace RestSharp.Extensions
 
         public static int FromHex(char digit)
         {
-#if DNXCORE50
+#if WINDOWS_UWP || DNXCORE50
             if (((digit >= '0') && (digit <= '9'))
                 || ((digit >= 'A') && (digit <= 'F')) 
                 || ((digit >= 'a') && (digit <= 'f')))
