@@ -34,10 +34,31 @@ using System.Windows.Browser;
 using RestSharp.Extensions.MonoHttp;
 #endif
 
+#if DNXCORE50
+using RestSharp.Extensions;
+#endif
+
 namespace RestSharp.Extensions
 {
     public static class StringExtensions
     {
+#if DNXCORE50
+        public static string ToLower(this string input, CultureInfo culture)
+        {
+            if (culture == null)
+                throw new ArgumentNullException("culture");
+
+            return input.ToLower();
+        }
+
+        public static string ToUpper(this string input, CultureInfo culture)
+        {
+            if (culture == null)
+                throw new ArgumentNullException("culture");
+
+            return input.ToUpper();
+        }
+#endif
         public static string UrlDecode(this string input)
         {
             return HttpUtility.UrlDecode(input);
@@ -280,9 +301,11 @@ namespace RestSharp.Extensions
                         {
                             restOfWord = restOfWord.ToLower(culture);
                         }
-
+#if DNXCORE50
+                        char firstChar = char.ToUpper(word[0]);
+#else
                         char firstChar = char.ToUpper(word[0], culture);
-
+#endif
                         words[i] = string.Concat(firstChar, restOfWord);
                     }
                 }

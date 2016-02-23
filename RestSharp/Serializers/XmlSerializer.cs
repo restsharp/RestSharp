@@ -161,7 +161,7 @@ namespace RestSharp.Serializers
                 XName nsName = name.AsNamespaced(this.Namespace);
                 XElement element = new XElement(nsName);
 
-                if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
+                if (propType.IsPrimitive() || propType.IsValueType() || propType == typeof(string))
                 {
                     if (useAttribute)
                     {

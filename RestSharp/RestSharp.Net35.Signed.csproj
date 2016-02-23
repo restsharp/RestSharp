@@ -125,6 +125,7 @@
     <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
     <Compile Include="Extensions\ResponseExtensions.cs" />
     <Compile Include="Extensions\ResponseStatusExtensions.cs" />
+    <Compile Include="Extensions\UriHelper.cs" />
     <Compile Include="RestClientExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Http.Sync.cs" />

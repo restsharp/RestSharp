@@ -1,0 +1,1450 @@
+<!--
+   Copyright (c) Microsoft. All rights reserved.
+   Licensed under the MIT license. See LICENSE file in the project root for full license information.
+-->
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:msxsl="urn:schemas-microsoft-com:xslt">
+<head>
+    <meta content="en-us" http-equiv="Content-Language" />
+    <meta content="text/html; charset=utf-16" http-equiv="Content-Type" />
+    <title _locid="PortabilityAnalysis0">.NET Portability Report</title>
+    <!--
+   Copyright (c) Microsoft. All rights reserved.
+   Licensed under the MIT license. See LICENSE file in the project root for full license information.
+-->
+
+<style>
+    /* Body style, for the entire document */
+    body {
+        background: #F3F3F4;
+        color: #1E1E1F;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Header1 style, used for the main title */
+    h1 {
+        padding: 10px 0px 10px 10px;
+        font-size: 21pt;
+        background-color: #E2E2E2;
+        border-bottom: 1px #C1C1C2 solid;
+        color: #201F20;
+        margin: 0;
+        font-weight: normal;
+    }
+
+    /* Header2 style, used for "Overview" and other sections */
+    h2 {
+        font-size: 18pt;
+        font-weight: normal;
+        padding: 15px 0 5px 0;
+        margin: 0;
+    }
+
+    /* Header3 style, used for sub-sections, such as project name */
+    h3 {
+        font-weight: normal;
+        font-size: 15pt;
+        margin: 0;
+        padding: 15px 0 5px 0;
+        background-color: transparent;
+    }
+
+    h4 {
+        font-weight: normal;
+        font-size: 13pt;
+        margin: 0;
+        padding: 0 0 0 0;
+        background-color: transparent;
+    }
+
+    /* Color all hyperlinks one color */
+    a {
+        color: #1382CE;
+    }
+
+    /* Paragraph text (for longer informational messages) */
+    p {
+        font-size: 10pt;
+    }
+
+    /* Make sure abbreviations are decorated on all browsers */
+    abbr {
+        text-decoration: none;
+        border-bottom: 1px dotted;
+    }
+
+    /* Table styles */
+    table {
+        border-spacing: 0 0;
+        border-collapse: collapse;
+        font-size: 10pt;
+    }
+
+        table th {
+            background: #E7E7E8;
+            text-align: left;
+            text-decoration: none;
+            font-weight: normal;
+            vertical-align: bottom;
+            padding: 3px 6px 3px 6px;
+        }
+
+        table td {
+            vertical-align: top;
+            padding: 3px 6px 5px 5px;
+            margin: 0px;
+            border: 1px solid #E7E7E8;
+            background: #F7F7F8;
+        }
+
+    .lowPriRow td {
+        background: #F0F0F0;
+    }
+
+    .lowPriRow a {
+        color: #6f9bba;
+    }
+
+
+    .lowPriRow .NoBreakingChanges {
+        color: #4e7e4e;
+    }
+
+    .lowPriRow .FewBreakingChanges {
+        color: #eeb550;
+    }
+
+    .lowPriRow .ManyBreakingChanges {
+        color: #ff7070;
+    }
+
+    .BreakDetails table {
+        table-layout: fixed;
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    .BreakingChangeID {
+        width: 35px;
+    }
+
+    .APIColumn {
+        width: 20%;
+    }
+
+    .LongDescriptionColumn {
+        width: 30%;
+    }
+
+    th.NarrowHeader {
+        height: 68px;
+    }
+
+    .NarrowHeader div {
+        height: 100%;
+        width: 68px;
+        min-width: 68px;
+        word-wrap: normal;
+        transform: rotate(-90deg);
+        -webkit-transform: rotate(-90deg); /* Safari/Chrome */
+        -moz-transform: rotate(-90deg); /* Firefox */
+        -o-transform: rotate(-90deg); /* Opera */
+        -ms-transform: rotate(-90deg); /* IE 9 */
+    }
+
+    .NoBreakingChanges {
+        color: #006400;
+        font-weight: bold;
+    }
+
+    .FewBreakingChanges {
+        color: #ffa500;
+        font-weight: bold;
+    }
+
+    .ManyBreakingChanges {
+        color: #dd0000;
+        font-weight: bold;
+    }
+
+    .BreakDetails {
+        margin-left: 30px;
+    }
+
+    .CompatMessage {
+        font-style: italic;
+        font-size: 10pt;
+    }
+
+    .GoodMessage {
+        color: darkgreen;
+    }
+
+    .ToggleButton {
+        font-size: 16px;
+        padding: 0px 3px;
+        color: #ffffff;
+        border-radius: 4px;
+        border: 1px solid #657298;
+        background-color: #9bb4d7;
+        display: inline-block;
+    }
+
+        .ToggleButton:hover {
+            background-color: #7892c2;
+        }
+
+    .ToggledOff {
+        display: none;
+    }
+
+    .MemberNames ul {
+        list-style-type: none;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .MemberNames li {
+        padding-bottom: 4px;
+    }
+
+    /* Local link is a style for hyperlinks that link to file:/// content, there are lots so color them as 'normal' text until the user mouse overs */
+    .localLink {
+        color: #1E1E1F;
+        background: #EEEEED;
+        text-decoration: none;
+    }
+
+        .localLink:hover {
+            color: #1382CE;
+            background: #FFFF99;
+            text-decoration: none;
+        }
+
+    /* Center text, used in the over views cells that contain message level counts */
+    .textCentered {
+        text-align: center;
+    }
+
+    /* The message cells in message tables should take up all avaliable space */
+    .messageCell {
+        width: 100%;
+    }
+
+    /* Padding around the content after the h1 */
+    #content {
+        padding: 0px 12px 12px 12px;
+    }
+
+    /* The overview table expands to width, with a max width of 97% */
+    #overview table {
+        width: auto;
+        max-width: 75%;
+    }
+
+    /* The messages tables are always 97% width */
+    #messages table {
+        width: 97%;
+    }
+
+    /* All Icons */
+    .IconSuccessEncoded, .IconInfoEncoded, .IconWarningEncoded, .IconErrorEncoded {
+        min-width: 18px;
+        min-height: 18px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    /* Success icon encoded */
+    .IconSuccessEncoded {
+        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+        /* [---XsltValidateInternal-Base64EncodedImage:IconSuccess#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABPElEQVR4Xp1Tv0vDUBi8FqeA4NpBcBLcWnQSApncOnTo4FSnjP0DsnXpH5CxiwbHDg4Zuj4oOEXiJgiC4FDcCkLWmIMc1Pfw+eMgQ77v3Xf3Pe51YKGqqisAEwCR1TIAsiAIblSo6xrdHeJR85Xle3mdmCQKb0PsfqyxxzM8K15HZADl/H5+sHpZwYfxyRjTs+kWwKBx8yoHd2mRiuzF8mkJniWH/13u3Fjrs/EdhsdDFHGB/DLXEJBDLh1MWPAhPo1BLB4WX5yQywHR+m3tVe/t97D52CB/ziG0nIgD/qDuYg8WuCcVZ2YGwlJ3YDugkpR/VNcAEx6GEKhERSr71FuO4YCM4XBdwKvecjIlkSnsO0Hyp/GxSeJAdzBKzpOtnPwyyiPdAZhpZptT04tU+zk7s8czeges//s5C5+CwqrR4/gw+AAAAABJRU5ErkJggg==);
+    }
+
+    /* Information icon encoded */
+    .IconInfoEncoded {
+        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+        /* [---XsltValidateInternal-Base64EncodedImage:IconInformation#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR4Xs2TsUoDQRRF7wwoziokjZUKadInhdhukR9YP8DMX1hYW+QvdsXa/QHBbcXC7W0CamWTQnclFutceIQJwwaWNLlwm5k5d94M76mmaeCrrmsLYOocY12FcxZFUeozCqKqqgYA8uevv1H6VuPxcwlfk5N92KHBxfFeCSAxxswlYAW/Xr989x/mv9gkhtyMDhcAxgzRsp7flj8B/HF1RsMXq+NZMkopaHe7lbKxQUEIGbKsYNoGn969060hZBkQex/W8oRQwsQaW2o3Ago2SVcJUzAgY3N0lTCZZm+zPS8HB51gMmS1DEYyOz9acKO1D8JWTlafKIMxdhvlfdyT94Vv5h7P8Ky7nQzACmhvKq3zk3PjW9asz9D/1oigecsioooAAAAASUVORK5CYII=);
+    }
+
+    /* Warning icon encoded */
+    .IconWarningEncoded {
+        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+        /* [---XsltValidateInternal-Base64EncodedImage:IconWarning#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAx0lEQVR4XpWSMQ7CMAxFf4xAyBMLCxMrO8dhaBcuwdCJS3RJBw7SA/QGTCxdWJgiQYWKXJWKIXHIlyw5lqr34tQgEOdcBsCOx5yZK3hCCKdYXneQkh4pEfqzLfu+wVDSyyzFoJjfz9NB+pAF+eizx2Vruts0k15mPgvS6GYvpVtQhB61IB/dk6AF6fS4Ben0uIX5odtFe8Q/eW1KvFeH4e8khT6+gm5B+t3juyDt7n0jpe+CANTd+oTUjN/U3yVaABnSUjFz/gFq44JaVSCXeQAAAABJRU5ErkJggg==);
+    }
+
+    /* Error icon encoded */
+    .IconErrorEncoded {
+        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+        /* [---XsltValidateInternal-Base64EncodedImage:IconError#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQElEQVR4XqWTvUoEQRCE6wYPZUA80AfwAQz23uCMjA7MDRQEIzPBVEyNTQUFIw00vcQTTMzuAh/AxEQQT8HF/3G/oGGnEUGuoNnd6qoZuqltyKEsyzVJq5I6rnUp6SjGeGhESikzzlc1eL7opfuVbrqbU1Zw9NCgtQMaZpY0eNnaaL2fHusvTK5vKu7sjSS1Y4y3QUA6K3e3Mau5UFDyMP7tYF9o8cAHZv68vipoIJg971PZIZ5HiwdvYGGvFVFHmGmZ2MxwmQYPXubPl9Up0tfoMQGetXd6mRbvhBw+boZ6WF7Mbv1+GsHRk0fQmPAH1GfmZirbCfDJ61tw3Px8/8pZsPAG4jlVhcPgZ7adwNWBB68lkRQWFiTgFlbnLY3DGGM7izIJIyT/jjIvEJw6fdJTc6krDzh6aMwMP9bvDH4ADSsa9uSWVJkAAAAASUVORK5CYII=);
+    }
+
+    .tocItem {
+        font-size: 14pt;
+    }
+
+    .compat-subheader {
+        font-weight: 700;
+        font-style: italic;
+    }
+</style>
+</head>
+<body>
+    <h1 _locid="PortabilityReport">.NET Portability Report</h1>
+    <div id="content">
+        <div id="submissionHeader" style="font-size:8pt;">
+            <p>
+                <i>
+                    Submission Id&nbsp;
+                    9d1eff7f-2474-4efb-9575-103f16d25565
+
+                    
+                    
+                </i>
+            </p>
+
+            <div id="toc">
+                <h2>Contents</h2>
+                <ul>
+                                            <li>
+                            <span class="tocItem"><a href="#Portability Summary">Portability Summary</a></span>
+                        </li>
+                </ul>
+            </div>
+        </div>
+
+
+            <div id="portabilityReport">
+                <!--
+   Copyright (c) Microsoft. All rights reserved.
+   Licensed under the MIT license. See LICENSE file in the project root for full license information.
+-->
+
+
+
+
+
+
+
+
+<h2 _locid="SummaryTitle">
+    <a name="Portability Summary"></a>Portability Summary
+</h2>
+<table>
+    <tbody>
+        <tr>
+            <th>Assembly</th>
+                <th>.NET Core,Version=v5.0</th>
+                <th>.NET Framework,Version=v4.6.1</th>
+                <th>.NET Native,Version=v1.0</th>
+                <th>ASP.NET 5,Version=v1.0</th>
+        </tr>
+
+        
+            <tr>
+                <td><strong><a href="#RestSharp, Version=105.2.3.0, Culture=neutral, PublicKeyToken=null">    <span class="assembly-name">RestSharp, Version=105.2.3.0, Culture=neutral, PublicKeyToken=null</span>
+</a></strong></td>
+                    <td class="text-center">94.08 %</td>
+                    <td class="text-center">100.00 %</td>
+                    <td class="text-center">91.86 %</td>
+                    <td class="text-center">94.08 %</td>
+            </tr>
+            </tbody>
+</table>
+<div id="details">
+        <a name="#RestSharp, Version=105.2.3.0, Culture=neutral, PublicKeyToken=null"><h3>    <span class="assembly-name">RestSharp, Version=105.2.3.0, Culture=neutral, PublicKeyToken=null</span>
+</h3></a>
+        <table>
+            <tbody>
+                <tr>
+                        <th>Target type</th>
+                        <th>.NET Core,Version=v5.0</th>
+                        <th>.NET Framework,Version=v4.6.1</th>
+                        <th>.NET Native,Version=v1.0</th>
+                        <th>ASP.NET 5,Version=v1.0</th>
+                        <th>Recommended changes</th>
+                </tr>
+                
+                    <tr>
+                            <td>System.Attribute</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetCustomAttribute(System.Reflection.MemberInfo,System.Type)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">IsDefined(System.Reflection.MemberInfo,System.Type)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Reflection.CustomAttributeExtensions.IsDefined() in System.Reflection.Extensions.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Boolean</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">ToString(System.IFormatProvider)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Call ToString() without arguments.  (Does not do anything).</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Char</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">ToUpper(System.Char,System.Globalization.CultureInfo)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.IO.MemoryStream</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetBuffer</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use an overload that supplies a buffer and maintain that buffer outside of memory stream.   If you need the internal buffer, create a copy via .ToArray().</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.Cache.RequestCachePolicy</td>
+
+                                <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                        <td>Remove usage.</td>
+                    </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.CookieContainer</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">Add(System.Net.Cookie)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.HttpWebRequest</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td>Use System.Net.Http.HttpClient / HttpClientHandler instead.</td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">AddRange(System.String,System.Int32,System.Int32)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient / HttpClientHandler instead.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_ClientCertificates</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.WinHttpHandler.ClientCertificates.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_ServicePoint</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Not supported - Authentication level is always set to MutualAuthRequested.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_AllowAutoRedirect(System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClientHandler.AllowAutoRedirect.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_AutomaticDecompression(System.Net.DecompressionMethods)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClientHandler.SetAutomaticDecompression(System.Net.DecompressionMethods).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_Connection(System.String)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpResponseMessage.Headers.Connection.Add(System.String).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_Expect(System.String)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient.DefaultRequestHeaders.Expect (applies to all requests made by that client) or System.Net.Http.HttpRequestMessage.Headers.Expect (applies to specific request).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_IfModifiedSince(System.DateTime)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient.DefaultRequestHeaders.IfModifiedSince (applies to all requests made by that client) or System.Net.Http.HttpRequestMessage.Headers.IfModifiedSince (applies to specific request).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_MaximumAutomaticRedirections(System.Int32)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClientHandler.MaxAutomaticRedirections.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_ReadWriteTimeout(System.Int32)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.WinHttpHandler.ReceiveTimeout, .SendTimeout.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_Referer(System.String)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpRequestMessage.Headers.Referrer.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_SendChunked(System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Add &quot;chunked&quot; to System.Net.Http.HttpClient.DefaultRequestHeaders.TransferEncoding  (applies to all requests made by that client) or System.Net.Http.HttpRequestMessage.Headers.TransferEncoding(applies to specific request).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_TransferEncoding(System.String)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient.DefaultRequestHeaders.TransferEncoding (applies to all requests made by that client) or System.Net.Http.HttpRequestMessage.Headers.TransferEncoding(applies to specific request).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_UserAgent(System.String)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient.DefaultRequestHeaders.UserAgent (applies to all requests made by that client) or System.Net.Http.HttpRequestMessage.Headers.UserAgent (applies to specific request).</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.HttpWebResponse</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td>Use System.Net.Http.HttpClient, System.Net.Http.HttpClientHandler and System.Net.Http.WinHttpHandler instead.</td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_ContentEncoding</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpContent.Headers.ContentEncoding.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_Server</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient, System.Net.Http.HttpClientHandler and System.Net.Http.WinHttpHandler instead.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.ServicePoint</td>
+
+                                <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                        <td>Use System.Net.Http.HttpClient, System.Net.Http.HttpClientHandler and System.Net.Http.WinHttpHandler instead.</td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_Expect100Continue(System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Not supported.  Expect: 100-Continue is turned off always.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.WebRequest</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetRequestStream</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use an System.Net.Http.HttpContent object in the System.Net.Http.HttpRequestMessage when using the HttpClient APIs.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetResponse</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient.SendAsync (returns an HttpResponseMessage).</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_CachePolicy(System.Net.Cache.RequestCachePolicy)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Not supported - Authentication level is always set to MutualAuthRequested.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_ContentLength(System.Int64)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpContent.Headers.ContentLength.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_PreAuthenticate(System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.WinHttpHandler.PreAuthenticate.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_Timeout(System.Int32)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use System.Net.Http.HttpClient.Timeout. More granular timeouts are also available: System.Net.Http.WinHttpHandler.ConnectTimout, .ReceiveTimeout, .SendTimeout.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Net.WebResponse</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td>Use System.Net.Http.HttpClient, System.Net.Http.HttpClientHandler and System.Net.Http.WinHttpHandler instead.</td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">Close</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use HttpResponseMessage.Dispose.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Reflection.Assembly</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetExecutingAssembly</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Typeof(CurrentType).GetTypeInfo().Assembly.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Reflection.PropertyInfo</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetGetMethod(System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use PropertyInfo.GetMethod property.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetSetMethod(System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use PropertyInfo.SetMethod property.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Security.Cryptography.HashAlgorithm</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">ComputeHash(System.Byte[])</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Security.Cryptography.HMACSHA1</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td>Currently there is no workaround, but we are working on it. Please check back.</td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">#ctor</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td>Currently there is no workaround, but we are working on it. Please check back.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Security.Cryptography.KeyedHashAlgorithm</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">set_Key(System.Byte[])</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Security.Cryptography.RandomNumberGenerator</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">Create</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">GetNonZeroBytes(System.Byte[])</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Security.Cryptography.X509Certificates.X509CertificateCollection</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">AddRange(System.Security.Cryptography.X509Certificates.X509CertificateCollection)</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.String</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">ToLower(System.Globalization.CultureInfo)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use CultureInfo.TextInfo.ToLower(String) instead.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">ToUpper(System.Globalization.CultureInfo)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use CultureInfo.TextInfo.ToUpper(String) instead.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.StringComparer</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">Create(System.Globalization.CultureInfo,System.Boolean)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>Use CompareInfo.GetStringComparer.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Threading.RegisteredWaitHandle</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Threading.Thread</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_CurrentThread</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_ManagedThreadId</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Threading.ThreadPool</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.Int32,System.Boolean)</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Threading.WaitOrTimerCallback</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">#ctor(System.Object,System.IntPtr)</td>
+
+                                    <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Type</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_BaseType</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().BaseType.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_IsEnum</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().IsEnum.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_IsGenericType</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().IsGenericType.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_IsNestedPublic</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().IsNestedPublic.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_IsPrimitive</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().IsPrimitive.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_IsPublic</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().IsPublic.</td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">get_IsValueType</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td>.GetTypeInfo().IsValueType.</td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                            <td>System.Uri</td>
+
+                                <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+
+                        <td></td>
+                    </tr>
+                        <tr>
+                                <td style="padding-left:2em">FromHex(System.Char)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                        <tr>
+                                <td style="padding-left:2em">IsHexDigit(System.Char)</td>
+
+                                    <td class="IconErrorEncoded"></td>
+        <td class="IconSuccessEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+        <td class="IconErrorEncoded"></td>
+
+                            <td></td>
+                        </tr>
+                    <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+            </tbody>
+        </table>
+        <p>
+            <a href="#Portability Summary">Back to Summary</a>
+        </p>
+</div>
+
+            </div>
+    </div>
+
+    <!--
+   Copyright (c) Microsoft. All rights reserved.
+   Licensed under the MIT license. See LICENSE file in the project root for full license information.
+-->
+
+<script>
+    // Toggle the element controlled by a toggle button on or off
+    function toggle(caller) {
+        var elementName = this.id.substr(6);
+        var element = document.getElementById(elementName);
+        var currentClass = element.getAttribute('class');
+        if (currentClass === null) {
+            // If the element has no class, then it's on. Turn it off.
+            element.setAttribute('class', 'ToggledOff');
+            this.innerHTML = '+';
+        }
+        else if (currentClass.search(/\bToggledOff\b/) > -1) {
+            // If it has ToggledOff as a class, then it's off. Turn it on.
+            element.setAttribute('class', currentClass.replace(/\bToggledOff\b/, '').trim());
+            this.innerHTML = '&#8212';
+        }
+        else {
+            // If it doesn't have ToggledOff as a class, then it's on. Turn it off.
+            element.setAttribute('class', currentClass.concat(' ToggledOff').trim());
+            this.innerHTML = '+';
+        }
+    }
+
+    // Hook up toggle buttons' click events
+    var toggleButtons = document.getElementsByClassName('ToggleButton');
+    for (var i = 0; i < toggleButtons.length; i++) {
+        toggleButtons[i].addEventListener('click', toggle);
+    }
+
+    // Turn off any elements that should begin collapsed. Note that this is done with the extra
+    // BeginToggledOff class instead of applying ToggledOff directly to these elements because they should be
+    // visible if javascript is unavailable for some reason.
+    var beginCollapsed = document.getElementsByClassName('BeginToggledOff');
+    for (var i = 0; i < beginCollapsed.length; i++) {
+        var currentClass = beginCollapsed[i].getAttribute('class');
+        beginCollapsed[i].setAttribute('class', currentClass.concat(' ToggledOff').trim());
+    }
+</script>
+</body>
+</html>

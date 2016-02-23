@@ -36,6 +36,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+#if DNXCORE50
+using RestSharp.Extensions;
+#endif
+
 namespace RestSharp.Extensions.MonoHttp
 {
     internal class HttpEncoder
@@ -441,9 +445,9 @@ namespace RestSharp.Extensions.MonoHttp
                             entity.Length = 0;
                             haveTrailingDigits = false;
                         }
-                        else if (isHexValue && Uri.IsHexDigit(c))
+                        else if (isHexValue && UriHelper.IsHexDigit(c))
                         {
-                            number = number * 16 + Uri.FromHex(c);
+                            number = number * 16 + UriHelper.FromHex(c);
                             haveTrailingDigits = true;
                         }
                         else if (char.IsDigit(c))

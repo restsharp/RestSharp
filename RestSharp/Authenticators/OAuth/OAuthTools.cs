@@ -7,7 +7,7 @@ using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !DNXCORE50
     [Serializable]
 #endif
     internal static class OAuthTools
@@ -32,7 +32,7 @@ namespace RestSharp.Authenticators.OAuth
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE
+#if !SILVERLIGHT && !WINDOWS_PHONE && !DNXCORE50
             byte[] bytes = new byte[4];
 
             rng.GetNonZeroBytes(bytes);

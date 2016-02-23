@@ -34,6 +34,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 #endif
 
+#if !DNXCORE50
 namespace RestSharp
 {
     /// <summary>
@@ -500,3 +501,4 @@ namespace RestSharp
 #endif
     }
 }
+#endif

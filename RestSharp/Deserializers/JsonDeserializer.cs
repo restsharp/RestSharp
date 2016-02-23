@@ -63,7 +63,7 @@ namespace RestSharp.Deserializers
             foreach (PropertyInfo prop in props)
             {
                 Type type = prop.PropertyType;
-                object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+                object[] attributes = (object[]) prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
                 string name;
 
                 if (attributes.Length > 0)
@@ -123,7 +123,7 @@ namespace RestSharp.Deserializers
 
                 object item;
 
-                if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+                if (valueType.IsGenericType() && valueType.GetGenericTypeDefinition() == typeof(List<>))
                 {
                     item = this.BuildList(valueType, child.Value);
                 }
@@ -143,14 +143,14 @@ namespace RestSharp.Deserializers
             IList list = (IList) Activator.CreateInstance(type);
             Type listType = type.GetInterfaces()
                                 .First
-                (x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
+                (x => x.IsGenericType() && x.GetGenericTypeDefinition() == typeof(IList<>));
             Type itemType = listType.GetGenericArguments()[0];
 
             if (parent is IList)
             {
                 foreach (object element in (IList) parent)
                 {
-                    if (itemType.IsPrimitive)
+                    if (itemType.IsPrimitive())
                     {
                         object item = this.ConvertValue(itemType, element);
 
@@ -193,7 +193,7 @@ namespace RestSharp.Deserializers
             string stringValue = Convert.ToString(value, this.Culture);
 
             // check for nullable and extract underlying type
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType() && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Since the type is nullable and no value is provided return null
                 if (string.IsNullOrEmpty(stringValue))
@@ -213,12 +213,12 @@ namespace RestSharp.Deserializers
                 type = value.GetType();
             }
 
-            if (type.IsPrimitive)
+            if (type.IsPrimitive())
             {
                 return value.ChangeType(type, this.Culture);
             }
 
-            if (type.IsEnum)
+            if (type.IsEnum())
             {
                 return type.FindEnumValue(stringValue, this.Culture);
             }
@@ -290,7 +290,7 @@ namespace RestSharp.Deserializers
                 // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }
-            else if (type.IsGenericType)
+            else if (type.IsGenericType())
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
 
