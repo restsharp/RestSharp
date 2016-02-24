@@ -46,6 +46,9 @@
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\AssemblyHelper.cs">
+      <Link>Extensions\AssemblyHelper.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
       <Link>Extensions\ResponseStatusExtensions.cs</Link>
     </Compile>

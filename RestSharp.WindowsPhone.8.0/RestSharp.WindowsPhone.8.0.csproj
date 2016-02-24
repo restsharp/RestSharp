@@ -220,6 +220,9 @@
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\AssemblyHelper.cs">
+      <Link>Extensions\AssemblyHelper.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\extensions\MiscExtensions.cs">
       <Link>Extensions\MiscExtensions.cs</Link>
     </Compile>

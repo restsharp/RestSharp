@@ -120,6 +120,7 @@
     <Compile Include="Deserializers\JsonDeserializer.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
+    <Compile Include="Extensions\AssemblyHelper.cs" />
     <Compile Include="Extensions\MonoHttp\Helpers.cs" />
     <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />
     <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
