@@ -23,6 +23,7 @@ using System.IO;
 using System.Net;
 using RestSharp.Extensions;
 
+#if !DNXCORE50
 namespace RestSharp
 {
     /// <summary>
@@ -316,5 +317,5 @@ namespace RestSharp
         }
     }
 }
-
+#endif
 #endif

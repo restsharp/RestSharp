@@ -37,6 +37,7 @@ using System.Threading;
 using Windows.Networking;
 #endif
 
+#if !DNXCORE50
 namespace RestSharp
 {
     /// <summary>
@@ -506,3 +507,4 @@ namespace RestSharp
         }
     }
 }
+#endif

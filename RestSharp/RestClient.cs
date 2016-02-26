@@ -41,7 +41,11 @@ namespace RestSharp
     {
         private static readonly Version version = AssemblyHelper.GetVersion(typeof(RestClient));
 
+#if DNXCORE50
+        public IHttpFactory HttpFactory = new SimpleFactory<HttpCore>();
+#else
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
+#endif
 
         /// <summary>
         /// Maximum number of redirects to follow if FollowRedirects is true

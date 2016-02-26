@@ -87,25 +87,25 @@ namespace RestSharp
 
         Uri Url { get; set; }
 
-        HttpWebRequest DeleteAsync(Action<HttpResponse> action);
+        HttpWebRequest DeleteAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest GetAsync(Action<HttpResponse> action);
+        HttpWebRequest GetAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest HeadAsync(Action<HttpResponse> action);
+        HttpWebRequest HeadAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest OptionsAsync(Action<HttpResponse> action);
+        HttpWebRequest OptionsAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest PostAsync(Action<HttpResponse> action);
+        HttpWebRequest PostAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest PutAsync(Action<HttpResponse> action);
+        HttpWebRequest PutAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest PatchAsync(Action<HttpResponse> action);
+        HttpWebRequest PatchAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest MergeAsync(Action<HttpResponse> action);
+        HttpWebRequest MergeAsync(Action<HttpResponse> callback);
 
-        HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
+        HttpWebRequest AsPostAsync(Action<HttpResponse> callback, string httpMethod);
 
-        HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
+        HttpWebRequest AsGetAsync(Action<HttpResponse> callback, string httpMethod);
 
 #if FRAMEWORK
         HttpResponse Delete();

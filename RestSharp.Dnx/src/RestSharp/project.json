@@ -24,6 +24,7 @@
         "../../../RestSharp/Extensions/MiscExtensions.cs",
         "../../../RestSharp/Extensions/ReflectionExtensions.cs",
         "../../../RestSharp/Extensions/ResponseExtensions.cs",
+        "../../../RestSharp/Extensions/ResponseStatusExtensions.cs",
         "../../../RestSharp/Extensions/StringExtensions.cs",
         "../../../RestSharp/Extensions/UriHelper.cs",
         "../../../RestSharp/Extensions/XmlExtensions.cs",
@@ -35,15 +36,13 @@
     "frameworks": {
         "dnxcore50": {
             "frameworkAssemblies": {
-                
+
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-*",
 
                 "System.Net.Http": "4.0.1-rc2-*",
                 "System.Net.Primitives": "4.0.10-beta-*",
-
-
 
                 "System.Collections": "4.0.11-beta-*",
                 "System.Collections.NonGeneric": "4.0.1-beta-*",

@@ -1,0 +1,7 @@
+﻿        "net452": {
+            "frameworkAssemblies": {
+                "System.Linq": "",
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },

@@ -23,7 +23,7 @@ using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || DNXCORE50
 using System.Threading;
 using System.Threading.Tasks;
 #endif
