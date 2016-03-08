@@ -769,7 +769,15 @@ namespace RestSharp
             switch (LookAhead(json, index))
             {
                 case TOKEN_STRING:
-                    return ParseString(json, ref index, ref success);
+                    String s = ParseString(json, ref index, ref success);
+                    if (s == "NaN")
+                        return double.NaN;
+                    else if (s == "-INF")
+                        return double.NegativeInfinity;
+                    else if ((s == "+INF") || (s == "INF"))
+                        return double.PositiveInfinity;
+                    else
+                        return s;
                 case TOKEN_NUMBER:
                     return ParseNumber(json, ref index, ref success);
                 case TOKEN_CURLY_OPEN:
