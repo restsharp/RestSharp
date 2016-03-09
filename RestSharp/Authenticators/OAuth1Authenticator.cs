@@ -293,7 +293,8 @@ namespace RestSharp.Authenticators
                                   .Select(p => new Parameter
                                                {
                                                    Name = p.Name,
-                                                   Value = HttpUtility.UrlDecode(p.Value)
+                                                   Value = HttpUtility.UrlDecode(p.Value),
+                                                   Type = ParameterType.GetOrPost
                                                }));
                     break;
 
