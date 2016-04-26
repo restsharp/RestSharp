@@ -81,6 +81,19 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_When_RootElement_Deeper_Then_One()
+        {
+            const string content = "<root><subroot><subsubroot><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></subsubroot></subroot></root>";
+            XmlDeserializer xml = new XmlDeserializer() { RootElement = "subsubroot" };
+            SimpleStruct output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+
+            Assert.NotNull(output);
+            Assert.AreEqual("oneOneOne", output.One);
+            Assert.AreEqual("twoTwoTwo", output.Two);
+            Assert.AreEqual(3, output.Three);
+        }
+
+        [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             string xmlpath = this.PathFor("xmllists.xml");
