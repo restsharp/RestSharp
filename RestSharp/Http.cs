@@ -30,6 +30,7 @@ using RestSharp.Compression.ZLib;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 #endif
@@ -207,6 +208,12 @@ namespace RestSharp
         /// Caching policy for requests created with this wrapper.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+#endif
+#if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates.
+        /// </summary>
+        public RemoteCertificateValidationCallback  RemoteCertificateValidationCallback { get; set; }
 #endif
 
         /// <summary>

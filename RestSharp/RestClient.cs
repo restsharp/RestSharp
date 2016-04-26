@@ -30,6 +30,7 @@ using RestSharp.Extensions;
 #if FRAMEWORK
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 #endif
 
 
@@ -120,6 +121,14 @@ namespace RestSharp
         public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
+
+#if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        /// overriding certificate errors in the scope of a request.
+        /// </summary>
+        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
 
         /// <summary>
         /// Default constructor that registers default content handlers
@@ -544,6 +553,9 @@ namespace RestSharp
             }
 #if FRAMEWORK
             this.ConfigureProxy(http);
+#endif
+#if NET45
+            http.RemoteCertificateValidationCallback = this.RemoteCertificateValidationCallback;
 #endif
         }
 

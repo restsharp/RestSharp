@@ -318,6 +318,10 @@ namespace RestSharp
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
 
+#if NET45
+            webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
+#endif
+
             return webRequest;
         }
     }
