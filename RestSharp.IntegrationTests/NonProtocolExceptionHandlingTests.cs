@@ -44,7 +44,7 @@ namespace RestSharp.IntegrationTests
             IRestResponse<StupidClass> response = task.Result;
 
             Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual("Unable to connect to the remote server", response.ErrorException.Message);
+            Assert.AreEqual(WebExceptionStatus.ConnectFailure, ((WebException)response.ErrorException).Status);
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
         }
 
@@ -69,7 +69,7 @@ namespace RestSharp.IntegrationTests
 
                 Assert.NotNull(response.ErrorException);
                 Assert.IsInstanceOf<WebException>(response.ErrorException);
-                Assert.IsTrue(response.ErrorException.Message.Contains("The operation has timed out"));
+                Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
             }
         }
 
@@ -148,7 +148,7 @@ namespace RestSharp.IntegrationTests
                 Assert.Null(response.Data);
                 Assert.NotNull(response.ErrorException);
                 Assert.IsInstanceOf<WebException>(response.ErrorException);
-                Assert.IsTrue(response.ErrorException.Message.Contains("The operation has timed out"));
+                Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
             }
         }
 
