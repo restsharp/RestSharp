@@ -16,7 +16,7 @@ RestSharp is in need of more maintainers.  Specifically ones who have more exper
 * Supports custom serialization and deserialization via ISerializer and IDeserializer
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
-* GET, POST, PUT, HEAD, OPTIONS, DELETE supported
+* GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE supported
 * Other non-standard HTTP methods also supported
 * oAuth 1, oAuth 2, Basic, NTLM and Parameter-based Authenticators included
 * Supports custom authentication schemes via IAuthenticator
