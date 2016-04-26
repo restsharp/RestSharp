@@ -51,6 +51,8 @@ namespace RestSharp
 
 #if !SILVERLIGHT
         bool FollowRedirects { get; set; }
+
+        bool Pipelined { get; set; }
 #endif
 
 #if FRAMEWORK

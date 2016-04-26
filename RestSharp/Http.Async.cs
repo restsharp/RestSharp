@@ -428,6 +428,7 @@ namespace RestSharp
 #if !WINDOWS_PHONE && !SILVERLIGHT && !WINDOWS_UWP
             
             webRequest.PreAuthenticate = this.PreAuthenticate;
+            webRequest.Pipelined = this.Pipelined;
 #endif
             this.AppendHeaders(webRequest);
             this.AppendCookies(webRequest);
@@ -490,10 +491,12 @@ namespace RestSharp
             {
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
+
 #endif
 
 #if !SILVERLIGHT && !WINDOWS_UWP
             webRequest.AllowAutoRedirect = this.FollowRedirects;
+
 #endif
 #if NET45
             webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;

@@ -71,6 +71,8 @@ namespace RestSharp
         /// The cache policy to use for requests initiated by this client instance.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+
+        public bool Pipelined { get; set; }
 #endif
 
         /// <summary>
@@ -404,6 +406,7 @@ namespace RestSharp
             http.ResponseWriter = request.ResponseWriter;
             http.CookieContainer = this.CookieContainer;
 
+
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (Parameter p in this.DefaultParameters)
             {
@@ -452,6 +455,7 @@ namespace RestSharp
 
 #if !SILVERLIGHT
             http.FollowRedirects = this.FollowRedirects;
+
 #endif
 
 #if FRAMEWORK
@@ -462,6 +466,7 @@ namespace RestSharp
 
             http.MaxRedirects = this.MaxRedirects;
             http.CachePolicy = this.CachePolicy;
+            http.Pipelined = this.Pipelined;
 #endif
 
             if (request.Credentials != null)
