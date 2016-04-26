@@ -555,8 +555,8 @@ namespace RestSharp
         public string Resource { get; set; }
 
         /// <summary>
-        /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
-        /// By default XmlSerializer is used.
+        /// Determines how to serialize the request body.
+        /// By default Xml is used.
         /// </summary>
         public DataFormat RequestFormat { get; set; }
 
