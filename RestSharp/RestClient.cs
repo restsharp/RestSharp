@@ -570,6 +570,7 @@ namespace RestSharp
                                             RawBytes = httpResponse.RawBytes,
                                             ResponseStatus = httpResponse.ResponseStatus,
                                             ResponseUri = httpResponse.ResponseUri,
+                                            ProtocolVersion = httpResponse.ProtocolVersion,
                                             Server = httpResponse.Server,
                                             StatusCode = httpResponse.StatusCode,
                                             StatusDescription = httpResponse.StatusDescription,
