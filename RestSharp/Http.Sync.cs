@@ -22,11 +22,10 @@ using System;
 using System.IO;
 using System.Net;
 using RestSharp.Extensions;
+using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp
-{
-    using RestSharp.Authenticators.OAuth.Extensions;
-
+{    
     /// <summary>
     /// HttpWebRequest wrapper (sync methods)
     /// </summary>
