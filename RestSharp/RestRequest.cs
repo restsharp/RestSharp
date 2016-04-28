@@ -37,6 +37,11 @@ namespace RestSharp
     public class RestRequest : IRestRequest
     {
         /// <summary>
+        /// Local list of Allowed Decompresison Methods
+        /// </summary>
+        private readonly IList<DecompressionMethods> alloweDecompressionMethods;
+
+        /// <summary>
         /// Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         public bool AlwaysMultipartFormData { get; set; }
@@ -67,7 +72,13 @@ namespace RestSharp
         /// <summary>
         /// List of Allowed Decompresison Methods
         /// </summary>
-        public IList<DecompressionMethods> AllowedDecompressionMethods { get; private set; }
+        public IList<DecompressionMethods> AllowedDecompressionMethods
+        {
+            get
+            {
+                return this.alloweDecompressionMethods.Any() ? this.alloweDecompressionMethods : new[] { DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip };
+            }
+        }
 
         /// <summary>
         /// Default constructor
@@ -80,7 +91,7 @@ namespace RestSharp
             this.Files = new List<FileParameter>();
             this.XmlSerializer = new XmlSerializer();
             this.JsonSerializer = new JsonSerializer();
-            this.AllowedDecompressionMethods = new[] { DecompressionMethods.None };
+            this.alloweDecompressionMethods = new List<DecompressionMethods>();
 
             this.OnBeforeDeserialization = r => { };
         }
@@ -525,9 +536,9 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
         {
-            if (!this.AllowedDecompressionMethods.Contains(decompressionMethod))
+            if (!this.alloweDecompressionMethods.Contains(decompressionMethod))
             {
-                this.AllowedDecompressionMethods.Add(decompressionMethod);    
+                this.alloweDecompressionMethods.Add(decompressionMethod);    
             }
             
             return this;
