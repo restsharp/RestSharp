@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
     [Serializable]
 #endif
 #if WINDOWS_UWP
@@ -40,7 +40,7 @@ namespace RestSharp.Authenticators.OAuth
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
             byte[] bytes = new byte[4];
 
             rng.GetNonZeroBytes(bytes);

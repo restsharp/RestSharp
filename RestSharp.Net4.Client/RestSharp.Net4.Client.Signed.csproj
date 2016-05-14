@@ -176,6 +176,9 @@
     <Compile Include="..\restsharp\extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\UriHelper.cs">
+      <Link>Extensions\UriHelper.cs</Link>
+    </Compile>
     <Compile Include="..\restsharp\extensions\XmlExtensions.cs">
       <Link>Extensions\XmlExtensions.cs</Link>
     </Compile>

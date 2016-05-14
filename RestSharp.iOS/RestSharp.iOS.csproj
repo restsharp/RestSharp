@@ -46,8 +46,8 @@
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
-    <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
-      <Link>Extensions\ResponseStatusExtensions.cs</Link>
+    <Compile Include="..\RestSharp\Extensions\UriHelper.cs">
+      <Link>Extensions\UriHelper.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\FileParameter.cs">
       <Link>FileParameter.cs</Link>
