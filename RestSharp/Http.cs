@@ -329,11 +329,11 @@ namespace RestSharp
             {
 #if FRAMEWORK
                 Cookie cookie = new Cookie
-                                {
-                                    Name = httpCookie.Name,
-                                    Value = httpCookie.Value,
-                                    Domain = webRequest.RequestUri.Host
-                                };
+                {
+                    Name = httpCookie.Name,
+                    Value = httpCookie.Value,
+                    Domain = webRequest.RequestUri.Host
+                };
 
                 webRequest.CookieContainer.Add(cookie);
 #else
@@ -368,18 +368,23 @@ namespace RestSharp
 
         private void PreparePostBody(HttpWebRequest webRequest)
         {
+            bool needsContentType = String.IsNullOrEmpty(webRequest.ContentType);
+
             if (this.HasFiles || this.AlwaysMultipartFormData)
             {
-                webRequest.ContentType = GetMultipartFormContentType();
+                if (needsContentType)
+                    webRequest.ContentType = GetMultipartFormContentType();
             }
             else if (this.HasParameters)
             {
-                webRequest.ContentType = "application/x-www-form-urlencoded";
+                if (needsContentType)
+                    webRequest.ContentType = "application/x-www-form-urlencoded";
                 this.RequestBody = this.EncodeParameters();
             }
             else if (this.HasBody)
             {
-                webRequest.ContentType = this.RequestContentType;
+                if (needsContentType)
+                    webRequest.ContentType = this.RequestContentType;
             }
         }
 
@@ -449,22 +454,22 @@ namespace RestSharp
                     foreach (Cookie cookie in webResponse.Cookies)
                     {
                         response.Cookies.Add(new HttpCookie
-                                             {
-                                                 Comment = cookie.Comment,
-                                                 CommentUri = cookie.CommentUri,
-                                                 Discard = cookie.Discard,
-                                                 Domain = cookie.Domain,
-                                                 Expired = cookie.Expired,
-                                                 Expires = cookie.Expires,
-                                                 HttpOnly = cookie.HttpOnly,
-                                                 Name = cookie.Name,
-                                                 Path = cookie.Path,
-                                                 Port = cookie.Port,
-                                                 Secure = cookie.Secure,
-                                                 TimeStamp = cookie.TimeStamp,
-                                                 Value = cookie.Value,
-                                                 Version = cookie.Version
-                                             });
+                        {
+                            Comment = cookie.Comment,
+                            CommentUri = cookie.CommentUri,
+                            Discard = cookie.Discard,
+                            Domain = cookie.Domain,
+                            Expired = cookie.Expired,
+                            Expires = cookie.Expires,
+                            HttpOnly = cookie.HttpOnly,
+                            Name = cookie.Name,
+                            Path = cookie.Path,
+                            Port = cookie.Port,
+                            Secure = cookie.Secure,
+                            TimeStamp = cookie.TimeStamp,
+                            Value = cookie.Value,
+                            Version = cookie.Version
+                        });
                     }
                 }
 
@@ -473,10 +478,10 @@ namespace RestSharp
                     string headerValue = webResponse.Headers[headerName];
 
                     response.Headers.Add(new HttpHeader
-                                         {
-                                             Name = headerName,
-                                             Value = headerValue
-                                         });
+                    {
+                        Name = headerName,
+                        Value = headerValue
+                    });
                 }
 #if !WINDOWS_UWP
                 webResponse.Close();

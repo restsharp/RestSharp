@@ -56,9 +56,9 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("error")
-                                      {
-                                          RootElement = "Success"
-                                      };
+                {
+                    RootElement = "Success"
+                };
 
                 request.OnBeforeDeserialization = resp =>
                                                   {
@@ -84,9 +84,9 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("success")
-                                      {
-                                          RootElement = "Success"
-                                      };
+                {
+                    RootElement = "Success"
+                };
 
                 request.OnBeforeDeserialization = resp =>
                                                   {
@@ -102,10 +102,40 @@ namespace RestSharp.IntegrationTests
                 Assert.AreEqual("Works!", response.Data.Message);
             }
         }
+
+        [Test]
+        public void ContentType_Additional_Information()
+        {
+            Uri baseUrl = new Uri("http://localhost:8888/");
+
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.Generic<ResponseHandler>()))
+            {
+                RestClient client = new RestClient(baseUrl);
+                var request = new RestRequest(Method.POST);
+                request.RequestFormat = DataFormat.Json;
+                request.AddBody("bodyadsodajjd");
+                request.AddHeader("X-RequestDigest", "xrequestdigestasdasd");
+                request.AddHeader("Accept", "application/json; odata=verbose");
+                request.AddHeader("Content-Type", "application/json; odata=verbose");
+                request.Resource = "contenttype_odata";
+
+                IRestResponse<Response> response = client.Execute<Response>(request);
+
+                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            }
+        }
+
     }
 
     public class ResponseHandler
     {
+
+        private void contenttype_odata(HttpListenerContext context)
+        {
+            bool hasCorrectHeader = context.Request.Headers["Content-Type"] == "application/json; odata=verbose";
+            context.Response.StatusCode = hasCorrectHeader ? 200 : 400;
+        }
+
         private void error(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
