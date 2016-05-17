@@ -26,6 +26,7 @@ using System.Text.RegularExpressions;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
+using RestSharp.Extensions.MonoHttp;
 
 #if FRAMEWORK
 using System.Net.Cache;
@@ -375,7 +376,7 @@ namespace RestSharp
             }
 
             // build and attach querystring
-            string data = EncodeParameters(parameters);
+            string data = EncodeParameters(parameters, Encoding);
             string separator = assembled != null && assembled.Contains("?")
                 ? "&"
                 : "?";
@@ -385,17 +386,16 @@ namespace RestSharp
             return new Uri(assembled);
         }
 
-        private static string EncodeParameters(IEnumerable<Parameter> parameters)
+        private static string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
         {
-            return string.Join("&", parameters.Select(EncodeParameter)
                                               .ToArray());
         }
 
-        private static string EncodeParameter(Parameter parameter)
+        private static string EncodeParameter(Parameter parameter, Encoding encoding)
         {
             return parameter.Value == null
-                ? string.Concat(parameter.Name.UrlEncode(), "=")
-                : string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
+                ? string.Concat(HttpUtility.UrlEncode(parameter.Name, encoding), "=")
+                : string.Concat(HttpUtility.UrlEncode(parameter.Name, encoding), "=", HttpUtility.UrlEncode(parameter.Value.ToString(), encoding));
         }
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
