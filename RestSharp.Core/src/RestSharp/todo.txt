@@ -1,13 +1,9 @@
 ﻿1]
 Use ifdef REMOTECERTVALIDATION for RemoteCertificateValidationCallback
 
-2]
-WINDOWS_UWP : HMACSHA256 not found ?
+2] Some frameworks are missing in project.json
 
-
-3] Some frameworks are missing in project.json
-
-4]
+3]
 SL50 cannot compile yet in rc2 ? Some framework depedencies are missing?
  "sl50": {
             "buildOptions": { "define": [ "SILVERLIGHT" ] },
