@@ -7,7 +7,7 @@ namespace RestSharp.Extensions
     {
         public static Version GetVersion(Type type)
         {
-#if DNXCORE50
+#if NETSTANDARD
         var asm = type.GetTypeInfo().Assembly;
         return new AssemblyName(asm.FullName).Version;    
 #else

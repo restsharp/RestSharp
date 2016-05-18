@@ -8,11 +8,13 @@ using Windows.Security.Cryptography.Core;
 #endif
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
+#if !NETSTANDARD
 using System.Runtime.Serialization;
+#endif
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
     [Serializable]
 #endif
 #if WINDOWS_UWP
@@ -40,7 +42,7 @@ namespace RestSharp.Authenticators.OAuth
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
             byte[] bytes = new byte[4];
 
             rng.GetNonZeroBytes(bytes);
@@ -351,6 +353,17 @@ namespace RestSharp.Authenticators.OAuth
                     break;
                 }
 
+                case OAuthSignatureMethod.HmacSha256:
+                {
+                    HMACSHA256 crypto = new HMACSHA256();
+                    string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+
+                    crypto.Key = encoding.GetBytes(key);
+                    signature = signatureBase.HashWith(crypto);
+
+                    break;
+                }
+
                 case OAuthSignatureMethod.PlainText:
                 {
                     signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
@@ -359,7 +372,7 @@ namespace RestSharp.Authenticators.OAuth
                 }
 
                 default:
-                    throw new NotImplementedException("Only HMAC-SHA1 is currently supported.");
+                    throw new NotImplementedException("Only HMAC-SHA1 and HMAC-SHA256 are currently supported.");
             }
 
             string result = signatureTreatment == OAuthSignatureTreatment.Escaped

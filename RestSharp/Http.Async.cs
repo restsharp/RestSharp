@@ -37,7 +37,6 @@ using System.Threading;
 using Windows.Networking;
 #endif
 
-#if !DNXCORE50
 namespace RestSharp
 {
     /// <summary>
@@ -188,7 +187,7 @@ namespace RestSharp
 
             if (this.HasBody || this.HasFiles || this.AlwaysMultipartFormData)
             {
-#if !WINDOWS_PHONE && !WINDOWS_UWP
+#if !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
                 webRequest.ContentLength = this.CalculateContentLength();
 #endif
                 asyncResult = webRequest.BeginGetRequestStream(
@@ -351,7 +350,7 @@ namespace RestSharp
 
             if (raw != null)
             {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD
                 raw.Close();
 #else
                 raw.Dispose();
@@ -426,9 +425,10 @@ namespace RestSharp
 
             webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
 
-#if !WINDOWS_PHONE && !SILVERLIGHT && !WINDOWS_UWP
+#if !WINDOWS_PHONE && !SILVERLIGHT && !WINDOWS_UWP && !NETSTANDARD
             
             webRequest.PreAuthenticate = this.PreAuthenticate;
+            webRequest.Pipelined = this.Pipelined;
 #endif
             this.AppendHeaders(webRequest);
             this.AppendCookies(webRequest);
@@ -436,7 +436,7 @@ namespace RestSharp
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
-#if !WINDOWS_PHONE && !WINDOWS_UWP
+#if !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
             // WP7 doesn't as of Beta doesn't support a way to set this value either directly
             // or indirectly
             if (!this.HasFiles && !this.AlwaysMultipartFormData)
@@ -450,7 +450,7 @@ namespace RestSharp
                 webRequest.Credentials = this.Credentials;
             }
 
-#if !SILVERLIGHT && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_UWP && !NETSTANDARD
             if (this.UserAgent.HasValue())
             {
                 webRequest.UserAgent = this.UserAgent;
@@ -491,10 +491,15 @@ namespace RestSharp
             {
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
+
 #endif
 
-#if !SILVERLIGHT && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_UWP && !NETSTANDARD
             webRequest.AllowAutoRedirect = this.FollowRedirects;
+
+#endif
+#if REMOTECERTVALIDATION
+            webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
 #endif
             return webRequest;
         }
@@ -507,4 +512,3 @@ namespace RestSharp
         }
     }
 }
-#endif

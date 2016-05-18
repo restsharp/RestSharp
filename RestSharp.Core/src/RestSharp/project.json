@@ -1,0 +1,204 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "",
+    "authors": [ "" ],
+    "buildOptions": {
+
+        "compile": [
+            "../../../RestSharp/*.cs",
+            "../../../RestSharp/Authenticators/*.cs",
+            "../../../RestSharp/Authenticators/OAuth/*.cs",
+            "../../../RestSharp/Authenticators/OAuth/Extensions/*.cs",
+            "../../../RestSharp/Compression/ZLib/*.cs",
+            "../../../RestSharp/Deserializers/*.cs",
+            "../../../RestSharp/Extensions/MemoryStreamExtensions.cs",
+            "../../../RestSharp/Extensions/MiscExtensions.cs",
+            "../../../RestSharp/Extensions/ReflectionExtensions.cs",
+            "../../../RestSharp/Extensions/ResponseExtensions.cs",
+            "../../../RestSharp/Extensions/ResponseStatusExtensions.cs",
+            "../../../RestSharp/Extensions/StringExtensions.cs",
+            "../../../RestSharp/Extensions/UriHelper.cs",
+            "../../../RestSharp/Extensions/XmlExtensions.cs",
+            "../../../RestSharp/Extensions/MonoHttp/*.cs",
+            "../../../RestSharp/Serializers/*.cs",
+            "../../../RestSharp/Validation/*.cs"
+        ]
+    },
+    "frameworks": {
+        "net35": {
+            "frameworkAssemblies": {
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },
+        "net4": {
+            "frameworkAssemblies": {
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },
+        "net45": {
+            "frameworkAssemblies": {
+                "System.Linq": "",
+                "System.Xml": "",
+                "System.Xml.Linq": "",
+                "System.Net": ""
+            }
+        },
+        "net451": {
+            "frameworkAssemblies": {
+                "System.Linq": "",
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },
+        "net452": {
+            "frameworkAssemblies": {
+                "System.Linq": "",
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },
+        "net46": {
+            "frameworkAssemblies": {
+                "System.Linq": "",
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },
+        "net461": {
+            "frameworkAssemblies": {
+                "System.Linq": "",
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        },
+       
+        "netstandard1.3": {
+            "buildOptions": { "define": [ "NETSTANDARD" ] },
+            "NETStandard.Library": {
+                "version": "1.5.0-rc2-*"
+            },
+            "imports": [
+                "dotnet5.4",
+                "portable-win81+wp81",
+                "portable-net45+wp8",
+                "portable-net45+win8+wp8",
+                "portable-wp81+wpa81",
+                "portable-win81+wp81+wpa81",
+                "portable-net45+win8+wpa81+wp8",
+                "portable-net45+win8",
+                "portable-net45+win8+wpa81",
+                "portable-win81+wpa81",
+                "portable-net451+win81",
+                "portable-net451+win81+wpa81"
+            ],
+            "dependencies": {
+                "System.Collections.Specialized": "4.0.1-rc2-*",
+                "System.Diagnostics.Debug": "4.0.11-rc2-*",
+                "System.Diagnostics.Tools": "4.0.1-rc2-*",
+                "System.IO.FileSystem": "4.0.1-rc2-*",
+                "System.Globalization": "4.0.11-rc2-*",
+                "System.Linq": "4.1.0-rc2-*",
+                "System.Linq.Expressions": "4.0.11-rc2-*",
+                "System.Net.Requests": "4.0.11-rc2-*",
+                "System.Net.Security": "4.0.0-rc2-*",
+                "System.Reflection": "4.1.0-rc2-*",
+                "System.Reflection.Extensions": "4.0.1-rc2-*",
+                "System.Reflection.TypeExtensions": "4.1.0-rc2-*",
+                "System.Runtime.Extensions": "4.1.0-rc2-*",
+                "System.Security.Cryptography.Algorithms": "4.1.0-rc2-*",
+                "System.Text.RegularExpressions": "4.0.12-rc2-*",
+                "System.Threading": "4.0.11-rc2-*",
+                "System.Threading.Thread": "4.0.0-rc2-*",
+                "System.Threading.Tasks": "4.0.11-rc2-*",
+                "System.Xml.XDocument": "4.0.11-rc2-*",
+                "System.Xml.XmlSerializer": "4.0.11-rc2-*"
+            }
+        },
+        "netstandard1.4": {
+            "buildOptions": { "define": [ "NETSTANDARD" ] },
+            "NETStandard.Library": {
+                "version": "1.5.0-rc2-*"
+            },
+            "imports": [
+                "dotnet5.5",
+                "portable-win81+wp81",
+                "portable-net45+wp8",
+                "portable-net45+win8+wp8",
+                "portable-wp81+wpa81",
+                "portable-win81+wp81+wpa81",
+                "portable-net45+win8+wpa81+wp8",
+                "portable-net45+win8",
+                "portable-net45+win8+wpa81",
+                "portable-win81+wpa81",
+                "portable-net451+win81",
+                "portable-net451+win81+wpa81"
+            ],
+            "dependencies": {
+                "System.Collections.Specialized": "4.0.1-rc2-*",
+                "System.Diagnostics.Debug": "4.0.11-rc2-*",
+                "System.Diagnostics.Tools": "4.0.1-rc2-*",
+                "System.IO.FileSystem": "4.0.1-rc2-*",
+                "System.Globalization": "4.0.11-rc2-*",
+                "System.Linq": "4.1.0-rc2-*",
+                "System.Linq.Expressions": "4.0.11-rc2-*",
+                "System.Net.Requests": "4.0.11-rc2-*",
+                "System.Net.Security": "4.0.0-rc2-*",
+                "System.Reflection": "4.1.0-rc2-*",
+                "System.Reflection.Extensions": "4.0.1-rc2-*",
+                "System.Reflection.TypeExtensions": "4.1.0-rc2-*",
+                "System.Runtime.Extensions": "4.1.0-rc2-*",
+                "System.Security.Cryptography.Algorithms": "4.1.0-rc2-*",
+                "System.Text.RegularExpressions": "4.0.12-rc2-*",
+                "System.Threading": "4.0.11-rc2-*",
+                "System.Threading.Thread": "4.0.0-rc2-*",
+                "System.Threading.Tasks": "4.0.11-rc2-*",
+                "System.Xml.XDocument": "4.0.11-rc2-*",
+                "System.Xml.XmlSerializer": "4.0.11-rc2-*"
+            }
+        },
+        "netstandard1.5": {
+            "buildOptions": { "define": [ "NETSTANDARD" ] },
+            "NETStandard.Library": {
+                "version": "1.5.0-rc2-*"
+            },
+            "imports": [
+                "dotnet5.5",
+                "portable-win81+wp81",
+                "portable-net45+wp8",
+                "portable-net45+win8+wp8",
+                "portable-wp81+wpa81",
+                "portable-win81+wp81+wpa81",
+                "portable-net45+win8+wpa81+wp8",
+                "portable-net45+win8",
+                "portable-net45+win8+wpa81",
+                "portable-win81+wpa81",
+                "portable-net451+win81",
+                "portable-net451+win81+wpa81"
+            ],
+            "dependencies": {
+                "System.Collections.Specialized": "4.0.1-rc2-*",
+                "System.Diagnostics.Debug": "4.0.11-rc2-*",
+                "System.Diagnostics.Tools": "4.0.1-rc2-*",
+                "System.IO.FileSystem": "4.0.1-rc2-*",
+                "System.Globalization": "4.0.11-rc2-*",
+                "System.Linq": "4.1.0-rc2-*",
+                "System.Linq.Expressions": "4.0.11-rc2-*",
+                "System.Net.Requests": "4.0.11-rc2-*",
+                "System.Net.Security": "4.0.0-rc2-*",
+                "System.Reflection": "4.1.0-rc2-*",
+                "System.Reflection.Extensions": "4.0.1-rc2-*",
+                "System.Reflection.TypeExtensions": "4.1.0-rc2-*",
+                "System.Runtime.Extensions": "4.1.0-rc2-*",
+                "System.Security.Cryptography.Algorithms": "4.1.0-rc2-*",
+                "System.Text.RegularExpressions": "4.0.12-rc2-*",
+                "System.Threading": "4.0.11-rc2-*",
+                "System.Threading.Thread": "4.0.0-rc2-*",
+                "System.Threading.Tasks": "4.0.11-rc2-*",
+                "System.Xml.XDocument": "4.0.11-rc2-*",
+                "System.Xml.XmlSerializer": "4.0.11-rc2-*"
+            }
+        }
+    }
+}

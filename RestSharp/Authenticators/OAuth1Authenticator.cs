@@ -72,12 +72,12 @@ namespace RestSharp.Authenticators
 
         internal virtual string ClientPassword { get; set; }
 
-        public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret)
+        public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
         {
             OAuth1Authenticator authenticator = new OAuth1Authenticator
                                                 {
                                                     ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureMethod = signatureMethod,
                                                     SignatureTreatment = OAuthSignatureTreatment.Escaped,
                                                     ConsumerKey = consumerKey,
                                                     ConsumerSecret = consumerSecret,
@@ -97,12 +97,12 @@ namespace RestSharp.Authenticators
         }
 
         public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token,
-            string tokenSecret)
+            string tokenSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
         {
             OAuth1Authenticator authenticator = new OAuth1Authenticator
                                                 {
                                                     ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureMethod = signatureMethod,
                                                     SignatureTreatment = OAuthSignatureTreatment.Escaped,
                                                     ConsumerKey = consumerKey,
                                                     ConsumerSecret = consumerSecret,
@@ -146,12 +146,12 @@ namespace RestSharp.Authenticators
         }
 
         public static OAuth1Authenticator ForClientAuthentication(string consumerKey, string consumerSecret,
-            string username, string password)
+            string username, string password, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
         {
             OAuth1Authenticator authenticator = new OAuth1Authenticator
                                                 {
                                                     ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureMethod = signatureMethod,
                                                     SignatureTreatment = OAuthSignatureTreatment.Escaped,
                                                     ConsumerKey = consumerKey,
                                                     ConsumerSecret = consumerSecret,
@@ -164,13 +164,13 @@ namespace RestSharp.Authenticators
         }
 
         public static OAuth1Authenticator ForProtectedResource(string consumerKey, string consumerSecret,
-            string accessToken, string accessTokenSecret)
+            string accessToken, string accessTokenSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
         {
             OAuth1Authenticator authenticator = new OAuth1Authenticator
                                                 {
                                                     Type = OAuthType.ProtectedResource,
                                                     ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                                                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                                                    SignatureMethod = signatureMethod,
                                                     SignatureTreatment = OAuthSignatureTreatment.Escaped,
                                                     ConsumerKey = consumerKey,
                                                     ConsumerSecret = consumerSecret,
@@ -293,7 +293,8 @@ namespace RestSharp.Authenticators
                                   .Select(p => new Parameter
                                                {
                                                    Name = p.Name,
-                                                   Value = HttpUtility.UrlDecode(p.Value)
+                                                   Value = HttpUtility.UrlDecode(p.Value),
+                                                   Type = ParameterType.GetOrPost
                                                }));
                     break;
 

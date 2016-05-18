@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 
@@ -70,6 +71,22 @@ namespace RestSharp.Tests
             RestRequest request = new RestRequest();
 
             Assert.DoesNotThrow(() => request.AddHeader("Host", value));
+        }
+
+        [Test]
+        [TestCase(1, "1")]
+        [TestCase("1", "1")]
+        [TestCase("entity", "entity")]
+        public void Can_Add_Object_To_UrlSegment(object value, string expectedValue)
+        {
+            const string ParameterName = "Id";
+            RestRequest request = new RestRequest();
+            request.AddUrlSegment(ParameterName, value);
+
+            var parameter = request.Parameters.FirstOrDefault(x => x.Name.Equals(ParameterName));
+            Assert.IsNotNull(parameter);
+            Assert.AreEqual(expectedValue, parameter.Value.ToString());
+            Assert.AreEqual(ParameterType.UrlSegment, parameter.Type);
         }
     }
 }

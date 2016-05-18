@@ -126,6 +126,11 @@ namespace RestSharp
         /// </summary>
         public Exception ErrorException { get; set; }
 
+        /// <summary>
+        /// The HTTP protocol version (1.0, 1.1, etc)
+        /// </summary>
+        /// <remarks>Only set when underlying framework supports it.</remarks>
+        public Version ProtocolVersion { get; set; }
 
         /// <summary>
         /// Assists with debugging responses by displaying in the debugger output
@@ -164,6 +169,7 @@ namespace RestSharp
                        RawBytes = response.RawBytes,
                        ResponseStatus = response.ResponseStatus,
                        ResponseUri = response.ResponseUri,
+                       ProtocolVersion = response.ProtocolVersion,
                        Server = response.Server,
                        StatusCode = response.StatusCode,
                        StatusDescription = response.StatusDescription,

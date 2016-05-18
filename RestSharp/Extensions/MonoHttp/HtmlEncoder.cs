@@ -36,7 +36,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-#if DNXCORE50
+#if NETSTANDARD
 using RestSharp.Extensions;
 #endif
 

@@ -30,11 +30,11 @@ using RestSharp.Compression.ZLib;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 #endif
 
-#if !DNXCORE50
 namespace RestSharp
 {
     /// <summary>
@@ -130,6 +130,11 @@ namespace RestSharp
         /// Whether or not HTTP 3xx response redirects should be automatically followed
         /// </summary>
         public bool FollowRedirects { get; set; }
+
+        /// <summary>
+        /// Whether or not to use pipelined connections
+        /// </summary>
+        public bool Pipelined { get; set; }
 #endif
 
 #if FRAMEWORK
@@ -142,6 +147,7 @@ namespace RestSharp
         /// Maximum number of automatic redirects to follow if FollowRedirects is true
         /// </summary>
         public int? MaxRedirects { get; set; }
+
 #endif
 
         /// <summary>
@@ -208,6 +214,12 @@ namespace RestSharp
         /// Caching policy for requests created with this wrapper.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+#endif
+#if REMOTECERTVALIDATION
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates.
+        /// </summary>
+        public RemoteCertificateValidationCallback  RemoteCertificateValidationCallback { get; set; }
 #endif
 
         /// <summary>
@@ -405,6 +417,7 @@ namespace RestSharp
 #if FRAMEWORK
                 response.ContentEncoding = webResponse.ContentEncoding;
                 response.Server = webResponse.Server;
+                response.ProtocolVersion = webResponse.ProtocolVersion;
 #endif
                 response.ContentType = webResponse.ContentType;
                 response.ContentLength = webResponse.ContentLength;
@@ -465,7 +478,7 @@ namespace RestSharp
                                              Value = headerValue
                                          });
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD
                 webResponse.Close();
 #else
                 webResponse.Dispose();
@@ -504,4 +517,3 @@ namespace RestSharp
 #endif
     }
 }
-#endif

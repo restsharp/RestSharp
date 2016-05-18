@@ -14,7 +14,7 @@ namespace RestSharp.Extensions
         /// <param name="character">The character to validate. </param>
         public static bool IsHexDigit(char character)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             if (character >= 48 && character <= 57 || character >= 65 && character <= 70)
                 return true;
 
@@ -29,7 +29,7 @@ namespace RestSharp.Extensions
 
         public static int FromHex(char digit)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             if (((digit >= '0') && (digit <= '9'))
                 || ((digit >= 'A') && (digit <= 'F')) 
                 || ((digit >= 'a') && (digit <= 'f')))

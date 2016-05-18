@@ -1,4 +1,4 @@
-﻿#if DNXCORE50
+﻿#if NETSTANDARD
 using System;
 using System.IO;
 
