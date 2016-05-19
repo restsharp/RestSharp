@@ -204,6 +204,10 @@ namespace RestSharp
         /// </summary>
         public bool PreAuthenticate { get; set; }
 
+        /// <summary>Gets or sets the override host.</summary>
+        ///
+        /// <value>The override host.</value>
+        public string OverrideHost { get; set; }
 #if FRAMEWORK
         /// <summary>
         /// Proxy info to be sent with request

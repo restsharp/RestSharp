@@ -124,6 +124,7 @@ namespace RestSharp
 
         public bool PreAuthenticate { get; set; }
 
+        public string OverrideHost { get; set; }
 #if NET45
         /// <summary>
         /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
@@ -427,6 +428,7 @@ namespace RestSharp
             }
 
             http.Url = this.BuildUri(request);
+            http.OverrideHost = this.OverrideHost;
             http.PreAuthenticate = this.PreAuthenticate;
 
             string userAgent = this.UserAgent ?? http.UserAgent;

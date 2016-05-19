@@ -79,6 +79,8 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
+        string OverrideHost { get; set; }
+
 #if FRAMEWORK
         RequestCachePolicy CachePolicy { get; set; }
 #endif
