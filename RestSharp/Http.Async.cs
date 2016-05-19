@@ -500,6 +500,11 @@ namespace RestSharp
 #endif
 #if NET45
             webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
+
+            if (!string.IsNullOrEmpty(OverrideHost))
+            {
+                webRequest.Host = this.OverrideHost;
+            }
 #endif
             return webRequest;
         }
