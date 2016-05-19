@@ -8,11 +8,13 @@ using Windows.Security.Cryptography.Core;
 #endif
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
+#if !NETSTANDARD
 using System.Runtime.Serialization;
+#endif
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
     [Serializable]
 #endif
 #if WINDOWS_UWP
@@ -40,7 +42,7 @@ namespace RestSharp.Authenticators.OAuth
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
             byte[] bytes = new byte[4];
 
             rng.GetNonZeroBytes(bytes);

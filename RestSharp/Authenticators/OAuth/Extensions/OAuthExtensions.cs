@@ -1,5 +1,5 @@
 using System;
-#if !WINDOWS_UWP
+#if !(WINDOWS_UWP)
 using System.Security.Cryptography;
 #else
 using Windows.Security.Cryptography;

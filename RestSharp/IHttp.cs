@@ -133,7 +133,7 @@ namespace RestSharp
 
         IWebProxy Proxy { get; set; }
 #endif
-#if NET45
+#if REMOTECERTVALIDATION
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 #endif
     }

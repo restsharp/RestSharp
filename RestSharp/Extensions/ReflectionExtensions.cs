@@ -28,7 +28,7 @@ namespace RestSharp.Extensions
     {
         public static bool IsPublic(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().IsPublic;
 #else
             return type.IsPublic;
@@ -37,7 +37,7 @@ namespace RestSharp.Extensions
 
         public static bool IsNestedPublic(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().IsNestedPublic;
 #else
             return type.IsNestedPublic;
@@ -46,7 +46,7 @@ namespace RestSharp.Extensions
 
         public static bool IsEnum(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().IsEnum;
 #else
             return type.IsEnum;
@@ -55,7 +55,7 @@ namespace RestSharp.Extensions
 
         public static bool IsPrimitive(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().IsPrimitive;
 #else
             return type.IsPrimitive;
@@ -64,7 +64,7 @@ namespace RestSharp.Extensions
 
         public static bool IsGenericType(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().IsGenericType;
 #else
             return type.IsGenericType;
@@ -73,7 +73,7 @@ namespace RestSharp.Extensions
 
         public static Type BaseType(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().BaseType;
 #else
             return type.BaseType;
@@ -82,7 +82,7 @@ namespace RestSharp.Extensions
 
         public static bool IsValueType(this Type type)
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return type.GetTypeInfo().IsValueType;
 #else
             return type.IsValueType;
@@ -97,7 +97,7 @@ namespace RestSharp.Extensions
         //        /// <returns></returns>
         //        public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
         //        {
-        //#if DNXCORE50
+        //#if NETSTANDARD
         //            return prop.CustomAttributes.SingleOrDefault(ca => ca.AttributeType == typeof(T)) as T;
         //#else
         //            return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
@@ -112,7 +112,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this PropertyInfo prop) where T : Attribute
         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
             return prop.CustomAttributes.SingleOrDefault(ca => ca.AttributeType == typeof(T)) as T;
 #else
             return prop.GetAttribute<T>();
@@ -127,8 +127,8 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
-#if WINDOWS_UWP || DNXCORE50
-            return type.GetTypeInfo().GetCustomAttributes(typeof(T), true).Cast<T>().FirstOrDefault();
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().CustomAttributes.FirstOrDefault(ca => ca.AttributeType == typeof(T)) as T;
 #else
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;
 #endif

@@ -124,7 +124,11 @@ namespace RestSharp.Deserializers
                     continue;
                 }
 
+#if NETSTANDARD
+                object[] attributes = (object[])prop.CustomAttributes.Where(a => a.AttributeType == typeof(DeserializeAsAttribute)).ToArray();
+#else
                 object[] attributes = (object[]) prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+#endif
                 XName name;
 
                 if (attributes.Length > 0)
@@ -321,7 +325,7 @@ namespace RestSharp.Deserializers
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
 
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !DNXCORE50
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))

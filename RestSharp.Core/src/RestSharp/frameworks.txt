@@ -46,8 +46,8 @@
 |                             | dnx452                                        |                                                                     |
 +-----------------------------+-----------------------------------------------+---------------------------------------------------------------------+
 | DNX Core                    | dnxcore                                       | Core CLR framework support                                          |
-|                             | dnxcore (equivalent to dnxcore50)             |                                                                     |
-|                             | dnxcore50                                     |                                                                     |
+|                             | dnxcore (equivalent to NETSTANDARD)             |                                                                     |
+|                             | NETSTANDARD                                     |                                                                     |
 +-----------------------------+-----------------------------------------------+---------------------------------------------------------------------+
 | Universal Windows Platform  | uap                                           | Support for Windows 10 Universal Application Platform               |
 |                             | uap (equivalent to uap10)                     |                                                                     |

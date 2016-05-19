@@ -34,7 +34,7 @@ using System.Windows.Browser;
 using RestSharp.Extensions.MonoHttp;
 #endif
 
-#if DNXCORE50
+#if NETSTANDARD
 using RestSharp.Extensions;
 #endif
 
@@ -42,7 +42,7 @@ namespace RestSharp.Extensions
 {
     public static class StringExtensions
     {
-#if DNXCORE50
+#if NETSTANDARD
         public static string ToLower(this string input, CultureInfo culture)
         {
             if (culture == null)
@@ -304,13 +304,13 @@ namespace RestSharp.Extensions
 
                         if (restOfWord.IsUpperCase())
                         {
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
                             restOfWord = restOfWord.ToLower();
 #else
                             restOfWord = restOfWord.ToLower(culture);
 #endif
                         }
-#if WINDOWS_UWP || DNXCORE50
+#if WINDOWS_UWP || NETSTANDARD
                             char firstChar = char.ToUpper(word[0]);
 #else
                         char firstChar = char.ToUpper(word[0], culture);

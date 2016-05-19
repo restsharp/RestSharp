@@ -64,7 +64,11 @@ namespace RestSharp.Deserializers
             {
                 string name;
                 Type type = prop.PropertyType;
+#if NETSTANDARD
+                object[] attributes = (object[]) prop.CustomAttributes.Where(a => a.AttributeType == typeof(DeserializeAsAttribute)).ToArray();
+#else
                 object[] attributes = (object[]) prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+#endif
 
                 if (attributes.Length > 0)
                 {

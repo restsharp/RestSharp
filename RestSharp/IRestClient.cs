@@ -23,7 +23,7 @@ using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || DNXCORE50
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || NETSTANDARD
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -89,7 +89,7 @@ namespace RestSharp
 
         Uri BuildUri(IRestRequest request);
 
-#if NET45
+#if REMOTECERTVALIDATION
         /// <summary>
         /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
         /// overriding certificate errors in the scope of a request.
