@@ -22,7 +22,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\DebugSigned\</OutputPath>
     <IntermediateOutputPath>obj\DebugSigned\</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;FRAMEWORK, NET4, SIGNED</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FRAMEWORK, NET4, NET45, SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\DebugSigned\RestSharp.xml</DocumentationFile>

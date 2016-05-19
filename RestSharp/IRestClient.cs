@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 #if FRAMEWORK
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 #endif
 
 namespace RestSharp
@@ -80,11 +81,21 @@ namespace RestSharp
         IWebProxy Proxy { get; set; }
 
         RequestCachePolicy CachePolicy { get; set; }
+
+        bool Pipelined { get; set; }
 #endif
 
         bool FollowRedirects { get; set; }
 
         Uri BuildUri(IRestRequest request);
+
+#if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        /// overriding certificate errors in the scope of a request.
+        /// </summary>
+        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
 
         /// <summary>
         /// Executes a GET-style request and callback asynchronously, authenticating if needed

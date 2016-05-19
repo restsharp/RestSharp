@@ -494,6 +494,17 @@ namespace RestSharp
         }
 
         /// <summary>
+        /// Shortcut to AddParameter(name, value, UrlSegment) overload
+        /// </summary>
+        /// <param name="name">Name of the segment to add</param>
+        /// <param name="value">Value of the segment to add</param>
+        /// <returns></returns>
+        public IRestRequest AddUrlSegment(string name, object value)
+        {
+            return this.AddParameter(name, value, ParameterType.UrlSegment);
+        }
+
+        /// <summary>
         /// Shortcut to AddParameter(name, value, QueryString) overload
         /// </summary>
         /// <param name="name">Name of the parameter to add</param>
@@ -536,8 +547,8 @@ namespace RestSharp
         public string Resource { get; set; }
 
         /// <summary>
-        /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
-        /// By default XmlSerializer is used.
+        /// Determines how to serialize the request body.
+        /// By default Xml is used.
         /// </summary>
         public DataFormat RequestFormat { get; set; }
 

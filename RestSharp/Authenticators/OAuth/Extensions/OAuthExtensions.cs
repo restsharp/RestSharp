@@ -16,7 +16,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         {
             string value = signatureMethod.ToString()
                                           .ToUpper();
-            int shaIndex = value.IndexOf("SHA1");
+            int shaIndex = value.IndexOf("SHA");
 
             return shaIndex > -1
                 ? value.Insert(shaIndex, "-")
@@ -29,6 +29,9 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             {
                 case "HMAC-SHA1":
                     return OAuthSignatureMethod.HmacSha1;
+
+                case "HMAC-SHA256":
+                    return OAuthSignatureMethod.HmacSha256;
 
                 case "RSA-SHA1":
                     return OAuthSignatureMethod.RsaSha1;
