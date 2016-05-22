@@ -170,6 +170,9 @@
     <Compile Include="..\RestSharp\Enum.cs">
       <Link>Enum.cs</Link>
     </Compile>
+    <Compile Include="..\RestSharp\Extensions\AssemblyHelper.cs">
+      <Link>Extensions\AssemblyHelper.cs</Link>
+    </Compile>
     <Compile Include="..\RestSharp\Extensions\MiscExtensions.cs">
       <Link>Extensions\MiscExtensions.cs</Link>
     </Compile>
@@ -184,6 +187,9 @@
     </Compile>
     <Compile Include="..\RestSharp\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\UriHelper.cs">
+      <Link>Extensions\UriHelper.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\Extensions\XmlExtensions.cs">
       <Link>Extensions\XmlExtensions.cs</Link>

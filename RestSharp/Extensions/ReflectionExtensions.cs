@@ -1,5 +1,4 @@
 ﻿#region License
-
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +17,8 @@
 
 using System;
 using System.Globalization;
-using System.Reflection;
-
-#if FRAMEWORK
 using System.Linq;
-#endif
+using System.Reflection;
 
 namespace RestSharp.Extensions
 {
@@ -31,18 +27,81 @@ namespace RestSharp.Extensions
     /// </summary>
     public static class ReflectionExtensions
     {
+        public static bool IsPublic(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().IsPublic;
+#else
+            return type.IsPublic;
+#endif
+        }
+
+        public static bool IsNestedPublic(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().IsNestedPublic;
+#else
+            return type.IsNestedPublic;
+#endif
+        }
+
+        public static bool IsEnum(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().IsEnum;
+#else
+            return type.IsEnum;
+#endif
+        }
+
+        public static bool IsPrimitive(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().IsPrimitive;
+#else
+            return type.IsPrimitive;
+#endif
+        }
+
+        public static bool IsGenericType(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().IsGenericType;
+#else
+            return type.IsGenericType;
+#endif
+        }
+
+        public static Type BaseType(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().BaseType;
+#else
+            return type.BaseType;
+#endif
+        }
+
+        public static bool IsValueType(this Type type)
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().IsValueType;
+#else
+            return type.IsValueType;
+#endif
+        }
+
         /// <summary>
         /// Retrieve an attribute from a member (property)
         /// </summary>
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="prop">Member to retrieve attribute from</param>
         /// <returns></returns>
-        public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
-        {           
-#if !WINDOWS_UWP
-            return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
+        public static T GetAttribute<T>(this PropertyInfo prop) where T : Attribute
+        {
+#if WINDOWS_UWP || NETSTANDARD
+            return prop.CustomAttributes.SingleOrDefault(ca => ca.AttributeType == typeof(T)) as T;
 #else
-            return prop.GetCustomAttribute(typeof(T)) as T;
+            return prop.GetAttribute<T>();
 #endif
         }
 
@@ -54,11 +113,10 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
-            //type.GetTypeInfo().getcu
-#if !WINDOWS_UWP
-            return Attribute.GetCustomAttribute(type, typeof(T)) as T;
+#if WINDOWS_UWP || NETSTANDARD
+            return type.GetTypeInfo().CustomAttributes.FirstOrDefault(ca => ca.AttributeType == typeof(T)) as T;
 #else
-            return type.GetTypeInfo().GetCustomAttribute(type) as T;
+            return Attribute.GetCustomAttribute(type, typeof(T)) as T;
 #endif
         }
 
@@ -72,25 +130,16 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
-#if !WINDOWS_UWP
-                Type cur = toCheck.IsGenericType
+                Type cur = toCheck.IsGenericType()
                     ? toCheck.GetGenericTypeDefinition()
                     : toCheck;
-#else
-                Type cur = toCheck.GetTypeInfo().IsGenericType
-                    ? toCheck.GetGenericTypeDefinition()
-                    : toCheck;
-#endif
 
                 if (generic == cur)
                 {
                     return true;
                 }
-#if !WINDOWS_UWP
-                toCheck = toCheck.BaseType;
-#else
-                toCheck = toCheck.GetTypeInfo().BaseType;
-#endif
+
+                toCheck = toCheck.BaseType();
             }
 
             return false;

@@ -68,9 +68,12 @@ using System.Dynamic;
 #endif
 using System.Globalization;
 using System.Reflection;
+#if !NETSTANDARD
 using System.Runtime.Serialization;
+#endif
 using System.Text;
 using RestSharp.Reflection;
+using System.Linq;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantExplicitArrayCreation
@@ -547,7 +550,11 @@ namespace RestSharp
             object obj;
             if (TryDeserializeObject(json, out obj))
                 return obj;
+#if NETSTANDARD
+            throw new Exception("Invalid JSON string");
+#else
             throw new SerializationException("Invalid JSON string");
+#endif
         }
 
         /// <summary>
@@ -1640,7 +1647,7 @@ namespace RestSharp
 
             public delegate TValue ThreadSafeDictionaryValueFactory<TKey, TValue>(TKey key);
 
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD
             public static TypeInfo GetTypeInfo(Type type)
             {
                 return type.GetTypeInfo();
@@ -1654,12 +1661,15 @@ namespace RestSharp
 
             public static Attribute GetAttribute(MemberInfo info, Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
-                if (info == null || type == null || !info.IsDefined(type))
+                if (info == null || type == null)
+                    return null;
+
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD
+                if (!info.IsDefined(type))
                     return null;
                 return info.GetCustomAttribute(type);
 #else
-                if (info == null || type == null || !Attribute.IsDefined(info, type))
+                if (!Attribute.IsDefined(info, type))
                     return null;
                 return Attribute.GetCustomAttribute(info, type);
 #endif
@@ -1686,9 +1696,11 @@ namespace RestSharp
 
             public static Attribute GetAttribute(Type objectType, Type attributeType)
             {
+                if (objectType == null || attributeType == null)
+                    return null;
 
-#if SIMPLE_JSON_TYPEINFO
-                if (objectType == null || attributeType == null || !objectType.GetTypeInfo().IsDefined(attributeType))
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD
+                if (!objectType.GetTypeInfo().IsDefined(attributeType))
                     return null;
                 return objectType.GetTypeInfo().GetCustomAttribute(attributeType);
 #else

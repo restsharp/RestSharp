@@ -34,10 +34,31 @@ using System.Windows.Browser;
 using RestSharp.Extensions.MonoHttp;
 #endif
 
+#if NETSTANDARD
+using RestSharp.Extensions;
+#endif
+
 namespace RestSharp.Extensions
 {
     public static class StringExtensions
     {
+#if NETSTANDARD
+        public static string ToLower(this string input, CultureInfo culture)
+        {
+            if (culture == null)
+                throw new ArgumentNullException("culture");
+
+            return input.ToLower();
+        }
+
+        public static string ToUpper(this string input, CultureInfo culture)
+        {
+            if (culture == null)
+                throw new ArgumentNullException("culture");
+
+            return input.ToUpper();
+        }
+#endif
         public static string UrlDecode(this string input)
         {
             return HttpUtility.UrlDecode(input);
@@ -137,7 +158,7 @@ namespace RestSharp.Extensions
                 if (unix > maxAllowedTimestamp)
                     return epoch.AddMilliseconds(unix);
                 else
-                    return epoch.AddSeconds(unix);
+                return epoch.AddSeconds(unix);
             }
 
             if (input.Contains("/Date("))
@@ -283,19 +304,17 @@ namespace RestSharp.Extensions
 
                         if (restOfWord.IsUpperCase())
                         {
-#if !WINDOWS_UWP
-                            restOfWord = restOfWord.ToLower(culture);
-#else
+#if WINDOWS_UWP || NETSTANDARD
                             restOfWord = restOfWord.ToLower();
+#else
+                            restOfWord = restOfWord.ToLower(culture);
 #endif
                         }
-
-#if !WINDOWS_UWP                        
-                        char firstChar = char.ToUpper(word[0], culture);
+#if WINDOWS_UWP || NETSTANDARD
+                            char firstChar = char.ToUpper(word[0]);
 #else
-                        char firstChar = char.ToUpper(word[0]);
+                        char firstChar = char.ToUpper(word[0], culture);
 #endif
-
                         words[i] = string.Concat(firstChar, restOfWord);
                     }
                 }
