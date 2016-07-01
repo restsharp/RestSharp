@@ -64,7 +64,7 @@ namespace RestSharp
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
-#if FRAMEWORK
+#if FRAMEWORK || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
         IRestResponse Execute(IRestRequest request);
 
         IRestResponse<T> Execute<T>(IRestRequest request) where T : new();

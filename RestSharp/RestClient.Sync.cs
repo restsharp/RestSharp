@@ -1,4 +1,4 @@
-﻿#if FRAMEWORK
+﻿#if FRAMEWORK || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
 
 using System;
 
