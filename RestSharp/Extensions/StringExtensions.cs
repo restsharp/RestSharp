@@ -283,14 +283,14 @@ namespace RestSharp.Extensions
 
                         if (restOfWord.IsUpperCase())
                         {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
                             restOfWord = restOfWord.ToLower(culture);
 #else
                             restOfWord = restOfWord.ToLower();
 #endif
                         }
 
-#if !WINDOWS_UWP                        
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)                        
                         char firstChar = char.ToUpper(word[0], culture);
 #else
                         char firstChar = char.ToUpper(word[0]);
@@ -303,7 +303,7 @@ namespace RestSharp.Extensions
                 return string.Join(joinString, words);
             }
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
             return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
 #else
             return string.Concat(words[0].Substring(0, 1).ToUpper(), words[0].Substring(1));
@@ -418,7 +418,7 @@ namespace RestSharp.Extensions
             yield return name.ToCamelCase(culture);
 
             // try lower cased name
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
             yield return name.ToLower(culture);
 #else
             yield return name.ToLowerInvariant();
@@ -428,7 +428,7 @@ namespace RestSharp.Extensions
             yield return name.AddUnderscores();
 
             // try name with underscores with lower case
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
             yield return name.AddUnderscores().ToLower(culture);
 #else
             yield return name.AddUnderscores().ToLowerInvariant();
@@ -438,7 +438,7 @@ namespace RestSharp.Extensions
             yield return name.AddDashes();
 
             // try name with dashes with lower case
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
             yield return name.AddDashes().ToLower(culture);
 #else
             yield return name.AddDashes().ToLowerInvariant();
@@ -454,7 +454,7 @@ namespace RestSharp.Extensions
             yield return name.AddSpaces();
 
             // try name with spaces with lower case
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
             yield return name.AddSpaces().ToLower(culture);
 #else
             yield return name.AddSpaces().ToLowerInvariant();
