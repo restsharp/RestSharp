@@ -1,3 +1,7 @@
+# Compile with .NET Core
+Nuget package can be found here:
+[RestSharp.NetCore 105.2.4-rc4-24214-01](https://www.nuget.org/packages/RestSharp.NetCore/105.2.4-rc4-24214-01)
+
 # RestSharp - Simple .NET REST Client [![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
 
 ![](https://ci5.googleusercontent.com/proxy/LSXBIaYndN6I0nqGyXGtKk3-woLLXMUj-UPxpJz6yhn-qUv5qHiIpW-8QczKLztBwl1TYyqlTV-1T4dL3o4lWmaZoy9S15ylU8WC5n-dpKFiwYPvWzIR4EumHgzx0q3ZFVyceR6aj-WfLkFu-LGdrGS1Mm-uW-mrEV7L_8HnfIwj0ASI3Ze0sbmjWoMtEvI6mA1mNYBW3wpeZe-BaHXMbTa84tKXKkZcvJC7-Gdsa8T334auZiRLJ_G2idmmgLafAVW_-WXYbbpTyXXXtv_3C4clLDeIOJSYWK_ll2H95THh-JhVgRCTvlgjKb5I=s0-d-e1-ft#https://camo.githubusercontent.com/b5192c7e6e9b9cd446ae5221b4d86a24dcc38a82/687474703a2f2f69632e706963732e6c6976656a6f75726e616c2e636f6d2f6c6a656e2f33393031393336382f31343833302f31343833305f6f726967696e616c2e6a7067)
