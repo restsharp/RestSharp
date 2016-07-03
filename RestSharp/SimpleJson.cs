@@ -50,7 +50,7 @@
 #define SIMPLE_JSON_DYNAMIC
 #endif
 
-#if NETFX_CORE
+#if NETFX_CORE || NETCORE1
 #define SIMPLE_JSON_TYPEINFO
 #endif
 

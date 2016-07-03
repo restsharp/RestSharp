@@ -30,7 +30,7 @@ namespace RestSharp.Authenticators.OAuth
             this.parameters = new List<WebPair>(parameters);
         }
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !NETCORE1
         public WebPairCollection(NameValueCollection collection)
             : this()
         {

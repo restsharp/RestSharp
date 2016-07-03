@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 //   Copyright 2010 John Sheehan
 //
@@ -478,7 +478,7 @@ namespace RestSharp
                                              Value = headerValue
                                          });
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETCORE1
                 webResponse.Close();
 #else
                 webResponse.Dispose();

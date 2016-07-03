@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 //   Copyright 2010 John Sheehan
 //
@@ -42,7 +42,7 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version      
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETCORE1
         private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
 #else
         private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;

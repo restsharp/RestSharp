@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 //   Copyright 2010 John Sheehan
 //
@@ -345,7 +345,7 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETCORE1
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
