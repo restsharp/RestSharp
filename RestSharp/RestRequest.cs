@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using RestSharp.Serializers;
 
-#if FRAMEWORK
+#if FRAMEWORK || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
 using RestSharp.Extensions;
 #endif
 

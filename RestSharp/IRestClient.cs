@@ -20,6 +20,8 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
@@ -141,7 +143,7 @@ namespace RestSharp
 
         void ClearHandlers();
 
-#if FRAMEWORK
+#if FRAMEWORK || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
 
         IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod);
@@ -151,7 +153,7 @@ namespace RestSharp
         IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
 #endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
         /// <summary>
         /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
