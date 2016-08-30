@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
+#if NET4 || MONODROID || MONOTOUCH || WP8 || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
 using System.Threading.Tasks;
 #endif
 
@@ -146,7 +146,7 @@ namespace RestSharp
             return client.ExecuteAsync(request, callback);
         }
 
-#if NET4 || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
+#if NET4 || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
         public static RestResponse<dynamic> ExecuteDynamic(this IRestClient client, IRestRequest request)
         {
             IRestResponse<dynamic> response = client.Execute<dynamic>(request);
@@ -159,7 +159,7 @@ namespace RestSharp
         }
 #endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4 || MONODROID || MONOTOUCH || WP8 || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
         public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             return client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
@@ -206,7 +206,7 @@ namespace RestSharp
         }
 #endif
 
-#if FRAMEWORK || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
+#if FRAMEWORK || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
         public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.GET;
