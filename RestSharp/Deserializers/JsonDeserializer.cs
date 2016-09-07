@@ -207,26 +207,37 @@ namespace RestSharp.Deserializers
             return list;
         }
 
-        private object ConvertValue(Type type, object value)
+        class LazyToString
         {
-            string stringValue = Convert.ToString(value, this.Culture);
+            object _value;
+            IFormatProvider _formatProvider;
+            string _convertedValue;
 
-            // check for nullable and extract underlying type
-#if !WINDOWS_UWP
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#else
-            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#endif
+            public LazyToString(object value, IFormatProvider formatProvider)
             {
-                // Since the type is nullable and no value is provided return null
-                if (string.IsNullOrEmpty(stringValue))
-                {
-                    return null;
-                }
-
-                type = type.GetGenericArguments()[0];
+                _value = value;
+                _formatProvider = formatProvider;
             }
 
+            public string Value
+            {
+                get
+                {
+                    if (_convertedValue == null)
+                    {
+                        _convertedValue = Convert.ToString(_value, _formatProvider);
+
+                        if (_convertedValue == null)
+                            _convertedValue = "";
+                    }
+
+                    return _convertedValue;
+                }
+            }
+        }
+
+        internal object ConvertValue(Type type, object value)
+        {
             if (type == typeof(object))
             {
                 if (value == null)
@@ -237,35 +248,49 @@ namespace RestSharp.Deserializers
             }
 
 #if !WINDOWS_UWP
-            if (type.IsPrimitive)
-            {
-                return value.ChangeType(type, this.Culture);
-            }
-
-            if (type.IsEnum)
-            {
-                return type.FindEnumValue(stringValue, this.Culture);
-            }
+            bool typeIsGenericType = type.IsGenericType;
+            bool typeIsPrimitive = type.IsPrimitive;
+            bool typeIsEnum = type.IsEnum;
 #else
-            if (type.GetTypeInfo().IsPrimitive)
+            var typeInfo = type.GetTypeInfo();
+
+            bool typeIsGenericType = typeInfo.IsGenericType;
+            bool typeIsPrimitive = typeInfo.IsPrimitive;
+            bool typeIsEnum = typeInfo.IsEnum;
+#endif
+
+            // check for nullable and extract underlying type
+            if (typeIsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                // Since the type is nullable and no value is provided return null
+                if ((value == null) || "".Equals(value))
+                {
+                    return null;
+                }
+
+                return ConvertValue(type.GetGenericArguments()[0], value);
+            }
+
+            if (typeIsPrimitive)
             {
                 return value.ChangeType(type, this.Culture);
             }
 
-            if (type.GetTypeInfo().IsEnum)
+            LazyToString stringValue = new LazyToString(value, this.Culture);
+
+            if (typeIsEnum)
             {
-                return type.FindEnumValue(stringValue, this.Culture);
+                return type.FindEnumValue(stringValue.Value, this.Culture);
             }
-#endif
 
             if (type == typeof(Uri))
             {
-                return new Uri(stringValue, UriKind.RelativeOrAbsolute);
+                return new Uri(stringValue.Value, UriKind.RelativeOrAbsolute);
             }
 
             if (type == typeof(string))
             {
-                return stringValue;
+                return stringValue.Value;
             }
 
             if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
@@ -274,13 +299,13 @@ namespace RestSharp.Deserializers
 
                 if (this.DateFormat.HasValue())
                 {
-                    dt = DateTime.ParseExact(stringValue, this.DateFormat, this.Culture,
+                    dt = DateTime.ParseExact(stringValue.Value, this.DateFormat, this.Culture,
                         DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
                 }
                 else
                 {
                     // try parsing instead
-                    dt = stringValue.ParseJsonDate(this.Culture);
+                    dt = stringValue.Value.ParseJsonDate(this.Culture);
                 }
 
                 if (type == typeof(DateTime))
@@ -300,36 +325,32 @@ namespace RestSharp.Deserializers
                     return (decimal) ((double) value);
                 }
 
-                if (stringValue.Contains("e"))
+                if (stringValue.Value.Contains("e"))
                 {
-                    return decimal.Parse(stringValue, NumberStyles.Float, this.Culture);
+                    return decimal.Parse(stringValue.Value, NumberStyles.Float, this.Culture);
                 }
 
-                return decimal.Parse(stringValue, this.Culture);
+                return decimal.Parse(stringValue.Value, this.Culture);
             }
             else if (type == typeof(Guid))
             {
-                return string.IsNullOrEmpty(stringValue)
+                return string.IsNullOrEmpty(stringValue.Value)
                     ? Guid.Empty
-                    : new Guid(stringValue);
+                    : new Guid(stringValue.Value);
             }
             else if (type == typeof(TimeSpan))
             {
                 TimeSpan timeSpan;
 
-                if (TimeSpan.TryParse(stringValue, out timeSpan))
+                if (TimeSpan.TryParse(stringValue.Value, out timeSpan))
                 {
                     return timeSpan;
                 }
 
                 // This should handle ISO 8601 durations
-                return XmlConvert.ToTimeSpan(stringValue);
+                return XmlConvert.ToTimeSpan(stringValue.Value);
             }
-#if !WINDOWS_UWP
-            else if (type.IsGenericType)
-#else
-            else if (type.GetTypeInfo().IsGenericType)
-#endif
+            else if (typeIsGenericType)
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
 
