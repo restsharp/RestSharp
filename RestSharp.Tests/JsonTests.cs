@@ -825,6 +825,14 @@ namespace RestSharp.Tests
             Assert.IsNull(dictionary["Null"]);
         }
 
+        [Test]
+        public void Can_Deserialize_Very_Large_Integers()
+        {
+            decimal veryLargeInteger = long.MaxValue + 1M;
+            decimal deserializedValue = new JsonDeserializer().Deserialize<decimal>(new RestResponse { Content = veryLargeInteger.ToString() });
+            Assert.AreEqual(veryLargeInteger, deserializedValue);
+        }
+
         private static string CreateJsonWithUnderscores()
         {
             JsonObject doc = new JsonObject();
