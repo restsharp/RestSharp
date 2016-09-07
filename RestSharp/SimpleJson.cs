@@ -903,19 +903,29 @@ namespace RestSharp
             EatWhitespace(json, ref index);
             int lastIndex = GetLastIndexOfNumber(json, index);
             int charLength = (lastIndex - index) + 1;
-            object returnNumber;
-            string str = new string(json, index, charLength);
-            if (str.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || str.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
+            object returnNumber = null;
+            string numberAsString = new string(json, index, charLength);
+            if ((numberAsString.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1)
+             || (numberAsString.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1))
             {
                 double number;
-                success = double.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+                success = double.TryParse(numberAsString, NumberStyles.Any, CultureInfo.InvariantCulture, out number);
                 returnNumber = number;
             }
             else
             {
-                long number;
-                success = long.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
-                returnNumber = number;
+                long longNumber;
+                decimal decimalNumber;
+                double doubleNumber;
+
+                if (long.TryParse(numberAsString, NumberStyles.Any, CultureInfo.InvariantCulture, out longNumber))
+                    returnNumber = longNumber;
+                else if (decimal.TryParse(numberAsString, NumberStyles.Any, CultureInfo.InvariantCulture, out decimalNumber))
+                    returnNumber = decimalNumber;
+                else if (double.TryParse(numberAsString, NumberStyles.Any, CultureInfo.InvariantCulture, out doubleNumber))
+                    returnNumber = doubleNumber;
+
+                success = (returnNumber != null);
             }
             index = lastIndex + 1;
             return returnNumber;
