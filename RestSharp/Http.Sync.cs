@@ -19,6 +19,7 @@
 #if FRAMEWORK
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using RestSharp.Extensions;
@@ -148,7 +149,7 @@ namespace RestSharp
             });
             this.restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
             this.restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
-            this.restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
+            this.restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v, CultureInfo.InvariantCulture));
             this.restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
             this.restrictedHeaderActions.Add("Transfer-Encoding", (r, v) =>
                                                                   {
