@@ -36,7 +36,7 @@ namespace RestSharp.Build
                 return false;
 
             var path = Path.GetFullPath(this.SourceAssemblyFile);
-            this.assembly = this.assembly ?? Assembly.LoadFile(path);
+            this.assembly = this.assembly ?? Assembly.Load(File.ReadAllBytes(path));
 
             var name = this.assembly.GetName();
 
