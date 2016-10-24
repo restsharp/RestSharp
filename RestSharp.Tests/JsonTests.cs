@@ -246,9 +246,9 @@ namespace RestSharp.Tests
 
             data["Items"] = new JsonArray
                             {
-                                item0.ToString(),
-                                item1.ToString(),
-                                item2.ToString(),
+                                item0,
+                                item1,
+                                item2,
                                 "/Date(1309421746929+0000)/"
                             };
 
