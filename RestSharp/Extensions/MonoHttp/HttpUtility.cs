@@ -272,11 +272,6 @@ namespace RestSharp.Extensions.MonoHttp
                 return string.Empty;
             }
 
-            if (bytes == null)
-            {
-                throw new ArgumentNullException("bytes");
-            }
-
             if (offset < 0 || offset > bytes.Length)
             {
                 throw new ArgumentOutOfRangeException("offset");
@@ -403,32 +398,34 @@ namespace RestSharp.Extensions.MonoHttp
                 throw new ArgumentOutOfRangeException("count");
             }
 
-            MemoryStream result = new MemoryStream();
-            int end = offset + count;
-
-            for (int i = offset; i < end; i++)
+            using (MemoryStream result = new MemoryStream())
             {
-                char c = (char) bytes[i];
+                int end = offset + count;
 
-                if (c == '+')
+                for (int i = offset; i < end; i++)
                 {
-                    c = ' ';
-                }
-                else if (c == '%' && i < end - 2)
-                {
-                    int xchar = GetChar(bytes, i + 1, 2);
+                    char c = (char) bytes[i];
 
-                    if (xchar != -1)
+                    if (c == '+')
                     {
-                        c = (char) xchar;
-                        i += 2;
+                        c = ' ';
                     }
+                    else if (c == '%' && i < end - 2)
+                    {
+                        int xchar = GetChar(bytes, i + 1, 2);
+
+                        if (xchar != -1)
+                        {
+                            c = (char) xchar;
+                            i += 2;
+                        }
+                    }
+
+                    result.WriteByte((byte) c);
                 }
 
-                result.WriteByte((byte) c);
+                return result.ToArray();
             }
-
-            return result.ToArray();
         }
 
         public static string UrlEncode(string str)

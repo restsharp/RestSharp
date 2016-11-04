@@ -116,7 +116,7 @@ namespace RestSharp.Extensions
             {
                 encoding = Encoding.UTF8;
             }
-            else if (buffer[0] == 0xfe && buffer[1] == 0xff)
+            else if (buffer[0] == 0xff && buffer[1] == 0xfe)
             {
                 encoding = Encoding.Unicode;
             }

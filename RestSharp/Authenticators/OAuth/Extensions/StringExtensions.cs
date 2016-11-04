@@ -10,8 +10,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
     {
         public static bool IsNullOrBlank(this string value)
         {
-            return string.IsNullOrEmpty(value) ||
-                   (!string.IsNullOrEmpty(value) && value.Trim() == string.Empty);
+            return string.IsNullOrEmpty(value) || value.Trim() == string.Empty;
         }
 
         public static bool EqualsIgnoreCase(this string left, string right)
@@ -21,7 +20,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static bool EqualsAny(this string input, params string[] args)
         {
-            return args.Aggregate(false, (current, arg) => current | input.Equals(arg));
+            return args.Aggregate(false, (current, arg) => current || input.Equals(arg));
         }
 
         public static string FormatWith(this string format, params object[] args)

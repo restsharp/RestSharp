@@ -516,8 +516,7 @@ namespace RestSharp.Tests
         private const int BUILDER_CAPACITY = 2000;
 
         private static readonly char[] EscapeTable;
-        private static readonly char[] EscapeCharacters = new char[] { '"', '\\', '\b', '\f', '\n', '\r', '\t' };
-        private static readonly string EscapeCharactersString = new string(EscapeCharacters);
+        private static readonly char[] EscapeCharacters = { '"', '\\', '\b', '\f', '\n', '\r', '\t' };
 
         static SimpleJson()
         {
@@ -983,18 +982,15 @@ namespace RestSharp.Tests
                     return TOKEN_FALSE;
                 }
             }
-            // true
             if (remainingLength >= 4)
             {
+                // true
                 if (json[index] == 't' && json[index + 1] == 'r' && json[index + 2] == 'u' && json[index + 3] == 'e')
                 {
                     index += 4;
                     return TOKEN_TRUE;
                 }
-            }
-            // null
-            if (remainingLength >= 4)
-            {
+                // null
                 if (json[index] == 'n' && json[index + 1] == 'u' && json[index + 2] == 'l' && json[index + 3] == 'l')
                 {
                     index += 4;
