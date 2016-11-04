@@ -325,8 +325,7 @@ namespace RestSharp
 
             foreach (PropertyInfo prop in props)
             {
-                bool isAllowed = includedProperties.Length == 0 ||
-                                 (includedProperties.Length > 0 && includedProperties.Contains(prop.Name));
+                bool isAllowed = includedProperties.Length == 0 || includedProperties.Contains(prop.Name);
 
                 if (!isAllowed)
                 {
