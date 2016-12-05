@@ -353,12 +353,15 @@ namespace RestSharp.Authenticators.OAuth
 
                 case OAuthSignatureMethod.HmacSha256:
                 {
+#if !WINDOWS_UWP
                     HMACSHA256 crypto = new HMACSHA256();
                     string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                     crypto.Key = encoding.GetBytes(key);
                     signature = signatureBase.HashWith(crypto);
-
+#else
+                    signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256));
+#endif
                     break;
                 }
 
