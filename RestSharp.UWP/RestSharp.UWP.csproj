@@ -7,8 +7,8 @@
     <ProjectGuid>{0136D105-745E-44CE-9215-161833B25D84}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RestSharp.UWP</RootNamespace>
-    <AssemblyName>RestSharp.UWP</AssemblyName>
+    <RootNamespace>RestSharp</RootNamespace>
+    <AssemblyName>RestSharp</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
