@@ -659,6 +659,67 @@ namespace RestSharp.Tests
             Assert.AreEqual(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
         }
 
+        [Test]
+        public void Can_Deserialize_ElementNamedValue()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("ValueCollection");
+
+            string valueName = "First moon landing events";
+            root.Add(new XElement("Value", valueName));
+
+            var xmlCollection = new XElement("Values");
+
+            var first = new XElement("Value");
+            first.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 20, 20, 18, 00, DateTimeKind.Utc)));
+            xmlCollection.Add(first);
+
+            var second = new XElement("Value");
+            second.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 21, 2, 56, 15, DateTimeKind.Utc)));
+            xmlCollection.Add(second);
+
+            root.Add(xmlCollection);
+            doc.Add(root);
+
+            RestResponse response = new RestResponse { Content = doc.ToString() };
+            XmlDeserializer d = new XmlDeserializer();
+            ValueCollectionForXml valueCollection = d.Deserialize<ValueCollectionForXml>(response);
+
+            Assert.AreEqual(valueName, valueCollection.Value);
+            Assert.AreEqual(2, valueCollection.Values.Count);
+            Assert.AreEqual(new DateTime(1969, 7, 20, 20, 18, 00, DateTimeKind.Utc), valueCollection.Values.First().Timestamp.ToUniversalTime());
+        }
+
+        [Test]
+        public void Can_Deserialize_AttributeNamedValue()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("ValueCollection");
+
+            var xmlCollection = new XElement("Values");
+
+            var first = new XElement("Value");
+            first.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 20, 20, 18, 00, DateTimeKind.Utc)));
+            first.Add(new XAttribute("Value", "Eagle landed"));
+            
+            xmlCollection.Add(first);
+
+            var second = new XElement("Value");
+            second.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 21, 2, 56, 15, DateTimeKind.Utc)));
+            second.Add(new XAttribute("Value", "First step"));
+            xmlCollection.Add(second);
+
+            root.Add(xmlCollection);
+            doc.Add(root);
+
+            RestResponse response = new RestResponse { Content = doc.ToString() };
+            XmlDeserializer d = new XmlDeserializer();
+            ValueCollectionForXml valueCollection = d.Deserialize<ValueCollectionForXml>(response);
+
+            Assert.AreEqual(2, valueCollection.Values.Count);
+            Assert.AreEqual("Eagle landed", valueCollection.Values.First().Value);
+        }
+
         private static string CreateUnderscoresXml()
         {
             XDocument doc = new XDocument();
