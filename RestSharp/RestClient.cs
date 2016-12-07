@@ -408,9 +408,14 @@ namespace RestSharp
 
 
             // move RestClient.DefaultParameters into Request.Parameters
+            var multiParameterTypes = new[]{ ParameterType.QueryString, ParameterType.GetOrPost };
+            
             foreach (Parameter p in this.DefaultParameters)
             {
-                if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
+                var isMultiParameter = multiParameterTypes.Any(pt => pt == p.Type);
+                var parameterExists = request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type);
+                
+                if (!isMultiParameter && parameterExists)
                 {
                     continue;
                 }
