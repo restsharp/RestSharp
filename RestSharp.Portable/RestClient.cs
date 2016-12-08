@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //   Copyright 2010 John Sheehan
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -388,6 +388,8 @@ namespace RestSharp
                 //response = ConvertToRestResponse(request, httpResponse); //execute async
 
                 var converter = new HttpConverter();
+                
+                converter.MergeClientProperties(this, restRequest);
 
                 var httpRequest = converter.ConvertTo(this, restRequest);
 
