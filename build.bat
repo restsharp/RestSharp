@@ -1,7 +1,8 @@
 @echo off
 
 REM Build
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe RestSharp.sln /p:Configuration=Release /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:false /p:BuildInParallel=true /p:RestorePackages=true /t:Clean,Rebuild
+REM %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe RestSharp.sln /p:Configuration=Release /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:false /p:BuildInParallel=true /p:RestorePackages=true /t:Clean,Rebuild
+"%programfiles(x86)%\MSBuild\14.0\Bin\msbuild.exe" RestSharp.sln /p:Configuration=Release /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:false /p:BuildInParallel=true /p:RestorePackages=true /t:Clean,Rebuild
 
 if not "%errorlevel%"=="0" goto failure
 
