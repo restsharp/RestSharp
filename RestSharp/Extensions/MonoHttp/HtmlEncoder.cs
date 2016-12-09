@@ -138,8 +138,11 @@ namespace RestSharp.Extensions.MonoHttp
             }
 
             byte[] bytes = result.ToArray();
-
+#if PCL
+            return new UTF8Encoding().GetString(bytes, 0, bytes.Length);
+#else
             return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+#endif
         }
 
         internal static byte[] UrlEncodeToBytes(byte[] bytes, int offset, int count)

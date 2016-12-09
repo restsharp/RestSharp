@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Extensions;
+using RestSharp.Authenticators.OAuth.Extensions;
 
 #if !SILVERLIGHT && !WINDOWS_PHONE
 using System.ComponentModel;
@@ -117,7 +118,7 @@ namespace RestSharp.Deserializers
             foreach (PropertyInfo prop in props)
             {
                 Type type = prop.PropertyType;
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 bool typeIsPublic = type.IsPublic || type.IsNestedPublic;
 #else
                 bool typeIsPublic = type.GetTypeInfo().IsPublic || type.GetTypeInfo().IsNestedPublic;
@@ -128,8 +129,8 @@ namespace RestSharp.Deserializers
                     continue;
                 }
 
-                XName name;                
-#if !WINDOWS_UWP
+                XName name;
+#if !WINDOWS_UWP && !PCL
                 object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);                
 
                 if (attributes.Length > 0)
@@ -153,7 +154,7 @@ namespace RestSharp.Deserializers
                 if (value == null)
                 {
                     // special case for inline list items
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                     if (type.IsGenericType)
 #else
                     if (type.GetTypeInfo().IsGenericType)
@@ -176,7 +177,7 @@ namespace RestSharp.Deserializers
                 }
 
                 // check for nullable and extract underlying type
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 #else
                 if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -199,7 +200,7 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 else if (type.IsPrimitive)
 #else
                 else if (type.GetTypeInfo().IsPrimitive)
@@ -207,7 +208,7 @@ namespace RestSharp.Deserializers
                 {
                     prop.SetValue(x, value.ChangeType(type, this.Culture), null);
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 else if (type.IsEnum)
 #else
                 else if (type.GetTypeInfo().IsEnum)
@@ -286,7 +287,7 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, timeSpan, null);
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 else if (type.IsGenericType)
 #else
                 else if (type.GetTypeInfo(). IsGenericType)
@@ -351,7 +352,7 @@ namespace RestSharp.Deserializers
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
 
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !PCL
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))
@@ -381,7 +382,7 @@ namespace RestSharp.Deserializers
 
         private object HandleListDerivative(XElement root, string propName, Type type)
         {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             Type t = type.IsGenericType
                 ? type.GetGenericArguments()[0]
                 : type.BaseType.GetGenericArguments()[0];
@@ -435,7 +436,7 @@ namespace RestSharp.Deserializers
 
             // get properties too, not just list items
             // only if this isn't a generic type
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             if (!type.IsGenericType)
 #else
             if (!type.GetTypeInfo().IsGenericType)
@@ -456,7 +457,7 @@ namespace RestSharp.Deserializers
             {
                 item = element.Value;
             }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             else if (t.IsPrimitive)
 #else
             else if (t.GetTypeInfo().IsPrimitive)

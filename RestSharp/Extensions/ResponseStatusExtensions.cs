@@ -17,7 +17,7 @@ namespace RestSharp.Extensions
             {
                 case ResponseStatus.None:
                     return new WebException("The request could not be processed.",
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                         WebExceptionStatus.ServerProtocolViolation
 #else
                         WebExceptionStatus.UnknownError
@@ -26,7 +26,7 @@ namespace RestSharp.Extensions
 
                 case ResponseStatus.Error:
                     return new WebException("An error occurred while processing the request.",
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                         WebExceptionStatus.ServerProtocolViolation
 #else
                         WebExceptionStatus.UnknownError
@@ -35,7 +35,7 @@ namespace RestSharp.Extensions
 
                 case ResponseStatus.TimedOut:
                     return new WebException("The request timed-out.",
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                         WebExceptionStatus.Timeout
 #else
                         WebExceptionStatus.UnknownError
@@ -44,7 +44,7 @@ namespace RestSharp.Extensions
 
                 case ResponseStatus.Aborted:
                     return new WebException("The request was aborted.",
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                         WebExceptionStatus.Timeout
 #else
                         WebExceptionStatus.RequestCanceled

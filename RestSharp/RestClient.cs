@@ -42,7 +42,7 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version      
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
         private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
 #else
         private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;
@@ -283,7 +283,7 @@ namespace RestSharp
             return null;
         }
 
-#if SILVERLIGHT
+#if SILVERLIGHT || PCL
         private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");

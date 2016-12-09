@@ -38,6 +38,7 @@ using System.Text;
 
 namespace RestSharp.Extensions.MonoHttp
 {
+#if !PCL
     public sealed class HttpUtility
     {
         private sealed class HttpQsCollection : NameValueCollection
@@ -68,7 +69,7 @@ namespace RestSharp.Extensions.MonoHttp
             }
         }
 
-        #region Methods
+    #region Methods
 
         public static void HtmlAttributeEncode(string s, TextWriter output)
         {
@@ -758,6 +759,8 @@ namespace RestSharp.Extensions.MonoHttp
             }
         }
 
-        #endregion
+    #endregion
+
     }
+#endif
 }

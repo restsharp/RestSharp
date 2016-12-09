@@ -1,10 +1,11 @@
 using System;
-#if !WINDOWS_UWP
-using System.Security.Cryptography;
-#else
+#if WINDOWS_UWP
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
+#elif PCL
+#else
+using System.Security.Cryptography;
 #endif
 using System.Text;
 
@@ -41,15 +42,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
-#if !WINDOWS_UWP
-        public static string HashWith(this string input, HashAlgorithm algorithm)
-        {
-            byte[] data = Encoding.UTF8.GetBytes(input);
-            byte[] hash = algorithm.ComputeHash(data);
-
-            return Convert.ToBase64String(hash);
-        }
-#else
+#if WINDOWS_UWP
         public static string HashWith(this string input, HashAlgorithmProvider algorithm)
         {
             CryptographicHash objHash = algorithm.CreateHash();
@@ -58,6 +51,15 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             IBuffer buffHash1 = objHash.GetValueAndReset();
 
             return CryptographicBuffer.EncodeToBase64String(buffHash1);
+        }
+#elif PCL
+#else
+        public static string HashWith(this string input, HashAlgorithm algorithm)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(input);
+            byte[] hash = algorithm.ComputeHash(data);
+
+            return Convert.ToBase64String(hash);
         }
 
 #endif

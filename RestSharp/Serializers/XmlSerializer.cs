@@ -115,7 +115,12 @@ namespace RestSharp.Serializers
         private void Map(XContainer root, object obj)
         {
             Type objType = obj.GetType();
-            IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
+            IEnumerable<PropertyInfo> props = from p in
+#if PCL
+                                              objType.GetTypeInfo().DeclaredProperties
+#else
+                                                  objType.GetProperties()
+#endif
                                               let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
                                               where p.CanRead && p.CanWrite
                                               orderby indexAttribute == null
@@ -160,7 +165,7 @@ namespace RestSharp.Serializers
 
                 XName nsName = name.AsNamespaced(this.Namespace);
                 XElement element = new XElement(nsName);
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
 #else
                 if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType || propType == typeof(string))
@@ -216,7 +221,7 @@ namespace RestSharp.Serializers
 
             if (obj is bool)
             {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 output = ((bool) obj).ToString(CultureInfo.InvariantCulture).ToLower();
 #else
                 output = ((bool)obj).ToString().ToLowerInvariant();                
