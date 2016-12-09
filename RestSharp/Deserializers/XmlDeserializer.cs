@@ -294,7 +294,7 @@ namespace RestSharp.Deserializers
                 {
                     Type t = type.GetGenericArguments()[0];
                     IList list = (IList) Activator.CreateInstance(type);
-                    XElement container = this.GetElementByName(root, prop.Name.AsNamespaced(this.Namespace));
+                    XElement container = this.GetElementByName(root, name);
 
                     if (container.HasElements)
                     {
