@@ -137,6 +137,10 @@ namespace RestSharp
         /// </summary>
         public RestClient()
         {
+#if PCL
+            throw new NotSupportedException("This is the RestShap PCL dll which is only a stub. Please make sure to also add RestSharp to your platform projects so the actual implementation of RestSharp is linked.");
+#endif
+
             this.Encoding = Encoding.UTF8;
 #if WINDOWS_PHONE
             this.UseSynchronizationContext = true;
