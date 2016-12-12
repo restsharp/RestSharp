@@ -23,7 +23,7 @@ using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || PCL
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -151,7 +151,7 @@ namespace RestSharp
         IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
 #endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || PCL
         /// <summary>
         /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>

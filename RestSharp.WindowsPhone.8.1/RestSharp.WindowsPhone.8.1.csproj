@@ -96,12 +96,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <DefineConstants>WINDOWS_PHONE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget />
     <OutputPath>Bin\ARM\Release</OutputPath>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
+    <DefineConstants>WINDOWS_PHONE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\restsharp\authenticators\HttpBasicAuthenticator.cs">
