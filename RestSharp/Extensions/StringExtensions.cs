@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
-using System.Net;
+
 #if WINDOWS_PHONE
 using System.Net;
 #endif
