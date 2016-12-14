@@ -21,6 +21,7 @@ if not exist Download\package\lib\net452 mkdir Download\package\lib\net452\
 if not exist Download\package\lib\net46 mkdir Download\package\lib\net46\
 if not exist Download\package\lib\windowsphone8 mkdir Download\package\lib\windowsphone8\
 if not exist Download\package\lib\windowsphone81 mkdir Download\package\lib\windowsphone81\
+if not exist Download\package\lib\win81 mkdir Download\package\lib\win81\
 if not exist Download\package\lib\sl5 mkdir Download\package\lib\sl5\
 if not exist "Download\package\lib\portable-net45+sl50+win+wpa81+wp80" mkdir "Download\package\lib\portable-net45+sl50+win+wpa81+wp80\"
 
@@ -54,6 +55,7 @@ copy RestSharp.Net46\bin\Release\RestSharp.dll Download\Package\lib\net46\
 copy RestSharp.Silverlight\bin\Release\RestSharp.dll Download\Package\lib\sl5\
 copy RestSharp.WindowsPhone.8.0\bin\Release\RestSharp.dll Download\Package\lib\windowsphone8\
 copy RestSharp.WindowsPhone.8.1\bin\Release\RestSharp.dll Download\Package\lib\windowsphone81\
+copy RestSharp.UWP\bin\Release\RestSharp.dll Download\Package\lib\win81\
 copy RestSharp.iOS\bin\Release\RestSharp.dll Download\package\lib\Xamarin.iOS10\
 copy RestSharp.MonoTouch\bin\Release\RestSharp.dll Download\package\lib\MonoTouch10\
 copy RestSharp.Android\bin\Release\RestSharp.dll Download\package\lib\MonoAndroid10\
@@ -69,6 +71,7 @@ copy RestSharp.Net46\bin\Release\RestSharp.xml Download\Package\lib\net46\
 copy RestSharp.Silverlight\bin\Release\RestSharp.xml Download\Package\lib\sl5\
 copy RestSharp.WindowsPhone.8.0\bin\Release\RestSharp.xml Download\Package\lib\windowsphone8\
 copy RestSharp.WindowsPhone.8.1\bin\Release\RestSharp.xml Download\Package\lib\windowsphone81\
+copy RestSharp.UWP\bin\Release\RestSharp.xml Download\Package\lib\win81\
 copy RestSharp.iOS\bin\Release\RestSharp.xml Download\package\lib\Xamarin.iOS10\
 copy RestSharp.MonoTouch\bin\Release\RestSharp.xml Download\package\lib\MonoTouch10\
 copy RestSharp.Android\bin\Release\RestSharp.xml Download\package\lib\MonoAndroid10\
