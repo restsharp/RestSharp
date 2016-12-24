@@ -33,10 +33,6 @@ using System.Net.Browser;
 using System.Threading;
 #endif
 
-#if WINDOWS_UWP
-using Windows.Networking;
-#endif
-
 namespace RestSharp
 {
     /// <summary>
