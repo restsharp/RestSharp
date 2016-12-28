@@ -67,13 +67,17 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        [TestCase("The quick brown fox jumps over the lazy dog")]
-        public void RsaSha1_Signs_Correctly(string value)
+        [TestCase("The quick brown fox jumps over the lazy dog", 1024)]
+        [TestCase("The quick brown fox jumps over the lazy dog", 2048)]
+        [TestCase("The quick brown fox jumps over the lazy dog", 4096)]
+        [TestCase("", 2048)]
+        [TestCase(" !\"#$%&'()*+,", 2048)]
+        public void RsaSha1_Signs_Correctly(string value, int keySize)
         {
             SHA1Managed hasher = new SHA1Managed();
             byte[] hash = hasher.ComputeHash(value.GetBytes());
 
-            using (var crypto = new RSACryptoServiceProvider() { PersistKeyInCsp = false })
+            using (var crypto = new RSACryptoServiceProvider(keySize) { PersistKeyInCsp = false })
             {
                 string privateKey = crypto.ToXmlString(true);
 
