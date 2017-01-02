@@ -55,6 +55,12 @@ namespace RestSharp
         /// </summary>
         public int? MaxRedirects { get; set; }
 
+        /// <summary>
+        /// In general you would not need to set this directly. Used by the NtlmAuthenticator. 
+        /// </summary>
+        public ICredentials Credentials { get; set; }
+
+
 #if FRAMEWORK
         /// <summary>
         /// X509CertificateCollection to be sent with request
@@ -469,9 +475,9 @@ namespace RestSharp
             http.Pipelined = this.Pipelined;
 #endif
 
-            if (request.Credentials != null)
+            if (this.Credentials != null)
             {
-                http.Credentials = request.Credentials;
+                http.Credentials = this.Credentials;
             }
 
             IEnumerable<HttpHeader> headers = from p in request.Parameters

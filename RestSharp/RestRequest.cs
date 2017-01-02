@@ -582,11 +582,6 @@ namespace RestSharp
         public string XmlNamespace { get; set; }
 
         /// <summary>
-        /// In general you would not need to set this directly. Used by the NtlmAuthenticator. 
-        /// </summary>
-        public ICredentials Credentials { get; set; }
-
-        /// <summary>
         /// Gets or sets a user-defined state object that contains information about a request and which can be later 
         /// retrieved when the request completes.
         /// </summary>

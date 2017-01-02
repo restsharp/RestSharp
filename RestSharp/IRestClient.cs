@@ -72,6 +72,11 @@ namespace RestSharp
         byte[] DownloadData(IRestRequest request);
 #endif
 
+        /// <summary>
+        /// In general you would not need to set this directly. Used by the NtlmAuthenticator. 
+        /// </summary>
+        ICredentials Credentials { get; set; }
+
 #if FRAMEWORK
         /// <summary>
         /// X509CertificateCollection to be sent with request
