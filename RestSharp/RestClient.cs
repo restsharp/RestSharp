@@ -201,7 +201,7 @@ namespace RestSharp
         {
             this.ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*" && !this.structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
+            if (contentType != "*" && !IsWildcardStructuredSuffixSyntax(contentType))
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
@@ -210,6 +210,25 @@ namespace RestSharp
                 this.RemoveDefaultParameter("Accept");
                 this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
             }
+        }
+
+        private bool IsWildcardStructuredSuffixSyntax(string contentType)
+        {
+            int i = 0;
+
+            // Avoid most unnecessary uses of RegEx by checking for necessary characters explicitly first
+            if (contentType[i++] != '*')
+                return false;
+
+            if (contentType[i++] != '+')
+                return false;
+
+            // If no more characters to check, exit now
+            if (i == contentType.Length)
+                return false;
+
+            // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
+            return structuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
         }
 
         /// <summary>
@@ -262,16 +281,20 @@ namespace RestSharp
                 return this.ContentHandlers[contentType];
             }
 
-            // https://tools.ietf.org/html/rfc6839#page-4
-            Match structuredSyntaxSuffixMatch = this.structuredSyntaxSuffixRegex.Match(contentType);
-
-            if (structuredSyntaxSuffixMatch.Success)
+            // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
+            if (contentType.IndexOf('+') >= 0)
             {
-                string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
+                // https://tools.ietf.org/html/rfc6839#page-4
+                Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
 
-                if (this.ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                if (structuredSyntaxSuffixMatch.Success)
                 {
-                    return this.ContentHandlers[structuredSyntaxSuffixWildcard];
+                    string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
+
+                    if (this.ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                    {
+                        return this.ContentHandlers[structuredSyntaxSuffixWildcard];
+                    }
                 }
             }
 
@@ -284,13 +307,13 @@ namespace RestSharp
         }
 
 #if SILVERLIGHT
-        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+        private static readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
-        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
+        private static readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 #else
-        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
 
-        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 #endif
 
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
