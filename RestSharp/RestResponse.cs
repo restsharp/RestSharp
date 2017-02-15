@@ -81,6 +81,14 @@ namespace RestSharp
         public HttpStatusCode StatusCode { get; set; }
 
         /// <summary>
+        /// Whether or not the response status code indicates success
+        /// </summary>
+        public bool IsSuccessful
+        {
+            get { return (int) this.StatusCode >= 200 && (int) this.StatusCode <= 399 && this.ResponseStatus == ResponseStatus.Completed; }
+        }
+
+        /// <summary>
         /// Description of HTTP status returned
         /// </summary>
         public string StatusDescription { get; set; }

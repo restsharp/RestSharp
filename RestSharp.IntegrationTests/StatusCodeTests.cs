@@ -102,6 +102,81 @@ namespace RestSharp.IntegrationTests
                 Assert.AreEqual("Works!", response.Data.Message);
             }
         }
+
+        [Test]
+        public void Reports_1xx_Status_Code_Success_Accurately()
+        {
+            Uri baseUrl = new Uri("http://localhost:8080/");
+
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
+            {
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("100");
+                IRestResponse response = client.Execute(request);
+
+                Assert.IsFalse(response.IsSuccessful);
+            }
+        }
+
+        [Test]
+        public void Reports_2xx_Status_Code_Success_Accurately()
+        {
+            Uri baseUrl = new Uri("http://localhost:8080/");
+
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
+            {
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("204");
+                IRestResponse response = client.Execute(request);
+
+                Assert.IsTrue(response.IsSuccessful);
+            }
+        }
+
+        [Test]
+        public void Reports_3xx_Status_Code_Success_Accurately()
+        {
+            Uri baseUrl = new Uri("http://localhost:8080/");
+
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
+            {
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("301");
+                IRestResponse response = client.Execute(request);
+
+                Assert.IsTrue(response.IsSuccessful);
+            }
+        }
+
+        [Test]
+        public void Reports_4xx_Status_Code_Success_Accurately()
+        {
+            Uri baseUrl = new Uri("http://localhost:8080/");
+
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
+            {
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("404");
+                IRestResponse response = client.Execute(request);
+
+                Assert.IsFalse(response.IsSuccessful);
+            }
+        }
+
+        [Test]
+        public void Reports_5xx_Status_Code_Success_Accurately()
+        {
+            Uri baseUrl = new Uri("http://localhost:8080/");
+
+            using (SimpleServer.Create(baseUrl.AbsoluteUri, UrlToStatusCodeHandler))
+            {
+                RestClient client = new RestClient(baseUrl);
+                RestRequest request = new RestRequest("503");
+                IRestResponse response = client.Execute(request);
+
+                Assert.IsFalse(response.IsSuccessful);
+            }
+        }
     }
 
     public class ResponseHandler

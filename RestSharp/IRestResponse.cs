@@ -43,6 +43,11 @@ namespace RestSharp
         HttpStatusCode StatusCode { get; set; }
 
         /// <summary>
+        /// Whether or not the response status code indicates success
+        /// </summary>
+        bool IsSuccessful { get; }
+
+        /// <summary>
         /// Description of HTTP status returned
         /// </summary>
         string StatusDescription { get; set; }
