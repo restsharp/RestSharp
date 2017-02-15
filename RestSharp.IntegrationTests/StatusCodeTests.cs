@@ -144,7 +144,7 @@ namespace RestSharp.IntegrationTests
                 RestRequest request = new RestRequest("301");
                 IRestResponse response = client.Execute(request);
 
-                Assert.IsTrue(response.IsSuccessful);
+                Assert.IsFalse(response.IsSuccessful);
             }
         }
 

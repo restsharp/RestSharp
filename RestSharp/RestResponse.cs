@@ -85,7 +85,7 @@ namespace RestSharp
         /// </summary>
         public bool IsSuccessful
         {
-            get { return (int) this.StatusCode >= 200 && (int) this.StatusCode <= 399 && this.ResponseStatus == ResponseStatus.Completed; }
+            get { return (int) this.StatusCode >= 200 && (int) this.StatusCode <= 299 && this.ResponseStatus == ResponseStatus.Completed; }
         }
 
         /// <summary>
