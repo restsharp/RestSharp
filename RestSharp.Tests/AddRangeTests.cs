@@ -18,7 +18,7 @@ namespace RestSharp.Tests
         [Test]
         public void ShouldParseOutLongRangeSpecifier()
         {
-            // This can't be tested wince the test project builds with .Net35
+            // This can't be tested since the test project builds with .Net35
 
 
             //RestClient restClient = new RestClient("http://localhost");
