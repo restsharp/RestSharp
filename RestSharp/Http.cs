@@ -509,8 +509,13 @@ namespace RestSharp
             }
 
             string rangeSpecifier = m.Groups[1].Value;
+#if NET4
             long from = Convert.ToInt64(m.Groups[2].Value);
             long to = Convert.ToInt64(m.Groups[3].Value);
+#else
+            int from = Convert.ToInt32(m.Groups[2].Value);
+            int to = Convert.ToInt32(m.Groups[3].Value);
+#endif
 
             r.AddRange(rangeSpecifier, from, to);
         }
