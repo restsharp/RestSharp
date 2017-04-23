@@ -78,6 +78,7 @@
     <Compile Include="AddRangeTests.cs" />
     <Compile Include="JwtAuthTests.cs" />
     <Compile Include="OAuthTests.cs" />
+    <Compile Include="SampleClasses\BearerToken.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
     <Compile Include="SampleClasses\EnumTest.cs" />
     <Compile Include="SampleClasses\Goodreads.cs" />
@@ -112,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleData\4sq.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\bearertoken.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\boolean_from_string.xml">
