@@ -68,9 +68,7 @@ using System.Dynamic;
 #endif
 using System.Globalization;
 using System.Reflection;
-#if !NETSTANDARD1_4
 using System.Runtime.Serialization;
-#endif
 using System.Text;
 using RestSharp.Reflection;
 

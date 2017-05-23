@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using System.Threading;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
 using Xunit;
@@ -9,12 +7,6 @@ namespace RestSharp.Tests
 {
     public class OAuthTests
     {
-        public OAuthTests()
-        {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentUICulture;
-        }
-
         [Theory]
         [InlineData("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz")]
         [InlineData("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")]

@@ -11,7 +11,7 @@ namespace RestSharp.Tests
             RestRequest req = new RestRequest("bob", Method.GET);
 
             req.AddHeader("Range", "pages=1-2");
-            restClient.Execute(req);
+            restClient.ExecuteAsync(req, response => { });
         }
     }
 }

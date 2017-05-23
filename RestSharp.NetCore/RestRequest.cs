@@ -321,7 +321,7 @@ namespace RestSharp
         {
             // automatically create parameters from object props
             Type type = obj.GetType();
-            PropertyInfo[] props = type.GetProperties();
+            var props = type.GetTypeInfo().DeclaredProperties;
 
             foreach (PropertyInfo prop in props)
             {
@@ -345,7 +345,7 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))

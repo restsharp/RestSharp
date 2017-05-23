@@ -10,8 +10,8 @@ namespace RestSharp.Tests
     {
         public RestRequestTests()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentUICulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.CurrentUICulture = CultureInfo.CurrentUICulture;
         }
 
         [Fact]

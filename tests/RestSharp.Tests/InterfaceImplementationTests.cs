@@ -27,7 +27,7 @@ namespace RestSharp.Tests
             Assert.Equal(0, compareResult.Count());
         }
 
-        private static IEnumerable<string> CompareTypes(IReflect type1, IReflect type2, BindingFlags bindingFlags)
+        private static IEnumerable<string> CompareTypes(Type type1, Type type2, BindingFlags bindingFlags)
         {
             MethodInfo[] typeTMethodInfo = type1.GetMethods(bindingFlags);
             MethodInfo[] typeXMethodInfo = type2.GetMethods(bindingFlags);

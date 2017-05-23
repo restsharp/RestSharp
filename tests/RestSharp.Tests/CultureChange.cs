@@ -15,16 +15,16 @@ namespace RestSharp.Tests
                 throw new ArgumentNullException("culture");
             }
 
-            this.PreviousCulture = Thread.CurrentThread.CurrentCulture;
+            this.PreviousCulture = CultureInfo.CurrentCulture;
 
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
         }
 
         public void Dispose()
         {
             if (this.PreviousCulture != null)
             {
-                Thread.CurrentThread.CurrentCulture = this.PreviousCulture;
+                CultureInfo.CurrentCulture = this.PreviousCulture;
 
                 this.PreviousCulture = null;
             }

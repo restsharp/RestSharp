@@ -56,7 +56,7 @@ namespace RestSharp.Deserializers
         private object Map(object target, IDictionary<string, object> data)
         {
             Type objType = target.GetType();
-            List<PropertyInfo> props = objType.GetProperties()
+            List<PropertyInfo> props = objType.GetRuntimeProperties()
                                               .Where(p => p.CanWrite)
                                               .ToList();
 
@@ -64,7 +64,7 @@ namespace RestSharp.Deserializers
             {
                 string name;
                 Type type = prop.PropertyType;
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
                 object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);               
                 
                 if (attributes.Length > 0)
@@ -118,8 +118,8 @@ namespace RestSharp.Deserializers
         private IDictionary BuildDictionary(Type type, object parent)
         {
             IDictionary dict = (IDictionary) Activator.CreateInstance(type);
-            Type keyType = type.GetGenericArguments()[0];
-            Type valueType = type.GetGenericArguments()[1];
+            Type keyType = type.GenericTypeArguments[0];
+            Type valueType = type.GenericTypeArguments[1];
 
             foreach (KeyValuePair<string, object> child in (IDictionary<string, object>) parent)
             {
@@ -129,7 +129,7 @@ namespace RestSharp.Deserializers
 
                 object item;
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
                 if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
 #else
                 
@@ -152,20 +152,20 @@ namespace RestSharp.Deserializers
         private IList BuildList(Type type, object parent)
         {
             IList list = (IList) Activator.CreateInstance(type);
-            Type listType = type.GetInterfaces()
+            Type listType = type.GetTypeInfo().ImplementedInterfaces
                                 .First
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
                 (x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
 #else
                 (x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
 #endif
-            Type itemType = listType.GetGenericArguments()[0];
+            Type itemType = listType.GenericTypeArguments[0];
 
             if (parent is IList)
             {
                 foreach (object element in (IList) parent)
                 {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
                     if (itemType.IsPrimitive)
 #else
                     if (itemType.GetTypeInfo().IsPrimitive)
@@ -212,7 +212,7 @@ namespace RestSharp.Deserializers
             string stringValue = Convert.ToString(value, this.Culture);
 
             // check for nullable and extract underlying type
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 #else
             if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -224,7 +224,7 @@ namespace RestSharp.Deserializers
                     return null;
                 }
 
-                type = type.GetGenericArguments()[0];
+                type = type.GenericTypeArguments[0];
             }
 
             if (type == typeof(object))
@@ -236,7 +236,7 @@ namespace RestSharp.Deserializers
                 type = value.GetType();
             }
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
             if (type.IsPrimitive)
             {
                 return value.ChangeType(type, this.Culture);
@@ -325,7 +325,7 @@ namespace RestSharp.Deserializers
                 // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD1_4
             else if (type.IsGenericType)
 #else
             else if (type.GetTypeInfo().IsGenericType)
@@ -335,7 +335,7 @@ namespace RestSharp.Deserializers
 
                 if (genericTypeDef == typeof(IEnumerable<>))
                 {
-                    Type itemType = type.GetGenericArguments()[0];
+                    Type itemType = type.GenericTypeArguments[0];
                     Type listType = typeof(List<>).MakeGenericType(itemType);
                     return this.BuildList(listType, value);
                 }

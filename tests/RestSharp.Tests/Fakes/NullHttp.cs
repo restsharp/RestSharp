@@ -2,7 +2,7 @@
 {
     public class NullHttp : Http
     {
-        public new HttpResponse Get()
+        public HttpResponse Get()
         {
             return new HttpResponse();
         }

@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
 using Xunit;

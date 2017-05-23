@@ -69,7 +69,7 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource/?foo=bar");
             Uri output = client.BuildUri(request);
 
-            client.Execute(request);
+            client.ExecuteAsync(request, response => { });
 
             Assert.Equal(expected, output);
         }
