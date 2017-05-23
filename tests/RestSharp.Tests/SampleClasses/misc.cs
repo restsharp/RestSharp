@@ -42,20 +42,11 @@ namespace RestSharp.Tests.SampleClasses
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy
-        {
-            get { return this.Ignore; }
-        }
+        public string IgnoreProxy => Ignore;
 
-        protected string ReadOnly
-        {
-            get { return null; }
-        }
+        protected string ReadOnly => null;
 
-        public string ReadOnlyProxy
-        {
-            get { return this.ReadOnly; }
-        }
+        public string ReadOnlyProxy => ReadOnly;
 
         public FoeList Foes { get; set; }
 
@@ -112,20 +103,11 @@ namespace RestSharp.Tests.SampleClasses
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy
-        {
-            get { return this.Ignore; }
-        }
+        public string IgnoreProxy => Ignore;
 
-        protected string ReadOnly
-        {
-            get { return null; }
-        }
+        protected string ReadOnly => null;
 
-        public string ReadOnlyProxy
-        {
-            get { return this.ReadOnly; }
-        }
+        public string ReadOnlyProxy => ReadOnly;
 
         public Dictionary<string, Foe> Foes { get; set; }
 

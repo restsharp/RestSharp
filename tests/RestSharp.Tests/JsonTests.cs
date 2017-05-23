@@ -30,9 +30,9 @@ namespace RestSharp.Tests
 {
     public class JsonTests
     {
-        private const string ALTERNATIVE_CULTURE = "pt-PT";
+        private const string AlternativeCulture = "pt-PT";
 
-        private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+        private const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
         [Fact]
         public void Can_Deserialize_Exponential_Notation()
@@ -200,9 +200,7 @@ namespace RestSharp.Tests
         {
             Guid id1 = new Guid("b0e5c11f-e944-478c-aadd-753b956d0c8c");
             Guid id2 = new Guid("809399fa-21c4-4dca-8dcd-34cb697fbca0");
-            JsonObject data = new JsonObject();
-
-            data["Ids"] = new JsonArray { id1, id2 };
+            JsonObject data = new JsonObject {["Ids"] = new JsonArray {id1, id2}};
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = data.ToString()  };
@@ -218,13 +216,15 @@ namespace RestSharp.Tests
         {
             DateTime item1 = new DateTime(2010, 2, 8, 11, 11, 11);
             DateTime item2 = item1.AddSeconds(12345);
-            JsonObject data = new JsonObject();
+            JsonObject data = new JsonObject
+            {
+                ["Items"] = new JsonArray
+                {
+                    item1.ToString("u"),
+                    item2.ToString("u")
+                }
+            };
 
-            data["Items"] = new JsonArray
-                            {
-                                item1.ToString("u"),
-                                item2.ToString("u")
-                            };
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = data.ToString() };
@@ -241,15 +241,17 @@ namespace RestSharp.Tests
             DateTime item0 = new DateTime(2010, 2, 8, 11, 11, 11, DateTimeKind.Local);
             DateTime item1 = new DateTime(2011, 2, 8, 11, 11, 11, DateTimeKind.Utc);
             DateTime item2 = new DateTime(2012, 2, 8, 11, 11, 11, DateTimeKind.Unspecified);
-            JsonObject data = new JsonObject();
+            JsonObject data = new JsonObject
+            {
+                ["Items"] = new JsonArray
+                {
+                    item0,
+                    item1,
+                    item2,
+                    "/Date(1309421746929+0000)/"
+                }
+            };
 
-            data["Items"] = new JsonArray
-                            {
-                                item0.ToString(),
-                                item1.ToString(),
-                                item2.ToString(),
-                                "/Date(1309421746929+0000)/"
-                            };
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = data.ToString() };
@@ -301,7 +303,7 @@ namespace RestSharp.Tests
             Assert.Equal(
                 new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc),
                 output.StartDate.Value);
-            Assert.Equal(new Guid(GUID_STRING), output.UniqueId);
+            Assert.Equal(new Guid(GuidString), output.UniqueId);
         }
 
         [Fact]
@@ -406,23 +408,21 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_Guid_String_Fields()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject {["Guid"] = GuidString};
 
-            doc["Guid"] = GUID_STRING;
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = doc.ToString() };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
-            Assert.Equal(new Guid(GUID_STRING), p.Guid);
+            Assert.Equal(new Guid(GuidString), p.Guid);
         }
 
         [Fact]
         public void Can_Deserialize_Quoted_Primitive()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject {["Age"] = "28"};
 
-            doc["Age"] = "28";
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = doc.ToString() };
@@ -434,9 +434,8 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_Int_to_Bool()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject {["IsCool"] = 1};
 
-            doc["IsCool"] = 1;
 
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = doc.ToString() };
@@ -462,7 +461,7 @@ namespace RestSharp.Tests
             Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.Equal(Guid.Empty, p.EmptyGuid);
-            Assert.Equal(new Guid(GUID_STRING), p.Guid);
+            Assert.Equal(new Guid(GuidString), p.Guid);
             Assert.Equal(Order.Third, p.Order);
             Assert.Equal(Disposition.SoSo, p.Disposition);
             Assert.NotNull(p.Friends);
@@ -478,9 +477,9 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_With_Default_Root_Alternative_Culture()
         {
-            using (new CultureChange(ALTERNATIVE_CULTURE))
+            using (new CultureChange(AlternativeCulture))
             {
-                this.Can_Deserialize_With_Default_Root();
+                Can_Deserialize_With_Default_Root();
             }
         }
 
@@ -525,9 +524,9 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_Names_With_Underscores_With_Default_Root_Alternative_Culture()
         {
-            using (new CultureChange(ALTERNATIVE_CULTURE))
+            using (new CultureChange(AlternativeCulture))
             {
-                this.Can_Deserialize_Names_With_Underscores_With_Default_Root();
+                Can_Deserialize_Names_With_Underscores_With_Default_Root();
             }
         }
 
@@ -560,9 +559,9 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_Names_With_Dashes_With_Default_Root_Alternative_Culture()
         {
-            using (new CultureChange(ALTERNATIVE_CULTURE))
+            using (new CultureChange(AlternativeCulture))
             {
-                this.Can_Deserialize_Names_With_Dashes_With_Default_Root();
+                Can_Deserialize_Names_With_Dashes_With_Default_Root();
             }
         }
 
@@ -745,7 +744,7 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_To_Dictionary_String_String()
         {
-            string doc = this.CreateJsonStringDictionary();
+            string doc = CreateJsonStringDictionary();
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = doc };
             Dictionary<string, string> bd = d.Deserialize<Dictionary<string, string>>(response);
@@ -759,7 +758,7 @@ namespace RestSharp.Tests
         [Fact]
         public void Can_Deserialize_To_Dictionary_String_String_With_Dynamic_Values()
         {
-            string doc = this.CreateDynamicJsonStringDictionary();
+            string doc = CreateDynamicJsonStringDictionary();
             JsonDeserializer d = new JsonDeserializer();
             RestResponse response = new RestResponse { Content = doc };
             Dictionary<string, string> bd = d.Deserialize<Dictionary<string, string>>(response);
@@ -826,23 +825,25 @@ namespace RestSharp.Tests
 
         private static string CreateJsonWithUnderscores()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["name"] = "John Sheehan",
+                ["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc),
+                ["age"] = 28,
+                ["percent"] = 99.9999m,
+                ["big_number"] = long.MaxValue,
+                ["is_cool"] = false,
+                ["ignore"] = "dummy",
+                ["read_only"] = "dummy",
+                ["url"] = "http://example.com",
+                ["url_path"] = "/foo/bar",
+                ["best_friend"] = new JsonObject
+                {
+                    {"name", "The Fonz"},
+                    {"since", 1952}
+                }
+            };
 
-            doc["name"] = "John Sheehan";
-            doc["start_date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
-            doc["age"] = 28;
-            doc["percent"] = 99.9999m;
-            doc["big_number"] = long.MaxValue;
-            doc["is_cool"] = false;
-            doc["ignore"] = "dummy";
-            doc["read_only"] = "dummy";
-            doc["url"] = "http://example.com";
-            doc["url_path"] = "/foo/bar";
-            doc["best_friend"] = new JsonObject
-                                 {
-                                     { "name", "The Fonz" },
-                                     { "since", 1952 }
-                                 };
 
             JsonArray friendsArray = new JsonArray();
 
@@ -870,23 +871,25 @@ namespace RestSharp.Tests
 
         private static string CreateJsonWithDashes()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["name"] = "John Sheehan",
+                ["start-date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc),
+                ["age"] = 28,
+                ["percent"] = 99.9999m,
+                ["big-number"] = long.MaxValue,
+                ["is-cool"] = false,
+                ["ignore"] = "dummy",
+                ["read-only"] = "dummy",
+                ["url"] = "http://example.com",
+                ["url-path"] = "/foo/bar",
+                ["best-friend"] = new JsonObject
+                {
+                    {"name", "The Fonz"},
+                    {"since", 1952}
+                }
+            };
 
-            doc["name"] = "John Sheehan";
-            doc["start-date"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
-            doc["age"] = 28;
-            doc["percent"] = 99.9999m;
-            doc["big-number"] = long.MaxValue;
-            doc["is-cool"] = false;
-            doc["ignore"] = "dummy";
-            doc["read-only"] = "dummy";
-            doc["url"] = "http://example.com";
-            doc["url-path"] = "/foo/bar";
-            doc["best-friend"] = new JsonObject
-                                 {
-                                     { "name", "The Fonz" },
-                                     { "since", 1952 }
-                                 };
 
             JsonArray friendsArray = new JsonArray();
 
@@ -924,45 +927,45 @@ namespace RestSharp.Tests
 
         private static string CreateUnixDateJson()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject {["Value"] = 1309421746};
 
-            doc["Value"] = 1309421746;
 
             return doc.ToString();
         }
 
         private static string CreateUnixDateMillisecondsJson()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject {["Value"] = 1309421746000};
 
-            doc["Value"] = 1309421746000;
 
             return doc.ToString();
         }
 
         private static string CreateJson()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["Name"] = "John Sheehan",
+                ["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc),
+                ["Age"] = 28,
+                ["Percent"] = 99.9999m,
+                ["BigNumber"] = long.MaxValue,
+                ["IsCool"] = false,
+                ["Ignore"] = "dummy",
+                ["ReadOnly"] = "dummy",
+                ["Url"] = "http://example.com",
+                ["UrlPath"] = "/foo/bar",
+                ["Order"] = "third",
+                ["Disposition"] = "so_so",
+                ["Guid"] = new Guid(GuidString).ToString(),
+                ["EmptyGuid"] = "",
+                ["BestFriend"] = new JsonObject
+                {
+                    {"Name", "The Fonz"},
+                    {"Since", 1952}
+                }
+            };
 
-            doc["Name"] = "John Sheehan";
-            doc["StartDate"] = new DateTime(2009, 9, 25, 0, 6, 1, DateTimeKind.Utc);
-            doc["Age"] = 28;
-            doc["Percent"] = 99.9999m;
-            doc["BigNumber"] = long.MaxValue;
-            doc["IsCool"] = false;
-            doc["Ignore"] = "dummy";
-            doc["ReadOnly"] = "dummy";
-            doc["Url"] = "http://example.com";
-            doc["UrlPath"] = "/foo/bar";
-            doc["Order"] = "third";
-            doc["Disposition"] = "so_so";
-            doc["Guid"] = new Guid(GUID_STRING).ToString();
-            doc["EmptyGuid"] = "";
-            doc["BestFriend"] = new JsonObject
-                                {
-                                    { "Name", "The Fonz" },
-                                    { "Since", 1952 }
-                                };
 
             JsonArray friendsArray = new JsonArray();
 
@@ -990,69 +993,79 @@ namespace RestSharp.Tests
 
         private static string CreateJsonWithNullValues()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["Id"] = null,
+                ["StartDate"] = null,
+                ["UniqueId"] = null
+            };
 
-            doc["Id"] = null;
-            doc["StartDate"] = null;
-            doc["UniqueId"] = null;
 
             return doc.ToString();
         }
 
         private static string CreateJsonWithEmptyValues()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["Id"] = "",
+                ["StartDate"] = "",
+                ["UniqueId"] = ""
+            };
 
-            doc["Id"] = "";
-            doc["StartDate"] = "";
-            doc["UniqueId"] = "";
 
             return doc.ToString();
         }
 
         private static string CreateJsonWithoutEmptyValues()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["Id"] = 123,
+                ["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc),
+                ["UniqueId"] = new Guid(GuidString).ToString()
+            };
 
-            doc["Id"] = 123;
-            doc["StartDate"] = new DateTime(2010, 2, 21, 9, 35, 00, DateTimeKind.Utc);
-            doc["UniqueId"] = new Guid(GUID_STRING).ToString();
 
             return doc.ToString();
         }
 
         public string CreateJsonStringDictionary()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["Thing1"] = "Thing1",
+                ["Thing2"] = "Thing2",
+                ["ThingRed"] = "ThingRed",
+                ["ThingBlue"] = "ThingBlue"
+            };
 
-            doc["Thing1"] = "Thing1";
-            doc["Thing2"] = "Thing2";
-            doc["ThingRed"] = "ThingRed";
-            doc["ThingBlue"] = "ThingBlue";
 
             return doc.ToString();
         }
 
         public string CreateDynamicJsonStringDictionary()
         {
-            JsonObject doc = new JsonObject();
+            JsonObject doc = new JsonObject
+            {
+                ["Thing1"] = new JsonArray
+                {
+                    "Value1",
+                    "Value2"
+                },
+                ["Thing2"] = "Thing2",
+                ["ThingRed"] = new JsonObject
+                {
+                    {"Name", "ThingRed"},
+                    {"Color", "Red"}
+                },
+                ["ThingBlue"] = new JsonObject
+                {
+                    {"Name", "ThingBlue"},
+                    {"Color", "Blue"}
+                }
+            };
 
-            doc["Thing1"] = new JsonArray
-                            {
-                                "Value1",
-                                "Value2"
-                            };
-            doc["Thing2"] = "Thing2";
-            doc["ThingRed"] = new JsonObject
-                              {
-                                  { "Name", "ThingRed" },
-                                  { "Color", "Red" }
-                              };
-            doc["ThingBlue"] = new JsonObject
-                               {
-                                   { "Name", "ThingBlue" },
-                                   { "Color", "Blue" }
-                               };
 
             return doc.ToString();
         }

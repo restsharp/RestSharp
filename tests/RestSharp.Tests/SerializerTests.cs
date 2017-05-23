@@ -29,6 +29,11 @@ namespace RestSharp.Tests
 {
     public class SerializerTests
     {
+        public SerializerTests()
+        {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+        }
+
         [Fact]
         public void Serializes_Properties_In_Specified_Order()
         {

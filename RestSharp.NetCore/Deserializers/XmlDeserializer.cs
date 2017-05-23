@@ -112,7 +112,7 @@ namespace RestSharp.Deserializers
         protected virtual object Map(object x, XElement root)
         {
             Type objType = x.GetType();
-            IEnumerable<PropertyInfo> props = objType.GetTypeInfo().DeclaredProperties;
+            IEnumerable<PropertyInfo> props = objType.GetProperties();
 
             foreach (PropertyInfo prop in props)
             {
@@ -387,8 +387,8 @@ namespace RestSharp.Deserializers
                 : type.BaseType.GetGenericArguments()[0];
 #else
             Type t = type.GetTypeInfo().IsGenericType
-               ? type.GenericTypeArguments[0]
-               : type.GetTypeInfo().BaseType.GenericTypeArguments[0];
+               ? type.GetGenericArguments()[0]
+               : type.GetTypeInfo().BaseType.GetGenericArguments()[0];
 #endif
             IList list = (IList) Activator.CreateInstance(type);
             IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(this.Namespace))

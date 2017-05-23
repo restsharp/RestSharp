@@ -20,7 +20,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
-#if FRAMEWORK
+#if FRAMEWORK || NETSTANDARD1_4
 using System.Linq;
 #endif
 
@@ -54,11 +54,10 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
-            //type.GetTypeInfo().getcu
 #if !WINDOWS_UWP && !NETSTANDARD1_4
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;
 #else
-            return type.GetTypeInfo().GetCustomAttribute(type) as T;
+            return type.GetTypeInfo().GetCustomAttribute<T>();
 #endif
         }
 
@@ -98,7 +97,7 @@ namespace RestSharp.Extensions
 
         public static object ChangeType(this object source, Type newType)
         {
-#if FRAMEWORK
+#if FRAMEWORK || NETSTANDARD1_4
             return Convert.ChangeType(source, newType);
 #else
             return Convert.ChangeType(source, newType, null);
@@ -107,7 +106,7 @@ namespace RestSharp.Extensions
 
         public static object ChangeType(this object source, Type newType, CultureInfo culture)
         {
-#if FRAMEWORK || SILVERLIGHT || WINDOWS_PHONE
+#if FRAMEWORK || SILVERLIGHT || WINDOWS_PHONE || NETSTANDARD1_4
             return Convert.ChangeType(source, newType, culture);
 #else
             return Convert.ChangeType(source, newType, null);
@@ -124,12 +123,12 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
-#if FRAMEWORK
+#if FRAMEWORK || NETSTANDARD1_4
             Enum ret = Enum.GetValues(type)
-                           .Cast<Enum>()
-                           .FirstOrDefault(v => v.ToString()
-                                                 .GetNameVariants(culture)
-                                                 .Contains(value, StringComparer.Create(culture, true)));
+                .Cast<Enum>()
+                .FirstOrDefault(v => v.ToString()
+                    .GetNameVariants(culture)
+                    .Contains(value, StringComparer.CurrentCultureIgnoreCase));
 
             if (ret == null)
             {

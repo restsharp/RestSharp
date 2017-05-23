@@ -25,16 +25,16 @@ namespace RestSharp.Tests
         public void UrlEncode_Returns_Correct_Length_When_Less_Than_Limit()
         {
             const int numLessThanLimit = 32766;
-            string stringWithLimitLength = new string('*', numLessThanLimit);
-            Assert.True(stringWithLimitLength.UrlEncode().Length == numLessThanLimit);
+            string stringWithLimitLength = new string('a', numLessThanLimit);
+            Assert.Equal(numLessThanLimit, stringWithLimitLength.UrlEncode().Length);
         }
 
         [Fact]
         public void UrlEncode_Returns_Correct_Length_When_More_Than_Limit()
         {
             const int numGreaterThanLimit = 65000;
-            string stringWithLimitLength = new string('*', numGreaterThanLimit);
-            Assert.True(stringWithLimitLength.UrlEncode().Length == numGreaterThanLimit);
+            string stringWithLimitLength = new string('a', numGreaterThanLimit);
+            Assert.Equal(numGreaterThanLimit, stringWithLimitLength.UrlEncode().Length);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace RestSharp.Deserializers
         private object Map(object target, IDictionary<string, object> data)
         {
             Type objType = target.GetType();
-            List<PropertyInfo> props = objType.GetRuntimeProperties()
+            List<PropertyInfo> props = objType.GetProperties()
                                               .Where(p => p.CanWrite)
                                               .ToList();
 
