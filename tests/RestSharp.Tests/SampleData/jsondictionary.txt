@@ -1,0 +1,21 @@
+{
+    "EmployeesPay" : 
+    {
+        "John": [{"Type":"BiWeekly","Amount":3000},{"Type":"Bonus","Amount":5000}],
+        "David": [{"Type":"Monthly","Amount":5000},{"Type":"Bonus","Amount":2500}],
+        "Mary": [{"Type":"BiWeekly","Amount":2000}]
+    },    
+    "EmployeesMail" : 
+    {
+        "John": ["Welcome to Restsharp", "Meetings at 4pm", "Meeting Cancled"],
+        "David": ["Project deadline is Monday", "Good work"],
+        "Mary": ["Is there any documentation on Product A", "I'm leaving early today"]
+    },
+    
+    "EmployeesTime" : 
+    {
+        "John": [[8, 7, 8, 8, 8], [1, 2, 3]],
+        "David": [[4, 12, 6, 4],[4, 12, 6, 4]],
+        "Mary": [[]]
+    }
+}

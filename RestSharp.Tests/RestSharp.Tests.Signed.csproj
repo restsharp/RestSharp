@@ -230,16 +230,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.Signed.csproj">
-      <Project>{60cf35b5-abe3-47e4-ba0c-0abaf1618475}</Project>
-      <Name>RestSharp.Build.Signed</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RestSharp\RestSharp.Net35.Signed.csproj">
-      <Project>{3190e0dc-674c-4c41-a7a3-bd2f406963b0}</Project>
-      <Name>RestSharp.Net35.Signed</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

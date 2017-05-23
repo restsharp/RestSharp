@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search version="0.2">
+    <total_items>3</total_items>
+    <page_size>10</page_size>
+    <page_count>1</page_count>
+    <page_number>1</page_number>
+    <page_items>3</page_items>
+    <first_item>1</first_item>
+    <last_item>3</last_item>
+    <search_time>0.262</search_time>
+    <venues>
+        <venue id="V0-001-002011236-6">
+            <url>http://eventful.com/venues/tivoli-/V0-001-002011236-6</url>
+            <name>Tivoli</name>
+            <venue_name>Tivoli</venue_name>
+            <description></description>
+            <venue_type></venue_type>
+            <address>291 Dandenong Rd</address>
+            <city_name>Prahran</city_name>
+            <region_name>Victoria</region_name>
+            <region_abbr>VIC</region_abbr>
+            <postal_code>3181</postal_code>
+            <country_name>Australia</country_name>
+            <country_abbr2>AU</country_abbr2>
+            <country_abbr>AUS</country_abbr>
+            <longitude>145.004726</longitude>
+            <latitude>-37.859123</latitude>
+            <geocode_type>EVDB Geocoder</geocode_type>
+            <owner>evdb</owner>
+            <timezone></timezone>
+            <created></created>
+            <event_count>0</event_count>
+            <trackback_count>0</trackback_count>
+            <comment_count>0</comment_count>
+            <link_count>0</link_count>
+            <image></image>
+        </venue>
+        <venue id="V0-001-002169294-8">
+            <url>http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8</url>
+            <name>Tivoli</name>
+            <venue_name>Tivoli</venue_name>
+            <description>&lt;br&gt; &lt;br&gt;(No phone for this venue yet.)&lt;br&gt; &lt;br&gt;(No website for this venue yet.)&lt;br&gt; &lt;br&gt;</description>
+            <venue_type></venue_type>
+            <address>Brisbane</address>
+            <city_name>Brisbane</city_name>
+            <region_name>Queensland</region_name>
+            <region_abbr>QLD</region_abbr>
+            <postal_code></postal_code>
+            <country_name>Australia</country_name>
+            <country_abbr2>AU</country_abbr2>
+            <country_abbr>AUS</country_abbr>
+            <longitude>153.017</longitude>
+            <latitude>-27.5</latitude>
+            <geocode_type>City Based GeoCodes</geocode_type>
+            <owner>evdb</owner>
+            <timezone></timezone>
+            <created></created>
+            <event_count>1</event_count>
+            <trackback_count>0</trackback_count>
+            <comment_count>0</comment_count>
+            <link_count>1</link_count>
+            <image></image>
+        </venue>
+        <venue id="V0-001-000266914-3">
+            <url>http://eventful.com/brisbane/venues/the-tivoli-/V0-001-000266914-3</url>
+            <name>The Tivoli</name>
+            <venue_name>The Tivoli</venue_name>
+            <description>Built in 1917 and restored in Art Deco style, this elegant, fully licensed theatre has state-of-the-art technical features, top-of-the-range facilities, in-house catering by our 5 star chef and dedicated staff available to meet all your needs.</description>
+            <venue_type>Concert Hall</venue_type>
+            <address>52 Costin Street Fortitude Valley</address>
+            <city_name>Brisbane</city_name>
+            <region_name>Queensland</region_name>
+            <region_abbr>QLD</region_abbr>
+            <postal_code>4006</postal_code>
+            <country_name>Australia</country_name>
+            <country_abbr2>AU</country_abbr2>
+            <country_abbr>AUS</country_abbr>
+            <longitude>153.031548</longitude>
+            <latitude>-27.452335</latitude>
+            <geocode_type>EVDB Geocoder</geocode_type>
+            <owner>evdb</owner>
+            <timezone></timezone>
+            <created></created>
+            <event_count>28</event_count>
+            <trackback_count>0</trackback_count>
+            <comment_count>7</comment_count>
+            <link_count>1</link_count>
+            <image>
+                <url>http://images.evdb.com/images/small/I0-001/001/414/278-2.jpeg</url>
+                <width>48</width>
+                <height>48</height>
+                <caption></caption>
+                <thumb>
+                    <url>http://images.evdb.com/images/thumb/I0-001/001/414/278-2.jpeg</url>
+                    <width>48</width>
+                    <height>48</height>
+                </thumb>
+                <small>
+                    <url>http://images.evdb.com/images/small/I0-001/001/414/278-2.jpeg</url>
+                    <width>48</width>
+                    <height>48</height>
+                </small>
+                <medium>
+                    <url>http://images.evdb.com/images/medium/I0-001/001/414/278-2.jpeg</url>
+                    <width>128</width>
+                    <height>128</height>
+                </medium>
+            </image>
+        </venue>
+    </venues>
+</search>

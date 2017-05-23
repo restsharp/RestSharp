@@ -1,0 +1,15 @@
+﻿{
+    "Tick": "00:00:00.0468006",
+    "Millisecond": "00:00:00.1250000",
+    "Second": "00:00:08.0000000",
+    "Minute": "00:55:02.0000000",
+    "Hour": "21:30:07.0000000",
+    "NullableWithoutValue": null,
+    "NullableWithValue": "21:30:07.0000000",
+    "IsoSecond": "PT10S",
+    "IsoMinute": "PT3M23S",
+    "IsoHour": "PT5H4M9S",
+    "IsoDay": "P1DT19H27M13S",
+    "IsoMonth": "P2M4DT3H14M19S",
+    "IsoYear": "P1YT9H27M48S"
+}

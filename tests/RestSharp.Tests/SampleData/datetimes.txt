@@ -1,0 +1,6 @@
+﻿{
+    "DateTime": "/Date(1309421746929+0000)/",
+    "NullableDateTimeWithValue": "/Date(1309421746929+0000)/",
+    "DateTimeOffset": "/Date(1309421746929+0000)/",
+    "NullableDateTimeOffsetWithValue": "/Date(1309421746929+0000)/"
+}

@@ -1,0 +1,46 @@
+﻿<lfm status="ok">
+    <event>
+        <id>328799</id>
+        <title>Philip Glass</title>
+        <artists>
+            <artist>Philip Glass</artist>
+            <artist>Orchestra and Chorus of Erfurt Theatre</artist>
+            <headliner>Philip Glass</headliner>
+        </artists>
+        <venue>
+            <id>8777860</id>
+            <name>Barbican Centre</name>
+            <location>
+                <city>London</city>
+                <country>United Kingdom</country>
+                <street>Silk Street</street>
+                <postalcode>EC2Y 8DS</postalcode>
+                <geo:point xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+                    <geo:lat>51.520099</geo:lat>
+                    <geo:long>-0.093609</geo:long>
+                </geo:point>
+            </location>
+            <url>http://www.last.fm/venue/8777860+Barbican+Centre</url>
+            <website>http://www.barbican.org.uk</website>
+            <phonenumber/>
+            <image size="small">http://userserve-ak.last.fm/serve/34/418510.jpg</image>
+            <image size="medium">http://userserve-ak.last.fm/serve/64/418510.jpg</image>
+            <image size="large">http://userserve-ak.last.fm/serve/126/418510.jpg</image>
+            <image size="extralarge">http://userserve-ak.last.fm/serve/252/418510.jpg</image>
+            <image size="mega">http://userserve-ak.last.fm/serve/500/418510/Barbican+Centre.jpg</image>
+        </venue>
+        <startDate>Thu, 12 Jun 2008 19:30:00</startDate>
+        <description/>
+        <image size="small">http://userserve-ak.last.fm/serve/34/39466081.png</image>
+        <image size="medium">http://userserve-ak.last.fm/serve/64/39466081.png</image>
+        <image size="large">http://userserve-ak.last.fm/serve/126/39466081.png</image>
+        <image size="extralarge">http://userserve-ak.last.fm/serve/252/39466081.png</image>
+        <attendance>48</attendance>
+        <reviews>0</reviews>
+        <tag>lastfm:event=328799</tag>
+        <url>http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008</url>
+        <website/>
+        <tickets></tickets>
+        <cancelled>0</cancelled>
+    </event>
+</lfm>

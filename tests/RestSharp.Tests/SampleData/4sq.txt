@@ -1,0 +1,62 @@
+﻿{
+   "meta":{
+      "code":200
+   },
+   "response":{
+      "groups":[
+         {
+            "type":"trending",
+            "name":"Trending Now",
+            "items":[
+               {
+                  "id":"4846c5acf964a5206f501fe3",
+                  "name":"Santos Party House",
+                  "contact":{
+                     "twitter":"SantosPartyHaus"
+                  },
+                  "location":{
+                     "address":"96 Lafayette St",
+                     "crossStreet":"btw Walker & White",
+                     "city":"New York",
+                     "distance":1962
+                  },
+                  "categories":[
+                     {
+                        "id":"4bf58dd8d48988d11f941735"
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "type":"nearby",
+            "name":"Nearby",
+            "items":[
+               {
+                  "id":"42377700f964a52024201fe3",
+                  "name":"Brooklyn Heights Promenade",
+                  "contact":{
+
+                  },
+                  "location":{
+                     "address":"Columbia Heights",
+                     "crossStreet":"btw Montague and Middagh",
+                     "city":"Brooklyn",
+                     "distance":342
+                  },
+                  "categories":[
+                     {
+                        "id":"4bf58dd8d48988d163941735",
+                        "name":"Park",
+                        "parents":[
+                           "Great Outdoors"
+                        ],
+                        "primary":true
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   }
+}

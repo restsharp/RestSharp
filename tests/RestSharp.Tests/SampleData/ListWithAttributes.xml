@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TwilioResponse>
+    <Calls page="0" numpages="3" pagesize="50" total="147" start="0" end="49" uri="/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls" firstpageuri="/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls?Page=0&amp;PageSize=50" previouspageuri="" nextpageuri="/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls?Page=1&amp;PageSize=50" lastpageuri="/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls?Page=2&amp;PageSize=50">
+        <Call>
+            <Sid>CA92d4405c9237c4ea04b56cbda88e128c</Sid>
+            <DateCreated>Fri, 13 Aug 2010 01:16:22 +0000</DateCreated>
+            <DateUpdated>Fri, 13 Aug 2010 01:16:22 +0000</DateUpdated>
+            <ParentCallSid/>
+            <AccountSid>AC5ef877a5fe4238be081ea6f3c44186f3</AccountSid>
+            <To>+15304551166</To>
+            <From>+15105555555</From>
+            <PhoneNumberSid>PNe2d8e63b37f46f2adb16f228afdb9058</PhoneNumberSid>
+            <Status>queued</Status>
+            <StartTime>Thu, 12 Aug 2010 01:37:05 +0000</StartTime>
+            <EndTime>Thu, 12 Aug 2010 01:37:40 +0000</EndTime>
+            <Duration/>
+            <Price/>
+            <Direction>outbound-api</Direction>
+            <AnsweredBy/>
+            <ApiVersion>2010-04-01</ApiVersion>
+            <ForwardedFrom/>
+            <CallerName/>
+            <Uri>/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls/CA92d4405c9237c4ea04b56cbda88e128c</Uri>
+            <SubresourceUris>
+                <Notifications>/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls/CA92d4405c9237c4ea04b56cbda88e128c/Notifications</Notifications>
+                <Recordings>/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls/CA92d4405c9237c4ea04b56cbda88e128c/Recordings</Recordings>
+            </SubresourceUris>
+        </Call>
+        <Call>
+            <Sid>CA12345</Sid>
+            <DateCreated>Fri, 13 Aug 2010 01:16:22 +0000</DateCreated>
+            <DateUpdated>Fri, 13 Aug 2010 01:16:22 +0000</DateUpdated>
+            <ParentCallSid/>
+            <AccountSid>AC5ef877a5fe4238be081ea6f3c44186f3</AccountSid>
+            <To>+15304551166</To>
+            <From>+15105555555</From>
+            <PhoneNumberSid>PNe2d8e63b37f46f2adb16f228afdb9058</PhoneNumberSid>
+            <Status>queued</Status>
+            <StartTime>Thu, 12 Aug 2010 01:37:05 +0000</StartTime>
+            <EndTime>Thu, 12 Aug 2010 01:37:40 +0000</EndTime>
+            <Duration/>
+            <Price/>
+            <Direction>outbound-api</Direction>
+            <AnsweredBy/>
+            <ApiVersion>2010-04-01</ApiVersion>
+            <ForwardedFrom/>
+            <CallerName/>
+            <Uri>/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls/CA92d4405c9237c4ea04b56cbda88e128c</Uri>
+            <SubresourceUris>
+                <Notifications>/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls/CA92d4405c9237c4ea04b56cbda88e128c/Notifications</Notifications>
+                <Recordings>/2010-04-01/Accounts/AC5ef877a5fe4238be081ea6f3c44186f3/Calls/CA92d4405c9237c4ea04b56cbda88e128c/Recordings</Recordings>
+            </SubresourceUris>
+        </Call>
+    </Calls>
+</TwilioResponse>
