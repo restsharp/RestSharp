@@ -1,7 +1,0 @@
-{
-    "SomeDictionary" : 
-    {
-        "NonNull": "abra",
-        "Null": null
-    }
-}
