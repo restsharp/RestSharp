@@ -68,7 +68,9 @@ using System.Dynamic;
 #endif
 using System.Globalization;
 using System.Reflection;
+#if !NETSTANDARD1_4
 using System.Runtime.Serialization;
+#endif
 using System.Text;
 using RestSharp.Reflection;
 
@@ -1640,7 +1642,7 @@ namespace RestSharp
 
             public delegate TValue ThreadSafeDictionaryValueFactory<TKey, TValue>(TKey key);
 
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
             public static TypeInfo GetTypeInfo(Type type)
             {
                 return type.GetTypeInfo();
@@ -1654,7 +1656,7 @@ namespace RestSharp
 
             public static Attribute GetAttribute(MemberInfo info, Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 if (info == null || type == null || !info.IsDefined(type))
                     return null;
                 return info.GetCustomAttribute(type);
@@ -1668,7 +1670,7 @@ namespace RestSharp
             public static Type GetGenericListElementType(Type type)
             {
                 IEnumerable<Type> interfaces;
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 interfaces = type.GetTypeInfo().ImplementedInterfaces;
 #else
                 interfaces = type.GetInterfaces();
@@ -1687,7 +1689,7 @@ namespace RestSharp
             public static Attribute GetAttribute(Type objectType, Type attributeType)
             {
 
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 if (objectType == null || attributeType == null || !objectType.GetTypeInfo().IsDefined(attributeType))
                     return null;
                 return objectType.GetTypeInfo().GetCustomAttribute(attributeType);
@@ -1700,7 +1702,7 @@ namespace RestSharp
 
             public static Type[] GetGenericTypeArguments(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return type.GetTypeInfo().GenericTypeArguments;
 #else
                 return type.GetGenericArguments();
@@ -1736,7 +1738,7 @@ namespace RestSharp
 
             public static bool IsTypeDictionary(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 if (typeof(IDictionary<,>).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
                     return true;
 #else
@@ -1767,7 +1769,7 @@ namespace RestSharp
 
             public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return type.GetTypeInfo().DeclaredConstructors;
 #else
                 return type.GetConstructors();
@@ -1805,7 +1807,7 @@ namespace RestSharp
 
             public static IEnumerable<PropertyInfo> GetProperties(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return type.GetRuntimeProperties();
 #else
                 return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
@@ -1814,7 +1816,7 @@ namespace RestSharp
 
             public static IEnumerable<FieldInfo> GetFields(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return type.GetRuntimeFields();
 #else
                 return type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
@@ -1823,7 +1825,7 @@ namespace RestSharp
 
             public static MethodInfo GetGetterMethodInfo(PropertyInfo propertyInfo)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return propertyInfo.GetMethod;
 #else
                 return propertyInfo.GetGetMethod(true);
@@ -1832,7 +1834,7 @@ namespace RestSharp
 
             public static MethodInfo GetSetterMethodInfo(PropertyInfo propertyInfo)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return propertyInfo.SetMethod;
 #else
                 return propertyInfo.GetSetMethod(true);
@@ -2000,7 +2002,7 @@ namespace RestSharp
 
             public static BinaryExpression Assign(Expression left, Expression right)
             {
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD1_4
                 return Expression.Assign(left, right);
 #else
                 MethodInfo assign = typeof(Assigner<>).MakeGenericType(left.Type).GetMethod("Assign");

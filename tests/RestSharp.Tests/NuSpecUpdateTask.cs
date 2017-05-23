@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Xunit;
 
 namespace RestSharp.Tests
 {
@@ -35,10 +35,10 @@ namespace RestSharp.Tests
 
         public class Execute
         {
-            [TestFixture(Category = "NuSpecUpdateTask")]
+            [Trait("Category", "NuSpecUpdateTask")]
             public class WhenSpecFileNotSpecified
             {
-                [Test]
+                [Fact]
                 public void ReturnsFalse()
                 {
                     Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask();
@@ -52,7 +52,7 @@ namespace RestSharp.Tests
             {
                 protected override void Setup() { }
 
-                [Test]
+                [Fact]
                 public void PullsVersionAttributeInstead()
                 {
                     Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask
@@ -63,7 +63,7 @@ namespace RestSharp.Tests
 
                     task.Execute();
 
-                    Assert.AreEqual("1.0.0.0", task.Version);
+                    Assert.Equal("1.0.0.0", task.Version);
                 }
             }
 
@@ -95,45 +95,45 @@ namespace RestSharp.Tests
                     this.result = this.subject.Execute();
                 }
 
-                [Test]
+                [Fact]
                 public void ReturnsTrue()
                 {
                     Assert.True(this.result);
                 }
 
-                [Test]
+                [Fact]
                 public void PullsIdFromAssembly()
                 {
-                    Assert.AreEqual(EXPECTED_ID, this.subject.Id);
+                    Assert.Equal(EXPECTED_ID, this.subject.Id);
                 }
 
-                [Test]
+                [Fact]
                 public void PullsDescriptionFromAssembly()
                 {
-                    Assert.AreEqual(EXPECTED_DESCRIPTION, this.subject.Description);
+                    Assert.Equal(EXPECTED_DESCRIPTION, this.subject.Description);
                 }
 
-                [Test]
+                [Fact]
                 public void PullsVersionFromAssemblyInfo()
                 {
                     Assert.True(this.expectedVersion.IsMatch(this.subject.Version));
                 }
 
-                [Test]
+                [Fact]
                 public void PullsAuthorsFromAssemblyInfo()
                 {
-                    Assert.AreEqual(EXPECTED_AUTHORS, this.subject.Authors);
+                    Assert.Equal(EXPECTED_AUTHORS, this.subject.Authors);
                 }
 
-                [Test]
+                [Fact]
                 public void UpdatesSpecFile()
                 {
                     XDocument doc = XDocument.Load(ComputedFileName);
 
-                    Assert.AreEqual(EXPECTED_ID, doc.Descendants("id").First().Value);
-                    Assert.AreEqual(EXPECTED_DESCRIPTION, doc.Descendants("description").First().Value);
-                    Assert.AreEqual(EXPECTED_AUTHORS, doc.Descendants("authors").First().Value);
-                    Assert.AreEqual(EXPECTED_OWNERS, doc.Descendants("owners").First().Value);
+                    Assert.Equal(EXPECTED_ID, doc.Descendants("id").First().Value);
+                    Assert.Equal(EXPECTED_DESCRIPTION, doc.Descendants("description").First().Value);
+                    Assert.Equal(EXPECTED_AUTHORS, doc.Descendants("authors").First().Value);
+                    Assert.Equal(EXPECTED_OWNERS, doc.Descendants("owners").First().Value);
                     Assert.True(this.expectedVersion.IsMatch(doc.Descendants("version").First().Value));
                 }
             }

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using NUnit.Framework;
+using Xunit;
 
 namespace RestSharp.Tests
 {
-    [TestFixture]
     public class InterfaceImplementationTests
     {
-        [Test]
+        [Fact]
         public void IRestSharp_Has_All_RestSharp_Signatures()
         {
             // Arrange
@@ -25,7 +24,7 @@ namespace RestSharp.Tests
                 restClientImplementationType.FullName, restClientInterfaceType.FullName));
 
             // Assert
-            Assert.AreEqual(0, compareResult.Count());
+            Assert.Equal(0, compareResult.Count());
         }
 
         private static IEnumerable<string> CompareTypes(IReflect type1, IReflect type2, BindingFlags bindingFlags)

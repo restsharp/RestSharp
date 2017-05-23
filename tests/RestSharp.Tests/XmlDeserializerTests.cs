@@ -22,14 +22,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
 using Event = RestSharp.Tests.SampleClasses.Lastfm.Event;
+using Xunit;
 
 namespace RestSharp.Tests
 {
-    [TestFixture]
     public class XmlDeserializerTests
     {
         private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
@@ -41,7 +40,7 @@ namespace RestSharp.Tests
             return Path.Combine(this.sampleDataPath, sampleFile);
         }
 
-        [Test]
+        [Fact]
         public void Can_Use_DeserializeAs_Attribute()
         {
             const string content =
@@ -50,12 +49,12 @@ namespace RestSharp.Tests
             Oddball output = xml.Deserialize<Oddball>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
-            Assert.AreEqual("1", output.Sid);
-            Assert.AreEqual("Jackson", output.FriendlyName);
-            Assert.AreEqual("oddball", output.GoodPropertyName);
+            Assert.Equal("1", output.Sid);
+            Assert.Equal("Jackson", output.FriendlyName);
+            Assert.Equal("oddball", output.GoodPropertyName);
         }
 
-        [Test]
+        [Fact]
         public void Can_Use_DeserializeAs_Attribute_for_List()
         {
             string xmlpath = this.PathFor("deserialize_as_list.xml");
@@ -64,10 +63,10 @@ namespace RestSharp.Tests
             List<Oddball> output = xml.Deserialize<List<Oddball>>(new RestResponse { Content = doc.ToString() });
 
             Assert.NotNull(output);
-            Assert.AreEqual("1", output[0].Sid);
+            Assert.Equal("1", output[0].Sid);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
@@ -75,12 +74,12 @@ namespace RestSharp.Tests
             SimpleStruct output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
-            Assert.AreEqual("oneOneOne", output.One);
-            Assert.AreEqual("twoTwoTwo", output.Two);
-            Assert.AreEqual(3, output.Three);
+            Assert.Equal("oneOneOne", output.One);
+            Assert.Equal("twoTwoTwo", output.Two);
+            Assert.Equal(3, output.Three);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_When_RootElement_Deeper_Then_One()
         {
             const string content = "<root><subroot><subsubroot><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></subsubroot></subroot></root>";
@@ -88,12 +87,12 @@ namespace RestSharp.Tests
             SimpleStruct output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
-            Assert.AreEqual("oneOneOne", output.One);
-            Assert.AreEqual("twoTwoTwo", output.Two);
-            Assert.AreEqual(3, output.Three);
+            Assert.Equal("oneOneOne", output.One);
+            Assert.Equal("twoTwoTwo", output.Two);
+            Assert.Equal(3, output.Three);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             string xmlpath = this.PathFor("xmllists.xml");
@@ -102,13 +101,13 @@ namespace RestSharp.Tests
             SimpleTypesListSample output = xml.Deserialize<SimpleTypesListSample>(
                 new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output.Names);
-            Assert.IsNotEmpty(output.Numbers);
+            Assert.NotEmpty(output.Names);
+            Assert.NotEmpty(output.Numbers);
             Assert.False(output.Names[0].Length == 0);
             Assert.False(output.Numbers.Sum() == 0);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_To_List_Inheritor_From_Custom_Root_With_Attributes()
         {
             string xmlpath = this.PathFor("ListWithAttributes.xml");
@@ -116,12 +115,12 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer { RootElement = "Calls" };
             TwilioCallList output = xml.Deserialize<TwilioCallList>(new RestResponse { Content = doc.ToString() });
 
-            Assert.AreEqual(3, output.NumPages);
-            Assert.IsNotEmpty(output);
-            Assert.AreEqual(2, output.Count);
+            Assert.Equal(3, output.NumPages);
+            Assert.NotEmpty(output);
+            Assert.Equal(2, output.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_To_Standalone_List_Without_Matching_Class_Case()
         {
             string xmlpath = this.PathFor("InlineListSample.xml");
@@ -129,11 +128,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             List<Image> output = xml.Deserialize<List<Image>>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output);
-            Assert.AreEqual(4, output.Count);
+            Assert.NotEmpty(output);
+            Assert.Equal(4, output.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_To_Standalone_List_With_Matching_Class_Case()
         {
             string xmlpath = this.PathFor("InlineListSample.xml");
@@ -141,11 +140,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             List<image> output = xml.Deserialize<List<image>>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output);
-            Assert.AreEqual(4, output.Count);
+            Assert.NotEmpty(output);
+            Assert.Equal(4, output.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Directly_To_Lists_Off_Root_Element()
         {
             string xmlpath = this.PathFor("directlists.xml");
@@ -153,11 +152,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             List<Database> output = xml.Deserialize<List<Database>>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output);
-            Assert.AreEqual(2, output.Count);
+            Assert.NotEmpty(output);
+            Assert.Equal(2, output.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Parentless_aka_Inline_List_Items_Without_Matching_Class_Name()
         {
             string xmlpath = this.PathFor("InlineListSample.xml");
@@ -165,11 +164,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             InlineListSample output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output.Images);
-            Assert.AreEqual(4, output.Images.Count);
+            Assert.NotEmpty(output.Images);
+            Assert.Equal(4, output.Images.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name()
         {
             string xmlpath = this.PathFor("InlineListSample.xml");
@@ -177,11 +176,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             InlineListSample output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output.images);
-            Assert.AreEqual(4, output.images.Count);
+            Assert.NotEmpty(output.images);
+            Assert.Equal(4, output.images.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Parentless_aka_Inline_List_Items_With_Matching_Class_Name_With_Additional_Property()
         {
             string xmlpath = this.PathFor("InlineListSample.xml");
@@ -189,10 +188,10 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             InlineListSample output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.AreEqual(4, output.Count);
+            Assert.Equal(4, output.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Nested_List_Items_Without_Matching_Class_Name()
         {
             string xmlpath = this.PathFor("NestedListSample.xml");
@@ -200,11 +199,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             InlineListSample output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output.Images);
-            Assert.AreEqual(4, output.Images.Count);
+            Assert.NotEmpty(output.Images);
+            Assert.Equal(4, output.Images.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Nested_List_Items_With_Matching_Class_Name()
         {
             string xmlpath = this.PathFor("NestedListSample.xml");
@@ -212,11 +211,11 @@ namespace RestSharp.Tests
             XmlDeserializer xml = new XmlDeserializer();
             InlineListSample output = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() });
 
-            Assert.IsNotEmpty(output.images);
-            Assert.AreEqual(4, output.images.Count);
+            Assert.NotEmpty(output.images);
+            Assert.Equal(4, output.images.Count);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Nested_List_Without_Elements_To_Empty_List()
         {
             string doc = CreateXmlWithEmptyNestedList();
@@ -225,11 +224,11 @@ namespace RestSharp.Tests
 
             Assert.NotNull(output.images);
             Assert.NotNull(output.Images);
-            Assert.IsEmpty(output.images);
-            Assert.IsEmpty(output.Images);
+            Assert.Empty(output.images);
+            Assert.Empty(output.Images);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Inline_List_Without_Elements_To_Empty_List()
         {
             string doc = CreateXmlWithEmptyInlineList();
@@ -238,11 +237,11 @@ namespace RestSharp.Tests
 
             Assert.NotNull(output.images);
             Assert.NotNull(output.Images);
-            Assert.IsEmpty(output.images);
-            Assert.IsEmpty(output.Images);
+            Assert.Empty(output.images);
+            Assert.Empty(output.Images);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
         {
             string doc = CreateXmlWithNullValues();
@@ -254,7 +253,7 @@ namespace RestSharp.Tests
             Assert.Null(output.UniqueId);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Elements_to_Nullable_Values()
         {
             CultureInfo culture = CultureInfo.InvariantCulture;
@@ -268,12 +267,12 @@ namespace RestSharp.Tests
             Assert.NotNull(output.Id);
             Assert.NotNull(output.StartDate);
             Assert.NotNull(output.UniqueId);
-            Assert.AreEqual(123, output.Id);
-            Assert.AreEqual(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
-            Assert.AreEqual(new Guid(GUID_STRING), output.UniqueId);
+            Assert.Equal(123, output.Id);
+            Assert.Equal(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
+            Assert.Equal(new Guid(GUID_STRING), output.UniqueId);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_TimeSpan()
         {
             CultureInfo culture = CultureInfo.InvariantCulture;
@@ -302,17 +301,17 @@ namespace RestSharp.Tests
                                 };
             TimeSpanTestStructure payload = d.Deserialize<TimeSpanTestStructure>(response);
 
-            Assert.AreEqual(new TimeSpan(468006), payload.Tick);
-            Assert.AreEqual(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
-            Assert.AreEqual(new TimeSpan(0, 0, 8), payload.Second);
-            Assert.AreEqual(new TimeSpan(0, 55, 2), payload.Minute);
-            Assert.AreEqual(new TimeSpan(21, 30, 7), payload.Hour);
+            Assert.Equal(new TimeSpan(468006), payload.Tick);
+            Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
+            Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
+            Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
+            Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
             Assert.Null(payload.NullableWithoutValue);
             Assert.NotNull(payload.NullableWithValue);
-            Assert.AreEqual(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+            Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Custom_Formatted_Date()
         {
             CultureInfo culture = CultureInfo.InvariantCulture;
@@ -332,10 +331,10 @@ namespace RestSharp.Tests
             RestResponse response = new RestResponse { Content = doc.ToString() };
             PersonForXml output = xml.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual(date, output.StartDate);
+            Assert.Equal(date, output.StartDate);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Elements_On_Default_Root()
         {
             string doc = CreateElementsXml();
@@ -343,26 +342,26 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(Guid.Empty, p.EmptyGuid);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
-            Assert.AreEqual(Order.Third, p.Order);
-            Assert.AreEqual(Disposition.SoSo, p.Disposition);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(Guid.Empty, p.EmptyGuid);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal(Order.Third, p.Order);
+            Assert.Equal(Disposition.SoSo, p.Disposition);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Attributes_On_Default_Root()
         {
             string doc = CreateAttributesXml();
@@ -370,21 +369,21 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
         }
 
-        [Test]
+        [Fact]
         public void Ignore_Protected_Property_That_Exists_In_Data()
         {
             string doc = CreateElementsXml();
@@ -395,7 +394,7 @@ namespace RestSharp.Tests
             Assert.Null(p.IgnoreProxy);
         }
 
-        [Test]
+        [Fact]
         public void Ignore_ReadOnly_Property_That_Exists_In_Data()
         {
             string doc = CreateElementsXml();
@@ -406,7 +405,7 @@ namespace RestSharp.Tests
             Assert.Null(p.ReadOnlyProxy);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Names_With_Underscores_On_Default_Root()
         {
             string doc = CreateUnderscoresXml();
@@ -414,26 +413,26 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.AreEqual(5, p.Foes.Count);
-            Assert.AreEqual("Yankees", p.Foes.Team);
+            Assert.Equal(5, p.Foes.Count);
+            Assert.Equal("Yankees", p.Foes.Team);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Names_With_Dashes_On_Default_Root()
         {
             string doc = CreateDashesXml();
@@ -441,26 +440,26 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.AreEqual(5, p.Foes.Count);
-            Assert.AreEqual("Yankees", p.Foes.Team);
+            Assert.Equal(5, p.Foes.Count);
+            Assert.Equal("Yankees", p.Foes.Team);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Names_With_Underscores_Without_Matching_Case_On_Default_Root()
         {
             string doc = CreateLowercaseUnderscoresXml();
@@ -468,26 +467,26 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.AreEqual(5, p.Foes.Count);
-            Assert.AreEqual("Yankees", p.Foes.Team);
+            Assert.Equal(5, p.Foes.Count);
+            Assert.Equal("Yankees", p.Foes.Team);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Lower_Cased_Root_Elements_With_Dashes()
         {
             string doc = CreateDashesXml();
@@ -495,26 +494,26 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.AreEqual(5, p.Foes.Count);
-            Assert.AreEqual("Yankees", p.Foes.Team);
+            Assert.Equal(5, p.Foes.Count);
+            Assert.Equal("Yankees", p.Foes.Team);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Root_Elements_Without_Matching_Case_And_Dashes()
         {
             string doc = CreateLowerCasedRootElementWithDashesXml();
@@ -523,11 +522,11 @@ namespace RestSharp.Tests
             List<IncomingInvoice> p = d.Deserialize<List<IncomingInvoice>>(response);
 
             Assert.NotNull(p);
-            Assert.AreEqual(1, p.Count);
-            Assert.AreEqual(45, p[0].ConceptId);
+            Assert.Equal(1, p.Count);
+            Assert.Equal(45, p[0].ConceptId);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Eventful_Xml()
         {
             string xmlpath = this.PathFor("eventful.xml");
@@ -536,14 +535,14 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             VenueSearch output = d.Deserialize<VenueSearch>(response);
 
-            Assert.IsNotEmpty(output.venues);
-            Assert.AreEqual(3, output.venues.Count);
-            Assert.AreEqual("Tivoli", output.venues[0].name);
-            Assert.AreEqual("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
-            Assert.AreEqual("V0-001-000266914-3", output.venues[2].id);
+            Assert.NotEmpty(output.venues);
+            Assert.Equal(3, output.venues.Count);
+            Assert.Equal("Tivoli", output.venues[0].name);
+            Assert.Equal("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
+            Assert.Equal("V0-001-000266914-3", output.venues[2].id);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Lastfm_Xml()
         {
             string xmlpath = this.PathFor("Lastfm.xml");
@@ -552,12 +551,12 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             Event output = d.Deserialize<Event>(response);
 
-            //Assert.IsNotEmpty(output.artists);
-            Assert.AreEqual("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
-            Assert.AreEqual("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
+            //Assert.NotEmpty(output.artists);
+            Assert.Equal("http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
+            Assert.Equal("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Google_Weather_Xml()
         {
             string xmlpath = this.PathFor("GoogleWeather.xml");
@@ -566,12 +565,12 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             xml_api_reply output = d.Deserialize<xml_api_reply>(response);
 
-            Assert.IsNotEmpty(output.weather);
-            Assert.AreEqual(4, output.weather.Count);
-            Assert.AreEqual("Sunny", output.weather[0].condition.data);
+            Assert.NotEmpty(output.weather);
+            Assert.Equal(4, output.weather.Count);
+            Assert.Equal("Sunny", output.weather[0].condition.data);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Goodreads_Xml()
         {
             string xmlpath = this.PathFor("Goodreads.xml");
@@ -580,12 +579,12 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             GoodReadsReviewCollection output = d.Deserialize<GoodReadsReviewCollection>(response);
 
-            Assert.AreEqual(2, output.Reviews.Count);
-            Assert.AreEqual("1208943892", output.Reviews[0].Id); // This fails without fixing the XmlDeserializer
-            Assert.AreEqual("1198344567", output.Reviews[1].Id);
+            Assert.Equal(2, output.Reviews.Count);
+            Assert.Equal("1208943892", output.Reviews[0].Id); // This fails without fixing the XmlDeserializer
+            Assert.Equal("1198344567", output.Reviews[1].Id);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Boolean_From_Number()
         {
             string xmlpath = this.PathFor("boolean_from_number.xml");
@@ -597,7 +596,7 @@ namespace RestSharp.Tests
             Assert.True(output.Value);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Boolean_From_String()
         {
             string xmlpath = this.PathFor("boolean_from_string.xml");
@@ -609,7 +608,7 @@ namespace RestSharp.Tests
             Assert.True(output.Value);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values()
         {
             string doc = CreateXmlWithAttributesAndNullValues();
@@ -621,7 +620,7 @@ namespace RestSharp.Tests
             Assert.Null(output.UniqueId);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Mixture_Of_Empty_Elements_With_Attributes_And_Populated_Elements()
         {
             string doc = CreateXmlWithAttributesAndNullValuesAndPopulatedValues();
@@ -630,10 +629,10 @@ namespace RestSharp.Tests
 
             Assert.Null(output.Id);
             Assert.Null(output.StartDate);
-            Assert.AreEqual(new Guid(GUID_STRING), output.UniqueId);
+            Assert.Equal(new Guid(GUID_STRING), output.UniqueId);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_DateTimeOffset()
         {
             CultureInfo culture = CultureInfo.InvariantCulture;
@@ -653,10 +652,10 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer { Culture = culture };
             DateTimeTestStructure payload = d.Deserialize<DateTimeTestStructure>(response);
 
-            Assert.AreEqual(dateTimeOffset, payload.DateTimeOffset);
+            Assert.Equal(dateTimeOffset, payload.DateTimeOffset);
             Assert.Null(payload.NullableDateTimeOffsetWithNull);
             Assert.True(payload.NullableDateTimeOffsetWithValue.HasValue);
-            Assert.AreEqual(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
+            Assert.Equal(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
         }
 
         private static string CreateUnderscoresXml()

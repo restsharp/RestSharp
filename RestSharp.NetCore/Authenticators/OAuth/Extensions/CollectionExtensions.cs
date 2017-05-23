@@ -49,15 +49,15 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         }
 
 #if !WINDOWS_PHONE && !SILVERLIGHT
-        public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
+        public static void AddRange(this IDictionary<string, string> collection, IDictionary<string, string> range)
         {
-            foreach (string key in range.AllKeys)
+            foreach (string key in range.Keys)
             {
                 collection.Add(key, range[key]);
             }
         }
 
-        public static string ToQueryString(this NameValueCollection collection)
+        public static string ToQueryString(this IDictionary<string, string> collection)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -68,7 +68,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
             int count = 0;
 
-            foreach (string key in collection.AllKeys)
+            foreach (string key in collection.Keys)
             {
                 sb.AppendFormat("{0}={1}", key, collection[key].UrlEncode());
                 count++;

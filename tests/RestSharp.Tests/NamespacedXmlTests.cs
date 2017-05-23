@@ -19,19 +19,18 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
 using RestSharp.Tests.SampleClasses.Lastfm;
+using Xunit;
 
 namespace RestSharp.Tests
 {
-    [TestFixture]
     public class NamespacedXmlTests
     {
         private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Elements_With_Namespace()
         {
             string doc = CreateElementsXml();
@@ -39,23 +38,23 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Elements_With_Namespace_Autodetect_Namespace()
         {
             string doc = CreateElementsXml();
@@ -63,23 +62,23 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer();
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Attributes_With_Namespace()
         {
             string doc = CreateAttributesXml();
@@ -87,21 +86,21 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
         }
 
-        [Test]
+        [Fact]
         public void Ignore_Protected_Property_That_Exists_In_Data()
         {
             string doc = CreateElementsXml();
@@ -112,7 +111,7 @@ namespace RestSharp.Tests
             Assert.Null(p.IgnoreProxy);
         }
 
-        [Test]
+        [Fact]
         public void Ignore_ReadOnly_Property_That_Exists_In_Data()
         {
             string doc = CreateElementsXml();
@@ -123,7 +122,7 @@ namespace RestSharp.Tests
             Assert.Null(p.ReadOnlyProxy);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_Names_With_Underscores_With_Namespace()
         {
             string doc = CreateUnderscoresXml();
@@ -131,26 +130,26 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
             PersonForXml p = d.Deserialize<PersonForXml>(response);
 
-            Assert.AreEqual("John Sheehan", p.Name);
-            Assert.AreEqual(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
-            Assert.AreEqual(28, p.Age);
-            Assert.AreEqual(long.MaxValue, p.BigNumber);
-            Assert.AreEqual(99.9999m, p.Percent);
-            Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
-            Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-            Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+            Assert.Equal("John Sheehan", p.Name);
+            Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+            Assert.Equal(28, p.Age);
+            Assert.Equal(long.MaxValue, p.BigNumber);
+            Assert.Equal(99.9999m, p.Percent);
+            Assert.Equal(false, p.IsCool);
+            Assert.Equal(new Guid(GUID_STRING), p.UniqueId);
+            Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+            Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
-            Assert.AreEqual(10, p.Friends.Count);
+            Assert.Equal(10, p.Friends.Count);
             Assert.NotNull(p.BestFriend);
-            Assert.AreEqual("The Fonz", p.BestFriend.Name);
-            Assert.AreEqual(1952, p.BestFriend.Since);
+            Assert.Equal("The Fonz", p.BestFriend.Name);
+            Assert.Equal(1952, p.BestFriend.Since);
             Assert.NotNull(p.Foes);
-            Assert.AreEqual(5, p.Foes.Count);
-            Assert.AreEqual("Yankees", p.Foes.Team);
+            Assert.Equal(5, p.Foes.Count);
+            Assert.Equal("Yankees", p.Foes.Team);
         }
 
-        [Test]
+        [Fact]
         public void Can_Deserialize_List_Of_Primitives_With_Namespace()
         {
             string doc = CreateListOfPrimitivesXml();
@@ -158,9 +157,9 @@ namespace RestSharp.Tests
             XmlDeserializer d = new XmlDeserializer { Namespace = "http://restsharp.org" };
             List<artist> a = d.Deserialize<List<artist>>(response);
 
-            Assert.AreEqual(2, a.Count);
-            Assert.AreEqual("first", a[0].Value);
-            Assert.AreEqual("second", a[1].Value);
+            Assert.Equal(2, a.Count);
+            Assert.Equal("first", a[0].Value);
+            Assert.Equal("second", a[1].Value);
         }
 
         private static string CreateListOfPrimitivesXml()

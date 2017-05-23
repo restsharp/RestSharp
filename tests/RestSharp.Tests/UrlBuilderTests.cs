@@ -1,15 +1,14 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace RestSharp.Tests
 {
     /// <summary>
     /// Note: These tests do not handle QueryString building, which is handled in Http, not RestClient
     /// </summary>
-    [TestFixture]
     public class UrlBuilderTests
     {
-        [Test]
+        [Fact]
         public void Should_not_duplicate_question_mark()
         {
             RestRequest request = new RestRequest();
@@ -20,10 +19,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource?param1=value1&param2=value2");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_leading_slash()
         {
             RestRequest request = new RestRequest("/resource");
@@ -31,10 +30,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void POST_with_leading_slash()
         {
             RestRequest request = new RestRequest("/resource", Method.POST);
@@ -42,10 +41,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_leading_slash_and_baseurl_trailing_slash()
         {
             RestRequest request = new RestRequest("/resource");
@@ -56,10 +55,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource?foo=bar");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_wth_trailing_slash_and_query_parameters()
         {
             RestRequest request = new RestRequest("/resource/");
@@ -72,10 +71,10 @@ namespace RestSharp.Tests
 
             client.Execute(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void POST_with_leading_slash_and_baseurl_trailing_slash()
         {
             RestRequest request = new RestRequest("/resource", Method.POST);
@@ -83,10 +82,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_resource_containing_slashes()
         {
             RestRequest request = new RestRequest("resource/foo");
@@ -94,10 +93,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource/foo");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void POST_with_resource_containing_slashes()
         {
             RestRequest request = new RestRequest("resource/foo", Method.POST);
@@ -105,10 +104,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource/foo");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_resource_containing_tokens()
         {
             RestRequest request = new RestRequest("resource/{foo}");
@@ -119,10 +118,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource/bar");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_resource_containing_null_token()
         {
             RestRequest request = new RestRequest("/resource/{foo}", Method.GET);
@@ -132,12 +131,13 @@ namespace RestSharp.Tests
             RestClient client = new RestClient("http://example.com/api/1.0");
             ArgumentException exception = Assert.Throws<ArgumentException>(() => client.BuildUri(request));
 
-            Assert.IsNotNull(exception);
-            Assert.IsNotNullOrEmpty(exception.Message);
-            Assert.IsTrue(exception.Message.Contains("foo"));
+            Assert.NotNull(exception);
+            Assert.NotNull(exception.Message);
+            Assert.NotEmpty(exception.Message);
+            Assert.True(exception.Message.Contains("foo"));
         }
 
-        [Test]
+        [Fact]
         public void POST_with_resource_containing_tokens()
         {
             RestRequest request = new RestRequest("resource/{foo}", Method.POST);
@@ -148,10 +148,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource/bar");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_empty_request()
         {
             RestRequest request = new RestRequest();
@@ -159,10 +159,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_empty_request_and_bare_hostname()
         {
             RestRequest request = new RestRequest();
@@ -170,10 +170,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void POST_with_querystring_containing_tokens()
         {
             RestRequest request = new RestRequest("resource", Method.POST);
@@ -184,10 +184,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/resource?foo=bar");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_multiple_instances_of_same_key()
         {
             RestRequest request = new RestRequest("v1/people/~/network/updates", Method.GET);
@@ -201,10 +201,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://api.linkedin.com/v1/people/~/network/updates?type=STAT&type=PICT&count=50&start=50");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_Uri_containing_tokens()
         {
             RestRequest request = new RestRequest();
@@ -215,10 +215,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/bar");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_Url_string_containing_tokens()
         {
             RestRequest request = new RestRequest();
@@ -229,10 +229,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/bar");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_Uri_and_resource_containing_tokens()
         {
             RestRequest request = new RestRequest("resource/{baz}");
@@ -244,10 +244,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/bar/resource/bat");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_Url_string_and_resource_containing_tokens()
         {
             RestRequest request = new RestRequest("resource/{baz}");
@@ -259,10 +259,10 @@ namespace RestSharp.Tests
             Uri expected = new Uri("http://example.com/bar/resource/bat");
             Uri output = client.BuildUri(request);
 
-            Assert.AreEqual(expected, output);
+            Assert.Equal(expected, output);
         }
 
-        [Test]
+        [Fact]
         public void GET_with_Invalid_Url_string_throws_exception()
         {
             Assert.Throws<UriFormatException>(delegate { new RestClient("invalid url"); });

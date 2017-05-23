@@ -21,22 +21,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Xml.Linq;
-using NUnit.Framework;
 using RestSharp.Serializers;
 using RestSharp.Tests.SampleClasses;
+using Xunit;
 
 namespace RestSharp.Tests
 {
-    [TestFixture]
     public class SerializerTests
     {
         public SerializerTests()
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentUICulture;
         }
 
-        [Test]
+        [Fact]
         public void Serializes_Properties_In_Specified_Order()
         {
             OrderedProperties ordered = new OrderedProperties
@@ -49,10 +48,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(ordered);
             XDocument expected = GetSortedPropsXDoc();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_simple_POCO()
         {
             Person poco = new Person
@@ -72,10 +71,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDoc();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_Enum()
         {
             ClassWithEnum enumClass = new ClassWithEnum { Color = Color.Red };
@@ -87,10 +86,10 @@ namespace RestSharp.Tests
             root.Add(new XElement("Color", "Red"));
             expected.Add(root);
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_simple_POCO_With_DateFormat_Specified()
         {
             Person poco = new Person
@@ -104,10 +103,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDocWithIsoDate();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
         {
             Person poco = new Person
@@ -122,10 +121,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDocWithXmlProperty();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_simple_POCO_With_Different_Root_Element()
         {
             Person poco = new Person
@@ -139,10 +138,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDocWithRoot();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_simple_POCO_With_Attribute_Options_Defined()
         {
             WackyPerson poco = new WackyPerson
@@ -156,10 +155,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDocWackyNames();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_simple_POCO_With_Attribute_Options_Defined_And_Property_Containing_IList_Elements()
         {
             WackyPerson poco = new WackyPerson
@@ -184,10 +183,10 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(poco);
             XDocument expected = GetSimplePocoXDocWackyNamesWithIListProperty();
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_a_list_which_is_the_root_element()
         {
             PersonList pocoList = new PersonList
@@ -223,7 +222,7 @@ namespace RestSharp.Tests
             string doc = xml.Serialize(pocoList);
             XDocument expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
 
-            Assert.AreEqual(expected.ToString(), doc);
+            Assert.Equal(expected.ToString(), doc);
         }
 
         private class Person

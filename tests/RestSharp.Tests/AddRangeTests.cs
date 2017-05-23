@@ -1,11 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace RestSharp.Tests
 {
-    [TestFixture]
     public class AddRangeTests
     {
-        [Test]
+        [Fact]
         public void ShouldParseOutRangeSpecifier()
         {
             RestClient restClient = new RestClient("http://localhost");
