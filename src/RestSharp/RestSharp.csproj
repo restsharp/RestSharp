@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.4;net4.5</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageId>HttpSharp</PackageId>
+    <Authors>chekkan</Authors>
+    <RepositoryUrl>https://github.com/chekkan/RestSharp</RepositoryUrl>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionSuffix>alpha1</VersionSuffix>
   </PropertyGroup>
 
 
