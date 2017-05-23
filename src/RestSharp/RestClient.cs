@@ -20,18 +20,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Security;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
-
-#if FRAMEWORK
-using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+
+#if NET45
+using System.Net.Cache;
 #endif
 
 
@@ -56,7 +55,7 @@ namespace RestSharp
         /// </summary>
         public int? MaxRedirects { get; set; }
 
-#if FRAMEWORK
+#if NETSTANDARD1_4 || NET45
         /// <summary>
         /// X509CertificateCollection to be sent with request
         /// </summary>
@@ -68,12 +67,13 @@ namespace RestSharp
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
+        public bool Pipelined { get; set; }
+#endif
+#if NET45
         /// <summary>
         /// The cache policy to use for requests initiated by this client instance.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
-
-        public bool Pipelined { get; set; }
 #endif
 
         /// <summary>
