@@ -117,7 +117,7 @@ namespace RestSharp.Deserializers
             foreach (PropertyInfo prop in props)
             {
                 Type type = prop.PropertyType;
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
                 bool typeIsPublic = type.IsPublic || type.IsNestedPublic;
 #else
                 bool typeIsPublic = type.GetTypeInfo().IsPublic || type.GetTypeInfo().IsNestedPublic;
@@ -153,7 +153,7 @@ namespace RestSharp.Deserializers
                 if (value == null)
                 {
                     // special case for inline list items
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
                     if (type.IsGenericType)
 #else
                     if (type.GetTypeInfo().IsGenericType)
@@ -176,7 +176,7 @@ namespace RestSharp.Deserializers
                 }
 
                 // check for nullable and extract underlying type
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 #else
                 if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -199,7 +199,7 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
                 else if (type.IsPrimitive)
 #else
                 else if (type.GetTypeInfo().IsPrimitive)
@@ -207,7 +207,7 @@ namespace RestSharp.Deserializers
                 {
                     prop.SetValue(x, value.ChangeType(type, this.Culture), null);
                 }
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
                 else if (type.IsEnum)
 #else
                 else if (type.GetTypeInfo().IsEnum)
@@ -286,10 +286,10 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, timeSpan, null);
                 }
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
                 else if (type.IsGenericType)
 #else
-                else if (type.GetTypeInfo(). IsGenericType)
+                else if (type.GetTypeInfo().IsGenericType)
 #endif
                 {
                     Type t = type.GenericTypeArguments[0];

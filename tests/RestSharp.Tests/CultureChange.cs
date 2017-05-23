@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading;
 
 namespace RestSharp.Tests
 {
@@ -12,22 +11,33 @@ namespace RestSharp.Tests
         {
             if (culture == null)
             {
-                throw new ArgumentNullException("culture");
+                throw new ArgumentNullException(nameof(culture));
             }
 
-            this.PreviousCulture = CultureInfo.CurrentCulture;
+            PreviousCulture = CultureInfo.CurrentCulture;
 
-            CultureInfo.CurrentCulture = new CultureInfo(culture);
+            SetCurrentCulture(culture);
+        }
+
+        public static void SetCurrentCulture(CultureInfo culture)
+        {
+#if NETCOREAPP1_1
+            CultureInfo.CurrentCulture = culture;
+#else
+            System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+#endif
+        }
+
+        public static void SetCurrentCulture(string culture)
+        {
+            SetCurrentCulture(new CultureInfo(culture));
         }
 
         public void Dispose()
         {
-            if (this.PreviousCulture != null)
-            {
-                CultureInfo.CurrentCulture = this.PreviousCulture;
-
-                this.PreviousCulture = null;
-            }
+            if (PreviousCulture == null) return;
+            SetCurrentCulture(PreviousCulture);
+            PreviousCulture = null;
         }
     }
 }

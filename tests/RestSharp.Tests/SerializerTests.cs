@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using System.Xml.Linq;
 using RestSharp.Serializers;
 using RestSharp.Tests.SampleClasses;
@@ -31,7 +30,7 @@ namespace RestSharp.Tests
     {
         public SerializerTests()
         {
-            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureChange.SetCurrentCulture(CultureInfo.InvariantCulture);
         }
 
         [Fact]

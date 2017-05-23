@@ -212,7 +212,7 @@ namespace RestSharp.Deserializers
             string stringValue = Convert.ToString(value, this.Culture);
 
             // check for nullable and extract underlying type
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 #else
             if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -236,7 +236,7 @@ namespace RestSharp.Deserializers
                 type = value.GetType();
             }
 
-#if !WINDOWS_UWP && !NETSTANDARD1_4
+#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
             if (type.IsPrimitive)
             {
                 return value.ChangeType(type, this.Culture);

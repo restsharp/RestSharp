@@ -19,6 +19,7 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
+using System.Net.Security;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;

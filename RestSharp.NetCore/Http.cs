@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using RestSharp.Extensions;
+using System.Net.Security;
 
 #if WINDOWS_PHONE
 using RestSharp.Compression.ZLib;

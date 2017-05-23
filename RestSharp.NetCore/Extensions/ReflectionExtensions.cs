@@ -20,7 +20,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
-#if FRAMEWORK || NETSTANDARD1_4
+#if FRAMEWORK || NETSTANDARD1_4 || NET45
 using System.Linq;
 #endif
 
@@ -123,7 +123,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
-#if FRAMEWORK || NETSTANDARD1_4
+#if FRAMEWORK || NETSTANDARD1_4 || NET45
             Enum ret = Enum.GetValues(type)
                 .Cast<Enum>()
                 .FirstOrDefault(v => v.ToString()
