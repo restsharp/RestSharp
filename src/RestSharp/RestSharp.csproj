@@ -7,7 +7,7 @@
     <Authors>chekkan</Authors>
     <RepositoryUrl>https://github.com/chekkan/RestSharp</RepositoryUrl>
     <VersionPrefix>0.0.1</VersionPrefix>
-    <VersionSuffix>alpha1</VersionSuffix>
+    <VersionSuffix>alpha2</VersionSuffix>
   </PropertyGroup>
 
 
