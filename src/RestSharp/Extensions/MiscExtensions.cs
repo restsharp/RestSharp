@@ -61,28 +61,6 @@ namespace RestSharp.Extensions
         }
 
         /// <summary>
-        /// Copies bytes from one stream to another
-        /// </summary>
-        /// <param name="input">The input stream.</param>
-        /// <param name="output">The output stream.</param>
-        public static void CopyTo(this Stream input, Stream output)
-        {
-            byte[] buffer = new byte[32768];
-
-            while (true)
-            {
-                int read = input.Read(buffer, 0, buffer.Length);
-
-                if (read <= 0)
-                {
-                    return;
-                }
-
-                output.Write(buffer, 0, read);
-            }
-        }
-
-        /// <summary>
         /// Converts a byte array to a string, using its byte order mark to convert it to the right encoding.
         /// http://www.shrinkrays.net/code-snippets/csharp/an-extension-method-for-converting-a-byte-array-to-a-string.aspx
         /// </summary>

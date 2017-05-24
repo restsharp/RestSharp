@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4;net4.5</TargetFrameworks>
+    <TargetFrameworks>netstandard1.4;net45;net40;net35</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>HttpSharp</PackageId>
     <Authors>chekkan</Authors>

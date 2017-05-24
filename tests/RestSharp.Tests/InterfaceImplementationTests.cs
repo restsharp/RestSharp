@@ -24,7 +24,7 @@ namespace RestSharp.Tests
                 restClientImplementationType.FullName, restClientInterfaceType.FullName));
 
             // Assert
-            Assert.Equal(0, compareResult.Count());
+            Assert.Equal(0, compareResult.Count);
         }
 
         private static IEnumerable<string> CompareTypes(Type type1, Type type2, BindingFlags bindingFlags)

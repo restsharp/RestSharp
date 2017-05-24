@@ -19,19 +19,14 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
-using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
-
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
-using System.Threading;
-using System.Threading.Tasks;
-#endif
-
-#if FRAMEWORK
+#if NET45 || NET40 || NET35
 using System.Net.Cache;
-using System.Security.Cryptography.X509Certificates;
+#endif
+#if NET45
 using System.Net.Security;
 #endif
 
@@ -73,16 +68,14 @@ namespace RestSharp
         byte[] DownloadData(IRestRequest request);
 #endif
 
-#if FRAMEWORK
+#if NETSTANDARD1_4 || NET45 || NET40 || NET35
         /// <summary>
         /// X509CertificateCollection to be sent with request
         /// </summary>
         X509CertificateCollection ClientCertificates { get; set; }
 
         IWebProxy Proxy { get; set; }
-
-        RequestCachePolicy CachePolicy { get; set; }
-
+        
         bool Pipelined { get; set; }
 #endif
 
@@ -96,6 +89,10 @@ namespace RestSharp
         /// overriding certificate errors in the scope of a request.
         /// </summary>
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
+
+#if !NETSTANDARD1_4
+        RequestCachePolicy CachePolicy { get; set; }
 #endif
 
         /// <summary>

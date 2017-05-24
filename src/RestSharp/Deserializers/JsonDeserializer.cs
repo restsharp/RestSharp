@@ -118,8 +118,8 @@ namespace RestSharp.Deserializers
         private IDictionary BuildDictionary(Type type, object parent)
         {
             IDictionary dict = (IDictionary) Activator.CreateInstance(type);
-            Type keyType = type.GenericTypeArguments[0];
-            Type valueType = type.GenericTypeArguments[1];
+            Type keyType = type.GetGenericTypeArguments()[0];
+            Type valueType = type.GetGenericTypeArguments()[1];
 
             foreach (KeyValuePair<string, object> child in (IDictionary<string, object>) parent)
             {
@@ -152,14 +152,10 @@ namespace RestSharp.Deserializers
         private IList BuildList(Type type, object parent)
         {
             IList list = (IList) Activator.CreateInstance(type);
-            Type listType = type.GetTypeInfo().ImplementedInterfaces
+            Type listType = type.GetInterfaces()
                                 .First
-#if !WINDOWS_UWP && !NETSTANDARD1_4
-                (x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
-#else
-                (x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
-#endif
-            Type itemType = listType.GenericTypeArguments[0];
+                (x => x.IsGenericType() && x.GetGenericTypeDefinition() == typeof(IList<>));
+            Type itemType = listType.GetGenericTypeArguments()[0];
 
             if (parent is IList)
             {
@@ -212,11 +208,7 @@ namespace RestSharp.Deserializers
             string stringValue = Convert.ToString(value, this.Culture);
 
             // check for nullable and extract underlying type
-#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#else
-            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#endif
+            if (type.IsGenericType() && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Since the type is nullable and no value is provided return null
                 if (string.IsNullOrEmpty(stringValue))
@@ -224,7 +216,7 @@ namespace RestSharp.Deserializers
                     return null;
                 }
 
-                type = type.GenericTypeArguments[0];
+                type = type.GetGenericTypeArguments()[0];
             }
 
             if (type == typeof(object))
@@ -325,17 +317,13 @@ namespace RestSharp.Deserializers
                 // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }
-#if !WINDOWS_UWP && !NETSTANDARD1_4
-            else if (type.IsGenericType)
-#else
-            else if (type.GetTypeInfo().IsGenericType)
-#endif
+            else if (type.IsGenericType())
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
 
                 if (genericTypeDef == typeof(IEnumerable<>))
                 {
-                    Type itemType = type.GenericTypeArguments[0];
+                    Type itemType = type.GetGenericArguments()[0];
                     Type listType = typeof(List<>).MakeGenericType(itemType);
                     return this.BuildList(listType, value);
                 }

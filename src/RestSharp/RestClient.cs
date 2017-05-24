@@ -27,12 +27,12 @@ using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
-
-#if NET45
+#if NET45 || NET40 || NET35
 using System.Net.Cache;
 #endif
-
+#if NET45
+using System.Net.Security;
+#endif
 
 namespace RestSharp
 {
@@ -55,7 +55,7 @@ namespace RestSharp
         /// </summary>
         public int? MaxRedirects { get; set; }
 
-#if NETSTANDARD1_4 || NET45
+#if NETSTANDARD1_4 || NET45 || NET40 || NET35
         /// <summary>
         /// X509CertificateCollection to be sent with request
         /// </summary>
@@ -69,7 +69,7 @@ namespace RestSharp
 
         public bool Pipelined { get; set; }
 #endif
-#if NET45
+#if NET45 || NET40 || NET35
         /// <summary>
         /// The cache policy to use for requests initiated by this client instance.
         /// </summary>

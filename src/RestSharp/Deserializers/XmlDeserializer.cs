@@ -153,13 +153,9 @@ namespace RestSharp.Deserializers
                 if (value == null)
                 {
                     // special case for inline list items
-#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
-                    if (type.IsGenericType)
-#else
-                    if (type.GetTypeInfo().IsGenericType)
-#endif
+                    if (type.IsGenericType())
                     {
-                        Type genericType = type.GenericTypeArguments[0];
+                        Type genericType = type.GetGenericTypeArguments()[0];
                         XElement first = this.GetElementByName(root, genericType.Name);
                         IList list = (IList) Activator.CreateInstance(type);
 
@@ -176,11 +172,7 @@ namespace RestSharp.Deserializers
                 }
 
                 // check for nullable and extract underlying type
-#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#else
-                if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#endif
+                if (type.IsGenericType() && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     // if the value is empty, set the property to null...
                     if (string.IsNullOrEmpty(value.ToString()))
@@ -189,7 +181,7 @@ namespace RestSharp.Deserializers
                         continue;
                     }
 
-                    type = type.GenericTypeArguments[0];
+                    type = type.GetGenericTypeArguments()[0];
                 }
 
                 if (type == typeof(bool))
@@ -286,13 +278,9 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, timeSpan, null);
                 }
-#if !WINDOWS_UWP && !NETSTANDARD1_4 && !NET45
-                else if (type.IsGenericType)
-#else
-                else if (type.GetTypeInfo().IsGenericType)
-#endif
+                else if (type.IsGenericType())
                 {
-                    Type t = type.GenericTypeArguments[0];
+                    Type t = type.GetGenericTypeArguments()[0];
                     IList list = (IList) Activator.CreateInstance(type);
                     XElement container = this.GetElementByName(root, prop.Name.AsNamespaced(this.Namespace));
 

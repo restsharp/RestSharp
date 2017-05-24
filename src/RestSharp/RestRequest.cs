@@ -23,11 +23,8 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using RestSharp.Serializers;
-
-#if FRAMEWORK
 using RestSharp.Extensions;
-#endif
+using RestSharp.Serializers;
 
 namespace RestSharp
 {
@@ -138,19 +135,19 @@ namespace RestSharp
             long fileLength = f.Length;
 
             return this.AddFile(new FileParameter
-                           {
-                               Name = name,
-                               FileName = Path.GetFileName(path),
-                               ContentLength = fileLength,
-                               Writer = s =>
-                                        {
-                                            using (StreamReader file = new StreamReader( new FileStream(path, FileMode.Open)))
-                                            {
-                                                file.BaseStream.CopyTo(s);
-                                            }
-                                        },
-                               ContentType = contentType
-                           });
+            {
+                Name = name,
+                FileName = Path.GetFileName(path),
+                ContentLength = fileLength,
+                Writer = s =>
+                {
+                    using (var file = new StreamReader(new FileStream(path, FileMode.Open)))
+                    {
+                        file.BaseStream.CopyTo(s);
+                    }
+                },
+                ContentType = contentType
+            });
         }
 
         /// <summary>
@@ -163,7 +160,7 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null)
         {
-            return this.AddFile(FileParameter.Create(name, bytes, fileName, contentType));
+            return AddFile(FileParameter.Create(name, bytes, fileName, contentType));
         }
 
         /// <summary>
@@ -321,8 +318,7 @@ namespace RestSharp
         {
             // automatically create parameters from object props
             Type type = obj.GetType();
-            var props = type.GetTypeInfo().DeclaredProperties;
-
+            var props = type.GetProperties();
             foreach (PropertyInfo prop in props)
             {
                 bool isAllowed = includedProperties.Length == 0 ||
