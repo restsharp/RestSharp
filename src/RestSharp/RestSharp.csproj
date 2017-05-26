@@ -2,12 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.4;net45;net40;net35</TargetFrameworks>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>HttpSharp</PackageId>
     <Authors>chekkan</Authors>
     <RepositoryUrl>https://github.com/chekkan/RestSharp</RepositoryUrl>
     <VersionPrefix>0.0.1</VersionPrefix>
-    <VersionSuffix>alpha3</VersionSuffix>
+    <VersionSuffix>alpha4</VersionSuffix>
+    <Description />
+    <PackageTags>REST;HTTP;API;JSON;XML</PackageTags>
+    <PackageProjectUrl>https://github.com/chekkan/restsharp</PackageProjectUrl>
+    <Product>HttpSharp</Product>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.4'">
