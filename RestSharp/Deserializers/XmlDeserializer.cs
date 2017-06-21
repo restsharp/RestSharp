@@ -113,6 +113,7 @@ namespace RestSharp.Deserializers
         {
             Type objType = x.GetType();
             PropertyInfo[] props = objType.GetProperties();
+            bool deserializeFromContentAttributeAlreadyUsed = false;
 
             foreach (PropertyInfo prop in props)
             {
@@ -128,7 +129,8 @@ namespace RestSharp.Deserializers
                     continue;
                 }
 
-                XName name;                
+                XName name = null;
+                bool deserializeFromContent = false;
 #if !WINDOWS_UWP
                 object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);                
 
@@ -142,8 +144,19 @@ namespace RestSharp.Deserializers
                     DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes.First();
 
                     name = attribute.Name.AsNamespaced(this.Namespace);
+
+                    deserializeFromContent = attribute.Content;
+
+                    if(deserializeFromContentAttributeAlreadyUsed && deserializeFromContent)
+                    {
+                        throw new ArgumentException("Class cannot have two properties marked with " +
+                            "SerializeAs(Content = true) attribute.");
+                    }
+
+                    deserializeFromContentAttributeAlreadyUsed |= deserializeFromContent;
                 }
-                else
+
+                if (name == null)
                 {
                     name = prop.Name.AsNamespaced(this.Namespace);
                 }
@@ -152,6 +165,18 @@ namespace RestSharp.Deserializers
 
                 if (value == null)
                 {
+                    // special case for text content node
+                    if (deserializeFromContent)
+                    {
+                        var textNode = root.Nodes().FirstOrDefault(n => n is XText);
+                        if(textNode != null)
+                        {
+                            value = ((XText)textNode).Value;
+                            prop.SetValue(x, value, null);
+                        }
+                        continue;
+                    }
+
                     // special case for inline list items
 #if !WINDOWS_UWP
                     if (type.IsGenericType)

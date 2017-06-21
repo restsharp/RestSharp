@@ -35,5 +35,10 @@ namespace RestSharp.Deserializers
         /// Sets if the property to Deserialize is an Attribute or Element (Default: false)
         /// </summary>
         public bool Attribute { get; set; }
+
+        /// <summary>
+        /// Sets if the property to Deserialize is a content of current Element (Default: false)
+        /// </summary>
+        public bool Content { get; set; }
     }
 }

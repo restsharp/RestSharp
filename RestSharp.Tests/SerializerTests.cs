@@ -188,6 +188,42 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Serialize_An_Object_To_Node_With_Attribute_And_Text_Content()
+        {
+            Note note = new Note
+            {
+                Id = 1,
+                Title = Note.TITLE,
+                Message = Note.MESSAGE
+            };
+
+            XmlSerializer xml = new XmlSerializer();
+            string doc = xml.Serialize(note);
+
+            XDocument expected = GetNoteXDoc();
+            var expectedStr = expected.ToString();
+
+            Assert.AreEqual(expectedStr, doc);
+        }
+
+        [Test]
+        public void Cannot_Serialize_An_Object_With_Two_Properties_With_Text_Content_Attributes()
+        {
+            WrongNote note = new WrongNote
+            {
+                Id = 1,
+                Text = "What a note."
+            };
+
+            XmlSerializer xml = new XmlSerializer();
+
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                string doc = xml.Serialize(note);
+            });
+        }
+
+        [Test]
         public void Can_serialize_a_list_which_is_the_root_element()
         {
             PersonList pocoList = new PersonList
@@ -302,6 +338,20 @@ namespace RestSharp.Tests
 
             [SerializeAs(Name = "location")]
             public string Location { get; set; }
+        }
+
+        private static XDocument GetNoteXDoc()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Note");
+
+            root.SetAttributeValue("Id", 1);
+            root.Value = Note.MESSAGE;
+            root.Add(new XElement("Title", Note.TITLE));
+
+            doc.Add(root);
+
+            return doc;
         }
 
         private static XDocument GetSimplePocoXDoc()

@@ -48,6 +48,11 @@ namespace RestSharp.Serializers
         public bool Attribute { get; set; }
 
         /// <summary>
+        /// Sets the value to be serialized as text content of current Element instead of an new Element
+        /// </summary>
+        public bool Content { get; set; }
+
+        /// <summary>
         /// The culture to use when serializing
         /// </summary>
         public CultureInfo Culture { get; set; }

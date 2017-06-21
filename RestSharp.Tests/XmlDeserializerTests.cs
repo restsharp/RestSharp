@@ -659,6 +659,41 @@ namespace RestSharp.Tests
             Assert.AreEqual(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
         }
 
+        [Test]
+        public void Can_Deserialize_Node_That_Has_Attribute_And_Content()
+        {
+            var doc = CreateNoteXml();
+
+            RestResponse response = new RestResponse
+            {
+                Content = doc.ToString()
+            };
+            XmlDeserializer d = new XmlDeserializer();
+
+            Note note = d.Deserialize<Note>(response);
+
+            Assert.AreEqual(1, note.Id);
+            Assert.AreEqual(Note.TITLE, note.Title);
+            Assert.AreEqual(Note.MESSAGE, note.Message);
+        }
+
+        [Test]
+        public void Cannot_Deserialize_Node_To_An_Object_That_Has_Two_Properties_With_Text_Content_Attributes()
+        {
+            var doc = CreateNoteXml();
+
+            RestResponse response = new RestResponse
+            {
+                Content = doc.ToString()
+            };
+            XmlDeserializer d = new XmlDeserializer();
+
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                var note = d.Deserialize<WrongNote>(response);
+            });
+        }
+
         private static string CreateUnderscoresXml()
         {
             XDocument doc = new XDocument();
@@ -865,6 +900,33 @@ namespace RestSharp.Tests
             root.Add(new XElement("BestFriend",
                 new XAttribute("Name", "The Fonz"),
                 new XAttribute("Since", 1952)));
+
+            doc.Add(root);
+
+            return doc.ToString();
+        }
+
+        private static string CreateNoteXml()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Note");
+
+            root.SetAttributeValue("Id", 1);
+            root.Value = Note.MESSAGE;
+            root.Add(new XElement("Title", Note.TITLE));
+
+            doc.Add(root);
+
+            return doc.ToString();
+        }
+
+        private static string CreateWrongNoteXml()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("Note");
+
+            root.SetAttributeValue("Id", 1);
+            root.Add(new XElement("Text", "What a wrong note."));
 
             doc.Add(root);
 
