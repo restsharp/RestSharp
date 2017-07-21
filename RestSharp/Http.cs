@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using RestSharp.Extensions;
+using RestSharp.Extensions.MonoHttp;
 
 #if WINDOWS_PHONE
 using RestSharp.Compression.ZLib;
@@ -360,7 +361,7 @@ namespace RestSharp
                     querystring.Append("&");
                 }
 
-                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
+                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), HttpUtility.UrlEncode(p.Value, encoding));
             }
 
             return querystring.ToString();
