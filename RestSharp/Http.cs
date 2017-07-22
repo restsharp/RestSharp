@@ -23,7 +23,18 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using RestSharp.Extensions;
+
+#if WINDOWS_PHONE
+using System.Net;
+#endif
+
+#if SILVERLIGHT
+using System.Windows.Browser;
+#endif
+
+#if !SILVERLIGHT && !WINDOWS_PHONE
 using RestSharp.Extensions.MonoHttp;
+#endif
 
 #if WINDOWS_PHONE
 using RestSharp.Compression.ZLib;
