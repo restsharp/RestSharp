@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="776acfd5-9378-49de-8197-d2f51c7799fc" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/RestSharp/RestClient.cs" afterPath="$PROJECT_DIR$/src/RestSharp/RestClient.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/RestSharp/RestSharp.csproj" afterPath="$PROJECT_DIR$/src/RestSharp/RestSharp.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/RestSharp.Tests/RestSharp.Tests.csproj" afterPath="$PROJECT_DIR$/tests/RestSharp.Tests/RestSharp.Tests.csproj" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/RestSharp/RestClient.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/RestSharp/RestClient.cs" />
+        <option value="$PROJECT_DIR$/src/RestSharp/RestSharp.csproj" />
+        <option value="$PROJECT_DIR$/tests/RestSharp.Tests/RestSharp.Tests.csproj" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="717" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="SolutionExplorer">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.jetbrains.rider.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RestSharp (2 projects)" />
+              <option name="myItemType" value="com.jetbrains.rider.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <option name="show-file-system" value="false" />
+        <option name="show-all-items" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="SearchEverywhereHistoryKey" value="format&#9;ACTION&#9;ReformatCode" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected=".NET Project.Default">
+    <configuration default="true" type="DotNetProject" factoryName=".NET Project">
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
+      <node-interpreter value="project" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui />
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+    <configuration default="false" name="Default" type="DotNetProject" factoryName=".NET Project">
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration />
+    <configuration />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue=".NET Project.Default" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="776acfd5-9378-49de-8197-d2f51c7799fc" name="Default" comment="" />
+      <created>1500688123562</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1500688123562</updated>
+      <workItem from="1500688125179" duration="366000" />
+      <workItem from="1500688536047" duration="518000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="884000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1280" height="717" extended-state="6" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289256" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Unit Tests" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289256" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21484375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="processedProjectFiles" value="true" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/RestSharp/RestClient.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1500688384000" expanded="true" signature="0:636" ph="License" />
+            <marker date="1500688384000" expanded="true" signature="17:624" ph="/* Copyright 2010 John Sheehan ... */" />
+            <marker date="1500688384000" expanded="false" signature="644:948" ph="..." />
+            <marker date="1500688384000" expanded="true" signature="1073:23748" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="1080:1200" ph="/// Client to translate RestRequests into Http requests and process response result ... " />
+            <marker date="1500688384000" expanded="true" signature="1250:23746" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="1681:1794" ph="/// Maximum number of redirects to follow if FollowRedirects is true ... " />
+            <marker date="1500688384000" expanded="true" signature="1897:1995" ph="/// X509CertificateCollection to be sent with request ... " />
+            <marker date="1500688384000" expanded="true" signature="2079:2238" ph="/// Proxy to use for requests made by this client instance. ... " />
+            <marker date="1500688384000" expanded="true" signature="2364:2468" ph="/* The cache policy to use for requests initiated by this client instance. ... */" />
+            <marker date="1500688384000" expanded="true" signature="2545:2729" ph="/// Default is true. Determine whether or not requests that result in  ... " />
+            <marker date="1500688384000" expanded="true" signature="2789:2904" ph="/// The CookieContainer used for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="2975:3082" ph="/// UserAgent to use for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="3138:3259" ph="/// Timeout in milliseconds to use for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="3310:3426" ph="/// The number of milliseconds before the writing or reading times out. ... " />
+            <marker date="1500688384000" expanded="true" signature="3486:3631" ph="/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked ... " />
+            <marker date="1500688384000" expanded="true" signature="3701:3812" ph="/// Authenticator to use for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="3880:4162" ph="/// Combined with Request.Resource to construct URL for request ... " />
+            <marker date="1500688384000" expanded="true" signature="4322:4520" ph="/* Callback function for handling the validation of remote certificates. Useful for certificate pinning and ... */" />
+            <marker date="1500688384000" expanded="true" signature="4638:4746" ph="/// Default constructor that registers default content handlers ... " />
+            <marker date="1500688384000" expanded="true" signature="4774:5779" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="5789:5948" ph="/// Sets the BaseUrl property for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="5996:6052" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="6062:6221" ph="/// Sets the BaseUrl property for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="6272:6479" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="6329:6423" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="6628:6823" ph="/// Parameters included with every request made with this instance of RestClient ... " />
+            <marker date="1500688384000" expanded="true" signature="6905:7183" ph="/// Registers a content handler to process response content ... " />
+            <marker date="1500688384000" expanded="true" signature="7262:7779" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="7789:7972" ph="/// Remove a content handler for the specified MIME content type ... " />
+            <marker date="1500688384000" expanded="true" signature="8026:8201" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="8211:8287" ph="/// Remove all content handlers ... " />
+            <marker date="1500688384000" expanded="true" signature="8323:8474" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="8484:8719" ph="/// Retrieve the handler for the specified MIME content type ... " />
+            <marker date="1500688384000" expanded="true" signature="8780:10151" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="8827:8919" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9012:9090" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9188:9288" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9352:9438" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9652:9981" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9850:9967" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="10037:10115" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="10668:10746" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="10756:10984" ph="/// Assembles URL to call based on parameters, method and resource ... " />
+            <marker date="1500688384000" expanded="true" signature="11034:13851" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11082:11207" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11480:12093" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11531:11767" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11822:11961" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12230:12310" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12400:12804" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12511:12610" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12966:13211" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="13228:13404" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="13440:13511" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="13934:14054" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14122:14356" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14426:19781" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14877:15103" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14981:15047" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="15293:15485" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="15920:15988" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="16176:16262" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="16703:16787" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="16975:17083" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17136:17206" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17390:17498" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17551:17621" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17833:17941" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18000:18076" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18135:18478" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18210:18462" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18599:18757" ph="/* Only add the body if there aren't any files to make it a multipart form request ... */" />
+            <marker date="1500688384000" expanded="true" signature="18787:19597" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18894:19263" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18997:19103" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="19128:19245" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="19284:19583" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="19381:19563" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="20084:22150" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="20164:20961" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21027:21282" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21113:21266" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21347:22106" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21442:22090" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22240:23740" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22381:23477" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22510:22701" ph="/* Only attempt to deserialize if the request has not errored due ... */" />
+            <marker date="1500688384000" expanded="true" signature="22754:23463" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22872:23092" ph="/* Only continue if there is a handler defined else there is no way to deserialize the data. ... */" />
+            <marker date="1500688384000" expanded="true" signature="23133:23445" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="23510:23700" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/RestSharp/RestClient.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="43" column="5" lean-forward="true" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+          <folding>
+            <marker date="1500688384000" expanded="true" signature="0:636" ph="License" />
+            <marker date="1500688384000" expanded="true" signature="17:624" ph="/* Copyright 2010 John Sheehan ... */" />
+            <marker date="1500688384000" expanded="false" signature="644:948" ph="..." />
+            <marker date="1500688384000" expanded="true" signature="1073:23748" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="1080:1200" ph="/// Client to translate RestRequests into Http requests and process response result ... " />
+            <marker date="1500688384000" expanded="true" signature="1250:23746" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="1681:1794" ph="/// Maximum number of redirects to follow if FollowRedirects is true ... " />
+            <marker date="1500688384000" expanded="true" signature="1897:1995" ph="/// X509CertificateCollection to be sent with request ... " />
+            <marker date="1500688384000" expanded="true" signature="2079:2238" ph="/// Proxy to use for requests made by this client instance. ... " />
+            <marker date="1500688384000" expanded="true" signature="2364:2468" ph="/* The cache policy to use for requests initiated by this client instance. ... */" />
+            <marker date="1500688384000" expanded="true" signature="2545:2729" ph="/// Default is true. Determine whether or not requests that result in  ... " />
+            <marker date="1500688384000" expanded="true" signature="2789:2904" ph="/// The CookieContainer used for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="2975:3082" ph="/// UserAgent to use for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="3138:3259" ph="/// Timeout in milliseconds to use for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="3310:3426" ph="/// The number of milliseconds before the writing or reading times out. ... " />
+            <marker date="1500688384000" expanded="true" signature="3486:3631" ph="/// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked ... " />
+            <marker date="1500688384000" expanded="true" signature="3701:3812" ph="/// Authenticator to use for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="3880:4162" ph="/// Combined with Request.Resource to construct URL for request ... " />
+            <marker date="1500688384000" expanded="true" signature="4322:4520" ph="/* Callback function for handling the validation of remote certificates. Useful for certificate pinning and ... */" />
+            <marker date="1500688384000" expanded="true" signature="4638:4746" ph="/// Default constructor that registers default content handlers ... " />
+            <marker date="1500688384000" expanded="true" signature="4774:5779" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="5789:5948" ph="/// Sets the BaseUrl property for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="5996:6052" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="6062:6221" ph="/// Sets the BaseUrl property for requests made by this client instance ... " />
+            <marker date="1500688384000" expanded="true" signature="6272:6479" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="6329:6423" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="6628:6823" ph="/// Parameters included with every request made with this instance of RestClient ... " />
+            <marker date="1500688384000" expanded="true" signature="6905:7183" ph="/// Registers a content handler to process response content ... " />
+            <marker date="1500688384000" expanded="true" signature="7262:7779" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="7789:7972" ph="/// Remove a content handler for the specified MIME content type ... " />
+            <marker date="1500688384000" expanded="true" signature="8026:8201" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="8211:8287" ph="/// Remove all content handlers ... " />
+            <marker date="1500688384000" expanded="true" signature="8323:8474" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="8484:8719" ph="/// Retrieve the handler for the specified MIME content type ... " />
+            <marker date="1500688384000" expanded="true" signature="8780:10151" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="8827:8919" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9012:9090" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9188:9288" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9352:9438" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9652:9981" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="9850:9967" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="10037:10115" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="10668:10746" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="10756:10984" ph="/// Assembles URL to call based on parameters, method and resource ... " />
+            <marker date="1500688384000" expanded="true" signature="11034:13851" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11082:11207" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11480:12093" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11531:11767" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="11822:11961" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12230:12310" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12400:12804" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12511:12610" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="12966:13211" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="13228:13404" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="13440:13511" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="13934:14054" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14122:14356" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14426:19781" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14877:15103" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="14981:15047" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="15293:15485" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="15920:15988" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="16176:16262" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="16703:16787" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="16975:17083" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17136:17206" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17390:17498" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17551:17621" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="17833:17941" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18000:18076" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18135:18478" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18210:18462" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18599:18757" ph="/* Only add the body if there aren't any files to make it a multipart form request ... */" />
+            <marker date="1500688384000" expanded="true" signature="18787:19597" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18894:19263" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="18997:19103" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="19128:19245" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="19284:19583" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="19381:19563" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="20084:22150" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="20164:20961" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21027:21282" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21113:21266" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21347:22106" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="21442:22090" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22240:23740" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22381:23477" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22510:22701" ph="/* Only attempt to deserialize if the request has not errored due ... */" />
+            <marker date="1500688384000" expanded="true" signature="22754:23463" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="22872:23092" ph="/* Only continue if there is a handler defined else there is no way to deserialize the data. ... */" />
+            <marker date="1500688384000" expanded="true" signature="23133:23445" ph="{...}" />
+            <marker date="1500688384000" expanded="true" signature="23510:23700" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/RestSharp/RestSharp.csproj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="4" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="14" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/RestSharp.Tests/RestSharp.Tests.csproj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="51" lean-forward="false" selection-start-line="3" selection-start-column="51" selection-end-line="3" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/share/dotnet/sdk/1.0.1/Microsoft.Common.CurrentVersion.targets">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="1110" column="4" lean-forward="false" selection-start-line="1110" selection-start-column="4" selection-end-line="1110" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
