@@ -24,10 +24,6 @@ using System.Net;
 using System.Text;
 using RestSharp.Extensions;
 
-#if WINDOWS_PHONE
-using System.Net;
-#endif
-
 #if SILVERLIGHT
 using System.Windows.Browser;
 #endif
