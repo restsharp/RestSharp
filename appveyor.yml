@@ -1,19 +1,16 @@
-version: 105.0.1.{build}
+version: 0.1.0.{build}
+image:
+- Visual Studio 2017
 before_build:
 - nuget restore RestSharp.sln
-- appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product Android
-- appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product iOS
 branches:
   only:
   - master
+  - feature/dotnet-core
 skip_tags: true
 build:
   project: RestSharp.sln
   verbosity: minimal
-after_build:
-- appveyor UnregisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password%
-environment:
-  xamarin_email:
-    secure: zM9+mVyEGu7yKbL64GG5h0ulFnmt6/jfq8jynL2yCOw=
-  xamarin_password:
-    secure: sRp5YM8LTyje4swi/8p5tQ==
+# to run your custom scripts instead of automatic tests
+test_script:
+  - dotnet test ./tests/RestSharp.Tests/RestSharp.Tests.csproj

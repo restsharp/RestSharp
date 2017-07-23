@@ -42,3 +42,4 @@ Backup/
 *.orig
 DownloadSigned/
 RestSharp.IntegrationTests/config.json
+.idea

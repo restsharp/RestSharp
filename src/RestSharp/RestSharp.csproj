@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">netstandard1.4;net45;net40;net35</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">netstandard1.4</TargetFrameworks>
+    <PackageId>HttpSharp</PackageId>
+    <Authors>chekkan</Authors>
+    <RepositoryUrl>https://github.com/chekkan/RestSharp</RepositoryUrl>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionSuffix>alpha4</VersionSuffix>
+    <Description />
+    <PackageTags>REST;HTTP;API;JSON;XML</PackageTags>
+    <PackageProjectUrl>https://github.com/chekkan/restsharp</PackageProjectUrl>
+    <Product>HttpSharp</Product>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.4'">
+    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Net.Requests" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

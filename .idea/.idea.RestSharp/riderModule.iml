@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RIDER_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.2.0/build/netcoreapp1.0/xunit.runner.reporters.netstandard15.dll">
+      <sourceFolder url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.2.0/build/netcoreapp1.0/xunit.runner.reporters.netstandard15.dll" isTestSource="false" />
+    </content>
+    <content url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.2.0/build/netcoreapp1.0/xunit.runner.utility.netstandard15.dll">
+      <sourceFolder url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.2.0/build/netcoreapp1.0/xunit.runner.utility.netstandard15.dll" isTestSource="false" />
+    </content>
+    <content url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.2.0/build/netcoreapp1.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll">
+      <sourceFolder url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.2.0/build/netcoreapp1.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../..">
+      <sourceFolder url="file://$MODULE_DIR$/../../.nuget/NuGet.exe" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../.nuget/NuGet.targets" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../appveyor.yml" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../build.bat" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../CONTRIBUTING.markdown" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../package.cmd" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../README.markdown" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../readme.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../releasenotes.markdown" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../restsharp.nuspec" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/RestSharp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../tests/RestSharp.Tests" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/../../packages" />
+      <excludeFolder url="file://$MODULE_DIR$/../../src/RestSharp/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/../../src/RestSharp/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/../../tests/RestSharp.Tests/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/../../tests/RestSharp.Tests/obj" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
