@@ -11,3 +11,6 @@ skip_tags: true
 build:
   project: RestSharp.sln
   verbosity: minimal
+# to run your custom scripts instead of automatic tests
+test_script:
+  - dotnet test ./tests/RestSharp.Tests/RestSharp.Tests.csproj
