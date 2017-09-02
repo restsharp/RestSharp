@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using RestSharp.Serializers;
 
-#if FRAMEWORK
+#if FRAMEWORK || PCL
 using RestSharp.Extensions;
 #endif
 
@@ -134,6 +134,9 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, string path, string contentType = null)
         {
+#if PCL
+            throw new NotSupportedException();
+#else
             FileInfo f = new FileInfo(path);
             long fileLength = f.Length;
 
@@ -151,6 +154,7 @@ namespace RestSharp
                                         },
                                ContentType = contentType
                            });
+#endif
         }
 
         /// <summary>
@@ -345,7 +349,7 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))

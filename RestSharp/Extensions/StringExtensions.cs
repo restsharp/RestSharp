@@ -34,6 +34,10 @@ using System.Windows.Browser;
 using RestSharp.Extensions.MonoHttp;
 #endif
 
+#if PCL
+using HttpUtility = System.Net.WebUtility;
+#endif
+
 namespace RestSharp.Extensions
 {
     public static class StringExtensions
@@ -283,14 +287,14 @@ namespace RestSharp.Extensions
 
                         if (restOfWord.IsUpperCase())
                         {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                             restOfWord = restOfWord.ToLower(culture);
 #else
                             restOfWord = restOfWord.ToLower();
 #endif
                         }
 
-#if !WINDOWS_UWP                        
+#if !WINDOWS_UWP && !PCL               
                         char firstChar = char.ToUpper(word[0], culture);
 #else
                         char firstChar = char.ToUpper(word[0]);
@@ -303,7 +307,7 @@ namespace RestSharp.Extensions
                 return string.Join(joinString, words);
             }
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
 #else
             return string.Concat(words[0].Substring(0, 1).ToUpper(), words[0].Substring(1));
@@ -418,7 +422,7 @@ namespace RestSharp.Extensions
             yield return name.ToCamelCase(culture);
 
             // try lower cased name
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             yield return name.ToLower(culture);
 #else
             yield return name.ToLowerInvariant();
@@ -428,7 +432,7 @@ namespace RestSharp.Extensions
             yield return name.AddUnderscores();
 
             // try name with underscores with lower case
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             yield return name.AddUnderscores().ToLower(culture);
 #else
             yield return name.AddUnderscores().ToLowerInvariant();
@@ -438,7 +442,7 @@ namespace RestSharp.Extensions
             yield return name.AddDashes();
 
             // try name with dashes with lower case
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             yield return name.AddDashes().ToLower(culture);
 #else
             yield return name.AddDashes().ToLowerInvariant();
@@ -454,7 +458,7 @@ namespace RestSharp.Extensions
             yield return name.AddSpaces();
 
             // try name with spaces with lower case
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             yield return name.AddSpaces().ToLower(culture);
 #else
             yield return name.AddSpaces().ToLowerInvariant();

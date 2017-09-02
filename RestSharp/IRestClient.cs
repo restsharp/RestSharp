@@ -23,7 +23,7 @@ using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || PCL
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -36,7 +36,25 @@ using System.Net.Security;
 
 namespace RestSharp
 {
-    public interface IRestClient
+    public interface IRestClient : IRestClientBase
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || PCL
+        , IRestClientAsync
+#endif
+#if FRAMEWORK
+        , IRestClientSync
+#endif
+    {
+#if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        /// overriding certificate errors in the scope of a request.
+        /// </summary>
+        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
+
+    }
+
+    public interface IRestClientBase
     {
         CookieContainer CookieContainer { get; set; }
 
@@ -64,38 +82,9 @@ namespace RestSharp
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
-#if FRAMEWORK
-        IRestResponse Execute(IRestRequest request);
-
-        IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
-
-        byte[] DownloadData(IRestRequest request);
-#endif
-
-#if FRAMEWORK
-        /// <summary>
-        /// X509CertificateCollection to be sent with request
-        /// </summary>
-        X509CertificateCollection ClientCertificates { get; set; }
-
-        IWebProxy Proxy { get; set; }
-
-        RequestCachePolicy CachePolicy { get; set; }
-
-        bool Pipelined { get; set; }
-#endif
-
         bool FollowRedirects { get; set; }
 
         Uri BuildUri(IRestRequest request);
-
-#if NET45
-        /// <summary>
-        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
-        /// overriding certificate errors in the scope of a request.
-        /// </summary>
-        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-#endif
 
         /// <summary>
         /// Executes a GET-style request and callback asynchronously, authenticating if needed
@@ -140,8 +129,15 @@ namespace RestSharp
         void RemoveHandler(string contentType);
 
         void ClearHandlers();
+    }
 
 #if FRAMEWORK
+    public interface IRestClientSync : IRestClientBase
+    {
+        IRestResponse Execute(IRestRequest request);
+
+        IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
+
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
 
         IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod);
@@ -149,9 +145,26 @@ namespace RestSharp
         IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new();
 
         IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
+
+        byte[] DownloadData(IRestRequest request);
+
+        /// <summary>
+        /// X509CertificateCollection to be sent with request
+        /// </summary>
+        X509CertificateCollection ClientCertificates { get; set; }
+
+        IWebProxy Proxy { get; set; }
+
+        RequestCachePolicy CachePolicy { get; set; }
+
+        bool Pipelined { get; set; }
+    }
 #endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || PCL
+    public interface IRestClientAsync : IRestClientBase
+    {
         /// <summary>
         /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
@@ -235,6 +248,6 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
         Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token);
-#endif
     }
+#endif
 }

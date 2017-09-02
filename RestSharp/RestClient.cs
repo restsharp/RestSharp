@@ -42,7 +42,7 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version      
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
         private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
 #else
         private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;
@@ -137,6 +137,10 @@ namespace RestSharp
         /// </summary>
         public RestClient()
         {
+#if PCL
+            throw new NotSupportedException("This is the RestShap PCL dll which is only a stub. Please make sure to also add RestSharp to your platform projects so the actual implementation of RestSharp is linked.");
+#endif
+
             this.Encoding = Encoding.UTF8;
 #if WINDOWS_PHONE
             this.UseSynchronizationContext = true;
@@ -283,7 +287,7 @@ namespace RestSharp
             return null;
         }
 
-#if SILVERLIGHT
+#if SILVERLIGHT || PCL
         private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");

@@ -17,10 +17,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 
-#if FRAMEWORK
+#if FRAMEWORK || PCL
 using System.Linq;
 #endif
 
@@ -38,8 +39,8 @@ namespace RestSharp.Extensions
         /// <param name="prop">Member to retrieve attribute from</param>
         /// <returns></returns>
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
-        {           
-#if !WINDOWS_UWP
+        {
+#if !WINDOWS_UWP && !PCL
             return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
 #else
             return prop.GetCustomAttribute(typeof(T)) as T;
@@ -55,12 +56,24 @@ namespace RestSharp.Extensions
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
             //type.GetTypeInfo().getcu
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
             return Attribute.GetCustomAttribute(type, typeof(T)) as T;
 #else
             return type.GetTypeInfo().GetCustomAttribute(type) as T;
 #endif
         }
+#if PCL
+
+        public static Type[] GetGenericArguments(this Type t)
+        {
+            return t.GetTypeInfo().GenericTypeArguments;
+        }
+
+        public static PropertyInfo[] GetProperties(this Type t)
+        {
+            return t.GetTypeInfo().DeclaredProperties.ToArray();
+        }
+#endif
 
         /// <summary>
         /// Checks a type to see if it derives from a raw generic (e.g. List[[]])
@@ -72,7 +85,7 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 Type cur = toCheck.IsGenericType
                     ? toCheck.GetGenericTypeDefinition()
                     : toCheck;
@@ -86,7 +99,7 @@ namespace RestSharp.Extensions
                 {
                     return true;
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !PCL
                 toCheck = toCheck.BaseType;
 #else
                 toCheck = toCheck.GetTypeInfo().BaseType;

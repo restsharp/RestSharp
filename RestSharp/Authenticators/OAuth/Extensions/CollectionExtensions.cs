@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace RestSharp.Authenticators.OAuth.Extensions
@@ -48,7 +49,17 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             }
         }
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if PCL
+        public static void ForEach(this string items, Action<string> action)
+        {
+            foreach (char item in items)
+            {
+                action(item.ToString());
+            }
+        }
+#endif
+
+#if !WINDOWS_PHONE && !SILVERLIGHT && !PCL
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {
             foreach (string key in range.AllKeys)

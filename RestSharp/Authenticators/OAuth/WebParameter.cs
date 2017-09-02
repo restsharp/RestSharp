@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !PCL
     [Serializable]
 #endif
 #if WINDOWS_UWP
