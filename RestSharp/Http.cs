@@ -215,7 +215,7 @@ namespace RestSharp
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
 #endif
-#if NET45
+#if REMOTECERTVALIDATION
         /// <summary>
         /// Callback function for handling the validation of remote certificates.
         /// </summary>
@@ -478,7 +478,7 @@ namespace RestSharp
                                              Value = headerValue
                                          });
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !NETSTANDARD
                 webResponse.Close();
 #else
                 webResponse.Dispose();

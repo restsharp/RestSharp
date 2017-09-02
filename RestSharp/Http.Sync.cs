@@ -23,6 +23,7 @@ using System.IO;
 using System.Net;
 using RestSharp.Extensions;
 
+#if !NETSTANDARD
 namespace RestSharp
 {
     /// <summary>
@@ -318,7 +319,7 @@ namespace RestSharp
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
 
-#if NET45
+#if REMOTECERTVALIDATION
             webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
 #endif
 
@@ -326,5 +327,5 @@ namespace RestSharp
         }
     }
 }
-
+#endif
 #endif

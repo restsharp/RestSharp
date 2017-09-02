@@ -1,0 +1,22 @@
+﻿1]
+Use ifdef REMOTECERTVALIDATION for RemoteCertificateValidationCallback
+
+2] Some frameworks are missing in project.json
+
+3]
+SL50 cannot compile yet in rc2 ? Some framework depedencies are missing?
+ "sl50": {
+            "buildOptions": { "define": [ "SILVERLIGHT" ] },
+            "dependencies": {
+            },
+            "frameworkAssemblies": {
+                "mscorlib": "",
+                "System": "",
+                "System.Core": "",
+                "System.Net": "",
+                "System.ServiceModel": "",
+                "System.Xml": "",
+                "System.Windows": "",
+                "System.Windows.Browser": ""
+            }
+        },

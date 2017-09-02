@@ -68,9 +68,12 @@ using System.Dynamic;
 #endif
 using System.Globalization;
 using System.Reflection;
+#if !NETSTANDARD
 using System.Runtime.Serialization;
+#endif
 using System.Text;
 using RestSharp.Reflection;
+using System.Linq;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantExplicitArrayCreation
@@ -547,7 +550,11 @@ namespace RestSharp
             object obj;
             if (TryDeserializeObject(json, out obj))
                 return obj;
+#if NETSTANDARD
+            throw new Exception("Invalid JSON string");
+#else
             throw new SerializationException("Invalid JSON string");
+#endif
         }
 
         /// <summary>
@@ -593,12 +600,12 @@ namespace RestSharp
 
         public static T DeserializeObject<T>(string json, IJsonSerializerStrategy jsonSerializerStrategy)
         {
-            return (T) DeserializeObject(json, typeof(T), jsonSerializerStrategy);
+            return (T)DeserializeObject(json, typeof(T), jsonSerializerStrategy);
         }
 
         public static T DeserializeObject<T>(string json)
         {
-            return (T) DeserializeObject(json, typeof(T), null);
+            return (T)DeserializeObject(json, typeof(T), null);
         }
 
         /// <summary>
@@ -627,7 +634,7 @@ namespace RestSharp
             StringBuilder sb = new StringBuilder();
             char c;
 
-            for (int i = 0; i < jsonString.Length; )
+            for (int i = 0; i < jsonString.Length;)
             {
                 c = jsonString[i++];
 
@@ -856,8 +863,8 @@ namespace RestSharp
                                     {
                                         if (0xDC00 <= lowCodePoint && lowCodePoint <= 0xDFFF)    // if low surrogate
                                         {
-                                            s.Append((char) codePoint);
-                                            s.Append((char) lowCodePoint);
+                                            s.Append((char)codePoint);
+                                            s.Append((char)lowCodePoint);
                                             index += 6; // skip 6 chars
                                             continue;
                                         }
@@ -866,7 +873,7 @@ namespace RestSharp
                                 success = false;    // invalid surrogate pair
                                 return "";
                             }
-                            s.Append(ConvertFromUtf32((int) codePoint));
+                            s.Append(ConvertFromUtf32((int)codePoint));
                             // skip 4 chars
                             index += 4;
                         }
@@ -893,9 +900,9 @@ namespace RestSharp
             if (0xD800 <= utf32 && utf32 <= 0xDFFF)
                 throw new ArgumentOutOfRangeException("utf32", "The argument must not be in surrogate pair range.");
             if (utf32 < 0x10000)
-                return new string((char) utf32, 1);
+                return new string((char)utf32, 1);
             utf32 -= 0x10000;
-            return new string(new char[] { (char) ((utf32 >> 10) + 0xD800), (char) (utf32 % 0x0400 + 0xDC00) });
+            return new string(new char[] { (char)((utf32 >> 10) + 0xD800), (char)(utf32 % 0x0400 + 0xDC00) });
         }
 
         static object ParseNumber(char[] json, ref int index, ref bool success)
@@ -1040,7 +1047,7 @@ namespace RestSharp
                         else if (IsNumeric(value))
                             success = SerializeNumber(value, builder);
                         else if (value is bool)
-                            builder.Append((bool) value ? "true" : "false");
+                            builder.Append((bool)value ? "true" : "false");
                         else if (value == null)
                             builder.Append("null");
                         else
@@ -1073,7 +1080,7 @@ namespace RestSharp
                     SerializeString(stringKey, builder);
                 else
                     if (!SerializeValue(jsonSerializerStrategy, value, builder))
-                        return false;
+                    return false;
                 builder.Append(":");
                 if (!SerializeValue(jsonSerializerStrategy, value, builder))
                     return false;
@@ -1151,17 +1158,17 @@ namespace RestSharp
         static bool SerializeNumber(object number, StringBuilder builder)
         {
             if (number is long)
-                builder.Append(((long) number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((long)number).ToString(CultureInfo.InvariantCulture));
             else if (number is ulong)
-                builder.Append(((ulong) number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((ulong)number).ToString(CultureInfo.InvariantCulture));
             else if (number is int)
-                builder.Append(((int) number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((int)number).ToString(CultureInfo.InvariantCulture));
             else if (number is uint)
-                builder.Append(((uint) number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((uint)number).ToString(CultureInfo.InvariantCulture));
             else if (number is decimal)
-                builder.Append(((decimal) number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((decimal)number).ToString(CultureInfo.InvariantCulture));
             else if (number is float)
-                builder.Append(((float) number).ToString(CultureInfo.InvariantCulture));
+                builder.Append(((float)number).ToString(CultureInfo.InvariantCulture));
             else
                 builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
             return true;
@@ -1429,7 +1436,7 @@ namespace RestSharp
 
                         Type genericType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
 
-                        IDictionary dict = (IDictionary) ConstructorCache[genericType]();
+                        IDictionary dict = (IDictionary)ConstructorCache[genericType]();
 
                         foreach (KeyValuePair<string, object> kvp in jsonObject)
                             dict.Add(kvp.Key, DeserializeObject(kvp.Value, valueType));
@@ -1465,7 +1472,7 @@ namespace RestSharp
 
                         if (type.IsArray)
                         {
-                            list = (IList) ConstructorCache[type](jsonObject.Count);
+                            list = (IList)ConstructorCache[type](jsonObject.Count);
                             int i = 0;
                             foreach (object o in jsonObject)
                                 list[i++] = DeserializeObject(o, type.GetElementType());
@@ -1473,7 +1480,7 @@ namespace RestSharp
                         else if (ReflectionUtils.IsTypeGenericeCollectionInterface(type) || ReflectionUtils.IsAssignableFrom(typeof(IList), type))
                         {
                             Type innerType = ReflectionUtils.GetGenericListElementType(type);
-                            list = (IList) (ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
+                            list = (IList)(ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
                             foreach (object o in jsonObject)
                                 list.Add(DeserializeObject(o, innerType));
                         }
@@ -1498,11 +1505,11 @@ namespace RestSharp
             bool returnValue = true;
 
             if (input is DateTime)
-                output = ((DateTime) input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
+                output = ((DateTime)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
             else if (input is DateTimeOffset)
-                output = ((DateTimeOffset) input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
+                output = ((DateTimeOffset)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
             else if (input is Guid)
-                output = ((Guid) input).ToString("D");
+                output = ((Guid)input).ToString("D");
             else if (input is Uri)
                 output = input.ToString();
             else
@@ -1640,7 +1647,7 @@ namespace RestSharp
 
             public delegate TValue ThreadSafeDictionaryValueFactory<TKey, TValue>(TKey key);
 
-#if SIMPLE_JSON_TYPEINFO
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD
             public static TypeInfo GetTypeInfo(Type type)
             {
                 return type.GetTypeInfo();
@@ -1654,12 +1661,19 @@ namespace RestSharp
 
             public static Attribute GetAttribute(MemberInfo info, Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
-                if (info == null || type == null || !info.IsDefined(type))
+                if (info == null || type == null)
+                    return null;
+
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD
+                if (!info.IsDefined(type))
                     return null;
                 return info.GetCustomAttribute(type);
+                //#elif NETSTANDARD
+                //                if (!Attribute.IsDefined(info, type))
+                //                    return null;
+                //                return Attribute.GetCustomAttribute(info, type);
 #else
-                if (info == null || type == null || !Attribute.IsDefined(info, type))
+                if (!Attribute.IsDefined(info, type))
                     return null;
                 return Attribute.GetCustomAttribute(info, type);
 #endif
@@ -1686,9 +1700,11 @@ namespace RestSharp
 
             public static Attribute GetAttribute(Type objectType, Type attributeType)
             {
+                if (objectType == null || attributeType == null)
+                    return null;
 
-#if SIMPLE_JSON_TYPEINFO
-                if (objectType == null || attributeType == null || !objectType.GetTypeInfo().IsDefined(attributeType))
+#if SIMPLE_JSON_TYPEINFO || NETSTANDARD
+                if (!objectType.GetTypeInfo().IsDefined(attributeType))
                     return null;
                 return objectType.GetTypeInfo().GetCustomAttribute(attributeType);
 #else
@@ -1859,7 +1875,7 @@ namespace RestSharp
 
             public static ConstructorDelegate GetConstructorByReflection(ConstructorInfo constructorInfo)
             {
-                return delegate(object[] args) { return constructorInfo.Invoke(args); };
+                return delegate (object[] args) { return constructorInfo.Invoke(args); };
             }
 
             public static ConstructorDelegate GetConstructorByReflection(Type type, params Type[] argsType)
@@ -1886,7 +1902,7 @@ namespace RestSharp
                 NewExpression newExp = Expression.New(constructorInfo, argsExp);
                 Expression<Func<object[], object>> lambda = Expression.Lambda<Func<object[], object>>(newExp, param);
                 Func<object[], object> compiledLambda = lambda.Compile();
-                return delegate(object[] args) { return compiledLambda(args); };
+                return delegate (object[] args) { return compiledLambda(args); };
             }
 
             public static ConstructorDelegate GetConstructorByExpression(Type type, params Type[] argsType)
@@ -1918,12 +1934,12 @@ namespace RestSharp
             public static GetDelegate GetGetMethodByReflection(PropertyInfo propertyInfo)
             {
                 MethodInfo methodInfo = GetGetterMethodInfo(propertyInfo);
-                return delegate(object source) { return methodInfo.Invoke(source, EmptyObjects); };
+                return delegate (object source) { return methodInfo.Invoke(source, EmptyObjects); };
             }
 
             public static GetDelegate GetGetMethodByReflection(FieldInfo fieldInfo)
             {
-                return delegate(object source) { return fieldInfo.GetValue(source); };
+                return delegate (object source) { return fieldInfo.GetValue(source); };
             }
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
@@ -1934,7 +1950,7 @@ namespace RestSharp
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
                 UnaryExpression instanceCast = (!IsValueType(propertyInfo.DeclaringType)) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
                 Func<object, object> compiled = Expression.Lambda<Func<object, object>>(Expression.TypeAs(Expression.Call(instanceCast, getMethodInfo), typeof(object)), instance).Compile();
-                return delegate(object source) { return compiled(source); };
+                return delegate (object source) { return compiled(source); };
             }
 
             public static GetDelegate GetGetMethodByExpression(FieldInfo fieldInfo)
@@ -1942,7 +1958,7 @@ namespace RestSharp
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
                 MemberExpression member = Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo);
                 GetDelegate compiled = Expression.Lambda<GetDelegate>(Expression.Convert(member, typeof(object)), instance).Compile();
-                return delegate(object source) { return compiled(source); };
+                return delegate (object source) { return compiled(source); };
             }
 
 #endif
@@ -1968,12 +1984,12 @@ namespace RestSharp
             public static SetDelegate GetSetMethodByReflection(PropertyInfo propertyInfo)
             {
                 MethodInfo methodInfo = GetSetterMethodInfo(propertyInfo);
-                return delegate(object source, object value) { methodInfo.Invoke(source, new object[] { value }); };
+                return delegate (object source, object value) { methodInfo.Invoke(source, new object[] { value }); };
             }
 
             public static SetDelegate GetSetMethodByReflection(FieldInfo fieldInfo)
             {
-                return delegate(object source, object value) { fieldInfo.SetValue(source, value); };
+                return delegate (object source, object value) { fieldInfo.SetValue(source, value); };
             }
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
@@ -1986,7 +2002,7 @@ namespace RestSharp
                 UnaryExpression instanceCast = (!IsValueType(propertyInfo.DeclaringType)) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
                 UnaryExpression valueCast = (!IsValueType(propertyInfo.PropertyType)) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
                 Action<object, object> compiled = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
-                return delegate(object source, object val) { compiled(source, val); };
+                return delegate (object source, object val) { compiled(source, val); };
             }
 
             public static SetDelegate GetSetMethodByExpression(FieldInfo fieldInfo)
@@ -1995,7 +2011,7 @@ namespace RestSharp
                 ParameterExpression value = Expression.Parameter(typeof(object), "value");
                 Action<object, object> compiled = Expression.Lambda<Action<object, object>>(
                     Assign(Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo), Expression.Convert(value, fieldInfo.FieldType)), instance, value).Compile();
-                return delegate(object source, object val) { compiled(source, val); };
+                return delegate (object source, object val) { compiled(source, val); };
             }
 
             public static BinaryExpression Assign(Expression left, Expression right)
