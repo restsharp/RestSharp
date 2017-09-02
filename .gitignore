@@ -42,3 +42,5 @@ Backup/
 *.orig
 DownloadSigned/
 RestSharp.IntegrationTests/config.json
+RestSharp.NetCore
+RestSharp/project.lock.json

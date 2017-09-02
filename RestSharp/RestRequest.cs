@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using RestSharp.Serializers;
 
-#if FRAMEWORK
+#if FRAMEWORK || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
 using RestSharp.Extensions;
 #endif
 
@@ -321,7 +321,11 @@ namespace RestSharp
         {
             // automatically create parameters from object props
             Type type = obj.GetType();
+#if NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
+            PropertyInfo[] props = type.GetTypeInfo().GetProperties();
+#else
             PropertyInfo[] props = type.GetProperties();
+#endif
 
             foreach (PropertyInfo prop in props)
             {
@@ -345,7 +349,7 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))

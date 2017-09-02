@@ -20,7 +20,7 @@ using System;
 using System.Threading;
 using System.Net;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
 using System.Threading.Tasks;
 #endif
 
@@ -182,7 +182,7 @@ namespace RestSharp
             callback(restResponse, asyncHandle);
         }
 
-#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP || NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
         /// <summary>
         /// Executes a GET-style request asynchronously, authenticating if needed
         /// </summary>

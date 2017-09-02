@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 
 #if WINDOWS_PHONE
@@ -204,16 +205,19 @@ namespace RestSharp
         /// </summary>
         public bool PreAuthenticate { get; set; }
 
-#if FRAMEWORK
+#if FRAMEWORK || (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
         /// <summary>
         /// Proxy info to be sent with request
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
+#if (NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
+#else
         /// <summary>
         /// Caching policy for requests created with this wrapper.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+#endif
 #endif
 #if NET45
         /// <summary>
@@ -478,7 +482,7 @@ namespace RestSharp
                                              Value = headerValue
                                          });
                 }
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
                 webResponse.Close();
 #else
                 webResponse.Dispose();

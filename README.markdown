@@ -1,3 +1,7 @@
+# Compile with .NET Core
+Nuget package can be found here:
+[RestSharp.NetCore 105.2.4-rc4-24214-01](https://www.nuget.org/packages/RestSharp.NetCore/105.2.4-rc4-24214-01)
+
 # RestSharp - Simple .NET REST Client [![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
 
 [![Join the chat at https://gitter.im/RestSharp/RestSharp](https://badges.gitter.im/RestSharp/RestSharp.svg)](https://gitter.im/RestSharp/RestSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

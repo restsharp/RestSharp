@@ -115,6 +115,15 @@ namespace RestSharp.Serializers
         private void Map(XContainer root, object obj)
         {
             Type objType = obj.GetType();
+#if NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6
+            IEnumerable<PropertyInfo> props = from p in objType.GetTypeInfo().GetProperties()
+                                              let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
+                                              where p.CanRead && p.CanWrite
+                                              orderby indexAttribute == null
+                                                  ? int.MaxValue
+                                                  : indexAttribute.Index
+                                              select p;
+#else
             IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
                                               let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
                                               where p.CanRead && p.CanWrite
@@ -122,6 +131,7 @@ namespace RestSharp.Serializers
                                                   ? int.MaxValue
                                                   : indexAttribute.Index
                                               select p;
+#endif
             SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
 
             foreach (PropertyInfo prop in props)
@@ -160,7 +170,7 @@ namespace RestSharp.Serializers
 
                 XName nsName = name.AsNamespaced(this.Namespace);
                 XElement element = new XElement(nsName);
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
                 if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
 #else
                 if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType || propType == typeof(string))
@@ -216,7 +226,7 @@ namespace RestSharp.Serializers
 
             if (obj is bool)
             {
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !(NETCORE50 || NETSTANDARD1_5 || NETSTANDARD1_6)
                 output = ((bool) obj).ToString(CultureInfo.InvariantCulture).ToLower();
 #else
                 output = ((bool)obj).ToString().ToLowerInvariant();                
