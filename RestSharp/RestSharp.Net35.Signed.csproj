@@ -120,11 +120,13 @@
     <Compile Include="Deserializers\JsonDeserializer.cs" />
     <Compile Include="Deserializers\DeserializeAsAttribute.cs" />
     <Compile Include="Deserializers\XmlAttributeDeserializer.cs" />
+    <Compile Include="Extensions\AssemblyHelper.cs" />
     <Compile Include="Extensions\MonoHttp\Helpers.cs" />
     <Compile Include="Extensions\MonoHttp\HtmlEncoder.cs" />
     <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
     <Compile Include="Extensions\ResponseExtensions.cs" />
     <Compile Include="Extensions\ResponseStatusExtensions.cs" />
+    <Compile Include="Extensions\UriHelper.cs" />
     <Compile Include="RestClientExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Http.Sync.cs" />

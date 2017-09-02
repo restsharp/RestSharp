@@ -318,7 +318,7 @@ namespace RestSharp
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
 
-#if NET45
+#if REMOTECERTVALIDATION
             webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
 #endif
 

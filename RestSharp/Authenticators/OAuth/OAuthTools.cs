@@ -8,11 +8,13 @@ using Windows.Security.Cryptography.Core;
 #endif
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
+#if !NETSTANDARD
 using System.Runtime.Serialization;
+#endif
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
     [Serializable]
 #endif
 #if WINDOWS_UWP
@@ -40,7 +42,7 @@ namespace RestSharp.Authenticators.OAuth
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETSTANDARD
             byte[] bytes = new byte[4];
 
             rng.GetNonZeroBytes(bytes);
@@ -338,36 +340,39 @@ namespace RestSharp.Authenticators.OAuth
             switch (signatureMethod)
             {
                 case OAuthSignatureMethod.HmacSha1:
-                {
+                    {
 #if !WINDOWS_UWP
-                    HMACSHA1 crypto = new HMACSHA1();
-                    string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                        HMACSHA1 crypto = new HMACSHA1();
+                        string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-                    crypto.Key = encoding.GetBytes(key);
-                    signature = signatureBase.HashWith(crypto);
+                        crypto.Key = encoding.GetBytes(key);
+                        signature = signatureBase.HashWith(crypto);
 #else
-                    signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));         
-#endif               
-                    break;
-                }
+                        signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));
+#endif
+                        break;
+                    }
 
                 case OAuthSignatureMethod.HmacSha256:
-                {
-                    HMACSHA256 crypto = new HMACSHA256();
-                    string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                    {
+#if !WINDOWS_UWP
+                        HMACSHA256 crypto = new HMACSHA256();
+                        string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-                    crypto.Key = encoding.GetBytes(key);
-                    signature = signatureBase.HashWith(crypto);
-
-                    break;
-                }
+                        crypto.Key = encoding.GetBytes(key);
+                        signature = signatureBase.HashWith(crypto);
+#else
+                        signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256));
+#endif
+                        break;
+                    }
 
                 case OAuthSignatureMethod.PlainText:
-                {
-                    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                    {
+                        signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-                    break;
-                }
+                        break;
+                    }
 
                 default:
                     throw new NotImplementedException("Only HMAC-SHA1 and HMAC-SHA256 are currently supported.");

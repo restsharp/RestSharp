@@ -1,0 +1,6 @@
+﻿1]
+Use ifdef REMOTECERTVALIDATION for RemoteCertificateValidationCallback
+
+2] Some frameworks are missing in project.json
+* WindowsPhone.8.0
+* WindowsPhone.8.1

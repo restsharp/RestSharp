@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>RestSharpSigned</id>
+    <version>105.2.3</version>
+    <authors>John Sheehan, RestSharp Community</authors>
+    <owners>John Sheehan, RestSharp Community</owners>
+    <description>Simple REST and HTTP API Client</description>
+    <language>en-US</language>
+    <projectUrl>http://restsharp.org</projectUrl>
+    <licenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</licenseUrl>
+    <iconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</iconUrl>
+    <tags>REST HTTP API JSON XML</tags>
+    <releaseNotes><![CDATA[
+            For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.markdown
+            ]]></releaseNotes>
+  </metadata>
+</package>
