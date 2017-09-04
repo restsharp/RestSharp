@@ -338,7 +338,7 @@ namespace RestSharp.Authenticators.OAuth
             switch (signatureMethod)
             {
                 case OAuthSignatureMethod.HmacSha1:
-                {
+                    {
 #if !WINDOWS_UWP
                     HMACSHA1 crypto = new HMACSHA1();
                     string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
@@ -346,28 +346,31 @@ namespace RestSharp.Authenticators.OAuth
                     crypto.Key = encoding.GetBytes(key);
                     signature = signatureBase.HashWith(crypto);
 #else
-                    signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));         
-#endif               
-                    break;
-                }
+                        signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));
+#endif
+                        break;
+                    }
 
                 case OAuthSignatureMethod.HmacSha256:
-                {
+                    {
+#if !WINDOWS_UWP
                     HMACSHA256 crypto = new HMACSHA256();
                     string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                     crypto.Key = encoding.GetBytes(key);
                     signature = signatureBase.HashWith(crypto);
-
-                    break;
-                }
+#else
+                        signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256));
+#endif
+                        break;
+                    }
 
                 case OAuthSignatureMethod.PlainText:
-                {
-                    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                    {
+                        signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
-                    break;
-                }
+                        break;
+                    }
 
                 default:
                     throw new NotImplementedException("Only HMAC-SHA1 and HMAC-SHA256 are currently supported.");
