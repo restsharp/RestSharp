@@ -1,4 +1,5 @@
 version: 105.0.1.{build}
+image: Visual Studio 2017
 before_build:
 - nuget restore RestSharp.sln
 - appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product Android
