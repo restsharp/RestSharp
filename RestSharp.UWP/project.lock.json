@@ -15485,9 +15485,6 @@
     ],
     "UAP,Version=v10.0.10240": []
   },
-  "packageFolders": {
-    "C:\\Users\\azima\\.nuget\\packages\\": {}
-  },
   "project": {
     "restore": {
       "projectUniqueName": "C:\\Github\\RestSharp\\RestSharp.UWP\\RestSharp.UWP.csproj",
