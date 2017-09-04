@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-#if !WINDOWS_UWP
 using System.Security.Cryptography;
-#else
-using Windows.Security.Cryptography.Core;
-#endif
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
 using System.Runtime.Serialization;
@@ -339,15 +335,11 @@ namespace RestSharp.Authenticators.OAuth
             {
                 case OAuthSignatureMethod.HmacSha1:
                 {
-#if !WINDOWS_UWP
                     HMACSHA1 crypto = new HMACSHA1();
                     string key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                     crypto.Key = encoding.GetBytes(key);
                     signature = signatureBase.HashWith(crypto);
-#else
-                    signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));         
-#endif               
                     break;
                 }
 

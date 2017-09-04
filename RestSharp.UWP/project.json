@@ -1,16 +1,92 @@
 ﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../restsharp/authenticators/HttpBasicAuthenticator.cs",
+        "../restsharp/authenticators/IAuthenticator.cs",
+        "../RestSharp/Authenticators/JwtAuthenticator.cs",
+        "../restsharp/authenticators/NtlmAuthenticator.cs",
+        "../RestSharp/Authenticators/OAuth1Authenticator.cs",
+        "../restsharp/authenticators/OAuth2Authenticator.cs",
+        "../restsharp/authenticators/oauth/extensions/CollectionExtensions.cs",
+        "../restsharp/authenticators/oauth/extensions/OAuthExtensions.cs",
+        "../restsharp/authenticators/oauth/extensions/StringExtensions.cs",
+        "../restsharp/authenticators/oauth/extensions/TimeExtensions.cs",
+        "../restsharp/authenticators/oauth/HttpPostParameter.cs",
+        "../restsharp/authenticators/oauth/HttpPostParameterType.cs",
+        "../restsharp/authenticators/oauth/OAuthParameterHandling.cs",
+        "../restsharp/authenticators/oauth/OAuthSignatureMethod.cs",
+        "../restsharp/authenticators/oauth/OAuthSignatureTreatment.cs",
+        "../restsharp/authenticators/oauth/OAuthTools.cs",
+        "../restsharp/authenticators/oauth/OAuthType.cs",
+        "../restsharp/authenticators/oauth/OAuthWebQueryInfo.cs",
+        "../restsharp/authenticators/oauth/OAuthWorkflow.cs",
+        "../restsharp/authenticators/oauth/WebPair.cs",
+        "../restsharp/authenticators/oauth/WebPairCollection.cs",
+        "../restsharp/authenticators/oauth/WebParameter.cs",
+        "../restsharp/authenticators/oauth/WebParameterCollection.cs",
+        "../restsharp/authenticators/SimpleAuthenticator.cs",
+        "../restsharp/deserializers/DeserializeAsAttribute.cs",
+        "../restsharp/deserializers/DotNetXmlDeserializer.cs",
+        "../restsharp/deserializers/IDeserializer.cs",
+        "../restsharp/deserializers/JsonDeserializer.cs",
+        "../restsharp/deserializers/XmlAttributeDeserializer.cs",
+        "../restsharp/deserializers/XmlDeserializer.cs",
+        "../RestSharp/Enum.cs",
+        "../restsharp/extensions/MiscExtensions.cs",
+        "../RestSharp/Extensions/MonoHttp/Helpers.cs",
+        "../RestSharp/Extensions/MonoHttp/HtmlEncoder.cs",
+        "../RestSharp/Extensions/MonoHttp/HttpUtility.cs",
+        "../restsharp/extensions/ReflectionExtensions.cs",
+        "../restsharp/extensions/ResponseExtensions.cs",
+        "../RestSharp/Extensions/ResponseStatusExtensions.cs",
+        "../restsharp/extensions/StringExtensions.cs",
+        "../restsharp/extensions/XmlExtensions.cs",
+        "../RestSharp/FileParameter.cs",
+        "../RestSharp/Http.Async.cs",
+        "../RestSharp/Http.cs",
+        "../RestSharp/Http.Sync.cs",
+        "../RestSharp/HttpCookie.cs",
+        "../RestSharp/HttpFile.cs",
+        "../RestSharp/HttpHeader.cs",
+        "../RestSharp/HttpParameter.cs",
+        "../RestSharp/HttpResponse.cs",
+        "../RestSharp/IHttp.cs",
+        "../RestSharp/IHttpFactory.cs",
+        "../RestSharp/IHttpResponse.cs",
+        "../RestSharp/IRestClient.cs",
+        "../RestSharp/IRestRequest.cs",
+        "../RestSharp/IRestResponse.cs",
+        "../RestSharp/Parameter.cs",
+        "../RestSharp/RestClient.Async.cs",
+        "../RestSharp/RestClient.cs",
+        "../RestSharp/RestClient.Sync.cs",
+        "../RestSharp/RestClientExtensions.cs",
+        "../RestSharp/RestRequest.cs",
+        "../RestSharp/RestRequestAsyncHandle.cs",
+        "../RestSharp/RestResponse.cs",
+        "../RestSharp/RestResponseCookie.cs",
+        "../restsharp/serializers/DotNetXmlSerializer.cs",
+        "../restsharp/serializers/ISerializer.cs",
+        "../restsharp/serializers/JsonSerializer.cs",
+        "../restsharp/serializers/SerializeAsAttribute.cs",
+        "../restsharp/serializers/XmlSerializer.cs",
+        "../RestSharp/SharedAssemblyInfo.cs",
+        "../restsharp/SimpleJson.cs",
+        "../restsharp/validation/Require.cs",
+        "../restsharp/validation/Validate.cs"
+      ]
+    }
+  },
   "dependencies": {
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0"
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "System.Security.Cryptography.Algorithms": "4.3.0",
+    "System.Security.Cryptography.Primitives": "4.3.0"
   },
   "frameworks": {
-    "uap10.0": {}
-  },
-  "runtimes": {
-    "win10-arm": {},
-    "win10-arm-aot": {},
-    "win10-x86": {},
-    "win10-x86-aot": {},
-    "win10-x64": {},
-    "win10-x64-aot": {}
+    "uap10.0": {
+      "buildOptions": { "define": [ "WINDOWS_UWP", "NETFX_CORE" ] }
+    }
   }
 }
