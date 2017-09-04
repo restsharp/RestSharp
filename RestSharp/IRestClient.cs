@@ -64,6 +64,8 @@ namespace RestSharp
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
+        IRestResponse<T> Deserialize<T>(IRestResponse response);
+
 #if FRAMEWORK
         IRestResponse Execute(IRestRequest request);
 

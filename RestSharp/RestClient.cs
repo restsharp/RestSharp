@@ -233,6 +233,11 @@ namespace RestSharp
             this.RemoveDefaultParameter("Accept");
         }
 
+        public IRestResponse<T> Deserialize<T>(IRestResponse response) 
+        {
+            return Deserialize<T>(response.Request, response);
+        }
+
         /// <summary>
         /// Retrieve the handler for the specified MIME content type
         /// </summary>
