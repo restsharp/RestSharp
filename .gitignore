@@ -42,3 +42,5 @@ Backup/
 *.orig
 DownloadSigned/
 RestSharp.IntegrationTests/config.json
+/.idea/.idea.RestSharp
+/.vs/RestSharp/v15/sqlite3
