@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
+#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP && !NETCORE1
     [Serializable]
 #endif
 #if WINDOWS_UWP
@@ -43,7 +43,11 @@ namespace RestSharp.Authenticators.OAuth
 #if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
             byte[] bytes = new byte[4];
 
+#if NETCORE1
+            rng.GetBytes(bytes);
+#else
             rng.GetNonZeroBytes(bytes);
+#endif
             random = new Random(BitConverter.ToInt32(bytes, 0));
 #else
             random = new Random();
@@ -347,7 +351,7 @@ namespace RestSharp.Authenticators.OAuth
                     signature = signatureBase.HashWith(crypto);
 #else
                     signature = signatureBase.HashWith(HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1));         
-#endif               
+#endif
                     break;
                 }
 

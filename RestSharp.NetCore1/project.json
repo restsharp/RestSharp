@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+	"System.Collections.Specialized": "4.0.1",
+	"System.Xml.XmlSerializer": "4.0.11",
+	"System.Net.Requests": "4.0.11",
+	"System.Reflection.TypeExtensions": "4.1.0",
+	"System.Runtime.Serialization.Primitives": "4.1.1"
+  },
+
+  "runtimes": {
+    "win7-x64": { }
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": { }
+  }
+}
