@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": {
-    "Microsoft.CSharp": "4.4.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.4.0"
   },
   "frameworks": {

@@ -1,7 +1,7 @@
 version: 105.0.1.{build}
 image: Visual Studio 2017
 before_build:
-- which msbuild
+- which msbuild.exe
 - nuget restore RestSharp.sln
 branches:
   only:
