@@ -19,10 +19,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{C5B02FAA-6A0A-4BF9-BBD4-82FD2DCBF669}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
-		CONTRIBUTING.markdown = CONTRIBUTING.markdown
-		README.markdown = README.markdown
+		CONTRIBUTING.md = CONTRIBUTING.md
+		README.md = README.md
 		readme.txt = readme.txt
-		releasenotes.markdown = releasenotes.markdown
+		releasenotes.md = releasenotes.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Net35", "RestSharp\RestSharp.Net35.csproj", "{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}"
