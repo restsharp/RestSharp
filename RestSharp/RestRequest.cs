@@ -458,6 +458,53 @@ namespace RestSharp
                                      });
         }
 
+        public IRestRequest AddOrUpdateParameter(Parameter p)
+        {
+            if (Parameters.Any(param => param.Name == p.Name))
+            {
+                var parameter = this.Parameters.First(param => param.Name == p.Name);
+                parameter.Value = p.Value;
+                return this;
+            }
+
+            this.Parameters.Add(p);
+            return this;
+        }
+
+        public IRestRequest AddOrUpdateParameter(string name, object value)
+        {
+            return this.AddOrUpdateParameter(new Parameter
+            {
+                Name = name,
+                Value = value,
+                Type = ParameterType.GetOrPost
+            });
+
+        }
+
+        public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
+        {
+            return this.AddOrUpdateParameter(new Parameter
+            {
+                Name = name,
+                Value = value,
+                Type = type
+            });
+
+        }
+
+        public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
+        {
+            return this.AddOrUpdateParameter(new Parameter
+            {
+                Name = name,
+                Value = value,
+                ContentType = contentType,
+                Type = type
+            });
+
+        }
+
         /// <summary>
         /// Shortcut to AddParameter(name, value, HttpHeader) overload
         /// </summary>
