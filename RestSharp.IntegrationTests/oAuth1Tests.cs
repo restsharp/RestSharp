@@ -381,5 +381,33 @@ namespace RestSharp.IntegrationTests
             Assert.False(response.Content.Contains("\"stat\":\"fail\""));
             Assert.True(response.Content.Contains("\"stat\":\"ok\""));
         }
+
+        [Test]
+        public void Can_Authenticate_OAuth1_With_Querystring_Parameters()
+        {
+            const string consumerKey = "enterConsumerKeyHere";
+            const string consumerSecret = "enterConsumerSecretHere";
+            const string baseUrl = "http://restsharp.org";
+            var expected = new List<string>
+            {
+                "oauth_consumer_key",
+                "oauth_nonce",
+                "oauth_signature_method",
+                "oauth_timestamp",
+                "oauth_version",
+                "oauth_signature"
+            };
+
+            RestClient client = new RestClient(baseUrl);
+            RestRequest request = new RestRequest(Method.GET);
+            var authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
+            authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
+            authenticator.Authenticate(client, request);
+
+            var requestUri = client.BuildUri(request);
+            var actual = HttpUtility.ParseQueryString(requestUri.Query).AllKeys.ToList();
+
+            Assert.IsTrue(actual.SequenceEqual(expected));
+        }
     }
 }

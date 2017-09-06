@@ -33,6 +33,10 @@ using System.Net.Browser;
 using System.Threading;
 #endif
 
+#if WINDOWS_UWP
+using Windows.Networking;
+#endif
+
 namespace RestSharp
 {
     /// <summary>
@@ -183,7 +187,7 @@ namespace RestSharp
 
             if (this.HasBody || this.HasFiles || this.AlwaysMultipartFormData)
             {
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !WINDOWS_UWP
                 webRequest.ContentLength = this.CalculateContentLength();
 #endif
                 asyncResult = webRequest.BeginGetRequestStream(
@@ -346,7 +350,11 @@ namespace RestSharp
 
             if (raw != null)
             {
+#if !WINDOWS_UWP
                 raw.Close();
+#else
+                raw.Dispose();
+#endif
             }
         }
 
@@ -417,8 +425,10 @@ namespace RestSharp
 
             webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
 
-#if !WINDOWS_PHONE && !SILVERLIGHT
+#if !WINDOWS_PHONE && !SILVERLIGHT && !WINDOWS_UWP
+            
             webRequest.PreAuthenticate = this.PreAuthenticate;
+            webRequest.Pipelined = this.Pipelined;
 #endif
             this.AppendHeaders(webRequest);
             this.AppendCookies(webRequest);
@@ -426,7 +436,7 @@ namespace RestSharp
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
-#if !WINDOWS_PHONE
+#if !WINDOWS_PHONE && !WINDOWS_UWP
             // WP7 doesn't as of Beta doesn't support a way to set this value either directly
             // or indirectly
             if (!this.HasFiles && !this.AlwaysMultipartFormData)
@@ -440,7 +450,7 @@ namespace RestSharp
                 webRequest.Credentials = this.Credentials;
             }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_UWP
             if (this.UserAgent.HasValue())
             {
                 webRequest.UserAgent = this.UserAgent;
@@ -481,10 +491,15 @@ namespace RestSharp
             {
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
+
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !WINDOWS_UWP
             webRequest.AllowAutoRedirect = this.FollowRedirects;
+
+#endif
+#if NET45
+            webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
 #endif
             return webRequest;
         }

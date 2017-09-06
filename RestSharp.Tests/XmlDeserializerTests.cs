@@ -81,6 +81,19 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_When_RootElement_Deeper_Then_One()
+        {
+            const string content = "<root><subroot><subsubroot><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></subsubroot></subroot></root>";
+            XmlDeserializer xml = new XmlDeserializer() { RootElement = "subsubroot" };
+            SimpleStruct output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+
+            Assert.NotNull(output);
+            Assert.AreEqual("oneOneOne", output.One);
+            Assert.AreEqual("twoTwoTwo", output.Two);
+            Assert.AreEqual(3, output.Three);
+        }
+
+        [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             string xmlpath = this.PathFor("xmllists.xml");
@@ -644,6 +657,67 @@ namespace RestSharp.Tests
             Assert.Null(payload.NullableDateTimeOffsetWithNull);
             Assert.True(payload.NullableDateTimeOffsetWithValue.HasValue);
             Assert.AreEqual(nullableDateTimeOffsetWithValue, payload.NullableDateTimeOffsetWithValue);
+        }
+
+        [Test]
+        public void Can_Deserialize_ElementNamedValue()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("ValueCollection");
+
+            string valueName = "First moon landing events";
+            root.Add(new XElement("Value", valueName));
+
+            var xmlCollection = new XElement("Values");
+
+            var first = new XElement("Value");
+            first.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 20, 20, 18, 00, DateTimeKind.Utc)));
+            xmlCollection.Add(first);
+
+            var second = new XElement("Value");
+            second.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 21, 2, 56, 15, DateTimeKind.Utc)));
+            xmlCollection.Add(second);
+
+            root.Add(xmlCollection);
+            doc.Add(root);
+
+            RestResponse response = new RestResponse { Content = doc.ToString() };
+            XmlDeserializer d = new XmlDeserializer();
+            ValueCollectionForXml valueCollection = d.Deserialize<ValueCollectionForXml>(response);
+
+            Assert.AreEqual(valueName, valueCollection.Value);
+            Assert.AreEqual(2, valueCollection.Values.Count);
+            Assert.AreEqual(new DateTime(1969, 7, 20, 20, 18, 00, DateTimeKind.Utc), valueCollection.Values.First().Timestamp.ToUniversalTime());
+        }
+
+        [Test]
+        public void Can_Deserialize_AttributeNamedValue()
+        {
+            XDocument doc = new XDocument();
+            XElement root = new XElement("ValueCollection");
+
+            var xmlCollection = new XElement("Values");
+
+            var first = new XElement("Value");
+            first.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 20, 20, 18, 00, DateTimeKind.Utc)));
+            first.Add(new XAttribute("Value", "Eagle landed"));
+            
+            xmlCollection.Add(first);
+
+            var second = new XElement("Value");
+            second.Add(new XAttribute("Timestamp", new DateTime(1969, 7, 21, 2, 56, 15, DateTimeKind.Utc)));
+            second.Add(new XAttribute("Value", "First step"));
+            xmlCollection.Add(second);
+
+            root.Add(xmlCollection);
+            doc.Add(root);
+
+            RestResponse response = new RestResponse { Content = doc.ToString() };
+            XmlDeserializer d = new XmlDeserializer();
+            ValueCollectionForXml valueCollection = d.Deserialize<ValueCollectionForXml>(response);
+
+            Assert.AreEqual(2, valueCollection.Values.Count);
+            Assert.AreEqual("Eagle landed", valueCollection.Values.First().Value);
         }
 
         private static string CreateUnderscoresXml()

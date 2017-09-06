@@ -122,6 +122,8 @@ namespace RestSharp.Extensions
         /// <returns>DateTime</returns>
         public static DateTime ParseJsonDate(this string input, CultureInfo culture)
         {
+            const long maxAllowedTimestamp = 253402300799;
+            
             input = input.Replace("\n", "");
             input = input.Replace("\r", "");
             input = input.RemoveSurroundingQuotes();
@@ -132,7 +134,10 @@ namespace RestSharp.Extensions
             {
                 DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-                return epoch.AddSeconds(unix);
+                if (unix > maxAllowedTimestamp)
+                    return epoch.AddMilliseconds(unix);
+                else
+                    return epoch.AddSeconds(unix);
             }
 
             if (input.Contains("/Date("))
@@ -278,10 +283,18 @@ namespace RestSharp.Extensions
 
                         if (restOfWord.IsUpperCase())
                         {
+#if !WINDOWS_UWP
                             restOfWord = restOfWord.ToLower(culture);
+#else
+                            restOfWord = restOfWord.ToLower();
+#endif
                         }
 
+#if !WINDOWS_UWP                        
                         char firstChar = char.ToUpper(word[0], culture);
+#else
+                        char firstChar = char.ToUpper(word[0]);
+#endif
 
                         words[i] = string.Concat(firstChar, restOfWord);
                     }
@@ -290,7 +303,11 @@ namespace RestSharp.Extensions
                 return string.Join(joinString, words);
             }
 
+#if !WINDOWS_UWP
             return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
+#else
+            return string.Concat(words[0].Substring(0, 1).ToUpper(), words[0].Substring(1));
+#endif
         }
 
         /// <summary>
@@ -401,19 +418,31 @@ namespace RestSharp.Extensions
             yield return name.ToCamelCase(culture);
 
             // try lower cased name
+#if !WINDOWS_UWP
             yield return name.ToLower(culture);
+#else
+            yield return name.ToLowerInvariant();
+#endif
 
             // try name with underscores
             yield return name.AddUnderscores();
 
             // try name with underscores with lower case
+#if !WINDOWS_UWP
             yield return name.AddUnderscores().ToLower(culture);
+#else
+            yield return name.AddUnderscores().ToLowerInvariant();
+#endif
 
             // try name with dashes
             yield return name.AddDashes();
 
             // try name with dashes with lower case
+#if !WINDOWS_UWP
             yield return name.AddDashes().ToLower(culture);
+#else
+            yield return name.AddDashes().ToLowerInvariant();
+#endif
 
             // try name with underscore prefix
             yield return name.AddUnderscorePrefix();
@@ -425,7 +454,11 @@ namespace RestSharp.Extensions
             yield return name.AddSpaces();
 
             // try name with spaces with lower case
+#if !WINDOWS_UWP
             yield return name.AddSpaces().ToLower(culture);
+#else
+            yield return name.AddSpaces().ToLowerInvariant();
+#endif
         }
     }
 }

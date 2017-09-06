@@ -8,10 +8,15 @@ it you may remove it from your installed packages.
 There is one breaking change: the default Json*Serializer* is no longer 
 compatible with Json.NET. To use Json.NET for serialization, copy the code 
 from https://github.com/restsharp/RestSharp/blob/86b31f9adf049d7fb821de8279154f41a17b36f7/RestSharp/Serializers/JsonSerializer.cs 
-and register it with your client:
+and register it with your request:
 
-var client = new RestClient();
-client.JsonSerializer = new YourCustomSerializer();
+ var request = new RestRequest();
+ request.JsonSerializer = new Shared.JsonSerializer();
+ 
+then you can use it in a client:
+ 
+ var client = new RestClient();
+ client.Post(request);
 
 The default Json*Deserializer* is mostly compatible, but it does not support
 all features which Json.NET has (like the ability to support a custom [JsonConverter]

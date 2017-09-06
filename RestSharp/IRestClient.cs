@@ -23,7 +23,7 @@ using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 #if FRAMEWORK
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 #endif
 
 namespace RestSharp
@@ -63,6 +64,8 @@ namespace RestSharp
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
+        IRestResponse<T> Deserialize<T>(IRestResponse response);
+
 #if FRAMEWORK
         IRestResponse Execute(IRestRequest request);
 
@@ -80,11 +83,21 @@ namespace RestSharp
         IWebProxy Proxy { get; set; }
 
         RequestCachePolicy CachePolicy { get; set; }
+
+        bool Pipelined { get; set; }
 #endif
 
         bool FollowRedirects { get; set; }
 
         Uri BuildUri(IRestRequest request);
+
+#if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        /// overriding certificate errors in the scope of a request.
+        /// </summary>
+        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
 
         /// <summary>
         /// Executes a GET-style request and callback asynchronously, authenticating if needed
@@ -140,7 +153,7 @@ namespace RestSharp
         IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
 #endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8
+#if NET4 || MONODROID || MONOTOUCH || WP8 || WINDOWS_UWP
         /// <summary>
         /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>

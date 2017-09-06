@@ -144,7 +144,7 @@ namespace RestSharp
                                ContentLength = fileLength,
                                Writer = s =>
                                         {
-                                            using (StreamReader file = new StreamReader(path))
+                                            using (StreamReader file = new StreamReader( new FileStream(path, FileMode.Open)))
                                             {
                                                 file.BaseStream.CopyTo(s);
                                             }
@@ -172,15 +172,17 @@ namespace RestSharp
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null)
+        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null)
         {
             return this.AddFile(new FileParameter
                                 {
                                     Name = name,
                                     Writer = writer,
                                     FileName = fileName,
+                                    ContentLength = contentLength,
                                     ContentType = contentType
                                 });
         }
@@ -343,9 +345,15 @@ namespace RestSharp
                 {
                     Type elementType = propType.GetElementType();
 
+#if !WINDOWS_UWP
                     if (((Array) val).Length > 0 &&
                         elementType != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
+#else
+                    if (((Array)val).Length > 0 &&
+                        elementType != null &&
+                        (elementType.GetTypeInfo().IsPrimitive || elementType.GetTypeInfo().IsValueType || elementType == typeof(string)))
+#endif
                     {
                         // convert the array to an array of strings
                         string[] values = (from object item in ((Array) val)
@@ -450,6 +458,53 @@ namespace RestSharp
                                      });
         }
 
+        public IRestRequest AddOrUpdateParameter(Parameter p)
+        {
+            if (Parameters.Any(param => param.Name == p.Name))
+            {
+                var parameter = this.Parameters.First(param => param.Name == p.Name);
+                parameter.Value = p.Value;
+                return this;
+            }
+
+            this.Parameters.Add(p);
+            return this;
+        }
+
+        public IRestRequest AddOrUpdateParameter(string name, object value)
+        {
+            return this.AddOrUpdateParameter(new Parameter
+            {
+                Name = name,
+                Value = value,
+                Type = ParameterType.GetOrPost
+            });
+
+        }
+
+        public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
+        {
+            return this.AddOrUpdateParameter(new Parameter
+            {
+                Name = name,
+                Value = value,
+                Type = type
+            });
+
+        }
+
+        public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
+        {
+            return this.AddOrUpdateParameter(new Parameter
+            {
+                Name = name,
+                Value = value,
+                ContentType = contentType,
+                Type = type
+            });
+
+        }
+
         /// <summary>
         /// Shortcut to AddParameter(name, value, HttpHeader) overload
         /// </summary>
@@ -489,6 +544,17 @@ namespace RestSharp
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
         public IRestRequest AddUrlSegment(string name, string value)
+        {
+            return this.AddParameter(name, value, ParameterType.UrlSegment);
+        }
+
+        /// <summary>
+        /// Shortcut to AddParameter(name, value, UrlSegment) overload
+        /// </summary>
+        /// <param name="name">Name of the segment to add</param>
+        /// <param name="value">Value of the segment to add</param>
+        /// <returns></returns>
+        public IRestRequest AddUrlSegment(string name, object value)
         {
             return this.AddParameter(name, value, ParameterType.UrlSegment);
         }
@@ -536,8 +602,8 @@ namespace RestSharp
         public string Resource { get; set; }
 
         /// <summary>
-        /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
-        /// By default XmlSerializer is used.
+        /// Determines how to serialize the request body.
+        /// By default Xml is used.
         /// </summary>
         public DataFormat RequestFormat { get; set; }
 

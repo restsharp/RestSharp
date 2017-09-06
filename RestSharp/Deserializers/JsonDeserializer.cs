@@ -62,13 +62,19 @@ namespace RestSharp.Deserializers
 
             foreach (PropertyInfo prop in props)
             {
-                Type type = prop.PropertyType;
-                object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
                 string name;
-
+                Type type = prop.PropertyType;
+#if !WINDOWS_UWP
+                object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);               
+                
                 if (attributes.Length > 0)
-                {
-                    DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes[0];
+#else
+                IEnumerable<Attribute> attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+
+                if (attributes.Count() > 0)
+#endif
+                {                    
+                    DeserializeAsAttribute attribute = (DeserializeAsAttribute)attributes.First();
                     name = attribute.Name;
                 }
                 else
@@ -123,7 +129,12 @@ namespace RestSharp.Deserializers
 
                 object item;
 
+#if !WINDOWS_UWP
                 if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+#else
+                
+                if (valueType.GetTypeInfo().IsGenericType && valueType.GetTypeInfo().GetGenericTypeDefinition() == typeof(List<>))    
+#endif
                 {
                     item = this.BuildList(valueType, child.Value);
                 }
@@ -143,14 +154,22 @@ namespace RestSharp.Deserializers
             IList list = (IList) Activator.CreateInstance(type);
             Type listType = type.GetInterfaces()
                                 .First
+#if !WINDOWS_UWP
                 (x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
+#else
+                (x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
+#endif
             Type itemType = listType.GetGenericArguments()[0];
 
             if (parent is IList)
             {
                 foreach (object element in (IList) parent)
                 {
+#if !WINDOWS_UWP
                     if (itemType.IsPrimitive)
+#else
+                    if (itemType.GetTypeInfo().IsPrimitive)
+#endif
                     {
                         object item = this.ConvertValue(itemType, element);
 
@@ -193,7 +212,11 @@ namespace RestSharp.Deserializers
             string stringValue = Convert.ToString(value, this.Culture);
 
             // check for nullable and extract underlying type
+#if !WINDOWS_UWP
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+#else
+            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+#endif
             {
                 // Since the type is nullable and no value is provided return null
                 if (string.IsNullOrEmpty(stringValue))
@@ -213,6 +236,7 @@ namespace RestSharp.Deserializers
                 type = value.GetType();
             }
 
+#if !WINDOWS_UWP
             if (type.IsPrimitive)
             {
                 return value.ChangeType(type, this.Culture);
@@ -222,6 +246,17 @@ namespace RestSharp.Deserializers
             {
                 return type.FindEnumValue(stringValue, this.Culture);
             }
+#else
+            if (type.GetTypeInfo().IsPrimitive)
+            {
+                return value.ChangeType(type, this.Culture);
+            }
+
+            if (type.GetTypeInfo().IsEnum)
+            {
+                return type.FindEnumValue(stringValue, this.Culture);
+            }
+#endif
 
             if (type == typeof(Uri))
             {
@@ -290,9 +325,20 @@ namespace RestSharp.Deserializers
                 // This should handle ISO 8601 durations
                 return XmlConvert.ToTimeSpan(stringValue);
             }
+#if !WINDOWS_UWP
             else if (type.IsGenericType)
+#else
+            else if (type.GetTypeInfo().IsGenericType)
+#endif
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
+
+                if (genericTypeDef == typeof(IEnumerable<>))
+                {
+                    Type itemType = type.GetGenericArguments()[0];
+                    Type listType = typeof(List<>).MakeGenericType(itemType);
+                    return this.BuildList(listType, value);
+                }
 
                 if (genericTypeDef == typeof(List<>))
                 {

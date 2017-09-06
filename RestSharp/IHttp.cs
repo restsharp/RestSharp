@@ -24,6 +24,7 @@ using System.Text;
 
 #if FRAMEWORK
 using System.Net.Cache;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
@@ -50,6 +51,8 @@ namespace RestSharp
 
 #if !SILVERLIGHT
         bool FollowRedirects { get; set; }
+
+        bool Pipelined { get; set; }
 #endif
 
 #if FRAMEWORK
@@ -129,6 +132,9 @@ namespace RestSharp
         HttpResponse AsGet(string httpMethod);
 
         IWebProxy Proxy { get; set; }
+#endif
+#if NET45
+        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 #endif
     }
 }

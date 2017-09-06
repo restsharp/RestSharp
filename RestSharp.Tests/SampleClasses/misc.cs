@@ -79,6 +79,18 @@ namespace RestSharp.Tests.SampleClasses
         }
     }
 
+    public class ValueCollectionForXml
+    {
+        public string Value { get; set; }
+        public List<ValueForXml> Values { get; set; }
+    }
+
+    public class ValueForXml
+    {
+        public DateTime Timestamp { get; set; }
+        public string Value { get; set; }
+    }
+
     public class IncomingInvoice
     {
         public int ConceptId { get; set; }

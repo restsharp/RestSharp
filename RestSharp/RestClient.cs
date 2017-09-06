@@ -30,7 +30,9 @@ using RestSharp.Extensions;
 #if FRAMEWORK
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 #endif
+
 
 namespace RestSharp
 {
@@ -39,8 +41,12 @@ namespace RestSharp
     /// </summary>
     public partial class RestClient : IRestClient
     {
-        // silverlight friendly way to get current version
-        private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
+        // silverlight friendly way to get current version      
+#if !WINDOWS_UWP
+        private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
+#else
+        private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;
+#endif
 
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
@@ -65,6 +71,8 @@ namespace RestSharp
         /// The cache policy to use for requests initiated by this client instance.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+
+        public bool Pipelined { get; set; }
 #endif
 
         /// <summary>
@@ -115,6 +123,14 @@ namespace RestSharp
         public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
+
+#if NET45
+        /// <summary>
+        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        /// overriding certificate errors in the scope of a request.
+        /// </summary>
+        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+#endif
 
         /// <summary>
         /// Default constructor that registers default content handlers
@@ -185,7 +201,7 @@ namespace RestSharp
         {
             this.ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*" && !this.structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
+            if (contentType != "*" && !structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
@@ -215,6 +231,11 @@ namespace RestSharp
             this.ContentHandlers.Clear();
             this.AcceptTypes.Clear();
             this.RemoveDefaultParameter("Accept");
+        }
+
+        public IRestResponse<T> Deserialize<T>(IRestResponse response) 
+        {
+            return Deserialize<T>(response.Request, response);
         }
 
         /// <summary>
@@ -247,7 +268,7 @@ namespace RestSharp
             }
 
             // https://tools.ietf.org/html/rfc6839#page-4
-            Match structuredSyntaxSuffixMatch = this.structuredSyntaxSuffixRegex.Match(contentType);
+            Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
 
             if (structuredSyntaxSuffixMatch.Success)
             {
@@ -272,9 +293,9 @@ namespace RestSharp
 
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 #else
-        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
 
-        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 #endif
 
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
@@ -422,6 +443,7 @@ namespace RestSharp
             http.ResponseWriter = request.ResponseWriter;
             http.CookieContainer = this.CookieContainer;
 
+
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (Parameter p in this.DefaultParameters)
             {
@@ -470,6 +492,7 @@ namespace RestSharp
 
 #if !SILVERLIGHT
             http.FollowRedirects = this.FollowRedirects;
+
 #endif
 
 #if FRAMEWORK
@@ -480,6 +503,7 @@ namespace RestSharp
 
             http.MaxRedirects = this.MaxRedirects;
             http.CachePolicy = this.CachePolicy;
+            http.Pipelined = this.Pipelined;
 #endif
 
             if (request.Credentials != null)
@@ -572,6 +596,9 @@ namespace RestSharp
 #if FRAMEWORK
             this.ConfigureProxy(http);
 #endif
+#if NET45
+            http.RemoteCertificateValidationCallback = this.RemoteCertificateValidationCallback;
+#endif
         }
 
 #if FRAMEWORK
@@ -597,6 +624,7 @@ namespace RestSharp
                                             RawBytes = httpResponse.RawBytes,
                                             ResponseStatus = httpResponse.ResponseStatus,
                                             ResponseUri = httpResponse.ResponseUri,
+                                            ProtocolVersion = httpResponse.ProtocolVersion,
                                             Server = httpResponse.Server,
                                             StatusCode = httpResponse.StatusCode,
                                             StatusDescription = httpResponse.StatusDescription,

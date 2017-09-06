@@ -158,9 +158,10 @@ namespace RestSharp
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
         /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType = null);
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
 
         /// <summary>
         /// Add bytes to the Files collection as if it was a file of specific type
@@ -274,6 +275,50 @@ namespace RestSharp
         /// <param name="type">The type of parameter to add</param>
         /// <returns>This request</returns>
         IRestRequest AddParameter(string name, object value, string contentType, ParameterType type);
+
+        /// <summary>
+        /// Add or update the parameter to the request
+        /// </summary>
+        /// <param name="p">Parameter to add</param>
+        /// <returns></returns>
+        IRestRequest AddOrUpdateParameter(Parameter p);
+
+        /// <summary>
+        /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        /// </summary>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <returns>This request</returns>
+        IRestRequest AddOrUpdateParameter(string name, object value);
+
+        /// <summary>
+        /// Adds a parameter to the request. There are five types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// </summary>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="type">The type of parameter to add</param>
+        /// <returns>This request</returns>
+        IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type);
+
+        /// <summary>
+        /// Adds a parameter to the request. There are five types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// </summary>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="contentType">Content-Type of the parameter</param>
+        /// <param name="type">The type of parameter to add</param>
+        /// <returns>This request</returns>
+        IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type);
 
         /// <summary>
         /// Shortcut to AddParameter(name, value, HttpHeader) overload

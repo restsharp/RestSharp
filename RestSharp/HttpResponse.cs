@@ -113,5 +113,11 @@ namespace RestSharp
         /// Exception thrown when error is encountered.
         /// </summary>
         public Exception ErrorException { get; set; }
+
+        /// <summary>
+        /// The HTTP protocol version (1.0, 1.1, etc)
+        /// </summary>
+        /// <remarks>Only set when underlying framework supports it.</remarks>
+        public Version ProtocolVersion { get; set; }
     }
 }

@@ -139,7 +139,13 @@ namespace RestSharp
 
         partial void AddSyncHeaderActions()
         {
-            this.restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
+            //this.restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
+            this.restrictedHeaderActions.Add("Connection", (r, v) => {
+                if (v.ToLower().Contains("keep-alive"))
+                    r.KeepAlive = true; //if a user sets the connection header explicitly to "keep-alive" then we set the field on HttpWebRequest
+                else
+                    r.KeepAlive = false; //if "Connection" is specified as anything else, we turn off keep alive functions
+            });
             this.restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
             this.restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
             this.restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
@@ -311,6 +317,10 @@ namespace RestSharp
             {
                 webRequest.MaximumAutomaticRedirections = this.MaxRedirects.Value;
             }
+
+#if NET45
+            webRequest.ServerCertificateValidationCallback = this.RemoteCertificateValidationCallback;
+#endif
 
             return webRequest;
         }

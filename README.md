@@ -1,20 +1,25 @@
-# RestSharp - Simple .NET REST Client [![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
+# RestSharp - Simple .NET REST Client 
 
-### [Official Site/Blog][1] - [@RestSharp][2]  
+[![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
+
+[![Join the chat at https://gitter.im/RestSharp/RestSharp](https://badges.gitter.im/RestSharp/RestSharp.svg)](https://gitter.im/RestSharp/RestSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+### [Official Site][1] - [@RestSharp][2]  
+
 ### License: Apache License 2.0
 
 ### Features
 
-* Supports .NET 3.5+, Silverlight 5, Windows Phone 8, Mono, MonoTouch, Mono for Android
+* Supports .NET 3.5+, Mono, Mono for Android, UWP
 * Easy installation using [NuGet](http://nuget.org/packages/RestSharp) for most .NET flavors
 * Supports strong naming using [NuGet](http://nuget.org/packages/RestSharpSigned) for most .NET flavors
 * Automatic XML and JSON deserialization
 * Supports custom serialization and deserialization via ISerializer and IDeserializer
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
-* GET, POST, PUT, HEAD, OPTIONS, DELETE supported
+* GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE supported
 * Other non-standard HTTP methods also supported
-* oAuth 1, oAuth 2, Basic, NTLM and Parameter-based Authenticators included
+* OAuth 1, OAuth 2, Basic, NTLM and Parameter-based Authenticators included
 * Supports custom authentication schemes via IAuthenticator
 * Multi-part form/file uploads
 * T4 Helper to generate C# classes from an XML document

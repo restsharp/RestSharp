@@ -129,15 +129,19 @@ namespace RestSharp.Extensions.MonoHttp
                 return value;
             }
 
-            MemoryStream result = new MemoryStream();
-            int length = value.Length;
+            byte[] bytes;
 
-            for (int i = 0; i < length; i++)
+            using (MemoryStream result = new MemoryStream())
             {
-                UrlPathEncodeChar(value[i], result);
-            }
+                int length = value.Length;
 
-            byte[] bytes = result.ToArray();
+                for (int i = 0; i < length; i++)
+                {
+                    UrlPathEncodeChar(value[i], result);
+                }
+
+                bytes = result.ToArray();
+            }
 
             return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
         }
@@ -440,10 +444,10 @@ namespace RestSharp.Extensions.MonoHttp
                             state = 0;
                             entity.Length = 0;
                             haveTrailingDigits = false;
-                        }
-                        else if (isHexValue && Uri.IsHexDigit(c))
+                        }                                                
+                        else if (isHexValue && IsHexDigit(c))
                         {
-                            number = number * 16 + Uri.FromHex(c);
+                            number = number * 16 + FromHex(c);
                             haveTrailingDigits = true;
                         }
                         else if (char.IsDigit(c))
@@ -482,6 +486,17 @@ namespace RestSharp.Extensions.MonoHttp
             }
 
             return output.ToString();
+        }
+
+        internal static int FromHex(char c)
+        {
+            return int.Parse(Convert.ToString(c), System.Globalization.NumberStyles.HexNumber);
+        }
+
+        internal static bool IsHexDigit(char c)
+        {
+            String hexValues = "0123456789abcdefABCDEF" ;           
+            return hexValues.IndexOf(c) >= 0; //returns -1 if not found
         }
 
         internal static bool NotEncoded(char c)
