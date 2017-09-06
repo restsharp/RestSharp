@@ -825,6 +825,131 @@ namespace RestSharp.Tests
             Assert.IsNull(dictionary["Null"]);
         }
 
+        [Test]
+        public void Does_Not_ToString_Complex_Objects_During_Deserialization()
+        {
+            string complexObjectData = SimpleJson.SerializeObject(Nested.Build(levels: 4));
+            JsonObject intermediateDeserializedForm = SimpleJson.DeserializeObject(complexObjectData) as JsonObject;
+            ToStringWatcher watcher = new ToStringWatcher(intermediateDeserializedForm);
+            Nested deserializedData = new JsonDeserializer().ConvertValue(typeof(Nested), watcher.Root) as Nested;
+
+            Assert.IsNotNull(deserializedData);
+            deserializedData.AssertStructureIsCorrect(levels: 4);
+            Assert.AreEqual(0, watcher.ToStringCount);
+        }
+
+        class ToStringWatcher
+        {
+            JsonObject _root;
+            int _toStringCount;
+
+            public ToStringWatcher(JsonObject rawData)
+            {
+                _root = new ToStringWatcherJsonObject(rawData, this);
+            }
+
+            private void CountToString()
+            {
+                _toStringCount++;
+            }
+
+            class ToStringWatcherJsonObject : JsonObject
+            {
+                ToStringWatcher _rootWatcher;
+
+                public ToStringWatcherJsonObject(JsonObject other, ToStringWatcher rootWatcher)
+                {
+                    foreach (var item in other)
+                    {
+                        object value = item.Value;
+
+                        if (value is JsonObject)
+                            value = new ToStringWatcherJsonObject((JsonObject)value, rootWatcher);
+
+                        base[item.Key] = value;
+                    }
+
+                    _rootWatcher = rootWatcher;
+                }
+
+                public override string ToString()
+                {
+                    _rootWatcher.CountToString();
+                    return base.ToString();
+                }
+            }
+
+            public JsonObject Root { get { return _root; } }
+            public int ToStringCount { get { return _toStringCount; } }
+        }
+
+        class Nested
+        {
+            public Nested First { get; set; }
+            public Nested Second { get; set; }
+            public Nested Third { get; set; }
+
+            public int Value { get; set; }
+
+            public static Nested Build(int levels)
+            {
+                int valueCounter = 0;
+
+                return Build(levels, ref valueCounter);
+            }
+
+            static Nested Build(int levels, ref int valueCounter)
+            {
+                Nested ret = new Nested();
+
+                if (levels == 0)
+                    ret.Value = valueCounter++;
+                else
+                {
+                    ret.Value = -1;
+
+                    ret.First = Build(levels - 1, ref valueCounter);
+                    ret.Second = Build(levels - 1, ref valueCounter);
+                    ret.Third = Build(levels - 1, ref valueCounter);
+                }
+
+                return ret;
+            }
+
+            public void AssertStructureIsCorrect(int levels)
+            {
+                int valueCounter = 0;
+
+                AssertStructureIsCorrect(levels, ref valueCounter);
+            }
+
+            void AssertStructureIsCorrect(int levels, ref int valueCounter)
+            {
+                if (levels == 0)
+                {
+                    Assert.IsNull(this.First);
+                    Assert.IsNull(this.Second);
+                    Assert.IsNull(this.Third);
+
+                    Assert.AreEqual(valueCounter, this.Value);
+
+                    valueCounter++;
+                }
+                else
+                {
+                    Assert.IsNotNull(this.First);
+                    Assert.IsNotNull(this.Second);
+                    Assert.IsNotNull(this.Third);
+
+                    Assert.AreEqual(-1, this.Value);
+
+                    this.First.AssertStructureIsCorrect(levels - 1, ref valueCounter);
+                    this.Second.AssertStructureIsCorrect(levels - 1, ref valueCounter);
+                    this.Third.AssertStructureIsCorrect(levels - 1, ref valueCounter);
+                }
+            }
+        }
+
         private static string CreateJsonWithUnderscores()
         {
             JsonObject doc = new JsonObject();
