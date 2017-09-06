@@ -201,9 +201,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.csproj">
-      <Project>{ccc30138-3d68-44d8-af1a-d22f769ee8dc}</Project>
-      <Name>RestSharp.Build</Name>
+    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.Signed.csproj">
+      <Project>{60CF35B5-ABE3-47E4-BA0C-0ABAF1618475}</Project>
+      <Name>RestSharp.Build.Signed</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
