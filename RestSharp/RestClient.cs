@@ -201,7 +201,7 @@ namespace RestSharp
         {
             this.ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*" && !this.structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
+            if (contentType != "*" && !structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
             {
                 this.AcceptTypes.Add(contentType);
                 // add Accept header based on registered deserializers
@@ -268,7 +268,7 @@ namespace RestSharp
             }
 
             // https://tools.ietf.org/html/rfc6839#page-4
-            Match structuredSyntaxSuffixMatch = this.structuredSyntaxSuffixRegex.Match(contentType);
+            Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
 
             if (structuredSyntaxSuffixMatch.Success)
             {
@@ -293,9 +293,9 @@ namespace RestSharp
 
         private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 #else
-        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
 
-        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 #endif
 
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
