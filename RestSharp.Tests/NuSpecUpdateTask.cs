@@ -50,16 +50,18 @@ namespace RestSharp.Tests
             [TestFixture(Category = "NuSpecUpdateTask")]
             public class WhenInformationalVersionIsNotDefined : BaseNuSpecUpdateTest
             {
-                protected override void Setup() { }
+                protected override void Setup()
+                {
+                }
 
                 [Test]
                 public void PullsVersionAttributeInstead()
                 {
                     Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask
-                                                  {
-                                                      SpecFile = FileName,
-                                                      SourceAssemblyFile = "RestSharp.Tests.dll"
-                                                  };
+                    {
+                        SpecFile = FileName,
+                        SourceAssemblyFile = "RestSharp.Tests.dll"
+                    };
 
                     task.Execute();
 
