@@ -264,9 +264,7 @@ namespace RestSharp
             {
                 webRequest.ContentLength = 0;
             }
-
-            // webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
-            // Fabrizio
+            
             AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });            
 
 #if FRAMEWORK
