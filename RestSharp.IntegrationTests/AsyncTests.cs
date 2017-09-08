@@ -60,7 +60,7 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Can_Perform_GET_TaskAsync()
+        public async Task Can_Perform_GET_TaskAsync()
         {
             const string baseUrl = "http://localhost:8888/";
             const string val = "Basic async task test";
@@ -69,17 +69,15 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("");
-                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
+                var result = await client.ExecuteTaskAsync(request);
 
-                task.Wait();
-
-                Assert.NotNull(task.Result.Content);
-                Assert.AreEqual(val, task.Result.Content);
+                Assert.NotNull(result.Content);
+                Assert.AreEqual(val, result.Content);
             }
         }
 
         [Test]
-        public void Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler()
+        public async Task Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler()
         {
             const string baseUrl = "http://localhost:8888/";
             const string exceptionMessage = "Thrown from OnBeforeDeserialization";
@@ -91,11 +89,7 @@ namespace RestSharp.IntegrationTests
 
                 request.OnBeforeDeserialization += r => { throw new Exception(exceptionMessage); };
 
-                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request);
-
-                task.Wait();
-
-                IRestResponse<Response> response = task.Result;
+                var response = await client.ExecuteTaskAsync<Response>(request);
 
                 Assert.AreEqual(exceptionMessage, response.ErrorMessage);
                 Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
@@ -103,7 +97,7 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Can_Perform_ExecuteGetTaskAsync_With_Response_Type()
+        public async Task Can_Perform_ExecuteGetTaskAsync_With_Response_Type()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -111,16 +105,14 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("success");
-                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request);
+                var response = await client.ExecuteTaskAsync<Response>(request);
 
-                task.Wait();
-
-                Assert.AreEqual("Works!", task.Result.Data.Message);
+                Assert.AreEqual("Works!", response.Data.Message);
             }
         }
 
         [Test]
-        public void Can_Perform_GetTaskAsync_With_Response_Type()
+        public async Task Can_Perform_GetTaskAsync_With_Response_Type()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -128,11 +120,9 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("success");
-                Task<Response> task = client.GetTaskAsync<Response>(request);
+                var response = await client.GetTaskAsync<Response>(request);
 
-                task.Wait();
-
-                Assert.AreEqual("Works!", task.Result.Message);
+                Assert.AreEqual("Works!", response.Message);
             }
         }
 
@@ -177,7 +167,7 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Handles_GET_Request_Errors_TaskAsync()
+        public async Task Handles_GET_Request_Errors_TaskAsync()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -185,16 +175,14 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("404");
-                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
+                var response = await client.ExecuteTaskAsync(request);
 
-                task.Wait();
-
-                Assert.AreEqual(HttpStatusCode.NotFound, task.Result.StatusCode);
+                Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
             }
         }
 
         [Test]
-        public void Handles_GET_Request_Errors_TaskAsync_With_Response_Type()
+        public async Task Handles_GET_Request_Errors_TaskAsync_With_Response_Type()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -202,16 +190,14 @@ namespace RestSharp.IntegrationTests
             {
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("404");
-                Task<IRestResponse<Response>> task = client.ExecuteTaskAsync<Response>(request);
+                var response = await client.ExecuteTaskAsync<Response>(request);
 
-                task.Wait();
-
-                Assert.Null(task.Result.Data);
+                Assert.Null(response.Data);
             }
         }
 
         [Test]
-        public void Can_Timeout_GET_TaskAsync()
+        public async Task Can_Timeout_GET_TaskAsync()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -223,18 +209,14 @@ namespace RestSharp.IntegrationTests
                 // Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
-                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
-
-                task.Wait();
-
-                IRestResponse response = task.Result;
+                var response = await client.ExecuteTaskAsync(request);
 
                 Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
             }
         }
 
         [Test]
-        public void Can_Timeout_PUT_TaskAsync()
+        public async Task Can_Timeout_PUT_TaskAsync()
         {
             const string baseUrl = "http://localhost:8888/";
 
@@ -246,11 +228,7 @@ namespace RestSharp.IntegrationTests
                 // Half the value of ResponseHandler.Timeout
                 request.Timeout = 500;
 
-                Task<IRestResponse> task = client.ExecuteTaskAsync(request);
-
-                task.Wait();
-
-                IRestResponse response = task.Result;
+                var response = await client.ExecuteTaskAsync(request);
 
                 Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
             }
@@ -261,7 +239,7 @@ namespace RestSharp.IntegrationTests
             obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
         }
 
-        public class ResponseHandler
+        private class ResponseHandler
         {
             private void error(HttpListenerContext context)
             {
@@ -293,7 +271,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        public class Response
+        private class Response
         {
             public string Message { get; set; }
         }

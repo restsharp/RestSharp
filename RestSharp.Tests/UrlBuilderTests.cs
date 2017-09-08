@@ -133,7 +133,7 @@ namespace RestSharp.Tests
             ArgumentException exception = Assert.Throws<ArgumentException>(() => client.BuildUri(request));
 
             Assert.IsNotNull(exception);
-            Assert.True(string.IsNullOrEmpty(exception.Message));
+            Assert.False(string.IsNullOrEmpty(exception.Message));
             Assert.IsTrue(exception.Message.Contains("foo"));
         }
 
