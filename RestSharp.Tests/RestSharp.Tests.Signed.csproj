@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddRangeTests.cs" />
+    <Compile Include="DecompressionMethodTests.cs" />
     <Compile Include="InterfaceImplementationTests.cs" />
     <Compile Include="JwtAuthTests.cs" />
     <Compile Include="OAuthTests.cs" />
