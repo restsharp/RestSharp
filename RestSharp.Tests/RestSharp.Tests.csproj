@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DecompressionMethodTests.cs" />
     <Compile Include="InterfaceImplementationTests.cs" />
     <Compile Include="AddRangeTests.cs" />
     <Compile Include="JwtAuthTests.cs" />
