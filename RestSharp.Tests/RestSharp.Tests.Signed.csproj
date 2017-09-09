@@ -183,7 +183,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\ListWithAttributes.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleData\NestedListSample.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

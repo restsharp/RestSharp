@@ -19,19 +19,16 @@ namespace RestSharp.IntegrationTests
         {
             _baseUrl = new Uri("http://localhost:8888/");
             _path = AppDomain.CurrentDomain.BaseDirectory;
-            _server = SimpleServer.Create(_baseUrl.AbsoluteUri, c => Handlers.FileHandler(c, _path));
         }
 
-        [OneTimeTearDown]
-        public void ShutdownServer()
-        {
-            _server.Dispose();
-        }
+        [TearDown]
+        public void ShutdownServer() => _server.Dispose();
 
         [SetUp]
         public void CreateClient()
         {
             _client = new RestClient(_baseUrl);
+            _server = SimpleServer.Create(_baseUrl.AbsoluteUri, c => Handlers.FileHandler(c, _path));
         }
 
         [Test]
