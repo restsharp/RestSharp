@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -26,7 +27,7 @@ namespace RestSharp.Tests
 
             protected BaseNuSpecUpdateTest()
             {
-                this.FileName = Path.Combine("SampleData", "restsharp.nuspec");
+                this.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData", "restsharp.nuspec");
                 this.Setup();
             }
 
