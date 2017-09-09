@@ -138,9 +138,27 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="path">Full path to file to upload</param>
+        /// <returns>This request</returns>
+        IRestRequest AddFile(string name, string path);
+
+        /// <summary>
+        /// Adds a file to the Files collection to be included with a POST or PUT request 
+        /// (other methods do not support file uploads).
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="path">Full path to file to upload</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, string path, string contentType = null);
+        IRestRequest AddFile(string name, string path, string contentType);
+
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name and content type
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="bytes">The file data</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <returns>This request</returns>
+        IRestRequest AddFile(string name, byte[] bytes, string fileName);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -150,7 +168,17 @@ namespace RestSharp
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null);
+        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType);
+
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name and content type
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentLength">The length (in bytes) of the file content.</param>
+        /// <returns>This request</returns>
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -161,7 +189,16 @@ namespace RestSharp
         /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType);
+
+        /// <summary>
+        /// Add bytes to the Files collection as if it was a file of specific type
+        /// </summary>
+        /// <param name="name">A form parameter name</param>
+        /// <param name="bytes">The file data</param>
+        /// <param name="filename">The file name to use for the uploaded file</param>
+        /// <returns></returns>
+        IRestRequest AddFileBytes(string name, byte[] bytes, string filename);
 
         /// <summary>
         /// Add bytes to the Files collection as if it was a file of specific type
@@ -171,7 +208,7 @@ namespace RestSharp
         /// <param name="filename">The file name to use for the uploaded file</param>
         /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
         /// <returns></returns>
-        IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip");
+        IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType);
 #endif
 
         /// <summary>

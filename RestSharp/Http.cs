@@ -29,8 +29,10 @@ using RestSharp.Compression.ZLib;
 #endif
 
 #if FRAMEWORK
+#if !PocketPC
 using System.Net.Cache;
 using System.Net.Security;
+#endif
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 #endif
@@ -110,10 +112,12 @@ namespace RestSharp
         /// </summary>
         public ICredentials Credentials { get; set; }
 
+#if !PocketPC
         /// <summary>
         /// The System.Net.CookieContainer to be used for the request
         /// </summary>
         public CookieContainer CookieContainer { get; set; }
+#endif
 
         /// <summary>
         /// The method to use to write the response instead of reading into RawBytes
@@ -210,10 +214,12 @@ namespace RestSharp
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
+#if !PocketPC
         /// <summary>
         /// Caching policy for requests created with this wrapper.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+#endif
 #endif
 #if NET45
         /// <summary>
@@ -323,6 +329,7 @@ namespace RestSharp
 
         private void AppendCookies(HttpWebRequest webRequest)
         {
+#if !PocketPC
             webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
 
             foreach (HttpCookie httpCookie in this.Cookies)
@@ -347,6 +354,7 @@ namespace RestSharp
                 webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
 #endif
             }
+#endif
         }
 
         private string EncodeParameters()
@@ -444,6 +452,7 @@ namespace RestSharp
                 response.ResponseUri = webResponse.ResponseUri;
                 response.ResponseStatus = ResponseStatus.Completed;
 
+#if !PocketPC
                 if (webResponse.Cookies != null)
                 {
                     foreach (Cookie cookie in webResponse.Cookies)
@@ -467,6 +476,7 @@ namespace RestSharp
                                              });
                     }
                 }
+#endif
 
                 foreach (string headerName in webResponse.Headers.AllKeys)
                 {

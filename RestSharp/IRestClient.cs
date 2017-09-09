@@ -29,16 +29,20 @@ using System.Threading.Tasks;
 #endif
 
 #if FRAMEWORK
+#if !PocketPC
 using System.Net.Cache;
-using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+#endif
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace RestSharp
 {
     public interface IRestClient
     {
+#if !PocketPC
         CookieContainer CookieContainer { get; set; }
+#endif
 
         int? MaxRedirects { get; set; }
 
@@ -82,7 +86,9 @@ namespace RestSharp
 
         IWebProxy Proxy { get; set; }
 
+#if !PocketPC
         RequestCachePolicy CachePolicy { get; set; }
+#endif
 
         bool Pipelined { get; set; }
 #endif

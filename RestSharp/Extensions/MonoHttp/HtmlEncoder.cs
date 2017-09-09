@@ -44,7 +44,7 @@ namespace RestSharp.Extensions.MonoHttp
 
         private static readonly object entitiesLock = new object();
 
-        private static SortedDictionary<string, char> entities;
+        private static Dictionary<string, char> entities;
 
         private static readonly HttpEncoder defaultEncoder;
 
@@ -605,7 +605,7 @@ namespace RestSharp.Extensions.MonoHttp
         {
             // Build the hash table of HTML entity references.  This list comes
             // from the HTML 4.01 W3C recommendation.
-            entities = new SortedDictionary<string, char>(StringComparer.Ordinal)
+            entities = new Dictionary<string, char>(StringComparer.Ordinal)
                        {
                            {"nbsp", '\u00A0'},
                            {"iexcl", '\u00A1'},

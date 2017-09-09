@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -28,9 +29,11 @@ using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
 #if FRAMEWORK
+#if !PocketPC
 using System.Net.Cache;
-using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+#endif
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 
@@ -41,11 +44,15 @@ namespace RestSharp
     /// </summary>
     public partial class RestClient : IRestClient
     {
+#if PocketPC
+        private static readonly Version version = Assembly.GetExecutingAssembly().GetName().Version;
+#else
         // silverlight friendly way to get current version      
 #if !WINDOWS_UWP
         private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
 #else
         private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;
+#endif
 #endif
 
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
@@ -67,10 +74,12 @@ namespace RestSharp
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
+#if !PocketPC
         /// <summary>
         /// The cache policy to use for requests initiated by this client instance.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
+#endif
 
         public bool Pipelined { get; set; }
 #endif
@@ -81,10 +90,12 @@ namespace RestSharp
         /// </summary>
         public bool FollowRedirects { get; set; }
 
+#if !PocketPC
         /// <summary>
         /// The CookieContainer used for requests made by this client instance
         /// </summary>
         public CookieContainer CookieContainer { get; set; }
+#endif
 
         /// <summary>
         /// UserAgent to use for requests made by this client instance
@@ -392,8 +403,11 @@ namespace RestSharp
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters)
         {
-            return string.Join("&", parameters.Select(EncodeParameter)
-                                              .ToArray());
+#if PocketPC
+            return string.Join("&", parameters.Select(p => EncodeParameter(p)).ToArray());
+#else
+            return string.Join("&", parameters.Select(EncodeParameter).ToArray());
+#endif
         }
 
         private static string EncodeParameter(Parameter parameter)
@@ -409,7 +423,9 @@ namespace RestSharp
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
             http.ResponseWriter = request.ResponseWriter;
+#if !PocketPC
             http.CookieContainer = this.CookieContainer;
+#endif
 
 
             // move RestClient.DefaultParameters into Request.Parameters
@@ -424,7 +440,7 @@ namespace RestSharp
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+            if (request.Parameters.All(p2 => p2.Name.ToString(CultureInfo.InvariantCulture) != "accept"))
             {
                 string accepts = string.Join(", ", this.AcceptTypes.ToArray());
 
@@ -470,7 +486,9 @@ namespace RestSharp
             }
 
             http.MaxRedirects = this.MaxRedirects;
+#if !PocketPC
             http.CachePolicy = this.CachePolicy;
+#endif
             http.Pipelined = this.Pipelined;
 #endif
 

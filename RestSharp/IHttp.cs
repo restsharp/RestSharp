@@ -23,8 +23,10 @@ using System.Net;
 using System.Text;
 
 #if FRAMEWORK
+#if !PocketPC
 using System.Net.Cache;
 using System.Net.Security;
+#endif
 using System.Security.Cryptography.X509Certificates;
 #endif
 
@@ -34,7 +36,9 @@ namespace RestSharp
     {
         Action<Stream> ResponseWriter { get; set; }
 
+#if !PocketPC
         CookieContainer CookieContainer { get; set; }
+#endif
 
         ICredentials Credentials { get; set; }
 
@@ -79,7 +83,7 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
-#if FRAMEWORK
+#if FRAMEWORK && !PocketPC
         RequestCachePolicy CachePolicy { get; set; }
 #endif
 

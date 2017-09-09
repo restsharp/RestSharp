@@ -28,7 +28,9 @@ namespace RestSharp
     /// <summary>
     /// Base class for common properties shared by RestResponse and RestResponse[[T]]
     /// </summary>
+#if !PocketPC   
     [DebuggerDisplay("{DebuggerDisplay()}")]
+#endif
     public abstract class RestResponseBase
     {
         private string content;
@@ -155,7 +157,9 @@ namespace RestSharp
     /// Container for data sent back from API including deserialized data
     /// </summary>
     /// <typeparam name="T">Type of data to deserialize to</typeparam>
+#if !PocketPC   
     [DebuggerDisplay("{DebuggerDisplay()}")]
+#endif
     public class RestResponse<T> : RestResponseBase, IRestResponse<T>
     {
         /// <summary>
@@ -189,6 +193,8 @@ namespace RestSharp
     /// <summary>
     /// Container for data sent back from API
     /// </summary>
+#if !PocketPC   
     [DebuggerDisplay("{DebuggerDisplay()}")]
+#endif
     public class RestResponse : RestResponseBase, IRestResponse { }
 }

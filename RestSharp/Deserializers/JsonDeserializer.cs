@@ -268,7 +268,11 @@ namespace RestSharp.Deserializers
                 return stringValue;
             }
 
-            if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
+            if (type == typeof(DateTime) 
+#if !PocketPC
+                || type == typeof(DateTimeOffset)
+#endif
+                )
             {
                 DateTime dt;
 
@@ -288,10 +292,12 @@ namespace RestSharp.Deserializers
                     return dt;
                 }
 
+#if !PocketPC
                 if (type == typeof(DateTimeOffset))
                 {
                     return (DateTimeOffset) dt;
                 }
+#endif
             }
             else if (type == typeof(decimal))
             {
@@ -317,7 +323,7 @@ namespace RestSharp.Deserializers
             {
                 TimeSpan timeSpan;
 
-                if (TimeSpan.TryParse(stringValue, out timeSpan))
+                if (TryParse.TimeSpan(stringValue, out timeSpan))
                 {
                     return timeSpan;
                 }
