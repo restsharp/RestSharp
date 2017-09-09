@@ -10,4 +10,4 @@ skip_tags: true
 build:
   project: RestSharp.sln
 test_script:
-- cmd: nunit3-console *.Tests*.dll --inprocess --result=myresults.xml;format=AppVeyor
+- ps: nunit3-console (ls -r *\bin\Debug*\*.*Tests.dll | % FullName | sort-object -Unique) --inprocess --result=myresults.xml;format=AppVeyortest_script:
