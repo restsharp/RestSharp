@@ -9,3 +9,5 @@ branches:
 skip_tags: true
 build:
   project: RestSharp.sln
+test_script:
+- cmd: nunit3-console *.Tests*.dll --inprocess --result=myresults.xml;format=AppVeyor
