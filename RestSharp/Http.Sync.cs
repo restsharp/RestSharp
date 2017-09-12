@@ -19,6 +19,7 @@
 #if FRAMEWORK
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using RestSharp.Extensions;
@@ -101,7 +102,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsGet(string httpMethod)
         {
-            return this.GetStyleMethodInternal(httpMethod.ToUpperInvariant());
+            return this.GetStyleMethodInternal(httpMethod.ToUpper(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -111,7 +112,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsPost(string httpMethod)
         {
-            return this.PostPutInternal(httpMethod.ToUpperInvariant());
+            return this.PostPutInternal(httpMethod.ToUpper(CultureInfo.InvariantCulture));
         }
 
         private HttpResponse GetStyleMethodInternal(string method)
@@ -255,9 +256,11 @@ namespace RestSharp
         {
             HttpWebRequest webRequest = (HttpWebRequest) WebRequest.Create(url);
 
+#if !PocketPC
             webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
-            webRequest.PreAuthenticate = this.PreAuthenticate;
             webRequest.ServicePoint.Expect100Continue = false;
+#endif
+            webRequest.PreAuthenticate = this.PreAuthenticate;
 
             this.AppendHeaders(webRequest);
             this.AppendCookies(webRequest);
@@ -304,7 +307,7 @@ namespace RestSharp
                 webRequest.Proxy = this.Proxy;
             }
 
-#if FRAMEWORK
+#if FRAMEWORK && !PocketPC
             if (this.CachePolicy != null)
             {
                 webRequest.CachePolicy = this.CachePolicy;

@@ -29,11 +29,15 @@ using RestSharp;
 
 #if SIGNED
 [assembly: AssemblyInformationalVersion(SharedAssemblyInfo.FILE_VERSION)]
+#if !PocketPC
 [assembly: AssemblyFileVersion(SharedAssemblyInfo.FILE_VERSION + ".0")]
+#endif
 #else
 
 [assembly: AssemblyInformationalVersion(SharedAssemblyInfo.VERSION)]
+#if !PocketPC
 [assembly: AssemblyFileVersion(SharedAssemblyInfo.VERSION + ".0")]
+#endif
 #endif
 
 namespace RestSharp

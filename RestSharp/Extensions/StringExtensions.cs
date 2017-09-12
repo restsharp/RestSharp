@@ -130,7 +130,7 @@ namespace RestSharp.Extensions
 
             long unix;
 
-            if (long.TryParse(input, out unix))
+            if (TryParse.Long(input, out unix))
             {
                 DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -188,12 +188,12 @@ namespace RestSharp.Extensions
 
             DateTime date;
 
-            if (DateTime.TryParseExact(input, formats, culture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out date))
+            if (TryParse.DateTimeExact(input, formats, culture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out date))
             {
                 return date;
             }
 
-            if (DateTime.TryParse(input, culture, DateTimeStyles.None, out date))
+            if (TryParse.DateTime(input, culture, DateTimeStyles.None, out date))
             {
                 return date;
             }

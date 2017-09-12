@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using RestSharp.Extensions;
@@ -94,7 +95,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
         {
-            return this.PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
+            return this.PutPostInternalAsync(httpMethod.ToUpper(CultureInfo.InvariantCulture), action);
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace RestSharp
         /// <returns></returns>
         public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
         {
-            return this.GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
+            return this.GetStyleMethodInternalAsync(httpMethod.ToUpper(CultureInfo.InvariantCulture), action);
         }
 
         private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
@@ -279,7 +280,7 @@ namespace RestSharp
 
         private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
         {
-#if FRAMEWORK
+#if FRAMEWORK && !PocketPC
             if (this.Timeout != 0)
             {
                 ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
@@ -423,7 +424,9 @@ namespace RestSharp
 #endif
             HttpWebRequest webRequest = (HttpWebRequest) WebRequest.Create(url);
 
+#if !PocketPC
             webRequest.UseDefaultCredentials = this.UseDefaultCredentials;
+#endif
 
 #if !WINDOWS_PHONE && !SILVERLIGHT && !WINDOWS_UWP
             
@@ -465,7 +468,9 @@ namespace RestSharp
 
             webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
+#if !PocketPC
             webRequest.ServicePoint.Expect100Continue = false;
+#endif            
 
             if (this.Timeout != 0)
             {
@@ -482,10 +487,12 @@ namespace RestSharp
                 webRequest.Proxy = this.Proxy;
             }
 
+#if !PocketPC
             if (this.CachePolicy != null)
             {
                 webRequest.CachePolicy = this.CachePolicy;
             }
+#endif
 
             if (this.FollowRedirects && this.MaxRedirects.HasValue)
             {

@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
     <DocumentationFile>bin\Debug\RestSharp.xml</DocumentationFile>
-    <NoWarn>1591,1658,1584,1572,1574</NoWarn>
+    <NoWarn>1591,1658,1584,1572,1574,3001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +49,9 @@
     </Compile>
     <Compile Include="..\RestSharp\Extensions\ResponseStatusExtensions.cs">
       <Link>Extensions\ResponseStatusExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\TryParse.cs">
+      <Link>Extensions\TryParse.cs</Link>
     </Compile>
     <Compile Include="..\RestSharp\FileParameter.cs">
       <Link>FileParameter.cs</Link>

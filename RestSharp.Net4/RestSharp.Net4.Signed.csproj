@@ -25,7 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\DebugSigned\RestSharp.xml</DocumentationFile>
-    <NoWarn>1591,1584,1572,1574,1658</NoWarn>
+    <NoWarn>1591,1584,1572,1574,1658,3001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -174,6 +174,9 @@
     </Compile>
     <Compile Include="..\restsharp\extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp\Extensions\TryParse.cs">
+      <Link>Extensions\TryParse.cs</Link>
     </Compile>
     <Compile Include="..\restsharp\extensions\XmlExtensions.cs">
       <Link>Extensions\XmlExtensions.cs</Link>

@@ -25,7 +25,11 @@ namespace RestSharp
         /// <returns>RestResponse</returns>
         public virtual IRestResponse Execute(IRestRequest request)
         {
+#if !PocketPC
             string method = Enum.GetName(typeof(Method), request.Method);
+#else
+            string method = request.Method.ToString();
+#endif
 
             switch (request.Method)
             {
