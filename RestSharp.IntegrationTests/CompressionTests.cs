@@ -54,30 +54,27 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        private static Action<HttpListenerContext> GzipEchoValue(string value)
-        {
-            return context =>
-                   {
-                       context.Response.Headers.Add("Content-encoding", "gzip");
+        private static Action<HttpListenerContext> GzipEchoValue(string value) =>
+            context =>
+            {
+                context.Response.Headers.Add("Content-encoding", "gzip");
 
-                       using (GZipStream gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true))
-                       {
-                           gzip.WriteStringUtf8(value);
-                       }
-                   };
-        }
+                using (GZipStream gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true))
+                {
+                    gzip.WriteStringUtf8(value);
+                }
+            };
 
-        private static Action<HttpListenerContext> DeflateEchoValue(string value)
-        {
-            return context =>
-                   {
-                       context.Response.Headers.Add("Content-encoding", "deflate");
+        private static Action<HttpListenerContext> DeflateEchoValue(string value) =>
+            context =>
+            {
+                context.Response.Headers.Add("Content-encoding", "deflate");
 
-                       using (DeflateStream gzip = new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true))
-                       {
-                           gzip.WriteStringUtf8(value);
-                       }
-                   };
-        }
+                using (DeflateStream gzip =
+                    new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true))
+                {
+                    gzip.WriteStringUtf8(value);
+                }
+            };
     }
 }

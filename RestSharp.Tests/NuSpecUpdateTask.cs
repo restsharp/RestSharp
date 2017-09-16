@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -26,7 +27,7 @@ namespace RestSharp.Tests
 
             protected BaseNuSpecUpdateTest()
             {
-                this.FileName = Path.Combine("SampleData", "restsharp.nuspec");
+                this.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData", "restsharp.nuspec");
                 this.Setup();
             }
 
@@ -50,16 +51,18 @@ namespace RestSharp.Tests
             [TestFixture(Category = "NuSpecUpdateTask")]
             public class WhenInformationalVersionIsNotDefined : BaseNuSpecUpdateTest
             {
-                protected override void Setup() { }
+                protected override void Setup()
+                {
+                }
 
                 [Test]
                 public void PullsVersionAttributeInstead()
                 {
                     Build.NuSpecUpdateTask task = new Build.NuSpecUpdateTask
-                                                  {
-                                                      SpecFile = FileName,
-                                                      SourceAssemblyFile = "RestSharp.Tests.dll"
-                                                  };
+                    {
+                        SpecFile = FileName,
+                        SourceAssemblyFile = "RestSharp.Tests.dll"
+                    };
 
                     task.Execute();
 

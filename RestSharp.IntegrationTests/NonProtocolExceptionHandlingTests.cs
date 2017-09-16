@@ -23,13 +23,14 @@ namespace RestSharp.IntegrationTests
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
         }
 
-        public class StupidClass
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private class StupidClass
         {
             public string Property { get; set; }
         }
 
         [Test]
-        public void Task_Handles_Non_Existent_Domain()
+        public async Task Task_Handles_Non_Existent_Domain()
         {
             RestClient client = new RestClient("http://192.168.1.200:8001");
             RestRequest request = new RestRequest("/")
@@ -37,11 +38,7 @@ namespace RestSharp.IntegrationTests
                                       RequestFormat = DataFormat.Json,
                                       Method = Method.GET
                                   };
-            Task<IRestResponse<StupidClass>> task = client.ExecuteTaskAsync<StupidClass>(request);
-
-            task.Wait();
-
-            IRestResponse<StupidClass> response = task.Result;
+            var response = await client.ExecuteTaskAsync<StupidClass>(request);
 
             Assert.IsInstanceOf<WebException>(response.ErrorException);
             Assert.AreEqual(WebExceptionStatus.ConnectFailure, ((WebException)response.ErrorException).Status);
