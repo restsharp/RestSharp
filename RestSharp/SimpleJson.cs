@@ -769,7 +769,15 @@ namespace RestSharp
             switch (LookAhead(json, index))
             {
                 case TOKEN_STRING:
-                    return ParseString(json, ref index, ref success);
+                    String s = ParseString(json, ref index, ref success);
+                    if (s == "NaN")
+                        return double.NaN;
+                    else if (s == "-INF")
+                        return double.NegativeInfinity;
+                    else if ((s == "+INF") || (s == "INF"))
+                        return double.PositiveInfinity;
+                    else
+                        return s;
                 case TOKEN_NUMBER:
                     return ParseNumber(json, ref index, ref success);
                 case TOKEN_CURLY_OPEN:
@@ -1161,9 +1169,27 @@ namespace RestSharp
             else if (number is decimal)
                 builder.Append(((decimal) number).ToString(CultureInfo.InvariantCulture));
             else if (number is float)
-                builder.Append(((float) number).ToString(CultureInfo.InvariantCulture));
+            {
+                if (float.IsNaN((float)number))
+                    builder.Append("\"NaN\"");
+                else if (float.IsNegativeInfinity((float)number))
+                    builder.Append("\"-INF\"");
+                else if (float.IsPositiveInfinity((float)number))
+                    builder.Append("\"+INF\"");
+                else
+                    builder.Append(((float)number).ToString(CultureInfo.InvariantCulture));
+            }
             else
-                builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
+            {
+                if (double.IsNaN((double)number))
+                    builder.Append("\"NaN\"");
+                else if (double.IsNegativeInfinity((double)number))
+                    builder.Append("\"-INF\"");
+                else if (double.IsPositiveInfinity((double)number))
+                    builder.Append("\"+INF\"");
+                else
+                    builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
+            }
             return true;
         }
 
