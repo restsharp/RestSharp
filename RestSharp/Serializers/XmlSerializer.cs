@@ -24,6 +24,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
+using System.Xml.Serialization;
 
 namespace RestSharp.Serializers
 {
@@ -115,7 +116,11 @@ namespace RestSharp.Serializers
         private void Map(XContainer root, object obj)
         {
             Type objType = obj.GetType();
+#if !WINDOWS_UWP
             IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
+#else
+			IEnumerable<PropertyInfo> props = from p in objType.GetRuntimeProperties()
+#endif
                                               let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
                                               where p.CanRead && p.CanWrite
                                               orderby indexAttribute == null
@@ -160,6 +165,12 @@ namespace RestSharp.Serializers
 
                 XName nsName = name.AsNamespaced(this.Namespace);
                 XElement element = new XElement(nsName);
+                XmlElementAttribute xeatt = prop.GetAttribute<XmlElementAttribute>();
+                if (xeatt!=null)
+                {
+                    element = (XElement)root;
+                }
+
 #if !WINDOWS_UWP
                 if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
 #else
@@ -200,8 +211,10 @@ namespace RestSharp.Serializers
                 {
                     this.Map(element, rawValue);
                 }
-
-                root.Add(element);
+                if (xeatt == null)
+                {
+                    root.Add(element);
+                }
             }
         }
 
