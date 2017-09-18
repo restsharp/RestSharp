@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<NestedListSample>
-    <images>
-        <image src="1.gif">value1</image>
-        <image src="2.gif">value2</image>
-        <image src="3.gif">value3</image>
-        <image src="4.gif">value4</image>
-    </images>
-</NestedListSample>

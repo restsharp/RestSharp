@@ -46,6 +46,7 @@
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <NoWarn>3001</NoWarn>
+    <DocumentationFile>bin\Release\RestSharp.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
