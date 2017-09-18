@@ -26,6 +26,10 @@ support Windows CE. For our particular use we needed to move to REST for all fut
 stepping stone to let us bring the mobile client over to the REST platform so we can eventually migrate it more easily
 to Android. Since I needed this, I figured others might need it also.
 
+If you just want a pre-compiled version of the library, you can download the ZIP file from this repository here:
+
+https://github.com/kendallb/RestSharp.CompactFramework/raw/master/RestSharp.CompactFramework.zip
+
 A couple of things are not supported on the Compact Framework, like Cookies. So not everythign will work, but it works great
 for most normal REST stuff. Also if you wish to use JSON.NET rather than the default simple JSON serializer, you can still download
 and use JSON.NET 3.5.8 which was the last official version to support the Compact Framework.
