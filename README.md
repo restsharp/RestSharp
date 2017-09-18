@@ -1,8 +1,4 @@
-# RestSharp - Simple .NET REST Client 
-
-[![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
-
-[![Join the chat at https://gitter.im/RestSharp/RestSharp](https://badges.gitter.im/RestSharp/RestSharp.svg)](https://gitter.im/RestSharp/RestSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# RestSharp - Simple .NET Compact Framework REST Client 
 
 ### [Official Site][1] - [@RestSharp][2]  
 
@@ -10,10 +6,9 @@
 
 ### Features
 
-* Supports .NET 3.5+, Mono, Mono for Android, UWP
-* Easy installation using [NuGet](http://nuget.org/packages/RestSharp) for most .NET flavors
-* Supports strong naming using [NuGet](http://nuget.org/packages/RestSharpSigned) for most .NET flavors
+* Supports .NET 3.5 Compact Framework
 * Automatic XML and JSON deserialization
+* Supports JSON.NET for serialization if required
 * Supports custom serialization and deserialization via ISerializer and IDeserializer
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
@@ -23,6 +18,19 @@
 * Supports custom authentication schemes via IAuthenticator
 * Multi-part form/file uploads
 * T4 Helper to generate C# classes from an XML document
+
+The primary difference between this version and the regular version is that this one has been customized to 
+compile and support the .NET Compact Framework. Although no new development is being done on Compact Framework 
+and Windows CE by Microsoft, a lot of existing Line Of Business applications and industrial handhelds still
+support Windows CE. For our particular use we needed to move to REST for all future development and this project is a
+stepping stone to let us bring the mobile client over to the REST platform so we can eventually migrate it more easily
+to Android. Since I needed this, I figured others might need it also.
+
+A couple of things are not supported on the Compact Framework, like Cookies. So not everythign will work, but it works great
+for most normal REST stuff. Also if you wish to use JSON.NET rather than the default simple JSON serializer, you can still download
+and use JSON.NET 3.5.8 which was the last official version to support the Compact Framework.
+
+https://github.com/JamesNK/Newtonsoft.Json/releases/tag/3.5.8
 
 ```csharp
 var client = new RestClient("http://example.com");
