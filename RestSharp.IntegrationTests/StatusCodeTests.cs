@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 
@@ -11,13 +12,13 @@ namespace RestSharp.IntegrationTests
     {
         private readonly Uri _baseUrl = new Uri("http://localhost:8888/");
         private SimpleServer _server;
-        private RestClient _client;
+        private HttpClient _client;
 
         [SetUp]
         public void SetupServer()
         {
             _server = SimpleServer.Create(_baseUrl.AbsoluteUri, UrlToStatusCodeHandler);
-            _client = new RestClient(_baseUrl);
+            _client = new HttpClient(_baseUrl);
         }
 
         [TearDown]

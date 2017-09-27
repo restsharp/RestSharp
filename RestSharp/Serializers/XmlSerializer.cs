@@ -116,12 +116,10 @@ namespace RestSharp.Serializers
         {
             Type objType = obj.GetType();
             IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
-                                              let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
-                                              where p.CanRead && p.CanWrite
-                                              orderby indexAttribute == null
-                                                  ? int.MaxValue
-                                                  : indexAttribute.Index
-                                              select p;
+                let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
+                where p.CanRead && p.CanWrite
+                orderby indexAttribute?.Index ?? int.MaxValue
+                select p;
             SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
 
             foreach (PropertyInfo prop in props)
@@ -160,11 +158,8 @@ namespace RestSharp.Serializers
 
                 XName nsName = name.AsNamespaced(this.Namespace);
                 XElement element = new XElement(nsName);
-#if !WINDOWS_UWP
-                if (propType.IsPrimitive || propType.IsValueType || propType == typeof(string))
-#else
-                if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType || propType == typeof(string))
-#endif
+                if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
+                    propType == typeof(string))
                 {
                     if (useAttribute)
                     {
@@ -209,62 +204,38 @@ namespace RestSharp.Serializers
         {
             object output = obj;
 
-            if (obj is DateTime && this.DateFormat.HasValue())
+            switch (obj)
             {
-                output = ((DateTime) obj).ToString(this.DateFormat, CultureInfo.InvariantCulture);
+                case DateTime time when DateFormat.HasValue():
+                    output = time.ToString(DateFormat, CultureInfo.InvariantCulture);
+                    break;
+                case bool _:
+                    output = ((bool)obj).ToString().ToLowerInvariant();
+                    break;
             }
 
-            if (obj is bool)
-            {
-#if !WINDOWS_UWP
-                output = ((bool) obj).ToString(CultureInfo.InvariantCulture).ToLower();
-#else
-                output = ((bool)obj).ToString().ToLowerInvariant();                
-#endif
-            }
-
-            if (IsNumeric(obj))
-            {
-                return SerializeNumber(obj);
-            }
-
-            return output.ToString();
+            return IsNumeric(obj) ? SerializeNumber(obj) : output.ToString();
         }
 
         private static string SerializeNumber(object number)
         {
-            if (number is long)
+            switch (number)
             {
-                return ((long) number).ToString(CultureInfo.InvariantCulture);
+                case long l:
+                    return l.ToString(CultureInfo.InvariantCulture);
+                case ulong @ulong:
+                    return @ulong.ToString(CultureInfo.InvariantCulture);
+                case int i:
+                    return i.ToString(CultureInfo.InvariantCulture);
+                case uint u:
+                    return u.ToString(CultureInfo.InvariantCulture);
+                case decimal @decimal:
+                    return @decimal.ToString(CultureInfo.InvariantCulture);
+                case float f:
+                    return f.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (number is ulong)
-            {
-                return ((ulong) number).ToString(CultureInfo.InvariantCulture);
-            }
-
-            if (number is int)
-            {
-                return ((int) number).ToString(CultureInfo.InvariantCulture);
-            }
-
-            if (number is uint)
-            {
-                return ((uint) number).ToString(CultureInfo.InvariantCulture);
-            }
-
-            if (number is decimal)
-            {
-                return ((decimal) number).ToString(CultureInfo.InvariantCulture);
-            }
-
-            if (number is float)
-            {
-                return ((float) number).ToString(CultureInfo.InvariantCulture);
-            }
-
-            return (Convert.ToDouble(number, CultureInfo.InvariantCulture)
-                           .ToString("r", CultureInfo.InvariantCulture));
+            return Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -273,59 +244,30 @@ namespace RestSharp.Serializers
         /// </summary>
         private static bool IsNumeric(object value)
         {
-            if (value is sbyte)
+            switch (value)
             {
-                return true;
-            }
-
-            if (value is byte)
-            {
-                return true;
-            }
-
-            if (value is short)
-            {
-                return true;
-            }
-
-            if (value is ushort)
-            {
-                return true;
-            }
-
-            if (value is int)
-            {
-                return true;
-            }
-
-            if (value is uint)
-            {
-                return true;
-            }
-
-            if (value is long)
-            {
-                return true;
-            }
-
-            if (value is ulong)
-            {
-                return true;
-            }
-
-            if (value is float)
-            {
-                return true;
-            }
-
-            if (value is double)
-            {
-                return true;
-            }
-
-            if (value is decimal)
-            {
-                return true;
+                case sbyte _:
+                    return true;
+                case byte _:
+                    return true;
+                case short _:
+                    return true;
+                case ushort _:
+                    return true;
+                case int _:
+                    return true;
+                case uint _:
+                    return true;
+                case long _:
+                    return true;
+                case ulong _:
+                    return true;
+                case float _:
+                    return true;
+                case double _:
+                    return true;
+                case decimal _:
+                    return true;
             }
 
             return false;

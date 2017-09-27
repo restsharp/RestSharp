@@ -18,11 +18,8 @@
 
 using System;
 using System.Globalization;
-using System.Reflection;
-
-#if FRAMEWORK
 using System.Linq;
-#endif
+using System.Reflection;
 
 namespace RestSharp.Extensions
 {
@@ -39,11 +36,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
         {           
-#if !WINDOWS_UWP
-            return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
-#else
             return prop.GetCustomAttribute(typeof(T)) as T;
-#endif
         }
 
         /// <summary>
@@ -55,11 +48,7 @@ namespace RestSharp.Extensions
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
             //type.GetTypeInfo().getcu
-#if !WINDOWS_UWP
-            return Attribute.GetCustomAttribute(type, typeof(T)) as T;
-#else
             return type.GetTypeInfo().GetCustomAttribute(type) as T;
-#endif
         }
 
         /// <summary>
@@ -72,46 +61,28 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
-#if !WINDOWS_UWP
-                Type cur = toCheck.IsGenericType
-                    ? toCheck.GetGenericTypeDefinition()
-                    : toCheck;
-#else
                 Type cur = toCheck.GetTypeInfo().IsGenericType
                     ? toCheck.GetGenericTypeDefinition()
                     : toCheck;
-#endif
 
                 if (generic == cur)
                 {
                     return true;
                 }
-#if !WINDOWS_UWP
-                toCheck = toCheck.BaseType;
-#else
                 toCheck = toCheck.GetTypeInfo().BaseType;
-#endif
             }
 
             return false;
         }
 
-        public static object ChangeType(this object source, Type newType)
+        public static object ChangeType(this object source, TypeInfo newType)
         {
-#if FRAMEWORK
-            return Convert.ChangeType(source, newType);
-#else
-            return Convert.ChangeType(source, newType, null);
-#endif
+            return Convert.ChangeType(source, newType.AsType());
         }
 
-        public static object ChangeType(this object source, Type newType, CultureInfo culture)
+        public static object ChangeType(this object source, TypeInfo newType, CultureInfo culture)
         {
-#if FRAMEWORK || SILVERLIGHT || WINDOWS_PHONE
-            return Convert.ChangeType(source, newType, culture);
-#else
-            return Convert.ChangeType(source, newType, null);
-#endif
+            return Convert.ChangeType(source, newType.AsType());
         }
 
         /// <summary>
@@ -124,27 +95,22 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
-#if FRAMEWORK
             Enum ret = Enum.GetValues(type)
                            .Cast<Enum>()
                            .FirstOrDefault(v => v.ToString()
                                                  .GetNameVariants(culture)
                                                  .Contains(value, StringComparer.Create(culture, true)));
 
-            if (ret == null)
-            {
-                object enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
+            if (ret != null) return ret;
 
-                if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
-                {
-                    ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
-                }
+            object enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
+
+            if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
+            {
+                ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
             }
 
             return ret;
-#else
-            return Enum.Parse(type, value, true);
-#endif
         }
     }
 }

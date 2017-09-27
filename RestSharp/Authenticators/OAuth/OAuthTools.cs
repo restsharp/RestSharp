@@ -1,23 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-#if !WINDOWS_UWP
 using System.Security.Cryptography;
-#else
-using Windows.Security.Cryptography.Core;
-#endif
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
 using System.Runtime.Serialization;
 
 namespace RestSharp.Authenticators.OAuth
 {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
-    [Serializable]
-#endif
-#if WINDOWS_UWP
     [DataContract]
-#endif
     internal static class OAuthTools
     {
         private const string ALPHA_NUMERIC = UPPER + LOWER + DIGIT;
@@ -34,20 +25,14 @@ namespace RestSharp.Authenticators.OAuth
 
         private static readonly object randomLock = new object();
 
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
         private static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
-#endif
 
         static OAuthTools()
         {
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
             byte[] bytes = new byte[4];
 
-            rng.GetNonZeroBytes(bytes);
+            rng.GetBytes(bytes);
             random = new Random(BitConverter.ToInt32(bytes, 0));
-#else
-            random = new Random();
-#endif
         }
 
         /// <summary>

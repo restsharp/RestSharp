@@ -272,39 +272,37 @@ namespace RestSharp.Extensions
                 : "_";
             string[] words = text.Split(' ');
 
-            if (words.Length > 1 || words[0].IsUpperCase())
-            {
-                for (int i = 0; i < words.Length; i++)
-                {
-                    if (words[i].Length > 0)
-                    {
-                        string word = words[i];
-                        string restOfWord = word.Substring(1);
+            if (words.Length <= 1 && !words[0].IsUpperCase())
+                return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
 
-                        if (restOfWord.IsUpperCase())
-                        {
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].Length <= 0) continue;
+
+                string word = words[i];
+                string restOfWord = word.Substring(1);
+
+                if (restOfWord.IsUpperCase())
+                {
 #if !WINDOWS_UWP
-                            restOfWord = restOfWord.ToLower(culture);
+                    restOfWord = restOfWord.ToLower(culture);
 #else
                             restOfWord = restOfWord.ToLower();
 #endif
-                        }
+                }
 
 #if !WINDOWS_UWP                        
-                        char firstChar = char.ToUpper(word[0], culture);
+                char firstChar = char.ToUpper(word[0], culture);
 #else
                         char firstChar = char.ToUpper(word[0]);
 #endif
 
-                        words[i] = string.Concat(firstChar, restOfWord);
-                    }
-                }
-
-                return string.Join(joinString, words);
+                words[i] = string.Concat(firstChar, restOfWord);
             }
 
+            return string.Join(joinString, words);
+
 #if !WINDOWS_UWP
-            return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
 #else
             return string.Concat(words[0].Substring(0, 1).ToUpper(), words[0].Substring(1));
 #endif
