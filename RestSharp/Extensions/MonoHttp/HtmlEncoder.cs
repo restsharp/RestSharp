@@ -129,15 +129,19 @@ namespace RestSharp.Extensions.MonoHttp
                 return value;
             }
 
-            MemoryStream result = new MemoryStream();
-            int length = value.Length;
+            byte[] bytes;
 
-            for (int i = 0; i < length; i++)
+            using (MemoryStream result = new MemoryStream())
             {
-                UrlPathEncodeChar(value[i], result);
-            }
+                int length = value.Length;
 
-            byte[] bytes = result.ToArray();
+                for (int i = 0; i < length; i++)
+                {
+                    UrlPathEncodeChar(value[i], result);
+                }
+
+                bytes = result.ToArray();
+            }
 
             return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
         }

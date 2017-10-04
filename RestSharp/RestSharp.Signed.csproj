@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RestSharp</RootNamespace>
     <AssemblyName>RestSharp</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -42,7 +42,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\DebugSigned\</OutputPath>
     <IntermediateOutputPath>obj\DebugSigned\</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;FRAMEWORK, SIGNED</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FRAMEWORK, NET4, NET45, SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -201,9 +201,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.csproj">
-      <Project>{ccc30138-3d68-44d8-af1a-d22f769ee8dc}</Project>
-      <Name>RestSharp.Build</Name>
+    <ProjectReference Include="..\RestSharp.Build\RestSharp.Build.Signed.csproj">
+      <Project>{60CF35B5-ABE3-47E4-BA0C-0ABAF1618475}</Project>
+      <Name>RestSharp.Build.Signed</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

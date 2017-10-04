@@ -522,7 +522,8 @@ namespace RestSharp.Deserializers
                 return root.Element(camelName);
             }
 
-            if (name == "Value".AsNamespaced(name.NamespaceName))
+            if (name == "Value".AsNamespaced(name.NamespaceName) &&
+                (!root.HasAttributes || root.Attributes().All(x => x.Name != name)))
             {
                 return root;
             }
