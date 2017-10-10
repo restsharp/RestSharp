@@ -180,12 +180,12 @@ namespace RestSharp.Deserializers
             return list;
         }
 
-        private object ConvertValue(TypeInfo type, object value)
+        private object ConvertValue(TypeInfo typeInfo, object value)
         {
             string stringValue = Convert.ToString(value, Culture);
 
             // check for nullable and extract underlying type
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Since the type is nullable and no value is provided return null
                 if (string.IsNullOrEmpty(stringValue))
@@ -193,24 +193,25 @@ namespace RestSharp.Deserializers
                     return null;
                 }
 
-                type = type.GetGenericArguments()[0].GetTypeInfo();
+                typeInfo = typeInfo.GetGenericArguments()[0].GetTypeInfo();
             }
 
-            if (Equals(type, typeof(object).GetTypeInfo()))
+            if (typeInfo.AsType() == typeof(object))
             {
                 if (value == null)
                 {
                     return null;
                 }
-                type = value.GetType().GetTypeInfo();
+                typeInfo = value.GetType().GetTypeInfo();
             }
 
-            if (type.IsPrimitive)
+            var type = typeInfo.AsType();
+            if (typeInfo.IsPrimitive)
             {
                 return value.ChangeType(type, Culture);
             }
 
-            if (type.IsEnum)
+            if (typeInfo.IsEnum)
             {
                 return type.FindEnumValue(stringValue, Culture);
             }
@@ -278,7 +279,7 @@ namespace RestSharp.Deserializers
 
                 if (genericTypeDef == typeof(IEnumerable<>))
                 {
-                    Type itemType = type.GetGenericArguments()[0];
+                    Type itemType = typeInfo.GetGenericArguments()[0];
                     Type listType = typeof(List<>).MakeGenericType(itemType);
                     return BuildList(listType, value);
                 }

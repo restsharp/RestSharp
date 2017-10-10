@@ -10,6 +10,33 @@ namespace RestSharp.Authenticators.OAuth
     {
         private List<WebPair> parameters;
 
+        public WebPairCollection(IEnumerable<WebPair> parameters)
+        {
+            this.parameters = new List<WebPair>(parameters);
+        }
+
+        public WebPairCollection(NameValueCollection collection)
+            : this()
+        {
+            AddCollection(collection);
+        }
+
+        public WebPairCollection(IDictionary<string, string> collection)
+            : this()
+        {
+            AddCollection(collection);
+        }
+
+        public WebPairCollection()
+        {
+            parameters = new List<WebPair>(0);
+        }
+
+        public WebPairCollection(int capacity)
+        {
+            parameters = new List<WebPair>(capacity);
+        }
+
         public virtual WebPair this[string name]
         {
             get { return this.SingleOrDefault(p => p.Name.Equals(name)); }
@@ -17,165 +44,128 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual IEnumerable<string> Names
         {
-            get { return this.parameters.Select(p => p.Name); }
+            get { return parameters.Select(p => p.Name); }
         }
 
         public virtual IEnumerable<string> Values
         {
-            get { return this.parameters.Select(p => p.Value); }
-        }
-
-        public WebPairCollection(IEnumerable<WebPair> parameters)
-        {
-            this.parameters = new List<WebPair>(parameters);
-        }
-
-#if !WINDOWS_PHONE && !SILVERLIGHT
-        public WebPairCollection(NameValueCollection collection)
-            : this()
-        {
-            this.AddCollection(collection);
+            get { return parameters.Select(p => p.Value); }
         }
 
         public virtual void AddRange(NameValueCollection collection)
         {
-            this.AddCollection(collection);
+            AddCollection(collection);
         }
 
         private void AddCollection(NameValueCollection collection)
         {
-            this.parameters.AddRange(collection.AllKeys.Select(key => new WebPair(key, collection[key])));
-        }
-#endif
-
-        public WebPairCollection(IDictionary<string, string> collection)
-            : this()
-        {
-            this.AddCollection(collection);
+            parameters.AddRange(collection.AllKeys.Select(key => new WebPair(key, collection[key])));
         }
 
         public void AddCollection(IDictionary<string, string> collection)
         {
-            this.parameters.AddRange(collection.Keys.Select(key => new WebPair(key, collection[key])));
-        }
-
-        public WebPairCollection()
-        {
-            this.parameters = new List<WebPair>(0);
-        }
-
-        public WebPairCollection(int capacity)
-        {
-            this.parameters = new List<WebPair>(capacity);
+            parameters.AddRange(collection.Keys.Select(key => new WebPair(key, collection[key])));
         }
 
         private void AddCollection(IEnumerable<WebPair> collection)
         {
-            this.parameters.AddRange(collection.Select(parameter => new WebPair(parameter.Name, parameter.Value)));
+            parameters.AddRange(collection.Select(parameter => new WebPair(parameter.Name, parameter.Value)));
         }
 
         public virtual void AddRange(WebPairCollection collection)
         {
-            this.AddCollection(collection);
+            AddCollection(collection);
         }
 
         public virtual void AddRange(IEnumerable<WebPair> collection)
         {
-            this.AddCollection(collection);
+            AddCollection(collection);
         }
 
         public virtual void Sort(Comparison<WebPair> comparison)
         {
-            List<WebPair> sorted = new List<WebPair>(this.parameters);
+            var sorted = new List<WebPair>(parameters);
 
             sorted.Sort(comparison);
 
-            this.parameters = sorted;
+            parameters = sorted;
         }
 
         public virtual bool RemoveAll(IEnumerable<WebPair> parametersToRemove)
         {
-            WebPair[] array = parametersToRemove.ToArray();
-            bool success = array.Aggregate(true, (current, parameter) => current & this.parameters.Remove(parameter));
+            var array = parametersToRemove.ToArray();
+            var success = array.Aggregate(true, (current, parameter) => current & parameters.Remove(parameter));
 
             return success && array.Length > 0;
         }
 
         public virtual void Add(string name, string value)
         {
-            WebPair pair = new WebPair(name, value);
+            var pair = new WebPair(name, value);
 
-            this.parameters.Add(pair);
+            parameters.Add(pair);
         }
 
         #region IList<WebParameter> Members
 
         public virtual IEnumerator<WebPair> GetEnumerator()
         {
-            return this.parameters.GetEnumerator();
+            return parameters.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         public virtual void Add(WebPair parameter)
         {
-            this.parameters.Add(parameter);
+            parameters.Add(parameter);
         }
 
         public virtual void Clear()
         {
-            this.parameters.Clear();
+            parameters.Clear();
         }
 
         public virtual bool Contains(WebPair parameter)
         {
-            return this.parameters.Contains(parameter);
+            return parameters.Contains(parameter);
         }
 
         public virtual void CopyTo(WebPair[] parametersArray, int arrayIndex)
         {
-            this.parameters.CopyTo(parametersArray, arrayIndex);
+            parameters.CopyTo(parametersArray, arrayIndex);
         }
 
         public virtual bool Remove(WebPair parameter)
         {
-            return this.parameters.Remove(parameter);
+            return parameters.Remove(parameter);
         }
 
-        public virtual int Count
-        {
-            get { return this.parameters.Count; }
-        }
+        public virtual int Count => parameters.Count;
 
-        public virtual bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public virtual bool IsReadOnly => false;
 
         public virtual int IndexOf(WebPair parameter)
         {
-            return this.parameters.IndexOf(parameter);
+            return parameters.IndexOf(parameter);
         }
 
         public virtual void Insert(int index, WebPair parameter)
         {
-            this.parameters.Insert(index, parameter);
+            parameters.Insert(index, parameter);
         }
 
         public virtual void RemoveAt(int index)
         {
-            this.parameters.RemoveAt(index);
+            parameters.RemoveAt(index);
         }
 
         public virtual WebPair this[int index]
         {
-            get { return this.parameters[index]; }
-            set { this.parameters[index] = value; }
+            get => parameters[index];
+            set => parameters[index] = value;
         }
-
-        #endregion
     }
 }

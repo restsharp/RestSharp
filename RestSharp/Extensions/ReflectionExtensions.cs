@@ -80,9 +80,9 @@ namespace RestSharp.Extensions
             return Convert.ChangeType(source, newType.AsType());
         }
 
-        public static object ChangeType(this object source, TypeInfo newType, CultureInfo culture)
+        public static object ChangeType(this object source, Type newType, CultureInfo culture)
         {
-            return Convert.ChangeType(source, newType.AsType());
+            return Convert.ChangeType(source, newType);
         }
 
         /// <summary>

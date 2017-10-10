@@ -111,17 +111,13 @@ namespace RestSharp.Deserializers
 
         protected virtual object Map(object x, XElement root)
         {
-            Type objType = x.GetType();
+            var objType = x.GetType().GetTypeInfo();
             PropertyInfo[] props = objType.GetProperties();
 
             foreach (PropertyInfo prop in props)
             {
-                Type type = prop.PropertyType;
-#if !WINDOWS_UWP
+                var type = prop.PropertyType.GetTypeInfo();
                 bool typeIsPublic = type.IsPublic || type.IsNestedPublic;
-#else
-                bool typeIsPublic = type.GetTypeInfo().IsPublic || type.GetTypeInfo().IsNestedPublic;
-#endif
 
                 if (!typeIsPublic || !prop.CanWrite)
                 {
@@ -129,45 +125,33 @@ namespace RestSharp.Deserializers
                 }
 
                 XName name;                
-#if !WINDOWS_UWP
-                object[] attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);                
+                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);                
 
-                if (attributes.Length > 0)
-#else
-                IEnumerable<Attribute> attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);                
-
-                if (attributes.Count() > 0)
-#endif
+                if (attributes.Any())
                 {
-                    DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes.First();
-
-                    name = attribute.Name.AsNamespaced(this.Namespace);
+                    var attribute = (DeserializeAsAttribute) attributes.First();
+                    name = attribute.Name.AsNamespaced(Namespace);
                 }
                 else
                 {
-                    name = prop.Name.AsNamespaced(this.Namespace);
+                    name = prop.Name.AsNamespaced(Namespace);
                 }
 
-                object value = this.GetValueFromXml(root, name, prop);
+                object value = GetValueFromXml(root, name, prop);
 
                 if (value == null)
                 {
-                    // special case for inline list items
-#if !WINDOWS_UWP
                     if (type.IsGenericType)
-#else
-                    if (type.GetTypeInfo().IsGenericType)
-#endif
                     {
                         Type genericType = type.GetGenericArguments()[0];
-                        XElement first = this.GetElementByName(root, genericType.Name);
-                        IList list = (IList) Activator.CreateInstance(type);
+                        XElement first = GetElementByName(root, genericType.Name);
+                        IList list = (IList) Activator.CreateInstance(type.AsType());
 
                         if (first != null && root != null)
                         {
                             IEnumerable<XElement> elements = root.Elements(first.Name);
 
-                            this.PopulateListFromElements(genericType, elements, list);
+                            PopulateListFromElements(genericType, elements, list);
                         }
 
                         prop.SetValue(x, list, null);
@@ -175,12 +159,7 @@ namespace RestSharp.Deserializers
                     continue;
                 }
 
-                // check for nullable and extract underlying type
-#if !WINDOWS_UWP
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#else
-                if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-#endif
                 {
                     // if the value is empty, set the property to null...
                     if (string.IsNullOrEmpty(value.ToString()))
@@ -189,88 +168,78 @@ namespace RestSharp.Deserializers
                         continue;
                     }
 
-                    type = type.GetGenericArguments()[0];
+                    type = type.GetGenericArguments()[0].GetTypeInfo();
                 }
 
-                if (type == typeof(bool))
+                var asType = type.AsType();
+                if (asType == typeof(bool))
                 {
                     string toConvert = value.ToString()
                                             .ToLower();
 
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
-#if !WINDOWS_UWP
                 else if (type.IsPrimitive)
-#else
-                else if (type.GetTypeInfo().IsPrimitive)
-#endif
                 {
-                    prop.SetValue(x, value.ChangeType(type, this.Culture), null);
+                    prop.SetValue(x, value.ChangeType(asType, Culture), null);
                 }
-#if !WINDOWS_UWP
                 else if (type.IsEnum)
-#else
-                else if (type.GetTypeInfo().IsEnum)
-#endif
                 {
-                    object converted = type.FindEnumValue(value.ToString(), this.Culture);
+                    object converted = type.AsType().FindEnumValue(value.ToString(), Culture);
 
                     prop.SetValue(x, converted, null);
                 }
-                else if (type == typeof(Uri))
+                else if (asType == typeof(Uri))
                 {
                     Uri uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
 
                     prop.SetValue(x, uri, null);
                 }
-                else if (type == typeof(string))
+                else if (asType == typeof(string))
                 {
                     prop.SetValue(x, value, null);
                 }
-                else if (type == typeof(DateTime))
+                else if (asType == typeof(DateTime))
                 {
-                    value = this.DateFormat.HasValue()
-                        ? DateTime.ParseExact(value.ToString(), this.DateFormat, this.Culture)
-                        : DateTime.Parse(value.ToString(), this.Culture);
+                    value = DateFormat.HasValue()
+                        ? DateTime.ParseExact(value.ToString(), DateFormat, Culture)
+                        : DateTime.Parse(value.ToString(), Culture);
 
                     prop.SetValue(x, value, null);
                 }
-                else if (type == typeof(DateTimeOffset))
+                else if (asType == typeof(DateTimeOffset))
                 {
                     string toConvert = value.ToString();
 
-                    if (!string.IsNullOrEmpty(toConvert))
+                    if (string.IsNullOrEmpty(toConvert)) continue;
+                    
+                    DateTimeOffset deserialisedValue;
+
+                    try
                     {
-                        DateTimeOffset deserialisedValue;
-
-                        try
+                        deserialisedValue = XmlConvert.ToDateTimeOffset(toConvert);
+                        prop.SetValue(x, deserialisedValue, null);
+                    }
+                    catch (Exception)
+                    {
+                        if (TryGetFromString(toConvert, out object result, asType))
                         {
-                            deserialisedValue = XmlConvert.ToDateTimeOffset(toConvert);
-                            prop.SetValue(x, deserialisedValue, null);
+                            prop.SetValue(x, result, null);
                         }
-                        catch (Exception)
+                        else
                         {
-                            object result;
-
-                            if (TryGetFromString(toConvert, out result, type))
-                            {
-                                prop.SetValue(x, result, null);
-                            }
-                            else
-                            {
-                                //fallback to parse
-                                deserialisedValue = DateTimeOffset.Parse(toConvert);
-                                prop.SetValue(x, deserialisedValue, null);
-                            }
+                            //fallback to parse
+                            deserialisedValue = DateTimeOffset.Parse(toConvert);
+                            prop.SetValue(x, deserialisedValue, null);
                         }
                     }
                 }
-                else if (type == typeof(decimal))
+                else if (asType == typeof(decimal))
                 {
                     value = decimal.Parse(value.ToString(), this.Culture);
                     prop.SetValue(x, value, null);
                 }
-                else if (type == typeof(Guid))
+                else if (asType == typeof(Guid))
                 {
                     string raw = value.ToString();
 
@@ -280,21 +249,17 @@ namespace RestSharp.Deserializers
 
                     prop.SetValue(x, value, null);
                 }
-                else if (type == typeof(TimeSpan))
+                else if (asType == typeof(TimeSpan))
                 {
                     TimeSpan timeSpan = XmlConvert.ToTimeSpan(value.ToString());
 
                     prop.SetValue(x, timeSpan, null);
                 }
-#if !WINDOWS_UWP
                 else if (type.IsGenericType)
-#else
-                else if (type.GetTypeInfo(). IsGenericType)
-#endif
                 {
                     Type t = type.GetGenericArguments()[0];
-                    IList list = (IList) Activator.CreateInstance(type);
-                    XElement container = this.GetElementByName(root, prop.Name.AsNamespaced(this.Namespace));
+                    IList list = (IList) Activator.CreateInstance(asType);
+                    XElement container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
 
                     if (container.HasElements)
                     {
@@ -304,43 +269,39 @@ namespace RestSharp.Deserializers
                         {
                             IEnumerable<XElement> elements = container.Elements(first.Name);
 
-                            this.PopulateListFromElements(t, elements, list);
+                            PopulateListFromElements(t, elements, list);
                         }
                     }
 
                     prop.SetValue(x, list, null);
                 }
-                else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
+                else if (asType.IsSubclassOfRawGeneric(typeof(List<>)))
                 {
                     // handles classes that derive from List<T>
                     // e.g. a collection that also has attributes
-                    object list = this.HandleListDerivative(root, prop.Name, type);
+                    object list = this.HandleListDerivative(root, prop.Name, asType);
 
                     prop.SetValue(x, list, null);
                 }
                 else
                 {
                     //fallback to type converters if possible
-                    object result;
 
-                    if (TryGetFromString(value.ToString(), out result, type))
+                    if (TryGetFromString(value.ToString(), out object result, asType))
                     {
                         prop.SetValue(x, result, null);
                     }
                     else
                     {
                         // nested property classes
-                        if (root != null)
-                        {
-                            XElement element = this.GetElementByName(root, name);
+                        if (root == null) continue;
+                        XElement element = GetElementByName(root, name);
 
-                            if (element != null)
-                            {
-                                object item = this.CreateAndMap(type, element);
+                        if (element == null) continue;
+                        
+                        object item = CreateAndMap(asType, element);
 
-                                prop.SetValue(x, item, null);
-                            }
-                        }
+                        prop.SetValue(x, item, null);
                     }
                 }
             }
@@ -350,13 +311,11 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-
-#if !SILVERLIGHT && !WINDOWS_PHONE && !WINDOWS_UWP
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))
             {
-                result = (converter.ConvertFromInvariantString(inputString));
+                result = converter.ConvertFromInvariantString(inputString);
 
                 return true;
             }
@@ -364,16 +323,11 @@ namespace RestSharp.Deserializers
             result = null;
 
             return false;
-#else
-            result = null;
-
-            return false;
-#endif
         }
 
         private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
         {
-            foreach (object item in elements.Select(element => this.CreateAndMap(t, element)))
+            foreach (var item in elements.Select(element => CreateAndMap(t, element)))
             {
                 list.Add(item);
             }
@@ -381,15 +335,11 @@ namespace RestSharp.Deserializers
 
         private object HandleListDerivative(XElement root, string propName, Type type)
         {
-#if !WINDOWS_UWP
-            Type t = type.IsGenericType
-                ? type.GetGenericArguments()[0]
-                : type.BaseType.GetGenericArguments()[0];
-#else
-            Type t = type.GetTypeInfo().IsGenericType
-               ? type.GetGenericArguments()[0]
-               : type.GetTypeInfo().BaseType.GetGenericArguments()[0];
-#endif
+            var typeInfo = type.GetTypeInfo();
+            Type t = typeInfo.IsGenericType
+               ? typeInfo.GetGenericArguments()[0]
+               : type.GetTypeInfo().BaseType.GetTypeInfo().GetGenericArguments()[0];
+            
             IList list = (IList) Activator.CreateInstance(type);
             IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(this.Namespace))
                                            .ToList();
@@ -435,11 +385,7 @@ namespace RestSharp.Deserializers
 
             // get properties too, not just list items
             // only if this isn't a generic type
-#if !WINDOWS_UWP
-            if (!type.IsGenericType)
-#else
-            if (!type.GetTypeInfo().IsGenericType)
-#endif
+            if (!typeInfo.IsGenericType)
             {
                 this.Map(list, root.Element(propName.AsNamespaced(this.Namespace)) ?? root);
                 // when using RootElement, the heirarchy is different
@@ -456,18 +402,14 @@ namespace RestSharp.Deserializers
             {
                 item = element.Value;
             }
-#if !WINDOWS_UWP
-            else if (t.IsPrimitive)
-#else
             else if (t.GetTypeInfo().IsPrimitive)
-#endif
             {
                 item = element.Value.ChangeType(t, this.Culture);
             }
             else
             {
                 item = Activator.CreateInstance(t);
-                this.Map(item, element);
+                Map(item, element);
             }
 
             return item;
@@ -476,26 +418,24 @@ namespace RestSharp.Deserializers
         protected virtual object GetValueFromXml(XElement root, XName name, PropertyInfo prop)
         {
             object val = null;
+            if (root == null) return val;
+            
+            XElement element = GetElementByName(root, name);
 
-            if (root != null)
+            if (element == null)
             {
-                XElement element = this.GetElementByName(root, name);
+                XAttribute attribute = GetAttributeByName(root, name);
 
-                if (element == null)
+                if (attribute != null)
                 {
-                    XAttribute attribute = this.GetAttributeByName(root, name);
-
-                    if (attribute != null)
-                    {
-                        val = attribute.Value;
-                    }
+                    val = attribute.Value;
                 }
-                else
+            }
+            else
+            {
+                if (!element.IsEmpty || element.HasElements || element.HasAttributes)
                 {
-                    if (!element.IsEmpty || element.HasElements || element.HasAttributes)
-                    {
-                        val = element.Value;
-                    }
+                    val = element.Value;
                 }
             }
 
