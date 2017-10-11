@@ -217,7 +217,7 @@ namespace RestSharp.Authenticators.OAuth
 
             // Include url parameters in query pool
             var uri = new Uri(url);
-            var urlParameters = HttpUtility.ParseQueryString(uri.Query);
+            var urlParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
             foreach (var parameter in urlParameters.AllKeys)
                 switch (method.ToUpperInvariant())

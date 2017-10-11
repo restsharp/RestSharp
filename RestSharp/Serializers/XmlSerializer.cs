@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -28,80 +27,74 @@ using RestSharp.Extensions;
 namespace RestSharp.Serializers
 {
     /// <summary>
-    /// Default XML Serializer
+    ///     Default XML Serializer
     /// </summary>
     public class XmlSerializer : ISerializer
     {
         /// <summary>
-        /// Default constructor, does not specify namespace
+        ///     Default constructor, does not specify namespace
         /// </summary>
         public XmlSerializer()
         {
-            this.ContentType = "text/xml";
+            ContentType = "text/xml";
         }
 
         /// <summary>
-        /// Specify the namespaced to be used when serializing
+        ///     Specify the namespaced to be used when serializing
         /// </summary>
         /// <param name="namespace">XML namespace</param>
         public XmlSerializer(string @namespace)
         {
-            this.Namespace = @namespace;
-            this.ContentType = "text/xml";
+            Namespace = @namespace;
+            ContentType = "text/xml";
         }
 
         /// <summary>
-        /// Serialize the object as XML
+        ///     Serialize the object as XML
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>XML as string</returns>
         public string Serialize(object obj)
         {
-            XDocument doc = new XDocument();
-            Type t = obj.GetType();
-            string name = t.Name;
-            SerializeAsAttribute options = t.GetAttribute<SerializeAsAttribute>();
+            var doc = new XDocument();
+            var t = obj.GetType();
+            var name = t.Name;
+            var options = t.GetAttribute<SerializeAsAttribute>();
 
             if (options != null)
-            {
                 name = options.TransformName(options.Name ?? name);
-            }
 
-            XElement root = new XElement(name.AsNamespaced(this.Namespace));
+            var root = new XElement(name.AsNamespaced(Namespace));
 
-            if (obj is IList)
+            if (obj is IList list)
             {
-                string itemTypeName = "";
+                var itemTypeName = "";
 
-                foreach (object item in (IList) obj)
+                foreach (var item in list)
                 {
-                    Type type = item.GetType();
-                    SerializeAsAttribute opts = type.GetAttribute<SerializeAsAttribute>();
+                    var type = item.GetType();
+                    var opts = type.GetAttribute<SerializeAsAttribute>();
 
                     if (opts != null)
-                    {
                         itemTypeName = opts.TransformName(opts.Name ?? name);
-                    }
 
                     if (itemTypeName == "")
-                    {
                         itemTypeName = type.Name;
-                    }
 
-                    XElement instance = new XElement(itemTypeName.AsNamespaced(this.Namespace));
+                    var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 
-                    this.Map(instance, item);
+                    Map(instance, item);
                     root.Add(instance);
                 }
             }
             else
             {
-                this.Map(root, obj);
+                Map(root, obj);
             }
 
-            if (this.RootElement.HasValue())
+            if (RootElement.HasValue())
             {
-                XElement wrapper = new XElement(this.RootElement.AsNamespaced(this.Namespace), root);
+                var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
                 doc.Add(wrapper);
             }
             else
@@ -112,30 +105,48 @@ namespace RestSharp.Serializers
             return doc.ToString();
         }
 
+        /// <summary>
+        ///     Name of the root element to use when serializing
+        /// </summary>
+        public string RootElement { get; set; }
+
+        /// <summary>
+        ///     XML namespace to use when serializing
+        /// </summary>
+        public string Namespace { get; set; }
+
+        /// <summary>
+        ///     Format string to use when serializing dates
+        /// </summary>
+        public string DateFormat { get; set; }
+
+        /// <summary>
+        ///     Content type for serialized content
+        /// </summary>
+        public string ContentType { get; set; }
+
         private void Map(XContainer root, object obj)
         {
-            Type objType = obj.GetType();
-            IEnumerable<PropertyInfo> props = from p in objType.GetTypeInfo().GetProperties()
+            var objType = obj.GetType();
+            var props = from p in objType.GetTypeInfo().GetProperties()
                 let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
                 where p.CanRead && p.CanWrite
                 orderby indexAttribute?.Index ?? int.MaxValue
                 select p;
-            SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
 
-            foreach (PropertyInfo prop in props)
+            foreach (var prop in props)
             {
-                string name = prop.Name;
-                object rawValue = prop.GetValue(obj, null);
+                var name = prop.Name;
+                var rawValue = prop.GetValue(obj, null);
 
                 if (rawValue == null)
-                {
                     continue;
-                }
 
-                string value = this.GetSerializedValue(rawValue);
-                Type propType = prop.PropertyType;
-                bool useAttribute = false;
-                SerializeAsAttribute settings = prop.GetAttribute<SerializeAsAttribute>();
+                var value = GetSerializedValue(rawValue);
+                var propType = prop.PropertyType;
+                var useAttribute = false;
+                var settings = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (settings != null)
                 {
@@ -145,19 +156,15 @@ namespace RestSharp.Serializers
                     useAttribute = settings.Attribute;
                 }
 
-                SerializeAsAttribute options = prop.GetAttribute<SerializeAsAttribute>();
+                var options = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (options != null)
-                {
                     name = options.TransformName(name);
-                }
                 else if (globalOptions != null)
-                {
                     name = globalOptions.TransformName(name);
-                }
 
-                XName nsName = name.AsNamespaced(this.Namespace);
-                XElement element = new XElement(nsName);
+                var nsName = name.AsNamespaced(Namespace);
+                var element = new XElement(nsName);
                 if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
                     propType == typeof(string))
                 {
@@ -171,29 +178,29 @@ namespace RestSharp.Serializers
                 }
                 else if (rawValue is IList)
                 {
-                    string itemTypeName = "";
+                    var itemTypeName = "";
 
-                    foreach (object item in (IList) rawValue)
+                    foreach (var item in (IList) rawValue)
                     {
                         if (itemTypeName == "")
                         {
-                            Type type = item.GetType();
-                            SerializeAsAttribute setting = type.GetAttribute<SerializeAsAttribute>();
+                            var type = item.GetType();
+                            var setting = type.GetAttribute<SerializeAsAttribute>();
 
                             itemTypeName = setting != null && setting.Name.HasValue()
                                 ? setting.Name
                                 : type.Name;
                         }
 
-                        XElement instance = new XElement(itemTypeName.AsNamespaced(this.Namespace));
+                        var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 
-                        this.Map(instance, item);
+                        Map(instance, item);
                         element.Add(instance);
                     }
                 }
                 else
                 {
-                    this.Map(element, rawValue);
+                    Map(element, rawValue);
                 }
 
                 root.Add(element);
@@ -202,7 +209,7 @@ namespace RestSharp.Serializers
 
         private string GetSerializedValue(object obj)
         {
-            object output = obj;
+            var output = obj;
 
             switch (obj)
             {
@@ -210,7 +217,7 @@ namespace RestSharp.Serializers
                     output = time.ToString(DateFormat, CultureInfo.InvariantCulture);
                     break;
                 case bool _:
-                    output = ((bool)obj).ToString().ToLowerInvariant();
+                    output = ((bool) obj).ToString().ToLowerInvariant();
                     break;
             }
 
@@ -239,8 +246,8 @@ namespace RestSharp.Serializers
         }
 
         /// <summary>
-        /// Determines if a given object is numeric in any way
-        /// (can be integer, double, null, etc).
+        ///     Determines if a given object is numeric in any way
+        ///     (can be integer, double, null, etc).
         /// </summary>
         private static bool IsNumeric(object value)
         {
@@ -272,25 +279,5 @@ namespace RestSharp.Serializers
 
             return false;
         }
-
-        /// <summary>
-        /// Name of the root element to use when serializing
-        /// </summary>
-        public string RootElement { get; set; }
-
-        /// <summary>
-        /// XML namespace to use when serializing
-        /// </summary>
-        public string Namespace { get; set; }
-
-        /// <summary>
-        /// Format string to use when serializing dates
-        /// </summary>
-        public string DateFormat { get; set; }
-
-        /// <summary>
-        /// Content type for serialized content
-        /// </summary>
-        public string ContentType { get; set; }
     }
 }

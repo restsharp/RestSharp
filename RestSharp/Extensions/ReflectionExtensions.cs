@@ -35,8 +35,8 @@ namespace RestSharp.Extensions
         /// <param name="prop">Member to retrieve attribute from</param>
         /// <returns></returns>
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
-        {           
-            return prop.GetCustomAttribute(typeof(T)) as T;
+        {
+            return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
         }
 
         /// <summary>
@@ -47,8 +47,7 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static T GetAttribute<T>(this Type type) where T : Attribute
         {
-            //type.GetTypeInfo().getcu
-            return type.GetTypeInfo().GetCustomAttribute(type) as T;
+            return Attribute.GetCustomAttribute(type, typeof(T)) as T;
         }
 
         /// <summary>
@@ -96,10 +95,10 @@ namespace RestSharp.Extensions
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
             Enum ret = Enum.GetValues(type)
-                           .Cast<Enum>()
-                           .FirstOrDefault(v => v.ToString()
-                                                 .GetNameVariants(culture)
-                                                 .Contains(value, StringComparer.Create(culture, true)));
+                .Cast<Enum>()
+                .FirstOrDefault(v => v.ToString()
+                    .GetNameVariants(culture)
+                    .Contains(value, StringComparer.Create(culture, true)));
 
             if (ret != null) return ret;
 

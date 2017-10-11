@@ -25,107 +25,89 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Extensions;
-
 #if !SILVERLIGHT && !WINDOWS_PHONE
 using System.ComponentModel;
+
 #endif
 
 namespace RestSharp.Deserializers
 {
     public class XmlDeserializer : IDeserializer
     {
+        public XmlDeserializer()
+        {
+            Culture = CultureInfo.InvariantCulture;
+        }
+
+        public CultureInfo Culture { get; set; }
         public string RootElement { get; set; }
 
         public string Namespace { get; set; }
 
         public string DateFormat { get; set; }
 
-        public CultureInfo Culture { get; set; }
-
-        public XmlDeserializer()
-        {
-            this.Culture = CultureInfo.InvariantCulture;
-        }
-
         public virtual T Deserialize<T>(IRestResponse response)
         {
             if (string.IsNullOrEmpty(response.Content))
-            {
                 return default(T);
-            }
 
-            XDocument doc = XDocument.Parse(response.Content);
-            XElement root = doc.Root;
+            var doc = XDocument.Parse(response.Content);
+            var root = doc.Root;
 
-            if (this.RootElement.HasValue() && doc.Root != null)
-            {
-                root = doc.Root.DescendantsAndSelf(this.RootElement.AsNamespaced(this.Namespace)).SingleOrDefault();
-            }
+            if (RootElement.HasValue() && doc.Root != null)
+                root = doc.Root.DescendantsAndSelf(RootElement.AsNamespaced(Namespace)).SingleOrDefault();
 
             // autodetect xml namespace
-            if (!this.Namespace.HasValue())
-            {
+            if (!Namespace.HasValue())
                 RemoveNamespace(doc);
-            }
 
-            T x = Activator.CreateInstance<T>();
-            Type objType = x.GetType();
+            var x = Activator.CreateInstance<T>();
+            var objType = x.GetType();
 
             if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
-            {
-                x = (T) this.HandleListDerivative(root, objType.Name, objType);
-            }
+                x = (T) HandleListDerivative(root, objType.Name, objType);
             else
-            {
-                x = (T) this.Map(x, root);
-            }
+                x = (T) Map(x, root);
 
             return x;
         }
 
         private static void RemoveNamespace(XDocument xdoc)
         {
-            if (xdoc.Root != null)
+            if (xdoc.Root == null) return;
+            
+            foreach (var e in xdoc.Root.DescendantsAndSelf())
             {
-                foreach (XElement e in xdoc.Root.DescendantsAndSelf())
-                {
-                    if (e.Name.Namespace != XNamespace.None)
-                    {
-                        e.Name = XNamespace.None.GetName(e.Name.LocalName);
-                    }
+                if (e.Name.Namespace != XNamespace.None)
+                    e.Name = XNamespace.None.GetName(e.Name.LocalName);
 
-                    if (e.Attributes()
-                         .Any(a => a.IsNamespaceDeclaration || a.Name.Namespace != XNamespace.None))
-                    {
-                        e.ReplaceAttributes(
-                            e.Attributes()
-                             .Select(a => a.IsNamespaceDeclaration
-                                 ? null
-                                 : a.Name.Namespace != XNamespace.None
-                                     ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
-                                     : a));
-                    }
-                }
+                if (e.Attributes()
+                    .Any(a => a.IsNamespaceDeclaration || a.Name.Namespace != XNamespace.None))
+                    e.ReplaceAttributes(
+                        e.Attributes()
+                            .Select(a => a.IsNamespaceDeclaration
+                                ? null
+                                : a.Name.Namespace != XNamespace.None
+                                    ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
+                                    : a));
             }
         }
 
         protected virtual object Map(object x, XElement root)
         {
             var objType = x.GetType().GetTypeInfo();
-            PropertyInfo[] props = objType.GetProperties();
+            var props = objType.GetProperties();
 
-            foreach (PropertyInfo prop in props)
+            foreach (var prop in props)
             {
                 var type = prop.PropertyType.GetTypeInfo();
-                bool typeIsPublic = type.IsPublic || type.IsNestedPublic;
+                var typeIsPublic = type.IsPublic || type.IsNestedPublic;
 
                 if (!typeIsPublic || !prop.CanWrite)
-                {
                     continue;
-                }
 
-                XName name;                
-                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);                
+                XName name;
+                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
                 {
@@ -137,19 +119,19 @@ namespace RestSharp.Deserializers
                     name = prop.Name.AsNamespaced(Namespace);
                 }
 
-                object value = GetValueFromXml(root, name, prop);
+                var value = GetValueFromXml(root, name, prop);
 
                 if (value == null)
                 {
                     if (type.IsGenericType)
                     {
-                        Type genericType = type.GetGenericArguments()[0];
-                        XElement first = GetElementByName(root, genericType.Name);
-                        IList list = (IList) Activator.CreateInstance(type.AsType());
+                        var genericType = type.GetGenericArguments()[0];
+                        var first = GetElementByName(root, genericType.Name);
+                        var list = (IList) Activator.CreateInstance(type.AsType());
 
                         if (first != null && root != null)
                         {
-                            IEnumerable<XElement> elements = root.Elements(first.Name);
+                            var elements = root.Elements(first.Name);
 
                             PopulateListFromElements(genericType, elements, list);
                         }
@@ -174,8 +156,8 @@ namespace RestSharp.Deserializers
                 var asType = type.AsType();
                 if (asType == typeof(bool))
                 {
-                    string toConvert = value.ToString()
-                                            .ToLower();
+                    var toConvert = value.ToString()
+                        .ToLower();
 
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
@@ -185,13 +167,13 @@ namespace RestSharp.Deserializers
                 }
                 else if (type.IsEnum)
                 {
-                    object converted = type.AsType().FindEnumValue(value.ToString(), Culture);
+                    var converted = type.AsType().FindEnumValue(value.ToString(), Culture);
 
                     prop.SetValue(x, converted, null);
                 }
                 else if (asType == typeof(Uri))
                 {
-                    Uri uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+                    var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
 
                     prop.SetValue(x, uri, null);
                 }
@@ -209,10 +191,10 @@ namespace RestSharp.Deserializers
                 }
                 else if (asType == typeof(DateTimeOffset))
                 {
-                    string toConvert = value.ToString();
+                    var toConvert = value.ToString();
 
                     if (string.IsNullOrEmpty(toConvert)) continue;
-                    
+
                     DateTimeOffset deserialisedValue;
 
                     try
@@ -222,7 +204,7 @@ namespace RestSharp.Deserializers
                     }
                     catch (Exception)
                     {
-                        if (TryGetFromString(toConvert, out object result, asType))
+                        if (TryGetFromString(toConvert, out var result, asType))
                         {
                             prop.SetValue(x, result, null);
                         }
@@ -236,12 +218,12 @@ namespace RestSharp.Deserializers
                 }
                 else if (asType == typeof(decimal))
                 {
-                    value = decimal.Parse(value.ToString(), this.Culture);
+                    value = decimal.Parse(value.ToString(), Culture);
                     prop.SetValue(x, value, null);
                 }
                 else if (asType == typeof(Guid))
                 {
-                    string raw = value.ToString();
+                    var raw = value.ToString();
 
                     value = string.IsNullOrEmpty(raw)
                         ? Guid.Empty
@@ -251,23 +233,23 @@ namespace RestSharp.Deserializers
                 }
                 else if (asType == typeof(TimeSpan))
                 {
-                    TimeSpan timeSpan = XmlConvert.ToTimeSpan(value.ToString());
+                    var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
 
                     prop.SetValue(x, timeSpan, null);
                 }
                 else if (type.IsGenericType)
                 {
-                    Type t = type.GetGenericArguments()[0];
-                    IList list = (IList) Activator.CreateInstance(asType);
-                    XElement container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
+                    var t = type.GetGenericArguments()[0];
+                    var list = (IList) Activator.CreateInstance(asType);
+                    var container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
 
                     if (container.HasElements)
                     {
-                        XElement first = container.Elements().FirstOrDefault();
+                        var first = container.Elements().FirstOrDefault();
 
                         if (first != null)
                         {
-                            IEnumerable<XElement> elements = container.Elements(first.Name);
+                            var elements = container.Elements(first.Name);
 
                             PopulateListFromElements(t, elements, list);
                         }
@@ -279,7 +261,7 @@ namespace RestSharp.Deserializers
                 {
                     // handles classes that derive from List<T>
                     // e.g. a collection that also has attributes
-                    object list = this.HandleListDerivative(root, prop.Name, asType);
+                    var list = HandleListDerivative(root, prop.Name, asType);
 
                     prop.SetValue(x, list, null);
                 }
@@ -287,7 +269,7 @@ namespace RestSharp.Deserializers
                 {
                     //fallback to type converters if possible
 
-                    if (TryGetFromString(value.ToString(), out object result, asType))
+                    if (TryGetFromString(value.ToString(), out var result, asType))
                     {
                         prop.SetValue(x, result, null);
                     }
@@ -295,11 +277,11 @@ namespace RestSharp.Deserializers
                     {
                         // nested property classes
                         if (root == null) continue;
-                        XElement element = GetElementByName(root, name);
+                        var element = GetElementByName(root, name);
 
                         if (element == null) continue;
-                        
-                        object item = CreateAndMap(asType, element);
+
+                        var item = CreateAndMap(asType, element);
 
                         prop.SetValue(x, item, null);
                     }
@@ -311,7 +293,7 @@ namespace RestSharp.Deserializers
 
         private static bool TryGetFromString(string inputString, out object result, Type type)
         {
-            TypeConverter converter = TypeDescriptor.GetConverter(type);
+            var converter = TypeDescriptor.GetConverter(type);
 
             if (converter.CanConvertFrom(typeof(string)))
             {
@@ -328,68 +310,58 @@ namespace RestSharp.Deserializers
         private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
         {
             foreach (var item in elements.Select(element => CreateAndMap(t, element)))
-            {
                 list.Add(item);
-            }
         }
 
         private object HandleListDerivative(XElement root, string propName, Type type)
         {
-            var typeInfo = type.GetTypeInfo();
-            Type t = typeInfo.IsGenericType
-               ? typeInfo.GetGenericArguments()[0]
-               : type.GetTypeInfo().BaseType.GetTypeInfo().GetGenericArguments()[0];
-            
-            IList list = (IList) Activator.CreateInstance(type);
-            IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(this.Namespace))
-                                           .ToList();
-            string name = t.Name;
-            DeserializeAsAttribute attribute = t.GetAttribute<DeserializeAsAttribute>();
+            var t = type.IsGenericType
+                ? type.GetGenericArguments()[0]
+                : type.BaseType.GetGenericArguments()[0];
+
+            var list = (IList) Activator.CreateInstance(type);
+            IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(Namespace))
+                .ToList();
+            var name = t.Name;
+            var attribute = t.GetAttribute<DeserializeAsAttribute>();
 
             if (attribute != null)
-            {
                 name = attribute.Name;
-            }
 
             if (!elements.Any())
             {
-                XName lowerName = name.ToLower().AsNamespaced(this.Namespace);
+                var lowerName = name.ToLower().AsNamespaced(Namespace);
 
                 elements = root.Descendants(lowerName).ToList();
             }
 
             if (!elements.Any())
             {
-                XName camelName = name.ToCamelCase(this.Culture).AsNamespaced(this.Namespace);
+                var camelName = name.ToCamelCase(Culture).AsNamespaced(Namespace);
 
                 elements = root.Descendants(camelName).ToList();
             }
 
             if (!elements.Any())
-            {
                 elements = root.Descendants()
-                               .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == name)
-                               .ToList();
-            }
+                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == name)
+                    .ToList();
 
             if (!elements.Any())
             {
-                XName lowerName = name.ToLower().AsNamespaced(this.Namespace);
+                var lowerName = name.ToLower().AsNamespaced(Namespace);
 
                 elements = root.Descendants()
-                               .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
-                               .ToList();
+                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
+                    .ToList();
             }
 
-            this.PopulateListFromElements(t, elements, list);
+            PopulateListFromElements(t, elements, list);
 
             // get properties too, not just list items
             // only if this isn't a generic type
-            if (!typeInfo.IsGenericType)
-            {
-                this.Map(list, root.Element(propName.AsNamespaced(this.Namespace)) ?? root);
-                // when using RootElement, the heirarchy is different
-            }
+            if (!type.IsGenericType)
+                Map(list, root.Element(propName.AsNamespaced(Namespace)) ?? root);
 
             return list;
         }
@@ -404,7 +376,7 @@ namespace RestSharp.Deserializers
             }
             else if (t.GetTypeInfo().IsPrimitive)
             {
-                item = element.Value.ChangeType(t, this.Culture);
+                item = element.Value.ChangeType(t, Culture);
             }
             else
             {
@@ -419,24 +391,20 @@ namespace RestSharp.Deserializers
         {
             object val = null;
             if (root == null) return val;
-            
-            XElement element = GetElementByName(root, name);
+
+            var element = GetElementByName(root, name);
 
             if (element == null)
             {
-                XAttribute attribute = GetAttributeByName(root, name);
+                var attribute = GetAttributeByName(root, name);
 
                 if (attribute != null)
-                {
                     val = attribute.Value;
-                }
             }
             else
             {
                 if (!element.IsEmpty || element.HasElements || element.HasAttributes)
-                {
                     val = element.Value;
-                }
             }
 
             return val;
@@ -444,29 +412,21 @@ namespace RestSharp.Deserializers
 
         protected virtual XElement GetElementByName(XElement root, XName name)
         {
-            XName lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
-            XName camelName = name.LocalName.ToCamelCase(this.Culture).AsNamespaced(name.NamespaceName);
+            var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
+            var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
             if (root.Element(name) != null)
-            {
                 return root.Element(name);
-            }
 
             if (root.Element(lowerName) != null)
-            {
                 return root.Element(lowerName);
-            }
 
             if (root.Element(camelName) != null)
-            {
                 return root.Element(camelName);
-            }
 
             if (name == "Value".AsNamespaced(name.NamespaceName) &&
                 (!root.HasAttributes || root.Attributes().All(x => x.Name != name)))
-            {
                 return root;
-            }
 
             // try looking for element that matches sanitized property name (Order by depth)
             return root.Descendants()
@@ -479,19 +439,19 @@ namespace RestSharp.Deserializers
 
         protected virtual XAttribute GetAttributeByName(XElement root, XName name)
         {
-            List<XName> names = new List<XName>
-                                {
-                                    name.LocalName,
-                                    name.LocalName.ToLower()
-                                        .AsNamespaced(name.NamespaceName),
-                                    name.LocalName.ToCamelCase(this.Culture)
-                                        .AsNamespaced(name.NamespaceName)
-                                };
+            var names = new List<XName>
+            {
+                name.LocalName,
+                name.LocalName.ToLower()
+                    .AsNamespaced(name.NamespaceName),
+                name.LocalName.ToCamelCase(Culture)
+                    .AsNamespaced(name.NamespaceName)
+            };
 
             return root.DescendantsAndSelf()
-                       .OrderBy(d => d.Ancestors().Count())
-                       .Attributes()
-                       .FirstOrDefault(d => names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes()));
+                .OrderBy(d => d.Ancestors().Count())
+                .Attributes()
+                .FirstOrDefault(d => names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes()));
         }
     }
 }

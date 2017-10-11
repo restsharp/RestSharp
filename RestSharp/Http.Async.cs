@@ -19,7 +19,6 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using RestSharp.Extensions;
 
@@ -94,7 +93,7 @@ namespace RestSharp
             return GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
         }
 
-        private HttpWebRequest GetStyleMethodInternalAsync(HttpMethod method, Action<HttpResponse> callback)
+        private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
         {
             HttpWebRequest webRequest = null;
 
@@ -102,9 +101,9 @@ namespace RestSharp
             {
                 var url = Url;
 
-                webRequest = this.ConfigureAsyncWebRequest(method, url);
+                webRequest = ConfigureAsyncWebRequest(method, url);
 
-                if (HasBody && (method == HttpMethod.Delete || method == HttpMethod.Options))
+                if (HasBody && (method == "DELETE" || method == "OPTIONS"))
                 {
                     webRequest.ContentType = RequestContentType;
                     WriteRequestBodyAsync(webRequest, callback);
@@ -147,13 +146,13 @@ namespace RestSharp
             return response;
         }
 
-        private HttpRequestMessage PutPostInternalAsync(HttpMethod method, Action<HttpResponse> callback)
+        private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
         {
-            HttpRequestMessage webRequest = null;
+            HttpWebRequest webRequest = null;
 
             try
             {
-                webRequest = this.ConfigureAsyncWebRequest(method, Url);
+                webRequest = ConfigureAsyncWebRequest(method, Url);
                 PreparePostBody(webRequest);
                 WriteRequestBodyAsync(webRequest, callback);
             }
@@ -165,7 +164,7 @@ namespace RestSharp
             return webRequest;
         }
 
-        private void WriteRequestBodyAsync(HttpRequestMessage webRequest, Action<HttpResponse> callback)
+        private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
         {
             IAsyncResult asyncResult;
             timeoutState = new TimeOutState {Request = webRequest};
@@ -257,9 +256,11 @@ namespace RestSharp
 
         private static void TimeoutCallback(object state, bool timedOut)
         {
-            if (!timedOut) return;
+            if (!timedOut)
+                return;
 
-            if (!(state is TimeOutState timeoutState)) return;
+            if (!(state is TimeOutState timeoutState))
+                return;
 
             lock (timeoutState)
             {
@@ -335,50 +336,51 @@ namespace RestSharp
 
         private static void PopulateErrorForIncompleteResponse(HttpResponse response)
         {
-            if (response.ResponseStatus == ResponseStatus.Completed || response.ErrorException != null) return;
-            
-            response.ErrorException = response.ResponseStatus.ToWebException();
-            response.ErrorMessage = response.ErrorException.Message;
+            if (response.ResponseStatus != ResponseStatus.Completed && response.ErrorException == null)
+            {
+                response.ErrorException = response.ResponseStatus.ToWebException();
+                response.ErrorMessage = response.ErrorException.Message;
+            }
         }
-
 
         // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
         // TODO: duplication at the moment).
-        private HttpRequestMessage ConfigureAsyncWebRequest(HttpMethod method, Uri url)
+        private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
         {
-            var webRequest = new HttpRequestMessage(method, url);
-            var clientHandler = new HttpClientHandler();
-            var httpClient = new HttpClient(clientHandler);
+            var webRequest = (HttpWebRequest) WebRequest.Create(url);
 
-            clientHandler.UseDefaultCredentials = UseDefaultCredentials;
+            webRequest.UseDefaultCredentials = UseDefaultCredentials;
 
-            clientHandler.PreAuthenticate = PreAuthenticate;
+            webRequest.PreAuthenticate = PreAuthenticate;
+            webRequest.Pipelined = Pipelined;
 
-            this.AppendHeaders(webRequest);
-            this.AppendCookies(webRequest);
+            AppendHeaders(webRequest);
+            AppendCookies(webRequest);
 
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
+            // WP7 doesn't as of Beta doesn't support a way to set this value either directly
+            // or indirectly
             if (!HasFiles && !AlwaysMultipartFormData)
-                clientHandler.ContentLength = 0;
+                webRequest.ContentLength = 0;
 
             if (Credentials != null)
-                clientHandler.Credentials = Credentials;
+                webRequest.Credentials = Credentials;
 
             if (UserAgent.HasValue())
-                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+                webRequest.UserAgent = UserAgent;
 
             if (ClientCertificates != null)
                 webRequest.ClientCertificates.AddRange(ClientCertificates);
 
-            clientHandler.AutomaticDecompression =
+            webRequest.AutomaticDecompression =
                 DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
             webRequest.ServicePoint.Expect100Continue = false;
 
             if (Timeout != 0)
-                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout);
+                webRequest.Timeout = Timeout;
 
             if (ReadWriteTimeout != 0)
                 webRequest.ReadWriteTimeout = ReadWriteTimeout;
@@ -392,10 +394,8 @@ namespace RestSharp
             if (FollowRedirects && MaxRedirects.HasValue)
                 webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
 
-            clientHandler.AllowAutoRedirect = FollowRedirects;
-
+            webRequest.AllowAutoRedirect = FollowRedirects;
             webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
-
             return webRequest;
         }
 
@@ -403,7 +403,7 @@ namespace RestSharp
         {
             public bool TimedOut { get; set; }
 
-            public HttpRequestMessage Request { get; set; }
+            public HttpWebRequest Request { get; set; }
         }
     }
 }

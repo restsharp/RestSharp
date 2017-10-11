@@ -22,8 +22,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -80,31 +78,6 @@ namespace RestSharp
         protected bool HasFiles => Files.Any();
 
         /// <summary>
-        ///     X509CertificateCollection to be sent with request
-        /// </summary>
-        public X509CertificateCollection ClientCertificates { get; set; }
-
-        /// <summary>
-        ///     Maximum number of automatic redirects to follow if FollowRedirects is true
-        /// </summary>
-        public int? MaxRedirects { get; set; }
-
-        /// <summary>
-        ///     Proxy info to be sent with request
-        /// </summary>
-        public IWebProxy Proxy { get; set; }
-
-        /// <summary>
-        ///     Caching policy for requests created with this wrapper.
-        /// </summary>
-        public RequestCachePolicy CachePolicy { get; set; }
-
-        /// <summary>
-        ///     Callback function for handling the validation of remote certificates.
-        /// </summary>
-        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-
-        /// <summary>
         ///     Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         public bool AlwaysMultipartFormData { get; set; }
@@ -154,6 +127,15 @@ namespace RestSharp
         /// </summary>
         public bool Pipelined { get; set; }
 
+        /// <summary>
+        ///     X509CertificateCollection to be sent with request
+        /// </summary>
+        public X509CertificateCollection ClientCertificates { get; set; }
+
+        /// <summary>
+        ///     Maximum number of automatic redirects to follow if FollowRedirects is true
+        /// </summary>
+        public int? MaxRedirects { get; set; }
 
         /// <summary>
         ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
@@ -205,6 +187,21 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
         /// <summary>
+        ///     Proxy info to be sent with request
+        /// </summary>
+        public IWebProxy Proxy { get; set; }
+
+        /// <summary>
+        ///     Caching policy for requests created with this wrapper.
+        /// </summary>
+        public RequestCachePolicy CachePolicy { get; set; }
+
+        /// <summary>
+        ///     Callback function for handling the validation of remote certificates.
+        /// </summary>
+        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+
+        /// <summary>
         ///     Creates an IHttp
         /// </summary>
         /// <returns></returns>
@@ -215,20 +212,20 @@ namespace RestSharp
 
         partial void AddSyncHeaderActions();
 
-        partial void AddAsyncHeaderActions();
-
         private void AddSharedHeaderActions()
         {
             restrictedHeaderActions.Add("Accept", (r, v) => r.Accept = v);
             restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
             restrictedHeaderActions.Add("Date", (r, v) =>
             {
-                /* Set by system */
+                DateTime parsed;
+
+                if (DateTime.TryParse(v, out parsed))
+                    r.Date = parsed;
             });
-            restrictedHeaderActions.Add("Host", (r, v) =>
-            {
-                /* Set by system */
-            });
+
+            restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
+
             restrictedHeaderActions.Add("Range", AddRange);
         }
 
@@ -266,7 +263,7 @@ namespace RestSharp
                 if (restrictedHeaderActions.ContainsKey(header.Name))
                     restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
                 else
-                    webRequest.Headers[header.Name] = header.Value;
+                    webRequest.Headers.Add(header.Name, header.Value);
         }
 
         private void AppendCookies(HttpWebRequest webRequest)
@@ -301,7 +298,7 @@ namespace RestSharp
             return querystring.ToString();
         }
 
-        private void PreparePostBody(HttpRequestMessage webRequest)
+        private void PreparePostBody(HttpWebRequest webRequest)
         {
             if (HasFiles || AlwaysMultipartFormData)
             {
@@ -347,6 +344,9 @@ namespace RestSharp
         {
             using (webResponse)
             {
+                response.ContentEncoding = webResponse.ContentEncoding;
+                response.Server = webResponse.Server;
+                response.ProtocolVersion = webResponse.ProtocolVersion;
                 response.ContentType = webResponse.ContentType;
                 response.ContentLength = webResponse.ContentLength;
 
@@ -389,7 +389,7 @@ namespace RestSharp
                         Value = headerValue
                     });
                 }
-                webResponse.Dispose();
+                webResponse.Close();
             }
         }
 
@@ -401,7 +401,7 @@ namespace RestSharp
                 ResponseWriter(webResponseStream);
         }
 
-        private static void AddRange(HttpRequestMessage r, string range)
+        private static void AddRange(HttpWebRequest r, string range)
         {
             var m = Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
 
@@ -412,7 +412,7 @@ namespace RestSharp
             var from = Convert.ToInt32(m.Groups[2].Value);
             var to = Convert.ToInt32(m.Groups[3].Value);
 
-            r.Headers.Range = new RangeHeaderValue(rangeSpecifier, from, to);
+            r.AddRange(rangeSpecifier, from, to);
         }
     }
 }

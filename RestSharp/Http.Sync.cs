@@ -152,9 +152,7 @@ namespace RestSharp
 
         private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
         {
-            var webException = ex as WebException;
-
-            if (webException != null && webException.Status == WebExceptionStatus.Timeout)
+            if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
             {
                 httpResponse.ResponseStatus = ResponseStatus.TimedOut;
                 httpResponse.ErrorMessage = ex.Message;
@@ -200,7 +198,8 @@ namespace RestSharp
                 // transport exception (ex: connection timeout) and
                 // rethrow the exception
 
-                if (ex.Response is HttpWebResponse response) return response;
+                if (ex.Response is HttpWebResponse response)
+                    return response;
 
                 throw;
             }
