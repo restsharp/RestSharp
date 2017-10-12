@@ -19,7 +19,8 @@ namespace RestSharp.Tests
         {
             const int numLessThanLimit = 32766;
             var stringWithLimitLength = new string('*', numLessThanLimit);
-            Assert.AreEqual(stringWithLimitLength.UrlEncode().Length, numLessThanLimit);
+            var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+            Assert.AreEqual(numLessThanLimit, encodedAndDecoded.Length);
         }
 
         [Test]
@@ -27,7 +28,8 @@ namespace RestSharp.Tests
         {
             const int numGreaterThanLimit = 65000;
             var stringWithLimitLength = new string('*', numGreaterThanLimit);
-            Assert.AreEqual(stringWithLimitLength.UrlEncode().Length, numGreaterThanLimit);
+            var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+            Assert.AreEqual(numGreaterThanLimit, encodedAndDecoded.Length);
         }
     }
 }

@@ -12,15 +12,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Extensions\MonoHttp\Helpers.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Extensions\MonoHttp\HtmlEncoder.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Extensions\MonoHttp\HttpUtility.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
 </Project>
