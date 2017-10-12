@@ -1,0 +1,116 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
+    <AssemblyName>RestSharp.Tests</AssemblyName>
+    <RootNamespace>RestSharp.Tests</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;SIGNED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RestSharp\RestSharp.Signed.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\RestSharp.Tests\AddRangeTests.cs">
+      <Link>AddRangeTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\CultureChange.cs">
+      <Link>CultureChange.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\Fakes\NullHttp.cs" />
+    <Compile Include="..\RestSharp.Tests\InterfaceImplementationTests.cs">
+      <Link>InterfaceImplementationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\JsonTests.cs">
+      <Link>JsonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\JwtAuthTests.cs">
+      <Link>JwtAuthTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\NamespacedXmlTests.cs">
+      <Link>NamespacedXmlTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\OAuthTests.cs">
+      <Link>OAuthTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\RestRequestTests.cs">
+      <Link>RestRequestTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\SampleClasses\BooleanTest.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\EmployeeTracker.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\EnumTest.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\eventful.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\foursq.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\Goodreads.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\googleweather.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\GoogleWeatherWithAttributes.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\JsonLists.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\Lastfm.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\ListSamples.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\misc.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\nullables.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\Oddball.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\SOUser.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\Struct.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\TwilioCallList.cs" />
+    <Compile Include="..\RestSharp.Tests\SampleClasses\twitter.cs" />
+    <Compile Include="..\RestSharp.Tests\SerializerTests.cs">
+      <Link>SerializerTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\StringExtensionsTests.cs">
+      <Link>StringExtensionsTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\StringExtensionTests.cs">
+      <Link>StringExtensionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\UrlBuilderTests.cs">
+      <Link>UrlBuilderTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\XmlAttributeDeserializerTests.cs">
+      <Link>XmlAttributeDeserializerTests.cs</Link>
+    </Compile>
+    <Compile Include="..\RestSharp.Tests\XmlDeserializerTests.cs">
+      <Link>XmlDeserializerTests.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\RestSharp.Tests\SampleData\4sq.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\boolean_from_number.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\boolean_from_string.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\datetimes.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\deserialize_as_list.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\directlists.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\eventful.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\GenericWithList.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\Goodreads.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\GoogleWeather.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\InlineListSample.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\iso8601datetimes.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsonarray.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsondictionary.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsondictionary_KeysType.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsondictionary_null.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsonenums.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsonenumtypes.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\jsonlists.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\Lastfm.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\ListWithAttributes.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\NestedListSample.xml" />
+    <Content Include="..\RestSharp.Tests\SampleData\objectproperty.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\person.json.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\restsharp.nuspec" />
+    <Content Include="..\RestSharp.Tests\SampleData\sojson.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\timespans.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\underscore_prefix.txt" />
+    <Content Include="..\RestSharp.Tests\SampleData\xmllists.xml" />
+  </ItemGroup>
+</Project>
