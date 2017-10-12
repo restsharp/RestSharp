@@ -6,6 +6,8 @@ before_build:
 branches:
   only:
   - master
+  - develop
+  - netstandard
 skip_tags: true
 build:
   project: RestSharp.sln
