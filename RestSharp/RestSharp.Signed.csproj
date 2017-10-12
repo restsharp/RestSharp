@@ -11,7 +11,7 @@
     <OutputPath>bin\DebugSigned\net452\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;SIGNED</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0:SIGNED</DefineConstants>
     <OutputPath>bin\DebugSigned\netstandard2.0\</OutputPath>
   </PropertyGroup>
   <ItemGroup>

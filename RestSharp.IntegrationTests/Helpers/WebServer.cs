@@ -9,6 +9,7 @@ namespace RestSharp.IntegrationTests
     {
         private readonly HttpListener _listener = new HttpListener();
         private Action<HttpListenerContext> _responderMethod;
+        private CancellationTokenSource _cts;
 
         public WebServer(string prefix, Action<HttpListenerContext> method, AuthenticationSchemes authenticationSchemes)
         {
@@ -24,23 +25,28 @@ namespace RestSharp.IntegrationTests
 
         public void Run()
         {
+            _cts = new CancellationTokenSource();
             ThreadPool.QueueUserWorkItem(o =>
             {
-                while (_listener.IsListening)
+                var token = (CancellationToken) o;
+                while (!token.IsCancellationRequested && _listener.IsListening)
                 {
                     ThreadPool.QueueUserWorkItem(c =>
                     {
                         if (!(c is HttpListenerContext ctx)) return;
                         _responderMethod?.Invoke(ctx);
+                        ctx.Response.OutputStream.Close();
                     }, _listener.GetContext());
                 }
-            });
+            }, _cts.Token);
         }
 
         public void Stop()
         {
+            _cts.Cancel();
             _listener.Stop();
             _listener.Close();
+            _cts.Dispose();
         }
 
         public void ChangeHandler(Action<HttpListenerContext> handler)
