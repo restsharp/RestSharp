@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
-    <PackageIconUrl>http://dl.dropbox.com/u/1827/restsharp100.png</PackageIconUrl>
+    <PackageIconUrl>https://github.com/restsharp/RestSharp/blob/master/restsharp.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
     <Description>Simple REST and HTTP API Client</Description>
