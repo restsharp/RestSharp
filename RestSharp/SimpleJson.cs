@@ -70,7 +70,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using RestSharp.Extensions;
 using RestSharp.Reflection;
+using RestSharp.Serializers;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantExplicitArrayCreation
@@ -1285,9 +1287,14 @@ namespace RestSharp
             SetCache = new ReflectionUtils.ThreadSafeDictionary<Type, IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>>(SetterValueFactory);
         }
 
-        protected virtual string MapClrMemberNameToJsonFieldName(string clrPropertyName)
+        protected virtual string MapClrMemberNameToJsonFieldName(string clrPropertyName, SerializeAsAttribute options = null)
         {
-            return clrPropertyName;
+            string name = clrPropertyName;
+            if (options != null)
+            {
+                name = options.TransformName(options.Name);
+            }
+            return name;
         }
 
         internal virtual ReflectionUtils.ConstructorDelegate ContructorDelegateFactory(Type key)
@@ -1302,10 +1309,12 @@ namespace RestSharp
             {
                 if (propertyInfo.CanRead)
                 {
+                    SerializeAsAttribute options = propertyInfo.GetAttribute<SerializeAsAttribute>();
+
                     MethodInfo getMethod = ReflectionUtils.GetGetterMethodInfo(propertyInfo);
                     if (getMethod.IsStatic || !getMethod.IsPublic)
                         continue;
-                    result[MapClrMemberNameToJsonFieldName(propertyInfo.Name)] = ReflectionUtils.GetGetMethod(propertyInfo);
+                    result[MapClrMemberNameToJsonFieldName(propertyInfo.Name, options)] = ReflectionUtils.GetGetMethod(propertyInfo);
                 }
             }
             foreach (FieldInfo fieldInfo in ReflectionUtils.GetFields(type))
