@@ -23,6 +23,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using RestSharp.Extensions;
+#if !SILVERLIGHT && !WINDOWS_PHONE
+using RestSharp.Extensions.MonoHttp;
+#endif
 
 #if WINDOWS_PHONE
 using RestSharp.Compression.ZLib;
@@ -360,7 +363,13 @@ namespace RestSharp
                     querystring.Append("&");
                 }
 
-                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
+                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), 
+                    #if !SILVERLIGHT && !WINDOWS_PHONE
+                    HttpUtility.UrlEncode(p.Value, encoding)
+                    #else
+                    p.Value.UrlEncode()
+                    #endif
+                );
             }
 
             return querystring.ToString();
