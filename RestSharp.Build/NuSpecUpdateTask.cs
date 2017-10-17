@@ -35,8 +35,8 @@ namespace RestSharp.Build
             if (string.IsNullOrEmpty(this.SpecFile))
                 return false;
 
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SourceAssemblyFile);
-            this.assembly = this.assembly ?? Assembly.LoadFile(path);
+            var path = Path.GetFullPath(this.SourceAssemblyFile);
+            this.assembly = this.assembly ?? Assembly.Load(File.ReadAllBytes(path));
 
             var name = this.assembly.GetName();
 
