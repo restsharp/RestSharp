@@ -358,6 +358,15 @@ namespace RestSharp
                     : string.Format("{0}{1}", this.BaseUrl, assembled);
             }
 
+            assembled = AssembleMatrixParameters(request, assembled);
+
+            assembled = AssembleQueryString(request, assembled);
+
+            return new Uri(assembled);
+        }
+
+        private static string AssembleQueryString(IRestRequest request, string assembled)
+        {
             IEnumerable<Parameter> parameters;
 
             if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
@@ -376,31 +385,50 @@ namespace RestSharp
 
             if (!parameters.Any())
             {
-                return new Uri(assembled);
+                return assembled;
             }
 
             // build and attach querystring
-            string data = EncodeParameters(parameters);
+            string data = EncodeParameters(parameters, "&");
             string separator = assembled != null && assembled.Contains("?")
                 ? "&"
                 : "?";
 
             assembled = string.Concat(assembled, separator, data);
-
-            return new Uri(assembled);
+            return assembled;
         }
 
-        private static string EncodeParameters(IEnumerable<Parameter> parameters)
+        private static string AssembleMatrixParameters(IRestRequest request, string assembled)
         {
-            return string.Join("&", parameters.Select(EncodeParameter)
+            IEnumerable<Parameter> parameters = request.Parameters
+                .Where(p => p.Type == ParameterType.Matrix)
+                .ToList();
+
+            if (!parameters.Any())
+                return assembled;
+
+            string data = EncodeParameters(parameters, ";");
+
+            return string.Concat(assembled, ";", data);
+        }
+
+        private static string EncodeParameters(IEnumerable<Parameter> parameters, string separator)
+        {
+            return string.Join(separator, parameters.Select(EncodeParameter)
                                               .ToArray());
         }
 
         private static string EncodeParameter(Parameter parameter)
         {
-            return parameter.Value == null
-                ? string.Concat(parameter.Name.UrlEncode(), "=")
-                : string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
+            if (parameter.Value == null)
+            {
+                if (parameter.Type == ParameterType.Matrix)
+                    return parameter.Name.UrlEncode();
+
+                return string.Concat(parameter.Name.UrlEncode(), "=");
+            }
+
+            return string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
         }
 
         private void ConfigureHttp(IRestRequest request, IHttp http)

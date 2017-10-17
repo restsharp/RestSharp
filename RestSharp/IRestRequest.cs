@@ -352,6 +352,14 @@ namespace RestSharp
         /// <returns></returns>
         IRestRequest AddQueryParameter(string name, string value);
 
+        /// <summary>
+        /// Shortcut to AddParameter(name, value, Matrix) overload
+        /// </summary>
+        /// <param name="name">Name of the parameter to add</param>
+        /// <param name="value">Value of the parameter to add</param>
+        /// <returns></returns>
+        IRestRequest AddMatrixParameter(string name, string value);
+
         Action<IRestResponse> OnBeforeDeserialization { get; set; }
 
         void IncreaseNumAttempts();
