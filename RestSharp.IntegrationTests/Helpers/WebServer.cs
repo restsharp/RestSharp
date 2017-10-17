@@ -36,7 +36,7 @@ namespace RestSharp.IntegrationTests
                         if (!(c is HttpListenerContext ctx)) return;
                         _responderMethod?.Invoke(ctx);
                         ctx.Response.OutputStream.Close();
-                    }, _listener.GetContext());
+                    }, _listener.IsListening ? _listener.GetContext() : null);
                 }
             }, _cts.Token);
         }
