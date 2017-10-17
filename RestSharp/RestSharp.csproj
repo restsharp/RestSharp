@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
     <PackageIconUrl>https://github.com/restsharp/RestSharp/blob/master/restsharp.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>

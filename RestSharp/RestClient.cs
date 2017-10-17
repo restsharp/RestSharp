@@ -485,6 +485,12 @@ namespace RestSharp
         {
             if (Proxy != null)
                 http.Proxy = Proxy;
+#if NETSTANDARD2_0
+            else
+            {
+                http.Proxy = new DefaultProxy();
+            }
+#endif
         }
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
