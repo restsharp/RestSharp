@@ -1,11 +1,30 @@
 version: 105.0.1.{build}
 image: Visual Studio 2017
-branches:
-  only:
-  - master
-  - develop
+
 build_script:
   - build.bat
+
 skip_tags: true
-artifacts:
-  path: 'RestSharp\bin\Release\*.nupkg'
+
+-
+  branches:
+    only:
+      - master
+
+  artifacts:
+    path: 'RestSharp\bin\Release\*.nupkg'
+
+  configuration: Release
+
+-
+  branches:
+    only:
+      - develop
+
+  artifacts:
+    path: 'RestSharp\bin\Debug\*.nupkg'
+
+  configuration: Debug
+
+-
+  configuration: Debug
