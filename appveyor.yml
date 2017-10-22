@@ -1,15 +1,11 @@
 version: 105.0.1.{build}
 image: Visual Studio 2017
-before_build:
-- which msbuild.exe
-- nuget restore RestSharp.sln
 branches:
   only:
   - master
   - develop
-  - netstandard
+build_script:
+  - build.bat
 skip_tags: true
-build:
-  project: RestSharp.sln
-test_script:
-- ps: nunit3-console (ls -r *\bin\Debug*\*.*Tests.dll | % FullName | sort-object -Unique) --inprocess --result="myresults.xml;format=AppVeyor"
+artifacts:
+  path: 'RestSharp\bin\Release\*.nupkg'
