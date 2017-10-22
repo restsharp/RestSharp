@@ -385,8 +385,7 @@ namespace RestSharp
             if (ReadWriteTimeout != 0)
                 webRequest.ReadWriteTimeout = ReadWriteTimeout;
 
-            if (Proxy != null)
-                webRequest.Proxy = Proxy;
+            webRequest.Proxy = Proxy;
 
             if (CachePolicy != null)
                 webRequest.CachePolicy = CachePolicy;

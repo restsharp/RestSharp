@@ -258,8 +258,7 @@ namespace RestSharp
             if (Credentials != null)
                 webRequest.Credentials = Credentials;
 
-            if (Proxy != null)
-                webRequest.Proxy = Proxy;
+            webRequest.Proxy = Proxy;
 
             if (CachePolicy != null)
                 webRequest.CachePolicy = CachePolicy;

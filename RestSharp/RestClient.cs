@@ -477,20 +477,12 @@ namespace RestSharp
                     });
                 }
             }
-            ConfigureProxy(http);
-            http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
-        }
-
-        private void ConfigureProxy(IHttp http)
-        {
-            if (Proxy != null)
-                http.Proxy = Proxy;
+            http.Proxy = Proxy;
 #if NETSTANDARD2_0
-            else
-            {
-                http.Proxy = new DefaultProxy();
-            }
+            if (http.Proxy == null)
+                WebRequest.DefaultWebProxy = null;
 #endif
+            http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
         }
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
