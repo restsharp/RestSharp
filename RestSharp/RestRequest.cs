@@ -235,6 +235,7 @@ namespace RestSharp
             string serialized;
             string contentType;
 
+            // TODO: Make it possible to change the serialiser
             switch (RequestFormat)
             {
                 case DataFormat.Json:

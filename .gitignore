@@ -47,3 +47,4 @@ RestSharp.IntegrationTests/config.json
 /RestSharp.UWP/project.lock.json
 *.ncrunchproject
 *.ncrunchsolution
+/.vs/RestSharp/v15/Server/sqlite3

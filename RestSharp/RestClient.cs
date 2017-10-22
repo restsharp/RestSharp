@@ -57,6 +57,7 @@ namespace RestSharp
             AcceptTypes = new List<string>();
             DefaultParameters = new List<Parameter>();
 
+            // TODO: Make this configurable
             // register default handlers
             AddHandler("application/json", new JsonDeserializer());
             AddHandler("application/xml", new XmlDeserializer());
@@ -480,7 +481,10 @@ namespace RestSharp
             http.Proxy = Proxy;
 #if NETSTANDARD2_0
             if (http.Proxy == null)
+            {
+                var _ = WebRequest.DefaultWebProxy;
                 WebRequest.DefaultWebProxy = null;
+            }
 #endif
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
         }
