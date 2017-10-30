@@ -6,6 +6,10 @@ build_script:
 
 skip_tags: true
 
+- provider: Slack
+  incoming_webhook:
+    secure: oYYkGVXbEgGf60T2CM6XlyG31S89BCgspVL9zoBwJVf1EPVJxv55BSqXQOTOyYRCWQC7mzjT2Gc1i2ujoJeq9rMPIYjxjDr8XJvFp8+/5rs= 
+
 -
   branches:
     only:
