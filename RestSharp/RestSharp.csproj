@@ -12,6 +12,7 @@
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+    <UpdateVersionProperties>true</UpdateVersionProperties>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
