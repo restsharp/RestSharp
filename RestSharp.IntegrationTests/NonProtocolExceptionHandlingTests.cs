@@ -30,6 +30,9 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
+#if NETCORE
+        [Ignore("Not supported for .NET Core")]
+#endif
         public async Task Task_Handles_Non_Existent_Domain()
         {
             RestClient client = new RestClient("http://192.168.1.200:8001");

@@ -68,6 +68,9 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
+#if NETCORE
+        [Ignore("Not supported for .NET Core")]
+#endif
         public void Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False()
         {
             const Method httpMethod = Method.GET;

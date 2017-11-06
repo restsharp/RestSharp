@@ -1,92 +1,33 @@
-﻿namespace RestSharp.IntegrationTests.Helpers
-{
-    using System;
-    using System.Net;
-    using System.Security;
-    using System.Threading;
+﻿using System;
+using System.Net;
 
+namespace RestSharp.IntegrationTests.Helpers
+{
     public class SimpleServer : IDisposable
     {
-        private readonly HttpListener _listener;
-
-        private Action<HttpListenerContext> _handler;
-
-        private Thread _thread;
-
-        private SimpleServer(HttpListener listener, Action<HttpListenerContext> handler)
-        {
-            _listener = listener;
-            _handler = handler;
-        }
+        private readonly WebServer _server;
 
         public static SimpleServer Create(string url, Action<HttpListenerContext> handler = null,
             AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
         {
-            var listener = new HttpListener
-            {
-                Prefixes = {url},
-                AuthenticationSchemes = authenticationSchemes
-            };
-            var server = new SimpleServer(listener, handler);
-
-            server.Start();
-
-            return server;
+            return new SimpleServer(url, handler, authenticationSchemes);
         }
 
-        public void SetHandler(Action<HttpListenerContext> handler) =>
-            _handler = handler;
-
-        private void Start()
+        private SimpleServer(string url, Action<HttpListenerContext> handler = null,
+            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
         {
-            if (_listener.IsListening)
-            {
-                return;
-            }
-
-            _listener.Start();
-
-            _thread = new Thread(() =>
-            {
-                HttpListenerContext context = _listener.GetContext();
-                _handler(context);
-                context.Response.Close();
-            })
-            {
-                Name = "WebServer"
-            };
-
-            _thread.Start();
+            _server = new WebServer(url, handler, authenticationSchemes);
+            _server.Run();
         }
 
         public void Dispose()
         {
-            try
-            {
-                _thread.Abort();
-            }
-            catch (ThreadStateException threadStateException)
-            {
-                Console.Error.WriteLine("Issue aborting thread - {0}.", threadStateException.Message);
-            }
-            catch (SecurityException securityException)
-            {
-                Console.Error.WriteLine("Issue aborting thread - {0}.", securityException.Message);
-            }
+            _server.Stop();
+        }
 
-            if (_listener.IsListening)
-            {
-                try
-                {
-                    _listener.Stop();
-                }
-                catch (ObjectDisposedException objectDisposedException)
-                {
-                    Console.Error.WriteLine("Issue stopping listener - {0}", objectDisposedException.Message);
-                }
-            }
-
-            _listener.Close();
+        public void SetHandler(Action<HttpListenerContext> handler)
+        {
+            _server.ChangeHandler(handler);
         }
     }
 }
