@@ -8,6 +8,11 @@
 
 ### License: Apache License 2.0
 
+### Signed Assembly
+
+Please note that the `RestSharp.Signed` package is obsolete per 106.0.0 because the `RestSharp` package contains
+the signed assembly by default.
+
 ### Features
 
 * Assemblies for .NET 4.5.2 and .NET Standard 2.0
