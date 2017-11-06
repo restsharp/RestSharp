@@ -1,12 +1,11 @@
-version: 105.0.1.{build}
-image: Visual Studio 2017
-
-build_script:
-  - build.bat
-
-skip_tags: true
-
 -
+  image: Visual Studio 2017
+
+  build_script:
+    - build.bat
+
+  skip_tags: true
+
   branches:
     only:
       - master
@@ -17,6 +16,13 @@ skip_tags: true
   configuration: Release
 
 -
+  image: Visual Studio 2017
+
+  build_script:
+    - build.bat
+
+  skip_tags: true
+
   branches:
     only:
       - develop
@@ -27,4 +33,11 @@ skip_tags: true
   configuration: Debug
 
 -
+  image: Visual Studio 2017
+
+  build_script:
+    - build.bat
+
+  skip_tags: true
+
   configuration: Debug
