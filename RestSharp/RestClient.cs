@@ -52,6 +52,7 @@ namespace RestSharp
         /// </summary>
         public RestClient()
         {
+			
             Encoding = Encoding.UTF8;
             ContentHandlers = new Dictionary<string, IDeserializer>();
             AcceptTypes = new List<string>();
@@ -168,6 +169,8 @@ namespace RestSharp
         public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
+
+		public string ConnectionGroupName { get; set; }
 
         /// <summary>
         ///     Callback function for handling the validation of remote certificates. Useful for certificate pinning and
@@ -404,6 +407,8 @@ namespace RestSharp
             http.MaxRedirects = MaxRedirects;
             http.CachePolicy = CachePolicy;
             http.Pipelined = Pipelined;
+
+			http.ConnectionGroupName = ConnectionGroupName;
 
             if (request.Credentials != null)
                 http.Credentials = request.Credentials;

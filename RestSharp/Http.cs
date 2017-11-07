@@ -55,6 +55,7 @@ namespace RestSharp
 
             AddSharedHeaderActions();
             AddSyncHeaderActions();
+			
         }
 
         /// <summary>
@@ -143,6 +144,11 @@ namespace RestSharp
         ///     will be sent along to the server.
         /// </summary>
         public bool UseDefaultCredentials { get; set; }
+
+		/// <summary>
+		/// ref: https://msdn.microsoft.com/en-us/library/6y3d5dts(v=vs.110).aspx
+		/// </summary>
+		public string ConnectionGroupName { get; set; }
 
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
