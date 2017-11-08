@@ -22,11 +22,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-#if FRAMEWORK
 using System.Net.Cache;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-#endif
 
 namespace RestSharp
 {
@@ -49,17 +47,13 @@ namespace RestSharp
 
         int ReadWriteTimeout { get; set; }
 
-#if !SILVERLIGHT
         bool FollowRedirects { get; set; }
 
         bool Pipelined { get; set; }
-#endif
 
-#if FRAMEWORK
         X509CertificateCollection ClientCertificates { get; set; }
 
         int? MaxRedirects { get; set; }
-#endif
 
         bool UseDefaultCredentials { get; set; }
 
@@ -79,9 +73,7 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
-#if FRAMEWORK
         RequestCachePolicy CachePolicy { get; set; }
-#endif
 
         /// <summary>
         /// An alternative to RequestBody, for when the caller already has the byte array.
@@ -110,7 +102,6 @@ namespace RestSharp
 
         HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
 
-#if FRAMEWORK
         HttpResponse Delete();
 
         HttpResponse Get();
@@ -132,9 +123,7 @@ namespace RestSharp
         HttpResponse AsGet(string httpMethod);
 
         IWebProxy Proxy { get; set; }
-#endif
-#if NET45
+        
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-#endif
     }
 }

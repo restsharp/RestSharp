@@ -1,19 +1,34 @@
 version: 105.0.1.{build}
-before_build:
-- nuget restore RestSharp.sln
-- appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product Android
-- appveyor RegisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password% -Product iOS
-branches:
-  only:
-  - master
+image: Visual Studio 2017
+
+build_script:
+  - build.bat
+
 skip_tags: true
-build:
-  project: RestSharp.sln
-  verbosity: minimal
-after_build:
-- appveyor UnregisterXamarinLicense -Email %xamarin_email% -Password %xamarin_password%
-environment:
-  xamarin_email:
-    secure: zM9+mVyEGu7yKbL64GG5h0ulFnmt6/jfq8jynL2yCOw=
-  xamarin_password:
-    secure: sRp5YM8LTyje4swi/8p5tQ==
+
+- provider: Slack
+  incoming_webhook:
+    secure: oYYkGVXbEgGf60T2CM6XlyG31S89BCgspVL9zoBwJVf1EPVJxv55BSqXQOTOyYRCWQC7mzjT2Gc1i2ujoJeq9rMPIYjxjDr8XJvFp8+/5rs= 
+
+-
+  branches:
+    only:
+      - master
+
+  artifacts:
+    path: 'RestSharp\bin\Release\*.nupkg'
+
+  configuration: Release
+
+-
+  branches:
+    only:
+      - develop
+
+  artifacts:
+    path: 'RestSharp\bin\Debug\*.nupkg'
+
+  configuration: Debug
+
+-
+  configuration: Debug

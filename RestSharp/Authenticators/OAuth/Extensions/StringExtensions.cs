@@ -11,7 +11,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         public static bool IsNullOrBlank(this string value)
         {
             return string.IsNullOrEmpty(value) ||
-                   (!string.IsNullOrEmpty(value) && value.Trim() == string.Empty);
+                   !string.IsNullOrEmpty(value) && value.Trim() == string.Empty;
         }
 
         public static bool EqualsIgnoreCase(this string left, string right)
@@ -67,13 +67,11 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string PercentEncode(this string s)
         {
-            byte[] bytes = s.GetBytes();
-            StringBuilder sb = new StringBuilder();
+            var bytes = s.GetBytes();
+            var sb = new StringBuilder();
 
-            foreach (byte b in bytes)
-            {
+            foreach (var b in bytes)
                 sb.Append(string.Format("%{0:X2}", b));
-            }
 
             return sb.ToString();
         }
@@ -82,19 +80,15 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         {
             // [DC]: This method does not URL decode, and cannot handle decoded input
             if (query.StartsWith("?"))
-            {
                 query = query.Substring(1);
-            }
 
             if (query.Equals(string.Empty))
-            {
                 return new Dictionary<string, string>();
-            }
 
-            string[] parts = query.Split('&');
+            var parts = query.Split('&');
 
             return parts.Select(part => part.Split('='))
-                        .ToDictionary(pair => pair[0], pair => pair[1]);
+                .ToDictionary(pair => pair[0], pair => pair[1]);
         }
     }
 }
