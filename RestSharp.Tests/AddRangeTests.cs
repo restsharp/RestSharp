@@ -8,8 +8,8 @@ namespace RestSharp.Tests
         [Test]
         public void ShouldParseOutRangeSpecifier()
         {
-            RestClient restClient = new RestClient("http://localhost");
-            RestRequest req = new RestRequest("bob", Method.GET);
+            var restClient = new RestClient("http://localhost");
+            var req = new RestRequest("bob", Method.GET);
 
             req.AddHeader("Range", "pages=1-2");
             restClient.Execute(req);
@@ -18,16 +18,13 @@ namespace RestSharp.Tests
         [Test]
         public void ShouldParseOutLongRangeSpecifier()
         {
-            // This can't be tested since the test project builds with .Net35
+            var restClient = new RestClient("http://localhost");
+            var req = new RestRequest("bob", Method.GET);
+            const long start = (long)int.MaxValue + 1;
+            const long end = start + 1;
 
-
-            //RestClient restClient = new RestClient("http://localhost");
-            //RestRequest req = new RestRequest("bob", Method.GET);
-            //long start = (long)int.MaxValue + 1;
-            //long end = start + 1;
-
-            //req.AddHeader("Range", string.Format("pages={0}-{1}", start, end));
-            //restClient.Execute(req);
+            req.AddHeader("Range", $"pages={start}-{end}");
+            restClient.Execute(req);
         }
     }
 }
