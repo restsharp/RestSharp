@@ -8,6 +8,10 @@
 
 ### License: Apache License 2.0
 
+### Note on RestSharp.Signed
+
+The `RestSharp` package is now signed so there is no need to install `RestSharp.Signed`, which is obsolete from v160.0.0.
+
 ### Features
 
 * Assemblies for .NET 4.5.2 and .NET Standard 2.0
