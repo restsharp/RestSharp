@@ -8,10 +8,9 @@
 
 ### License: Apache License 2.0
 
-### Signed Assembly
+### Note on RestSharp.Signed
 
-Please note that the `RestSharp.Signed` package is obsolete per 106.0.0 because the `RestSharp` package contains
-the signed assembly by default.
+The `RestSharp` package is now signed so there is no need to install `RestSharp.Signed`, which is obsolete from v160.0.0.
 
 ### Features
 
