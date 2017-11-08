@@ -241,7 +241,7 @@ namespace RestSharp.Deserializers
                 {
                     var t = type.GetGenericArguments()[0];
                     var list = (IList) Activator.CreateInstance(asType);
-                    var container = GetElementByName(root, prop.Name.AsNamespaced(Namespace));
+                    var container = this.GetElementByName(root, name);
 
                     if (container.HasElements)
                     {
