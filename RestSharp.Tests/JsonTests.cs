@@ -76,7 +76,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Dot_Field()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "bearertoken.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "bearertoken.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer();
             BearerToken output = json.Deserialize<BearerToken>(response);
