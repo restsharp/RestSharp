@@ -240,8 +240,11 @@ namespace RestSharp
             if (!HasFiles && !AlwaysMultipartFormData)
                 webRequest.ContentLength = 0;
 
-            webRequest.AutomaticDecompression =
-                DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
+            if (AutomaticDecompression)
+            {
+                webRequest.AutomaticDecompression =
+                    DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
+            }
 
             if (ClientCertificates != null)
                 webRequest.ClientCertificates.AddRange(ClientCertificates);

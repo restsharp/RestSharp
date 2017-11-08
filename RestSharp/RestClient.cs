@@ -56,6 +56,7 @@ namespace RestSharp
             ContentHandlers = new Dictionary<string, IDeserializer>();
             AcceptTypes = new List<string>();
             DefaultParameters = new List<Parameter>();
+            AutomaticDecompression = true;
 
             // TODO: Make this configurable
             // register default handlers
@@ -96,6 +97,11 @@ namespace RestSharp
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
 
         private IList<string> AcceptTypes { get; }
+
+        /// <summary>
+        /// Enable or disable automatic gzip/deflate decompression
+        /// </summary>
+        public bool AutomaticDecompression { get; set; }
 
         /// <summary>
         ///     Maximum number of redirects to follow if FollowRedirects is true
