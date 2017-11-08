@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq;
-
-#if NET4 || MONODROID || MONOTOUCH || WP8
 using System.Threading.Tasks;
-#endif
 
 namespace RestSharp
 {
@@ -146,20 +143,17 @@ namespace RestSharp
             return client.ExecuteAsync(request, callback);
         }
 
-#if NET4
         public static RestResponse<dynamic> ExecuteDynamic(this IRestClient client, IRestRequest request)
         {
             IRestResponse<dynamic> response = client.Execute<dynamic>(request);
             RestResponse<dynamic> generic = (RestResponse<dynamic>)response;
-            dynamic content = SimpleJson.DeserializeObject(response.Content);
+            dynamic content = SimpleJson.SimpleJson.DeserializeObject(response.Content);
 
             generic.Data = content;
 
             return generic;
         }
-#endif
 
-#if NET4 || MONODROID || MONOTOUCH || WP8
         public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             return client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
@@ -204,9 +198,7 @@ namespace RestSharp
 
             return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
         }
-#endif
 
-#if FRAMEWORK
         public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.GET;
@@ -304,7 +296,6 @@ namespace RestSharp
 
             return client.Execute(request);
         }
-#endif
 
         /// <summary>
         /// Add a parameter to use on every request made with this client instance

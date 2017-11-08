@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
+    <PackageIconUrl>https://github.com/restsharp/RestSharp/blob/master/restsharp.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
+    <Description>Simple REST and HTTP API Client</Description>
+    <Authors>John Sheehan, RestSharp Community</Authors>
+    <Version>106.0.0</Version>
+    <Optimize>true</Optimize>
+    <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+    <UpdateVersionProperties>true</UpdateVersionProperties>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta*">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+</Project>
