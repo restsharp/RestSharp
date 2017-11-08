@@ -146,7 +146,9 @@ namespace RestSharp
         public bool UseDefaultCredentials { get; set; }
 
 		/// <summary>
-		/// ref: https://msdn.microsoft.com/en-us/library/6y3d5dts(v=vs.110).aspx
+		///	    The ConnectionGroupName property enables you to associate a request with a connection group. 
+		///     This is useful when your application makes requests to one server for different users, 
+		///     such as a Web site that retrieves customer information from a database server.
 		/// </summary>
 		public string ConnectionGroupName { get; set; }
 
