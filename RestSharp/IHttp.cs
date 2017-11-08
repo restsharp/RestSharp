@@ -37,6 +37,11 @@ namespace RestSharp
         ICredentials Credentials { get; set; }
 
         /// <summary>
+        /// Enable or disable automatic gzip/deflate decompression
+        /// </summary>
+        bool AutomaticDecompression { get; set; }
+
+        /// <summary>
         /// Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         bool AlwaysMultipartFormData { get; set; }
