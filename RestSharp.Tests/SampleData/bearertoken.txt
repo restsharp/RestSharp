@@ -1,0 +1,8 @@
+﻿{
+    "access_token":"boQtj0SCGz2GFGz[...]",
+    "token_type":"bearer",
+    "expires_in":1209599,
+    "userName":"Alice",
+    ".issued":"Mon, 14 Oct 2013 06:53:32 GMT",
+    ".expires":"Mon, 28 Oct 2013 06:53:32 GMT"
+}
