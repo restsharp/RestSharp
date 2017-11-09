@@ -35,6 +35,8 @@ namespace RestSharp
     {
         CookieContainer CookieContainer { get; set; }
 
+        bool AutomaticDecompression { get; set; }
+
         int? MaxRedirects { get; set; }
 
         string UserAgent { get; set; }
