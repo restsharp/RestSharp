@@ -78,6 +78,11 @@ namespace RestSharp
         protected bool HasFiles => Files.Any();
 
         /// <summary>
+        /// Enable or disable automatic gzip/deflate decompression
+        /// </summary>
+        public bool AutomaticDecompression { get; set; }
+
+        /// <summary>
         ///     Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         public bool AlwaysMultipartFormData { get; set; }
