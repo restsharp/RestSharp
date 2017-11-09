@@ -37,17 +37,11 @@ namespace RestSharp.Deserializers
                 isAttribute = options.Attribute;
             }
 
-            if (isAttribute)
-            {
-                XAttribute attributeVal = GetAttributeByName(root, name);
+            if (!isAttribute) return base.GetValueFromXml(root, name, prop);
+            
+            XAttribute attributeVal = GetAttributeByName(root, name);
 
-                if (attributeVal != null)
-                {
-                    return attributeVal.Value;
-                }
-            }
-
-            return base.GetValueFromXml(root, name, prop);
+            return attributeVal != null ? attributeVal.Value : base.GetValueFromXml(root, name, prop);
         }
     }
 }

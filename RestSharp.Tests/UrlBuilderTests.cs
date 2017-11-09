@@ -133,7 +133,7 @@ namespace RestSharp.Tests
             ArgumentException exception = Assert.Throws<ArgumentException>(() => client.BuildUri(request));
 
             Assert.IsNotNull(exception);
-            Assert.IsNotNullOrEmpty(exception.Message);
+            Assert.False(string.IsNullOrEmpty(exception.Message));
             Assert.IsTrue(exception.Message.Contains("foo"));
         }
 
@@ -267,5 +267,36 @@ namespace RestSharp.Tests
         {
             Assert.Throws<UriFormatException>(delegate { new RestClient("invalid url"); });
         }
+
+        [Test]
+        public void Should_add_parameter_if_it_is_new()
+        {
+            RestRequest request = new RestRequest();
+
+            request.AddOrUpdateParameter("param2", "value2");
+            request.AddOrUpdateParameter("param3", "value3");
+
+            RestClient client = new RestClient("http://example.com/resource?param1=value1");
+            Uri expected = new Uri("http://example.com/resource?param1=value1&param2=value2&param3=value3");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void Should_update_parameter_if_it_already_exists()
+        {
+            RestRequest request = new RestRequest();
+
+            request.AddOrUpdateParameter("param2", "value2");
+            request.AddOrUpdateParameter("param2", "value2-1");
+
+            RestClient client = new RestClient("http://example.com/resource?param1=value1");
+            Uri expected = new Uri("http://example.com/resource?param1=value1&param2=value2-1");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
     }
 }

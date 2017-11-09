@@ -35,6 +35,8 @@ namespace RestSharp.Tests
 
         private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
+        private static string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+
         [Test]
         public void Can_Deserialize_Exponential_Notation()
         {
@@ -63,7 +65,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Select_Tokens()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonarray.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer();
             StatusComplexList output = json.Deserialize<StatusComplexList>(response);
@@ -72,9 +74,27 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_Dot_Field()
+        {
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "bearertoken.txt"));
+            RestResponse response = new RestResponse { Content = data };
+            JsonDeserializer json = new JsonDeserializer();
+            BearerToken output = json.Deserialize<BearerToken>(response);
+            DateTimeOffset expectedIssued = DateTimeOffset.ParseExact("Mon, 14 Oct 2013 06:53:32 GMT", "r", CultureInfo.InvariantCulture);
+            DateTimeOffset expectedExpires = DateTimeOffset.ParseExact("Mon, 28 Oct 2013 06:53:32 GMT", "r", CultureInfo.InvariantCulture);
+
+            Assert.AreEqual("boQtj0SCGz2GFGz[...]", output.AccessToken);
+            Assert.AreEqual("bearer", output.TokenType);
+            Assert.AreEqual(1209599L, output.ExpiresIn);
+            Assert.AreEqual("Alice", output.UserName);
+            Assert.AreEqual(expectedIssued, output.Issued);
+            Assert.AreEqual(expectedExpires, output.Expires);
+        }
+
+        [Test]
         public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "4sq.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "4sq.txt"));
             JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
             VenuesResponse output = json.Deserialize<VenuesResponse>(new RestResponse { Content = doc });
 
@@ -95,7 +115,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "jsonlists.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonlists.txt"));
             JsonDeserializer json = new JsonDeserializer();
             JsonLists output = json.Deserialize<JsonLists>(new RestResponse { Content = doc });
 
@@ -148,7 +168,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_From_Root_Element()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "sojson.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "sojson.txt"));
             JsonDeserializer json = new JsonDeserializer { RootElement = "User" };
             SoUser output = json.Deserialize<SoUser>(new RestResponse { Content = doc });
 
@@ -158,7 +178,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_To_Dictionary_String_Object()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary.txt"));
             JsonDeserializer json = new JsonDeserializer();
             Dictionary<string, object> output =
                 json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
@@ -173,7 +193,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_To_Dictionary_Int_Object()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary_KeysType.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary_KeysType.txt"));
             JsonDeserializer json = new JsonDeserializer();
             Dictionary<int, object> output =
                 json.Deserialize<Dictionary<int, object>>(new RestResponse { Content = doc });
@@ -188,7 +208,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Generic_Members()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "GenericWithList.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "GenericWithList.txt"));
             JsonDeserializer json = new JsonDeserializer();
             Generic<GenericWithList<Foe>> output =
                 json.Deserialize<Generic<GenericWithList<Foe>>>(new RestResponse { Content = doc });
@@ -246,9 +266,9 @@ namespace RestSharp.Tests
 
             data["Items"] = new JsonArray
                             {
-                                item0.ToString(),
-                                item1.ToString(),
-                                item2.ToString(),
+                                item0,
+                                item1,
+                                item2,
                                 "/Date(1309421746929+0000)/"
                             };
 
@@ -338,7 +358,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Root_Json_Array_To_List()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonarray.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer();
             List<status> output = json.Deserialize<List<status>>(response);
@@ -349,7 +369,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Root_Json_Array_To_Inherited_List()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "jsonarray.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonarray.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer();
             StatusList output = json.Deserialize<StatusList>(response);
@@ -360,7 +380,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Various_Enum_Values()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "jsonenums.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonenums.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer();
             JsonEnumsTestStructure output = json.Deserialize<JsonEnumsTestStructure>(response);
@@ -378,7 +398,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Various_Enum_Types()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "jsonenumtypes.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonenumtypes.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer();
             JsonEnumTypesTestStructure output = json.Deserialize<JsonEnumTypesTestStructure>(response);
@@ -488,7 +508,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Names_With_Underscore_Prefix()
         {
-            string data = File.ReadAllText(Path.Combine("SampleData", "underscore_prefix.txt"));
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "underscore_prefix.txt"));
             RestResponse response = new RestResponse { Content = data };
             JsonDeserializer json = new JsonDeserializer { RootElement = "User" };
             SoUser output = json.Deserialize<SoUser>(response);
@@ -793,7 +813,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Dictionary_of_Lists()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary.txt"));
             JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
             EmployeeTracker output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
 
@@ -816,7 +836,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Dictionary_with_Null()
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", "jsondictionary_null.txt"));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary_null.txt"));
             JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
             IDictionary<string, object> output = json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
 
@@ -1060,7 +1080,7 @@ namespace RestSharp.Tests
 
         private static T GetPayLoad<T>(string fileName)
         {
-            string doc = File.ReadAllText(Path.Combine("SampleData", fileName));
+            string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", fileName));
             RestResponse response = new RestResponse { Content = doc };
             JsonDeserializer d = new JsonDeserializer();
 

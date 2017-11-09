@@ -42,3 +42,9 @@ Backup/
 *.orig
 DownloadSigned/
 RestSharp.IntegrationTests/config.json
+/.idea/.idea.RestSharp
+/.vs/RestSharp/v15/sqlite3
+/RestSharp.UWP/project.lock.json
+*.ncrunchproject
+*.ncrunchsolution
+/.vs/RestSharp/v15/Server/sqlite3
