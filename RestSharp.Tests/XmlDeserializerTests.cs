@@ -68,6 +68,20 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Use_DeserializeAs_Attribute_for_List_Property()
+        {
+            const string content =
+                "<oddball><oddballListName><item>TestValue</item></oddballListName></oddball>";
+
+            XmlDeserializer xml = new XmlDeserializer();
+            Oddball output = xml.Deserialize<Oddball>(new RestResponse { Content = content });
+
+            Assert.NotNull(output);
+            Assert.NotNull(output.ListWithGoodName);
+            Assert.IsNotEmpty(output.ListWithGoodName);
+        }
+
+        [Test]
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
