@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Net;
 using RestSharp.Extensions;
 
@@ -140,7 +141,7 @@ namespace RestSharp
             restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
             restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
             restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
-            restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v));
+            restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v, CultureInfo.InvariantCulture));
             restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
             restrictedHeaderActions.Add("Transfer-Encoding", (r, v) =>
             {
