@@ -484,11 +484,8 @@ namespace RestSharp
             }
             http.Proxy = Proxy;
 #if NETSTANDARD2_0
-            if (http.Proxy == null)
-            {
-                var _ = WebRequest.DefaultWebProxy;
-                WebRequest.DefaultWebProxy = null;
-            }
+            var _ = WebRequest.DefaultWebProxy;
+            WebRequest.DefaultWebProxy = http.Proxy;
 #endif
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
         }
