@@ -71,6 +71,11 @@ namespace RestSharp.Extensions
             return HttpUtility.HtmlEncode(input);
         }
 
+        public static string UrlEncode(this string input, Encoding encoding)
+        {
+            return HttpUtility.UrlEncode(input, encoding);
+        }
+
         public static string HtmlAttributeEncode(this string input)
         {
             return HttpUtility.HtmlAttributeEncode(input);
