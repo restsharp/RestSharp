@@ -344,6 +344,7 @@ namespace RestSharp
             Authenticator?.Authenticate(client, request);
 
         private static string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
+            string.Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
         private static string EncodeParameter(Parameter parameter, Encoding encoding) =>
             parameter.Value == null
