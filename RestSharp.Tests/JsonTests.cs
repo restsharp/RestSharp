@@ -74,6 +74,24 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_Dot_Field()
+        {
+            string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "bearertoken.txt"));
+            RestResponse response = new RestResponse { Content = data };
+            JsonDeserializer json = new JsonDeserializer();
+            BearerToken output = json.Deserialize<BearerToken>(response);
+            DateTimeOffset expectedIssued = DateTimeOffset.ParseExact("Mon, 14 Oct 2013 06:53:32 GMT", "r", CultureInfo.InvariantCulture);
+            DateTimeOffset expectedExpires = DateTimeOffset.ParseExact("Mon, 28 Oct 2013 06:53:32 GMT", "r", CultureInfo.InvariantCulture);
+
+            Assert.AreEqual("boQtj0SCGz2GFGz[...]", output.AccessToken);
+            Assert.AreEqual("bearer", output.TokenType);
+            Assert.AreEqual(1209599L, output.ExpiresIn);
+            Assert.AreEqual("Alice", output.UserName);
+            Assert.AreEqual(expectedIssued, output.Issued);
+            Assert.AreEqual(expectedExpires, output.Expires);
+        }
+
+        [Test]
         public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "4sq.txt"));

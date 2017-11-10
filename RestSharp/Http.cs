@@ -408,9 +408,9 @@ namespace RestSharp
             if (!m.Success)
                 return;
 
-            var rangeSpecifier = m.Groups[1].Value;
-            var from = Convert.ToInt32(m.Groups[2].Value);
-            var to = Convert.ToInt32(m.Groups[3].Value);
+            string rangeSpecifier = m.Groups[1].Value;
+            long from = Convert.ToInt64(m.Groups[2].Value);
+            long to = Convert.ToInt64(m.Groups[3].Value);
 
             r.AddRange(rangeSpecifier, from, to);
         }

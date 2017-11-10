@@ -40,9 +40,9 @@ namespace RestSharp
         // silverlight friendly way to get current version      
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
 
-        private static readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
 
-        private static readonly Regex structuredSyntaxSuffixWildcardRegex =
+        private static readonly Regex StructuredSyntaxSuffixWildcardRegex =
             new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
@@ -190,7 +190,7 @@ namespace RestSharp
         {
             ContentHandlers[contentType] = deserializer;
 
-            if (contentType == "*" || structuredSyntaxSuffixWildcardRegex.IsMatch(contentType)) return;
+            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
 
             AcceptTypes.Add(contentType);
             // add Accept header based on registered deserializers
@@ -307,7 +307,7 @@ namespace RestSharp
             if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];
 
-            var semicolonIndex = contentType.IndexOf(';');
+            int semicolonIndex = contentType.IndexOf(';');
 
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
@@ -315,37 +315,35 @@ namespace RestSharp
             if (ContentHandlers.ContainsKey(contentType))
                 return ContentHandlers[contentType];
 
-            // https://tools.ietf.org/html/rfc6839#page-4
-            var structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
+            // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
+            if (contentType.IndexOf('+') >= 0)
+            {
+                // https://tools.ietf.org/html/rfc6839#page-4
+                Match structuredSyntaxSuffixMatch = StructuredSyntaxSuffixRegex.Match(contentType);
 
-            if (!structuredSyntaxSuffixMatch.Success)
-                return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
-
-            var structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
-
-            if (ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
-                return ContentHandlers[structuredSyntaxSuffixWildcard];
+                if (structuredSyntaxSuffixMatch.Success)
+                {
+                    string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
+                    if (ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                    {
+                        return ContentHandlers[structuredSyntaxSuffixWildcard];
+                    }
+                }
+            }
 
             return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
         }
 
-        private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
-        {
+        private void AuthenticateIfNeeded(RestClient client, IRestRequest request) =>
             Authenticator?.Authenticate(client, request);
-        }
 
-        private static string EncodeParameters(IEnumerable<Parameter> parameters)
-        {
-            return string.Join("&", parameters.Select(EncodeParameter)
-                .ToArray());
-        }
+        private static string EncodeParameters(IEnumerable<Parameter> parameters) =>
+            string.Join("&", parameters.Select(EncodeParameter).ToArray());
 
-        private static string EncodeParameter(Parameter parameter)
-        {
-            return parameter.Value == null
+        private static string EncodeParameter(Parameter parameter) =>
+            parameter.Value == null
                 ? string.Concat(parameter.Name.UrlEncode(), "=")
                 : string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
-        }
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
         {
@@ -354,7 +352,6 @@ namespace RestSharp
             http.UseDefaultCredentials = request.UseDefaultCredentials;
             http.ResponseWriter = request.ResponseWriter;
             http.CookieContainer = CookieContainer;
-
 
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (var p in DefaultParameters)
@@ -552,7 +549,7 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    var handler = GetHandler(raw.ContentType);
+                    IDeserializer handler = GetHandler(raw.ContentType);
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
@@ -574,6 +571,25 @@ namespace RestSharp
             }
 
             return response;
+        }
+
+        private static bool IsWildcardStructuredSuffixSyntax(string contentType)
+        {
+            int i = 0;
+
+            // Avoid most unnecessary uses of RegEx by checking for necessary characters explicitly first
+            if (contentType[i++] != '*')
+                return false;
+
+            if (contentType[i++] != '+')
+                return false;
+
+            // If no more characters to check, exit now
+            if (i == contentType.Length)
+                return false;
+
+            // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
+            return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
         }
     }
 }
