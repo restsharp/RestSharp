@@ -28,12 +28,12 @@ namespace RestSharp.IntegrationTests.Helpers
         /// Response to a request like this:  http://localhost:8888/assets/koala.jpg
         /// by streaming the file located at "assets\koala.jpg" back to the client.
         /// </summary>
-        public static void FileHandler(HttpListenerContext context)
+        public static void FileHandler(HttpListenerContext context, string path)
         {
-            string pathToFile = Path.Combine(context.Request.Url.Segments.Select(s => s.Replace("/", ""))
-                                                    .ToArray());
+            var pathToFile = Path.Combine(path, Path.Combine(context.Request.Url.Segments.Select(s => s.Replace("/", ""))
+                                                    .ToArray()));
 
-            using (StreamReader reader = new StreamReader(pathToFile))
+            using (var reader = new StreamReader(pathToFile))
             {
                 reader.BaseStream.CopyTo(context.Response.OutputStream);
             }

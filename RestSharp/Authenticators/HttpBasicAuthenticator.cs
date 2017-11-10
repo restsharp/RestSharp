@@ -28,9 +28,9 @@ namespace RestSharp.Authenticators
 
         public HttpBasicAuthenticator(string username, string password)
         {
-            string token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)));
+            var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)));
 
-            this.authHeader = string.Format("Basic {0}", token);
+            authHeader = string.Format("Basic {0}", token);
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
@@ -44,9 +44,7 @@ namespace RestSharp.Authenticators
 
             // only add the Authorization parameter if it hasn't been added by a previous Execute
             if (!request.Parameters.Any(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
-            {
-                request.AddParameter("Authorization", this.authHeader, ParameterType.HttpHeader);
-            }
+                request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
         }
     }
 }

@@ -58,11 +58,11 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void HmacSha256_Does_Not_Accept_Nulls()
         {
             string consumerSecret = "12345678";
-            string actual = OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, null, consumerSecret);
+            Assert.That(() => OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, null, consumerSecret),
+                Throws.TypeOf<ArgumentNullException>());
         }
     }
 }
