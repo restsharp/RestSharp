@@ -37,8 +37,8 @@ namespace RestSharp.Tests
         public void UrlEncodeTest()
         {
             const string parameter = "ø";
-            Assert.AreEqual("%F8", parameter.UrlEncode(Encoding.GetEncoding("ISO-8859-1")));
-            Assert.AreEqual("%C3%B8", parameter.UrlEncode());
+            Assert.True(string.Compare("%F8", parameter.UrlEncode(Encoding.GetEncoding("ISO-8859-1")), StringComparison.OrdinalIgnoreCase));
+            Assert.True(string.Compare("%C3%B8", parameter.UrlEncode(), StringComparison.OrdinalIgnoreCase));
         }
     }
 }
