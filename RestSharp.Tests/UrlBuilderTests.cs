@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using System.Text;
 
 namespace RestSharp.Tests
 {
@@ -296,6 +297,24 @@ namespace RestSharp.Tests
             Uri output = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void Should_build_uri_using_selected_encoding()
+        {
+            RestRequest request = new RestRequest();
+            // adding parameter with o-slash character which is encoded differently between
+            // utf-8 and iso-8859-1
+            request.AddOrUpdateParameter("town", "Hillerød");
+
+            RestClient client = new RestClient("http://example.com/resource");
+
+            Uri expectedDefaultEncoding = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
+            Uri expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%F8d");
+            Assert.AreEqual(expectedDefaultEncoding, client.BuildUri(request));
+            // now changing encoding
+            client.Encoding = Encoding.GetEncoding("ISO-8859-1");
+            Assert.AreEqual(expectedIso89591Encoding, client.BuildUri(request));
         }
 
     }
