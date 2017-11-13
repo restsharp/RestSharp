@@ -298,5 +298,17 @@ namespace RestSharp.Tests
             Assert.AreEqual(expected, output);
         }
 
+        [Test]
+        public void GET_with_resource_full_uri()
+        {
+            RestRequest request = new RestRequest("https://www.example1.com/connect/authorize");
+            
+            RestClient client = new RestClient("https://www.example1.com/");
+            Uri expected = new Uri("https://www.example1.com/connect/authorize");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
     }
 }

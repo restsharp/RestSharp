@@ -8,7 +8,7 @@
     <Description>Simple REST and HTTP API Client</Description>
     <Authors>John Sheehan, RestSharp Community</Authors>
     <Version>106.0.0</Version>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
