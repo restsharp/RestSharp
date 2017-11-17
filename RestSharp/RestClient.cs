@@ -266,12 +266,11 @@ namespace RestSharp
 
             if (BaseUrl != null && !string.IsNullOrEmpty(BaseUrl.AbsoluteUri))
             {
+                var usingBaseUri = BaseUrl;
                 if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
-                    assembled = string.Concat("/", assembled);
-
-                assembled = string.IsNullOrEmpty(assembled)
-                    ? BaseUrl.AbsoluteUri
-                    : string.Format("{0}{1}", BaseUrl, assembled);
+                    usingBaseUri = new Uri(BaseUrl.AbsoluteUri + "/");
+                
+                assembled = new Uri(usingBaseUri, assembled).AbsoluteUri;
             }
 
             IEnumerable<Parameter> parameters;
