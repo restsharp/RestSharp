@@ -312,6 +312,7 @@ namespace RestSharp.Authenticators.OAuth
             if (tokenSecret.IsNullOrBlank())
                 tokenSecret = string.Empty;
 
+            var unencodedConsumerSecret = consumerSecret;
             consumerSecret = UrlEncodeRelaxed(consumerSecret);
             tokenSecret = UrlEncodeRelaxed(tokenSecret);
 
@@ -339,6 +340,20 @@ namespace RestSharp.Authenticators.OAuth
                     break;
                 }
 
+                case OAuthSignatureMethod.RsaSha1:
+                {
+                    using (var provider = new RSACryptoServiceProvider() { PersistKeyInCsp = false })
+                    {
+                        provider.FromXmlString(unencodedConsumerSecret);
+
+                        SHA1Managed hasher = new SHA1Managed();
+                        byte[] hash = hasher.ComputeHash(encoding.GetBytes(signatureBase));
+
+                        signature = Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
+                    }
+                    break;
+                }
+
                 case OAuthSignatureMethod.PlainText:
                 {
                     signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
@@ -347,7 +362,7 @@ namespace RestSharp.Authenticators.OAuth
                 }
 
                 default:
-                    throw new NotImplementedException("Only HMAC-SHA1 and HMAC-SHA256 are currently supported.");
+                    throw new NotImplementedException("Only HMAC-SHA1, HMAC-SHA256, and RSA-SHA1 are currently supported.");
             }
 
             var result = signatureTreatment == OAuthSignatureTreatment.Escaped
