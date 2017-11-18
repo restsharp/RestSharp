@@ -235,6 +235,8 @@ namespace RestSharp
             AppendHeaders(webRequest);
             AppendCookies(webRequest);
 
+            if (Host != null) webRequest.Host = Host;
+
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1

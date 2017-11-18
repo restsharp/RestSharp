@@ -188,6 +188,12 @@ namespace RestSharp
         public IList<Parameter> DefaultParameters { get; }
 
         /// <summary>
+        /// Explicit Host header value to use in requests independent from the request URI.
+        /// If null, default host value extracted from URI is used.
+        /// </summary>
+        public string BaseHost { get; set; }
+
+        /// <summary>
         ///     Registers a content handler to process response content
         /// </summary>
         /// <param name="contentType">MIME content type of the response content</param>
@@ -269,7 +275,7 @@ namespace RestSharp
                 var usingBaseUri = BaseUrl;
                 if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
                     usingBaseUri = new Uri(BaseUrl.AbsoluteUri + "/");
-                
+
                 assembled = new Uri(usingBaseUri, assembled).AbsoluteUri;
             }
 
@@ -377,6 +383,7 @@ namespace RestSharp
             }
 
             http.Url = BuildUri(request);
+            http.Host = BaseHost;
             http.PreAuthenticate = PreAuthenticate;
 
             var userAgent = UserAgent ?? http.UserAgent;

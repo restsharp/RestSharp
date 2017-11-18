@@ -187,6 +187,12 @@ namespace RestSharp
         public Uri Url { get; set; }
 
         /// <summary>
+        /// Explicit Host header value to use in requests independent from the request URI.
+        /// If null, default host value extracted from URI is used.
+        /// </summary>
+        public string Host { get; set; }
+
+        /// <summary>
         ///     Flag to send authorisation header with the HttpWebRequest
         /// </summary>
         public bool PreAuthenticate { get; set; }
