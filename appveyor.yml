@@ -7,7 +7,7 @@
     path: 'RestSharp\bin\Release\*.nupkg'
 
   configuration: Release
- 
+
   image: Visual Studio 2017
 
   build_script:
