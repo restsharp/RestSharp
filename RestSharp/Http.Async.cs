@@ -353,6 +353,7 @@ namespace RestSharp
 
             webRequest.PreAuthenticate = PreAuthenticate;
             webRequest.Pipelined = Pipelined;
+            webRequest.ServicePoint.Expect100Continue = false;
 
             AppendHeaders(webRequest);
             AppendCookies(webRequest);
@@ -376,10 +377,11 @@ namespace RestSharp
             if (ClientCertificates != null)
                 webRequest.ClientCertificates.AddRange(ClientCertificates);
 
-            webRequest.AutomaticDecompression =
-                DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
-
-            webRequest.ServicePoint.Expect100Continue = false;
+            if (AutomaticDecompression)
+            {
+                webRequest.AutomaticDecompression =
+                    DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
+            }
 
             if (Timeout != 0)
                 webRequest.Timeout = Timeout;
@@ -392,11 +394,13 @@ namespace RestSharp
             if (CachePolicy != null)
                 webRequest.CachePolicy = CachePolicy;
 
+            webRequest.AllowAutoRedirect = FollowRedirects;
+
             if (FollowRedirects && MaxRedirects.HasValue)
                 webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
 
-            webRequest.AllowAutoRedirect = FollowRedirects;
             webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
+
             return webRequest;
         }
 
