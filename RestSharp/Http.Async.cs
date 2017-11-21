@@ -345,7 +345,7 @@ namespace RestSharp
 
         // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
         // TODO: duplication at the moment).
-        private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
+        protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
         {
             var webRequest = CreateWebRequest(url);
 
