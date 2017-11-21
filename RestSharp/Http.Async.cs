@@ -347,7 +347,7 @@ namespace RestSharp
         // TODO: duplication at the moment).
         private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
         {
-            var webRequest = (HttpWebRequest) WebRequest.Create(url);
+            var webRequest = CreateWebRequest(url);
 
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 

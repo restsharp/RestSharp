@@ -221,6 +221,11 @@ namespace RestSharp
             return new Http();
         }
 
+        protected virtual HttpWebRequest CreateWebRequest(Uri url)
+        {
+            return (HttpWebRequest)WebRequest.Create(url);
+        }
+
         partial void AddSyncHeaderActions();
 
         private void AddSharedHeaderActions()
