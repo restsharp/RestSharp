@@ -52,6 +52,7 @@ namespace RestSharp
         /// </summary>
         public RestClient()
         {
+			
             Encoding = Encoding.UTF8;
             ContentHandlers = new Dictionary<string, IDeserializer>();
             AcceptTypes = new List<string>();
@@ -174,6 +175,13 @@ namespace RestSharp
         public Encoding Encoding { get; set; }
 
         public bool PreAuthenticate { get; set; }
+
+		/// <summary>
+		///	    The ConnectionGroupName property enables you to associate a request with a connection group. 
+		///     This is useful when your application makes requests to one server for different users, 
+		///     such as a Web site that retrieves customer information from a database server.
+		/// </summary>
+		public string ConnectionGroupName { get; set; }
 
         /// <summary>
         ///     Callback function for handling the validation of remote certificates. Useful for certificate pinning and
@@ -415,7 +423,12 @@ namespace RestSharp
             http.CachePolicy = CachePolicy;
             http.Pipelined = Pipelined;
 
-            if (request.Credentials != null)
+			if (!string.IsNullOrEmpty(ConnectionGroupName))
+			{
+				http.ConnectionGroupName = ConnectionGroupName;
+			}
+
+			if (request.Credentials != null)
                 http.Credentials = request.Credentials;
 
             var headers = from p in request.Parameters

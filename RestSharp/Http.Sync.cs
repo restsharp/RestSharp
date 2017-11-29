@@ -276,6 +276,8 @@ namespace RestSharp
 
             webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
 
+			webRequest.ConnectionGroupName = ConnectionGroupName;
+
             return webRequest;
         }
     }

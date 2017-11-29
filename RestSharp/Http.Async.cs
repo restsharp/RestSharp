@@ -397,6 +397,12 @@ namespace RestSharp
 
             webRequest.AllowAutoRedirect = FollowRedirects;
             webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
+
+			if (!string.IsNullOrEmpty(ConnectionGroupName))
+			{
+				webRequest.ConnectionGroupName = ConnectionGroupName;
+			}
+
             return webRequest;
         }
 
