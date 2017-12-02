@@ -141,10 +141,35 @@ namespace RestSharp.IntegrationTests
 
             Assert.IsFalse(response.IsSuccessful);
         }
+
+        [Test]
+        public void ContentType_Additional_Information()
+        {
+            _server.SetHandler(Handlers.Generic<ResponseHandler>());
+            var request = new RestRequest(Method.POST)
+            {
+                RequestFormat = DataFormat.Json,
+                Resource = "contenttype_odata"
+            };
+            request.AddBody("bodyadsodajjd");
+            request.AddHeader("X-RequestDigest", "xrequestdigestasdasd");
+            request.AddHeader("Accept", "application/json; odata=verbose");
+            request.AddHeader("Content-Type", "application/json; odata=verbose");
+
+            IRestResponse<Response> response = _client.Execute<Response>(request);
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
     }
 
     public class ResponseHandler
     {
+        private void contenttype_odata(HttpListenerContext context)
+        {
+            bool hasCorrectHeader = context.Request.Headers["Content-Type"] == "application/json; odata=verbose";
+            context.Response.StatusCode = hasCorrectHeader ? 200 : 400;
+        }
+
         private void error(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
