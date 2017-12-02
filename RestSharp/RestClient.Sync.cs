@@ -9,10 +9,20 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to execute</param>
         /// <returns>Response data</returns>
-        public byte[] DownloadData(IRestRequest request)
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Global
+        public byte[] DownloadData(IRestRequest request) => DownloadData(request, false);
+
+        /// <summary>
+        ///     Executes the specified request and downloads the response data
+        /// </summary>
+        /// <param name="request">Request to execute</param>
+        /// <param name="throwOnError">Throw an exception if download fails.</param>
+        /// <returns>Response data</returns>
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Global
+        public byte[] DownloadData(IRestRequest request, bool throwOnError)
         {
             var response = Execute(request);
-            if (response.ResponseStatus == ResponseStatus.Error)
+            if (response.ResponseStatus == ResponseStatus.Error && throwOnError)
             {
                 throw response.ErrorException;
             }

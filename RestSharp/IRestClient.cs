@@ -70,6 +70,8 @@ namespace RestSharp
         IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
 
         byte[] DownloadData(IRestRequest request);
+        
+        byte[] DownloadData(IRestRequest request, bool throwOnError);
 
         /// <summary>
         /// X509CertificateCollection to be sent with request
