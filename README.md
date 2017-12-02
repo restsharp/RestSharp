@@ -20,7 +20,7 @@ The `RestSharp` package is now signed so there is no need to install `RestSharp.
 * Supports custom serialization and deserialization via ISerializer and IDeserializer
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
-* GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE supported
+* GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE, COPY supported
 * Other non-standard HTTP methods also supported
 * OAuth 1, OAuth 2, Basic, NTLM and Parameter-based Authenticators included
 * Supports custom authentication schemes via IAuthenticator
