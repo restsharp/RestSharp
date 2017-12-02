@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using NUnit.Framework;
 using RestSharp.Extensions;
 
@@ -30,6 +31,14 @@ namespace RestSharp.Tests
             var stringWithLimitLength = new string('*', numGreaterThanLimit);
             var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
             Assert.AreEqual(numGreaterThanLimit, encodedAndDecoded.Length);
+        }
+
+        [Test]
+        public void UrlEncodeTest()
+        {
+            const string parameter = "ø";
+            Assert.True(string.Equals("%F8", parameter.UrlEncode(Encoding.GetEncoding("ISO-8859-1")), StringComparison.OrdinalIgnoreCase));
+            Assert.True(string.Equals("%C3%B8", parameter.UrlEncode(), StringComparison.OrdinalIgnoreCase));
         }
     }
 }

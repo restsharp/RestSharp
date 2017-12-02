@@ -295,7 +295,7 @@ namespace RestSharp
                 return new Uri(assembled);
 
             // build and attach querystring
-            var data = EncodeParameters(parameters);
+            var data = EncodeParameters(parameters, Encoding);
             var separator = assembled != null && assembled.Contains("?")
                 ? "&"
                 : "?";
@@ -348,13 +348,13 @@ namespace RestSharp
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request) =>
             Authenticator?.Authenticate(client, request);
 
-        private static string EncodeParameters(IEnumerable<Parameter> parameters) =>
-            string.Join("&", parameters.Select(EncodeParameter).ToArray());
+        private static string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
+            string.Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
-        private static string EncodeParameter(Parameter parameter) =>
+        private static string EncodeParameter(Parameter parameter, Encoding encoding) =>
             parameter.Value == null
-                ? string.Concat(parameter.Name.UrlEncode(), "=")
-                : string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
+                ? string.Concat(parameter.Name.UrlEncode(encoding), "=")
+                : string.Concat(parameter.Name.UrlEncode(encoding), "=", parameter.Value.ToString().UrlEncode(encoding));
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
         {
