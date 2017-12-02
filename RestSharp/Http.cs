@@ -317,17 +317,24 @@ namespace RestSharp
         private void PreparePostBody(HttpWebRequest webRequest)
         {
             if (HasFiles || AlwaysMultipartFormData)
+            bool needsContentType = String.IsNullOrEmpty(webRequest.ContentType);
+
+            if (this.HasFiles || this.AlwaysMultipartFormData)
             {
-                webRequest.ContentType = GetMultipartFormContentType();
+                if (needsContentType)
+                    webRequest.ContentType = GetMultipartFormContentType();
             }
             else if (HasParameters)
             {
-                webRequest.ContentType = "application/x-www-form-urlencoded";
+                if (needsContentType)
+                    webRequest.ContentType = "application/x-www-form-urlencoded";
+                this.RequestBody = this.EncodeParameters();
                 RequestBody = EncodeParameters();
             }
             else if (HasBody)
             {
-                webRequest.ContentType = RequestContentType;
+                if (needsContentType)
+                    webRequest.ContentType = this.RequestContentType;
             }
         }
 
