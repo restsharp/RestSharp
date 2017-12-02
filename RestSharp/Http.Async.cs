@@ -343,61 +343,9 @@ namespace RestSharp
             }
         }
 
-        // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
-        // TODO: duplication at the moment).
-        private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
+        protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
         {
-            var webRequest = (HttpWebRequest) WebRequest.Create(url);
-
-            webRequest.UseDefaultCredentials = UseDefaultCredentials;
-
-            webRequest.PreAuthenticate = PreAuthenticate;
-            webRequest.Pipelined = Pipelined;
-
-            AppendHeaders(webRequest);
-            AppendCookies(webRequest);
-
-            if (Host != null) webRequest.Host = Host;
-
-            webRequest.Method = method;
-
-            // make sure Content-Length header is always sent since default is -1
-            // WP7 doesn't as of Beta doesn't support a way to set this value either directly
-            // or indirectly
-            if (!HasFiles && !AlwaysMultipartFormData)
-                webRequest.ContentLength = 0;
-
-            if (Credentials != null)
-                webRequest.Credentials = Credentials;
-
-            if (UserAgent.HasValue())
-                webRequest.UserAgent = UserAgent;
-
-            if (ClientCertificates != null)
-                webRequest.ClientCertificates.AddRange(ClientCertificates);
-
-            webRequest.AutomaticDecompression =
-                DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
-
-            webRequest.ServicePoint.Expect100Continue = false;
-
-            if (Timeout != 0)
-                webRequest.Timeout = Timeout;
-
-            if (ReadWriteTimeout != 0)
-                webRequest.ReadWriteTimeout = ReadWriteTimeout;
-
-            webRequest.Proxy = Proxy;
-
-            if (CachePolicy != null)
-                webRequest.CachePolicy = CachePolicy;
-
-            if (FollowRedirects && MaxRedirects.HasValue)
-                webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
-
-            webRequest.AllowAutoRedirect = FollowRedirects;
-            webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
-            return webRequest;
+            return ConfigureWebRequest(method, url);
         }
 
         private class TimeOutState

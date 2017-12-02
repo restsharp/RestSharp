@@ -222,14 +222,14 @@ namespace RestSharp
             }
         }
 
-        // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
-        // TODO: duplication at the moment).
-        private HttpWebRequest ConfigureWebRequest(string method, Uri url)
+        protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
-            var webRequest = (HttpWebRequest) WebRequest.Create(url);
+            var webRequest = CreateWebRequest(url);
 
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
+
             webRequest.PreAuthenticate = PreAuthenticate;
+            webRequest.Pipelined = Pipelined;
             webRequest.ServicePoint.Expect100Continue = false;
 
             AppendHeaders(webRequest);
@@ -240,8 +240,19 @@ namespace RestSharp
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
+            // WP7 doesn't as of Beta doesn't support a way to set this value either directly
+            // or indirectly
             if (!HasFiles && !AlwaysMultipartFormData)
                 webRequest.ContentLength = 0;
+
+            if (Credentials != null)
+                webRequest.Credentials = Credentials;
+
+            if (UserAgent.HasValue())
+                webRequest.UserAgent = UserAgent;
+
+            if (ClientCertificates != null)
+                webRequest.ClientCertificates.AddRange(ClientCertificates);
 
             if (AutomaticDecompression)
             {
@@ -249,20 +260,11 @@ namespace RestSharp
                     DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
             }
 
-            if (ClientCertificates != null)
-                webRequest.ClientCertificates.AddRange(ClientCertificates);
-
-            if (UserAgent.HasValue())
-                webRequest.UserAgent = UserAgent;
-
             if (Timeout != 0)
                 webRequest.Timeout = Timeout;
 
             if (ReadWriteTimeout != 0)
                 webRequest.ReadWriteTimeout = ReadWriteTimeout;
-
-            if (Credentials != null)
-                webRequest.Credentials = Credentials;
 
             webRequest.Proxy = Proxy;
 
