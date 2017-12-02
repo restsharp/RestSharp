@@ -316,6 +316,18 @@ namespace RestSharp.Tests
             client.Encoding = Encoding.GetEncoding("ISO-8859-1");
             Assert.AreEqual(expectedIso89591Encoding, client.BuildUri(request));
         }
+      
+        [Test]
+        public void Should_build_uri_with_resource_full_uri()
+        {
+            RestRequest request = new RestRequest("https://www.example1.com/connect/authorize");
+            
+            RestClient client = new RestClient("https://www.example1.com/");
+            Uri expected = new Uri("https://www.example1.com/connect/authorize");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
 
     }
 }
