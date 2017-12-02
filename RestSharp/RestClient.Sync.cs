@@ -12,6 +12,10 @@ namespace RestSharp
         public byte[] DownloadData(IRestRequest request)
         {
             var response = Execute(request);
+            if (response.ResponseStatus == ResponseStatus.Error)
+            {
+                throw response.ErrorException;
+            }
 
             return response.RawBytes;
         }
