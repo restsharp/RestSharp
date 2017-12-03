@@ -173,6 +173,27 @@ namespace RestSharp.IntegrationTests
             }
         }
 
+        [Test]
+        public void Can_Be_Added_To_COPY_Request()
+        {
+            const Method httpMethod = Method.COPY;
+
+            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
+            {
+                RestClient client = new RestClient(BASE_URL);
+                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+
+                const string contentType = "text/plain";
+                const string bodyData = "abc123 foo bar baz BING!";
+
+                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+
+                client.Execute(request);
+
+                AssertHasRequestBody(contentType, bodyData);
+            }
+        }
+
         private static void AssertHasNoRequestBody()
         {
             Assert.Null(RequestBodyCapturer.CapturedContentType);

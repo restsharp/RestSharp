@@ -177,6 +177,26 @@ namespace RestSharp.IntegrationTests
             AssertHasRequestBody(contentType, bodyData);
         }
 
+        [Test]
+        public void Can_Be_Added_To_COPY_Request()
+        {
+            const Method httpMethod = Method.COPY;
+
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
+
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
+
+            AssertHasRequestBody(contentType, bodyData);
+        }
+
         private static void AssertHasNoRequestBody()
         {
             Assert.Null(RequestBodyCapturer.CapturedContentType);

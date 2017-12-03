@@ -37,6 +37,7 @@ namespace RestSharp
 
             switch (request.Method)
             {
+                case Method.COPY:
                 case Method.MERGE:
                 case Method.PATCH:
                 case Method.POST:

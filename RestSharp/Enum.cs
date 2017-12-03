@@ -51,6 +51,7 @@ namespace RestSharp
         OPTIONS,
         PATCH,
         MERGE,
+        COPY
     }
 
     /// <summary>
