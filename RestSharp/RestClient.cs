@@ -245,64 +245,116 @@ namespace RestSharp
         /// <returns>Assembled System.Uri</returns>
         public Uri BuildUri(IRestRequest request)
         {
-            if (BaseUrl == null)
-                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
+            DoBuildUriValidations(request);
 
-            var assembled = request.Resource;
-            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            KeyValuePair<string, string> tuple = ApplyUrlSegmentParamsValuesToBaseUriAndResource(request);
+
+            BaseUrl = new Uri(tuple.Key);
+            string resource = tuple.Value;
+
+            string mergedUri = MergeBaseUrlAndResource(resource);
+
+            string finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
+
+            return new Uri(finalUri);
+        }
+
+        private void DoBuildUriValidations(IRestRequest request)
+        {
+            if (BaseUrl == null)
+            {
+                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
+            }
+
+            IList<string> nullValuedParams = request.Parameters
+                                                    .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
+                                                    .Select(p => p.Name)
+                                                    .ToList();
+
+            if (!nullValuedParams.Any())
+            {
+                return;
+            }
+
+            string names = string.Join(", ", nullValuedParams.Select(name => $"'{name}'").ToArray());
+            throw new ArgumentException($"Cannot build uri when url segment parameter(s) {names} value is null.", "request");
+        }
+
+        private KeyValuePair<string, string> ApplyUrlSegmentParamsValuesToBaseUriAndResource(IRestRequest request)
+        {
+            string assembled = request.Resource;
+            bool hasResource = !string.IsNullOrEmpty(assembled);
+            IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
             var builder = new UriBuilder(BaseUrl);
 
-            foreach (var p in urlParms)
+            foreach (Parameter parameter in urlParms)
             {
-                if (p.Value == null)
-                    throw new ArgumentException(
-                        string.Format("Cannot build uri when url segment parameter '{0}' value is null.", p.Name),
-                        "request");
+                string paramPlaceHolder = $"{{{parameter.Name}}}";
+                string paramValue = parameter.Value.ToString().UrlEncode();
 
-                if (!string.IsNullOrEmpty(assembled))
-                    assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                if (hasResource)
+                {
+                    assembled = assembled.Replace(paramPlaceHolder, paramValue);
+                }
 
-                builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+                builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
             }
 
-            BaseUrl = new Uri(builder.ToString());
+            return new KeyValuePair<string, string>(builder.ToString(), assembled);
+        }
+
+        private string MergeBaseUrlAndResource(string resource)
+        {
+            string assembled = resource;
 
             if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
-                assembled = assembled.Substring(1);
-
-            if (BaseUrl != null && !string.IsNullOrEmpty(BaseUrl.AbsoluteUri))
             {
-                var usingBaseUri = BaseUrl;
-                if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
-                    usingBaseUri = new Uri(BaseUrl.AbsoluteUri + "/");
-
-                assembled = new Uri(usingBaseUri, assembled).AbsoluteUri;
+                assembled = assembled.Substring(1);
             }
 
-            IEnumerable<Parameter> parameters;
+            if (BaseUrl == null || string.IsNullOrEmpty(BaseUrl.AbsoluteUri))
+            {
+                return assembled;
+            }
 
-            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
-                parameters = request.Parameters
-                    .Where(p => p.Type == ParameterType.GetOrPost ||
-                                p.Type == ParameterType.QueryString)
-                    .ToList();
-            else
-                parameters = request.Parameters
-                    .Where(p => p.Type == ParameterType.QueryString)
-                    .ToList();
+            Uri usingBaseUri = BaseUrl;
+            if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+            {
+                usingBaseUri = new Uri(BaseUrl.AbsoluteUri + "/");
+            }
+
+            assembled = new Uri(usingBaseUri, assembled).AbsoluteUri;
+
+            return assembled;
+        }
+
+        private string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
+        {
+            IList<Parameter> parameters = GetQueryStringParameters(request);
 
             if (!parameters.Any())
-                return new Uri(assembled);
+            {
+                return mergedUri;
+            }
 
-            // build and attach querystring
-            var data = EncodeParameters(parameters, Encoding);
-            var separator = assembled != null && assembled.Contains("?")
-                ? "&"
-                : "?";
+            string separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
 
-            assembled = string.Concat(assembled, separator, data);
+            return string.Concat(mergedUri, separator, EncodeParameters(parameters, Encoding));
+        }
 
-            return new Uri(assembled);
+        private static IList<Parameter> GetQueryStringParameters(IRestRequest request)
+        {
+            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+            {
+                return request.Parameters
+                                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                                p.Type == ParameterType.QueryString)
+                                    .ToList();
+            }
+
+            return request.Parameters
+                                .Where(p => p.Type == ParameterType.QueryString)
+                                .ToList();
         }
 
         /// <summary>
