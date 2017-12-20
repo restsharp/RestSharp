@@ -34,11 +34,11 @@ namespace RestSharp.Tests
     {
         private const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-        private readonly string sampleDataPath = Path.Combine(Environment.CurrentDirectory, "SampleData");
+        private readonly string sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
 
         private string PathFor(string sampleFile)
         {
-            return Path.Combine(this.sampleDataPath, sampleFile);
+            return Path.Combine(sampleDataPath, sampleFile);
         }
 
         [Test]
@@ -65,6 +65,20 @@ namespace RestSharp.Tests
 
             Assert.NotNull(output);
             Assert.AreEqual("1", output[0].Sid);
+        }
+
+        [Test]
+        public void Can_Use_DeserializeAs_Attribute_for_List_Property()
+        {
+            const string content =
+                "<oddball><oddballListName><item>TestValue</item></oddballListName></oddball>";
+
+            XmlDeserializer xml = new XmlDeserializer();
+            Oddball output = xml.Deserialize<Oddball>(new RestResponse { Content = content });
+
+            Assert.NotNull(output);
+            Assert.NotNull(output.ListWithGoodName);
+            Assert.IsNotEmpty(output.ListWithGoodName);
         }
 
         [Test]

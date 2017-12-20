@@ -1,11 +1,27 @@
 # RestSharp Release Notes
 
+# 106.1.0
+
+* Fixed ignoring the DeserializeAsAttribute for list properties
+* Fixed the proxy issue on .NET Core
+* Fixed Uri builder when the Resource is an absolute Uri
+* Add RSA-SHA1 signing capability
+* Add ability to customize the Host header
+
+# 106.0.1
+
+* Added support of .NET Standard 2.0, enabling development for .NET Core 2.0
+* Support for .NET 3.5, .NET 4.0, Silverlight, Windows Phone and Monotouch is removed
+* Several smaller fixes
+
+To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/106.0.1...105.2.3).
+
 ## 105.2.2
 
 * Added nuget targets for windows phone 8 and 8.1, monotouch10, monoandroid10, xamarin.ios10, net46
-* fixed the silverlight target to be sl5
-* added all projects to the solution
-* cleaned up and consolidated the build and packaging scripts
+* Fixed the silverlight target to be sl5
+* Added all projects to the solution
+* Cleaned up and consolidated the build and packaging scripts
 * **Code clean-up and namespace patching may cause breaking changes**
 
 To see all commits for this version, [click here](https://github.com/RestSharp/RestSharp/compare/105.2.1...105.2.2).

@@ -1,12 +1,11 @@
-﻿
-namespace RestSharp.Authenticators.OAuth
+﻿namespace RestSharp.Authenticators.OAuth
 {
     internal class WebPair
     {
         public WebPair(string name, string value)
         {
-            this.Name = name;
-            this.Value = value;
+            Name = name;
+            Value = value;
         }
 
         public string Value { get; set; }

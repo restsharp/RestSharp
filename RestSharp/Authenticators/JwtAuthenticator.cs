@@ -23,8 +23,8 @@ using System.Linq;
 namespace RestSharp.Authenticators
 {
     /// <summary>
-    /// JSON WEB TOKEN (JWT) Authenticator class. 
-    /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
+    ///     JSON WEB TOKEN (JWT) Authenticator class.
+    ///     <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
     /// </summary>
     public class JwtAuthenticator : IAuthenticator
     {
@@ -33,11 +33,9 @@ namespace RestSharp.Authenticators
         public JwtAuthenticator(string accessToken)
         {
             if (accessToken == null)
-            {
                 throw new ArgumentNullException("accessToken");
-            }
 
-            this.authHeader = string.Format("Bearer {0}", accessToken);
+            authHeader = string.Format("Bearer {0}", accessToken);
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
@@ -45,9 +43,7 @@ namespace RestSharp.Authenticators
             // only add the Authorization parameter if it hasn't been added by a previous Execute
             if (!request.Parameters.Any(p => p.Type.Equals(ParameterType.HttpHeader) &&
                                              p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
-            {
-                request.AddParameter("Authorization", this.authHeader, ParameterType.HttpHeader);
-            }
+                request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
         }
     }
 }

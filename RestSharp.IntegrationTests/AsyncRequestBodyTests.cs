@@ -9,30 +9,38 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class AsyncRequestBodyTests
     {
-        private const string BASE_URL = "http://localhost:8888/";
+        private SimpleServer _server;
+        private RestClient _client;
+        private const string BaseUrl = "http://localhost:8888/";
+
+        [TearDown]
+        public void ShutdownServer() => _server.Dispose();
+
+        [SetUp]
+        public void CreateClient()
+        {
+            _server = SimpleServer.Create(BaseUrl, Handlers.Generic<RequestBodyCapturer>());
+            _client = new RestClient(BaseUrl);
+        }
 
         [Test]
         public void Can_Not_Be_Added_To_GET_Request()
         {
             const Method httpMethod = Method.GET;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasNoRequestBody();
-            }
+            AssertHasNoRequestBody();
         }
 
         [Test]
@@ -40,17 +48,13 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.POST;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasNoRequestBody();
-            }
+            AssertHasNoRequestBody();
         }
 
         [Test]
@@ -58,23 +62,19 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.POST;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasRequestBody(contentType, bodyData);
-            }
+            AssertHasRequestBody(contentType, bodyData);
         }
 
         [Test]
@@ -82,23 +82,19 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.PUT;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasRequestBody(contentType, bodyData);
-            }
+            AssertHasRequestBody(contentType, bodyData);
         }
 
         [Test]
@@ -106,23 +102,19 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.DELETE;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasRequestBody(contentType, bodyData);
-            }
+            AssertHasRequestBody(contentType, bodyData);
         }
 
         [Test]
@@ -130,23 +122,19 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.HEAD;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasNoRequestBody();
-            }
+            AssertHasNoRequestBody();
         }
 
         [Test]
@@ -154,23 +142,19 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.OPTIONS;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasRequestBody(contentType, bodyData);
-            }
+            AssertHasRequestBody(contentType, bodyData);
         }
 
         [Test]
@@ -178,23 +162,39 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.PATCH;
 
-            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
-            {
-                RestClient client = new RestClient(BASE_URL);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-                ManualResetEvent resetEvent = new ManualResetEvent(false);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
 
-                client.ExecuteAsync(request, response => resetEvent.Set());
-                resetEvent.WaitOne();
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-                AssertHasRequestBody(contentType, bodyData);
-            }
+            AssertHasRequestBody(contentType, bodyData);
+        }
+
+        [Test]
+        public void Can_Be_Added_To_COPY_Request()
+        {
+            const Method httpMethod = Method.COPY;
+
+            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+
+            const string contentType = "text/plain";
+            const string bodyData = "abc123 foo bar baz BING!";
+
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
+
+            AssertHasRequestBody(contentType, bodyData);
         }
 
         private static void AssertHasNoRequestBody()
@@ -213,7 +213,7 @@ namespace RestSharp.IntegrationTests
 
         private class RequestBodyCapturer
         {
-            public const string RESOURCE = "Capture";
+            public const string Resource = "Capture";
 
             public static string CapturedContentType { get; set; }
 

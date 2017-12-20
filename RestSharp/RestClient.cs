@@ -16,107 +16,158 @@
 
 #endregion
 
+using RestSharp.Authenticators;
+using RestSharp.Deserializers;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
+using System.Net.Security;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
-using RestSharp.Authenticators;
-using RestSharp.Deserializers;
-using RestSharp.Extensions;
-
-#if FRAMEWORK
-using System.Net.Cache;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
-#endif
-
 
 namespace RestSharp
 {
     /// <summary>
-    /// Client to translate RestRequests into Http requests and process response result
+    ///     Client to translate RestRequests into Http requests and process response result
     /// </summary>
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version      
-#if !WINDOWS_UWP
-        private static readonly Version version = new AssemblyName(  Assembly.GetExecutingAssembly().FullName).Version;
-#else
-        private static readonly Version version = typeof(RestClient).GetTypeInfo().Assembly.GetName().Version;
-#endif
+        private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
+
+        private static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+
+        private static readonly Regex StructuredSyntaxSuffixWildcardRegex =
+            new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 
         public IHttpFactory HttpFactory = new SimpleFactory<Http>();
 
         /// <summary>
-        /// Maximum number of redirects to follow if FollowRedirects is true
+        ///     Default constructor that registers default content handlers
+        /// </summary>
+        public RestClient()
+        {
+            Encoding = Encoding.UTF8;
+            ContentHandlers = new Dictionary<string, IDeserializer>();
+            AcceptTypes = new List<string>();
+            DefaultParameters = new List<Parameter>();
+            AutomaticDecompression = true;
+
+            // TODO: Make this configurable
+            // register default handlers
+            AddHandler("application/json", new JsonDeserializer());
+            AddHandler("application/xml", new XmlDeserializer());
+            AddHandler("text/json", new JsonDeserializer());
+            AddHandler("text/x-json", new JsonDeserializer());
+            AddHandler("text/javascript", new JsonDeserializer());
+            AddHandler("text/xml", new XmlDeserializer());
+            AddHandler("*+json", new JsonDeserializer());
+            AddHandler("*+xml", new XmlDeserializer());
+            AddHandler("*", new XmlDeserializer());
+
+            FollowRedirects = true;
+        }
+
+        /// <summary>
+        ///     Sets the BaseUrl property for requests made by this client instance
+        /// </summary>
+        /// <param name="baseUrl"></param>
+        public RestClient(Uri baseUrl) : this()
+        {
+            BaseUrl = baseUrl;
+        }
+
+        /// <summary>
+        ///     Sets the BaseUrl property for requests made by this client instance
+        /// </summary>
+        /// <param name="baseUrl"></param>
+        public RestClient(string baseUrl) : this()
+        {
+            if (string.IsNullOrEmpty(baseUrl))
+                throw new ArgumentNullException("baseUrl");
+
+            BaseUrl = new Uri(baseUrl);
+        }
+
+        private IDictionary<string, IDeserializer> ContentHandlers { get; }
+
+        private IList<string> AcceptTypes { get; }
+
+        /// <summary>
+        /// Enable or disable automatic gzip/deflate decompression
+        /// </summary>
+        public bool AutomaticDecompression { get; set; }
+
+        /// <summary>
+        ///     Maximum number of redirects to follow if FollowRedirects is true
         /// </summary>
         public int? MaxRedirects { get; set; }
 
-#if FRAMEWORK
         /// <summary>
-        /// X509CertificateCollection to be sent with request
+        ///     X509CertificateCollection to be sent with request
         /// </summary>
         public X509CertificateCollection ClientCertificates { get; set; }
 
         /// <summary>
-        /// Proxy to use for requests made by this client instance.
-        /// Passed on to underlying WebRequest if set.
+        ///     Proxy to use for requests made by this client instance.
+        ///     Passed on to underlying WebRequest if set.
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
         /// <summary>
-        /// The cache policy to use for requests initiated by this client instance.
+        ///     The cache policy to use for requests initiated by this client instance.
         /// </summary>
         public RequestCachePolicy CachePolicy { get; set; }
 
         public bool Pipelined { get; set; }
-#endif
 
         /// <summary>
-        /// Default is true. Determine whether or not requests that result in 
-        /// HTTP status codes of 3xx should follow returned redirect
+        ///     Default is true. Determine whether or not requests that result in
+        ///     HTTP status codes of 3xx should follow returned redirect
         /// </summary>
         public bool FollowRedirects { get; set; }
 
         /// <summary>
-        /// The CookieContainer used for requests made by this client instance
+        ///     The CookieContainer used for requests made by this client instance
         /// </summary>
         public CookieContainer CookieContainer { get; set; }
 
         /// <summary>
-        /// UserAgent to use for requests made by this client instance
+        ///     UserAgent to use for requests made by this client instance
         /// </summary>
         public string UserAgent { get; set; }
 
         /// <summary>
-        /// Timeout in milliseconds to use for requests made by this client instance
+        ///     Timeout in milliseconds to use for requests made by this client instance
         /// </summary>
         public int Timeout { get; set; }
 
         /// <summary>
-        /// The number of milliseconds before the writing or reading times out.
+        ///     The number of milliseconds before the writing or reading times out.
         /// </summary>
         public int ReadWriteTimeout { get; set; }
 
         /// <summary>
-        /// Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
+        ///     Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
         /// </summary>
         public bool UseSynchronizationContext { get; set; }
 
         /// <summary>
-        /// Authenticator to use for requests made by this client instance
+        ///     Authenticator to use for requests made by this client instance
         /// </summary>
         public IAuthenticator Authenticator { get; set; }
 
         /// <summary>
-        /// Combined with Request.Resource to construct URL for request
-        /// Should include scheme and domain without trailing slash.
+        ///     Combined with Request.Resource to construct URL for request
+        ///     Should include scheme and domain without trailing slash.
         /// </summary>
         /// <example>
-        /// client.BaseUrl = new Uri("http://example.com");
+        ///     client.BaseUrl = new Uri("http://example.com");
         /// </example>
         public virtual Uri BaseUrl { get; set; }
 
@@ -124,333 +175,201 @@ namespace RestSharp
 
         public bool PreAuthenticate { get; set; }
 
-#if NET45
         /// <summary>
-        /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
-        /// overriding certificate errors in the scope of a request.
+        ///     Callback function for handling the validation of remote certificates. Useful for certificate pinning and
+        ///     overriding certificate errors in the scope of a request.
         /// </summary>
         public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-#endif
 
         /// <summary>
-        /// Default constructor that registers default content handlers
+        ///     Parameters included with every request made with this instance of RestClient
+        ///     If specified in both client and request, the request wins
         /// </summary>
-        public RestClient()
-        {
-            this.Encoding = Encoding.UTF8;
-#if WINDOWS_PHONE
-            this.UseSynchronizationContext = true;
-#endif
-            this.ContentHandlers = new Dictionary<string, IDeserializer>();
-            this.AcceptTypes = new List<string>();
-            this.DefaultParameters = new List<Parameter>();
-
-            // register default handlers
-            this.AddHandler("application/json", new JsonDeserializer());
-            this.AddHandler("application/xml", new XmlDeserializer());
-            this.AddHandler("text/json", new JsonDeserializer());
-            this.AddHandler("text/x-json", new JsonDeserializer());
-            this.AddHandler("text/javascript", new JsonDeserializer());
-            this.AddHandler("text/xml", new XmlDeserializer());
-            this.AddHandler("*+json", new JsonDeserializer());
-            this.AddHandler("*+xml", new XmlDeserializer());
-            this.AddHandler("*", new XmlDeserializer());
-
-            this.FollowRedirects = true;
-        }
+        public IList<Parameter> DefaultParameters { get; }
 
         /// <summary>
-        /// Sets the BaseUrl property for requests made by this client instance
+        /// Explicit Host header value to use in requests independent from the request URI.
+        /// If null, default host value extracted from URI is used.
         /// </summary>
-        /// <param name="baseUrl"></param>
-        public RestClient(Uri baseUrl) : this()
-        {
-            this.BaseUrl = baseUrl;
-        }
+        public string BaseHost { get; set; }
 
         /// <summary>
-        /// Sets the BaseUrl property for requests made by this client instance
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        public RestClient(string baseUrl) : this()
-        {
-            if (string.IsNullOrEmpty(baseUrl))
-            {
-                throw new ArgumentNullException("baseUrl");
-            }
-
-            this.BaseUrl = new Uri(baseUrl);
-        }
-
-        private IDictionary<string, IDeserializer> ContentHandlers { get; set; }
-
-        private IList<string> AcceptTypes { get; set; }
-
-        /// <summary>
-        /// Parameters included with every request made with this instance of RestClient
-        /// If specified in both client and request, the request wins
-        /// </summary>
-        public IList<Parameter> DefaultParameters { get; private set; }
-
-        /// <summary>
-        /// Registers a content handler to process response content
+        ///     Registers a content handler to process response content
         /// </summary>
         /// <param name="contentType">MIME content type of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
         public void AddHandler(string contentType, IDeserializer deserializer)
         {
-            this.ContentHandlers[contentType] = deserializer;
+            ContentHandlers[contentType] = deserializer;
 
-            if (contentType != "*" && !structuredSyntaxSuffixWildcardRegex.IsMatch(contentType))
-            {
-                this.AcceptTypes.Add(contentType);
-                // add Accept header based on registered deserializers
-                string accepts = string.Join(", ", this.AcceptTypes.ToArray());
+            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
 
-                this.RemoveDefaultParameter("Accept");
-                this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-            }
+            AcceptTypes.Add(contentType);
+            // add Accept header based on registered deserializers
+            var accepts = string.Join(", ", AcceptTypes.ToArray());
+
+            this.RemoveDefaultParameter("Accept");
+            this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
         }
 
         /// <summary>
-        /// Remove a content handler for the specified MIME content type
+        ///     Remove a content handler for the specified MIME content type
         /// </summary>
         /// <param name="contentType">MIME content type to remove</param>
         public void RemoveHandler(string contentType)
         {
-            this.ContentHandlers.Remove(contentType);
-            this.AcceptTypes.Remove(contentType);
+            ContentHandlers.Remove(contentType);
+            AcceptTypes.Remove(contentType);
             this.RemoveDefaultParameter("Accept");
         }
 
         /// <summary>
-        /// Remove all content handlers
+        ///     Remove all content handlers
         /// </summary>
         public void ClearHandlers()
         {
-            this.ContentHandlers.Clear();
-            this.AcceptTypes.Clear();
+            ContentHandlers.Clear();
+            AcceptTypes.Clear();
             this.RemoveDefaultParameter("Accept");
         }
 
-        public IRestResponse<T> Deserialize<T>(IRestResponse response) 
+        public IRestResponse<T> Deserialize<T>(IRestResponse response)
         {
             return Deserialize<T>(response.Request, response);
         }
 
         /// <summary>
-        /// Retrieve the handler for the specified MIME content type
+        ///     Assembles URL to call based on parameters, method and resource
+        /// </summary>
+        /// <param name="request">RestRequest to execute</param>
+        /// <returns>Assembled System.Uri</returns>
+        public Uri BuildUri(IRestRequest request)
+        {
+            if (BaseUrl == null)
+                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
+
+            var assembled = request.Resource;
+            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            var builder = new UriBuilder(BaseUrl);
+
+            foreach (var p in urlParms)
+            {
+                if (p.Value == null)
+                    throw new ArgumentException(
+                        string.Format("Cannot build uri when url segment parameter '{0}' value is null.", p.Name),
+                        "request");
+
+                if (!string.IsNullOrEmpty(assembled))
+                    assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+
+                builder.Path = builder.Path.UrlDecode().Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+            }
+
+            BaseUrl = new Uri(builder.ToString());
+
+            if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
+                assembled = assembled.Substring(1);
+
+            if (BaseUrl != null && !string.IsNullOrEmpty(BaseUrl.AbsoluteUri))
+            {
+                var usingBaseUri = BaseUrl;
+                if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+                    usingBaseUri = new Uri(BaseUrl.AbsoluteUri + "/");
+
+                assembled = new Uri(usingBaseUri, assembled).AbsoluteUri;
+            }
+
+            IEnumerable<Parameter> parameters;
+
+            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+                parameters = request.Parameters
+                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                p.Type == ParameterType.QueryString)
+                    .ToList();
+            else
+                parameters = request.Parameters
+                    .Where(p => p.Type == ParameterType.QueryString)
+                    .ToList();
+
+            if (!parameters.Any())
+                return new Uri(assembled);
+
+            // build and attach querystring
+            var data = EncodeParameters(parameters, Encoding);
+            var separator = assembled != null && assembled.Contains("?")
+                ? "&"
+                : "?";
+
+            assembled = string.Concat(assembled, separator, data);
+
+            return new Uri(assembled);
+        }
+
+        /// <summary>
+        ///     Retrieve the handler for the specified MIME content type
         /// </summary>
         /// <param name="contentType">MIME content type to retrieve</param>
         /// <returns>IDeserializer instance</returns>
         private IDeserializer GetHandler(string contentType)
         {
             if (contentType == null)
-            {
                 throw new ArgumentNullException("contentType");
-            }
 
-            if (string.IsNullOrEmpty(contentType) && this.ContentHandlers.ContainsKey("*"))
-            {
-                return this.ContentHandlers["*"];
-            }
+            if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
+                return ContentHandlers["*"];
 
             int semicolonIndex = contentType.IndexOf(';');
 
             if (semicolonIndex > -1)
-            {
                 contentType = contentType.Substring(0, semicolonIndex);
-            }
 
-            if (this.ContentHandlers.ContainsKey(contentType))
+            if (ContentHandlers.ContainsKey(contentType))
+                return ContentHandlers[contentType];
+
+            // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
+            if (contentType.IndexOf('+') >= 0)
             {
-                return this.ContentHandlers[contentType];
-            }
+                // https://tools.ietf.org/html/rfc6839#page-4
+                Match structuredSyntaxSuffixMatch = StructuredSyntaxSuffixRegex.Match(contentType);
 
-            // https://tools.ietf.org/html/rfc6839#page-4
-            Match structuredSyntaxSuffixMatch = structuredSyntaxSuffixRegex.Match(contentType);
-
-            if (structuredSyntaxSuffixMatch.Success)
-            {
-                string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
-
-                if (this.ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                if (structuredSyntaxSuffixMatch.Success)
                 {
-                    return this.ContentHandlers[structuredSyntaxSuffixWildcard];
+                    string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
+                    if (ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                    {
+                        return ContentHandlers[structuredSyntaxSuffixWildcard];
+                    }
                 }
             }
 
-            if (this.ContentHandlers.ContainsKey("*"))
-            {
-                return this.ContentHandlers["*"];
-            }
-
-            return null;
+            return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
         }
 
-#if SILVERLIGHT
-        private readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+        private void AuthenticateIfNeeded(RestClient client, IRestRequest request) =>
+            Authenticator?.Authenticate(client, request);
 
-        private readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
-#else
-        private static readonly Regex structuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private static string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
+            string.Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
-        private static readonly Regex structuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
-#endif
-
-        private void AuthenticateIfNeeded(RestClient client, IRestRequest request)
-        {
-            if (this.Authenticator != null)
-            {
-                this.Authenticator.Authenticate(client, request);
-            }
-        }
-
-        /// <summary>
-        /// Assembles URL to call based on parameters, method and resource
-        /// </summary>
-        /// <param name="request">RestRequest to execute</param>
-        /// <returns>Assembled System.Uri</returns>
-        public Uri BuildUri(IRestRequest request)
-        {
-            DoBuildUriValidations(request);
-
-            var tuple = ApplyUrlSegmentParamsValuesToBaseUriAndResource(request);
-
-            this.BaseUrl = new Uri(tuple.Key);
-            string resource = tuple.Value;
-
-            string mergedUri = MergeBaseUrlAndResource(resource);
-
-            string finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
-
-            return new Uri(finalUri);
-        }
-
-        private void DoBuildUriValidations(IRestRequest request)
-        {
-            if (this.BaseUrl == null)
-            {
-                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
-            }
-
-            var nullValuedParams = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
-                .Select(p => p.Name);
-
-            if (nullValuedParams.Any())
-            {
-                var names = string.Join(", ", nullValuedParams.Select(name => string.Format("'{0}'", name)).ToArray());
-                throw new ArgumentException(
-                        string.Format("Cannot build uri when url segment parameter(s) {0} value is null.", names), "request");
-            }
-        }
-
-        private KeyValuePair<string, String> ApplyUrlSegmentParamsValuesToBaseUriAndResource(IRestRequest request)
-        {
-            string assembled = request.Resource;
-            var hasResource = !string.IsNullOrEmpty(assembled);
-            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
-            var builder = new UriBuilder(this.BaseUrl);
-
-            foreach (var parameter in urlParms)
-            {
-                var paramPlaceHolder = "{" + parameter.Name + "}";
-                var paramValue = parameter.Value.ToString().UrlEncode();
-
-                if (hasResource)
-                {
-                    assembled = assembled.Replace(paramPlaceHolder, paramValue);
-                }
-
-                builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
-            }
-
-            return new KeyValuePair<string, String>(builder.ToString(), assembled);
-        }
-
-        private string MergeBaseUrlAndResource(string resource)
-        {
-            string assembled = resource;
-
-            if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
-            {
-                assembled = assembled.Substring(1);
-            }
-
-            if (this.BaseUrl != null && !string.IsNullOrEmpty(this.BaseUrl.AbsoluteUri))
-            {
-                if (!this.BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
-                {
-                    assembled = string.Concat("/", assembled);
-                }
-
-                assembled = string.IsNullOrEmpty(assembled)
-                    ? this.BaseUrl.AbsoluteUri
-                    : string.Format("{0}{1}", this.BaseUrl, assembled);
-            }
-
-            return assembled;
-
-        }
-
-        private static string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
-        {
-            var parameters = GetQueryStringParameters(request);
-
-            if (!parameters.Any())
-            {
-                return mergedUri;
-            }
-
-            string separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
-
-            return string.Concat(mergedUri, separator, EncodeParameters(parameters));
-        }
-
-        private static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
-        {
-            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
-            {
-                return request.Parameters
-                                    .Where(p => p.Type == ParameterType.GetOrPost ||
-                                                p.Type == ParameterType.QueryString)
-                                    .ToList();
-            }
-
-            return request.Parameters
-                                .Where(p => p.Type == ParameterType.QueryString)
-                                .ToList();
-        }
-
-        private static string EncodeParameters(IEnumerable<Parameter> parameters)
-        {
-            return string.Join("&", parameters.Select(EncodeParameter)
-                                              .ToArray());
-        }
-
-        private static string EncodeParameter(Parameter parameter)
-        {
-            return parameter.Value == null
-                ? string.Concat(parameter.Name.UrlEncode(), "=")
-                : string.Concat(parameter.Name.UrlEncode(), "=", parameter.Value.ToString().UrlEncode());
-        }
+        private static string EncodeParameter(Parameter parameter, Encoding encoding) =>
+            parameter.Value == null
+                ? string.Concat(parameter.Name.UrlEncode(encoding), "=")
+                : string.Concat(parameter.Name.UrlEncode(encoding), "=", parameter.Value.ToString().UrlEncode(encoding));
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
         {
-            http.Encoding = this.Encoding;
+            http.Encoding = Encoding;
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
             http.ResponseWriter = request.ResponseWriter;
-            http.CookieContainer = this.CookieContainer;
-
+            http.CookieContainer = CookieContainer;
+            http.AutomaticDecompression = AutomaticDecompression;
 
             // move RestClient.DefaultParameters into Request.Parameters
-            foreach (Parameter p in this.DefaultParameters)
+            foreach (var p in DefaultParameters)
             {
                 if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
-                {
                     continue;
-                }
 
                 request.AddParameter(p);
             }
@@ -458,111 +377,91 @@ namespace RestSharp
             // Add Accept header based on registered deserializers if none has been set by the caller.
             if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
             {
-                string accepts = string.Join(", ", this.AcceptTypes.ToArray());
+                var accepts = string.Join(", ", AcceptTypes.ToArray());
 
                 request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
             }
 
-            http.Url = this.BuildUri(request);
-            http.PreAuthenticate = this.PreAuthenticate;
+            http.Url = BuildUri(request);
+            http.Host = BaseHost;
+            http.PreAuthenticate = PreAuthenticate;
 
-            string userAgent = this.UserAgent ?? http.UserAgent;
+            var userAgent = UserAgent ?? http.UserAgent;
 
             http.UserAgent = userAgent.HasValue()
                 ? userAgent
                 : "RestSharp/" + version;
 
-            int timeout = request.Timeout > 0
+            var timeout = request.Timeout > 0
                 ? request.Timeout
-                : this.Timeout;
+                : Timeout;
 
             if (timeout > 0)
-            {
                 http.Timeout = timeout;
-            }
 
-            int readWriteTimeout = request.ReadWriteTimeout > 0
+            var readWriteTimeout = request.ReadWriteTimeout > 0
                 ? request.ReadWriteTimeout
-                : this.ReadWriteTimeout;
+                : ReadWriteTimeout;
 
             if (readWriteTimeout > 0)
-            {
                 http.ReadWriteTimeout = readWriteTimeout;
-            }
 
-#if !SILVERLIGHT
-            http.FollowRedirects = this.FollowRedirects;
+            http.FollowRedirects = FollowRedirects;
 
-#endif
+            if (ClientCertificates != null)
+                http.ClientCertificates = ClientCertificates;
 
-#if FRAMEWORK
-            if (this.ClientCertificates != null)
-            {
-                http.ClientCertificates = this.ClientCertificates;
-            }
-
-            http.MaxRedirects = this.MaxRedirects;
-            http.CachePolicy = this.CachePolicy;
-            http.Pipelined = this.Pipelined;
-#endif
+            http.MaxRedirects = MaxRedirects;
+            http.CachePolicy = CachePolicy;
+            http.Pipelined = Pipelined;
 
             if (request.Credentials != null)
-            {
                 http.Credentials = request.Credentials;
-            }
 
-            IEnumerable<HttpHeader> headers = from p in request.Parameters
-                                              where p.Type == ParameterType.HttpHeader
-                                              select new HttpHeader
-                                                     {
-                                                         Name = p.Name,
-                                                         Value = Convert.ToString(p.Value)
-                                                     };
+            var headers = from p in request.Parameters
+                          where p.Type == ParameterType.HttpHeader
+                          select new HttpHeader
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
-            foreach (HttpHeader header in headers)
-            {
+            foreach (var header in headers)
                 http.Headers.Add(header);
-            }
 
-            IEnumerable<HttpCookie> cookies = from p in request.Parameters
-                                              where p.Type == ParameterType.Cookie
-                                              select new HttpCookie
-                                                     {
-                                                         Name = p.Name,
-                                                         Value = Convert.ToString(p.Value)
-                                                     };
+            var cookies = from p in request.Parameters
+                          where p.Type == ParameterType.Cookie
+                          select new HttpCookie
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
-            foreach (HttpCookie cookie in cookies)
-            {
+            foreach (var cookie in cookies)
                 http.Cookies.Add(cookie);
-            }
 
-            IEnumerable<HttpParameter> @params = from p in request.Parameters
-                                                 where p.Type == ParameterType.GetOrPost && p.Value != null
-                                                 select new HttpParameter
-                                                        {
-                                                            Name = p.Name,
-                                                            Value = Convert.ToString(p.Value)
-                                                        };
+            var @params = from p in request.Parameters
+                          where p.Type == ParameterType.GetOrPost && p.Value != null
+                          select new HttpParameter
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
-            foreach (HttpParameter parameter in @params)
-            {
+            foreach (var parameter in @params)
                 http.Parameters.Add(parameter);
-            }
 
-            foreach (FileParameter file in request.Files)
-            {
+            foreach (var file in request.Files)
                 http.Files.Add(new HttpFile
-                               {
-                                   Name = file.Name,
-                                   ContentType = file.ContentType,
-                                   Writer = file.Writer,
-                                   FileName = file.FileName,
-                                   ContentLength = file.ContentLength
-                               });
-            }
+                {
+                    Name = file.Name,
+                    ContentType = file.ContentType,
+                    Writer = file.Writer,
+                    FileName = file.FileName,
+                    ContentLength = file.ContentLength
+                });
 
-            Parameter body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
+            var body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
             // Only add the body if there aren't any files to make it a multipart form request
             // If there are files, then add the body to the HTTP Parameters
@@ -572,95 +471,77 @@ namespace RestSharp
 
                 if (!http.Files.Any())
                 {
-                    object val = body.Value;
+                    var val = body.Value;
 
-                    if (val is byte[])
-                    {
-                        http.RequestBodyBytes = (byte[]) val;
-                    }
+                    if (val is byte[] bytes)
+                        http.RequestBodyBytes = bytes;
                     else
-                    {
                         http.RequestBody = Convert.ToString(body.Value);
-                    }
                 }
                 else
                 {
                     http.Parameters.Add(new HttpParameter
-                                        {
-                                            Name = body.Name,
-                                            Value = Convert.ToString(body.Value),
-                                            ContentType = body.ContentType
-                                        });
+                    {
+                        Name = body.Name,
+                        Value = Convert.ToString(body.Value),
+                        ContentType = body.ContentType
+                    });
                 }
             }
-#if FRAMEWORK
-            this.ConfigureProxy(http);
+            http.Proxy = Proxy;
+#if NETSTANDARD2_0
+            var _ = WebRequest.DefaultWebProxy;
+            WebRequest.DefaultWebProxy = http.Proxy;
 #endif
-#if NET45
-            http.RemoteCertificateValidationCallback = this.RemoteCertificateValidationCallback;
-#endif
+            http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
         }
-
-#if FRAMEWORK
-        private void ConfigureProxy(IHttp http)
-        {
-            if (this.Proxy != null)
-            {
-                http.Proxy = this.Proxy;
-            }
-        }
-#endif
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
         {
-            RestResponse restResponse = new RestResponse
-                                        {
-                                            Content = httpResponse.Content,
-                                            ContentEncoding = httpResponse.ContentEncoding,
-                                            ContentLength = httpResponse.ContentLength,
-                                            ContentType = httpResponse.ContentType,
-                                            ErrorException = httpResponse.ErrorException,
-                                            ErrorMessage = httpResponse.ErrorMessage,
-                                            RawBytes = httpResponse.RawBytes,
-                                            ResponseStatus = httpResponse.ResponseStatus,
-                                            ResponseUri = httpResponse.ResponseUri,
-                                            ProtocolVersion = httpResponse.ProtocolVersion,
-                                            Server = httpResponse.Server,
-                                            StatusCode = httpResponse.StatusCode,
-                                            StatusDescription = httpResponse.StatusDescription,
-                                            Request = request
-                                        };
-
-            foreach (HttpHeader header in httpResponse.Headers)
+            var restResponse = new RestResponse
             {
+                Content = httpResponse.Content,
+                ContentEncoding = httpResponse.ContentEncoding,
+                ContentLength = httpResponse.ContentLength,
+                ContentType = httpResponse.ContentType,
+                ErrorException = httpResponse.ErrorException,
+                ErrorMessage = httpResponse.ErrorMessage,
+                RawBytes = httpResponse.RawBytes,
+                ResponseStatus = httpResponse.ResponseStatus,
+                ResponseUri = httpResponse.ResponseUri,
+                ProtocolVersion = httpResponse.ProtocolVersion,
+                Server = httpResponse.Server,
+                StatusCode = httpResponse.StatusCode,
+                StatusDescription = httpResponse.StatusDescription,
+                Request = request
+            };
+
+            foreach (var header in httpResponse.Headers)
                 restResponse.Headers.Add(new Parameter
-                                         {
-                                             Name = header.Name,
-                                             Value = header.Value,
-                                             Type = ParameterType.HttpHeader
-                                         });
-            }
+                {
+                    Name = header.Name,
+                    Value = header.Value,
+                    Type = ParameterType.HttpHeader
+                });
 
-            foreach (HttpCookie cookie in httpResponse.Cookies)
-            {
+            foreach (var cookie in httpResponse.Cookies)
                 restResponse.Cookies.Add(new RestResponseCookie
-                                         {
-                                             Comment = cookie.Comment,
-                                             CommentUri = cookie.CommentUri,
-                                             Discard = cookie.Discard,
-                                             Domain = cookie.Domain,
-                                             Expired = cookie.Expired,
-                                             Expires = cookie.Expires,
-                                             HttpOnly = cookie.HttpOnly,
-                                             Name = cookie.Name,
-                                             Path = cookie.Path,
-                                             Port = cookie.Port,
-                                             Secure = cookie.Secure,
-                                             TimeStamp = cookie.TimeStamp,
-                                             Value = cookie.Value,
-                                             Version = cookie.Version
-                                         });
-            }
+                {
+                    Comment = cookie.Comment,
+                    CommentUri = cookie.CommentUri,
+                    Discard = cookie.Discard,
+                    Domain = cookie.Domain,
+                    Expired = cookie.Expired,
+                    Expires = cookie.Expires,
+                    HttpOnly = cookie.HttpOnly,
+                    Name = cookie.Name,
+                    Path = cookie.Path,
+                    Port = cookie.Port,
+                    Secure = cookie.Secure,
+                    TimeStamp = cookie.TimeStamp,
+                    Value = cookie.Value,
+                    Version = cookie.Version
+                });
 
             return restResponse;
         }
@@ -681,7 +562,7 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    IDeserializer handler = this.GetHandler(raw.ContentType);
+                    IDeserializer handler = GetHandler(raw.ContentType);
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
@@ -703,6 +584,25 @@ namespace RestSharp
             }
 
             return response;
+        }
+
+        private static bool IsWildcardStructuredSuffixSyntax(string contentType)
+        {
+            int i = 0;
+
+            // Avoid most unnecessary uses of RegEx by checking for necessary characters explicitly first
+            if (contentType[i++] != '*')
+                return false;
+
+            if (contentType[i++] != '+')
+                return false;
+
+            // If no more characters to check, exit now
+            if (i == contentType.Length)
+                return false;
+
+            // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
+            return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
         }
     }
 }

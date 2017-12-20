@@ -8,21 +8,23 @@
 
 ### License: Apache License 2.0
 
+### Note on RestSharp.Signed
+
+The `RestSharp` package is now signed so there is no need to install `RestSharp.Signed`, which is obsolete from v160.0.0.
+
 ### Features
 
-* Supports .NET 3.5+, Mono, Mono for Android, UWP
-* Easy installation using [NuGet](http://nuget.org/packages/RestSharp) for most .NET flavors
-* Supports strong naming using [NuGet](http://nuget.org/packages/RestSharpSigned) for most .NET flavors
+* Assemblies for .NET 4.5.2 and .NET Standard 2.0
+* Easy installation using [NuGet](http://nuget.org/packages/RestSharp) for most .NET flavors (signed)
 * Automatic XML and JSON deserialization
 * Supports custom serialization and deserialization via ISerializer and IDeserializer
 * Fuzzy element name matching ('product_id' in XML/JSON will match C# property named 'ProductId')
 * Automatic detection of type of content returned
-* GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE supported
+* GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE, COPY supported
 * Other non-standard HTTP methods also supported
 * OAuth 1, OAuth 2, Basic, NTLM and Parameter-based Authenticators included
 * Supports custom authentication schemes via IAuthenticator
 * Multi-part form/file uploads
-* T4 Helper to generate C# classes from an XML document
 
 ```csharp
 var client = new RestClient("http://example.com");
@@ -57,9 +59,7 @@ var name = response2.Data.Name;
 client.DownloadData(request).SaveAs(path);
 
 // easy async support
-client.ExecuteAsync(request, response => {
-    Console.WriteLine(response.Content);
-});
+await client.ExecuteAsync(request);
 
 // async with deserialization
 var asyncHandle = client.ExecuteAsync<Person>(request, response => {

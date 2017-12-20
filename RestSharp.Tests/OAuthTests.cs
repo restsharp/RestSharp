@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Threading;
 using NUnit.Framework;
 using RestSharp.Authenticators.OAuth;
@@ -58,11 +59,38 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void HmacSha256_Does_Not_Accept_Nulls()
         {
             string consumerSecret = "12345678";
-            string actual = OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, null, consumerSecret);
+            Assert.That(() => OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, null, consumerSecret),
+                Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        [TestCase("The quick brown fox jumps over the lazy dog", 1024)]
+        [TestCase("The quick brown fox jumps over the lazy dog", 2048)]
+        [TestCase("The quick brown fox jumps over the lazy dog", 4096)]
+        [TestCase("", 2048)]
+        [TestCase(" !\"#$%&'()*+,", 2048)]
+        public void RsaSha1_Signs_Correctly(string value, int keySize)
+        {
+            SHA1Managed hasher = new SHA1Managed();
+            byte[] hash = hasher.ComputeHash(value.GetBytes());
+
+            using (var crypto = new RSACryptoServiceProvider(keySize) { PersistKeyInCsp = false })
+            {
+                string privateKey = crypto.ToXmlString(true);
+
+                string signature = OAuthTools.GetSignature(
+                    OAuthSignatureMethod.RsaSha1,
+                    OAuthSignatureTreatment.Unescaped,
+                    value,
+                    privateKey);
+
+                byte[] signatureBytes = Convert.FromBase64String(signature);
+
+                Assert.IsTrue(crypto.VerifyHash(hash, CryptoConfig.MapNameToOID("SHA1"), signatureBytes));
+            }
         }
     }
 }

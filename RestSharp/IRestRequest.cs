@@ -131,7 +131,6 @@ namespace RestSharp
         /// </summary>
         bool UseDefaultCredentials { get; set; }
 
-#if FRAMEWORK
         /// <summary>
         /// Adds a file to the Files collection to be included with a POST or PUT request 
         /// (other methods do not support file uploads).
@@ -172,7 +171,6 @@ namespace RestSharp
         /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
         /// <returns></returns>
         IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip");
-#endif
 
         /// <summary>
         /// Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
