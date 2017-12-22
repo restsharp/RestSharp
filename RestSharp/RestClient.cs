@@ -175,6 +175,9 @@ namespace RestSharp
 
         public bool PreAuthenticate { get; set; }
 
+        /// <summary>
+        /// Allow high-speed NTLM-authenticated connection sharing
+        /// </summary>
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
         /// <summary>
@@ -397,7 +400,7 @@ namespace RestSharp
                     {
                         return ContentHandlers[structuredSyntaxSuffixWildcard];
                     }
-                }//
+                }
             }
 
             return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
