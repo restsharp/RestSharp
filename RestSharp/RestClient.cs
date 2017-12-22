@@ -175,6 +175,8 @@ namespace RestSharp
 
         public bool PreAuthenticate { get; set; }
 
+        public bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
         /// <summary>
         ///	    The ConnectionGroupName property enables you to associate a request with a connection group. 
         /// </summary>
@@ -395,7 +397,7 @@ namespace RestSharp
                     {
                         return ContentHandlers[structuredSyntaxSuffixWildcard];
                     }
-                }
+                }//
             }
 
             return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
@@ -453,6 +455,7 @@ namespace RestSharp
             http.Url = BuildUri(request);
             http.Host = BaseHost;
             http.PreAuthenticate = PreAuthenticate;
+            http.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
 
             var userAgent = UserAgent ?? http.UserAgent;
 

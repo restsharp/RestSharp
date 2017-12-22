@@ -57,6 +57,8 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
+        bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
         IList<Parameter> DefaultParameters { get; }
 
         string BaseHost { get; set; }
