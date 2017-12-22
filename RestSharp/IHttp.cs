@@ -78,6 +78,8 @@ namespace RestSharp
 
         bool PreAuthenticate { get; set; }
 
+        bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
         RequestCachePolicy CachePolicy { get; set; }
         
         string ConnectionGroupName { get; set; }

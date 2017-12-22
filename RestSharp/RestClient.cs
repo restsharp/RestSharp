@@ -176,6 +176,11 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
         /// <summary>
+        /// Allow high-speed NTLM-authenticated connection sharing
+        /// </summary>
+        public bool UnsafeAuthenticatedConnectionSharing { get; set; }
+
+        /// <summary>
         ///	    The ConnectionGroupName property enables you to associate a request with a connection group. 
         /// </summary>
         public string ConnectionGroupName { get; set; }
@@ -453,6 +458,7 @@ namespace RestSharp
             http.Url = BuildUri(request);
             http.Host = BaseHost;
             http.PreAuthenticate = PreAuthenticate;
+            http.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
 
             var userAgent = UserAgent ?? http.UserAgent;
 
