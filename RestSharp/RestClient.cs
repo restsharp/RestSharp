@@ -258,10 +258,10 @@ namespace RestSharp
         {
             DoBuildUriValidations(request);
 
-            KeyValuePair<string, string> tuple = ApplyUrlSegmentParamsValuesToBaseUriAndResource(request);
+            var applied = ApplyUrlSegmentParamsValues(request);
 
-            BaseUrl = new Uri(tuple.Key);
-            string resource = tuple.Value;
+            BaseUrl = applied.uri;
+            string resource = applied.resource;
 
             string mergedUri = MergeBaseUrlAndResource(resource);
 
@@ -277,28 +277,26 @@ namespace RestSharp
                 throw new NullReferenceException("RestClient must contain a value for BaseUrl");
             }
 
-            IList<string> nullValuedParams = request.Parameters
-                                                    .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
-                                                    .Select(p => p.Name)
-                                                    .ToList();
+            var nullValuedParams = request.Parameters
+                .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
+                .Select(p => p.Name);
 
-            if (!nullValuedParams.Any())
+            if (nullValuedParams.Any())
             {
-                return;
+                string names = string.Join(", ", nullValuedParams.Select(name => $"'{name}'").ToArray());
+                throw new ArgumentException($"Cannot build uri when url segment parameter(s) {names} value is null.",
+                    "request");
             }
-
-            string names = string.Join(", ", nullValuedParams.Select(name => $"'{name}'").ToArray());
-            throw new ArgumentException($"Cannot build uri when url segment parameter(s) {names} value is null.", "request");
         }
 
-        private KeyValuePair<string, string> ApplyUrlSegmentParamsValuesToBaseUriAndResource(IRestRequest request)
+        private (Uri uri, string resource) ApplyUrlSegmentParamsValues(IRestRequest request)
         {
             string assembled = request.Resource;
             bool hasResource = !string.IsNullOrEmpty(assembled);
-            IEnumerable<Parameter> urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
             var builder = new UriBuilder(BaseUrl);
 
-            foreach (Parameter parameter in urlParms)
+            foreach (var parameter in urlParms)
             {
                 string paramPlaceHolder = $"{{{parameter.Name}}}";
                 string paramValue = parameter.Value.ToString().UrlEncode();
@@ -311,7 +309,7 @@ namespace RestSharp
                 builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
             }
 
-            return new KeyValuePair<string, string>(builder.ToString(), assembled);
+            return (builder.Uri, assembled);
         }
 
         private string MergeBaseUrlAndResource(string resource)
@@ -341,7 +339,7 @@ namespace RestSharp
 
         private string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
         {
-            IList<Parameter> parameters = GetQueryStringParameters(request);
+            var parameters = GetQueryStringParameters(request);
 
             if (!parameters.Any())
             {
@@ -353,19 +351,14 @@ namespace RestSharp
             return string.Concat(mergedUri, separator, EncodeParameters(parameters, Encoding));
         }
 
-        private static IList<Parameter> GetQueryStringParameters(IRestRequest request)
+        private static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
         {
-            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
-            {
-                return request.Parameters
-                                    .Where(p => p.Type == ParameterType.GetOrPost ||
-                                                p.Type == ParameterType.QueryString)
-                                    .ToList();
-            }
-
-            return request.Parameters
-                                .Where(p => p.Type == ParameterType.QueryString)
-                                .ToList();
+            return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
+                ? request.Parameters
+                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                p.Type == ParameterType.QueryString)
+                : request.Parameters
+                    .Where(p => p.Type == ParameterType.QueryString);
         }
 
         /// <summary>
@@ -497,34 +490,34 @@ namespace RestSharp
                 http.ConnectionGroupName = ConnectionGroupName;
 
             var headers = from p in request.Parameters
-                          where p.Type == ParameterType.HttpHeader
-                          select new HttpHeader
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+                where p.Type == ParameterType.HttpHeader
+                select new HttpHeader
+                {
+                    Name = p.Name,
+                    Value = Convert.ToString(p.Value)
+                };
 
             foreach (var header in headers)
                 http.Headers.Add(header);
 
             var cookies = from p in request.Parameters
-                          where p.Type == ParameterType.Cookie
-                          select new HttpCookie
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+                where p.Type == ParameterType.Cookie
+                select new HttpCookie
+                {
+                    Name = p.Name,
+                    Value = Convert.ToString(p.Value)
+                };
 
             foreach (var cookie in cookies)
                 http.Cookies.Add(cookie);
 
             var @params = from p in request.Parameters
-                          where p.Type == ParameterType.GetOrPost && p.Value != null
-                          select new HttpParameter
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+                where p.Type == ParameterType.GetOrPost && p.Value != null
+                select new HttpParameter
+                {
+                    Name = p.Name,
+                    Value = Convert.ToString(p.Value)
+                };
 
             foreach (var parameter in @params)
                 http.Parameters.Add(parameter);
