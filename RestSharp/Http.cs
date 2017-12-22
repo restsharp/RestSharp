@@ -144,11 +144,18 @@ namespace RestSharp
 
         /// <summary>
         ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
-        ///     running)
-        ///     will be sent along to the server.
+        ///     running) ///     will be sent along to the server.
         /// </summary>
         public bool UseDefaultCredentials { get; set; }
 
+        /// <summary>
+        ///	    The ConnectionGroupName property enables you to associate a request with a connection group. 
+        /// </summary>
+        public string ConnectionGroupName { get; set; }
+
+        /// <summary>
+        ///     Encoding for the request, UTF8 is the default
+        /// </summary>
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
@@ -223,7 +230,7 @@ namespace RestSharp
 
         protected virtual HttpWebRequest CreateWebRequest(Uri url)
         {
-            return (HttpWebRequest)WebRequest.Create(url);
+            return (HttpWebRequest) WebRequest.Create(url);
         }
 
         partial void AddSyncHeaderActions();
@@ -410,6 +417,7 @@ namespace RestSharp
                         Value = headerValue
                     });
                 }
+
                 webResponse.Close();
             }
         }

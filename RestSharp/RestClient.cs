@@ -176,6 +176,11 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
         /// <summary>
+        ///	    The ConnectionGroupName property enables you to associate a request with a connection group. 
+        /// </summary>
+        public string ConnectionGroupName { get; set; }
+
+        /// <summary>
         ///     Callback function for handling the validation of remote certificates. Useful for certificate pinning and
         ///     overriding certificate errors in the scope of a request.
         /// </summary>
@@ -354,7 +359,8 @@ namespace RestSharp
         private static string EncodeParameter(Parameter parameter, Encoding encoding) =>
             parameter.Value == null
                 ? string.Concat(parameter.Name.UrlEncode(encoding), "=")
-                : string.Concat(parameter.Name.UrlEncode(encoding), "=", parameter.Value.ToString().UrlEncode(encoding));
+                : string.Concat(parameter.Name.UrlEncode(encoding), "=",
+                    parameter.Value.ToString().UrlEncode(encoding));
 
         private void ConfigureHttp(IRestRequest request, IHttp http)
         {
@@ -417,6 +423,9 @@ namespace RestSharp
 
             if (request.Credentials != null)
                 http.Credentials = request.Credentials;
+            
+            if (!string.IsNullOrEmpty(ConnectionGroupName))
+                http.ConnectionGroupName = ConnectionGroupName;
 
             var headers = from p in request.Parameters
                 where p.Type == ParameterType.HttpHeader
@@ -488,6 +497,7 @@ namespace RestSharp
                     });
                 }
             }
+
             http.Proxy = Proxy;
 #if NETSTANDARD2_0
             var _ = WebRequest.DefaultWebProxy;

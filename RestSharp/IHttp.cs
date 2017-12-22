@@ -79,6 +79,8 @@ namespace RestSharp
         bool PreAuthenticate { get; set; }
 
         RequestCachePolicy CachePolicy { get; set; }
+        
+        string ConnectionGroupName { get; set; }
 
         /// <summary>
         /// An alternative to RequestBody, for when the caller already has the byte array.
