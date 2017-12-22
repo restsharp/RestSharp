@@ -52,6 +52,8 @@ namespace RestSharp
         Uri BaseUrl { get; set; }
 
         Encoding Encoding { get; set; }
+        
+        string ConnectionGroupName { get; set; }
 
         bool PreAuthenticate { get; set; }
 
