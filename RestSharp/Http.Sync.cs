@@ -31,86 +31,56 @@ namespace RestSharp
         /// <summary>
         ///     Execute a POST request
         /// </summary>
-        public HttpResponse Post()
-        {
-            return PostPutInternal("POST");
-        }
+        public HttpResponse Post() => PostPutInternal("POST");
 
         /// <summary>
         ///     Execute a PUT request
         /// </summary>
-        public HttpResponse Put()
-        {
-            return PostPutInternal("PUT");
-        }
+        public HttpResponse Put() => PostPutInternal("PUT");
 
         /// <summary>
         ///     Execute a GET request
         /// </summary>
-        public HttpResponse Get()
-        {
-            return GetStyleMethodInternal("GET");
-        }
+        public HttpResponse Get() => GetStyleMethodInternal("GET");
 
         /// <summary>
         ///     Execute a HEAD request
         /// </summary>
-        public HttpResponse Head()
-        {
-            return GetStyleMethodInternal("HEAD");
-        }
+        public HttpResponse Head() => GetStyleMethodInternal("HEAD");
 
         /// <summary>
         ///     Execute an OPTIONS request
         /// </summary>
-        public HttpResponse Options()
-        {
-            return GetStyleMethodInternal("OPTIONS");
-        }
+        public HttpResponse Options() => GetStyleMethodInternal("OPTIONS");
 
         /// <summary>
         ///     Execute a DELETE request
         /// </summary>
-        public HttpResponse Delete()
-        {
-            return GetStyleMethodInternal("DELETE");
-        }
+        public HttpResponse Delete() => GetStyleMethodInternal("DELETE");
 
         /// <summary>
         ///     Execute a PATCH request
         /// </summary>
-        public HttpResponse Patch()
-        {
-            return PostPutInternal("PATCH");
-        }
+        public HttpResponse Patch() => PostPutInternal("PATCH");
 
         /// <summary>
         ///     Execute a MERGE request
         /// </summary>
-        public HttpResponse Merge()
-        {
-            return PostPutInternal("MERGE");
-        }
+        public HttpResponse Merge() => PostPutInternal("MERGE");
 
         /// <summary>
         ///     Execute a GET-style request with the specified HTTP Method.
         /// </summary>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpResponse AsGet(string httpMethod)
-        {
-            return GetStyleMethodInternal(httpMethod.ToUpperInvariant());
-        }
+        public HttpResponse AsGet(string httpMethod) => GetStyleMethodInternal(httpMethod.ToUpperInvariant());
 
         /// <summary>
         ///     Execute a POST-style request with the specified HTTP Method.
         /// </summary>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpResponse AsPost(string httpMethod)
-        {
-            return PostPutInternal(httpMethod.ToUpperInvariant());
-        }
+        public HttpResponse AsPost(string httpMethod) => PostPutInternal(httpMethod.ToUpperInvariant());
 
         private HttpResponse GetStyleMethodInternal(string method)
         {
@@ -137,7 +107,6 @@ namespace RestSharp
 
         partial void AddSyncHeaderActions()
         {
-            //this.restrictedHeaderActions.Add("Connection", (r, v) => r.Connection = v);
             restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
             restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
             restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
@@ -151,20 +120,20 @@ namespace RestSharp
             restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
         }
 
-        private void ExtractErrorResponse(HttpResponse httpResponse, Exception ex)
+        private static void ExtractErrorResponse(IHttpResponse httpResponse, Exception ex)
         {
             if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
             {
                 httpResponse.ResponseStatus = ResponseStatus.TimedOut;
                 httpResponse.ErrorMessage = ex.Message;
                 httpResponse.ErrorException = webException;
-
-                return;
             }
-
-            httpResponse.ErrorMessage = ex.Message;
-            httpResponse.ErrorException = ex;
-            httpResponse.ResponseStatus = ResponseStatus.Error;
+            else
+            {
+                httpResponse.ErrorMessage = ex.Message;
+                httpResponse.ErrorException = ex;
+                httpResponse.ResponseStatus = ResponseStatus.Error;
+            }
         }
 
         private HttpResponse GetResponse(HttpWebRequest request)
@@ -240,8 +209,6 @@ namespace RestSharp
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
-            // WP7 doesn't as of Beta doesn't support a way to set this value either directly
-            // or indirectly
             if (!HasFiles && !AlwaysMultipartFormData)
                 webRequest.ContentLength = 0;
 
