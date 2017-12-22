@@ -42,6 +42,7 @@ namespace RestSharp
             Files = new List<FileParameter>();
             XmlSerializer = new XmlSerializer();
             JsonSerializer = new JsonSerializer();
+            alloweDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
         }
@@ -94,6 +95,19 @@ namespace RestSharp
         {
             //resource.PathAndQuery not supported by Silverlight :(
         }
+
+        /// <summary>
+        /// Local list of Allowed Decompresison Methods
+        /// </summary>
+        private readonly IList<DecompressionMethods> alloweDecompressionMethods;
+        
+        /// <summary>
+        /// List of Allowed Decompresison Methods
+        /// </summary>
+        public IList<DecompressionMethods> AllowedDecompressionMethods => 
+            alloweDecompressionMethods.Any() 
+                ? alloweDecompressionMethods 
+                : new[] { DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip };
 
         /// <summary>
         ///     Gets or sets a user-defined state object that contains information about a request and which can be later
@@ -577,6 +591,21 @@ namespace RestSharp
         public IRestRequest AddQueryParameter(string name, string value)
         {
             return AddParameter(name, value, ParameterType.QueryString);
+        }
+
+        /// <summary>
+        /// Add a Decompression Method to the request
+        /// </summary>
+        /// <param name="decompressionMethod">None | GZip | Deflate</param>
+        /// <returns></returns>
+        public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
+        {
+            if (!this.alloweDecompressionMethods.Contains(decompressionMethod))
+            {
+                this.alloweDecompressionMethods.Add(decompressionMethod);    
+            }
+            
+            return this;
         }
 
         /// <summary>

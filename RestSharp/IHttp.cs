@@ -93,6 +93,8 @@ namespace RestSharp
 
         string Host { get; set; }
 
+        IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
+            
         HttpWebRequest DeleteAsync(Action<HttpResponse> action);
 
         HttpWebRequest GetAsync(Action<HttpResponse> action);
