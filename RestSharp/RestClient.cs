@@ -193,10 +193,16 @@ namespace RestSharp
         public IList<Parameter> DefaultParameters { get; }
 
         /// <summary>
-        /// Explicit Host header value to use in requests independent from the request URI.
-        /// If null, default host value extracted from URI is used.
+        ///     Explicit Host header value to use in requests independent from the request URI.
+        ///     If null, default host value extracted from URI is used.
         /// </summary>
         public string BaseHost { get; set; }
+
+        /// <summary>
+        ///     Set to true if you need to add multiple default parameters with the same name.
+        ///     Only query and form parameters are supported.
+        /// </summary>
+        public bool AllowMultipleDefaultParametersWithSameName { get; set; } = false;
 
         /// <summary>
         ///     Registers a content handler to process response content
@@ -362,6 +368,9 @@ namespace RestSharp
                 : string.Concat(parameter.Name.UrlEncode(encoding), "=",
                     parameter.Value.ToString().UrlEncode(encoding));
 
+        private static readonly ParameterType[] MultiParameterTypes =
+            {ParameterType.QueryString, ParameterType.GetOrPost};
+
         private void ConfigureHttp(IRestRequest request, IHttp http)
         {
             http.Encoding = Encoding;
@@ -374,7 +383,15 @@ namespace RestSharp
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (var p in DefaultParameters)
             {
-                if (request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type))
+                var parameterExists = request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type);
+
+                if (AllowMultipleDefaultParametersWithSameName)
+                {
+                    var isMultiParameter = MultiParameterTypes.Any(pt => pt == p.Type);
+                    parameterExists = !isMultiParameter && parameterExists;
+                }
+
+                if (parameterExists)
                     continue;
 
                 request.AddParameter(p);
@@ -423,7 +440,7 @@ namespace RestSharp
 
             if (request.Credentials != null)
                 http.Credentials = request.Credentials;
-            
+
             if (!string.IsNullOrEmpty(ConnectionGroupName))
                 http.ConnectionGroupName = ConnectionGroupName;
 
@@ -499,10 +516,10 @@ namespace RestSharp
             }
 
             http.Proxy = Proxy ?? HttpWebRequest.GetSystemWebProxy();
-            
+
             var _ = WebRequest.DefaultWebProxy;
             WebRequest.DefaultWebProxy = http.Proxy;
-            
+
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
         }
 
