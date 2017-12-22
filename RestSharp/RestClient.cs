@@ -565,7 +565,9 @@ namespace RestSharp
                     });
                 }
             }
-
+            
+            http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
+            
             http.Proxy = Proxy ?? HttpWebRequest.GetSystemWebProxy();
 
             var _ = WebRequest.DefaultWebProxy;

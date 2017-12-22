@@ -20,6 +20,7 @@ using System;
 using System.Globalization;
 using System.Net;
 using RestSharp.Extensions;
+using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp
 {
@@ -221,6 +222,8 @@ namespace RestSharp
 
             if (ClientCertificates != null)
                 webRequest.ClientCertificates.AddRange(ClientCertificates);
+            
+            AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });            
 
             if (AutomaticDecompression)
             {
