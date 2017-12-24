@@ -25,10 +25,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Extensions;
-#if !SILVERLIGHT && !WINDOWS_PHONE
 using System.ComponentModel;
-
-#endif
 
 namespace RestSharp.Deserializers
 {
