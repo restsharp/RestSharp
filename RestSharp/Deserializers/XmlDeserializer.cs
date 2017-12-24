@@ -92,8 +92,9 @@ namespace RestSharp.Deserializers
 
         protected virtual object Map(object x, XElement root)
         {
-            var objType = x.GetType().GetTypeInfo();
-            var props = objType.GetProperties();
+            Type objType = x.GetType();
+            PropertyInfo[] props = objType.GetProperties();
+            bool deserializeFromContentAttributeAlreadyUsed = false;
 
             foreach (var prop in props)
             {
@@ -103,15 +104,28 @@ namespace RestSharp.Deserializers
                 if (!typeIsPublic || !prop.CanWrite)
                     continue;
 
-                XName name;
+                bool deserializeFromContent = false;
+                XName name = null;
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
                 {
-                    var attribute = (DeserializeAsAttribute) attributes.First();
+                    DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes.First();
+
                     name = attribute.Name.AsNamespaced(Namespace);
+
+                    deserializeFromContent = attribute.Content;
+
+                    if(deserializeFromContentAttributeAlreadyUsed && deserializeFromContent)
+                    {
+                        throw new ArgumentException("Class cannot have two properties marked with " +
+                            "SerializeAs(Content = true) attribute.");
+                    }
+
+                    deserializeFromContentAttributeAlreadyUsed |= deserializeFromContent;
                 }
-                else
+
+                if (name == null)
                 {
                     name = prop.Name.AsNamespaced(Namespace);
                 }
@@ -120,6 +134,19 @@ namespace RestSharp.Deserializers
 
                 if (value == null)
                 {
+                    // special case for text content node
+                    if (deserializeFromContent)
+                    {
+                        var textNode = root.Nodes().FirstOrDefault(n => n is XText);
+                        if(textNode != null)
+                        {
+                            value = ((XText)textNode).Value;
+                            prop.SetValue(x, value, null);
+                        }
+                        continue;
+                    }
+
+                    // special case for inline list items
                     if (type.IsGenericType)
                     {
                         var genericType = type.GetGenericArguments()[0];
