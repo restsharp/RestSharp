@@ -128,12 +128,10 @@ namespace RestSharp.Serializers
         private void Map(XContainer root, object obj)
         {
             Type objType = obj.GetType();
-            IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
+            var props = from p in objType.GetProperties()
                                               let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
                                               where p.CanRead && p.CanWrite
-                                              orderby indexAttribute == null
-                                                  ? int.MaxValue
-                                                  : indexAttribute.Index
+                                              orderby indexAttribute?.Index ?? int.MaxValue
                                               select p;
             SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
             bool textContentAttributeAlreadyUsed = false;

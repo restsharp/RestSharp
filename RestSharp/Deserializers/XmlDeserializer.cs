@@ -105,14 +105,14 @@ namespace RestSharp.Deserializers
                     continue;
 
                 bool deserializeFromContent = false;
-                XName name;
+                XName name = null;
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
                 {
                     DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes.First();
 
-                    name = attribute.Name.AsNamespaced(this.Namespace);
+                    name = attribute.Name.AsNamespaced(Namespace);
 
                     deserializeFromContent = attribute.Content;
 
