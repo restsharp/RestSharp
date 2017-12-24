@@ -424,17 +424,18 @@ namespace RestSharp.Deserializers
             if (root.Element(camelName) != null)
                 return root.Element(camelName);
 
-            if (name == "Value".AsNamespaced(name.NamespaceName) &&
-                (!root.HasAttributes || root.Attributes().All(x => x.Name != name)))
-                return root;
-
             // try looking for element that matches sanitized property name (Order by depth)
-            return root.Descendants()
+            var element = root.Descendants()
                        .OrderBy(d => d.Ancestors().Count())
                        .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
                    root.Descendants()
                        .OrderBy(d => d.Ancestors().Count())
                        .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
+
+            return element == null && name == "Value".AsNamespaced(name.NamespaceName) &&
+                   (!root.HasAttributes || root.Attributes().All(x => x.Name != name))
+                ? root
+                : element;
         }
 
         protected virtual XAttribute GetAttributeByName(XElement root, XName name)
