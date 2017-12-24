@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<example>
+  <content>
+     <header>
+        <title>text title</title>
+        <body>text body</body>
+        <date>2014-12-12</date>
+     </header>
+     <rows>
+        <row>
+           <text1>first row text 1 sample</text1>
+           <text2>first row text 2 sample</text2>
+        </row>
+        <row>
+           <text1>second row text 1 sample</text1>
+           <text2>second row text 2 sample</text2>
+        </row>
+     </rows>
+  </content>
+</example>

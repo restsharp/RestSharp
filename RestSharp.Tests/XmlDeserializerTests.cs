@@ -750,6 +750,20 @@ namespace RestSharp.Tests
             Assert.AreEqual(output.Value, 255);
         }
 
+        [Test]
+        public void Able_to_use_alternative_name_for_arrays()
+        {
+            string xmlpath = PathFor("header_and_rows.xml");
+            var doc = XDocument.Load(xmlpath);
+            var xml = new XmlDeserializer();
+            var output = xml.Deserialize<Header>(new RestResponse {Content = doc.ToString()});
+
+            Assert.NotNull(output);
+            Assert.AreEqual(output.Title, "text title");
+            Assert.IsNotEmpty(output.Othername);
+            Assert.IsTrue(output.Othername.Any(x => x.Text1 == "first row text 1 sample"));
+        }
+
         private static string CreateUnderscoresXml()
         {
             XDocument doc = new XDocument();

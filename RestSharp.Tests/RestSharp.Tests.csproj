@@ -18,6 +18,9 @@
     <Compile Remove="NuSpecUpdateTask.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="SampleData\header_and_rows.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SampleData\4sq.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
