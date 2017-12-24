@@ -127,13 +127,16 @@ namespace RestSharp.Serializers
 
         private void Map(XContainer root, object obj)
         {
-            var objType = obj.GetType();
-            var props = from p in objType.GetTypeInfo().GetProperties()
-                let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
-                where p.CanRead && p.CanWrite
-                orderby indexAttribute?.Index ?? int.MaxValue
-                select p;
-            var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            Type objType = obj.GetType();
+            IEnumerable<PropertyInfo> props = from p in objType.GetProperties()
+                                              let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
+                                              where p.CanRead && p.CanWrite
+                                              orderby indexAttribute == null
+                                                  ? int.MaxValue
+                                                  : indexAttribute.Index
+                                              select p;
+            SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            bool textContentAttributeAlreadyUsed = false;
 
             foreach (var prop in props)
             {
@@ -143,23 +146,32 @@ namespace RestSharp.Serializers
                 if (rawValue == null)
                     continue;
 
-                var value = GetSerializedValue(rawValue);
-                var propType = prop.PropertyType;
-                var useAttribute = false;
-                var settings = prop.GetAttribute<SerializeAsAttribute>();
-
-                if (settings != null)
-                {
-                    name = settings.Name.HasValue()
-                        ? settings.Name
-                        : name;
-                    useAttribute = settings.Attribute;
-                }
-
-                var options = prop.GetAttribute<SerializeAsAttribute>();
+                string value = this.GetSerializedValue(rawValue);
+                Type propType = prop.PropertyType;
+                bool useAttribute = false;
+                bool setTextContent = false;
+                SerializeAsAttribute options = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (options != null)
+                {
+                    name = options.Name.HasValue()
+                        ? options.Name
+                        : name;
+
                     name = options.TransformName(name);
+
+                    useAttribute = options.Attribute;
+
+                    setTextContent = options.Content;
+
+                    if (textContentAttributeAlreadyUsed && setTextContent)
+                    {
+                        throw new ArgumentException("Class cannot have two properties marked with " +
+                            "SerializeAs(Content = true) attribute.");
+                    }
+
+                    textContentAttributeAlreadyUsed |= setTextContent;
+                }
                 else if (globalOptions != null)
                     name = globalOptions.TransformName(name);
 
@@ -171,6 +183,10 @@ namespace RestSharp.Serializers
                     if (useAttribute)
                     {
                         root.Add(new XAttribute(name, value));
+                        continue;
+                    } else if (setTextContent)
+                    {
+                        root.Add(new XText(value));
                         continue;
                     }
 
