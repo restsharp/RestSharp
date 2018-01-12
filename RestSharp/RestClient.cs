@@ -565,20 +565,18 @@ namespace RestSharp
                     });
                 }
             }
-            
+
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 
-            http.Proxy = Proxy;
-            
-            #if !NETSTANDARD2_0
-            if (http.Proxy == null)
-                http.Proxy = HttpWebRequest.GetSystemWebProxy();
-            #endif
-    
-            #if NETSTANDARD2_0
+
+#if !NETSTANDARD2_0
+            http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
+#endif
+
+#if NETSTANDARD2_0
             var _ = WebRequest.DefaultWebProxy;
             WebRequest.DefaultWebProxy = http.Proxy;
-            #endif
+#endif
 
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
         }
