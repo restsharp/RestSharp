@@ -13,6 +13,6 @@ Follow these guidelines, in no particular order, to improve your chances of havi
  * Changes to XmlDeserializer or JsonDeserializer must be accompanied by a unit test covering the change.
  * In general, changes should be accompanied by unit tests to show what was broken and how your patch fixes it.
  * No regions except for license header
- * Code must build for .NET 3.5 Client Profile, Silverlight 4 and Windows Phone 7
+ * Code must build for .NET 4.5.2 and .NET Standard 2.0
  * If you didn't write the code you must provide a reference to where you obtained it and preferably the license. 
  * Use autocrlf=true `git config --global core.autocrlf true` http://help.github.com/dealing-with-lineendings/
