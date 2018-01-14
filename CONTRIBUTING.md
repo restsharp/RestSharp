@@ -3,6 +3,7 @@ Follow these guidelines, in no particular order, to improve your chances of havi
 ### Before you do anything else
 
  * Before reporting an issue or creating a pull request, discuss it in the Google Group http://groups.google.com/group/restsharp
+ * If you have an inquiry - ask a question on StackOverflow, tagged with `restsharp` tag.
 
 ### Once a contribution is ready to be submitted
 
