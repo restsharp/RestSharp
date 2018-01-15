@@ -504,7 +504,7 @@ namespace RestSharp
             }
 
             if (name == "Host" && InvalidHost(value))
-                throw new ArgumentException("The specified value is not a valid Host header string.", "value");
+                throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
             return AddParameter(name, value, ParameterType.HttpHeader);
         }
 

@@ -204,7 +204,7 @@ namespace RestSharp.Authenticators.OAuth
         public static string ConstructRequestUrl(Uri url)
         {
             if (url == null)
-                throw new ArgumentNullException("url");
+                throw new ArgumentNullException(nameof(url));
 
             var sb = new StringBuilder();
             var requestUrl = "{0}://{1}".FormatWith(url.Scheme, url.Host);

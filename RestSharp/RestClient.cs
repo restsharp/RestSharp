@@ -79,7 +79,7 @@ namespace RestSharp
         public RestClient(string baseUrl) : this()
         {
             if (string.IsNullOrEmpty(baseUrl))
-                throw new ArgumentNullException("baseUrl");
+                throw new ArgumentNullException(nameof(baseUrl));
 
             BaseUrl = new Uri(baseUrl);
         }
@@ -385,7 +385,7 @@ namespace RestSharp
         private IDeserializer GetHandler(string contentType)
         {
             if (contentType == null)
-                throw new ArgumentNullException("contentType");
+                throw new ArgumentNullException(nameof(contentType));
 
             if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];

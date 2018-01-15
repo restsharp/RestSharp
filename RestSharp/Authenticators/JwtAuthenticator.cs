@@ -33,7 +33,7 @@ namespace RestSharp.Authenticators
         public JwtAuthenticator(string accessToken)
         {
             if (accessToken == null)
-                throw new ArgumentNullException("accessToken");
+                throw new ArgumentNullException(nameof(accessToken));
 
             authHeader = string.Format("Bearer {0}", accessToken);
         }

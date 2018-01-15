@@ -38,7 +38,7 @@ namespace RestSharp.Extensions
             const int maxLength = 32766;
 
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
 
             if (input.Length <= maxLength)
                 return Uri.EscapeDataString(input);
