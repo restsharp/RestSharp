@@ -456,7 +456,7 @@ namespace RestSharp.Deserializers
                        .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
                    root.Descendants()
                        .OrderBy(d => d.Ancestors().Count())
-                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
+                       .FirstOrDefault(d => string.Equals(d.Name.LocalName.RemoveUnderscoresAndDashes(), name.LocalName, StringComparison.OrdinalIgnoreCase));
 
             return element == null && name == "Value".AsNamespaced(name.NamespaceName) &&
                    (!root.HasAttributes || root.Attributes().All(x => x.Name != name))

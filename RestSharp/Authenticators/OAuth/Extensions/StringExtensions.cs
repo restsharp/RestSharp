@@ -8,12 +8,10 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 {
     internal static class StringExtensions
     {
-        public static bool IsNullOrBlank(this string value) => string.IsNullOrEmpty(value) ||
-                                                               !string.IsNullOrEmpty(value) &&
-                                                               value.Trim() == string.Empty;
+        public static bool IsNullOrBlank(this string value) => string.IsNullOrWhiteSpace(value);
 
-        public static bool EqualsIgnoreCase(this string left, string right) => 
-            string.Compare(left, right, StringComparison.OrdinalIgnoreCase) == 0;
+        public static bool EqualsIgnoreCase(this string left, string right) =>
+            string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
 
         public static bool EqualsAny(this string input, params string[] args) => 
             args.Aggregate(false, (current, arg) => current | input.Equals(arg));
@@ -42,7 +40,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
             var sb = new StringBuilder();
 
             foreach (var b in bytes)
-                sb.Append(string.Format("%{0:X2}", b));
+                sb.AppendFormat("%{0:X2}", b);
 
             return sb.ToString();
         }

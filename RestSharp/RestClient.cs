@@ -467,7 +467,7 @@ namespace RestSharp
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+            if (request.Parameters.All(p2 => !string.Equals(p2.Name, "accept", StringComparison.InvariantCultureIgnoreCase)))
             {
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
 
