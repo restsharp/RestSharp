@@ -395,8 +395,8 @@ namespace RestSharp
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
 
-            if (ContentHandlers.ContainsKey(contentType))
-                return ContentHandlers[contentType];
+            if (ContentHandlers.TryGetValue(contentType,  out var contentHandler))
+                return contentHandler;
 
             // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
             if (contentType.IndexOf('+') >= 0)
@@ -407,9 +407,9 @@ namespace RestSharp
                 if (structuredSyntaxSuffixMatch.Success)
                 {
                     var structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
-                    if (ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                    if (ContentHandlers.TryGetValue(structuredSyntaxSuffixWildcard, out var contentHandlerWildcard))
                     {
-                        return ContentHandlers[structuredSyntaxSuffixWildcard];
+                        return contentHandlerWildcard;
                     }
                 }
             }
