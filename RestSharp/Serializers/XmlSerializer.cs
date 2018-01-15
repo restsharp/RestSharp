@@ -144,7 +144,6 @@ namespace RestSharp.Serializers
                 if (rawValue == null)
                     continue;
 
-                string value = this.GetSerializedValue(rawValue);
                 Type propType = prop.PropertyType;
                 bool useAttribute = false;
                 bool setTextContent = false;
@@ -178,6 +177,8 @@ namespace RestSharp.Serializers
                 if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
                     propType == typeof(string))
                 {
+                    string value = this.GetSerializedValue(rawValue);
+
                     if (useAttribute)
                     {
                         root.Add(new XAttribute(name, value));
