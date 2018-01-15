@@ -191,11 +191,11 @@ namespace RestSharp.Serializers
 
                     element.Value = value;
                 }
-                else if (rawValue is IList)
+                else if (rawValue is IList items)
                 {
                     var itemTypeName = "";
 
-                    foreach (var item in (IList) rawValue)
+                    foreach (var item in items)
                     {
                         if (itemTypeName == "")
                         {
