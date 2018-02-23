@@ -105,6 +105,7 @@ namespace RestSharp.Deserializers
                     continue;
 
                 bool deserializeFromContent = false;
+                bool isNameDefinedInAttribute = false;
                 XName name = null;
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
@@ -113,6 +114,7 @@ namespace RestSharp.Deserializers
                     DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes.First();
 
                     name = attribute.Name.AsNamespaced(Namespace);
+                    isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
 
                     deserializeFromContent = attribute.Content;
 
@@ -130,7 +132,7 @@ namespace RestSharp.Deserializers
                     name = prop.Name.AsNamespaced(Namespace);
                 }
 
-                var value = GetValueFromXml(root, name, prop);
+                var value = GetValueFromXml(root, name, prop, isNameDefinedInAttribute);
 
                 if (value == null)
                 {
@@ -411,7 +413,7 @@ namespace RestSharp.Deserializers
             return item;
         }
 
-        protected virtual object GetValueFromXml(XElement root, XName name, PropertyInfo prop)
+        protected virtual object GetValueFromXml(XElement root, XName name, PropertyInfo prop, bool useExactName)
         {
             object val = null;
             if (root == null) return val;
@@ -420,7 +422,7 @@ namespace RestSharp.Deserializers
 
             if (element == null)
             {
-                var attribute = GetAttributeByName(root, name);
+                var attribute = GetAttributeByName(root, name, useExactName);
 
                 if (attribute != null)
                     val = attribute.Value;
@@ -462,21 +464,26 @@ namespace RestSharp.Deserializers
                 : element;
         }
 
-        protected virtual XAttribute GetAttributeByName(XElement root, XName name)
+        protected virtual XAttribute GetAttributeByName(XElement root, XName name, bool useExactName)
         {
-            var names = new List<XName>
-            {
-                name.LocalName,
-                name.LocalName.ToLower()
-                    .AsNamespaced(name.NamespaceName),
-                name.LocalName.ToCamelCase(Culture)
-                    .AsNamespaced(name.NamespaceName)
-            };
+            var names = useExactName
+                ? null
+                : new List<XName>
+                {
+                    name.LocalName,
+                    name.LocalName.ToLower()
+                        .AsNamespaced(name.NamespaceName),
+                    name.LocalName.ToCamelCase(Culture)
+                        .AsNamespaced(name.NamespaceName)
+                };
 
             return root.DescendantsAndSelf()
                 .OrderBy(d => d.Ancestors().Count())
                 .Attributes()
-                .FirstOrDefault(d => names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes()));
+                .FirstOrDefault(
+                    d => useExactName
+                        ? d.Name == name
+                        : names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes()));
         }
     }
 }
