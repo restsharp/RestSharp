@@ -95,6 +95,8 @@ namespace RestSharp
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
 
         private IList<string> AcceptTypes { get; }
+        
+        private Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 
         /// <summary>
         /// Enable or disable automatic gzip/deflate decompression
@@ -251,6 +253,9 @@ namespace RestSharp
         {
             return Deserialize<T>(response.Request, response);
         }
+
+        public void ConfigureWebRequest(Action<HttpWebRequest> configurator) =>
+            WebRequestConfigurator = configurator;
 
         /// <summary>
         ///     Assembles URL to call based on parameters, method and resource
@@ -419,7 +424,7 @@ namespace RestSharp
         private static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
 
-        private IHttp ConfigureHttp(IRestRequest request)
+        internal IHttp ConfigureHttp(IRestRequest request)
         {
             var http = Http.Create();
             
@@ -429,6 +434,7 @@ namespace RestSharp
             http.ResponseWriter = request.ResponseWriter;
             http.CookieContainer = CookieContainer;
             http.AutomaticDecompression = AutomaticDecompression;
+            http.WebRequestConfigurator = WebRequestConfigurator;
 
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (var p in DefaultParameters)

@@ -138,5 +138,7 @@ namespace RestSharp
         IWebProxy Proxy { get; set; }
         
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+        
+        Action<HttpWebRequest> WebRequestConfigurator { get; set; }
     }
 }

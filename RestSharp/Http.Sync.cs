@@ -202,7 +202,7 @@ namespace RestSharp
             webRequest.Pipelined = Pipelined;
             webRequest.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
             webRequest.ServicePoint.Expect100Continue = false;
-
+            
             AppendHeaders(webRequest);
             AppendCookies(webRequest);
 
@@ -250,6 +250,8 @@ namespace RestSharp
             webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             webRequest.ConnectionGroupName = ConnectionGroupName;
+
+            WebRequestConfigurator?.Invoke(webRequest);
 
             return webRequest;
         }

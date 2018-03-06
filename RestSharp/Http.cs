@@ -235,11 +235,10 @@ namespace RestSharp
         /// <returns></returns>
         public static IHttp Create() => new Http();
 
-        protected virtual HttpWebRequest CreateWebRequest(Uri url)
-        {
-            return (HttpWebRequest) WebRequest.Create(url);
-        }
+        protected virtual HttpWebRequest CreateWebRequest(Uri url) => (HttpWebRequest) WebRequest.Create(url);
 
+        public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+        
         partial void AddSyncHeaderActions();
 
         private void AddSharedHeaderActions()
@@ -248,9 +247,7 @@ namespace RestSharp
             restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
             restrictedHeaderActions.Add("Date", (r, v) =>
             {
-                DateTime parsed;
-
-                if (DateTime.TryParse(v, out parsed))
+                if (DateTime.TryParse(v, out var parsed))
                     r.Date = parsed;
             });
 
