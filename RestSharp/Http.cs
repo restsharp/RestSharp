@@ -33,7 +33,7 @@ namespace RestSharp
     /// <summary>
     ///     HttpWebRequest wrapper
     /// </summary>
-    public partial class Http : IHttp, IHttpFactory
+    public partial class Http : IHttp
     {
         private const string LINE_BREAK = "\r\n";
 
@@ -233,10 +233,7 @@ namespace RestSharp
         ///     Creates an IHttp
         /// </summary>
         /// <returns></returns>
-        public IHttp Create()
-        {
-            return new Http();
-        }
+        public static IHttp Create() => new Http();
 
         protected virtual HttpWebRequest CreateWebRequest(Uri url)
         {

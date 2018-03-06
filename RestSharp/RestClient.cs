@@ -45,8 +45,6 @@ namespace RestSharp
         private static readonly Regex StructuredSyntaxSuffixWildcardRegex =
             new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
 
-        public IHttpFactory HttpFactory = new SimpleFactory<Http>();
-
         /// <summary>
         ///     Default constructor that registers default content handlers
         /// </summary>
@@ -421,8 +419,10 @@ namespace RestSharp
         private static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
 
-        private void ConfigureHttp(IRestRequest request, IHttp http)
+        private IHttp ConfigureHttp(IRestRequest request)
         {
+            var http = Http.Create();
+            
             http.Encoding = Encoding;
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
@@ -488,7 +488,7 @@ namespace RestSharp
             http.MaxRedirects = MaxRedirects;
             http.CachePolicy = CachePolicy;
             http.Pipelined = Pipelined;
-
+            
             if (request.Credentials != null)
                 http.Credentials = request.Credentials;
 
@@ -579,6 +579,8 @@ namespace RestSharp
 #endif
 
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
+
+            return http;
         }
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)

@@ -32,6 +32,11 @@ namespace RestSharp
     public class RestRequest : IRestRequest
     {
         /// <summary>
+        ///     Local list of Allowed Decompresison Methods
+        /// </summary>
+        private readonly IList<DecompressionMethods> alloweDecompressionMethods;
+
+        /// <summary>
         ///     Default constructor
         /// </summary>
         public RestRequest()
@@ -97,23 +102,18 @@ namespace RestSharp
         }
 
         /// <summary>
-        /// Local list of Allowed Decompresison Methods
-        /// </summary>
-        private readonly IList<DecompressionMethods> alloweDecompressionMethods;
-        
-        /// <summary>
-        /// List of Allowed Decompresison Methods
-        /// </summary>
-        public IList<DecompressionMethods> AllowedDecompressionMethods => 
-            alloweDecompressionMethods.Any() 
-                ? alloweDecompressionMethods 
-                : new[] { DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip };
-
-        /// <summary>
         ///     Gets or sets a user-defined state object that contains information about a request and which can be later
         ///     retrieved when the request completes.
         /// </summary>
         public object UserState { get; set; }
+
+        /// <summary>
+        ///     List of Allowed Decompresison Methods
+        /// </summary>
+        public IList<DecompressionMethods> AllowedDecompressionMethods =>
+            alloweDecompressionMethods.Any()
+                ? alloweDecompressionMethods
+                : new[] {DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip};
 
         /// <summary>
         ///     Always send a multipart/form-data request - even when no Files are present.
@@ -465,7 +465,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        /// Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the request 
+        ///     Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
+        ///     request
         /// </summary>
         /// <param name="p">Parameter to add</param>
         /// <returns></returns>
@@ -483,8 +484,9 @@ namespace RestSharp
         }
 
         /// <summary>
-        /// Adds a HTTP parameter to the request or updates it with the given argument, if the parameter already exists in the request 
-        /// (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        ///     Adds a HTTP parameter to the request or updates it with the given argument, if the parameter already exists in the
+        ///     request
+        ///     (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -499,12 +501,14 @@ namespace RestSharp
             });
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Adds a HTTP parameter to the request or updates it with the given argument, if the parameter already exists in the request 
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        ///     Adds a HTTP parameter to the request or updates it with the given argument, if the parameter already exists in the
+        ///     request
+        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
+        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -512,20 +516,22 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
         {
-            return AddOrUpdateParameter(new Parameter
-            {
-                Name = name,
-                Value = value,
-                Type = type
-            });
+            return AddOrUpdateParameter(
+                new Parameter
+                {
+                    Name = name,
+                    Value = value,
+                    Type = type
+                });
         }
 
         /// <summary>
-        /// Adds a HTTP parameter to the request or updates it with the given argument, if the parameter already exists in the request 
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        ///     Adds a HTTP parameter to the request or updates it with the given argument, if the parameter already exists in the
+        ///     request
+        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
+        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -543,6 +549,7 @@ namespace RestSharp
             });
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Shortcut to AddParameter(name, value, HttpHeader) overload
         /// </summary>
@@ -552,14 +559,18 @@ namespace RestSharp
         public IRestRequest AddHeader(string name, string value)
         {
             const string portSplit = @":\d+";
-            Func<string, bool> invalidHost =
-                host => Uri.CheckHostName(Regex.Split(host, portSplit)[0]) == UriHostNameType.Unknown;
 
-            if (name == "Host" && invalidHost(value))
+            bool InvalidHost(string host)
+            {
+                return Uri.CheckHostName(Regex.Split(host, portSplit)[0]) == UriHostNameType.Unknown;
+            }
+
+            if (name == "Host" && InvalidHost(value))
                 throw new ArgumentException("The specified value is not a valid Host header string.", "value");
             return AddParameter(name, value, ParameterType.HttpHeader);
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Shortcut to AddParameter(name, value, Cookie) overload
         /// </summary>
@@ -594,17 +605,15 @@ namespace RestSharp
         }
 
         /// <summary>
-        /// Add a Decompression Method to the request
+        ///     Add a Decompression Method to the request
         /// </summary>
         /// <param name="decompressionMethod">None | GZip | Deflate</param>
         /// <returns></returns>
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
         {
-            if (!this.alloweDecompressionMethods.Contains(decompressionMethod))
-            {
-                this.alloweDecompressionMethods.Add(decompressionMethod);    
-            }
-            
+            if (!alloweDecompressionMethods.Contains(decompressionMethod))
+                alloweDecompressionMethods.Add(decompressionMethod);
+
             return this;
         }
 

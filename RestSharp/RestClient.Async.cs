@@ -326,10 +326,8 @@ namespace RestSharp
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod,
             Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
         {
-            var http = HttpFactory.Create();
-
             AuthenticateIfNeeded(this, request);
-            ConfigureHttp(request, http);
+            var http = ConfigureHttp(request);
 
             var asyncHandle = new RestRequestAsyncHandle();
             Action<HttpResponse> responseCb = r => ProcessResponse(request, r, asyncHandle, callback);

@@ -95,9 +95,7 @@ namespace RestSharp
 
             try
             {
-                var http = HttpFactory.Create();
-
-                ConfigureHttp(request, http);
+                var http = ConfigureHttp(request);
 
                 response = ConvertToRestResponse(request, getResponse(http, httpMethod));
                 response.Request = request;
