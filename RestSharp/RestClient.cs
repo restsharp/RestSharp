@@ -428,7 +428,7 @@ namespace RestSharp
         private static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
 
-        private IHttp ConfigureHttp(IRestRequest request)
+        internal IHttp ConfigureHttp(IRestRequest request)
         {
             var http = Http.Create();
             
