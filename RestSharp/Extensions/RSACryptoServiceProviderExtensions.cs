@@ -15,6 +15,9 @@ namespace RestSharp.Extensions
         /// </remarks>
         public static void FromXmlString2(this RSACryptoServiceProvider rsa, string xmlString)
         {
+#if !NETSTANDARD2_0
+            rsa.FromXmlString(xmlString);
+#else
             var parameters = new RSAParameters();
 
             var xmlDoc = new XmlDocument();
@@ -43,6 +46,7 @@ namespace RestSharp.Extensions
             }
 
             rsa.ImportParameters(parameters);
+#endif
         }
     }
 }

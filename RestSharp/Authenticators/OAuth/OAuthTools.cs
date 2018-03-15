@@ -346,11 +346,7 @@ namespace RestSharp.Authenticators.OAuth
                 {
                     using (var provider = new RSACryptoServiceProvider { PersistKeyInCsp = false })
                     {
-#if NETSTANDARD2_0
                         provider.FromXmlString2(unencodedConsumerSecret);
-#else
-                        provider.FromXmlString(unencodedConsumerSecret);
-#endif
 
                         SHA1Managed hasher = new SHA1Managed();
                         byte[] hash = hasher.ComputeHash(encoding.GetBytes(signatureBase));
