@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using RestSharp.Authenticators.OAuth.Extensions;
+using RestSharp.Extensions;
 
 namespace RestSharp.Authenticators.OAuth
 {
@@ -346,7 +347,7 @@ namespace RestSharp.Authenticators.OAuth
                     using (var provider = new RSACryptoServiceProvider { PersistKeyInCsp = false })
                     {
 #if NETSTANDARD2_0
-                        FromXmlString(provider, unencodedConsumerSecret);
+                        provider.FromXmlString2(unencodedConsumerSecret);
 #else
                         provider.FromXmlString(unencodedConsumerSecret);
 #endif
@@ -376,43 +377,5 @@ namespace RestSharp.Authenticators.OAuth
 
             return result;
         }
-
-#if NETSTANDARD2_0
-        /// <summary>
-        ///  .NET Core 2.0 doesn't provide an implementation of RSACryptoServiceProvider.FromXmlString/ToXmlString, so we have to do it ourselves.
-        /// Source: https://gist.github.com/Jargon64/5b172c452827e15b21882f1d76a94be4/
-        /// </summary>
-        private static void FromXmlString(RSACryptoServiceProvider rsa, string xmlString)
-        {
-            var parameters = new RSAParameters();
-
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xmlString);
-
-            if (xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
-            {
-                foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
-                {
-                    switch (node.Name)
-                    {
-                        case "Modulus": parameters.Modulus = Convert.FromBase64String(node.InnerText); break;
-                        case "Exponent": parameters.Exponent = Convert.FromBase64String(node.InnerText); break;
-                        case "P": parameters.P = Convert.FromBase64String(node.InnerText); break;
-                        case "Q": parameters.Q = Convert.FromBase64String(node.InnerText); break;
-                        case "DP": parameters.DP = Convert.FromBase64String(node.InnerText); break;
-                        case "DQ": parameters.DQ = Convert.FromBase64String(node.InnerText); break;
-                        case "InverseQ": parameters.InverseQ = Convert.FromBase64String(node.InnerText); break;
-                        case "D": parameters.D = Convert.FromBase64String(node.InnerText); break;
-                    }
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid XML RSA key.");
-            }
-
-            rsa.ImportParameters(parameters);
-        }
-#endif
     }
 }
