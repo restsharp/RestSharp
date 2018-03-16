@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using NUnit.Framework;
 using RestSharp.Extensions;
 
@@ -30,6 +31,34 @@ namespace RestSharp.Tests.Extensions
                 Assert.AreEqual(dotnetBasedParameters.Modulus, customBasedParameters.Modulus);
                 Assert.AreEqual(dotnetBasedParameters.P, customBasedParameters.P);
                 Assert.AreEqual(dotnetBasedParameters.Q, customBasedParameters.Q);
+            }
+        }
+
+        [Test]
+        public void FromXmlStringImpl_GivenInvalidPrivateKeyXml_ThrowsInvalidOperationException()
+        {
+            const string samplePrivateKeyXml =
+                "<something></something>";
+
+            using (var provider = new RSACryptoServiceProvider())
+            {
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                    RSACryptoServiceProviderExtensions.FromXmlStringImpl(provider, samplePrivateKeyXml));
+                Assert.AreEqual("Invalid XML RSA key.", exception.Message);
+            }
+        }
+
+        [Test]
+        public void FromXmlStringImpl_GivenPrivateKeyXmlWithUnknownNode_ThrowsInvalidOperationException()
+        {
+            const string samplePrivateKeyXml =
+                "<RSAKeyValue><pi>unexpected</pi></RSAKeyValue>";
+
+            using (var provider = new RSACryptoServiceProvider())
+            {
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                    RSACryptoServiceProviderExtensions.FromXmlStringImpl(provider, samplePrivateKeyXml));
+                Assert.AreEqual("Unknown node name: pi", exception.Message);
             }
         }
     }

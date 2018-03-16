@@ -29,26 +29,43 @@ namespace RestSharp.Extensions
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmlString);
 
-            if (xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
-            {
-                foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
-                {
-                    switch (node.Name)
-                    {
-                        case "Modulus": parameters.Modulus = Convert.FromBase64String(node.InnerText); break;
-                        case "Exponent": parameters.Exponent = Convert.FromBase64String(node.InnerText); break;
-                        case "P": parameters.P = Convert.FromBase64String(node.InnerText); break;
-                        case "Q": parameters.Q = Convert.FromBase64String(node.InnerText); break;
-                        case "DP": parameters.DP = Convert.FromBase64String(node.InnerText); break;
-                        case "DQ": parameters.DQ = Convert.FromBase64String(node.InnerText); break;
-                        case "InverseQ": parameters.InverseQ = Convert.FromBase64String(node.InnerText); break;
-                        case "D": parameters.D = Convert.FromBase64String(node.InnerText); break;
-                    }
-                }
-            }
-            else
+            if (!xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
             {
                 throw new InvalidOperationException("Invalid XML RSA key.");
+            }
+
+
+            foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
+            {
+                switch (node.Name)
+                {
+                    case "Modulus":
+                        parameters.Modulus = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "Exponent":
+                        parameters.Exponent = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "P":
+                        parameters.P = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "Q":
+                        parameters.Q = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "DP":
+                        parameters.DP = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "DQ":
+                        parameters.DQ = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "InverseQ":
+                        parameters.InverseQ = Convert.FromBase64String(node.InnerText);
+                        break;
+                    case "D":
+                        parameters.D = Convert.FromBase64String(node.InnerText);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Unknown node name: " + node.Name);
+                }
             }
 
             rsa.ImportParameters(parameters);
