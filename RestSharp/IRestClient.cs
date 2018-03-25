@@ -138,10 +138,28 @@ namespace RestSharp
         RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>,
             RestRequestAsyncHandle> callback, string httpMethod);
 
+        /// <summary>
+        /// Add a delegate to apply custom configuration to HttpWebRequest before making a call
+        /// </summary>
+        /// <param name="configurator">Configuration delegate for HttpWebRequest</param>
+        void ConfigureWebRequest(Action<HttpWebRequest> configurator);
+        
+        /// <summary>
+        /// Adds or replaces a deserializer for the specified content type
+        /// </summary>
+        /// <param name="contentType">Content type for which the deserializer will be replaced</param>
+        /// <param name="deserializer">Custom deserializer</param>
         void AddHandler(string contentType, IDeserializer deserializer);
 
+        /// <summary>
+        /// Removes custom deserialzier for the specified content type
+        /// </summary>
+        /// <param name="contentType">Content type for which deserializer needs to be removed</param>
         void RemoveHandler(string contentType);
 
+        /// <summary>
+        /// Remove deserializers for all content types
+        /// </summary>
         void ClearHandlers();
 
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);

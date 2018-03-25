@@ -71,6 +71,7 @@ namespace RestSharp
             FollowRedirects = true;
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Sets the BaseUrl property for requests made by this client instance
         /// </summary>
@@ -80,6 +81,7 @@ namespace RestSharp
             BaseUrl = baseUrl;
         }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Sets the BaseUrl property for requests made by this client instance
         /// </summary>

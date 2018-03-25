@@ -1,4 +1,3 @@
-msbuild.exe /t:restore
-msbuild.exe /t:build
+dotnet msbuild /p:Configuration=Release
 dotnet test --no-build
-msbuild.exe /t:pack /p:Version=106.0.0
+dotnet msbuild /t:Pack /p:Version=106.0.0
