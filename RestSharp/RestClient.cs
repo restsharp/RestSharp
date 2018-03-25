@@ -222,7 +222,9 @@ namespace RestSharp
 
             if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
 
-            AcceptTypes.Add(contentType);
+            if (!AcceptTypes.Contains(contentType))
+                AcceptTypes.Add(contentType);
+            
             // add Accept header based on registered deserializers
             var accepts = string.Join(", ", AcceptTypes.ToArray());
 
