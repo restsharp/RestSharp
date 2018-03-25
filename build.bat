@@ -1,3 +1,3 @@
-dotnet msbuild /p:Configuration=Release
+msbuild /t:build /p:Configuration=Release
 dotnet test --no-build
-dotnet msbuild /t:Pack /p:Version=106.0.0
+msbuild /t:Pack /p:Version=106.0.0
