@@ -22,6 +22,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
+using RestSharp.Tests.SampleClasses.DeserializeAsTest;
 using RestSharp.Tests.SampleClasses.Lastfm;
 
 namespace RestSharp.Tests
@@ -161,6 +162,49 @@ namespace RestSharp.Tests
             Assert.AreEqual(2, a.Count);
             Assert.AreEqual("first", a[0].Value);
             Assert.AreEqual("second", a[1].Value);
+        }
+
+        [Test]
+        public void Can_Deserialize_Attribute_Using_Exact_Name_Defined_In_DeserializeAs_Attribute()
+        {
+            const string @namespace = "http://restsharp.org";
+            XNamespace ns = XNamespace.Get(@namespace);
+            XDocument doc = new XDocument(
+                new XElement(ns + "response",
+                    new XAttribute(ns + "attribute-value", "711"),
+                        "random value"));
+
+            var expected = new NodeWithAttributeAndValue
+            {
+                AttributeValue = "711"
+            };
+
+            XmlDeserializer xml = new XmlDeserializer() { Namespace = @namespace };
+            NodeWithAttributeAndValue output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse { Content = doc.ToString() });
+
+            Assert.AreEqual(expected.AttributeValue, output.AttributeValue);
+        }
+
+        [Test]
+        public void Can_Deserialize_Node_Using_Exact_Name_Defined_In_DeserializeAs_Attribute()
+        {
+            const string @namespace = "http://restsharp.org";
+            XNamespace ns = XNamespace.Get(@namespace);
+            XDocument doc = new XDocument(
+                new XElement(ns + "response",
+                    new XElement(ns + "node-value", "711")));
+            
+            var expected = new SingleNode
+            {
+                Node = "711"
+            };
+
+            XmlDeserializer xml = new XmlDeserializer();
+            SingleNode output = xml.Deserialize<SingleNode>(new RestResponse { Content = doc.ToString() });
+
+            Assert.IsNotNull(output);
+
+            Assert.AreEqual(expected.Node, output.Node);
         }
 
         private static string CreateListOfPrimitivesXml()

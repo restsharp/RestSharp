@@ -25,6 +25,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.Tests.SampleClasses;
+using RestSharp.Tests.SampleClasses.DeserializeAsTest;
 using Event = RestSharp.Tests.SampleClasses.Lastfm.Event;
 
 namespace RestSharp.Tests
@@ -54,7 +55,7 @@ namespace RestSharp.Tests
             Assert.AreEqual("Jackson", output.FriendlyName);
             Assert.AreEqual("oddball", output.GoodPropertyName);
         }
-
+        
         [Test]
         public void Can_Use_DeserializeAs_Attribute_for_List()
         {
@@ -785,6 +786,40 @@ namespace RestSharp.Tests
             Assert.AreEqual(output.Value, 255);
         }
 
+        [Test]
+        public void Can_Deserialize_Attribute_Using_Exact_Name_Defined_In_DeserializeAs_Attribute()
+        {
+            var content = @"<response attribute-value=""711""></response>";
+
+            var expected = new NodeWithAttributeAndValue
+            {
+                AttributeValue = "711"
+            };
+
+            XmlDeserializer xml = new XmlDeserializer();
+            NodeWithAttributeAndValue output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse { Content = content });
+
+            Assert.AreEqual(expected.AttributeValue, output.AttributeValue);
+        }
+
+        [Test]
+        public void Can_Deserialize_Node_Using_Exact_Name_Defined_In_DeserializeAs_Attribute()
+        {
+            var content = @"<response><node-value>711</node-value></response>";
+
+            var expected = new SingleNode
+            {
+                Node = "711"
+            };
+
+            XmlDeserializer xml = new XmlDeserializer();
+            SingleNode output = xml.Deserialize<SingleNode>(new RestResponse { Content = content });
+
+            Assert.IsNotNull(output);
+
+            Assert.AreEqual(expected.Node, output.Node);
+        }
+        
         [Test]
         public void Able_to_use_alternative_name_for_arrays()
         {

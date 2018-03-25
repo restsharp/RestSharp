@@ -24,10 +24,10 @@ namespace RestSharp.Deserializers
 {
     public class XmlAttributeDeserializer : XmlDeserializer
     {
-        protected override object GetValueFromXml(XElement root, XName name, PropertyInfo prop)
+        protected override object GetValueFromXml(XElement root, XName name, PropertyInfo prop, bool useExactName)
         {
             bool isAttribute = false;
-
+            
             //Check for the DeserializeAs attribute on the property
             DeserializeAsAttribute options = prop.GetAttribute<DeserializeAsAttribute>();
 
@@ -37,11 +37,11 @@ namespace RestSharp.Deserializers
                 isAttribute = options.Attribute;
             }
 
-            if (!isAttribute) return base.GetValueFromXml(root, name, prop);
+            if (!isAttribute) return base.GetValueFromXml(root, name, prop, useExactName);
             
-            XAttribute attributeVal = GetAttributeByName(root, name);
+            XAttribute attributeVal = GetAttributeByName(root, name, useExactName);
 
-            return attributeVal != null ? attributeVal.Value : base.GetValueFromXml(root, name, prop);
+            return attributeVal != null ? attributeVal.Value : base.GetValueFromXml(root, name, prop, useExactName);
         }
     }
 }
