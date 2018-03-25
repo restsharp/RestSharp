@@ -3,7 +3,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using RestSharp.Authenticators.OAuth.Extensions;
+using RestSharp.Extensions;
 
 namespace RestSharp.Authenticators.OAuth
 {
@@ -342,9 +344,9 @@ namespace RestSharp.Authenticators.OAuth
 
                 case OAuthSignatureMethod.RsaSha1:
                 {
-                    using (var provider = new RSACryptoServiceProvider() { PersistKeyInCsp = false })
+                    using (var provider = new RSACryptoServiceProvider { PersistKeyInCsp = false })
                     {
-                        provider.FromXmlString(unencodedConsumerSecret);
+                        provider.FromXmlString2(unencodedConsumerSecret);
 
                         SHA1Managed hasher = new SHA1Managed();
                         byte[] hash = hasher.ComputeHash(encoding.GetBytes(signatureBase));
