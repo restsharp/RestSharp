@@ -476,18 +476,18 @@ namespace RestSharp
                 ? userAgent
                 : "RestSharp/" + version;
 
-            var timeout = request.Timeout > 0
+            var timeout = request.Timeout != 0
                 ? request.Timeout
                 : Timeout;
 
-            if (timeout > 0)
+            if (timeout != 0)
                 http.Timeout = timeout;
 
-            var readWriteTimeout = request.ReadWriteTimeout > 0
+            var readWriteTimeout = request.ReadWriteTimeout != 0
                 ? request.ReadWriteTimeout
                 : ReadWriteTimeout;
 
-            if (readWriteTimeout > 0)
+            if (readWriteTimeout != 0)
                 http.ReadWriteTimeout = readWriteTimeout;
 
             http.FollowRedirects = FollowRedirects;
