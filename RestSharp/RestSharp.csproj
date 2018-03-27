@@ -18,6 +18,7 @@
     <PackageReference Include="GitVersionTask" Version="4.0.0-beta*">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>

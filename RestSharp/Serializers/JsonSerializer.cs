@@ -1,9 +1,12 @@
-﻿
+﻿using Newtonsoft.Json;
+
 namespace RestSharp.Serializers
 {
     /// <summary>
     /// Default JSON serializer for request bodies
     /// Doesn't currently use the SerializeAs attribute, defers to Newtonsoft's attributes
+    /// To Use Newtonsoft's attributes in place of the SerializeAs attribute use
+    /// [JsonProperty(PropertyName = "<name>")]
     /// </summary>
     public class JsonSerializer : ISerializer
     {
@@ -22,7 +25,7 @@ namespace RestSharp.Serializers
         /// <returns>JSON as String</returns>
         public string Serialize(object obj)
         {
-            return SimpleJson.SimpleJson.SerializeObject(obj);
+            return JsonConvert.SerializeObject(obj);
         }
 
         /// <summary>
