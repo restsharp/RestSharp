@@ -18,7 +18,6 @@
     <PackageReference Include="GitVersionTask" Version="4.0.0-beta*">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />

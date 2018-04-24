@@ -270,10 +270,10 @@ namespace RestSharp
         {
             DoBuildUriValidations(request);
 
-            var applied = ApplyUrlSegmentParamsValues(request);
+            var applied = GetUrlSegmentParamsValues(request);
 
-            BaseUrl = applied.uri;
-            string resource = applied.resource;
+            BaseUrl = applied.Uri;
+            string resource = applied.Resource;
 
             string mergedUri = MergeBaseUrlAndResource(resource);
 
@@ -295,23 +295,23 @@ namespace RestSharp
 
             if (nullValuedParams.Any())
             {
-                string names = string.Join(", ", nullValuedParams.Select(name => $"'{name}'").ToArray());
+                var names = string.Join(", ", nullValuedParams.Select(name => $"'{name}'").ToArray());
                 throw new ArgumentException($"Cannot build uri when url segment parameter(s) {names} value is null.",
-                    "request");
+                    nameof(request));
             }
         }
 
-        private (Uri uri, string resource) ApplyUrlSegmentParamsValues(IRestRequest request)
+        private UrlSegmentParamsValues GetUrlSegmentParamsValues(IRestRequest request)
         {
-            string assembled = request.Resource;
-            bool hasResource = !string.IsNullOrEmpty(assembled);
+            var assembled = request.Resource;
+            var hasResource = !string.IsNullOrEmpty(assembled);
             var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
             var builder = new UriBuilder(BaseUrl);
 
             foreach (var parameter in urlParms)
             {
-                string paramPlaceHolder = $"{{{parameter.Name}}}";
-                string paramValue = parameter.Value.ToString().UrlEncode();
+                var paramPlaceHolder = $"{{{parameter.Name}}}";
+                var paramValue = parameter.Value.ToString().UrlEncode();
 
                 if (hasResource)
                 {
@@ -321,12 +321,12 @@ namespace RestSharp
                 builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
             }
 
-            return (builder.Uri, assembled);
+            return new UrlSegmentParamsValues(builder.Uri, assembled);
         }
 
         private string MergeBaseUrlAndResource(string resource)
         {
-            string assembled = resource;
+            var assembled = resource;
 
             if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
             {
@@ -358,7 +358,7 @@ namespace RestSharp
                 return mergedUri;
             }
 
-            string separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
+            var separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
 
             return string.Concat(mergedUri, separator, EncodeParameters(parameters, Encoding));
         }
@@ -402,7 +402,7 @@ namespace RestSharp
 
                 if (structuredSyntaxSuffixMatch.Success)
                 {
-                    string structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
+                    var structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
                     if (ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
                     {
                         return ContentHandlers[structuredSyntaxSuffixWildcard];
@@ -428,7 +428,7 @@ namespace RestSharp
         private static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
 
-        internal IHttp ConfigureHttp(IRestRequest request)
+        private IHttp ConfigureHttp(IRestRequest request)
         {
             var http = Http.Create();
             
@@ -700,6 +700,18 @@ namespace RestSharp
 
             // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
             return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
+        }
+
+        private class UrlSegmentParamsValues
+        {
+            public UrlSegmentParamsValues(Uri builderUri, string assembled)
+            {
+                Uri = builderUri;
+                Resource = assembled;
+            }
+
+            public Uri Uri { get; } 
+            public string Resource { get; }
         }
     }
 }
