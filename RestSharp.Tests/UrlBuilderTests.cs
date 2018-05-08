@@ -300,7 +300,7 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        public void Should_encode_semicolon()
+        public void Should_encode_colon()
         {
             RestRequest request = new RestRequest();
             // adding parameter with o-slash character which is encoded differently between
