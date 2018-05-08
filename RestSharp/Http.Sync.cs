@@ -201,6 +201,9 @@ namespace RestSharp
             webRequest.PreAuthenticate = PreAuthenticate;
             webRequest.Pipelined = Pipelined;
             webRequest.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
+#if NETSTANDARD2_0
+            webRequest.Proxy = null;
+#endif
             webRequest.ServicePoint.Expect100Continue = false;
             
             AppendHeaders(webRequest);
