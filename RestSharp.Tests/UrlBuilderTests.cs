@@ -300,6 +300,20 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Should_encode_semicolon()
+        {
+            RestRequest request = new RestRequest();
+            // adding parameter with o-slash character which is encoded differently between
+            // utf-8 and iso-8859-1
+            request.AddOrUpdateParameter("parameter", "some:value");
+
+            RestClient client = new RestClient("http://example.com/resource");
+
+            Uri expectedDefaultEncoding = new Uri("http://example.com/resource?parameter=some%3avalue");
+            Assert.AreEqual(expectedDefaultEncoding, client.BuildUri(request));
+        }
+      
+        [Test]
         public void Should_build_uri_using_selected_encoding()
         {
             RestRequest request = new RestRequest();
