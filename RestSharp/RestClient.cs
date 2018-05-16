@@ -40,10 +40,9 @@ namespace RestSharp
         // silverlight friendly way to get current version      
         private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
 
-        private static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
-        private static readonly Regex StructuredSyntaxSuffixWildcardRegex =
-            new Regex(@"^\*\+\w+$", RegexOptions.Compiled);
+        private static readonly Regex StructuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 
         /// <summary>
         ///     Default constructor that registers default content handlers

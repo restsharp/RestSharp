@@ -81,6 +81,9 @@ namespace RestSharp.Extensions
         public static string RemoveUnderscoresAndDashes(this string input) =>
             input.Replace("_", "").Replace("-", "");
 
+        private static readonly Regex DateRegex = new Regex(@"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/");
+        private static readonly Regex NewDateRegex = new Regex(@"newDate\((-?\d+)*\)");
+
         /// <summary>
         ///     Parses most common JSON date formats
         /// </summary>
@@ -103,14 +106,14 @@ namespace RestSharp.Extensions
             }
 
             if (input.Contains("/Date("))
-                return ExtractDate(input, @"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/", culture);
+                return ExtractDate(input, DateRegex, culture);
 
             if (input.Contains("new Date("))
             {
                 input = input.Replace(" ", "");
 
                 // because all whitespace is removed, match against newDate( instead of new Date(
-                return ExtractDate(input, @"newDate\((-?\d+)*\)", culture);
+                return ExtractDate(input, NewDateRegex, culture);
             }
 
             return ParseFormattedDate(input, culture);
@@ -150,10 +153,9 @@ namespace RestSharp.Extensions
             return DateTime.TryParse(input, culture, DateTimeStyles.None, out date) ? date : default(DateTime);
         }
 
-        private static DateTime ExtractDate(string input, string pattern, CultureInfo culture)
+        private static DateTime ExtractDate(string input, Regex regex, CultureInfo culture)
         {
             var dt = DateTime.MinValue;
-            var regex = new Regex(pattern);
 
             if (!regex.IsMatch(input)) return dt;
 
@@ -175,14 +177,6 @@ namespace RestSharp.Extensions
 
             return dt;
         }
-
-        /// <summary>
-        ///     Checks a string to see if it matches a regex
-        /// </summary>
-        /// <param name="input">String to check</param>
-        /// <param name="pattern">Pattern to match</param>
-        /// <returns>bool</returns>
-        public static bool Matches(this string input, string pattern) => Regex.IsMatch(input, pattern);
 
         /// <summary>
         ///     Converts a string to pascal case
@@ -250,12 +244,18 @@ namespace RestSharp.Extensions
         public static string MakeInitialLowerCase(this string word) =>
             string.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
 
+        private static readonly Regex IsUpperCaseRegex = new Regex(@"^[A-Z]+$");
+
         /// <summary>
         ///     Checks to see if a string is all uppper case
         /// </summary>
         /// <param name="inputString">String to check</param>
         /// <returns>bool</returns>
-        public static bool IsUpperCase(this string inputString) => Regex.IsMatch(inputString, @"^[A-Z]+$");
+        public static bool IsUpperCase(this string inputString) => IsUpperCaseRegex.IsMatch(inputString);
+
+        private static readonly Regex AddUnderscoresRegex1 = new Regex(@"[-\s]");
+        private static readonly Regex AddUnderscoresRegex2 = new Regex(@"([a-z\d])([A-Z])");
+        private static readonly Regex AddUnderscoresRegex3 = new Regex(@"([A-Z]+)([A-Z][a-z])");
 
         /// <summary>
         ///     Add underscores to a pascal-cased string
@@ -263,13 +263,15 @@ namespace RestSharp.Extensions
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>string</returns>
         public static string AddUnderscores(this string pascalCasedWord) =>
-            Regex.Replace(
-                Regex.Replace(
-                    Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2"),
-                    @"([a-z\d])([A-Z])",
+            AddUnderscoresRegex1.Replace(
+                AddUnderscoresRegex2.Replace(
+                    AddUnderscoresRegex3.Replace(pascalCasedWord, "$1_$2"),
                     "$1_$2"),
-                @"[-\s]",
                 "_");
+
+        private static readonly Regex AddDashesRegex1 = new Regex(@"[\s]");
+        private static readonly Regex AddDashesRegex2 = new Regex(@"([a-z\d])([A-Z])");
+        private static readonly Regex AddDashesRegex3 = new Regex(@"([A-Z]+)([A-Z][a-z])");
 
         /// <summary>
         ///     Add dashes to a pascal-cased string
@@ -277,12 +279,10 @@ namespace RestSharp.Extensions
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>string</returns>
         public static string AddDashes(this string pascalCasedWord) =>
-            Regex.Replace(
-                Regex.Replace(
-                    Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1-$2"),
-                    @"([a-z\d])([A-Z])",
+            AddDashesRegex1.Replace(
+                AddDashesRegex2.Replace(
+                    AddDashesRegex3.Replace(pascalCasedWord, "$1-$2"),
                     "$1-$2"),
-                @"[\s]",
                 "-");
 
         /// <summary>
@@ -292,18 +292,20 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static string AddUnderscorePrefix(this string pascalCasedWord) => string.Format("_{0}", pascalCasedWord);
 
+        private static readonly Regex AddSpacesRegex1 = new Regex(@"[-\s]");
+        private static readonly Regex AddSpacesRegex2 = new Regex(@"([a-z\d])([A-Z])");
+        private static readonly Regex AddSpacesRegex3 = new Regex(@"([A-Z]+)([A-Z][a-z])");
+
         /// <summary>
         ///     Add spaces to a pascal-cased string
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>string</returns>
         public static string AddSpaces(this string pascalCasedWord) =>
-            Regex.Replace(
-                Regex.Replace(
-                    Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1 $2"),
-                    @"([a-z\d])([A-Z])",
+            AddSpacesRegex1.Replace(
+                AddSpacesRegex2.Replace(
+                    AddSpacesRegex3.Replace(pascalCasedWord, "$1 $2"),
                     "$1 $2"),
-                @"[-\s]",
                 " ");
 
         /// <summary>
