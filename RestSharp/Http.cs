@@ -434,9 +434,11 @@ namespace RestSharp
                 ResponseWriter(webResponseStream);
         }
 
+        private static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
+
         private static void AddRange(HttpWebRequest r, string range)
         {
-            var m = Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
+            var m = AddRangeRegex.Match(range);
 
             if (!m.Success)
                 return;

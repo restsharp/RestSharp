@@ -549,6 +549,8 @@ namespace RestSharp
             });
         }
 
+        private static readonly Regex PortSplitRegex = new Regex(@":\d+");
+
         /// <inheritdoc />
         /// <summary>
         ///     Shortcut to AddParameter(name, value, HttpHeader) overload
@@ -558,11 +560,9 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddHeader(string name, string value)
         {
-            const string portSplit = @":\d+";
-
             bool InvalidHost(string host)
             {
-                return Uri.CheckHostName(Regex.Split(host, portSplit)[0]) == UriHostNameType.Unknown;
+                return Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
             }
 
             if (name == "Host" && InvalidHost(value))
