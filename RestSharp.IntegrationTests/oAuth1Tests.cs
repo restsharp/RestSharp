@@ -388,7 +388,7 @@ namespace RestSharp.IntegrationTests
             var escapedString = OAuthTools.UrlEncodeRelaxed(reservedCharacterString);
 
             // assert
-            Assert.AreEqual("%3B%2F%3F%3A%40%26%3D%2B%24%2C%21%2A%27%28%29", escapedString);
+            Assert.AreEqual("%3B%2F%3F%3A%40%26%3D%2B%24%2C%2521%252A%2527%2528%2529", escapedString);
         }
     }
 }

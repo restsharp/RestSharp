@@ -110,19 +110,16 @@ namespace RestSharp.Authenticators.OAuth
         /// <seealso cref="http://stackoverflow.com/questions/846487/how-to-get-uri-escapedatastring-to-comply-with-rfc-3986" />
         public static string UrlEncodeRelaxed(string value)
         {
-            // Start with RFC 2396 escaping by calling the .NET method to do the work.
-            // This MAY sometimes exhibit RFC 3986 behavior (according to the documentation).
-            // If it does, the escaping we do that follows it will be a no-op since the
-            // characters we search for to replace can't possibly exist in the string.
-            var escaped = new StringBuilder(Uri.EscapeDataString(value));
-
-            // Upgrade the escaping to RFC 3986, if necessary.
+            // Escape RFC 3986 chars first.
             for (var i = 0; i < uriRfc3986CharsToEscape.Length; i++)
             {
                 var t = uriRfc3986CharsToEscape[i];
 
-                escaped.Replace(t, uriRfc3968EscapedHex[i]);
+                value = value.Replace(t, uriRfc3968EscapedHex[i]);
             }
+
+            // Do RFC 2396 escaping by calling the .NET method to do the work.
+            var escaped = new StringBuilder(Uri.EscapeDataString(value));
 
             // Return the fully-RFC3986-escaped string.
             return escaped.ToString();
