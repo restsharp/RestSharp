@@ -111,18 +111,19 @@ namespace RestSharp.Authenticators.OAuth
         public static string UrlEncodeRelaxed(string value)
         {
             // Escape RFC 3986 chars first.
+            var escapedRfc3986 = new StringBuilder(value);
             for (var i = 0; i < uriRfc3986CharsToEscape.Length; i++)
             {
                 var t = uriRfc3986CharsToEscape[i];
 
-                value = value.Replace(t, uriRfc3968EscapedHex[i]);
+                escapedRfc3986.Replace(t, uriRfc3968EscapedHex[i]);
             }
 
             // Do RFC 2396 escaping by calling the .NET method to do the work.
-            var escaped = new StringBuilder(Uri.EscapeDataString(value));
+            string escapedRfc2396 = Uri.EscapeDataString(escapedRfc3986.ToString());
 
             // Return the fully-RFC3986-escaped string.
-            return escaped.ToString();
+            return escapedRfc2396;
         }
 
         /// <summary>
