@@ -313,8 +313,8 @@ namespace RestSharp.Authenticators.OAuth
                 tokenSecret = string.Empty;
 
             var unencodedConsumerSecret = consumerSecret;
-            consumerSecret = UrlEncodeRelaxed(consumerSecret);
-            tokenSecret = UrlEncodeRelaxed(tokenSecret);
+            consumerSecret = Uri.EscapeDataString(consumerSecret);
+            tokenSecret = Uri.EscapeDataString(tokenSecret);
 
             string signature;
 

@@ -46,13 +46,13 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P%2FltlWS7WvJXpECPs%3D")]
-        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog", "C%2B2RY0Hna6VrfK1crCkU%2FV1e0ECoxoDh41iOOdmEMx8%3D")]
-        [TestCase("", "%2BnkCwZfv%2FQVmBbNZsPKbBT3kAg3JtVn3f3YMBtV83L8%3D")]
-        [TestCase(" !\"#$%&'()*+,", "xcTgWGBVZaw%2Bilg6kjWAGt%2FhCcsVBMMe1CcDEnxnh8Y%3D")]
-        public void HmacSha256_Hashes_Correctly(string value, string expected)
+        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P%2FltlWS7WvJXpECPs%3D", "12345678")]
+        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog", "C%2B2RY0Hna6VrfK1crCkU%2FV1e0ECoxoDh41iOOdmEMx8%3D", "12345678")]
+        [TestCase("", "%2BnkCwZfv%2FQVmBbNZsPKbBT3kAg3JtVn3f3YMBtV83L8%3D", "12345678")]
+        [TestCase(" !\"#$%&'()*+,", "xcTgWGBVZaw%2Bilg6kjWAGt%2FhCcsVBMMe1CcDEnxnh8Y%3D", "12345678")]
+        [TestCase("AB", "JJgraAxzpO2Q6wiC3blM4eiQeA9WmkALaZI8yGRH4qM%3D", "CD!")]
+        public void HmacSha256_Hashes_Correctly(string value, string expected, string consumerSecret)
         {
-            string consumerSecret = "12345678";
             string actual = OAuthTools.GetSignature(OAuthSignatureMethod.HmacSha256, value, consumerSecret);
 
             Assert.AreEqual(expected, actual);
