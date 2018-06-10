@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{C5B02FAA-6
 		README.md = README.md
 		readme.txt = readme.txt
 		releasenotes.md = releasenotes.md
+		build.bat = build.bat
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp", "RestSharp\RestSharp.csproj", "{24BDBFB9-7849-400D-B3AB-E06AB7AEDBC5}"
