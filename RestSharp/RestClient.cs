@@ -550,12 +550,12 @@ namespace RestSharp
             var body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
             // Only add the body if there aren't any files to make it a multipart form request
-            // If there are files, then add the body to the HTTP Parameters
+            // If there are files or AlwaysMultipartFormData = true, then add the body to the HTTP Parameters
             if (body != null)
             {
                 http.RequestContentType = body.Name;
 
-                if (!http.Files.Any())
+                if (!http.AlwaysMultipartFormData && !http.Files.Any())
                 {
                     var val = body.Value;
 

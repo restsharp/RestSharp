@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
@@ -191,6 +192,47 @@ namespace RestSharp.IntegrationTests
                 client.Execute(request);
 
                 AssertHasRequestBody(contentType, bodyData);
+            }
+        }
+
+        [Test]
+        public void MultipartFormData_Without_File_Creates_A_Valid_RequestBody()
+        {
+            string expectedFormBoundary = "-------------------------------28947758029299";
+
+
+            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
+            {
+                RestClient client = new RestClient(BASE_URL);
+
+                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, Method.POST)
+                {
+                    AlwaysMultipartFormData = true
+                };
+
+                const string contentType = "text/plain";
+                const string bodyData = "abc123 foo bar baz BING!";
+                const string multipartName = "mybody";
+
+                request.AddParameter(multipartName, bodyData, contentType, ParameterType.RequestBody);
+
+                client.Execute(request);
+
+                string expectedBody = expectedFormBoundary +
+                                      Environment.NewLine
+                                      + "Content-Type: " +
+                                      contentType
+                                      + Environment.NewLine
+                                      + @"Content-Disposition: form-data; name=""" + multipartName + @""""
+                                      + Environment.NewLine
+                                      + Environment.NewLine
+                                      + bodyData
+                                      + Environment.NewLine
+                                      + expectedFormBoundary + "--"
+                                      + Environment.NewLine;
+
+                Console.WriteLine(RequestBodyCapturer.CapturedEntityBody);
+                Assert.AreEqual(expectedBody, RequestBodyCapturer.CapturedEntityBody, "Empty multipart generated: " + RequestBodyCapturer.CapturedEntityBody);
             }
         }
 
