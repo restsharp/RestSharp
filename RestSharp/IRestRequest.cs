@@ -142,7 +142,7 @@ namespace RestSharp {
         /// <param name="path">Full path to file to upload</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, string path, string contentType = null);
+        IRestRequest AddFile(string name, string path, string contentType);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -152,7 +152,7 @@ namespace RestSharp {
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null);
+        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -163,7 +163,7 @@ namespace RestSharp {
         /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType);
 
         /// <summary>
         /// Add bytes to the Files collection as if it was a file of specific type

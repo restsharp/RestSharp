@@ -48,3 +48,4 @@ RestSharp.IntegrationTests/config.json
 *.ncrunchproject
 *.ncrunchsolution
 /.vs/RestSharp/v15/Server/sqlite3
+/.vs/RestSharp/DesignTimeBuild/.dtbcache
