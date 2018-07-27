@@ -22,10 +22,8 @@ using System.IO;
 using System.Net;
 using RestSharp.Serializers;
 
-namespace RestSharp
-{
-    public interface IRestRequest
-    {
+namespace RestSharp {
+    public interface IRestRequest {
         /// <summary>
         /// Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
@@ -330,6 +328,15 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         IRestRequest AddHeader(string name, string value);
+
+
+        /// <summary>
+        /// Shortcut to AddParameter(name, value, HttpHeader) overload
+        /// </summary>
+        /// <param name="http.Name">Name of the header to add</param>
+        /// <param name="http.value">Value of the header to add</param>
+        /// <returns></returns>
+        IRestRequest AddHeader(HttpHeader httpHeader);
 
         /// <summary>
         /// Shortcut to AddParameter(name, value, Cookie) overload
