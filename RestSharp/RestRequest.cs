@@ -180,7 +180,7 @@ namespace RestSharp {
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null) {
+        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType) {
             return AddFile(FileParameter.Create(name, bytes, fileName, contentType));
         }
 
