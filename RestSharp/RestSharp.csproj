@@ -5,6 +5,8 @@
     <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/develop/restsharp.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <Description>Simple REST and HTTP API Client</Description>
     <Authors>John Sheehan, RestSharp Community</Authors>
     <Version>106.0.0</Version>
