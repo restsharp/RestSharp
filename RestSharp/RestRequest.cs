@@ -602,10 +602,7 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddQueryParameter(string name, string value, bool encode = true)
         {
-            if (encode)
-                return AddParameter(name, value, ParameterType.QueryString);
-
-            return AddParameter(name, value, ParameterType.QueryStringWithoutEncode);
+            return AddParameter(name, value, encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode);
         }
 
         /// <summary>
