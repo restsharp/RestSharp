@@ -605,6 +605,18 @@ namespace RestSharp
         }
 
         /// <summary>
+        ///     Shortcut to AddParameter(name, value, QueryString) overload
+        /// </summary>
+        /// <param name="name">Name of the parameter to add</param>
+        /// <param name="value">Value of the parameter to add</param>
+        /// <param name="encode">Whether parameter should be encoded or not</param>
+        /// <returns></returns>
+        public IRestRequest AddQueryParameter(string name, string value, bool encode)
+        {
+            return AddParameter(name, value, encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode);
+        }
+
+        /// <summary>
         ///     Add a Decompression Method to the request
         /// </summary>
         /// <param name="decompressionMethod">None | GZip | Deflate</param>
