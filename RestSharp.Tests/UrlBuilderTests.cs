@@ -77,6 +77,20 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void GET_with_empty_request_and_query_parameters_without_encoding()
+        {
+            RestRequest request = new RestRequest();
+
+            request.AddParameter("param2", "bar,baz", ParameterType.QueryStringWithoutEncode);
+
+            RestClient client = new RestClient("http://example.com/resource?param1=value1");
+            Uri expected = new Uri("http://example.com/resource?param1=value1&param2=bar,baz");
+            Uri output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
         public void POST_with_leading_slash_and_baseurl_trailing_slash()
         {
             RestRequest request = new RestRequest("/resource", Method.POST);
