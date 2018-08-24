@@ -22,10 +22,8 @@ using System.IO;
 using System.Net;
 using RestSharp.Serializers;
 
-namespace RestSharp
-{
-    public interface IRestRequest
-    {
+namespace RestSharp {
+    public interface IRestRequest {
         /// <summary>
         /// Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
@@ -144,7 +142,7 @@ namespace RestSharp
         /// <param name="path">Full path to file to upload</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, string path, string contentType = null);
+        IRestRequest AddFile(string name, string path, string contentType);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -154,7 +152,7 @@ namespace RestSharp
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null);
+        IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType);
 
         /// <summary>
         /// Adds the bytes to the Files collection with the specified file name and content type
@@ -165,7 +163,7 @@ namespace RestSharp
         /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
+        IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType);
 
         /// <summary>
         /// Add bytes to the Files collection as if it was a file of specific type
@@ -330,6 +328,15 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         IRestRequest AddHeader(string name, string value);
+
+
+        /// <summary>
+        /// Shortcut to AddParameter(name, value, HttpHeader) overload
+        /// </summary>
+        /// <param name="http.Name">Name of the header to add</param>
+        /// <param name="http.value">Value of the header to add</param>
+        /// <returns></returns>
+        IRestRequest AddHeader(HttpHeader httpHeader);
 
         /// <summary>
         /// Shortcut to AddParameter(name, value, Cookie) overload
