@@ -355,6 +355,14 @@ namespace RestSharp
         /// <returns></returns>
         IRestRequest AddQueryParameter(string name, string value);
 
+        /// <summary>
+        /// Shortcut to AddParameter(name, value, QueryStringWithoutEncode) overload
+        /// </summary>
+        /// <param name="name">Name of the parameter to add</param>
+        /// <param name="value">Value of the parameter to add</param>
+        /// <returns></returns>
+        IRestRequest AddQueryParameterWithoutEncode(string name, string value);
+
         IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod);
 
         Action<IRestResponse> OnBeforeDeserialization { get; set; }

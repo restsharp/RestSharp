@@ -367,9 +367,11 @@ namespace RestSharp
             return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
                 ? request.Parameters
                     .Where(p => p.Type == ParameterType.GetOrPost ||
-                                p.Type == ParameterType.QueryString)
+                                p.Type == ParameterType.QueryString ||
+                                p.Type == ParameterType.QueryStringWithoutEncode)
                 : request.Parameters
-                    .Where(p => p.Type == ParameterType.QueryString);
+                    .Where(p => p.Type == ParameterType.QueryString ||
+                                p.Type == ParameterType.QueryStringWithoutEncode);
         }
 
         /// <summary>
@@ -420,9 +422,13 @@ namespace RestSharp
 
         private static string EncodeParameter(Parameter parameter, Encoding encoding) =>
             parameter.Value == null
-                ? string.Concat(parameter.Name.UrlEncode(encoding), "=")
-                : string.Concat(parameter.Name.UrlEncode(encoding), "=",
-                    parameter.Value.ToString().UrlEncode(encoding));
+                ? parameter.Type == ParameterType.QueryStringWithoutEncode
+                    ? string.Concat(parameter.Name, "=")
+                    : string.Concat(parameter.Name.UrlEncode(encoding), "=")
+                : parameter.Type == ParameterType.QueryStringWithoutEncode
+                    ? string.Concat(parameter.Name, "=", parameter.Value.ToString())
+                    : string.Concat(parameter.Name.UrlEncode(encoding), "=",
+                        parameter.Value.ToString().UrlEncode(encoding));
 
         private static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
