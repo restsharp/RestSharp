@@ -598,20 +598,13 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">Name of the parameter to add</param>
         /// <param name="value">Value of the parameter to add</param>
+        /// <param name="encode">Whether parameter should be encoded or not</param>
         /// <returns></returns>
-        public IRestRequest AddQueryParameter(string name, string value)
+        public IRestRequest AddQueryParameter(string name, string value, bool encode = true)
         {
-            return AddParameter(name, value, ParameterType.QueryString);
-        }
+            if (encode)
+                return AddParameter(name, value, ParameterType.QueryString);
 
-        /// <summary>
-        ///     Shortcut to AddParameter(name, value, QueryStringWithoutEncode) overload
-        /// </summary>
-        /// <param name="name">Name of the parameter to add</param>
-        /// <param name="value">Value of the parameter to add</param>
-        /// <returns></returns>
-        public IRestRequest AddQueryParameterWithoutEncode(string name, string value)
-        {
             return AddParameter(name, value, ParameterType.QueryStringWithoutEncode);
         }
 
