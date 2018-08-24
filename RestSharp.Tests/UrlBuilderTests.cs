@@ -81,10 +81,10 @@ namespace RestSharp.Tests
         {
             RestRequest request = new RestRequest();
 
-            request.AddQueryParameter("param2", "bar,baz", false);
+            request.AddQueryParameter("foo", "bar,baz", false);
 
             RestClient client = new RestClient("http://example.com/resource?param1=value1");
-            Uri expected = new Uri("http://example.com/resource?param1=value1&param2=bar,baz");
+            Uri expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
             Uri output = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
