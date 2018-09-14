@@ -12,7 +12,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 #endregion
 
@@ -195,10 +195,6 @@ namespace RestSharp.Authenticators
         {
             var url = client.BuildUri(request)
                 .ToString();
-            var queryStringStart = url.IndexOf('?');
-
-            if (queryStringStart != -1)
-                url = url.Substring(0, queryStringStart);
 
             OAuthWebQueryInfo oauth;
             var method = request.Method.ToString()
