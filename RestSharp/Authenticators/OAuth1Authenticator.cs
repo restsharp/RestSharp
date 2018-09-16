@@ -191,7 +191,7 @@ namespace RestSharp.Authenticators
             return authenticator;
         }
 
-        private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
+        internal void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
         {
             var url = client.BuildUri(request)
                 .ToString();

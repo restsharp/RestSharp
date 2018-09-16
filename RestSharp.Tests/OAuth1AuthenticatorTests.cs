@@ -36,12 +36,15 @@ namespace RestSharp.Tests
             mockClient.SetupGet(x => x.DefaultParameters).Returns(new List<Parameter>());
 
             mockRequest = new Mock<RestRequest>();
+
+            mockWorkflow = new Mock<OAuthWorkflow>();
         }
 
         private OAuth1Authenticator authenticator;
 
         private Mock<RestRequest> mockRequest;
         private Mock<IRestClient> mockClient;
+        private Mock<OAuthWorkflow> mockWorkflow;
 
         [Test]
         public void Authenticate_ShouldAddAuthorizationAsTextValueToRequest_OnHttpAuthorizationHeaderHandling()
@@ -96,6 +99,27 @@ namespace RestSharp.Tests
             Assert.IsNotNull(parameters.FirstOrDefault(x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_version" && (string)x.Value == "Version" && x.ContentType == null));
             Assert.IsNotNull(parameters.FirstOrDefault(x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_nonce" && !string.IsNullOrWhiteSpace((string)x.Value) && x.ContentType == null));
             Assert.IsNotNull(parameters.FirstOrDefault(x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_timestamp" && !string.IsNullOrWhiteSpace((string)x.Value) && x.ContentType == null));
+        }
+
+        [Test]
+        public void AddOAuthData_ProtectedResource_ShouldRetainQueryParamsFromUrl()
+        {
+            authenticator.Type = OAuthType.ProtectedResource;
+
+            var uri = new Uri("https://no-query.string?queryparameter=foobartemp");
+            mockClient.Setup(x => x.BuildUri(It.IsAny<IRestRequest>())).Returns(uri);
+
+            var mockCall = mockWorkflow
+                .Setup(x => x.BuildProtectedResourceInfo(It.IsAny<string>(), It.IsAny<WebParameterCollection>(), It.IsAny<string>()))
+                .Callback<string, WebParameterCollection, string>((methodValue, webParamsValue, urlValue) =>
+                {
+                    Assert.AreEqual(uri, urlValue);
+                })
+                .Returns(new OAuthWebQueryInfo());
+
+            mockClient.SetupGet(x => x.DefaultParameters).Returns(new List<Parameter>());
+
+            authenticator.AddOAuthData(mockClient.Object, mockRequest.Object, mockWorkflow.Object);
         }
     }
 }
