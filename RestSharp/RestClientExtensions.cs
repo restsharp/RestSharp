@@ -154,51 +154,75 @@ namespace RestSharp
             return generic;
         }
 
-        public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            return client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
-        }
+        public static Task<T> GetAsync<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
 
-        public static Task<T> PostTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            return client.ExecutePostTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
-        }
+        public static Task<T> PostAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.ExecutePostTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
 
-        public static Task<T> PutTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        public static Task<T> PutAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.PUT;
 
             return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
         }
-
-        public static Task<T> HeadTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        
+        public static Task<T> HeadAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.HEAD;
 
             return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
         }
 
-        public static Task<T> OptionsTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        public static Task<T> OptionsAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.OPTIONS;
 
             return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
         }
 
-        public static Task<T> PatchTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        public static Task<T> PatchAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.PATCH;
 
             return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
         }
 
-        public static Task<T> DeleteTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        public static Task<T> DeleteAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.DELETE;
 
             return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
         }
 
+        [Obsolete("Use GetAsync")]
+        public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.GetAsync<T>(request);
+
+        [Obsolete("Use PostAsync")]
+        public static Task<T> PostTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.PostAsync<T>(request);
+
+        [Obsolete("Use PutAsync")]
+        public static Task<T> PutTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.PutAsync<T>(request);
+
+        [Obsolete("Use HeadAsync")]
+        public static Task<T> HeadTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.HeadAsync<T>(request);
+        
+        [Obsolete("Use OptionsAsync")]
+        public static Task<T> OptionsTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.OptionsAsync<T>(request);
+        
+        [Obsolete("Use PatchAsync")]
+        public static Task<T> PatchTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.PatchAsync<T>(request);
+        
+        [Obsolete("Use DeleteAsync")]
+        public static Task<T> DeleteTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+            => client.DeleteAsync<T>(request);
+        
         public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
         {
             request.Method = Method.GET;
