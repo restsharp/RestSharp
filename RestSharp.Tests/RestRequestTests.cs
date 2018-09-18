@@ -19,7 +19,7 @@ namespace RestSharp.Tests
         {
             RestRequest request = new RestRequest();
 
-            request.AddObject(new { Items = new [] { 2, 3, 4 } });
+            Assert.DoesNotThrow(() => request.AddObject(new { Items = new [] { 2, 3, 4 } }));
         }
 
         [Test]

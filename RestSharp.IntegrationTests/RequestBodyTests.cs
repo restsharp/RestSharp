@@ -236,6 +236,26 @@ namespace RestSharp.IntegrationTests
             }
         }
 
+        [Test]
+        public void Query_Parameters_With_Json_Body()
+        {
+            const Method httpMethod = Method.PUT;
+
+            using (SimpleServer.Create(BASE_URL, Handlers.Generic<RequestBodyCapturer>()))
+            {
+                var client = new RestClient(BASE_URL);
+                var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod)
+                    .AddJsonBody(new {displayName = "Display Name"})
+                    .AddQueryParameter("key", "value");
+
+                client.Execute(request);
+
+                Assert.Equals(RequestBodyCapturer.CapturedUrl, "http://localhost:8888/Capture?key=value");
+                Assert.Equals(RequestBodyCapturer.CapturedContentType, "application/json");
+                Assert.Equals(RequestBodyCapturer.CapturedEntityBody, "{\"displayName\":\"Display Name\"}");
+            }
+        }
+        
         private static void AssertHasNoRequestBody()
         {
             Assert.Null(RequestBodyCapturer.CapturedContentType);
@@ -260,6 +280,8 @@ namespace RestSharp.IntegrationTests
 
             public static string CapturedEntityBody { get; set; }
 
+            public static Uri CapturedUrl { get; set; }
+            
             public static void Capture(HttpListenerContext context)
             {
                 HttpListenerRequest request = context.Request;
@@ -267,8 +289,9 @@ namespace RestSharp.IntegrationTests
                 CapturedContentType = request.ContentType;
                 CapturedHasEntityBody = request.HasEntityBody;
                 CapturedEntityBody = StreamToString(request.InputStream);
+                CapturedUrl = request.Url;
             }
-
+            
             private static string StreamToString(Stream stream)
             {
                 StreamReader streamReader = new StreamReader(stream);
