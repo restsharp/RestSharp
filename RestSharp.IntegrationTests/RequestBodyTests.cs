@@ -250,9 +250,9 @@ namespace RestSharp.IntegrationTests
 
                 client.Execute(request);
 
-                Assert.Equals(RequestBodyCapturer.CapturedUrl, "http://localhost:8888/Capture?key=value");
-                Assert.Equals(RequestBodyCapturer.CapturedContentType, "application/json");
-                Assert.Equals(RequestBodyCapturer.CapturedEntityBody, "{\"displayName\":\"Display Name\"}");
+                Assert.AreEqual("http://localhost:8888/Capture?key=value", RequestBodyCapturer.CapturedUrl);
+                Assert.AreEqual("application/json", RequestBodyCapturer.CapturedContentType);
+                Assert.AreEqual("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
             }
         }
         
