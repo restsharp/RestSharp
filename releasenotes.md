@@ -1,5 +1,13 @@
 # RestSharp Release Notes
 
+# 106.4.0
+
+* Added the XML documentation file to the NuGet package
+* Fixed the issue with `AddBody` overrides the XML namespace with an empty string
+* Fixed the issue when combining query parameters and JSON body caused an incorrect content type
+* Marked `MethodTaskAsync<T>` extensions as obsolete (where `Method` is `Get`, `Post`, etc)
+* Added new extensions for `MethodAsync<T>` (where `Method` is the same as above) that will return the result or throw an exception. Obsolete methods still don't throw and return an empty instance.
+
 # 106.1.0
 
 * Fixed ignoring the DeserializeAsAttribute for list properties
