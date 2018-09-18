@@ -441,6 +441,7 @@ namespace RestSharp
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
             http.ResponseWriter = request.ResponseWriter;
+            http.AdvancedResponseWriter = request.AdvancedResponseWriter;
             http.CookieContainer = CookieContainer;
             http.AutomaticDecompression = AutomaticDecompression;
             http.WebRequestConfigurator = WebRequestConfigurator;

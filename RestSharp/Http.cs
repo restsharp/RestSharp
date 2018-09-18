@@ -113,7 +113,13 @@ namespace RestSharp
         public CookieContainer CookieContainer { get; set; }
 
         /// <summary>
-        ///     The method to use to write the response instead of reading into RawBytes
+        ///     The delegate to use to write the response instead of reading into RawBytes
+        ///     Here you can also check the request details
+        /// </summary>
+        public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
+        
+        /// <summary>
+        ///     The delegate to use to write the response instead of reading into RawBytes
         /// </summary>
         public Action<Stream> ResponseWriter { get; set; }
 
@@ -279,7 +285,7 @@ namespace RestSharp
 
         private static string GetMultipartFooter()
         {
-            return string.Format("--{0}--{1}", FORM_BOUNDARY, LINE_BREAK);
+            return $"--{FORM_BOUNDARY}--{LINE_BREAK}";
         }
 
         // handle restricted headers the .NET way - thanks @dimebrain!
@@ -432,6 +438,8 @@ namespace RestSharp
                 response.RawBytes = webResponseStream.ReadAsBytes();
             else
                 ResponseWriter(webResponseStream);
+
+            AdvancedResponseWriter?.Invoke(webResponseStream, response);
         }
 
         private static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");

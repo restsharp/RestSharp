@@ -138,6 +138,11 @@ namespace RestSharp
         public Action<Stream> ResponseWriter { get; set; }
 
         /// <summary>
+        /// Set this to handle the response stream yourself, based on the response details
+        /// </summary>
+        public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
+        
+        /// <summary>
         ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
         ///     running)
         ///     will be sent along to the server. The default is false.

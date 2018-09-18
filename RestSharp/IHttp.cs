@@ -31,6 +31,8 @@ namespace RestSharp
     public interface IHttp
     {
         Action<Stream> ResponseWriter { get; set; }
+        
+        Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 
         CookieContainer CookieContainer { get; set; }
 

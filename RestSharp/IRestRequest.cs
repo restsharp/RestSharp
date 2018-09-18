@@ -44,6 +44,11 @@ namespace RestSharp
         ISerializer XmlSerializer { get; set; }
 
         /// <summary>
+        /// Set this to handle the response stream yourself, based on the response details
+        /// </summary>
+        Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
+        
+        /// <summary>
         /// Set this to write response to Stream rather than reading into memory.
         /// </summary>
         Action<Stream> ResponseWriter { get; set; }
