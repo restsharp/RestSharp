@@ -288,7 +288,13 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddBody(object obj)
         {
-            return AddBody(obj, "");
+            var xmlNamespace = "";
+            if (!string.IsNullOrWhiteSpace(XmlNamespace))
+                xmlNamespace = XmlNamespace;
+            else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
+                xmlNamespace = XmlSerializer.Namespace;
+            
+            return AddBody(obj, xmlNamespace);
         }
 
         /// <summary>
