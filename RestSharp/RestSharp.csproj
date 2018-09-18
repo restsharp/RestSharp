@@ -17,11 +17,6 @@
     <UpdateVersionProperties>true</UpdateVersionProperties>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta*">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
   <ItemGroup>

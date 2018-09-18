@@ -325,25 +325,25 @@ namespace RestSharp
             return querystring.ToString();
         }
 
-        private void PreparePostBody(HttpWebRequest webRequest)
+        private void PreparePostBody(WebRequest webRequest)
         {
-            bool needsContentType = String.IsNullOrEmpty(webRequest.ContentType);
+            bool needsContentType = string.IsNullOrEmpty(webRequest.ContentType);
 
             if (HasFiles || AlwaysMultipartFormData)
             {
                 if (needsContentType)
                     webRequest.ContentType = GetMultipartFormContentType();
             }
+            else if (HasBody)
+            {
+                if (needsContentType)
+                    webRequest.ContentType = RequestContentType;
+            }
             else if (HasParameters)
             {
                 if (needsContentType)
                     webRequest.ContentType = "application/x-www-form-urlencoded";
                 RequestBody = EncodeParameters();
-            }
-            else if (HasBody)
-            {
-                if (needsContentType)
-                    webRequest.ContentType = RequestContentType;
             }
         }
 
