@@ -22,12 +22,6 @@ namespace RestSharp.Serializers
     {
         string Serialize(object obj);
 
-        string RootElement { get; set; }
-
-        string Namespace { get; set; }
-
-        string DateFormat { get; set; }
-
         string ContentType { get; set; }
     }
 }

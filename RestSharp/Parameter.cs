@@ -23,6 +23,23 @@ namespace RestSharp
     /// </summary>
     public class Parameter
     {
+        public Parameter()
+        {
+
+        }
+
+        public Parameter(string name, object value, ParameterType type) : this()
+        {
+            Name = name;
+            Value = value;
+            Type = type;
+        }
+
+        public Parameter(string name, object value, string contentType, ParameterType type) :this(name, value, type)
+        { 
+            ContentType = contentType;
+        }
+
         /// <summary>
         /// Name of the parameter
         /// </summary>
@@ -47,9 +64,7 @@ namespace RestSharp
         /// Return a human-readable representation of this parameter
         /// </summary>
         /// <returns>String</returns>
-        public override string ToString()
-        {
-            return string.Format("{0}={1}", this.Name, this.Value);
-        }
+        public override string ToString() 
+            => string.Format("{0}={1}", this.Name, this.Value);
     }
 }

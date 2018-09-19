@@ -1,9 +1,10 @@
 ﻿
 namespace RestSharp.Serializers
 {
+    using SimpleJson;
     /// <summary>
     /// Default JSON serializer for request bodies
-    /// Doesn't currently use the SerializeAs attribute, defers to Newtonsoft's attributes
+    /// Doesn't currently use the SerializeAs attribute, defers to SimpleJson's attributes
     /// </summary>
     public class JsonSerializer : ISerializer
     {
@@ -20,25 +21,7 @@ namespace RestSharp.Serializers
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
-        public string Serialize(object obj)
-        {
-            return SimpleJson.SimpleJson.SerializeObject(obj);
-        }
-
-        /// <summary>
-        /// Unused for JSON Serialization
-        /// </summary>
-        public string DateFormat { get; set; }
-
-        /// <summary>
-        /// Unused for JSON Serialization
-        /// </summary>
-        public string RootElement { get; set; }
-
-        /// <summary>
-        /// Unused for JSON Serialization
-        /// </summary>
-        public string Namespace { get; set; }
+        public string Serialize(object obj) => SimpleJson.SerializeObject(obj);
 
         /// <summary>
         /// Content type for serialized content

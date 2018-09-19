@@ -32,9 +32,9 @@ namespace RestSharp.Serializers
     {
         public SerializeAsAttribute()
         {
-            this.NameStyle = NameStyle.AsIs;
-            this.Index = int.MaxValue;
-            this.Culture = CultureInfo.InvariantCulture;
+            NameStyle = NameStyle.AsIs;
+            Index = int.MaxValue;
+            Culture = CultureInfo.InvariantCulture;
         }
 
         /// <summary>
@@ -74,15 +74,15 @@ namespace RestSharp.Serializers
         /// <returns>String</returns>
         public string TransformName(string input)
         {
-            string name = this.Name ?? input;
+            string name = Name ?? input;
 
-            switch (this.NameStyle)
+            switch (NameStyle)
             {
                 case NameStyle.CamelCase:
-                    return name.ToCamelCase(this.Culture);
+                    return name.ToCamelCase(Culture);
 
                 case NameStyle.PascalCase:
-                    return name.ToPascalCase(this.Culture);
+                    return name.ToPascalCase(Culture);
 
                 case NameStyle.LowerCase:
                     return name.ToLower();
