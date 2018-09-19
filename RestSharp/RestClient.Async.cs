@@ -31,11 +31,11 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
+            Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod)
         {
-            var method = Enum.GetName(typeof(Method), request.Method);
+            var method = Enum.GetName(typeof(Method), httpMethod);
 
-            switch (request.Method)
+            switch (httpMethod)
             {
                 case Method.COPY:
                 case Method.MERGE:
@@ -50,16 +50,23 @@ namespace RestSharp
         }
 
         /// <summary>
+        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
+        public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
+            Action<IRestResponse, RestRequestAsyncHandle> callback)
+            => ExecuteAsync(request, callback, request.Method);
+
+        /// <summary>
         ///     Executes a GET-style request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
         public virtual RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
-        {
-            return ExecuteAsync(request, callback, httpMethod, DoAsGetAsync);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod) 
+            => ExecuteAsync(request, callback, httpMethod, DoAsGetAsync);
 
         /// <summary>
         ///     Executes a POST-style request and callback asynchronously, authenticating if needed
@@ -80,12 +87,28 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
+        /// <param name="httpMethod">Override the request http method</param>
         public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod)
         {
-            return ExecuteAsync(request,
-                (response, asyncHandle) => DeserializeResponse(request, callback, response, asyncHandle));
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+            if (callback == null)
+                throw new ArgumentNullException(nameof(callback));
+
+            request.Method = httpMethod;
+            return ExecuteAsync(request, callback);
         }
+            
+        /// <summary>
+        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="callback">Callback function to be executed upon completion</param>
+        public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) 
+            => ExecuteAsync(request, (response, asyncHandle) => DeserializeResponse(request, callback, response, asyncHandle));
 
         /// <summary>
         ///     Executes a GET-style request and callback asynchronously, authenticating if needed
@@ -120,10 +143,8 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request)
-        {
-            return ExecuteGetTaskAsync<T>(request, CancellationToken.None);
-        }
+        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request) 
+            => ExecuteGetTaskAsync<T>(request, CancellationToken.None);
 
         /// <summary>
         ///     Executes a GET-style request asynchronously, authenticating if needed
@@ -131,25 +152,16 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            request.Method = Method.GET;
-
-            return ExecuteTaskAsync<T>(request, token);
-        }
+        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token) 
+            => ExecuteTaskAsync<T>(request, token, Method.GET);
 
         /// <summary>
         ///     Executes a POST-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request)
-        {
-            return ExecutePostTaskAsync<T>(request, CancellationToken.None);
-        }
+        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request) 
+            => ExecutePostTaskAsync<T>(request, CancellationToken.None);
 
         /// <summary>
         ///     Executes a POST-style request asynchronously, authenticating if needed
@@ -157,26 +169,43 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            request.Method = Method.POST;
-
-            return ExecuteTaskAsync<T>(request, token);
-        }
+        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token) 
+            => ExecuteTaskAsync<T>(request, token, Method.POST);
 
         /// <summary>
         ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request)
-        {
-            return ExecuteTaskAsync<T>(request, CancellationToken.None);
-        }
+        /// <param name="httpMethod">Override the request method</param>
+        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod) 
+            => ExecuteTaskAsync<T>(request, CancellationToken.None, httpMethod);
 
+        /// <summary>
+        ///     Executes the request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request) 
+            => ExecuteTaskAsync<T>(request, CancellationToken.None);
+
+        /// <summary>
+        ///     Executes the request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        /// <param name="httpMethod">Override the request method</param>
+        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token,
+            Method httpMethod)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+            
+            request.Method = httpMethod;
+            return ExecuteTaskAsync<T>(request, token);
+        }
+        
         /// <summary>
         ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
@@ -186,7 +215,7 @@ namespace RestSharp
         public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             var taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
 
@@ -225,59 +254,55 @@ namespace RestSharp
         ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
-        {
-            return ExecuteTaskAsync(request, CancellationToken.None);
-        }
+        public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request) 
+            => ExecuteTaskAsync(request, CancellationToken.None);
 
         /// <summary>
         ///     Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request)
-        {
-            return ExecuteGetTaskAsync(request, CancellationToken.None);
-        }
+        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request) 
+            => ExecuteGetTaskAsync(request, CancellationToken.None);
 
         /// <summary>
         ///     Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            request.Method = Method.GET;
-
-            return ExecuteTaskAsync(request, token);
-        }
+        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token) 
+            => ExecuteTaskAsync(request, token, Method.GET);
 
         /// <summary>
         ///     Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request)
-        {
-            return ExecutePostTaskAsync(request, CancellationToken.None);
-        }
+        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request) 
+            => ExecutePostTaskAsync(request, CancellationToken.None);
 
         /// <summary>
         ///     Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
+        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token) 
+            => ExecuteTaskAsync(request, token, Method.POST);
+
+        /// <summary>
+        ///     Executes the request asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        /// <param name="httpMethod">Override the request method</param>
+        public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token,
+            Method httpMethod)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
-            request.Method = Method.POST;
-
+            request.Method = httpMethod;
             return ExecuteTaskAsync(request, token);
         }
-
+        
         /// <summary>
         ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
@@ -286,7 +311,7 @@ namespace RestSharp
         public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
 
@@ -345,15 +370,11 @@ namespace RestSharp
             return asyncHandle;
         }
 
-        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method)
-        {
-            return http.AsGetAsync(responseCb, method);
-        }
+        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method) 
+            => http.AsGetAsync(responseCb, method);
 
-        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method)
-        {
-            return http.AsPostAsync(responseCb, method);
-        }
+        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method) 
+            => http.AsPostAsync(responseCb, method);
 
         private static void ProcessResponse(IRestRequest request, HttpResponse httpResponse,
             RestRequestAsyncHandle asyncHandle, Action<IRestResponse, RestRequestAsyncHandle> callback)

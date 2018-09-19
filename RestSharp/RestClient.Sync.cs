@@ -34,6 +34,20 @@ namespace RestSharp
         ///     Executes the request and returns a response, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
+        /// <param name="httpMethod">Override the http method in the request</param>
+        /// <returns>RestResponse</returns>
+        public virtual IRestResponse Execute(IRestRequest request, Method httpMethod)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            return Execute(request);
+        }
+        
+        /// <summary>
+        ///     Executes the request and returns a response, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
         /// <returns>RestResponse</returns>
         public virtual IRestResponse Execute(IRestRequest request)
         {
@@ -65,26 +79,29 @@ namespace RestSharp
             return Execute(request, httpMethod, DoExecuteAsPost);
         }
 
+        public virtual IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod) where T : new()
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            request.Method = httpMethod;
+            return Execute<T>(request);
+        }
+        
         /// <summary>
         ///     Executes the specified request and deserializes the response content using the appropriate content handler
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to execute</param>
         /// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
-        public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
-        {
-            return Deserialize<T>(request, Execute(request));
-        }
+        public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new() 
+            => Deserialize<T>(request, Execute(request));
 
-        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
-        {
-            return Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
-        }
+        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new() 
+            => Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
 
-        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
-        {
-            return Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
-        }
+        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new() 
+            => Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
 
         private IRestResponse Execute(IRestRequest request, string httpMethod,
             Func<IHttp, string, HttpResponse> getResponse)

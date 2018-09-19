@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace RestSharp
@@ -13,10 +14,8 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         public static RestRequestAsyncHandle ExecuteAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse> callback)
-        {
-            return client.ExecuteAsync(request, (response, handle) => callback(response));
-        }
+            Action<IRestResponse> callback) 
+            => client.ExecuteAsync(request, (response, handle) => callback(response));
 
         /// <summary>
         /// Executes the request and callback asynchronously, authenticating if needed
@@ -26,127 +25,69 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle</param>
         public static RestRequestAsyncHandle ExecuteAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>> callback) where T : new()
-        {
-            return client.ExecuteAsync<T>(request, (response, asyncHandle) => callback(response));
-        }
+            Action<IRestResponse<T>> callback) where T : new() 
+            => client.ExecuteAsync<T>(request, (response, asyncHandle) => callback(response));
 
         public static RestRequestAsyncHandle GetAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.GET;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.GET);
 
         public static RestRequestAsyncHandle PostAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.POST;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.POST);
 
         public static RestRequestAsyncHandle PutAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.PUT;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.PUT);
 
         public static RestRequestAsyncHandle HeadAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.HEAD;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.HEAD);
 
         public static RestRequestAsyncHandle OptionsAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.OPTIONS;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.OPTIONS);
 
         public static RestRequestAsyncHandle PatchAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.PATCH;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.PATCH);
 
         public static RestRequestAsyncHandle DeleteAsync<T>(this IRestClient client, IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new()
-        {
-            request.Method = Method.DELETE;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback) where T : new() 
+            => client.ExecuteAsync(request, callback, Method.DELETE);
 
         public static RestRequestAsyncHandle GetAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.GET;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.GET);
 
         public static RestRequestAsyncHandle PostAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.POST;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.POST);
 
         public static RestRequestAsyncHandle PutAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.PUT;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.PUT);
 
         public static RestRequestAsyncHandle HeadAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.HEAD;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.HEAD);
 
         public static RestRequestAsyncHandle OptionsAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.OPTIONS;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.OPTIONS);
 
         public static RestRequestAsyncHandle PatchAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.PATCH;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.PATCH);
 
         public static RestRequestAsyncHandle DeleteAsync(this IRestClient client, IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            request.Method = Method.DELETE;
-
-            return client.ExecuteAsync(request, callback);
-        }
+            Action<IRestResponse, RestRequestAsyncHandle> callback) 
+            => client.ExecuteAsync(request, callback, Method.DELETE);
 
         public static RestResponse<dynamic> ExecuteDynamic(this IRestClient client, IRestRequest request)
         {
-            IRestResponse<dynamic> response = client.Execute<dynamic>(request);
-            RestResponse<dynamic> generic = (RestResponse<dynamic>)response;
+            var response = client.Execute<dynamic>(request);
+            var generic = (RestResponse<dynamic>)response;
             dynamic content = SimpleJson.SimpleJson.DeserializeObject(response.Content);
 
             generic.Data = content;
@@ -154,172 +95,173 @@ namespace RestSharp
             return generic;
         }
 
-        public static Task<T> GetAsync<T>(this IRestClient client, IRestRequest request) where T : new() 
-            => client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
-
-        public static Task<T> PostAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.ExecutePostTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
-
-        public static Task<T> PutAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        /// <summary>
+        /// Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> GetAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
-            request.Method = Method.PUT;
-
-            return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
-        }
-        
-        public static Task<T> HeadAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.HEAD;
-
-            return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+            var response = await client.ExecuteGetTaskAsync<T>(request);
+            ThrowIfError(response);
+            return response.Data;
         }
 
-        public static Task<T> OptionsAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        /// <summary>
+        /// Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> PostAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
-            request.Method = Method.OPTIONS;
-
-            return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+            var response = await client.ExecutePostTaskAsync<T>(request);
+            ThrowIfError(response);
+            return response.Data;
         }
 
-        public static Task<T> PatchAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        /// <summary>
+        /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> PutAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
-            request.Method = Method.PATCH;
-
-            return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+            var response = await client.ExecuteTaskAsync<T>(request, Method.PUT);
+            ThrowIfError(response);
+            return response.Data;
         }
 
-        public static Task<T> DeleteAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        /// <summary>
+        /// Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> HeadAsync<T>(this IRestClient client, IRestRequest request) where T : new()
         {
-            request.Method = Method.DELETE;
+            var response = await client.ExecuteTaskAsync<T>(request, Method.HEAD);
+            ThrowIfError(response);
+            return response.Data;
+        }
 
-            return client.ExecuteTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
+        /// <summary>
+        /// Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> OptionsAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        {
+            var response = await client.ExecuteTaskAsync<T>(request, Method.OPTIONS);
+            ThrowIfError(response);
+            return response.Data;
+        }
+
+        /// <summary>
+        /// Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> PatchAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        {
+            var response = await client.ExecuteTaskAsync<T>(request, Method.PATCH);
+            ThrowIfError(response);
+            return response.Data;
+        }
+
+        /// <summary>
+        /// Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
+        /// </summary>
+        /// <param name="client">RestClient instance</param>
+        /// <param name="request">The request</param>
+        /// <typeparam name="T">Expected result type</typeparam>
+        /// <returns></returns>
+        public static async Task<T> DeleteAsync<T>(this IRestClient client, IRestRequest request) where T : new()
+        {
+            var response = await client.ExecuteTaskAsync<T>(request, Method.DELETE);
+            ThrowIfError(response);
+            return response.Data;
         }
 
         [Obsolete("Use GetAsync")]
         public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.GetAsync<T>(request);
+            => client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
 
         [Obsolete("Use PostAsync")]
         public static Task<T> PostTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new() 
-            => client.PostAsync<T>(request);
+            => client.ExecutePostTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
 
         [Obsolete("Use PutAsync")]
         public static Task<T> PutTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.PutAsync<T>(request);
+            => client.ExecuteTaskAsync<T>(request, Method.PUT).ContinueWith(x => x.Result.Data);
 
         [Obsolete("Use HeadAsync")]
         public static Task<T> HeadTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.HeadAsync<T>(request);
+            => client.ExecuteTaskAsync<T>(request, Method.HEAD).ContinueWith(x => x.Result.Data);
         
         [Obsolete("Use OptionsAsync")]
         public static Task<T> OptionsTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.OptionsAsync<T>(request);
+            => client.ExecuteTaskAsync<T>(request, Method.OPTIONS).ContinueWith(x => x.Result.Data);
         
         [Obsolete("Use PatchAsync")]
         public static Task<T> PatchTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.PatchAsync<T>(request);
+            => client.ExecuteTaskAsync<T>(request, Method.PATCH).ContinueWith(x => x.Result.Data);
         
         [Obsolete("Use DeleteAsync")]
         public static Task<T> DeleteTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
-            => client.DeleteAsync<T>(request);
+            => client.ExecuteTaskAsync<T>(request, Method.DELETE).ContinueWith(x => x.Result.Data);
         
-        public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.GET;
+        public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.GET);
 
-            return client.Execute<T>(request);
-        }
+        public static IRestResponse<T> Post<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.POST);
 
-        public static IRestResponse<T> Post<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.POST;
+        public static IRestResponse<T> Put<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.PUT);
 
-            return client.Execute<T>(request);
-        }
+        public static IRestResponse<T> Head<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.HEAD);
 
-        public static IRestResponse<T> Put<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.PUT;
+        public static IRestResponse<T> Options<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.OPTIONS);
 
-            return client.Execute<T>(request);
-        }
+        public static IRestResponse<T> Patch<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.PATCH);
 
-        public static IRestResponse<T> Head<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.HEAD;
+        public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request) where T : new() 
+            => client.Execute<T>(request, Method.DELETE);
 
-            return client.Execute<T>(request);
-        }
+        public static IRestResponse Get(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.GET);
 
-        public static IRestResponse<T> Options<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.OPTIONS;
+        public static IRestResponse Post(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.PUT);
 
-            return client.Execute<T>(request);
-        }
+        public static IRestResponse Put(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.PUT);
 
-        public static IRestResponse<T> Patch<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.PATCH;
+        public static IRestResponse Head(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.HEAD);
 
-            return client.Execute<T>(request);
-        }
+        public static IRestResponse Options(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.OPTIONS);
 
-        public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request) where T : new()
-        {
-            request.Method = Method.DELETE;
+        public static IRestResponse Patch(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.PATCH);
 
-            return client.Execute<T>(request);
-        }
-
-        public static IRestResponse Get(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.GET;
-
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Post(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.POST;
-
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Put(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.PUT;
-
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Head(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.HEAD;
-
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Options(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.OPTIONS;
-
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Patch(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.PATCH;
-
-            return client.Execute(request);
-        }
-
-        public static IRestResponse Delete(this IRestClient client, IRestRequest request)
-        {
-            request.Method = Method.DELETE;
-
-            return client.Execute(request);
-        }
+        public static IRestResponse Delete(this IRestClient client, IRestRequest request) 
+            => client.Execute(request, Method.DELETE);
 
         /// <summary>
         /// Add a parameter to use on every request made with this client instance
@@ -418,6 +360,32 @@ namespace RestSharp
         public static void AddDefaultUrlSegment(this IRestClient restClient, string name, string value)
         {
             restClient.AddDefaultParameter(name, value, ParameterType.UrlSegment);
+        }
+
+        private static void ThrowIfError(IRestResponse response)
+        {
+            Exception exception;
+            switch (response.ResponseStatus)
+            {
+                case ResponseStatus.Aborted:
+                    exception = new WebException("Request aborted");
+                    break;
+                case ResponseStatus.Error:
+                    exception = response.ErrorException;
+                    break;
+                case ResponseStatus.TimedOut:
+                    exception = new TimeoutException("Request timed out");
+                    break;
+                case ResponseStatus.None:
+                case ResponseStatus.Completed:
+                    exception = null;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            if (exception != null)
+                throw exception;
         }
     }
 }

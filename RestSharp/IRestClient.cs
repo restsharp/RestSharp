@@ -68,12 +68,20 @@ namespace RestSharp
         RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);
 
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
+        
+        RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod);
+
+        RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod);
 
         IRestResponse<T> Deserialize<T>(IRestResponse response);
 
         IRestResponse Execute(IRestRequest request);
 
+        IRestResponse Execute(IRestRequest request, Method httpMethod);
+
         IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
+
+        IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod) where T : new();
 
         byte[] DownloadData(IRestRequest request);
         
@@ -183,6 +191,14 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
+        /// <param name="httpMethod">Override the request method</param>
+        Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod);
+        
+        /// <summary>
+        /// Executes the request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request);
 
         /// <summary>
@@ -221,6 +237,14 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token);
+
+        /// <summary>
+        /// Executes the request and callback asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="token">The cancellation token</param>
+        /// <param name="httpMethod">Override the request method</param>
+        Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token, Method httpMethod);
 
         /// <summary>
         /// Executes the request asynchronously, authenticating if needed
