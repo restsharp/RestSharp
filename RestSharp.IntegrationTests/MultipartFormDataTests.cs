@@ -31,6 +31,12 @@ namespace RestSharp.IntegrationTests
             "This is a test file for RestSharp." + Environment.NewLine +
             "-------------------------------28947758029299--" + Environment.NewLine;
 
+        private readonly string _expectedDefaultMultipartContentType = 
+            "multipart/form-data; boundary=-----------------------------28947758029299";
+
+        private readonly string _expectedCustomMultipartContentType = 
+            "multipart/vnd.resteasy+form-data; boundary=-----------------------------28947758029299";
+
         private SimpleServer _server;
         private RestClient _client;
 
@@ -39,7 +45,7 @@ namespace RestSharp.IntegrationTests
         [SetUp]
         public void SetupServer()
         {
-            _server = SimpleServer.Create(BaseUrl, EchoHandler);
+            _server = SimpleServer.Create(BaseUrl, RequestHandler.Handle);
             _client = new RestClient(BaseUrl);
         }
 
@@ -171,13 +177,46 @@ namespace RestSharp.IntegrationTests
             Assert.Null(syncResponse.ErrorException);
         }
 
-        private static void EchoHandler(HttpListenerContext obj)
-        {
-            obj.Response.StatusCode = 200;
+        [Test]
+        public void MultipartFormData_HasDefaultContentType() {
+            var request = new RestRequest("/", Method.POST);
 
-            StreamReader streamReader = new StreamReader(obj.Request.InputStream);
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            request.AddFile("fileName", path);
 
-            obj.Response.OutputStream.WriteStringUtf8(streamReader.ReadToEnd());
+            request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+
+            IRestResponse response = _client.Execute(request);
+
+            Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
+            Assert.AreEqual(_expectedDefaultMultipartContentType, RequestHandler.CapturedContentType);
+        }
+
+        [Test]
+        public void MultipartFormData_WithCustomContentType() {
+            var request = new RestRequest("/", Method.POST);
+
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            string customContentType = "multipart/vnd.resteasy+form-data";
+            request.AddHeader("Content-Type", customContentType);
+
+            request.AddFile("fileName", path);
+
+            request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+
+            IRestResponse response = _client.Execute(request);
+
+            Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
+            Assert.AreEqual(_expectedCustomMultipartContentType, RequestHandler.CapturedContentType);
+        }
+
+        private static class RequestHandler {
+            public static string CapturedContentType { get; set; }
+
+            public static void Handle(HttpListenerContext context) {
+                CapturedContentType = context.Request.ContentType;
+                Handlers.Echo(context);
+            }
         }
 
         private static void AddParameters(IRestRequest request)
