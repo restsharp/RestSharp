@@ -339,6 +339,8 @@ namespace RestSharp
             {
                 if (needsContentType)
                     webRequest.ContentType = GetMultipartFormContentType();
+                else if (!webRequest.ContentType.Contains("boundary"))
+                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FORM_BOUNDARY; 
             }
             else if (HasBody)
             {
