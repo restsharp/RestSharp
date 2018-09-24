@@ -246,7 +246,7 @@ namespace RestSharp
             => client.Execute(request, Method.GET);
 
         public static IRestResponse Post(this IRestClient client, IRestRequest request) 
-            => client.Execute(request, Method.PUT);
+            => client.Execute(request, Method.POST);
 
         public static IRestResponse Put(this IRestClient client, IRestRequest request) 
             => client.Execute(request, Method.PUT);
