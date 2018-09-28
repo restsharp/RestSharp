@@ -40,6 +40,7 @@ namespace RestSharp
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
+            request.Method = httpMethod;
 
             return Execute(request);
         }
