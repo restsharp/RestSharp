@@ -1,5 +1,9 @@
 # RestSharp Release Notes
 
+# 106.4.1
+* Fixed the wrong HTTP method used in `Post` extension method
+* Custom content type for multipart requests
+
 # 106.4.0
 
 * Added the XML documentation file to the NuGet package
