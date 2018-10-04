@@ -581,7 +581,15 @@ namespace RestSharp
             }
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
-            http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
+            try
+            {
+                http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
+            }
+            catch (PlatformNotSupportedException ex)
+            {
+                http.Proxy = null;
+            }
+
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             return http;
