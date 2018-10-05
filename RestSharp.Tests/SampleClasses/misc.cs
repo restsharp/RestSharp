@@ -333,4 +333,9 @@ namespace RestSharp.Tests.SampleClasses
         [DeserializeAs(Content = true)]
         public string Text { get; set; }
     }
+
+    public class DateTimeResponse
+    {
+        public DateTime CreatedOn { get; set; }
+    }
 }

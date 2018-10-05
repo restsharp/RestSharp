@@ -143,13 +143,14 @@ namespace RestSharp.Extensions
                 "yyyy-MM-dd HH:mm:ssZ",
                 "yyyy-MM-ddTHH:mm:ss",
                 "yyyy-MM-ddTHH:mm:sszzzzzz",
+                "yyyy-MM-ddTHH:mm:ss.fffZ",
                 "M/d/yyyy h:mm:ss tt" // default format for invariant culture
             };
 
             if (DateTime.TryParseExact(input, formats, culture,
                 DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var date))
                 return date;
-
+            
             return DateTime.TryParse(input, culture, DateTimeStyles.None, out date) ? date : default(DateTime);
         }
 
