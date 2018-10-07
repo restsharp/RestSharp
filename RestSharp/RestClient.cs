@@ -57,7 +57,8 @@ namespace RestSharp
 
             // TODO: Make this configurable
             // register default handlers
-            AddHandler(new JsonDeserializer(), "application/json", "text/json", "text/x-json", "text/javascript", "*+json");
+            AddHandler(new JsonDeserializer(), "application/json", "text/json", "text/x-json", "text/javascript",
+                "*+json");
             AddHandler(new XmlDeserializer(), "application/xml", "text/xml", "*+xml", "*");
             FollowRedirects = true;
         }
@@ -67,10 +68,7 @@ namespace RestSharp
         ///     Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
-        public RestClient(Uri baseUrl) : this()
-        {
-            BaseUrl = baseUrl;
-        }
+        public RestClient(Uri baseUrl) : this() => BaseUrl = baseUrl;
 
         /// <inheritdoc />
         /// <summary>
@@ -223,11 +221,16 @@ namespace RestSharp
             this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
         }
 
+        /// <summary>
+        ///     Registers a content handler to process response content
+        /// </summary>
+        /// <param name="contentTypes">A list of MIME content types of the response content</param>
+        /// <param name="deserializer">Deserializer to use to process content</param>
         public void AddHandler(IDeserializer deserializer, params string[] contentTypes)
         {
-            for (var i = 0; i < contentTypes.Length; i++)
+            foreach (var contentType in contentTypes)
             {
-                AddHandler(contentTypes[i], deserializer);
+                AddHandler(contentType, deserializer);
             }
         }
 
@@ -252,7 +255,7 @@ namespace RestSharp
             this.RemoveDefaultParameter("Accept");
         }
 
-        public IRestResponse<T> Deserialize<T>(IRestResponse response) 
+        public IRestResponse<T> Deserialize<T>(IRestResponse response)
             => Deserialize<T>(response.Request, response);
 
         public void ConfigureWebRequest(Action<HttpWebRequest> configurator) =>
@@ -288,7 +291,8 @@ namespace RestSharp
 
             var nullValuedParams = request.Parameters
                 .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
-                .Select(p => p.Name);
+                .Select(p => p.Name)
+                .ToArray();
 
             if (nullValuedParams.Any())
             {
@@ -348,7 +352,7 @@ namespace RestSharp
 
         private string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
         {
-            var parameters = GetQueryStringParameters(request);
+            var parameters = GetQueryStringParameters(request).ToArray();
 
             if (!parameters.Any())
             {
@@ -509,35 +513,23 @@ namespace RestSharp
             if (!string.IsNullOrEmpty(ConnectionGroupName))
                 http.ConnectionGroupName = ConnectionGroupName;
 
-            var headers = from p in request.Parameters
-                          where p.Type == ParameterType.HttpHeader
-                          select new HttpHeader
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+            var headers = request.Parameters
+                .Where(p => p.Type == ParameterType.HttpHeader)
+                .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)});
 
             foreach (var header in headers)
                 http.Headers.Add(header);
 
-            var cookies = from p in request.Parameters
-                          where p.Type == ParameterType.Cookie
-                          select new HttpCookie
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+            var cookies = request.Parameters
+                .Where(p => p.Type == ParameterType.Cookie)
+                .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)});
 
             foreach (var cookie in cookies)
                 http.Cookies.Add(cookie);
 
-            var @params = from p in request.Parameters
-                          where p.Type == ParameterType.GetOrPost && p.Value != null
-                          select new HttpParameter
-                          {
-                              Name = p.Name,
-                              Value = Convert.ToString(p.Value)
-                          };
+            var @params = request.Parameters
+                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
+                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)});
 
             foreach (var parameter in @params)
                 http.Parameters.Add(parameter);
@@ -585,7 +577,7 @@ namespace RestSharp
             {
                 http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
             }
-            catch (PlatformNotSupportedException ex)
+            catch (PlatformNotSupportedException)
             {
                 http.Proxy = null;
             }

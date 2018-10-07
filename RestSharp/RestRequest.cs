@@ -61,51 +61,15 @@ namespace RestSharp
             Method = method;
         }
 
-        /// <summary>
-        ///     Sets Resource property
-        /// </summary>
-        /// <param name="resource">Resource to use for this request</param>
-        public RestRequest(string resource) : this(resource, Method.GET)
-        {
-        }
-
-        /// <summary>
-        ///     Sets Resource and Method properties
-        /// </summary>
-        /// <param name="resource">Resource to use for this request</param>
-        /// <param name="method">Method to use for this request</param>
-        public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml)
-        {
-
-        }
-
-        public RestRequest(string resource, Method method, DataFormat dataFormat) : this()
+        public RestRequest(string resource, Method method = Method.GET, DataFormat dataFormat = DataFormat.Xml) : this()
         {
             Resource = resource;
             Method = method;
             RequestFormat = dataFormat;
         }
 
-        /// <summary>
-        ///     Sets Resource property
-        /// </summary>
-        /// <param name="resource">Resource to use for this request</param>
-        public RestRequest(Uri resource) : this(resource, Method.GET)
-        {
-        }
-
-        /// <summary>
-        ///     Sets Resource and Method properties
-        /// </summary>
-        /// <param name="resource">Resource to use for this request</param>
-        /// <param name="method">Method to use for this request</param>
-        public RestRequest(Uri resource, Method method)
-            : this(resource, method, DataFormat.Xml)
-        {
-            //resource.PathAndQuery not supported by Silverlight :(
-        }
-
-        public RestRequest(Uri resource, Method method, DataFormat dataFormat): this(resource.IsAbsoluteUri
+        public RestRequest(Uri resource, Method method = Method.GET, DataFormat dataFormat = DataFormat.Xml)
+            : this(resource.IsAbsoluteUri
                 ? resource.AbsolutePath + resource.Query
                 : resource.OriginalString, method, dataFormat)
         {
@@ -151,7 +115,7 @@ namespace RestSharp
         /// Set this to handle the response stream yourself, based on the response details
         /// </summary>
         public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
-        
+
         /// <summary>
         ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
         ///     running)
@@ -196,7 +160,7 @@ namespace RestSharp
         /// <param name="fileName">The file name to use for the uploaded file</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null) 
+        public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null)
             => AddFile(FileParameter.Create(name, bytes, fileName, contentType));
 
         /// <summary>
@@ -301,7 +265,7 @@ namespace RestSharp
                 xmlNamespace = XmlNamespace;
             else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
                 xmlNamespace = XmlSerializer.Namespace;
-            
+
             return AddBody(obj, xmlNamespace);
         }
 
@@ -429,7 +393,7 @@ namespace RestSharp
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
         /// <returns>This request</returns>
-        public IRestRequest AddParameter(string name, object value) 
+        public IRestRequest AddParameter(string name, object value)
             => AddParameter(new Parameter(name, value, ParameterType.GetOrPost));
 
         /// <summary>
@@ -443,7 +407,7 @@ namespace RestSharp
         /// <param name="value">Value of the parameter</param>
         /// <param name="type">The type of parameter to add</param>
         /// <returns>This request</returns>
-        public IRestRequest AddParameter(string name, object value, ParameterType type) 
+        public IRestRequest AddParameter(string name, object value, ParameterType type)
             => AddParameter(new Parameter(name, value, type));
 
         /// <summary>
@@ -458,7 +422,7 @@ namespace RestSharp
         /// <param name="contentType">Content-Type of the parameter</param>
         /// <param name="type">The type of parameter to add</param>
         /// <returns>This request</returns>
-        public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type) 
+        public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type)
             => AddParameter(new Parameter(name, value, contentType, type));
 
         /// <summary>
@@ -488,7 +452,7 @@ namespace RestSharp
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
         /// <returns>This request</returns>
-        public IRestRequest AddOrUpdateParameter(string name, object value) 
+        public IRestRequest AddOrUpdateParameter(string name, object value)
             => AddOrUpdateParameter(new Parameter(name, value, ParameterType.GetOrPost));
 
         /// <inheritdoc />
@@ -504,7 +468,7 @@ namespace RestSharp
         /// <param name="value">Value of the parameter</param>
         /// <param name="type">The type of parameter to add</param>
         /// <returns>This request</returns>
-        public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type) 
+        public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
             => AddOrUpdateParameter(new Parameter(name, value, type));
 
         /// <summary>
@@ -520,7 +484,7 @@ namespace RestSharp
         /// <param name="contentType">Content-Type of the parameter</param>
         /// <param name="type">The type of parameter to add</param>
         /// <returns>This request</returns>
-        public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type) 
+        public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
             => AddOrUpdateParameter(new Parameter(name, value, contentType, type));
 
         private static readonly Regex PortSplitRegex = new Regex(@":\d+");
@@ -551,7 +515,7 @@ namespace RestSharp
         /// <param name="name">Name of the cookie to add</param>
         /// <param name="value">Value of the cookie to add</param>
         /// <returns></returns>
-        public IRestRequest AddCookie(string name, string value) 
+        public IRestRequest AddCookie(string name, string value)
             => AddParameter(name, value, ParameterType.Cookie);
 
         /// <summary>
@@ -560,7 +524,7 @@ namespace RestSharp
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
-        public IRestRequest AddUrlSegment(string name, string value) 
+        public IRestRequest AddUrlSegment(string name, string value)
             => AddParameter(name, value, ParameterType.UrlSegment);
 
         /// <summary>
@@ -569,7 +533,7 @@ namespace RestSharp
         /// <param name="name">Name of the parameter to add</param>
         /// <param name="value">Value of the parameter to add</param>
         /// <returns></returns>
-        public IRestRequest AddQueryParameter(string name, string value) 
+        public IRestRequest AddQueryParameter(string name, string value)
             => AddParameter(name, value, ParameterType.QueryString);
 
         /// <summary>
@@ -579,7 +543,7 @@ namespace RestSharp
         /// <param name="value">Value of the parameter to add</param>
         /// <param name="encode">Whether parameter should be encoded or not</param>
         /// <returns></returns>
-        public IRestRequest AddQueryParameter(string name, string value, bool encode) 
+        public IRestRequest AddQueryParameter(string name, string value, bool encode)
             => AddParameter(name, value, encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode);
 
         /// <summary>
@@ -700,7 +664,7 @@ namespace RestSharp
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
-        public IRestRequest AddUrlSegment(string name, object value) 
+        public IRestRequest AddUrlSegment(string name, object value)
             => AddParameter(name, value, ParameterType.UrlSegment);
     }
 }
