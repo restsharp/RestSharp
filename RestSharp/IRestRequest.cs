@@ -33,7 +33,7 @@ namespace RestSharp
 
         /// <summary>
         /// Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.
-        /// By default the included JsonSerializer is used (currently using JSON.NET default serialization).
+        /// By default the included JsonSerializer is used (currently using SimpleJson default serialization).
         /// </summary>
         ISerializer JsonSerializer { get; set; }
 
@@ -41,7 +41,7 @@ namespace RestSharp
         /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
         /// By default the included XmlSerializer is used.
         /// </summary>
-        ISerializer XmlSerializer { get; set; }
+        IXmlSerializer XmlSerializer { get; set; }
 
         /// <summary>
         /// Set this to handle the response stream yourself, based on the response details

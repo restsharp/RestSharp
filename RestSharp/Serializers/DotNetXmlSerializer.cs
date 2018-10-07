@@ -7,7 +7,7 @@ namespace RestSharp.Serializers
     /// <summary>
     ///     Wrapper for System.Xml.Serialization.XmlSerializer.
     /// </summary>
-    public class DotNetXmlSerializer : ISerializer
+    public class DotNetXmlSerializer : IXmlSerializer
     {
         /// <summary>
         ///     Default constructor, does not specify namespace

@@ -39,7 +39,7 @@ namespace RestSharp
         public virtual IRestResponse Execute(IRestRequest request, Method httpMethod)
         {
             if (request == null)
-                throw new ArgumentNullException(nameof(request));
+                throw new ArgumentNullException(nameof(request));            
 
             request.Method = httpMethod;
             return Execute(request);

@@ -13,6 +13,11 @@ namespace RestSharp.Deserializers
 
     public class JsonDeserializer : IDeserializer
     {
+        public JsonDeserializer()
+        {
+            Culture = CultureInfo.InvariantCulture;
+        }
+
         public string RootElement { get; set; }
 
         public string Namespace { get; set; }
@@ -20,11 +25,6 @@ namespace RestSharp.Deserializers
         public string DateFormat { get; set; }
 
         public CultureInfo Culture { get; set; }
-
-        public JsonDeserializer()
-        {
-            Culture = CultureInfo.InvariantCulture;
-        }
 
         public T Deserialize<T>(IRestResponse response)
         {

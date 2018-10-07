@@ -57,16 +57,8 @@ namespace RestSharp
 
             // TODO: Make this configurable
             // register default handlers
-            AddHandler("application/json", new JsonDeserializer());
-            AddHandler("application/xml", new XmlDeserializer());
-            AddHandler("text/json", new JsonDeserializer());
-            AddHandler("text/x-json", new JsonDeserializer());
-            AddHandler("text/javascript", new JsonDeserializer());
-            AddHandler("text/xml", new XmlDeserializer());
-            AddHandler("*+json", new JsonDeserializer());
-            AddHandler("*+xml", new XmlDeserializer());
-            AddHandler("*", new XmlDeserializer());
-
+            AddHandler(new JsonDeserializer(), "application/json", "text/json", "text/x-json", "text/javascript", "*+json");
+            AddHandler(new XmlDeserializer(), "application/xml", "text/xml", "*+xml", "*");
             FollowRedirects = true;
         }
 
@@ -96,7 +88,7 @@ namespace RestSharp
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
 
         private IList<string> AcceptTypes { get; }
-        
+
         private Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 
         /// <summary>
@@ -223,12 +215,20 @@ namespace RestSharp
 
             if (!AcceptTypes.Contains(contentType))
                 AcceptTypes.Add(contentType);
-            
+
             // add Accept header based on registered deserializers
             var accepts = string.Join(", ", AcceptTypes.ToArray());
 
             this.RemoveDefaultParameter("Accept");
             this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+        }
+
+        public void AddHandler(IDeserializer deserializer, params string[] contentTypes)
+        {
+            for (var i = 0; i < contentTypes.Length; i++)
+            {
+                AddHandler(contentTypes[i], deserializer);
+            }
         }
 
         /// <summary>
@@ -252,10 +252,8 @@ namespace RestSharp
             this.RemoveDefaultParameter("Accept");
         }
 
-        public IRestResponse<T> Deserialize<T>(IRestResponse response)
-        {
-            return Deserialize<T>(response.Request, response);
-        }
+        public IRestResponse<T> Deserialize<T>(IRestResponse response) 
+            => Deserialize<T>(response.Request, response);
 
         public void ConfigureWebRequest(Action<HttpWebRequest> configurator) =>
             WebRequestConfigurator = configurator;
@@ -436,7 +434,7 @@ namespace RestSharp
         internal IHttp ConfigureHttp(IRestRequest request)
         {
             var http = Http.Create();
-            
+
             http.Encoding = Encoding;
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
             http.UseDefaultCredentials = request.UseDefaultCredentials;
@@ -504,7 +502,7 @@ namespace RestSharp
             http.MaxRedirects = MaxRedirects;
             http.CachePolicy = CachePolicy;
             http.Pipelined = Pipelined;
-            
+
             if (request.Credentials != null)
                 http.Credentials = request.Credentials;
 
@@ -512,34 +510,34 @@ namespace RestSharp
                 http.ConnectionGroupName = ConnectionGroupName;
 
             var headers = from p in request.Parameters
-                where p.Type == ParameterType.HttpHeader
-                select new HttpHeader
-                {
-                    Name = p.Name,
-                    Value = Convert.ToString(p.Value)
-                };
+                          where p.Type == ParameterType.HttpHeader
+                          select new HttpHeader
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
             foreach (var header in headers)
                 http.Headers.Add(header);
 
             var cookies = from p in request.Parameters
-                where p.Type == ParameterType.Cookie
-                select new HttpCookie
-                {
-                    Name = p.Name,
-                    Value = Convert.ToString(p.Value)
-                };
+                          where p.Type == ParameterType.Cookie
+                          select new HttpCookie
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
             foreach (var cookie in cookies)
                 http.Cookies.Add(cookie);
 
             var @params = from p in request.Parameters
-                where p.Type == ParameterType.GetOrPost && p.Value != null
-                select new HttpParameter
-                {
-                    Name = p.Name,
-                    Value = Convert.ToString(p.Value)
-                };
+                          where p.Type == ParameterType.GetOrPost && p.Value != null
+                          select new HttpParameter
+                          {
+                              Name = p.Name,
+                              Value = Convert.ToString(p.Value)
+                          };
 
             foreach (var parameter in @params)
                 http.Parameters.Add(parameter);
@@ -583,7 +581,15 @@ namespace RestSharp
             }
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
-            http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
+            try
+            {
+                http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
+            }
+            catch (PlatformNotSupportedException ex)
+            {
+                http.Proxy = null;
+            }
+
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             return http;
@@ -706,7 +712,7 @@ namespace RestSharp
                 Resource = assembled;
             }
 
-            public Uri Uri { get; } 
+            public Uri Uri { get; }
             public string Resource { get; }
         }
     }

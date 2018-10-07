@@ -29,7 +29,7 @@ namespace RestSharp.Serializers
     /// <summary>
     ///     Default XML Serializer
     /// </summary>
-    public class XmlSerializer : ISerializer
+    public class XmlSerializer : IXmlSerializer
     {
         /// <summary>
         ///     Default constructor, does not specify namespace
