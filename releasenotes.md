@@ -1,5 +1,12 @@
 # RestSharp Release Notes
 
+# 106.5
+* Wrapped proxy discovery in try-catch for the platform unsupported exception
+* Fixed DateTime deserialization with millisecond UTC conflict
+* Fixed HttpMethod is not overridden in `RestClient.Sync.Execute(IRestRequest request, Method httpMethod)`
+* Split `ISerializer` to `IJsonSerializer` and `IXmlSerializer` to avoid the namespace confusion
+* Fixed double escape bug in SimpleJson
+
 # 106.4.1
 * Fixed the wrong HTTP method used in `Post` extension method
 * Custom content type for multipart requests
