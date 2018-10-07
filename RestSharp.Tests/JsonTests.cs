@@ -845,6 +845,19 @@ namespace RestSharp.Tests
             Assert.IsNull(dictionary["Null"]);
         }
 
+        [Test]
+        public void Can_Deserialize_Date_With_Milliseconds()
+        {
+            const string content = "{ \"CreatedOn\": \"2018-10-01T14:39:00.123Z\" }";
+            JsonDeserializer json = new JsonDeserializer();
+            DateTimeResponse output = json.Deserialize<DateTimeResponse>(new RestResponse { Content = content });
+            DateTime expected = DateTime.Parse("2018-10-01 14:39:00", CultureInfo.InvariantCulture);
+            
+            Assert.NotNull(output);
+            Assert.AreEqual(output.CreatedOn.Kind, DateTimeKind.Utc);
+            Assert.AreEqual(expected.ToString(), output.CreatedOn.ToString());
+        }
+        
         private static string CreateJsonWithUnderscores()
         {
             JsonObject doc = new JsonObject();
