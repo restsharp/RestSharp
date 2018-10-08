@@ -9,7 +9,7 @@
     <RepositoryType>git</RepositoryType>
     <Description>Simple REST and HTTP API Client</Description>
     <Authors>John Sheehan, RestSharp Community</Authors>
-    <Version>106.5.0</Version>
+    <Version>106.5.1</Version>
     <Optimize>false</Optimize>
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>

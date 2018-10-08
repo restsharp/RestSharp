@@ -35,7 +35,7 @@ namespace RestSharp
     /// </summary>
     public partial class Http : IHttp
     {
-        private const string LINE_BREAK = "\r\n";
+        private static readonly string LINE_BREAK = Environment.NewLine;
 
         private const string FORM_BOUNDARY = "-----------------------------28947758029299";
 
