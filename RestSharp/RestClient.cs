@@ -26,6 +26,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Net.Security;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -573,14 +574,12 @@ namespace RestSharp
             }
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
-            try
-            {
-                http.Proxy = Proxy ?? (WebRequest.DefaultWebProxy ?? HttpWebRequest.GetSystemWebProxy());
-            }
-            catch (PlatformNotSupportedException)
-            {
-                http.Proxy = null;
-            }
+            http.Proxy = Proxy ?? WebRequest.DefaultWebProxy;
+
+#if NETSTANDARD2_0
+            if (http.Proxy == null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                http.Proxy = WebRequest.GetSystemWebProxy();
+#endif
 
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
