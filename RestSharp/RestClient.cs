@@ -574,11 +574,11 @@ namespace RestSharp
             }
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
-            http.Proxy = Proxy ?? WebRequest.DefaultWebProxy;
 
 #if NETSTANDARD2_0
-            if (http.Proxy == null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                http.Proxy = WebRequest.GetSystemWebProxy();
+            http.Proxy = Proxy ?? WebRequest.DefaultWebProxy;
+#else
+            http.Proxy = Proxy ?? WebRequest.DefaultWebProxy ?? WebRequest.GetSystemWebProxy();
 #endif
 
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
