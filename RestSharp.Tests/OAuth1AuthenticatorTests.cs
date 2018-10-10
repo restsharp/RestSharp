@@ -121,5 +121,6 @@ namespace RestSharp.Tests
 
             authenticator.AddOAuthData(mockClient.Object, mockRequest.Object, mockWorkflow.Object);
         }
-    }
+
+	}
 }

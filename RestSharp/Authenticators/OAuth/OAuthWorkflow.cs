@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using RestSharp.Authenticators.OAuth.Extensions;
 
@@ -215,11 +216,12 @@ namespace RestSharp.Authenticators.OAuth
             if (parameters == null)
                 parameters = new WebParameterCollection();
 
-            // Include url parameters in query pool
+            // Include url parameters in query pool...
             var uri = new Uri(url);
             var urlParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-            foreach (var parameter in urlParameters.AllKeys)
+			//...unless they were already present at some point, such as being added to the request object
+            foreach (var parameter in urlParameters.AllKeys.Where(k => !parameters.Names.Contains(k)))
                 switch (method.ToUpperInvariant())
                 {
                     case "POST":
