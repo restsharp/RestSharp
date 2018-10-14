@@ -221,7 +221,7 @@ namespace RestSharp
         /// <param name="obj">The object to serialize</param>
         /// <param name="xmlNamespace">The XML namespace to use when serializing</param>
         /// <returns>This request</returns>
-        public IRestRequest AddBody(object obj, string xmlNamespace = "")
+        public IRestRequest AddBody(object obj, string xmlNamespace)
         {
             string serialized;
             string contentType;
