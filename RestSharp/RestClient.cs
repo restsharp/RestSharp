@@ -587,8 +587,6 @@ namespace RestSharp
 
             http.Proxy = proxy;
             
-            WebRequest.GetSystemWebProxy();
-
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             return http;
