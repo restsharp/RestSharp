@@ -21,7 +21,20 @@ namespace RestSharp.Serializers
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
-        public string Serialize(object obj) => SimpleJson.SerializeObject(obj);
+        public string Serialize(object obj)
+        {
+            if (obj is string value)
+            {
+                string trimmed = value.Trim();
+                if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
+                {
+                    return value;
+                }
+
+            }
+
+            return SimpleJson.SerializeObject(obj);
+        }
 
         /// <summary>
         /// Content type for serialized content

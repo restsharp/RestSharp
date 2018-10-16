@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RestSharp.Deserializers;
+using RestSharp.Serializers;
 using RestSharp.Tests.SampleClasses;
 
 namespace RestSharp.Tests
@@ -857,7 +858,32 @@ namespace RestSharp.Tests
             Assert.AreEqual(output.CreatedOn.Kind, DateTimeKind.Utc);
             Assert.AreEqual(expected.ToString(), output.CreatedOn.ToString());
         }
-        
+
+        [Test]
+        public void Serialize_Json_Returns_Same_Json()
+        {
+            string preformattedString = "{ \"name\" : \"value\" } ";
+
+            var json = new JsonSerializer();
+            string result = json.Serialize(preformattedString);
+
+            Assert.AreEqual(preformattedString, result);
+        }
+
+        [Test]
+        public void Serialize_Json_Does_Not_Double_Encode()
+        {
+            string preformattedString = "{ \"name\" : \"value\" }";
+            int expectedSlashCount = preformattedString.Count(x => x == '\\');
+
+            var json = new JsonSerializer();
+            string result = json.Serialize(preformattedString);
+            int actualSlashCount = result.Count(x => x == '\\');
+
+            Assert.AreEqual(preformattedString, result);
+            Assert.AreEqual(expectedSlashCount, actualSlashCount);
+        }
+
         private static string CreateJsonWithUnderscores()
         {
             JsonObject doc = new JsonObject();
