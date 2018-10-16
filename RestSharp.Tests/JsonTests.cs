@@ -871,7 +871,7 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        public void Serialize_Json_Does_Not_Double_Encode()
+        public void Serialize_Json_Does_Not_Double_Escape()
         {
             string preformattedString = "{ \"name\" : \"value\" }";
             int expectedSlashCount = preformattedString.Count(x => x == '\\');
