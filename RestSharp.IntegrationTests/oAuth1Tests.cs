@@ -198,7 +198,76 @@ namespace RestSharp.IntegrationTests
             Assert.IsTrue(actual.SequenceEqual(expected));
         }
 
-        [Test]
+
+		[Test]
+		public void Create_Appropriate_OAuth1_Header_Signature_With_Querystring_Parameters()
+		{
+			const string consumerKey = "enterConsumerKeyHere";
+			const string consumerSecret = "enterConsumerSecretHere";
+			const string tokenAccess = "fooaccesstoken";
+			const string tokenSecret = "foosecrettoken";
+
+			const string baseUrl = "http://localhost:8888/oauth1_signature_test";
+			const string requestUrl = "youvegotmail";
+
+			const string qsParamName = "foo";
+			const string qsParamValue = "bar";
+
+			var authenticator = OAuth1Authenticator.ForProtectedResource(consumerKey, consumerSecret, tokenAccess, tokenSecret);
+			authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader; // not sure this matters
+
+			var client = new RestClient(baseUrl);
+
+			// add the offending parameter in two different ways
+			var requestWithQs = new RestRequest(requestUrl + $"?{qsParamName}={qsParamValue}", Method.GET);
+			var requestWithParameter = new RestRequest(requestUrl, Method.GET);
+			requestWithParameter.AddParameter("foo", "bar");
+
+			authenticator.Authenticate(client, requestWithQs);
+			authenticator.Authenticate(client, requestWithParameter);
+
+			var headerWithQs = requestWithQs.Parameters.Single(p => p.Name == "Authorization");
+			var headerWithParameter = requestWithParameter.Parameters.Single(p => p.Name == "Authorization");
+
+			// just for eyeballing
+			Console.WriteLine("===== Manually added to QS =====");
+			var urlQs = client.BuildUri(requestWithQs);
+			Console.WriteLine(urlQs);
+			foreach (var p in requestWithQs.Parameters) Console.WriteLine($"{p.Name} {p.Type} = {p.Value}");
+			Console.WriteLine("===== Added via Param =====");
+			var urlParams = client.BuildUri(requestWithParameter);
+			Console.WriteLine(urlParams);
+			foreach (var p in requestWithParameter.Parameters) Console.WriteLine($"{p.Name} {p.Type} = {p.Value}");
+			
+			// just because they're constructed differently
+			Assert.AreNotEqual(headerWithParameter, headerWithQs);
+
+			// really need to validate against something that checks the signature, like http://lti.tools/oauth/
+			
+			// can we test it this way?
+			var oworkflow = new OAuthWorkflow
+			{
+				ConsumerKey = consumerKey,
+				ConsumerSecret = consumerSecret,
+				Token = tokenAccess,
+				TokenSecret = tokenSecret,
+				SignatureMethod = OAuthSignatureMethod.HmacSha1,
+				ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+				SignatureTreatment = OAuthSignatureTreatment.Escaped,
+			};
+			var qsWebParams = new WebParameterCollection();
+			var infoQs = oworkflow.BuildProtectedResourceInfo("GET", qsWebParams, urlQs.AbsoluteUri);
+
+			var paramsWebParams = new WebParameterCollection();
+			var infoParams = oworkflow.BuildProtectedResourceInfo("GET", paramsWebParams, urlParams.AbsoluteUri);
+
+			// no, can't really test it because of nonce and timestamp, but can compare it to something that checks the signature, like http://lti.tools/oauth/
+			Assert.AreNotEqual(infoQs.Signature, infoParams.Signature);
+
+			Assert.Inconclusive("Unverifiable, must compare it to a signature checker like http://lti.tools/oauth/");
+		}
+
+		[Test]
         [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_Twitter()
         {
