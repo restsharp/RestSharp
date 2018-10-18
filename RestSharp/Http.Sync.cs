@@ -204,7 +204,14 @@ namespace RestSharp
 #if NETSTANDARD2_0
             webRequest.Proxy = null;
 #endif
-            webRequest.ServicePoint.Expect100Continue = false;
+            try
+            {
+                webRequest.ServicePoint.Expect100Continue = false;
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // Avoid to crash in UWP apps
+            }
             
             AppendHeaders(webRequest);
             AppendCookies(webRequest);

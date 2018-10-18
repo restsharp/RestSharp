@@ -1009,21 +1009,7 @@ namespace RestSharp.Tests
             bool success = true;
             string stringValue = value as string;
             if (stringValue != null)
-            {
-                // check for json formatting if we're already a string
-                string trimmed = stringValue.Trim();
-                if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
-                {
-                    object tmp;
-                    success = TryDeserializeObject(trimmed, out tmp);
-                    if (success)
-                        builder.Append(trimmed);
-                }
-                else
-                {
-                    success = SerializeString(stringValue, builder);
-                }
-            }
+                success = SerializeString(stringValue, builder);
             else
             {
                 IDictionary<string, object> dict = value as IDictionary<string, object>;
