@@ -38,7 +38,7 @@ namespace RestSharp.Extensions
             const int maxLength = 32766;
 
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
 
             if (input.Length <= maxLength)
                 return Uri.EscapeDataString(input);
@@ -62,7 +62,11 @@ namespace RestSharp.Extensions
 
         public static string HtmlEncode(this string input) => HttpUtility.HtmlEncode(input);
 
-        public static string UrlEncode(this string input, Encoding encoding) => HttpUtility.UrlEncode(input, encoding);
+        public static string UrlEncode(this string input, Encoding encoding)
+        {
+            var encoded = HttpUtility.UrlEncode(input, encoding);
+            return encoded?.Replace("+", "%20");
+        }
 
         public static string HtmlAttributeEncode(this string input) => HttpUtility.HtmlAttributeEncode(input);
 

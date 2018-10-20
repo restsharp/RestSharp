@@ -30,6 +30,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
+        /// <param name="httpMethod">HTTP call method (GET, PUT, etc)</param>
         public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod)
         {

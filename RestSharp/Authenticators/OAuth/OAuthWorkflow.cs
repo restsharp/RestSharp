@@ -7,7 +7,6 @@ namespace RestSharp.Authenticators.OAuth
 {
     /// <summary>
     ///     A class to encapsulate OAuth authentication flow.
-    ///     <seealso cref="http://oauth.net/core/1.0#anchor9" />
     /// </summary>
     internal class OAuthWorkflow
     {
@@ -37,13 +36,10 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual string ClientPassword { get; set; }
 
-        /// <seealso cref="http://oauth.net/core/1.0#request_urls" />
         public virtual string RequestTokenUrl { get; set; }
 
-        /// <seealso cref="http://oauth.net/core/1.0#request_urls" />
         public virtual string AccessTokenUrl { get; set; }
 
-        /// <seealso cref="http://oauth.net/core/1.0#request_urls" />
         public virtual string AuthorizationUrl { get; set; }
 
         /// <summary>
@@ -52,7 +48,6 @@ namespace RestSharp.Authenticators.OAuth
         ///     unauthorized request token.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
-        /// <seealso cref="http://oauth.net/core/1.0#anchor9" />
         /// <returns></returns>
         public OAuthWebQueryInfo BuildRequestTokenInfo(string method)
         {
@@ -66,7 +61,6 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
-        /// <seealso cref="http://oauth.net/core/1.0#anchor9" />
         /// <returns></returns>
         public virtual OAuthWebQueryInfo BuildRequestTokenInfo(string method, WebParameterCollection parameters)
         {
@@ -108,7 +102,6 @@ namespace RestSharp.Authenticators.OAuth
         ///     for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
-        /// <seealso cref="http://oauth.net/core/1.0#anchor9" />
         public virtual OAuthWebQueryInfo BuildAccessTokenInfo(string method)
         {
             return BuildAccessTokenInfo(method, null);
@@ -120,7 +113,6 @@ namespace RestSharp.Authenticators.OAuth
         ///     for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
-        /// <seealso cref="http://oauth.net/core/1.0#anchor9" />
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
         public virtual OAuthWebQueryInfo BuildAccessTokenInfo(string method, WebParameterCollection parameters)
         {
@@ -166,7 +158,6 @@ namespace RestSharp.Authenticators.OAuth
         ///     for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
-        /// <seealso cref="http://tools.ietf.org/html/draft-dehora-farrell-oauth-accesstoken-creds-00#section-4" />
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
         public virtual OAuthWebQueryInfo BuildClientAuthAccessTokenInfo(string method,
             WebParameterCollection parameters)

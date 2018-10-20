@@ -8,6 +8,8 @@ namespace RestSharp.Tests.Extensions
     [TestFixture]
     public class RSACryptoServiceProviderExtensionsTests
     {
+        
+#if !NETCOREAPP
         [Test]
         public void FromXmlStringImpl_GivenPrivateKeyXml_GivesSameResultAsDotNetImplementation()
         {
@@ -33,6 +35,7 @@ namespace RestSharp.Tests.Extensions
                 Assert.AreEqual(dotnetBasedParameters.Q, customBasedParameters.Q);
             }
         }
+#endif
 
         [Test]
         public void FromXmlStringImpl_GivenInvalidPrivateKeyXml_ThrowsInvalidOperationException()
