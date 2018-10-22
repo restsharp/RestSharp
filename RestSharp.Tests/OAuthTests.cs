@@ -46,8 +46,10 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P%2FltlWS7WvJXpECPs%3D", "12345678")]
-        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog", "C%2B2RY0Hna6VrfK1crCkU%2FV1e0ECoxoDh41iOOdmEMx8%3D", "12345678")]
+        [TestCase("The quick brown fox jumps over the lazy dog", "rVL90tHhGt0eQ0TCITY74nVL22P%2FltlWS7WvJXpECPs%3D",
+            "12345678")]
+        [TestCase("The quick\tbrown\nfox\rjumps\r\nover\t\tthe\n\nlazy\r\n\r\ndog",
+            "C%2B2RY0Hna6VrfK1crCkU%2FV1e0ECoxoDh41iOOdmEMx8%3D", "12345678")]
         [TestCase("", "%2BnkCwZfv%2FQVmBbNZsPKbBT3kAg3JtVn3f3YMBtV83L8%3D", "12345678")]
         [TestCase(" !\"#$%&'()*+,", "xcTgWGBVZaw%2Bilg6kjWAGt%2FhCcsVBMMe1CcDEnxnh8Y%3D", "12345678")]
         [TestCase("AB", "JJgraAxzpO2Q6wiC3blM4eiQeA9WmkALaZI8yGRH4qM%3D", "CD!")]
@@ -66,6 +68,7 @@ namespace RestSharp.Tests
                 Throws.TypeOf<ArgumentNullException>());
         }
 
+#if !NETCOREAPP
         [Test]
         [TestCase("The quick brown fox jumps over the lazy dog", 1024)]
         [TestCase("The quick brown fox jumps over the lazy dog", 2048)]
@@ -77,7 +80,7 @@ namespace RestSharp.Tests
             SHA1Managed hasher = new SHA1Managed();
             byte[] hash = hasher.ComputeHash(value.GetBytes());
 
-            using (var crypto = new RSACryptoServiceProvider(keySize) { PersistKeyInCsp = false })
+            using (var crypto = new RSACryptoServiceProvider(keySize) {PersistKeyInCsp = false})
             {
                 string privateKey = crypto.ToXmlString(true);
 
@@ -92,5 +95,6 @@ namespace RestSharp.Tests
                 Assert.IsTrue(crypto.VerifyHash(hash, CryptoConfig.MapNameToOID("SHA1"), signatureBytes));
             }
         }
+#endif
     }
 }

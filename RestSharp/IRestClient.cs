@@ -101,6 +101,8 @@ namespace RestSharp
         bool FollowRedirects { get; set; }
 
         Uri BuildUri(IRestRequest request);
+        
+        string BuildUriWithoutQueryParameters(IRestRequest request);
 
         /// <summary>
         /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and

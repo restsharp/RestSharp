@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using RestSharp.Serializers;
+// ReSharper disable IntroduceOptionalParameters.Global
 
 namespace RestSharp
 {
@@ -60,21 +61,37 @@ namespace RestSharp
         {
             Method = method;
         }
+        
+        public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml)
+        {
+        }
+        
+        public RestRequest(string resource) : this(resource, Method.GET, DataFormat.Xml)
+        {
+        }
 
-        public RestRequest(string resource, Method method = Method.GET, DataFormat dataFormat = DataFormat.Xml) : this()
+        public RestRequest(string resource, Method method, DataFormat dataFormat) : this()
         {
             Resource = resource;
             Method = method;
             RequestFormat = dataFormat;
         }
 
-        public RestRequest(Uri resource, Method method = Method.GET, DataFormat dataFormat = DataFormat.Xml)
+        public RestRequest(Uri resource, Method method, DataFormat dataFormat)
             : this(resource.IsAbsoluteUri
                 ? resource.AbsolutePath + resource.Query
                 : resource.OriginalString, method, dataFormat)
         {
         }
 
+        public RestRequest(Uri resource, Method method) : this(resource, method, DataFormat.Xml)
+        {
+        }
+
+        public RestRequest(Uri resource) : this(resource, Method.GET, DataFormat.Xml)
+        {
+        }
+        
         /// <summary>
         ///     Gets or sets a user-defined state object that contains information about a request and which can be later
         ///     retrieved when the request completes.

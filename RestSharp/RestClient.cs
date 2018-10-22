@@ -273,14 +273,20 @@ namespace RestSharp
 
             var applied = GetUrlSegmentParamsValues(request);
 
-            BaseUrl = applied.Uri;
-            string resource = applied.Resource;
-
-            string mergedUri = MergeBaseUrlAndResource(resource);
+            string mergedUri = MergeBaseUrlAndResource(applied.Uri, applied.Resource);
 
             string finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
 
             return new Uri(finalUri);
+        }
+
+        string IRestClient.BuildUriWithoutQueryParameters(IRestRequest request)
+        {
+            DoBuildUriValidations(request);
+
+            var applied = GetUrlSegmentParamsValues(request);
+
+            return MergeBaseUrlAndResource(applied.Uri, applied.Resource);
         }
 
         private void DoBuildUriValidations(IRestRequest request)
@@ -326,7 +332,7 @@ namespace RestSharp
             return new UrlSegmentParamsValues(builder.Uri, assembled);
         }
 
-        private string MergeBaseUrlAndResource(string resource)
+        private static string MergeBaseUrlAndResource(Uri baseUrl, string resource)
         {
             var assembled = resource;
 
@@ -335,25 +341,24 @@ namespace RestSharp
                 assembled = assembled.Substring(1);
             }
 
-            if (BaseUrl == null || string.IsNullOrEmpty(BaseUrl.AbsoluteUri))
+            if (baseUrl == null || string.IsNullOrEmpty(baseUrl.AbsoluteUri))
             {
                 return assembled;
             }
 
-            Uri usingBaseUri = BaseUrl;
-            if (!BaseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
+            var usingBaseUri = baseUrl;
+            if (!baseUrl.AbsoluteUri.EndsWith("/") && !string.IsNullOrEmpty(assembled))
             {
-                usingBaseUri = new Uri(BaseUrl.AbsoluteUri + "/");
+                usingBaseUri = new Uri(baseUrl.AbsoluteUri + "/");
             }
 
-            assembled = new Uri(usingBaseUri, assembled).AbsoluteUri;
-
-            return assembled;
+            return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
         }
 
         private string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
         {
-            var parameters = GetQueryStringParameters(request).ToArray();
+            var parameters = GetQueryStringParameters(request).ToList();
+            parameters.AddRange(GetDefaultQueryStringParameters(request));
 
             if (!parameters.Any())
             {
@@ -365,6 +370,17 @@ namespace RestSharp
             return string.Concat(mergedUri, separator, EncodeParameters(parameters, Encoding));
         }
 
+        private IEnumerable<Parameter> GetDefaultQueryStringParameters(IRestRequest request)
+        {
+            return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
+                ? DefaultParameters
+                    .Where(p => p.Type == ParameterType.GetOrPost ||
+                                p.Type == ParameterType.QueryString ||
+                                p.Type == ParameterType.QueryStringWithoutEncode)
+                : DefaultParameters
+                    .Where(p => p.Type == ParameterType.QueryString ||
+                                p.Type == ParameterType.QueryStringWithoutEncode);
+        }
         private static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
         {
             return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH

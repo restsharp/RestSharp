@@ -107,8 +107,7 @@ namespace RestSharp.Authenticators
 
         public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token,
             string tokenSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
-        {
-            var authenticator = new OAuth1Authenticator
+            => new OAuth1Authenticator
             {
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
                 SignatureMethod = signatureMethod,
@@ -119,9 +118,6 @@ namespace RestSharp.Authenticators
                 TokenSecret = tokenSecret,
                 Type = OAuthType.AccessToken
             };
-
-            return authenticator;
-        }
 
         public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token,
             string tokenSecret, string verifier)
@@ -156,8 +152,7 @@ namespace RestSharp.Authenticators
 
         public static OAuth1Authenticator ForClientAuthentication(string consumerKey, string consumerSecret,
             string username, string password, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
-        {
-            var authenticator = new OAuth1Authenticator
+            => new OAuth1Authenticator
             {
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
                 SignatureMethod = signatureMethod,
@@ -169,14 +164,10 @@ namespace RestSharp.Authenticators
                 Type = OAuthType.ClientAuthentication
             };
 
-            return authenticator;
-        }
-
         public static OAuth1Authenticator ForProtectedResource(string consumerKey, string consumerSecret,
             string accessToken, string accessTokenSecret,
             OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
-        {
-            var authenticator = new OAuth1Authenticator
+            => new OAuth1Authenticator
             {
                 Type = OAuthType.ProtectedResource,
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
@@ -188,17 +179,19 @@ namespace RestSharp.Authenticators
                 TokenSecret = accessTokenSecret
             };
 
-            return authenticator;
-        }
-
-        internal void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
+        private void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow)
         {
-            var url = client.BuildUri(request)
-                .ToString();
-
-            OAuthWebQueryInfo oauth;
-            var method = request.Method.ToString()
-                .ToUpperInvariant();
+            var requestUrl = client.BuildUriWithoutQueryParameters(request);
+            if (requestUrl.Contains('?'))
+                throw new ApplicationException("Using query parameters in the base URL is not supported for OAuth calls. Consider using AddDefaultQueryParameter instead.");
+            
+            var url = client.BuildUri(request).ToString();
+            var queryStringStart = url.IndexOf('?');
+             if (queryStringStart != -1)
+                url = url.Substring(0, queryStringStart);
+            
+            var method = request.Method.ToString().ToUpperInvariant();
+            
             var parameters = new WebParameterCollection();
 
             // include all GET and POST parameters before generating the signature
@@ -235,6 +228,7 @@ namespace RestSharp.Authenticators
                         .Select(p => new WebPair(p.Name, p.Value.ToString())));
             }
 
+            OAuthWebQueryInfo oauth;
             switch (Type)
             {
                 case OAuthType.RequestToken:
