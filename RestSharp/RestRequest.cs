@@ -12,7 +12,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 #endregion
 
@@ -75,6 +75,16 @@ namespace RestSharp
             Resource = resource;
             Method = method;
             RequestFormat = dataFormat;
+
+            var queryStringStart = Resource.IndexOf('?');
+            if (queryStringStart >= 0)
+            {
+                var queryParams = System.Web.HttpUtility.ParseQueryString(Resource.Substring(queryStringStart));
+                Resource = resource.Substring(0, queryStringStart);
+
+                foreach (var key in queryParams.AllKeys)
+                    AddQueryParameter(key, queryParams[key]);
+            }
         }
 
         public RestRequest(Uri resource, Method method, DataFormat dataFormat)
