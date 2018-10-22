@@ -88,5 +88,24 @@ namespace RestSharp.Tests
             Assert.AreEqual(expectedValue, parameter.Value.ToString());
             Assert.AreEqual(ParameterType.UrlSegment, parameter.Type);
         }
+
+        [Test]
+        public void RestRequest_Request_Property()
+        {
+            RestRequest request = new RestRequest("resource");
+
+            Assert.AreEqual("resource", request.Resource);
+        }
+
+        [Test]
+        public void Can_Add_Query_Params_To_RestRequest()
+        {
+            RestRequest request = new RestRequest("resource?hello=world");
+
+            Assert.AreEqual("resource", request.Resource);
+            Assert.AreEqual(1, request.Parameters.Count);
+            Assert.AreEqual("hello", request.Parameters[0].Name);
+            Assert.AreEqual("world", request.Parameters[0].Value);
+        }
     }
 }
