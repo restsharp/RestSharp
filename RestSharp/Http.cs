@@ -35,9 +35,9 @@ namespace RestSharp
     /// </summary>
     public partial class Http : IHttp
     {
-        private static readonly string LINE_BREAK = Environment.NewLine;
+        private const string LineBreak = "\r\n";
 
-        private const string FORM_BOUNDARY = "-----------------------------28947758029299";
+        private const string FormBoundary = "-----------------------------28947758029299";
 
         private readonly IDictionary<string, Action<HttpWebRequest, string>> restrictedHeaderActions;
 
@@ -264,14 +264,14 @@ namespace RestSharp
 
         private static string GetMultipartFormContentType()
         {
-            return string.Format("multipart/form-data; boundary={0}", FORM_BOUNDARY);
+            return string.Format("multipart/form-data; boundary={0}", FormBoundary);
         }
 
         private static string GetMultipartFileHeader(HttpFile file)
         {
             return string.Format(
                 "--{0}{4}Content-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"{4}Content-Type: {3}{4}{4}",
-                FORM_BOUNDARY, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LINE_BREAK);
+                FormBoundary, file.Name, file.FileName, file.ContentType ?? "application/octet-stream", LineBreak);
         }
 
         private string GetMultipartFormData(HttpParameter param)
@@ -280,12 +280,12 @@ namespace RestSharp
                 ? "--{0}{3}Content-Type: {4}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
-            return string.Format(format, FORM_BOUNDARY, param.Name, param.Value, LINE_BREAK, param.ContentType);
+            return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
         }
 
         private static string GetMultipartFooter()
         {
-            return $"--{FORM_BOUNDARY}--{LINE_BREAK}";
+            return $"--{FormBoundary}--{LineBreak}";
         }
 
         // handle restricted headers the .NET way - thanks @dimebrain!
@@ -340,7 +340,7 @@ namespace RestSharp
                 if (needsContentType)
                     webRequest.ContentType = GetMultipartFormContentType();
                 else if (!webRequest.ContentType.Contains("boundary"))
-                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FORM_BOUNDARY; 
+                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary; 
             }
             else if (HasBody)
             {
@@ -374,7 +374,7 @@ namespace RestSharp
 
                 // Write the file data directly to the Stream, rather than serializing it to a string.
                 file.Writer(requestStream);
-                WriteStringTo(requestStream, LINE_BREAK);
+                WriteStringTo(requestStream, LineBreak);
             }
 
             WriteStringTo(requestStream, GetMultipartFooter());

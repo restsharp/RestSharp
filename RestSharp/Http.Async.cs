@@ -198,7 +198,7 @@ namespace RestSharp
             {
                 length += Encoding.GetByteCount(GetMultipartFileHeader(file));
                 length += file.ContentLength;
-                length += Encoding.GetByteCount(LINE_BREAK);
+                length += Encoding.GetByteCount(LineBreak);
             }
 
             length = Parameters.Aggregate(length,

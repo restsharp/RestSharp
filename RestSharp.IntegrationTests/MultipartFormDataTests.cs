@@ -11,25 +11,27 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class MultipartFormDataTests
     {
+        private const string LineBreak = "\r\n";
+        
         private readonly string _expected =
-            "-------------------------------28947758029299" + Environment.NewLine +
-            "Content-Disposition: form-data; name=\"foo\"" + Environment.NewLine + Environment.NewLine +
-            "bar" + Environment.NewLine +
-            "-------------------------------28947758029299" + Environment.NewLine +
-            "Content-Disposition: form-data; name=\"a name with spaces\"" + Environment.NewLine + Environment.NewLine +
-            "somedata" + Environment.NewLine +
-            "-------------------------------28947758029299--" + Environment.NewLine;
+            "-------------------------------28947758029299" + LineBreak +
+            "Content-Disposition: form-data; name=\"foo\"" + LineBreak + LineBreak +
+            "bar" + LineBreak +
+            "-------------------------------28947758029299" + LineBreak +
+            "Content-Disposition: form-data; name=\"a name with spaces\"" + LineBreak + LineBreak +
+            "somedata" + LineBreak +
+            "-------------------------------28947758029299--" + LineBreak;
 
         private readonly string _expectedFileAndBodyRequestContent =
-            "-------------------------------28947758029299" + Environment.NewLine +
-            "Content-Type: application/json" + Environment.NewLine +
-            "Content-Disposition: form-data; name=\"controlName\"" + Environment.NewLine + Environment.NewLine +
-            "test" + Environment.NewLine +
-            "-------------------------------28947758029299" + Environment.NewLine +
-            "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" + Environment.NewLine +
-            "Content-Type: application/octet-stream" + Environment.NewLine + Environment.NewLine +
-            "This is a test file for RestSharp." + Environment.NewLine +
-            "-------------------------------28947758029299--" + Environment.NewLine;
+            "-------------------------------28947758029299" + LineBreak +
+            "Content-Type: application/json" + LineBreak +
+            "Content-Disposition: form-data; name=\"controlName\"" + LineBreak + LineBreak +
+            "test" + LineBreak +
+            "-------------------------------28947758029299" + LineBreak +
+            "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" + LineBreak +
+            "Content-Type: application/octet-stream" + LineBreak + LineBreak +
+            "This is a test file for RestSharp." + LineBreak +
+            "-------------------------------28947758029299--" + LineBreak;
 
         private readonly string _expectedDefaultMultipartContentType = 
             "multipart/form-data; boundary=-----------------------------28947758029299";
