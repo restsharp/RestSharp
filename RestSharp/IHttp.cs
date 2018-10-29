@@ -142,5 +142,11 @@ namespace RestSharp
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
         
         Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+
+        /// <summary>
+        /// Sets the underlying HttpWebRequest's AllowWriteStreamBuffering flag so large files
+        /// don't need to be loaded into memory, causing OutOfMemoryExceptions
+        /// </summary>
+        bool AllowWriteStreamBuffering { get; set; }
     }
 }

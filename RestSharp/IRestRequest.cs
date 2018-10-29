@@ -374,5 +374,11 @@ namespace RestSharp
         Action<IRestResponse> OnBeforeDeserialization { get; set; }
 
         void IncreaseNumAttempts();
+
+        /// <summary>
+        /// Sets the underlying HttpWebRequest's AllowWriteStreamBuffering flag so large files
+        /// don't need to be loaded into memory, causing OutOfMemoryExceptions
+        /// </summary>
+        bool AllowWriteStreamBuffering { get; set; }
     }
 }

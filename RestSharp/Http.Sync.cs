@@ -199,6 +199,7 @@ namespace RestSharp
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 
             webRequest.PreAuthenticate = PreAuthenticate;
+            webRequest.AllowWriteStreamBuffering = AllowWriteStreamBuffering;
             webRequest.Pipelined = Pipelined;
             webRequest.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
 #if NETSTANDARD2_0

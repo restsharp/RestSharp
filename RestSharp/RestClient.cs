@@ -461,6 +461,7 @@ namespace RestSharp
             http.UseDefaultCredentials = request.UseDefaultCredentials;
             http.ResponseWriter = request.ResponseWriter;
             http.AdvancedResponseWriter = request.AdvancedResponseWriter;
+            http.AllowWriteStreamBuffering = request.AllowWriteStreamBuffering;
             http.CookieContainer = CookieContainer;
             http.AutomaticDecompression = AutomaticDecompression;
             http.WebRequestConfigurator = WebRequestConfigurator;

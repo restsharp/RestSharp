@@ -211,6 +211,12 @@ namespace RestSharp
         public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
 
         /// <summary>
+        ///     Sets the underlying HttpWebRequest's AllowWriteStreamBuffering flag so large files
+        ///     don't need to be loaded into memory, causing OutOfMemoryExceptions
+        /// </summary>
+        public bool AllowWriteStreamBuffering { get; set; }
+
+        /// <summary>
         ///     Flag to send authorisation header with the HttpWebRequest
         /// </summary>
         public bool PreAuthenticate { get; set; }
