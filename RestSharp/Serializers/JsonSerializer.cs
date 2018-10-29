@@ -18,23 +18,40 @@ namespace RestSharp.Serializers
 
         /// <summary>
         /// Serialize the object as JSON
+        /// If the object is already a serialized string returns that value
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
         public string Serialize(object obj)
         {
-            if (obj is string value)
-            {
-                string trimmed = value.Trim();
-                if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
-                {
-                    return value;
-                }
-
-            }
+	        if (IsSerializedString(obj, out var serializedString))
+	        {
+		        return serializedString;
+	        }
 
             return SimpleJson.SerializeObject(obj);
         }
+
+		/// <summary>
+		/// Determines if the object is already a serialized string.
+		/// </summary>
+	    private static bool IsSerializedString(object obj, out string serializedString)
+	    {
+		    if( obj is string value )
+		    {
+			    string trimmed = value.Trim();
+
+			    if( ( trimmed.StartsWith( "{" ) && trimmed.EndsWith( "}" ) ) 
+				    || ( trimmed.StartsWith( "[{" ) && trimmed.EndsWith( "}]" ) ) )
+			    {
+				    serializedString = value;
+				    return true;
+			    }
+		    }
+
+		    serializedString = null;
+		    return false;
+	    }
 
         /// <summary>
         /// Content type for serialized content
