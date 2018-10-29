@@ -67,19 +67,20 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void AdvancedResponseWriter_without_ResponseWriter_reads_stream()
         {
+            string tag = string.Empty;
+
             var rr = new RestRequest("Assets/Koala.jpg")
             {
                 AdvancedResponseWriter = (stream, context) =>
                 {
                     var buf = new byte[16];
                     stream.Read(buf, 0, buf.Length);
-
-                    var str = Encoding.ASCII.GetString(buf, 6, 4);
-                    Assert.AreEqual("JFIF", str);
+                    tag = Encoding.ASCII.GetString(buf, 6, 4);
                 }
             };
 
             _client.Execute(rr);
+            Assert.IsTrue("JFIF".CompareTo(tag) == 0);
         }
     }
 }
