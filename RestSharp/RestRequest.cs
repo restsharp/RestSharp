@@ -39,6 +39,9 @@ namespace RestSharp
         /// </summary>
         private readonly IList<DecompressionMethods> _alloweDecompressionMethods;
 
+        private Action<Stream> _responseWriter;
+        private Action<Stream, IHttpResponse> _advancedResponseWriter;
+
         /// <summary>
         ///     Default constructor
         /// </summary>
@@ -138,12 +141,32 @@ namespace RestSharp
         /// <summary>
         ///     Set this to write response to Stream rather than reading into memory.
         /// </summary>
-        public Action<Stream> ResponseWriter { get; set; }
+        public Action<Stream> ResponseWriter
+        {
+            get => _responseWriter;
+            set
+            {
+                if (AdvancedResponseWriter != null)
+                    throw new ArgumentException("AdvancedResponseWriter is not null. Only one response writer can be used.");
+                
+                _responseWriter = value;
+            }
+        }
 
         /// <summary>
         /// Set this to handle the response stream yourself, based on the response details
         /// </summary>
-        public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
+        public Action<Stream, IHttpResponse> AdvancedResponseWriter
+        {
+            get => _advancedResponseWriter;
+            set
+            {
+                if (ResponseWriter != null)
+                    throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
+                
+                _advancedResponseWriter = value;
+            }
+        }
 
         /// <summary>
         ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
