@@ -1,4 +1,6 @@
-﻿namespace RestSharp.Serializers
+﻿using RestSharp.Serializers;
+
+namespace RestSharp.Serialization.Xml
 {
     public interface IXmlSerializer : ISerializer
     {

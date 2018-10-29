@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Threading;
 using System.Xml.Linq;
 using NUnit.Framework;
+using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 using RestSharp.Tests.SampleClasses;
 

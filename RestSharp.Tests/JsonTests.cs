@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RestSharp.Deserializers;
+using RestSharp.Serialization.Json;
 using RestSharp.Serializers;
 using RestSharp.Tests.SampleClasses;
 
@@ -42,7 +43,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Exponential_Notation()
         {
             const string content = "{ \"Value\": 4.8e-04 }";
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             DecimalNumber output = json.Deserialize<DecimalNumber>(new RestResponse { Content = content });
             decimal expected = decimal.Parse("4.8e-04", NumberStyles.Float, CultureInfo.InvariantCulture);
 
@@ -54,7 +55,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Into_Struct()
         {
             const string content = "{\"one\":\"oneOneOne\", \"two\":\"twoTwoTwo\", \"three\":3}";
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             SimpleStruct output = json.Deserialize<SimpleStruct>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
@@ -68,7 +69,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonarray.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             StatusComplexList output = json.Deserialize<StatusComplexList>(response);
 
             Assert.AreEqual(4, output.Count);
@@ -79,7 +80,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "bearertoken.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             BearerToken output = json.Deserialize<BearerToken>(response);
             DateTimeOffset expectedIssued = DateTimeOffset.ParseExact("Mon, 14 Oct 2013 06:53:32 GMT", "r", CultureInfo.InvariantCulture);
             DateTimeOffset expectedExpires = DateTimeOffset.ParseExact("Mon, 28 Oct 2013 06:53:32 GMT", "r", CultureInfo.InvariantCulture);
@@ -96,7 +97,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "4sq.txt"));
-            JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
+            JsonSerializer json = new JsonSerializer { RootElement = "response" };
             VenuesResponse output = json.Deserialize<VenuesResponse>(new RestResponse { Content = doc });
 
             Assert.IsNotEmpty(output.Groups);
@@ -106,7 +107,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_IEnumerable_of_Simple_Types()
         {
             const string content = "{\"numbers\":[1,2,3,4,5]}";
-            JsonDeserializer json = new JsonDeserializer { RootElement = "numbers" };
+            JsonSerializer json = new JsonSerializer { RootElement = "numbers" };
             var output = json.Deserialize<IEnumerable<int>>(new RestResponse { Content = content });
 
             Assert.IsNotEmpty(output);
@@ -117,7 +118,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonlists.txt"));
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             JsonLists output = json.Deserialize<JsonLists>(new RestResponse { Content = doc });
 
             Assert.IsNotEmpty(output.Names);
@@ -128,7 +129,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Simple_Generic_List_of_Simple_Types()
         {
             const string content = "{\"users\":[\"johnsheehan\",\"jagregory\",\"drusellers\",\"structuremap\"]}";
-            JsonDeserializer json = new JsonDeserializer { RootElement = "users" };
+            JsonSerializer json = new JsonSerializer { RootElement = "users" };
             List<string> output = json.Deserialize<List<string>>(new RestResponse { Content = content });
 
             Assert.IsNotEmpty(output);
@@ -138,7 +139,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Simple_Generic_List_of_Simple_Types_With_Nulls()
         {
             const string content = "{\"users\":[\"johnsheehan\",\"jagregory\",null,\"drusellers\",\"structuremap\"]}";
-            JsonDeserializer json = new JsonDeserializer { RootElement = "users" };
+            JsonSerializer json = new JsonSerializer { RootElement = "users" };
             List<string> output = json.Deserialize<List<string>>(new RestResponse { Content = content });
 
             Assert.IsNotEmpty(output);
@@ -150,7 +151,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Simple_Generic_List_Given_Item_Without_Array()
         {
             const string content = "{\"users\":\"johnsheehan\"}";
-            JsonDeserializer json = new JsonDeserializer { RootElement = "users" };
+            JsonSerializer json = new JsonSerializer { RootElement = "users" };
             List<string> output = json.Deserialize<List<string>>(new RestResponse { Content = content });
 
             Assert.True(output.SequenceEqual(new[] { "johnsheehan" }));
@@ -160,7 +161,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Simple_Generic_List_Given_Toplevel_Item_Without_Array()
         {
             const string content = "\"johnsheehan\"";
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             List<string> output = json.Deserialize<List<string>>(new RestResponse { Content = content });
 
             Assert.True(output.SequenceEqual(new[] { "johnsheehan" }));
@@ -170,7 +171,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_From_Root_Element()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "sojson.txt"));
-            JsonDeserializer json = new JsonDeserializer { RootElement = "User" };
+            JsonSerializer json = new JsonSerializer { RootElement = "User" };
             SoUser output = json.Deserialize<SoUser>(new RestResponse { Content = doc });
 
             Assert.AreEqual("John Sheehan", output.DisplayName);
@@ -180,7 +181,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_To_Dictionary_String_Object()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary.txt"));
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             Dictionary<string, object> output =
                 json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
 
@@ -195,7 +196,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_To_Dictionary_Int_Object()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary_KeysType.txt"));
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             Dictionary<int, object> output =
                 json.Deserialize<Dictionary<int, object>>(new RestResponse { Content = doc });
 
@@ -210,7 +211,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Generic_Members()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "GenericWithList.txt"));
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             Generic<GenericWithList<Foe>> output =
                 json.Deserialize<Generic<GenericWithList<Foe>>>(new RestResponse { Content = doc });
 
@@ -226,7 +227,7 @@ namespace RestSharp.Tests
 
             data["Ids"] = new JsonArray { id1, id2 };
 
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = data.ToString()  };
             GuidList p = d.Deserialize<GuidList>(response);
 
@@ -248,7 +249,7 @@ namespace RestSharp.Tests
                                 item2.ToString("u")
                             };
 
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = data.ToString() };
             GenericWithList<DateTime> p = d.Deserialize<GenericWithList<DateTime>>(response);
 
@@ -273,7 +274,7 @@ namespace RestSharp.Tests
                                 "/Date(1309421746929+0000)/"
                             };
 
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = data.ToString() };
             GenericWithList<DateTime> p = d.Deserialize<GenericWithList<DateTime>>(response);
 
@@ -287,7 +288,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Null_Elements_to_Nullable_Values()
         {
             string doc = CreateJsonWithNullValues();
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             NullableValues output = json.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
             Assert.Null(output.Id);
@@ -299,7 +300,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Empty_Elements_to_Nullable_Values()
         {
             string doc = CreateJsonWithEmptyValues();
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             NullableValues output = json.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
             Assert.Null(output.Id);
@@ -311,7 +312,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Elements_to_Nullable_Values()
         {
             string doc = CreateJsonWithoutEmptyValues();
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             NullableValues output = json.Deserialize<NullableValues>(new RestResponse { Content = doc });
 
             Assert.NotNull(output.Id);
@@ -330,7 +331,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Json_Using_DeserializeAs_Attribute()
         {
             const string content = "{\"sid\":\"asdasdasdasdasdasdasda\",\"friendlyName\":\"VeryNiceName\",\"oddballPropertyName\":\"blahblah\"}";
-            JsonDeserializer json = new JsonDeserializer { RootElement = "users" };
+            JsonSerializer json = new JsonSerializer { RootElement = "users" };
             Oddball output = json.Deserialize<Oddball>(new RestResponse { Content = content });
 
             Assert.NotNull(output);
@@ -346,7 +347,7 @@ namespace RestSharp.Tests
             var formatted = new { StartDate = date.ToString(format, culture) };
             string data = SimpleJson.SerializeObject(formatted);
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer
+            JsonSerializer json = new JsonSerializer
                                     {
                                         DateFormat = format,
                                         Culture = culture
@@ -361,7 +362,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonarray.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             List<status> output = json.Deserialize<List<status>>(response);
 
             Assert.AreEqual(4, output.Count);
@@ -372,7 +373,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonarray.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             StatusList output = json.Deserialize<StatusList>(response);
 
             Assert.AreEqual(4, output.Count);
@@ -383,7 +384,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonenums.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             JsonEnumsTestStructure output = json.Deserialize<JsonEnumsTestStructure>(response);
 
             Assert.AreEqual(Disposition.Friendly, output.Upper);
@@ -401,7 +402,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsonenumtypes.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             JsonEnumTypesTestStructure output = json.Deserialize<JsonEnumTypesTestStructure>(response);
 
             Assert.AreEqual(ByteEnum.EnumMin, output.ByteEnumType);
@@ -419,7 +420,7 @@ namespace RestSharp.Tests
         {
             const string data = @"{ ""Integer"" : 1024 }";
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             JsonEnumsTestStructure result = json.Deserialize<JsonEnumsTestStructure>(response);
 
             Assert.AreEqual(Disposition.Friendly, result.Integer);
@@ -432,7 +433,7 @@ namespace RestSharp.Tests
 
             doc["Guid"] = GUID_STRING;
 
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc.ToString() };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -446,7 +447,7 @@ namespace RestSharp.Tests
 
             doc["Age"] = "28";
 
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc.ToString() };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -460,7 +461,7 @@ namespace RestSharp.Tests
 
             doc["IsCool"] = 1;
 
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc.ToString() };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -471,7 +472,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_With_Default_Root()
         {
             string doc = CreateJson();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -511,7 +512,7 @@ namespace RestSharp.Tests
         {
             string data = File.ReadAllText(Path.Combine(currentPath, "SampleData", "underscore_prefix.txt"));
             RestResponse response = new RestResponse { Content = data };
-            JsonDeserializer json = new JsonDeserializer { RootElement = "User" };
+            JsonSerializer json = new JsonSerializer { RootElement = "User" };
             SoUser output = json.Deserialize<SoUser>(response);
 
             Assert.AreEqual("John Sheehan", output.DisplayName);
@@ -522,7 +523,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Names_With_Underscores_With_Default_Root()
         {
             string doc = CreateJsonWithUnderscores();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -557,7 +558,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Names_With_Dashes_With_Default_Root()
         {
             string doc = CreateJsonWithDashes();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -592,7 +593,7 @@ namespace RestSharp.Tests
         public void Ignore_Protected_Property_That_Exists_In_Data()
         {
             string doc = CreateJson();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
@@ -604,7 +605,7 @@ namespace RestSharp.Tests
         {
             string doc = CreateJson();
             RestResponse response = new RestResponse { Content = doc };
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             PersonForJson p = d.Deserialize<PersonForJson>(response);
 
             Assert.Null(p.ReadOnlyProxy);
@@ -637,7 +638,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Iso_Json_Dates()
         {
             string doc = CreateIsoDateJson();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             Birthdate bd = d.Deserialize<Birthdate>(response);
 
@@ -648,7 +649,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Unix_Json_Dates()
         {
             string doc = CreateUnixDateJson();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             Birthdate bd = d.Deserialize<Birthdate>(response);
 
@@ -659,7 +660,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Unix_Json_Millisecond_Dates()
         {
             string doc = CreateUnixDateMillisecondsJson();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             Birthdate bd = d.Deserialize<Birthdate>(response);
 
@@ -768,7 +769,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_To_Dictionary_String_String()
         {
             string doc = this.CreateJsonStringDictionary();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             Dictionary<string, string> bd = d.Deserialize<Dictionary<string, string>>(response);
 
@@ -782,7 +783,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_To_Dictionary_String_String_With_Dynamic_Values()
         {
             string doc = this.CreateDynamicJsonStringDictionary();
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             RestResponse response = new RestResponse { Content = doc };
             Dictionary<string, string> bd = d.Deserialize<Dictionary<string, string>>(response);
 
@@ -797,7 +798,7 @@ namespace RestSharp.Tests
         {
             const string json = "{\"Value\":0.00005557}";
             RestResponse response = new RestResponse { Content = json };
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             DecimalNumber result = d.Deserialize<DecimalNumber>(response);
 
             Assert.AreEqual(result.Value, .00005557m);
@@ -815,7 +816,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Dictionary_of_Lists()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary.txt"));
-            JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
+            JsonSerializer json = new JsonSerializer { RootElement = "response" };
             EmployeeTracker output = json.Deserialize<EmployeeTracker>(new RestResponse { Content = doc });
 
             Assert.IsNotEmpty(output.EmployeesMail);
@@ -828,7 +829,7 @@ namespace RestSharp.Tests
         {
             const string json = "\"c02bdd1e-cce3-4b9c-8473-165e6e93b92a\"";
             RestResponse response = new RestResponse { Content = json };
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
             Guid result = d.Deserialize<Guid>(response);
 
             Assert.AreEqual(result, new Guid("c02bdd1e-cce3-4b9c-8473-165e6e93b92a"));
@@ -838,7 +839,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Dictionary_with_Null()
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", "jsondictionary_null.txt"));
-            JsonDeserializer json = new JsonDeserializer { RootElement = "response" };
+            JsonSerializer json = new JsonSerializer { RootElement = "response" };
             IDictionary<string, object> output = json.Deserialize<Dictionary<string, object>>(new RestResponse { Content = doc });
 
             IDictionary<string, object> dictionary = (IDictionary<string, object>)output["SomeDictionary"];
@@ -850,7 +851,7 @@ namespace RestSharp.Tests
         public void Can_Deserialize_Date_With_Milliseconds()
         {
             const string content = "{ \"CreatedOn\": \"2018-10-01T14:39:00.123Z\" }";
-            JsonDeserializer json = new JsonDeserializer();
+            JsonSerializer json = new JsonSerializer();
             DateTimeResponse output = json.Deserialize<DateTimeResponse>(new RestResponse { Content = content });
             DateTime expected = DateTime.Parse("2018-10-01 14:39:00", CultureInfo.InvariantCulture);
             
@@ -1121,7 +1122,7 @@ namespace RestSharp.Tests
         {
             string doc = File.ReadAllText(Path.Combine(currentPath, "SampleData", fileName));
             RestResponse response = new RestResponse { Content = doc };
-            JsonDeserializer d = new JsonDeserializer();
+            JsonSerializer d = new JsonSerializer();
 
             return d.Deserialize<T>(response);
         }

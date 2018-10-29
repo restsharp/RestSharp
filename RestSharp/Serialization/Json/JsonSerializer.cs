@@ -4,23 +4,46 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
+using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using SimpleJson;
 
-namespace RestSharp.Deserializers
+namespace RestSharp.Serialization.Json
 {
-    using System.Xml;
-
-    public class JsonDeserializer : IDeserializer
+    public class JsonSerializer : IRestSerializer
     {
-        public JsonDeserializer()
+        public JsonSerializer()
         {
             Culture = CultureInfo.InvariantCulture;
+            ContentType = "application/json";
         }
 
-        public string RootElement { get; set; }
+        /// <summary>
+        /// Serialize the object as JSON
+        /// </summary>
+        /// <param name="obj">Object to serialize</param>
+        /// <returns>JSON as String</returns>
+        public string Serialize(object obj)
+        {
+            if (obj is string value)
+            {
+                var trimmed = value.Trim();
+                if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
+                {
+                    return value;
+                }
+            }
 
-        public string Namespace { get; set; }
+            return SimpleJson.SimpleJson.SerializeObject(obj);
+        }
+
+        /// <summary>
+        /// Content type for serialized content
+        /// </summary>
+        public string ContentType { get; set; }
+        
+        public string RootElement { get; set; }
 
         public string DateFormat { get; set; }
 
@@ -328,4 +351,6 @@ namespace RestSharp.Deserializers
             return instance;
         }
     }
+    
+    public class JsonDeserializer : JsonSerializer { }
 }

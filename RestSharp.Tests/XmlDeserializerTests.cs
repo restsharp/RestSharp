@@ -24,6 +24,8 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using RestSharp.Deserializers;
+using RestSharp.Serialization;
+using RestSharp.Serialization.Xml;
 using RestSharp.Tests.SampleClasses;
 using RestSharp.Tests.SampleClasses.DeserializeAsTest;
 using Event = RestSharp.Tests.SampleClasses.Lastfm.Event;

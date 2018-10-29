@@ -19,17 +19,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using RestSharp.Deserializers;
 using RestSharp.Extensions;
-using System.ComponentModel;
 
-namespace RestSharp.Deserializers
+namespace RestSharp.Serialization.Xml
 {
-    public class XmlDeserializer : IDeserializer
+    public class XmlDeserializer : IXmlDeserializer
     {
         public XmlDeserializer()
         {

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml.Serialization;
 
-namespace RestSharp.Serializers
+namespace RestSharp.Serialization.Xml
 {
     /// <summary>
     ///     Wrapper for System.Xml.Serialization.XmlSerializer.

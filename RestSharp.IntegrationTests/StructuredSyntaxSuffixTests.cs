@@ -3,6 +3,7 @@ using System.Net;
 using NUnit.Framework;
 using RestSharp.Deserializers;
 using RestSharp.IntegrationTests.Helpers;
+using RestSharp.Serialization.Json;
 
 namespace RestSharp.IntegrationTests
 {
@@ -77,7 +78,7 @@ namespace RestSharp.IntegrationTests
                 RestClient client = new RestClient(baseUrl);
 
                 // In spite of the content type (+xml), treat this specific content type as JSON
-                client.AddHandler("application/vnd.somebody.something+xml", new JsonDeserializer());
+                client.AddHandler("application/vnd.somebody.something+xml", new JsonSerializer());
 
                 RestRequest request = new RestRequest();
 
@@ -101,7 +102,7 @@ namespace RestSharp.IntegrationTests
                 RestClient client = new RestClient(baseUrl);
 
                 // In spite of the content type, handle ALL structured syntax suffixes of "+xml" as JSON
-                client.AddHandler("*+xml", new JsonDeserializer());
+                client.AddHandler("*+xml", new JsonSerializer());
 
                 RestRequest request = new RestRequest();
 

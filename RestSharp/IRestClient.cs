@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
-
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Cache;
@@ -33,6 +32,10 @@ namespace RestSharp
 {
     public interface IRestClient
     {
+        IRestClient UseJsonSerializer(IDeserializer deserializer);
+
+        IRestClient UseXmlSerializer(IDeserializer deserializer);
+        
         CookieContainer CookieContainer { get; set; }
 
         bool AutomaticDecompression { get; set; }
@@ -52,7 +55,7 @@ namespace RestSharp
         Uri BaseUrl { get; set; }
 
         Encoding Encoding { get; set; }
-        
+
         string ConnectionGroupName { get; set; }
 
         bool PreAuthenticate { get; set; }
@@ -64,14 +67,18 @@ namespace RestSharp
         string BaseHost { get; set; }
 
         bool AllowMultipleDefaultParametersWithSameName { get; set; }
-        
-        RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback);
 
-        RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
-        
-        RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod);
+        RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
+            Action<IRestResponse, RestRequestAsyncHandle> callback);
 
-        RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod);
+        RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
+
+        RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
+            Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod);
+
+        RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
+            Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod);
 
         IRestResponse<T> Deserialize<T>(IRestResponse response);
 
@@ -84,7 +91,7 @@ namespace RestSharp
         IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod) where T : new();
 
         byte[] DownloadData(IRestRequest request);
-        
+
         byte[] DownloadData(IRestRequest request, bool throwOnError);
 
         /// <summary>
@@ -101,7 +108,7 @@ namespace RestSharp
         bool FollowRedirects { get; set; }
 
         Uri BuildUri(IRestRequest request);
-        
+
         string BuildUriWithoutQueryParameters(IRestRequest request);
 
         /// <summary>
@@ -153,24 +160,24 @@ namespace RestSharp
         /// </summary>
         /// <param name="configurator">Configuration delegate for HttpWebRequest</param>
         void ConfigureWebRequest(Action<HttpWebRequest> configurator);
-        
+
         /// <summary>
         /// Adds or replaces a deserializer for the specified content type
         /// </summary>
         /// <param name="contentType">Content type for which the deserializer will be replaced</param>
         /// <param name="deserializer">Custom deserializer</param>
-        void AddHandler(string contentType, IDeserializer deserializer);
+        IRestClient AddHandler(string contentType, IDeserializer deserializer);
 
         /// <summary>
         /// Removes custom deserialzier for the specified content type
         /// </summary>
         /// <param name="contentType">Content type for which deserializer needs to be removed</param>
-        void RemoveHandler(string contentType);
+        IRestClient RemoveHandler(string contentType);
 
         /// <summary>
         /// Remove deserializers for all content types
         /// </summary>
-        void ClearHandlers();
+        IRestClient ClearHandlers();
 
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
 
@@ -195,7 +202,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="httpMethod">Override the request method</param>
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod);
-        
+
         /// <summary>
         /// Executes the request asynchronously, authenticating if needed
         /// </summary>

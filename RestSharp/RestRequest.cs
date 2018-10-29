@@ -22,6 +22,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using RestSharp.Serialization.Json;
+using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 // ReSharper disable IntroduceOptionalParameters.Global
 
@@ -33,9 +35,9 @@ namespace RestSharp
     public class RestRequest : IRestRequest
     {
         /// <summary>
-        ///     Local list of Allowed Decompresison Methods
+        ///     Local list of Allowed Decompression Methods
         /// </summary>
-        private readonly IList<DecompressionMethods> alloweDecompressionMethods;
+        private readonly IList<DecompressionMethods> _alloweDecompressionMethods;
 
         /// <summary>
         ///     Default constructor
@@ -48,7 +50,7 @@ namespace RestSharp
             Files = new List<FileParameter>();
             XmlSerializer = new XmlSerializer();
             JsonSerializer = new JsonSerializer();
-            alloweDecompressionMethods = new List<DecompressionMethods>();
+            _alloweDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
         }
@@ -112,8 +114,8 @@ namespace RestSharp
         ///     List of Allowed Decompresison Methods
         /// </summary>
         public IList<DecompressionMethods> AllowedDecompressionMethods =>
-            alloweDecompressionMethods.Any()
-                ? alloweDecompressionMethods
+            _alloweDecompressionMethods.Any()
+                ? _alloweDecompressionMethods
                 : new[] {DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip};
 
         /// <summary>
@@ -580,8 +582,8 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
         {
-            if (!alloweDecompressionMethods.Contains(decompressionMethod))
-                alloweDecompressionMethods.Add(decompressionMethod);
+            if (!_alloweDecompressionMethods.Contains(decompressionMethod))
+                _alloweDecompressionMethods.Add(decompressionMethod);
 
             return this;
         }

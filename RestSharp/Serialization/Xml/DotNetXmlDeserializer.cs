@@ -18,14 +18,13 @@
 
 using System.IO;
 using System.Text;
-using System.Xml.Serialization;
 
-namespace RestSharp.Deserializers
+namespace RestSharp.Serialization.Xml
 {
     /// <summary>
     /// Wrapper for System.Xml.Serialization.XmlSerializer.
     /// </summary>
-    public class DotNetXmlDeserializer : IDeserializer
+    public class DotNetXmlDeserializer : IXmlDeserializer
     {
         public string DateFormat { get; set; }
 
@@ -40,9 +39,9 @@ namespace RestSharp.Deserializers
                 return default(T);
             }
 
-            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(response.Content)))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
 
                 return (T) serializer.Deserialize(stream);
             }

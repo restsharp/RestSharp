@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 
 namespace RestSharp

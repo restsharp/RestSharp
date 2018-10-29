@@ -23,8 +23,9 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
+using RestSharp.Serializers;
 
-namespace RestSharp.Serializers
+namespace RestSharp.Serialization.Xml
 {
     /// <summary>
     ///     Default XML Serializer

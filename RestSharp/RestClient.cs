@@ -26,10 +26,12 @@ using System.Net;
 using System.Net.Cache;
 using System.Net.Security;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using RestSharp.Serialization.Json;
+using RestSharp.Serialization.Xml;
+using RestSharp.Serializers;
 
 namespace RestSharp
 {
@@ -39,11 +41,21 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version      
-        private static readonly Version version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
+        private static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;
 
         private static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
         private static readonly Regex StructuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
+
+        private static readonly string[] JsonContentTypes =
+        {
+            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
+        };
+
+        private static readonly string[] XmlContentTypes =
+        {
+            "application/xml", "text/xml", "*+xml", "*"
+        };
 
         /// <summary>
         ///     Default constructor that registers default content handlers
@@ -58,9 +70,8 @@ namespace RestSharp
 
             // TODO: Make this configurable
             // register default handlers
-            AddHandler(new JsonDeserializer(), "application/json", "text/json", "text/x-json", "text/javascript",
-                "*+json");
-            AddHandler(new XmlDeserializer(), "application/xml", "text/xml", "*+xml", "*");
+            AddHandler(new JsonSerializer(), JsonContentTypes);
+            AddHandler(new XmlDeserializer(), XmlContentTypes);
             FollowRedirects = true;
         }
 
@@ -83,6 +94,10 @@ namespace RestSharp
 
             BaseUrl = new Uri(baseUrl);
         }
+
+        public IRestClient UseJsonSerializer(IDeserializer deserializer) => AddHandler(deserializer, JsonContentTypes);
+
+        public IRestClient UseXmlSerializer(IDeserializer deserializer) => AddHandler(deserializer, XmlContentTypes);
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
 
@@ -206,11 +221,11 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentType">MIME content type of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
-        public void AddHandler(string contentType, IDeserializer deserializer)
+        public IRestClient AddHandler(string contentType, IDeserializer deserializer)
         {
             ContentHandlers[contentType] = deserializer;
 
-            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
+            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return this;
 
             if (!AcceptTypes.Contains(contentType))
                 AcceptTypes.Add(contentType);
@@ -220,6 +235,8 @@ namespace RestSharp
 
             this.RemoveDefaultParameter("Accept");
             this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+
+            return this;
         }
 
         /// <summary>
@@ -227,33 +244,39 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentTypes">A list of MIME content types of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
-        public void AddHandler(IDeserializer deserializer, params string[] contentTypes)
+        public IRestClient AddHandler(IDeserializer deserializer, params string[] contentTypes)
         {
             foreach (var contentType in contentTypes)
             {
                 AddHandler(contentType, deserializer);
             }
+
+            return this;
         }
 
         /// <summary>
         ///     Remove a content handler for the specified MIME content type
         /// </summary>
         /// <param name="contentType">MIME content type to remove</param>
-        public void RemoveHandler(string contentType)
+        public IRestClient RemoveHandler(string contentType)
         {
             ContentHandlers.Remove(contentType);
             AcceptTypes.Remove(contentType);
             this.RemoveDefaultParameter("Accept");
+
+            return this;
         }
 
         /// <summary>
         ///     Remove all content handlers
         /// </summary>
-        public void ClearHandlers()
+        public IRestClient ClearHandlers()
         {
             ContentHandlers.Clear();
             AcceptTypes.Clear();
             this.RemoveDefaultParameter("Accept");
+
+            return this;
         }
 
         public IRestResponse<T> Deserialize<T>(IRestResponse response)
@@ -381,6 +404,7 @@ namespace RestSharp
                     .Where(p => p.Type == ParameterType.QueryString ||
                                 p.Type == ParameterType.QueryStringWithoutEncode);
         }
+
         private static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
         {
             return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
@@ -499,7 +523,7 @@ namespace RestSharp
 
             http.UserAgent = userAgent.HasValue()
                 ? userAgent
-                : "RestSharp/" + version;
+                : "RestSharp/" + Version;
 
             var timeout = request.Timeout != 0
                 ? request.Timeout
@@ -602,7 +626,7 @@ namespace RestSharp
             }
 
             http.Proxy = proxy;
-            
+
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             return http;
@@ -674,18 +698,19 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    IDeserializer handler = GetHandler(raw.ContentType);
+                    var handler = GetHandler(raw.ContentType);
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
-                    if (handler != null)
+                    if (handler is IXmlDeserializer xml)
                     {
-                        handler.RootElement = request.RootElement;
-                        handler.DateFormat = request.DateFormat;
-                        handler.Namespace = request.XmlNamespace;
-
-                        response.Data = handler.Deserialize<T>(raw);
+                        xml.RootElement = request.RootElement;
+                        xml.DateFormat = request.DateFormat;
+                        xml.Namespace = request.XmlNamespace;
                     }
+                    
+                    if (handler != null)
+                        response.Data = handler.Deserialize<T>(raw);
                 }
             }
             catch (Exception ex)

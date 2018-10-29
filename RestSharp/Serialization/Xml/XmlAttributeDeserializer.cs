@@ -18,9 +18,10 @@
 
 using System.Reflection;
 using System.Xml.Linq;
+using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
-namespace RestSharp.Deserializers
+namespace RestSharp.Serialization.Xml
 {
     public class XmlAttributeDeserializer : XmlDeserializer
     {
@@ -29,7 +30,7 @@ namespace RestSharp.Deserializers
             bool isAttribute = false;
             
             //Check for the DeserializeAs attribute on the property
-            DeserializeAsAttribute options = prop.GetAttribute<DeserializeAsAttribute>();
+            var options = prop.GetAttribute<DeserializeAsAttribute>();
 
             if (options != null)
             {
@@ -39,9 +40,9 @@ namespace RestSharp.Deserializers
 
             if (!isAttribute) return base.GetValueFromXml(root, name, prop, useExactName);
             
-            XAttribute attributeVal = GetAttributeByName(root, name, useExactName);
+            var attributeVal = GetAttributeByName(root, name, useExactName);
 
-            return attributeVal != null ? attributeVal.Value : base.GetValueFromXml(root, name, prop, useExactName);
+            return attributeVal?.Value ?? base.GetValueFromXml(root, name, prop, useExactName);
         }
     }
 }
