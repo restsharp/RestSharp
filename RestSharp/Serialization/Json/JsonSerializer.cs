@@ -19,47 +19,47 @@ namespace RestSharp.Serialization.Json
             ContentType = "application/json";
         }
 
-		/// <summary>
-		/// Serialize the object as JSON
-		/// If the object is already a serialized string returns it's value
-		/// </summary>
-		/// <param name="obj">Object to serialize</param>
-		/// <returns>JSON as String</returns>
-		public string Serialize(object obj)
+        /// <summary>
+        /// Serialize the object as JSON
+        /// If the object is already a serialized string returns it's value
+        /// </summary>
+        /// <param name="obj">Object to serialize</param>
+        /// <returns>JSON as String</returns>
+        public string Serialize(object obj)
         {
-			if( IsSerializedString( obj, out var serializedString ) )
-			{
-				return serializedString;
-			}
+            if( IsSerializedString( obj, out var serializedString ) )
+            {
+                return serializedString;
+            }
 
-			return SimpleJson.SimpleJson.SerializeObject(obj);
+            return SimpleJson.SimpleJson.SerializeObject(obj);
         }
 
-	    /// <summary>
-	    /// Determines if the object is already a serialized string.
-	    /// </summary>
-	    private static bool IsSerializedString( object obj, out string serializedString )
-	    {
-		    if( obj is string value )
-		    {
-			    string trimmed = value.Trim();
+        /// <summary>
+        /// Determines if the object is already a serialized string.
+        /// </summary>
+        private static bool IsSerializedString( object obj, out string serializedString )
+        {
+            if( obj is string value )
+            {
+                string trimmed = value.Trim();
 
-			    if( ( trimmed.StartsWith( "{" ) && trimmed.EndsWith( "}" ) )
-			        || ( trimmed.StartsWith( "[{" ) && trimmed.EndsWith( "}]" ) ) )
-			    {
-				    serializedString = value;
-				    return true;
-			    }
-		    }
+                if( ( trimmed.StartsWith( "{" ) && trimmed.EndsWith( "}" ) )
+                    || ( trimmed.StartsWith( "[{" ) && trimmed.EndsWith( "}]" ) ) )
+                {
+                    serializedString = value;
+                    return true;
+                }
+            }
 
-		    serializedString = null;
-		    return false;
-	    }
+            serializedString = null;
+            return false;
+        }
 
-		/// <summary>
-		/// Content type for serialized content
-		/// </summary>
-		public string ContentType { get; set; }
+        /// <summary>
+        /// Content type for serialized content
+        /// </summary>
+        public string ContentType { get; set; }
         
         public string RootElement { get; set; }
 

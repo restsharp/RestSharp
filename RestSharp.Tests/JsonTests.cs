@@ -871,18 +871,18 @@ namespace RestSharp.Tests
             Assert.AreEqual(preformattedString, result);
         }
 
-	    [Test]
-	    public void Serialize_Json_Returns_Same_Json_Array()
-	    {
-		    string preformattedString = "[{ \"name\" : \"value\" }]";
+        [Test]
+        public void Serialize_Json_Returns_Same_Json_Array()
+        {
+            string preformattedString = "[{ \"name\" : \"value\" }]";
 
-		    var json = new JsonSerializer();
-		    string result = json.Serialize( preformattedString );
+            var json = new JsonSerializer();
+            string result = json.Serialize( preformattedString );
 
-		    Assert.AreEqual( preformattedString, result );
-	    }
+            Assert.AreEqual( preformattedString, result );
+        }
 
-		[Test]
+        [Test]
         public void Serialize_Json_Does_Not_Double_Escape()
         {
             string preformattedString = "{ \"name\" : \"value\" }";
