@@ -390,10 +390,6 @@ namespace RestSharp
                 response.ContentType = webResponse.ContentType;
                 response.ContentLength = webResponse.ContentLength;
 
-                var webResponseStream = webResponse.GetResponseStream();
-
-                ProcessResponseStream(webResponseStream, response);
-
                 response.StatusCode = webResponse.StatusCode;
                 response.StatusDescription = webResponse.StatusDescription;
                 response.ResponseUri = webResponse.ResponseUri;
@@ -430,18 +426,24 @@ namespace RestSharp
                     });
                 }
 
+                var webResponseStream = webResponse.GetResponseStream();
+                ProcessResponseStream(webResponseStream, response);
+
                 webResponse.Close();
             }
         }
 
         private void ProcessResponseStream(Stream webResponseStream, HttpResponse response)
         {
-            if (ResponseWriter == null)
-                response.RawBytes = webResponseStream.ReadAsBytes();
+            if (AdvancedResponseWriter != null)
+                AdvancedResponseWriter(webResponseStream, response);
             else
-                ResponseWriter(webResponseStream);
-
-            AdvancedResponseWriter?.Invoke(webResponseStream, response);
+            {
+                if (ResponseWriter == null)
+                    response.RawBytes = webResponseStream.ReadAsBytes();
+                else
+                    ResponseWriter(webResponseStream);
+            }
         }
 
         private static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");

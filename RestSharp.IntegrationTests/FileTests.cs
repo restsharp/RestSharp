@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 
@@ -61,6 +62,25 @@ namespace RestSharp.IntegrationTests
             byte[] expected = File.ReadAllBytes(_path + "\\Assets\\Koala.jpg");
 
             Assert.AreEqual(expected, fromTemp);
+        }
+
+        [Test]
+        public void AdvancedResponseWriter_without_ResponseWriter_reads_stream()
+        {
+            string tag = string.Empty;
+
+            var rr = new RestRequest("Assets/Koala.jpg")
+            {
+                AdvancedResponseWriter = (stream, context) =>
+                {
+                    var buf = new byte[16];
+                    stream.Read(buf, 0, buf.Length);
+                    tag = Encoding.ASCII.GetString(buf, 6, 4);
+                }
+            };
+
+            _client.Execute(rr);
+            Assert.IsTrue("JFIF".CompareTo(tag) == 0);
         }
     }
 }
