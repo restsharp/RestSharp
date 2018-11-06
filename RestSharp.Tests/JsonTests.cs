@@ -113,7 +113,16 @@ namespace RestSharp.Tests
             Assert.IsNotEmpty(output);
             Assert.IsTrue(output.Count() == 5);
         }
+        [Test]
+        public void Can_Deserialize_IList_of_Simple_Types()
+        {
+            const string content = "{\"numbers\":[1,2,3,4,5]}";
+            JsonSerializer json = new JsonSerializer { RootElement = "numbers" };
+            var output = json.Deserialize<IList<int>>(new RestResponse { Content = content });
 
+            Assert.IsNotEmpty(output);
+            Assert.IsTrue(output.Count() == 5);
+        }
         [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {

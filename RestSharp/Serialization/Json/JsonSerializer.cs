@@ -310,6 +310,13 @@ namespace RestSharp.Serialization.Json
                     return BuildList(listType, value);
                 }
 
+                if (genericTypeDef == typeof(IList<>))
+                {
+                    Type itemType = typeInfo.GetGenericArguments()[0];
+                    Type listType = typeof(List<>).MakeGenericType(itemType);
+                    return BuildList(listType, value);
+                }
+
                 if (genericTypeDef == typeof(List<>))
                 {
                     return BuildList(type, value);
