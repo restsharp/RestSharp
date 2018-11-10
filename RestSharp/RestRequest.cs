@@ -37,7 +37,7 @@ namespace RestSharp
         /// <summary>
         ///     Local list of Allowed Decompression Methods
         /// </summary>
-        private readonly IList<DecompressionMethods> _alloweDecompressionMethods;
+        private readonly IList<DecompressionMethods> _allowedDecompressionMethods;
 
         private Action<Stream> _responseWriter;
         private Action<Stream, IHttpResponse> _advancedResponseWriter;
@@ -53,7 +53,7 @@ namespace RestSharp
             Files = new List<FileParameter>();
             XmlSerializer = new XmlSerializer();
             JsonSerializer = new JsonSerializer();
-            _alloweDecompressionMethods = new List<DecompressionMethods>();
+            _allowedDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
         }
@@ -117,8 +117,8 @@ namespace RestSharp
         ///     List of Allowed Decompresison Methods
         /// </summary>
         public IList<DecompressionMethods> AllowedDecompressionMethods =>
-            _alloweDecompressionMethods.Any()
-                ? _alloweDecompressionMethods
+            _allowedDecompressionMethods.Any()
+                ? _allowedDecompressionMethods
                 : new[] {DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip};
 
         /// <summary>
@@ -605,8 +605,8 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
         {
-            if (!_alloweDecompressionMethods.Contains(decompressionMethod))
-                _alloweDecompressionMethods.Add(decompressionMethod);
+            if (!_allowedDecompressionMethods.Contains(decompressionMethod))
+                _allowedDecompressionMethods.Add(decompressionMethod);
 
             return this;
         }
