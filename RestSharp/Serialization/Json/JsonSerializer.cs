@@ -303,7 +303,7 @@ namespace RestSharp.Serialization.Json
             {
                 Type genericTypeDef = type.GetGenericTypeDefinition();
 
-                if (genericTypeDef == typeof(IEnumerable<>))
+                if (genericTypeDef == typeof(IEnumerable<>) || genericTypeDef == typeof(IList<>))
                 {
                     Type itemType = typeInfo.GetGenericArguments()[0];
                     Type listType = typeof(List<>).MakeGenericType(itemType);
