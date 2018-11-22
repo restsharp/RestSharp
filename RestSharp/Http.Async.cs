@@ -234,17 +234,15 @@ namespace RestSharp
                     else if (RequestBody != null)
                         WriteStringTo(requestStream, RequestBody);
                 }
+
+                var asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+
+                SetTimeout(asyncResult, timeoutState);
             }
             catch (Exception ex)
             {
                 ExecuteCallback(CreateErrorResponse(ex), callback);
-
-                return;
             }
-
-            var asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
-
-            SetTimeout(asyncResult, timeoutState);
         }
 
         private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
