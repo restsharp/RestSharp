@@ -81,7 +81,7 @@ namespace RestSharp
             Method = method;
             RequestFormat = dataFormat;
 
-            var queryStringStart = Resource.IndexOf('?');
+            var queryStringStart = (Resource ?? string.Empty).IndexOf('?');
             if (queryStringStart >= 0)
             {
                 var queryParams = System.Web.HttpUtility.ParseQueryString(Resource.Substring(queryStringStart));

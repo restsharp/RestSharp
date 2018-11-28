@@ -107,5 +107,16 @@ namespace RestSharp.Tests
             Assert.AreEqual("hello", request.Parameters[0].Name);
             Assert.AreEqual("world", request.Parameters[0].Value);
         }
+
+        [Test]
+        public void Can_Set_Null_Resource()
+        {
+            Assert.DoesNotThrow(
+                () =>
+                    {
+                        RestRequest request = new RestRequest((string)null);
+                        Assert.NotNull(request);
+                    });
+        }
     }
 }
