@@ -27,15 +27,14 @@ using System.Threading.Tasks;
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using RestSharp.Serialization;
 
 namespace RestSharp
 {
     public interface IRestClient
     {
-        IRestClient UseJsonSerializer(IDeserializer deserializer);
+        IRestClient UseSerializer(IRestSerializer serializer);
 
-        IRestClient UseXmlSerializer(IDeserializer deserializer);
-        
         CookieContainer CookieContainer { get; set; }
 
         bool AutomaticDecompression { get; set; }

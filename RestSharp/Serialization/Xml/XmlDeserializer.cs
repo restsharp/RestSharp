@@ -38,6 +38,7 @@ namespace RestSharp.Serialization.Xml
         }
 
         public CultureInfo Culture { get; set; }
+        
         public string RootElement { get; set; }
 
         public string Namespace { get; set; }

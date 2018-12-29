@@ -51,8 +51,6 @@ namespace RestSharp
             Method = Method.GET;
             Parameters = new List<Parameter>();
             Files = new List<FileParameter>();
-            XmlSerializer = new XmlSerializer();
-            JsonSerializer = new JsonSerializer();
             _allowedDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
@@ -273,35 +271,21 @@ namespace RestSharp
         /// <param name="obj">The object to serialize</param>
         /// <param name="xmlNamespace">The XML namespace to use when serializing</param>
         /// <returns>This request</returns>
+        [Obsolete("Use AddXmlBody")]
         public IRestRequest AddBody(object obj, string xmlNamespace)
         {
-            string serialized;
-            string contentType;
-
-            // TODO: Make it possible to change the serialiser
             switch (RequestFormat)
             {
                 case DataFormat.Json:
-                    serialized = JsonSerializer.Serialize(obj);
-                    contentType = JsonSerializer.ContentType;
+                    AddJsonBody(obj);
                     break;
 
                 case DataFormat.Xml:
-                    XmlSerializer.Namespace = xmlNamespace;
-                    serialized = XmlSerializer.Serialize(obj);
-                    contentType = XmlSerializer.ContentType;
-                    break;
-
-                default:
-                    serialized = "";
-                    contentType = "";
+                    AddXmlBody(obj, xmlNamespace);
                     break;
             }
 
-            // passing the content type as the parameter name because there can only be
-            // one parameter with ParameterType.RequestBody so name isn't used otherwise
-            // it's a hack, but it works :)
-            return AddParameter(contentType, serialized, ParameterType.RequestBody);
+            return this;
         }
 
         /// <summary>
@@ -310,16 +294,8 @@ namespace RestSharp
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
-        public IRestRequest AddBody(object obj)
-        {
-            var xmlNamespace = "";
-            if (!string.IsNullOrWhiteSpace(XmlNamespace))
-                xmlNamespace = XmlNamespace;
-            else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
-                xmlNamespace = XmlSerializer.Namespace;
-
-            return AddBody(obj, xmlNamespace);
-        }
+        [Obsolete("Use AddXmlBody")]
+        public IRestRequest AddBody(object obj) => AddXmlBody(obj, "");
 
         /// <summary>
         ///     Serializes obj to JSON format and adds it to the request body.
@@ -330,7 +306,9 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            return AddBody(obj);
+            BodyParameter = new BodyParameter(obj);
+            
+            return this;
         }
 
         /// <summary>
@@ -338,12 +316,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
-        public IRestRequest AddXmlBody(object obj)
-        {
-            RequestFormat = DataFormat.Xml;
-
-            return AddBody(obj);
-        }
+        public IRestRequest AddXmlBody(object obj) => AddXmlBody(obj, "");
 
         /// <summary>
         ///     Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
@@ -356,7 +329,14 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Xml;
 
-            return AddBody(obj, xmlNamespace);
+            if (!string.IsNullOrWhiteSpace(XmlNamespace))
+                xmlNamespace = XmlNamespace;
+            else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
+                xmlNamespace = XmlSerializer.Namespace;
+
+            BodyParameter = new BodyParameter(obj, xmlNamespace);
+            
+            return this;
         }
 
         /// <summary>
@@ -616,6 +596,12 @@ namespace RestSharp
         ///     See AddParameter() for explanation of the types of parameters that can be passed
         /// </summary>
         public List<Parameter> Parameters { get; }
+        
+        /// <summary>
+        ///     Body parameter to be passed with the request.
+        ///     Content type will be used as a parameter name
+        /// </summary>
+        public BodyParameter BodyParameter { get; internal set; }
 
         /// <summary>
         ///     Container of all the files to be uploaded with the request.

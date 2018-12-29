@@ -13,12 +13,6 @@ namespace RestSharp.Serialization.Json
 {
     public class JsonSerializer : IRestSerializer
     {
-        public JsonSerializer()
-        {
-            Culture = CultureInfo.InvariantCulture;
-            ContentType = "application/json";
-        }
-
         /// <summary>
         /// Serialize the object as JSON
         /// </summary>
@@ -41,13 +35,22 @@ namespace RestSharp.Serialization.Json
         /// <summary>
         /// Content type for serialized content
         /// </summary>
-        public string ContentType { get; set; }
-        
+        public string ContentType { get; set; } = "application/json";
+
         public string RootElement { get; set; }
 
         public string DateFormat { get; set; }
 
-        public CultureInfo Culture { get; set; }
+        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
+
+        public string[] SupportedContentTypes { get; } =
+        {
+            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
+        };
+
+        public DataFormat DataFormat { get; } = DataFormat.Json;
+        
+        public string Serialize(BodyParameter bodyParameter) => Serialize(bodyParameter.Value);
 
         public T Deserialize<T>(IRestResponse response)
         {

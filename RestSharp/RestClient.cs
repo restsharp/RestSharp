@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using RestSharp.Serialization;
 using RestSharp.Serialization.Json;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
@@ -47,16 +48,6 @@ namespace RestSharp
 
         private static readonly Regex StructuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 
-        private static readonly string[] JsonContentTypes =
-        {
-            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
-        };
-
-        private static readonly string[] XmlContentTypes =
-        {
-            "application/xml", "text/xml", "*+xml", "*"
-        };
-
         /// <summary>
         ///     Default constructor that registers default content handlers
         /// </summary>
@@ -64,14 +55,15 @@ namespace RestSharp
         {
             Encoding = Encoding.UTF8;
             ContentHandlers = new Dictionary<string, IDeserializer>();
+            Serializers = new Dictionary<DataFormat, IRestSerializer>();
             AcceptTypes = new List<string>();
             DefaultParameters = new List<Parameter>();
             AutomaticDecompression = true;
 
-            // TODO: Make this configurable
-            // register default handlers
-            AddHandler(new JsonSerializer(), JsonContentTypes);
-            AddHandler(new XmlDeserializer(), XmlContentTypes);
+            // register default serializers
+            UseSerializer(new XmlRestSerializer());
+            UseSerializer(new JsonSerializer());
+            
             FollowRedirects = true;
         }
 
@@ -95,11 +87,15 @@ namespace RestSharp
             BaseUrl = new Uri(baseUrl);
         }
 
-        public IRestClient UseJsonSerializer(IDeserializer deserializer) => AddHandler(deserializer, JsonContentTypes);
-
-        public IRestClient UseXmlSerializer(IDeserializer deserializer) => AddHandler(deserializer, XmlContentTypes);
+        public IRestClient UseSerializer(IRestSerializer serializer)
+        {
+            Serializers[serializer.DataFormat] = serializer;
+            
+            return AddHandler(serializer, serializer.SupportedContentTypes);
+        }
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
+        private IDictionary<DataFormat, IRestSerializer> Serializers { get; }
 
         private IList<string> AcceptTypes { get; }
 
@@ -489,29 +485,29 @@ namespace RestSharp
             http.AutomaticDecompression = AutomaticDecompression;
             http.WebRequestConfigurator = WebRequestConfigurator;
 
+            var requestParameters = new List<Parameter>();
+            requestParameters.AddRange(request.Parameters);
+            
             // move RestClient.DefaultParameters into Request.Parameters
-            foreach (var p in DefaultParameters)
+            foreach (var defaultParameter in DefaultParameters)
             {
-                var parameterExists = request.Parameters.Any(p2 => p2.Name == p.Name && p2.Type == p.Type);
+                var parameterExists = request.Parameters.Any(p => p.Name == defaultParameter.Name && p.Type == defaultParameter.Type);
 
                 if (AllowMultipleDefaultParametersWithSameName)
                 {
-                    var isMultiParameter = MultiParameterTypes.Any(pt => pt == p.Type);
+                    var isMultiParameter = MultiParameterTypes.Any(pt => pt == defaultParameter.Type);
                     parameterExists = !isMultiParameter && parameterExists;
                 }
 
-                if (parameterExists)
-                    continue;
-
-                request.AddParameter(p);
+                if (!parameterExists) requestParameters.Add(defaultParameter);
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (request.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+            if (requestParameters.All(p => p.Name.ToLowerInvariant() != "accept"))
             {
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
 
-                request.AddParameter("Accept", accepts, ParameterType.HttpHeader);
+                requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
             }
 
             http.Url = BuildUri(request);
@@ -554,26 +550,21 @@ namespace RestSharp
             if (!string.IsNullOrEmpty(ConnectionGroupName))
                 http.ConnectionGroupName = ConnectionGroupName;
 
-            var headers = request.Parameters
+            var headers = requestParameters
                 .Where(p => p.Type == ParameterType.HttpHeader)
                 .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)});
 
             foreach (var header in headers)
                 http.Headers.Add(header);
 
-            var cookies = request.Parameters
+            var cookies = requestParameters
                 .Where(p => p.Type == ParameterType.Cookie)
                 .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)});
 
             foreach (var cookie in cookies)
                 http.Cookies.Add(cookie);
 
-            var @params = request.Parameters
-                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
-                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)});
-
-            foreach (var parameter in @params)
-                http.Parameters.Add(parameter);
+            AddParametersToHttp(request.Parameters, http);
 
             foreach (var file in request.Files)
                 http.Files.Add(new HttpFile
@@ -585,33 +576,9 @@ namespace RestSharp
                     ContentLength = file.ContentLength
                 });
 
-            var body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
-            // Only add the body if there aren't any files to make it a multipart form request
-            // If there are files or AlwaysMultipartFormData = true, then add the body to the HTTP Parameters
-            if (body != null)
-            {
-                http.RequestContentType = body.Name;
-
-                if (!http.AlwaysMultipartFormData && !http.Files.Any())
-                {
-                    var val = body.Value;
-
-                    if (val is byte[] bytes)
-                        http.RequestBodyBytes = bytes;
-                    else
-                        http.RequestBody = Convert.ToString(body.Value);
-                }
-                else
-                {
-                    http.Parameters.Add(new HttpParameter
-                    {
-                        Name = body.Name,
-                        Value = Convert.ToString(body.Value),
-                        ContentType = body.ContentType
-                    });
-                }
-            }
+            http.AddBody(request.BodyParameter, Serializers);
+            http.AddBody(requestParameters);
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 
@@ -630,6 +597,16 @@ namespace RestSharp
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             return http;
+        }
+
+        private static void AddParametersToHttp(IEnumerable<Parameter> parameters, IHttp http)
+        {
+            var @params = parameters
+                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
+                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)});
+
+            foreach (var parameter in @params)
+                http.Parameters.Add(parameter);
         }
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)

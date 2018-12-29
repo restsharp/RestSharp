@@ -61,6 +61,12 @@ namespace RestSharp
         List<Parameter> Parameters { get; }
 
         /// <summary>
+        ///     Body parameter to be passed with the request.
+        ///     Content type will be used as a parameter name
+        /// </summary>
+        BodyParameter BodyParameter { get; }
+        
+        /// <summary>
         /// Container of all the files to be uploaded with the request.
         /// </summary>
         List<FileParameter> Files { get; }
