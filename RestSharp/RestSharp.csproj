@@ -3,7 +3,7 @@
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/develop/restsharp.png</PackageIconUrl>
-    <PackageLicense>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicense>
+    <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
     <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
