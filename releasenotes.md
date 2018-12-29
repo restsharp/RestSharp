@@ -1,5 +1,12 @@
 # RestSharp Release Notes
 
+# 106.6
+
+* Fixed some new platform unsupported exceptions
+* Fixed OAuth regression issues
+* Moved serialization to the client
+* Added `WithSerializer` to `IRestClient` to specify the client-level (de)serializer
+
 # 106.5
 * Wrapped proxy discovery in try-catch for the platform unsupported exception
 * Fixed DateTime deserialization with millisecond UTC conflict
