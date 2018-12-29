@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace RestSharp.Serialization.Xml
 {
-    public class XmlRestSerializer : IRestSerializer
+    public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer
     {
         public string[] SupportedContentTypes { get; } =
         {
@@ -10,7 +10,7 @@ namespace RestSharp.Serialization.Xml
         };
 
         public DataFormat DataFormat { get; } = DataFormat.Xml;
-        
+
         public string ContentType { get; set; } = "text/xml";
 
         public string Serialize(object obj) => _xmlSerializer.Serialize(obj);
@@ -23,8 +23,8 @@ namespace RestSharp.Serialization.Xml
             return this;
         }
 
-        public XmlRestSerializer WithXmlSerializer<T>(XmlSerilizationOptions options = null) 
-            where T: IXmlSerializer, new()
+        public XmlRestSerializer WithXmlSerializer<T>(XmlSerilizationOptions options = null)
+            where T : IXmlSerializer, new()
         {
             if (options != null) _options = options;
 
@@ -34,22 +34,22 @@ namespace RestSharp.Serialization.Xml
                 DateFormat = _options.DateFormat,
                 RootElement = _options.RootElement
             };
-            
+
             return this;
         }
 
-        public XmlRestSerializer WithXmlDeserialzier<T>(XmlSerilizationOptions options = null) 
-            where T: IXmlDeserializer, new()
+        public XmlRestSerializer WithXmlDeserialzier<T>(XmlSerilizationOptions options = null)
+            where T : IXmlDeserializer, new()
         {
             if (options != null) _options = options;
-            
+
             _xmlDeserializer = new T
             {
                 Namespace = _options.Namespace,
                 DateFormat = _options.DateFormat,
                 RootElement = _options.RootElement
             };
-            
+
             return this;
         }
 
@@ -59,7 +59,7 @@ namespace RestSharp.Serialization.Xml
             _xmlSerializer.Namespace = bodyParameter.XmlNamespace ?? savedNamespace;
 
             var result = _xmlSerializer.Serialize(bodyParameter.Value);
-            
+
             _xmlSerializer.Namespace = savedNamespace;
 
             return result;
@@ -68,6 +68,24 @@ namespace RestSharp.Serialization.Xml
         private XmlSerilizationOptions _options = XmlSerilizationOptions.Default;
         private IXmlSerializer _xmlSerializer = new XmlSerializer();
         private IXmlDeserializer _xmlDeserializer = new XmlDeserializer();
+
+        public string RootElement
+        {
+            get => _options.RootElement;
+            set => _options.RootElement = value;
+        }
+
+        public string Namespace
+        {
+            get => _options.Namespace;
+            set => _options.Namespace = value;
+        }
+
+        public string DateFormat
+        {
+            get => _options.DateFormat;
+            set => _options.DateFormat = value;
+        }
     }
 
     public class XmlSerilizationOptions
@@ -86,10 +104,10 @@ namespace RestSharp.Serialization.Xml
         ///     Format string to use when serializing dates
         /// </summary>
         public string DateFormat { get; set; }
-        
+
         public CultureInfo Culture { get; set; }
-        
-        public static XmlSerilizationOptions Default => 
+
+        public static XmlSerilizationOptions Default =>
             new XmlSerilizationOptions
             {
                 Culture = CultureInfo.InvariantCulture
