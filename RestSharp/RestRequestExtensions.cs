@@ -14,7 +14,7 @@ namespace RestSharp
             var body = parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
             if (body == null) return;
             
-            http.AddBody(body.Name, body.Value);
+            http.AddBody(body.ContentType, body.Value);
         }
 
         internal static void AddBody(this IHttp http, BodyParameter bodyParameter,
