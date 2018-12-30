@@ -5,7 +5,8 @@
 * Fixed some new platform unsupported exceptions
 * Fixed OAuth regression issues
 * Moved serialization to the client
-* Added `WithSerializer` to `IRestClient` to specify the client-level (de)serializer
+* Added `UseSerializer` to `IRestClient` to specify the client-level (de)serializer
+* Added `UseDotNetXmlSerializer` extension to `IRestClient`
 
 # 106.5
 * Wrapped proxy discovery in try-catch for the platform unsupported exception

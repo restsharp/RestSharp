@@ -1,4 +1,6 @@
 using System.Globalization;
+using RestSharp.Deserializers;
+using RestSharp.Serializers;
 
 namespace RestSharp.Serialization.Xml
 {
@@ -28,13 +30,17 @@ namespace RestSharp.Serialization.Xml
         {
             if (options != null) _options = options;
 
-            _xmlSerializer = new T
+            return WithXmlSerializer(new T
             {
                 Namespace = _options.Namespace,
                 DateFormat = _options.DateFormat,
                 RootElement = _options.RootElement
-            };
+            });
+        }
 
+        public XmlRestSerializer WithXmlSerializer(IXmlSerializer xmlSerializer)
+        {
+            _xmlSerializer = xmlSerializer;
             return this;
         }
 
@@ -43,13 +49,17 @@ namespace RestSharp.Serialization.Xml
         {
             if (options != null) _options = options;
 
-            _xmlDeserializer = new T
+            return WithXmlDeserializer(new T
             {
                 Namespace = _options.Namespace,
                 DateFormat = _options.DateFormat,
                 RootElement = _options.RootElement
-            };
+            });
+        }
 
+        public XmlRestSerializer WithXmlDeserializer(IXmlDeserializer xmlDeserializer)
+        {
+            _xmlDeserializer = xmlDeserializer;
             return this;
         }
 

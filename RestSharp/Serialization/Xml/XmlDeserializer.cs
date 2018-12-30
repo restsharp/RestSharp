@@ -27,8 +27,9 @@ using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
+using RestSharp.Serialization.Xml;
 
-namespace RestSharp.Serialization.Xml
+namespace RestSharp.Deserializers
 {
     public class XmlDeserializer : IXmlDeserializer
     {
