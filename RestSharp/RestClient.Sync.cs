@@ -116,8 +116,6 @@ namespace RestSharp
                 var http = ConfigureHttp(request);
 
                 response = ConvertToRestResponse(request, getResponse(http, httpMethod));
-                response.Request = request;
-                response.Request.IncreaseNumAttempts();
             }
             catch (Exception ex)
             {
@@ -125,6 +123,8 @@ namespace RestSharp
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
             }
+            response.Request = request;
+            response.Request.IncreaseNumAttempts();
 
             return response;
         }

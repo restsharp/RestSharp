@@ -668,7 +668,6 @@ namespace RestSharp
             try
             {
                 response = raw.ToAsyncResponse<T>();
-                response.Request = request;
 
                 // Only attempt to deserialize if the request has not errored due
                 // to a transport or framework exception.  HTTP errors should attempt to 
@@ -696,6 +695,7 @@ namespace RestSharp
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
             }
+            response.Request = request;
 
             return response;
         }
