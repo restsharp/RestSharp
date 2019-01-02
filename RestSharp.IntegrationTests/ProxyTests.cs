@@ -37,11 +37,9 @@ namespace RestSharp.IntegrationTests
                 Assert.IsInstanceOf<WebException>(response.ErrorException);
 
 #if NETCORE
-                Assert.AreEqual("An error occurred while sending the request. The server name or address could not be resolved", response.ErrorMessage);
-#endif
-
-#if !NETCORE
-                Assert.AreEqual("The proxy name could not be resolved: 'non_existent_proxy'", response.ErrorMessage);
+                Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
+#else
+                Assert.AreEqual(WebExceptionStatus.ProxyNameResolutionFailure, ((WebException)response.ErrorException).Status);
 #endif
             }
         }
