@@ -577,8 +577,7 @@ namespace RestSharp
                 });
 
 
-            http.AddBody(request.BodyParameter, Serializers);
-            http.AddBody(requestParameters);
+            http.AddBody(requestParameters, Serializers);
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 

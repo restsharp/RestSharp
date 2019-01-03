@@ -36,7 +36,8 @@ namespace RestSharp
     public enum DataFormat
     {
         Json,
-        Xml
+        Xml,
+        None
     }
 
     /// <summary>

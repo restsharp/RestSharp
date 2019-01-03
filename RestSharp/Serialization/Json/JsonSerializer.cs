@@ -50,7 +50,7 @@ namespace RestSharp.Serialization.Json
 
         public DataFormat DataFormat { get; } = DataFormat.Json;
         
-        public string Serialize(BodyParameter bodyParameter) => Serialize(bodyParameter.Value);
+        public string Serialize(Parameter parameter) => Serialize(parameter.Value);
 
         public T Deserialize<T>(IRestResponse response)
         {

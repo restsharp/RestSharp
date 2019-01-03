@@ -9,25 +9,24 @@ namespace RestSharp
 {
     internal static class RestRequestExtensions
     {
-        internal static void AddBody(this IHttp http, IEnumerable<Parameter> parameters)
+        internal static void AddBody(this IHttp http, IEnumerable<Parameter> parameters,
+            IDictionary<DataFormat, IRestSerializer> serializers)
         {
             var body = parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
             if (body == null) return;
-            
-            http.AddBody(body.ContentType, body.Name, body.Value);
-        }
 
-        internal static void AddBody(this IHttp http, BodyParameter bodyParameter,
-            IDictionary<DataFormat, IRestSerializer> serializers)
-        {
-            if (bodyParameter == null) return;
-
-            if (!serializers.TryGetValue(bodyParameter.ParameterType, out var serializer))
+            if (body.DataFormat == DataFormat.None)
+                http.AddBody(body.ContentType, body.Name, body.Value);
+            else
             {
-                throw new InvalidDataContractException($"Can't find serializer for content type {bodyParameter.ParameterType}");
+                if (!serializers.TryGetValue(body.DataFormat, out var serializer))
+                {
+                    throw new InvalidDataContractException(
+                        $"Can't find serializer for content type {body.DataFormat}");
+                }
+
+                http.AddBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(body));
             }
-            
-            http.AddBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(bodyParameter));
         }
 
         internal static void AddBody(this IHttp http, string contentType, string name, object value)

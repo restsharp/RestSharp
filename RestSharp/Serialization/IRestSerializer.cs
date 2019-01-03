@@ -9,6 +9,6 @@ namespace RestSharp.Serialization
         
         DataFormat DataFormat { get; }
 
-        string Serialize(BodyParameter bodyParameter);
+        string Serialize(Parameter parameter);
     }
 }

@@ -306,8 +306,8 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            BodyParameter = new BodyParameter(obj);
-            
+            AddParameter(new JsonParameter("", obj));
+
             return this;
         }
 
@@ -334,7 +334,7 @@ namespace RestSharp
             else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
                 xmlNamespace = XmlSerializer.Namespace;
 
-            BodyParameter = new BodyParameter(obj, xmlNamespace);
+            AddParameter(new XmlParameter("", obj, xmlNamespace));
             
             return this;
         }
@@ -597,12 +597,6 @@ namespace RestSharp
         /// </summary>
         public List<Parameter> Parameters { get; }
         
-        /// <summary>
-        ///     Body parameter to be passed with the request.
-        ///     Content type will be used as a parameter name
-        /// </summary>
-        public BodyParameter BodyParameter { get; internal set; }
-
         /// <summary>
         ///     Container of all the files to be uploaded with the request.
         /// </summary>

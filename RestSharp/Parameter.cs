@@ -55,6 +55,11 @@ namespace RestSharp
         public ParameterType Type { get; set; }
 
         /// <summary>
+        /// Body parameter data type
+        /// </summary>
+        public DataFormat DataFormat { get; set; } = DataFormat.None;
+
+        /// <summary>
         /// MIME content type of the parameter
         /// </summary>
         public string ContentType { get; set; }
@@ -64,5 +69,24 @@ namespace RestSharp
         /// </summary>
         /// <returns>String</returns>
         public override string ToString() => $"{Name}={Value}";
+    }
+
+    public class XmlParameter : Parameter
+    {
+        public XmlParameter(string name, object value, string xmlNamespace = null) : base(name, value, ParameterType.RequestBody)
+        {
+            XmlNamespace = xmlNamespace;
+            DataFormat = DataFormat.Xml;
+        }
+
+        public string XmlNamespace { get; }
+    }
+
+    public class JsonParameter : Parameter
+    {
+        public JsonParameter(string name, object value) : base(name, value, ParameterType.RequestBody)
+        {
+            DataFormat = DataFormat.Json;
+        }
     }
 }

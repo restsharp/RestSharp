@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using RestSharp.Deserializers;
 using RestSharp.Serializers;
@@ -63,12 +64,15 @@ namespace RestSharp.Serialization.Xml
             return this;
         }
 
-        public string Serialize(BodyParameter bodyParameter)
+        public string Serialize(Parameter parameter)
         {
+            if (!(parameter is XmlParameter xmlParameter))
+                throw new InvalidOperationException("Supplied parameter is not an XML parameter");
+            
             var savedNamespace = _xmlSerializer.Namespace;
-            _xmlSerializer.Namespace = bodyParameter.XmlNamespace ?? savedNamespace;
+            _xmlSerializer.Namespace = xmlParameter.XmlNamespace ?? savedNamespace;
 
-            var result = _xmlSerializer.Serialize(bodyParameter.Value);
+            var result = _xmlSerializer.Serialize(parameter.Value);
 
             _xmlSerializer.Namespace = savedNamespace;
 
