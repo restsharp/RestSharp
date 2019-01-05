@@ -44,7 +44,7 @@ namespace RestSharp.IntegrationTests
 
             client.Get(request);
 
-            RequestHandler.Url.Segments.ShouldBe(new[] {"/", "/bar", "bar1"});
+            RequestHandler.Url.Segments.ShouldBe(new[] {"/", "bar/", "bar1"});
         }
 
         private static class RequestHandler
