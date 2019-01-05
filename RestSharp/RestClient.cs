@@ -332,10 +332,11 @@ namespace RestSharp
         {
             var assembled = request.Resource;
             var hasResource = !string.IsNullOrEmpty(assembled);
-            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            var parameters = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
+            parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
             var builder = new UriBuilder(BaseUrl);
 
-            foreach (var parameter in urlParms)
+            foreach (var parameter in parameters)
             {
                 var paramPlaceHolder = $"{{{parameter.Name}}}";
                 var paramValue = parameter.Value.ToString().UrlEncode();

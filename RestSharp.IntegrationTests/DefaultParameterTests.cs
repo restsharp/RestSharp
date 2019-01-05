@@ -24,7 +24,7 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Should_add_default_and_request_query_parameters()
+        public void Should_add_default_and_request_query_get_parameters()
         {
             var client = new RestClient(BASE_URL).AddDefaultParameter("foo", "bar", ParameterType.QueryString);
             var request = new RestRequest().AddParameter("foo1", "bar1", ParameterType.QueryString);
@@ -34,6 +34,18 @@ namespace RestSharp.IntegrationTests
             var query = RequestHandler.Url.Query;
             query.ShouldContain("foo=bar");
             query.ShouldContain("foo1=bar1");
+        }
+
+        [Test]
+        public void Should_add_default_and_request_url_get_parameters()
+        {
+            var client = new RestClient(BASE_URL + "{foo}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+            var request = new RestRequest("{foo1}").AddParameter("foo1", "bar1", ParameterType.UrlSegment);
+
+            client.Get(request);
+
+            RequestHandler.Url.Segments.ShouldContain("/bar");
+            RequestHandler.Url.Segments.ShouldContain("bar1");
         }
 
         private static class RequestHandler
