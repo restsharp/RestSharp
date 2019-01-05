@@ -295,7 +295,21 @@ namespace RestSharp
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
         [Obsolete("Use AddXmlBody")]
-        public IRestRequest AddBody(object obj) => AddXmlBody(obj, "");
+        public IRestRequest AddBody(object obj)
+        {
+            switch (RequestFormat)
+            {
+                case DataFormat.Json:
+                    AddJsonBody(obj);
+                    break;
+
+                case DataFormat.Xml:
+                    AddXmlBody(obj);
+                    break;
+            }
+
+            return this;
+        }
 
         /// <summary>
         ///     Serializes obj to JSON format and adds it to the request body.
