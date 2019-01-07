@@ -165,18 +165,18 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentType">Content type for which the deserializer will be replaced</param>
         /// <param name="deserializer">Custom deserializer</param>
-        IRestClient AddHandler(string contentType, IDeserializer deserializer);
+        void AddHandler(string contentType, IDeserializer deserializer);
 
         /// <summary>
         /// Removes custom deserialzier for the specified content type
         /// </summary>
         /// <param name="contentType">Content type for which deserializer needs to be removed</param>
-        IRestClient RemoveHandler(string contentType);
+        void RemoveHandler(string contentType);
 
         /// <summary>
         /// Remove deserializers for all content types
         /// </summary>
-        IRestClient ClearHandlers();
+        void ClearHandlers();
 
         IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod);
 

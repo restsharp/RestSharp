@@ -91,7 +91,9 @@ namespace RestSharp
         {
             Serializers[serializer.DataFormat] = serializer;
             
-            return AddHandler(serializer, serializer.SupportedContentTypes);
+            AddHandler(serializer, serializer.SupportedContentTypes);
+
+            return this;
         }
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
@@ -217,11 +219,11 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentType">MIME content type of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
-        public IRestClient AddHandler(string contentType, IDeserializer deserializer)
+        public void AddHandler(string contentType, IDeserializer deserializer)
         {
             ContentHandlers[contentType] = deserializer;
 
-            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return this;
+            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
 
             if (!AcceptTypes.Contains(contentType))
                 AcceptTypes.Add(contentType);
@@ -231,8 +233,6 @@ namespace RestSharp
 
             this.RemoveDefaultParameter("Accept");
             this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
-
-            return this;
         }
 
         /// <summary>
@@ -240,39 +240,33 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentTypes">A list of MIME content types of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
-        public IRestClient AddHandler(IDeserializer deserializer, params string[] contentTypes)
+        public void AddHandler(IDeserializer deserializer, params string[] contentTypes)
         {
             foreach (var contentType in contentTypes)
             {
                 AddHandler(contentType, deserializer);
             }
-
-            return this;
         }
 
         /// <summary>
         ///     Remove a content handler for the specified MIME content type
         /// </summary>
         /// <param name="contentType">MIME content type to remove</param>
-        public IRestClient RemoveHandler(string contentType)
+        public void RemoveHandler(string contentType)
         {
             ContentHandlers.Remove(contentType);
             AcceptTypes.Remove(contentType);
             this.RemoveDefaultParameter("Accept");
-
-            return this;
         }
 
         /// <summary>
         ///     Remove all content handlers
         /// </summary>
-        public IRestClient ClearHandlers()
+        public void ClearHandlers()
         {
             ContentHandlers.Clear();
             AcceptTypes.Clear();
             this.RemoveDefaultParameter("Accept");
-
-            return this;
         }
 
         public IRestResponse<T> Deserialize<T>(IRestResponse response)
@@ -578,7 +572,7 @@ namespace RestSharp
                 });
 
 
-            http.AddBody(requestParameters, Serializers);
+            http.AddBody(requestParameters, Serializers, request.XmlSerializer, request.JsonSerializer);
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 
@@ -589,7 +583,7 @@ namespace RestSharp
             }
             catch (PlatformNotSupportedException)
             {
-                // Ignore platform unsopported proxy detection
+                // Ignore platform unsupported proxy detection
             }
 
             http.Proxy = proxy;

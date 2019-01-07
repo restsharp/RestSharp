@@ -10,7 +10,7 @@ namespace RestSharp
     internal static class RestRequestExtensions
     {
         internal static void AddBody(this IHttp http, IEnumerable<Parameter> parameters,
-            IDictionary<DataFormat, IRestSerializer> serializers)
+            IDictionary<DataFormat, IRestSerializer> restSerializers, params ISerializer[] serializers)
         {
             var body = parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
             if (body == null) return;
@@ -19,13 +19,22 @@ namespace RestSharp
                 http.AddBody(body.ContentType, body.Name, body.Value);
             else
             {
-                if (!serializers.TryGetValue(body.DataFormat, out var serializer))
+                var requestSerializer = serializers?.FirstOrDefault(x => x.ContentType == body.ContentType);
+                if (requestSerializer != null)
                 {
-                    throw new InvalidDataContractException(
-                        $"Can't find serializer for content type {body.DataFormat}");
+                    http.AddBody(requestSerializer.ContentType, requestSerializer.ContentType,
+                        requestSerializer.Serialize(body.Value));
                 }
+                else
+                {
+                    if (!restSerializers.TryGetValue(body.DataFormat, out var serializer))
+                    {
+                        throw new InvalidDataContractException(
+                            $"Can't find serializer for content type {body.DataFormat}");
+                    }
 
-                http.AddBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(body));
+                    http.AddBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(body));
+                }
             }
         }
 
