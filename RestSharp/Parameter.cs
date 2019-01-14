@@ -77,6 +77,7 @@ namespace RestSharp
         {
             XmlNamespace = xmlNamespace;
             DataFormat = DataFormat.Xml;
+            ContentType = 
         }
 
         public string XmlNamespace { get; }
