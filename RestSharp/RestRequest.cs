@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -82,12 +83,19 @@ namespace RestSharp
             var queryStringStart = Resource.IndexOf('?');
             if (queryStringStart >= 0)
             {
-                var queryParams = System.Web.HttpUtility.ParseQueryString(Resource.Substring(queryStringStart));
+                var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
                 Resource = resource.Substring(0, queryStringStart);
 
-                foreach (var key in queryParams.AllKeys)
-                    AddQueryParameter(key, queryParams[key]);
+                foreach (var param in queryParams)
+                    AddQueryParameter(param.Name, param.Value);
             }
+
+            IEnumerable<NameValuePair> ParseQuery(string query) =>
+                query.Split('&').Select(x =>
+                {
+                    var pair = x.Split('=');
+                    return pair.Length == 2 ? new NameValuePair(pair[0], pair[1]) : NameValuePair.Empty;
+                }).Where(x => !x.IsEmpty);
         }
 
         public RestRequest(Uri resource, Method method, DataFormat dataFormat)
