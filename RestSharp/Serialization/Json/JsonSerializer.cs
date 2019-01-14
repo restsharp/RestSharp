@@ -35,7 +35,7 @@ namespace RestSharp.Serialization.Json
         /// <summary>
         /// Content type for serialized content
         /// </summary>
-        public string ContentType { get; set; } = "application/json";
+        public string ContentType { get; set; } = Serialization.ContentType.Json;
 
         public string RootElement { get; set; }
 

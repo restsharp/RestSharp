@@ -19,7 +19,8 @@ namespace RestSharp
                 http.AddBody(body.ContentType, body.Name, body.Value);
             else
             {
-                var requestSerializer = serializers.FirstOrDefault(x => x != null && x.ContentType == body.ContentType);
+                var contentType = body.ContentType ?? ContentType.FromDataFormat[body.DataFormat];
+                var requestSerializer = serializers.FirstOrDefault(x => x != null && x.ContentType == contentType);
                 if (requestSerializer != null)
                 {
                     http.AddBody(requestSerializer.ContentType, requestSerializer.ContentType,

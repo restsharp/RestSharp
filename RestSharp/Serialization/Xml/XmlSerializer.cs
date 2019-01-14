@@ -23,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
+using RestSharp.Serialization;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 
@@ -38,17 +39,16 @@ namespace RestSharp.Serializers
         /// </summary>
         public XmlSerializer()
         {
-            ContentType = "text/xml";
+            ContentType = Serialization.ContentType.Xml;
         }
 
         /// <summary>
         ///     Specify the namespaced to be used when serializing
         /// </summary>
         /// <param name="namespace">XML namespace</param>
-        public XmlSerializer(string @namespace)
+        public XmlSerializer(string @namespace) : this()
         {
             Namespace = @namespace;
-            ContentType = "text/xml";
         }
 
         /// <summary>

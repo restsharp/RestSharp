@@ -16,6 +16,8 @@
 
 #endregion
 
+using RestSharp.Serialization;
+
 namespace RestSharp
 {
     /// <summary>
@@ -77,7 +79,7 @@ namespace RestSharp
         {
             XmlNamespace = xmlNamespace;
             DataFormat = DataFormat.Xml;
-            ContentType = 
+            ContentType = Serialization.ContentType.Xml;
         }
 
         public string XmlNamespace { get; }
@@ -88,6 +90,7 @@ namespace RestSharp
         public JsonParameter(string name, object value) : base(name, value, ParameterType.RequestBody)
         {
             DataFormat = DataFormat.Json;
+            ContentType = Serialization.ContentType.Json;
         }
     }
 }

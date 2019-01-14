@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 using RestSharp.Serialization.Xml;
+using Shouldly;
 
 namespace RestSharp.IntegrationTests
 {
@@ -12,12 +13,17 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_use_custom_xml_serializer()
         {
-            using (var server = SimpleServer.Create(BASE_URL))
+            using (SimpleServer.Create(BASE_URL))
             {
                 var client = new RestClient(BASE_URL);
-                var request = new RestRequest("/") {XmlSerializer = new CustomSerializer()};
-                request.AddXmlBody(new {Text = "text"});
-                var result = client.Execute(request);
+                var serializer = new CustomSerializer();
+                var body = new {Text = "text"};
+                
+                var request = new RestRequest("/") {XmlSerializer = serializer};
+                request.AddXmlBody(body);
+                client.Execute(request);
+                
+                serializer.BodyString.ShouldBe(body.ToString());
             }
         }
 

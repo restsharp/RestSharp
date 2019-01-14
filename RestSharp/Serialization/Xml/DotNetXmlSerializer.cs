@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml.Serialization;
+using RestSharp.Serialization;
 using RestSharp.Serialization.Xml;
 
 namespace RestSharp.Serializers
@@ -15,7 +16,7 @@ namespace RestSharp.Serializers
         /// </summary>
         public DotNetXmlSerializer()
         {
-            ContentType = "application/xml";
+            ContentType = Serialization.ContentType.Xml;
             Encoding = Encoding.UTF8;
         }
 

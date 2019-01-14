@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
+using RestSharp.Serialization;
 
 namespace RestSharp.IntegrationTests
 {
@@ -153,8 +154,8 @@ namespace RestSharp.IntegrationTests
             };
             request.AddBody("bodyadsodajjd");
             request.AddHeader("X-RequestDigest", "xrequestdigestasdasd");
-            request.AddHeader("Accept", "application/json; odata=verbose");
-            request.AddHeader("Content-Type", "application/json; odata=verbose");
+            request.AddHeader("Accept", $"{ContentType.Json}; odata=verbose");
+            request.AddHeader("Content-Type", $"{ContentType.Json}; odata=verbose");
 
             IRestResponse<Response> response = _client.Execute<Response>(request);
 
@@ -166,14 +167,14 @@ namespace RestSharp.IntegrationTests
     {
         private void contenttype_odata(HttpListenerContext context)
         {
-            bool hasCorrectHeader = context.Request.Headers["Content-Type"] == "application/json; odata=verbose";
+            bool hasCorrectHeader = context.Request.Headers["Content-Type"] == $"{ContentType.Json}; odata=verbose";
             context.Response.StatusCode = hasCorrectHeader ? 200 : 400;
         }
 
         private void error(HttpListenerContext context)
         {
             context.Response.StatusCode = 400;
-            context.Response.Headers.Add("Content-Type", "application/xml");
+            context.Response.Headers.Add("Content-Type", ContentType.Xml);
             context.Response.OutputStream.WriteStringUtf8(
                 @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
