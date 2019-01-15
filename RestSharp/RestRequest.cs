@@ -70,6 +70,10 @@ namespace RestSharp
         {
         }
         
+        public RestRequest(string resource, DataFormat dataFormat) : this(resource, Method.GET, dataFormat)
+        {
+        }
+
         public RestRequest(string resource) : this(resource, Method.GET, DataFormat.Xml)
         {
         }
@@ -341,7 +345,6 @@ namespace RestSharp
         public IRestRequest AddXmlBody(object obj) => AddXmlBody(obj, "");
 
         /// <summary>
-        ///     Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
         ///     Serializes obj to XML format and passes xmlNamespace then adds it to the request body.
         /// </summary>
         /// <param name="obj">The object to serialize</param>
@@ -654,6 +657,7 @@ namespace RestSharp
         ///     Used by the default deserializers to determine where to start deserializing from.
         ///     Can be used to skip container or root elements that do not have corresponding deserialzation targets.
         /// </summary>
+        [Obsolete("Add custom content handler instead. This property will be removed.")]
         public string RootElement { get; set; }
 
         /// <summary>
@@ -664,12 +668,14 @@ namespace RestSharp
         /// <summary>
         ///     Used by the default deserializers to explicitly set which date format string to use when parsing dates.
         /// </summary>
+        [Obsolete("Add custom content handler instead. This property will be removed.")]
         public string DateFormat { get; set; }
 
         /// <summary>
         ///     Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from
         ///     element names.
         /// </summary>
+        [Obsolete("Add custom content handler instead. This property will be removed.")]
         public string XmlNamespace { get; set; }
 
         /// <summary>

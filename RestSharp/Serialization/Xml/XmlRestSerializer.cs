@@ -86,19 +86,34 @@ namespace RestSharp.Serialization.Xml
         public string RootElement
         {
             get => _options.RootElement;
-            set => _options.RootElement = value;
+            set
+            {
+                _options.RootElement = value;
+                _xmlSerializer.RootElement = value;
+                _xmlDeserializer.RootElement = value;
+            }
         }
 
         public string Namespace
         {
             get => _options.Namespace;
-            set => _options.Namespace = value;
+            set
+            {
+                _options.Namespace = value;
+                _xmlSerializer.Namespace = value;
+                _xmlDeserializer.Namespace = value;
+            }
         }
 
         public string DateFormat
         {
             get => _options.DateFormat;
-            set => _options.DateFormat = value;
+            set
+            {
+                _options.DateFormat = value;
+                _xmlSerializer.DateFormat = value;
+                _xmlDeserializer.DateFormat = value;
+            }
         }
     }
 
