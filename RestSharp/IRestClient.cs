@@ -165,7 +165,15 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentType">Content type for which the deserializer will be replaced</param>
         /// <param name="deserializer">Custom deserializer</param>
+        [Obsolete("Use the overload that accepts a factory delegate")]
         void AddHandler(string contentType, IDeserializer deserializer);
+
+        /// <summary>
+        /// Adds or replaces a deserializer for the specified content type
+        /// </summary>
+        /// <param name="contentType">Content type for which the deserializer will be replaced</param>
+        /// <param name="deserializerFactory">Custom deserializer factory</param>
+        void AddHandler(string contentType, Func<IDeserializer> deserializerFactory);
 
         /// <summary>
         /// Removes custom deserialzier for the specified content type

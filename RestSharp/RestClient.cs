@@ -54,15 +54,15 @@ namespace RestSharp
         public RestClient()
         {
             Encoding = Encoding.UTF8;
-            ContentHandlers = new Dictionary<string, IDeserializer>();
+            ContentHandlers = new Dictionary<string, Func<IDeserializer>>();
             Serializers = new Dictionary<DataFormat, IRestSerializer>();
             AcceptTypes = new List<string>();
             DefaultParameters = new List<Parameter>();
             AutomaticDecompression = true;
 
             // register default serializers
-            UseSerializer(new JsonSerializer());
-            UseSerializer(new XmlRestSerializer());
+            UseSerializer<JsonSerializer>();
+            UseSerializer<XmlRestSerializer>();
 
             FollowRedirects = true;
         }
@@ -87,16 +87,43 @@ namespace RestSharp
             BaseUrl = new Uri(baseUrl);
         }
 
+        /// <summary>
+        /// Replace the default serializer with a custom one
+        /// </summary>
+        /// <param name="serializer">The custom serializer instance</param>
+        /// <returns></returns>
+        [Obsolete("Use the overload that accepts the delegate factory")]
         public IRestClient UseSerializer(IRestSerializer serializer)
         {
-            Serializers[serializer.DataFormat] = serializer;
+            UseSerializer(() => serializer);
+
+            return this;
+        }
+        
+        /// <summary>
+        /// Replace the default serializer with a custom one
+        /// </summary>
+        /// <param name="serializerFactory">A function that creates a custom serializer instance</param>
+        /// <returns></returns>
+        public IRestClient UseSerializer(Func<IRestSerializer> serializerFactory)
+        {
+            var instance = serializerFactory();
+            Serializers[instance.DataFormat] = instance;
             
-            AddHandler(serializer, serializer.SupportedContentTypes);
+            AddHandler(serializerFactory, instance.SupportedContentTypes);
 
             return this;
         }
 
-        private IDictionary<string, IDeserializer> ContentHandlers { get; }
+        /// <summary>
+        /// Replace the default serializer with a custom one
+        /// </summary>
+        /// <typeparam name="T">The type that implements IRestSerializer</typeparam>
+        /// <returns></returns>
+        public IRestClient UseSerializer<T>() where T : IRestSerializer, new() =>
+            UseSerializer(new T());
+
+        private IDictionary<string, Func<IDeserializer>> ContentHandlers { get; }
         internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
 
         private IList<string> AcceptTypes { get; }
@@ -218,10 +245,10 @@ namespace RestSharp
         ///     Registers a content handler to process response content
         /// </summary>
         /// <param name="contentType">MIME content type of the response content</param>
-        /// <param name="deserializer">Deserializer to use to process content</param>
-        public void AddHandler(string contentType, IDeserializer deserializer)
+        /// <param name="deserializerFactory">Deserializer to use to process content</param>
+        public void AddHandler(string contentType, Func<IDeserializer> deserializerFactory)
         {
-            ContentHandlers[contentType] = deserializer;
+            ContentHandlers[contentType] = deserializerFactory;
 
             if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
 
@@ -238,14 +265,33 @@ namespace RestSharp
         /// <summary>
         ///     Registers a content handler to process response content
         /// </summary>
+        /// <param name="contentType">MIME content type of the response content</param>
+        /// <param name="deserializer">Deserializer to use to process content</param>
+        [Obsolete("Use the overload that accepts a factory delegate")]
+        public void AddHandler(string contentType, IDeserializer deserializer) => 
+            AddHandler(contentType, () => deserializer);
+
+        /// <summary>
+        ///     Registers a content handler to process response content
+        /// </summary>
+        /// <param name="contentTypes">A list of MIME content types of the response content</param>
+        /// <param name="deserializerFactory">Deserializer factory to use to process content</param>
+        public void AddHandler(Func<IDeserializer> deserializerFactory, params string[] contentTypes)
+        {
+            foreach (var contentType in contentTypes)
+                AddHandler(contentType, deserializerFactory);
+        }
+        
+        /// <summary>
+        ///     Registers a content handler to process response content
+        /// </summary>
         /// <param name="contentTypes">A list of MIME content types of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
+        [Obsolete("Use the overload that accepts a factory delegate")]
         public void AddHandler(IDeserializer deserializer, params string[] contentTypes)
         {
             foreach (var contentType in contentTypes)
-            {
                 AddHandler(contentType, deserializer);
-            }
         }
 
         /// <summary>
@@ -413,7 +459,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="contentType">MIME content type to retrieve</param>
         /// <returns>IDeserializer instance</returns>
-        private IDeserializer GetHandler(string contentType)
+        private Func<IDeserializer> GetHandler(string contentType)
         {
             if (contentType == null)
                 throw new ArgumentNullException("contentType");
@@ -668,7 +714,7 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    var handler = GetHandler(raw.ContentType);
+                    var handler = GetHandler(raw.ContentType)();
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
