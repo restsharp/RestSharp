@@ -11,7 +11,7 @@ using SimpleJson;
 
 namespace RestSharp.Serialization.Json
 {
-    public class JsonSerializer : IRestSerializer
+    public class JsonSerializer : IRestSerializer, IWithRootElement
     {
         /// <summary>
         /// Serialize the object as JSON

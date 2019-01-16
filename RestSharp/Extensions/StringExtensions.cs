@@ -312,6 +312,9 @@ namespace RestSharp.Extensions
                     "$1 $2"),
                 " ");
 
+        internal static bool IsEmpty(this string value) => string.IsNullOrWhiteSpace(value);
+        internal static bool IsNotEmpty(this string value) => !string.IsNullOrWhiteSpace(value);
+
         /// <summary>
         ///     Return possible variants of a name for name matching.
         /// </summary>

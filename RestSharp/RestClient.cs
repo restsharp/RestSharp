@@ -674,11 +674,16 @@ namespace RestSharp
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
                     if (handler is IXmlDeserializer xml)
                     {
-                        xml.RootElement = request.RootElement;
-                        xml.DateFormat = request.DateFormat;
-                        xml.Namespace = request.XmlNamespace;
+                        if (request.DateFormat.IsNotEmpty())
+                            xml.DateFormat = request.DateFormat;
+
+                        if (request.XmlNamespace.IsNotEmpty())
+                            xml.Namespace = request.XmlNamespace;
                     }
-                    
+
+                    if (handler is IWithRootElement deserializer && request.RootElement.IsEmpty())
+                        deserializer.RootElement = request.RootElement;
+
                     if (handler != null)
                         response.Data = handler.Deserialize<T>(raw);
                 }

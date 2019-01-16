@@ -2,10 +2,8 @@
 
 namespace RestSharp.Serialization.Xml
 {
-    public interface IXmlSerializer : ISerializer
+    public interface IXmlSerializer : ISerializer, IWithRootElement
     {
-        string RootElement { get; set; }
-
         string Namespace { get; set; }
 
         string DateFormat { get; set; }
