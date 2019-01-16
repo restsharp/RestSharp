@@ -61,9 +61,9 @@ namespace RestSharp
             AutomaticDecompression = true;
 
             // register default serializers
-            UseSerializer(new XmlRestSerializer());
             UseSerializer(new JsonSerializer());
-            
+            UseSerializer(new XmlRestSerializer());
+
             FollowRedirects = true;
         }
 
