@@ -8,11 +8,21 @@ namespace RestSharp.Serialization
 
         public const string Xml = "application/xml";
 
-        public static Dictionary<DataFormat, string> FromDataFormat =
+        public static readonly Dictionary<DataFormat, string> FromDataFormat =
             new Dictionary<DataFormat, string>
             {
                 {DataFormat.Xml, Xml},
                 {DataFormat.Json, Json}
             };
+
+        public static readonly string[] JsonAccept =
+        {
+            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
+        };
+
+        public static readonly string[] XmlAccept =
+        {
+            "application/xml", "text/xml", "*+xml", "*"
+        };
     }
 }

@@ -97,7 +97,7 @@ namespace RestSharp
         }
 
         private IDictionary<string, IDeserializer> ContentHandlers { get; }
-        private IDictionary<DataFormat, IRestSerializer> Serializers { get; }
+        internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
 
         private IList<string> AcceptTypes { get; }
 

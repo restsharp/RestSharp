@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using RestSharp.Serialization;
 
 namespace RestSharp
 {
@@ -394,6 +395,26 @@ namespace RestSharp
 
             if (exception != null)
                 throw exception;
+        }
+
+        public static RestClient UseJson(this RestClient client)
+        {
+            foreach (var contentType in ContentType.XmlAccept)
+                client.RemoveHandler(contentType);
+
+            client.Serializers.Remove(DataFormat.Xml);
+
+            return client;
+        }
+
+        public static RestClient UseXml(this RestClient client)
+        {
+            foreach (var contentType in ContentType.JsonAccept)
+                client.RemoveHandler(contentType);
+
+            client.Serializers.Remove(DataFormat.Json);
+
+            return client;
         }
     }
 }

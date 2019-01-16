@@ -43,10 +43,7 @@ namespace RestSharp.Serialization.Json
 
         public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
-        public string[] SupportedContentTypes { get; } =
-        {
-            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
-        };
+        public string[] SupportedContentTypes { get; } = Serialization.ContentType.JsonAccept;
 
         public DataFormat DataFormat { get; } = DataFormat.Json;
         

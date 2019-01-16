@@ -7,14 +7,11 @@ namespace RestSharp.Serialization.Xml
 {
     public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer
     {
-        public string[] SupportedContentTypes { get; } =
-        {
-            "application/xml", "text/xml", "*+xml", "*"
-        };
+        public string[] SupportedContentTypes { get; } = Serialization.ContentType.XmlAccept;
 
         public DataFormat DataFormat { get; } = DataFormat.Xml;
 
-        public string ContentType { get; set; } = "text/xml";
+        public string ContentType { get; set; } = Serialization.ContentType.Xml;
 
         public string Serialize(object obj) => _xmlSerializer.Serialize(obj);
 
