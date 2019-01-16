@@ -121,7 +121,7 @@ namespace RestSharp
         /// <typeparam name="T">The type that implements IRestSerializer</typeparam>
         /// <returns></returns>
         public IRestClient UseSerializer<T>() where T : IRestSerializer, new() =>
-            UseSerializer(new T());
+            UseSerializer(() => new T());
 
         private IDictionary<string, Func<IDeserializer>> ContentHandlers { get; }
         internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
