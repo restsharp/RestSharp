@@ -27,6 +27,7 @@ using System.Net.Cache;
 using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Serialization;
@@ -510,16 +511,17 @@ namespace RestSharp
 
         internal IHttp ConfigureHttp(IRestRequest request)
         {
-            var http = Http.Create();
-
-            http.Encoding = Encoding;
-            http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
-            http.UseDefaultCredentials = request.UseDefaultCredentials;
-            http.ResponseWriter = request.ResponseWriter;
-            http.AdvancedResponseWriter = request.AdvancedResponseWriter;
-            http.CookieContainer = CookieContainer;
-            http.AutomaticDecompression = AutomaticDecompression;
-            http.WebRequestConfigurator = WebRequestConfigurator;
+            var http = new Http
+            {
+                Encoding = Encoding,
+                AlwaysMultipartFormData = request.AlwaysMultipartFormData,
+                UseDefaultCredentials = request.UseDefaultCredentials,
+                ResponseWriter = request.ResponseWriter,
+                AdvancedResponseWriter = request.AdvancedResponseWriter,
+                CookieContainer = CookieContainer,
+                AutomaticDecompression = AutomaticDecompression,
+                WebRequestConfigurator = WebRequestConfigurator
+            };
 
             var requestParameters = new List<Parameter>();
             requestParameters.AddRange(request.Parameters);
@@ -587,26 +589,29 @@ namespace RestSharp
             if (!string.IsNullOrEmpty(ConnectionGroupName))
                 http.ConnectionGroupName = ConnectionGroupName;
 
-            http.Headers.AddRange(requestParameters
+            http.Headers = requestParameters
                 .Where(p => p.Type == ParameterType.HttpHeader)
-                .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)}));
+                .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)})
+                .ToList();
 
-            http.Cookies.AddRange(requestParameters
+            http.Cookies = requestParameters
                 .Where(p => p.Type == ParameterType.Cookie)
-                .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)}));
+                .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)})
+                .ToList();
 
-            http.Parameters.AddRange(requestParameters
+            http.Parameters = requestParameters
                 .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
-                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)}));
+                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)})
+                .ToList();
 
-            http.Files.AddRange(request.Files.Select(file => new HttpFile
+            http.Files = request.Files.Select(file => new HttpFile
             {
                 Name = file.Name,
                 ContentType = file.ContentType,
                 Writer = file.Writer,
                 FileName = file.FileName,
                 ContentLength = file.ContentLength
-            }));
+            }).ToList();
 
             http.AddBody(requestParameters, Serializers, request.XmlSerializer, request.JsonSerializer);
 

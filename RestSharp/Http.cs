@@ -46,12 +46,8 @@ namespace RestSharp
         /// </summary>
         public Http()
         {
-            Headers = new List<HttpHeader>();
-            Files = new List<HttpFile>();
-            Parameters = new List<HttpParameter>();
-            Cookies = new List<HttpCookie>();
-            restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(
-                StringComparer.OrdinalIgnoreCase);
+            restrictedHeaderActions = 
+                new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
 
             AddSharedHeaderActions();
             AddSyncHeaderActions();
@@ -126,7 +122,7 @@ namespace RestSharp
         /// <summary>
         ///     Collection of files to be sent with request
         /// </summary>
-        public List<HttpFile> Files { get; }
+        public IList<HttpFile> Files { get; internal set; }
 
         /// <summary>
         ///     Whether or not HTTP 3xx response redirects should be automatically followed
@@ -167,17 +163,17 @@ namespace RestSharp
         /// <summary>
         ///     HTTP headers to be sent with request
         /// </summary>
-        public List<HttpHeader> Headers { get; }
+        public IList<HttpHeader> Headers { get; internal set; }
 
         /// <summary>
         ///     HTTP parameters (QueryString or Form values) to be sent with request
         /// </summary>
-        public List<HttpParameter> Parameters { get; }
+        public IList<HttpParameter> Parameters { get; internal set; }
 
         /// <summary>
         ///     HTTP cookies to be sent with request
         /// </summary>
-        public List<HttpCookie> Cookies { get; }
+        public IList<HttpCookie> Cookies { get; internal set; }
 
         /// <summary>
         ///     Request body to be sent with request
@@ -283,10 +279,7 @@ namespace RestSharp
             return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
         }
 
-        private static string GetMultipartFooter()
-        {
-            return $"--{FormBoundary}--{LineBreak}";
-        }
+        private static string GetMultipartFooter() => $"--{FormBoundary}--{LineBreak}";
 
         // handle restricted headers the .NET way - thanks @dimebrain!
         // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
@@ -316,20 +309,8 @@ namespace RestSharp
             }
         }
 
-        private string EncodeParameters()
-        {
-            var querystring = new StringBuilder();
-
-            foreach (var p in Parameters)
-            {
-                if (querystring.Length > 1)
-                    querystring.Append("&");
-
-                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), p.Value.UrlEncode());
-            }
-
-            return querystring.ToString();
-        }
+        private string EncodeParameters() => 
+            string.Join("&", Parameters.Select(p => $"{p.Name.UrlEncode()}={p.Value.UrlEncode()}"));
 
         private void PreparePostBody(WebRequest webRequest)
         {

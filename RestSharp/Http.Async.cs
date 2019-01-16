@@ -31,45 +31,22 @@ namespace RestSharp
     {
         private TimeOutState timeoutState;
 
-        public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
-        {
-            return GetStyleMethodInternalAsync("DELETE", action);
-        }
+        public HttpWebRequest DeleteAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("DELETE", action);
 
-        public HttpWebRequest GetAsync(Action<HttpResponse> action)
-        {
-            return GetStyleMethodInternalAsync("GET", action);
-        }
+        public HttpWebRequest GetAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("GET", action);
 
-        public HttpWebRequest HeadAsync(Action<HttpResponse> action)
-        {
-            return GetStyleMethodInternalAsync("HEAD", action);
-        }
+        public HttpWebRequest HeadAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("HEAD", action);
 
-        public HttpWebRequest OptionsAsync(Action<HttpResponse> action)
-        {
-            return GetStyleMethodInternalAsync("OPTIONS", action);
-        }
+        public HttpWebRequest OptionsAsync(Action<HttpResponse> action) =>
+            GetStyleMethodInternalAsync("OPTIONS", action);
 
-        public HttpWebRequest PostAsync(Action<HttpResponse> action)
-        {
-            return PutPostInternalAsync("POST", action);
-        }
+        public HttpWebRequest PostAsync(Action<HttpResponse> action) => PutPostInternalAsync("POST", action);
 
-        public HttpWebRequest PutAsync(Action<HttpResponse> action)
-        {
-            return PutPostInternalAsync("PUT", action);
-        }
+        public HttpWebRequest PutAsync(Action<HttpResponse> action) => PutPostInternalAsync("PUT", action);
 
-        public HttpWebRequest PatchAsync(Action<HttpResponse> action)
-        {
-            return PutPostInternalAsync("PATCH", action);
-        }
+        public HttpWebRequest PatchAsync(Action<HttpResponse> action) => PutPostInternalAsync("PATCH", action);
 
-        public HttpWebRequest MergeAsync(Action<HttpResponse> action)
-        {
-            return PutPostInternalAsync("MERGE", action);
-        }
+        public HttpWebRequest MergeAsync(Action<HttpResponse> action) => PutPostInternalAsync("MERGE", action);
 
         /// <summary>
         ///     Execute an async POST-style request with the specified HTTP Method.
@@ -77,10 +54,8 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
-        {
-            return PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
-        }
+        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod) =>
+            PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
 
         /// <summary>
         ///     Execute an async GET-style request with the specified HTTP Method.
@@ -88,10 +63,8 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
-        {
-            return GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
-        }
+        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod) =>
+            GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
 
         private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
         {
@@ -341,6 +314,7 @@ namespace RestSharp
             }
         }
 
+        [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
         protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
         {
             return ConfigureWebRequest(method, url);

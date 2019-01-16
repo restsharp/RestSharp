@@ -192,6 +192,7 @@ namespace RestSharp
             }
         }
 
+        [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
         protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
             var webRequest = CreateWebRequest(url);
