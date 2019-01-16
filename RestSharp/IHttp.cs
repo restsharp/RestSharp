@@ -66,13 +66,13 @@ namespace RestSharp
 
         Encoding Encoding { get; set; }
 
-        IList<HttpHeader> Headers { get; }
+        List<HttpHeader> Headers { get; }
 
-        IList<HttpParameter> Parameters { get; }
+        List<HttpParameter> Parameters { get; }
 
-        IList<HttpFile> Files { get; }
+        List<HttpFile> Files { get; }
 
-        IList<HttpCookie> Cookies { get; }
+        List<HttpCookie> Cookies { get; }
 
         string RequestBody { get; set; }
 

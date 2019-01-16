@@ -81,7 +81,7 @@ namespace RestSharp
         /// <param name="baseUrl"></param>
         public RestClient(string baseUrl) : this()
         {
-            if (string.IsNullOrEmpty(baseUrl))
+            if (baseUrl.IsEmpty())
                 throw new ArgumentNullException("baseUrl");
 
             BaseUrl = new Uri(baseUrl);
@@ -99,7 +99,7 @@ namespace RestSharp
 
             return this;
         }
-        
+
         /// <summary>
         /// Replace the default serializer with a custom one
         /// </summary>
@@ -109,7 +109,7 @@ namespace RestSharp
         {
             var instance = serializerFactory();
             Serializers[instance.DataFormat] = instance;
-            
+
             AddHandler(serializerFactory, instance.SupportedContentTypes);
 
             return this;
@@ -268,7 +268,7 @@ namespace RestSharp
         /// <param name="contentType">MIME content type of the response content</param>
         /// <param name="deserializer">Deserializer to use to process content</param>
         [Obsolete("Use the overload that accepts a factory delegate")]
-        public void AddHandler(string contentType, IDeserializer deserializer) => 
+        public void AddHandler(string contentType, IDeserializer deserializer) =>
             AddHandler(contentType, () => deserializer);
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace RestSharp
             foreach (var contentType in contentTypes)
                 AddHandler(contentType, deserializerFactory);
         }
-        
+
         /// <summary>
         ///     Registers a content handler to process response content
         /// </summary>
@@ -332,9 +332,9 @@ namespace RestSharp
 
             var applied = GetUrlSegmentParamsValues(request);
 
-            string mergedUri = MergeBaseUrlAndResource(applied.Uri, applied.Resource);
+            var mergedUri = MergeBaseUrlAndResource(applied.Uri, applied.Resource);
 
-            string finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
+            var finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
 
             return new Uri(finalUri);
         }
@@ -454,11 +454,6 @@ namespace RestSharp
                                 p.Type == ParameterType.QueryStringWithoutEncode);
         }
 
-        /// <summary>
-        ///     Retrieve the handler for the specified MIME content type
-        /// </summary>
-        /// <param name="contentType">MIME content type to retrieve</param>
-        /// <returns>IDeserializer instance</returns>
         private Func<IDeserializer> GetHandler(string contentType)
         {
             if (contentType == null)
@@ -479,7 +474,7 @@ namespace RestSharp
             if (contentType.IndexOf('+') >= 0)
             {
                 // https://tools.ietf.org/html/rfc6839#page-4
-                Match structuredSyntaxSuffixMatch = StructuredSyntaxSuffixRegex.Match(contentType);
+                var structuredSyntaxSuffixMatch = StructuredSyntaxSuffixRegex.Match(contentType);
 
                 if (structuredSyntaxSuffixMatch.Success)
                 {
@@ -528,11 +523,12 @@ namespace RestSharp
 
             var requestParameters = new List<Parameter>();
             requestParameters.AddRange(request.Parameters);
-            
+
             // move RestClient.DefaultParameters into Request.Parameters
             foreach (var defaultParameter in DefaultParameters)
             {
-                var parameterExists = request.Parameters.Any(p => p.Name == defaultParameter.Name && p.Type == defaultParameter.Type);
+                var parameterExists =
+                    request.Parameters.Any(p => p.Name == defaultParameter.Name && p.Type == defaultParameter.Type);
 
                 if (AllowMultipleDefaultParametersWithSameName)
                 {
@@ -591,32 +587,26 @@ namespace RestSharp
             if (!string.IsNullOrEmpty(ConnectionGroupName))
                 http.ConnectionGroupName = ConnectionGroupName;
 
-            var headers = requestParameters
+            http.Headers.AddRange(requestParameters
                 .Where(p => p.Type == ParameterType.HttpHeader)
-                .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)});
+                .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)}));
 
-            foreach (var header in headers)
-                http.Headers.Add(header);
-
-            var cookies = requestParameters
+            http.Cookies.AddRange(requestParameters
                 .Where(p => p.Type == ParameterType.Cookie)
-                .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)});
+                .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)}));
 
-            foreach (var cookie in cookies)
-                http.Cookies.Add(cookie);
+            http.Parameters.AddRange(requestParameters
+                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
+                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)}));
 
-            AddParametersToHttp(request.Parameters, http);
-
-            foreach (var file in request.Files)
-                http.Files.Add(new HttpFile
-                {
-                    Name = file.Name,
-                    ContentType = file.ContentType,
-                    Writer = file.Writer,
-                    FileName = file.FileName,
-                    ContentLength = file.ContentLength
-                });
-
+            http.Files.AddRange(request.Files.Select(file => new HttpFile
+            {
+                Name = file.Name,
+                ContentType = file.ContentType,
+                Writer = file.Writer,
+                FileName = file.FileName,
+                ContentLength = file.ContentLength
+            }));
 
             http.AddBody(requestParameters, Serializers, request.XmlSerializer, request.JsonSerializer);
 
@@ -637,16 +627,6 @@ namespace RestSharp
             http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 
             return http;
-        }
-
-        private static void AddParametersToHttp(IEnumerable<Parameter> parameters, IHttp http)
-        {
-            var @params = parameters
-                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
-                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)});
-
-            foreach (var parameter in @params)
-                http.Parameters.Add(parameter);
         }
 
         private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
@@ -740,6 +720,7 @@ namespace RestSharp
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
             }
+
             response.Request = request;
 
             return response;

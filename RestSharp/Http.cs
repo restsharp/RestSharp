@@ -126,7 +126,7 @@ namespace RestSharp
         /// <summary>
         ///     Collection of files to be sent with request
         /// </summary>
-        public IList<HttpFile> Files { get; }
+        public List<HttpFile> Files { get; }
 
         /// <summary>
         ///     Whether or not HTTP 3xx response redirects should be automatically followed
@@ -167,17 +167,17 @@ namespace RestSharp
         /// <summary>
         ///     HTTP headers to be sent with request
         /// </summary>
-        public IList<HttpHeader> Headers { get; }
+        public List<HttpHeader> Headers { get; }
 
         /// <summary>
         ///     HTTP parameters (QueryString or Form values) to be sent with request
         /// </summary>
-        public IList<HttpParameter> Parameters { get; }
+        public List<HttpParameter> Parameters { get; }
 
         /// <summary>
         ///     HTTP cookies to be sent with request
         /// </summary>
-        public IList<HttpCookie> Cookies { get; }
+        public List<HttpCookie> Cookies { get; }
 
         /// <summary>
         ///     Request body to be sent with request
