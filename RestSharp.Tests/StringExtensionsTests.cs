@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using NUnit.Framework;
 using RestSharp.Extensions;
@@ -39,6 +40,16 @@ namespace RestSharp.Tests
             const string parameter = "ø";
             Assert.True(string.Equals("%F8", parameter.UrlEncode(Encoding.GetEncoding("ISO-8859-1")), StringComparison.OrdinalIgnoreCase));
             Assert.True(string.Equals("%C3%B8", parameter.UrlEncode(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        [Test]
+        [TestCase("this_is_a_test", true, "ThisIsATest")]
+        [TestCase("this_is_a_test", false, "This_Is_A_Test")]
+        public void ToPascalCase(string start, bool removeUnderscores, string finish)
+        {
+            string result = start.ToPascalCase(removeUnderscores, CultureInfo.InvariantCulture);
+
+            Assert.AreEqual(finish, result);
         }
     }
 }

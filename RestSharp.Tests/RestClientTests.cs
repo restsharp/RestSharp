@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
     public class RestClientTests
     {
-        public RestClientTests() { }
-        private string BASE_URL => "http://localhost:8888/";
+        private const string BASE_URL = "http://localhost:8888/";
 
         [Test]
         [TestCase(Method.GET, Method.POST)]
@@ -23,11 +17,10 @@ namespace RestSharp.Tests
         [TestCase(Method.GET, Method.DELETE)]
         public void Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod)
         {
-            RestRequest req = new RestRequest(reqMethod);
+            var req = new RestRequest(reqMethod);
+            var client = new RestClient(BASE_URL);
 
-            IRestClient client = new RestClient(BASE_URL);
-
-            IRestResponse res = client.Execute(req, overrideMethod);
+            client.Execute(req, overrideMethod);
 
             Assert.AreEqual(req.Method, overrideMethod);
         }
@@ -35,10 +28,8 @@ namespace RestSharp.Tests
         [Test]
         public void ConfigureHttp_will_set_proxy_to_null_with_no_exceptions_When_no_proxy_can_be_found()
         {
-            IRestRequest req = new RestRequest();
-
-            IRestClient client = new RestClient(BASE_URL);
-            client.Proxy = null;            
+            var req = new RestRequest();
+            var client = new RestClient(BASE_URL) {Proxy = null};
 
             Assert.DoesNotThrow(() => client.Execute(req));
             Assert.IsNull(client.Proxy);
