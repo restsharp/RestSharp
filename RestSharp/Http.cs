@@ -46,7 +46,7 @@ namespace RestSharp
         /// </summary>
         public Http()
         {
-            restrictedHeaderActions = 
+            restrictedHeaderActions =
                 new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
 
             AddSharedHeaderActions();
@@ -113,7 +113,7 @@ namespace RestSharp
         ///     Here you can also check the request details
         /// </summary>
         public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
-        
+
         /// <summary>
         ///     The delegate to use to write the response instead of reading into RawBytes
         /// </summary>
@@ -240,7 +240,9 @@ namespace RestSharp
         protected virtual HttpWebRequest CreateWebRequest(Uri url) => (HttpWebRequest) WebRequest.Create(url);
 
         public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
-        
+
+        internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
+
         partial void AddSyncHeaderActions();
 
         private void AddSharedHeaderActions()
@@ -309,9 +311,6 @@ namespace RestSharp
             }
         }
 
-        private string EncodeParameters() => 
-            string.Join("&", Parameters.Select(p => $"{p.Name.UrlEncode()}={p.Value.UrlEncode()}"));
-
         private void PreparePostBody(WebRequest webRequest)
         {
             bool needsContentType = string.IsNullOrEmpty(webRequest.ContentType);
@@ -321,7 +320,7 @@ namespace RestSharp
                 if (needsContentType)
                     webRequest.ContentType = GetMultipartFormContentType();
                 else if (!webRequest.ContentType.Contains("boundary"))
-                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary; 
+                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary;
             }
             else if (HasBody)
             {
@@ -334,6 +333,9 @@ namespace RestSharp
                     webRequest.ContentType = "application/x-www-form-urlencoded";
                 RequestBody = EncodeParameters();
             }
+
+            string EncodeParameters() =>
+                string.Join("&", Parameters.Select(p => $"{Encode(p.Name)}={Encode(p.Value)}"));
         }
 
         private void WriteStringTo(Stream stream, string toWrite)

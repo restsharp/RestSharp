@@ -124,8 +124,21 @@ namespace RestSharp
         public IRestClient UseSerializer<T>() where T : IRestSerializer, new() =>
             UseSerializer(() => new T());
 
+        /// <summary>
+        /// Allows to use a custom way to encode parameters
+        /// </summary>
+        /// <param name="encoder">A delegate to encode parameters</param>
+        /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
+        /// <returns></returns>
+        public IRestClient UseUrlEncoder(Func<string, string> encoder)
+        {
+            Encode = encoder;
+            return this;
+        }
+
         private IDictionary<string, Func<IDeserializer>> ContentHandlers { get; }
         internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
+        private Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
         private IList<string> AcceptTypes { get; }
 
@@ -380,7 +393,7 @@ namespace RestSharp
             foreach (var parameter in parameters)
             {
                 var paramPlaceHolder = $"{{{parameter.Name}}}";
-                var paramValue = parameter.Value.ToString().UrlEncode();
+                var paramValue = Encode(parameter.Value.ToString());
 
                 if (hasResource)
                 {
@@ -520,7 +533,8 @@ namespace RestSharp
                 AdvancedResponseWriter = request.AdvancedResponseWriter,
                 CookieContainer = CookieContainer,
                 AutomaticDecompression = AutomaticDecompression,
-                WebRequestConfigurator = WebRequestConfigurator
+                WebRequestConfigurator = WebRequestConfigurator,
+                Encode = Encode
             };
 
             var requestParameters = new List<Parameter>();
