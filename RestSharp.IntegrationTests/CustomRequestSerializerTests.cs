@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 using RestSharp.Serialization.Xml;
+using RestSharp.Serializers;
 using Shouldly;
 
 namespace RestSharp.IntegrationTests
@@ -16,7 +17,7 @@ namespace RestSharp.IntegrationTests
             using (SimpleServer.Create(BASE_URL))
             {
                 var client = new RestClient(BASE_URL);
-                var serializer = new CustomSerializer();
+                var serializer = new CustomXmlSerializer();
                 var body = new {Text = "text"};
                 
                 var request = new RestRequest("/") {XmlSerializer = serializer};
@@ -27,16 +28,42 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        private class CustomSerializer : IXmlSerializer
+        [Test]
+        public void Should_use_custom_json_serializer()
+        {
+            using (SimpleServer.Create(BASE_URL))
+            {
+                var client = new RestClient(BASE_URL);
+                var serializer = new CustomJsonSerializer();
+                var body = new {Text = "text"};
+                
+                var request = new RestRequest("/") {JsonSerializer = serializer};
+                request.AddXmlBody(body);
+                client.Execute(request);
+                
+                serializer.BodyString.ShouldBe(body.ToString());
+            }
+        }
+
+        private class CustomXmlSerializer : IXmlSerializer
         {
             public string BodyString { get; private set; }
 
             public string Serialize(object obj) => BodyString = obj?.ToString();
 
-            public string ContentType { get; set; } = "application/xml";
+            public string ContentType { get; set; } = Serialization.ContentType.Xml;
             public string RootElement { get; set; }
             public string Namespace { get; set; }
             public string DateFormat { get; set; }
+        }
+
+        private class CustomJsonSerializer : ISerializer
+        {
+            public string BodyString { get; private set; }
+
+            public string Serialize(object obj) => BodyString = obj?.ToString();
+
+            public string ContentType { get; set; } = Serialization.ContentType.Json;
         }
     }
 }

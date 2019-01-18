@@ -80,6 +80,14 @@ namespace RestSharp
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod);
 
         IRestResponse<T> Deserialize<T>(IRestResponse response);
+        
+        /// <summary>
+        /// Allows to use a custom way to encode parameters
+        /// </summary>
+        /// <param name="encoder">A delegate to encode parameters</param>
+        /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
+        /// <returns></returns>
+        IRestClient UseUrlEncoder(Func<string, string> encoder);
 
         IRestResponse Execute(IRestRequest request);
 
