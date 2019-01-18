@@ -222,7 +222,7 @@ namespace RestSharp
             webRequest.Method = method;
 
             // make sure Content-Length header is always sent since default is -1
-            if (!HasFiles && !AlwaysMultipartFormData)
+            if (!HasFiles && !AlwaysMultipartFormData && method != "GET")
                 webRequest.ContentLength = 0;
 
             if (Credentials != null)
