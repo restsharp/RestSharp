@@ -306,7 +306,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
-        [Obsolete("Use AddXmlBody")]
+        [Obsolete("Use AddXmlBody or AddJsonBody")]
         public IRestRequest AddBody(object obj)
         {
             switch (RequestFormat)

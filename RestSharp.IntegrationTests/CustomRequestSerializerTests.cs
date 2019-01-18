@@ -37,8 +37,8 @@ namespace RestSharp.IntegrationTests
                 var serializer = new CustomJsonSerializer();
                 var body = new {Text = "text"};
                 
-                var request = new RestRequest("/") {JsonSerializer = serializer};
-                request.AddXmlBody(body);
+                var request = new RestRequest("/") {JsonSerializer = serializer, RequestFormat = DataFormat.Json};
+                request.AddBody(body);
                 client.Execute(request);
                 
                 serializer.BodyString.ShouldBe(body.ToString());
