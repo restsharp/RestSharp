@@ -203,7 +203,7 @@ namespace RestSharp.Extensions
             if (string.IsNullOrEmpty(text))
                 return text;
 
-            text = text.Replace("_", " ");
+            text = text.Replace('_', ' ');
 
             var joinString = removeUnderscores
                 ? string.Empty

@@ -288,8 +288,8 @@ namespace RestSharp
         private void AppendHeaders(HttpWebRequest webRequest)
         {
             foreach (var header in Headers)
-                if (restrictedHeaderActions.ContainsKey(header.Name))
-                    restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
+                if (restrictedHeaderActions.TryGetValue(header.Name, out var restrictedHeaderAction))
+                    restrictedHeaderAction.Invoke(webRequest, header.Value);
                 else
                     webRequest.Headers.Add(header.Name, header.Value);
         }

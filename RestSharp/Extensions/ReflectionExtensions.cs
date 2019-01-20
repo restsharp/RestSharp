@@ -94,11 +94,13 @@ namespace RestSharp.Extensions
         /// <returns></returns>
         public static object FindEnumValue(this Type type, string value, CultureInfo culture)
         {
+            var caseInsensitiveComparer = StringComparer.Create(culture, true);
+
             Enum ret = Enum.GetValues(type)
                 .Cast<Enum>()
                 .FirstOrDefault(v => v.ToString()
                     .GetNameVariants(culture)
-                    .Contains(value, StringComparer.Create(culture, true)));
+                    .Contains(value, caseInsensitiveComparer));
 
             if (ret != null) return ret;
 

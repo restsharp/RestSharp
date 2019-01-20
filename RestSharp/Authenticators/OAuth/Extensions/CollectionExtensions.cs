@@ -62,7 +62,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
             if (collection.Count > 0)
             {
-                sb.Append("?");
+                sb.Append('?');
             }
 
             int count = 0;
@@ -77,7 +77,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
                     continue;
                 }
 
-                sb.Append("&");
+                sb.Append('&');
             }
 
             return sb.ToString();
