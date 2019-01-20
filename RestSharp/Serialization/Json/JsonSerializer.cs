@@ -15,21 +15,39 @@ namespace RestSharp.Serialization.Json
     {
         /// <summary>
         /// Serialize the object as JSON
+        /// If the object is already a serialized string returns it's value
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
         public string Serialize(object obj)
         {
-            if (obj is string value)
+            if (IsSerializedString(obj, out var serializedString))
             {
-                var trimmed = value.Trim();
-                if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
-                {
-                    return value;
-                }
+                return serializedString;
             }
 
             return SimpleJson.SimpleJson.SerializeObject(obj);
+        }
+
+        /// <summary>
+        /// Determines if the object is already a serialized string.
+        /// </summary>
+        private static bool IsSerializedString(object obj, out string serializedString)
+        {
+            if (obj is string value)
+            {
+                string trimmed = value.Trim();
+
+                if ((trimmed.StartsWith("{") && trimmed.EndsWith("}"))
+                    || (trimmed.StartsWith("[{") && trimmed.EndsWith("}]")))
+                {
+                    serializedString = value;
+                    return true;
+                }
+            }
+
+            serializedString = null;
+            return false;
         }
 
         /// <summary>
@@ -46,7 +64,7 @@ namespace RestSharp.Serialization.Json
         public string[] SupportedContentTypes { get; } = Serialization.ContentType.JsonAccept;
 
         public DataFormat DataFormat { get; } = DataFormat.Json;
-        
+
         public string Serialize(Parameter parameter) => Serialize(parameter.Value);
 
         public T Deserialize<T>(IRestResponse response)
@@ -228,6 +246,7 @@ namespace RestSharp.Serialization.Json
                 {
                     return null;
                 }
+
                 typeInfo = value.GetType().GetTypeInfo();
             }
 
@@ -351,6 +370,8 @@ namespace RestSharp.Serialization.Json
             return instance;
         }
     }
-    
-    public class JsonDeserializer : JsonSerializer { }
+
+    public class JsonDeserializer : JsonSerializer
+    {
+    }
 }
