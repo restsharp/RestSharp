@@ -80,7 +80,7 @@ namespace RestSharp
 
         public RestRequest(string resource, Method method, DataFormat dataFormat) : this()
         {
-            Resource = resource;
+            Resource = resource ?? "";
             Method = method;
             RequestFormat = dataFormat;
 
