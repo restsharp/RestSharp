@@ -19,15 +19,10 @@ namespace RestSharp.Serialization.Json
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
-        public string Serialize(object obj)
-        {
-            if (IsSerializedString(obj, out var serializedString))
-            {
-                return serializedString;
-            }
-
-            return SimpleJson.SimpleJson.SerializeObject(obj);
-        }
+        public string Serialize(object obj) =>
+            IsSerializedString(obj, out var serializedString)
+                ? serializedString
+                : SimpleJson.SimpleJson.SerializeObject(obj);
 
         /// <summary>
         /// Determines if the object is already a serialized string.
@@ -36,10 +31,10 @@ namespace RestSharp.Serialization.Json
         {
             if (obj is string value)
             {
-                string trimmed = value.Trim();
+                var trimmed = value.Trim();
 
-                if ((trimmed.StartsWith("{") && trimmed.EndsWith("}"))
-                    || (trimmed.StartsWith("[{") && trimmed.EndsWith("}]")))
+                if (trimmed.StartsWith("{") && trimmed.EndsWith("}")
+                    || trimmed.StartsWith("[{") && trimmed.EndsWith("}]"))
                 {
                     serializedString = value;
                     return true;
@@ -69,14 +64,14 @@ namespace RestSharp.Serialization.Json
 
         public T Deserialize<T>(IRestResponse response)
         {
-            object json = FindRoot(response.Content);
+            var json = FindRoot(response.Content);
 
             return (T) ConvertValue(typeof(T).GetTypeInfo(), json);
         }
 
         private object FindRoot(string content)
         {
-            object json = SimpleJson.SimpleJson.DeserializeObject(content);
+            var json = SimpleJson.SimpleJson.DeserializeObject(content);
 
             if (!RootElement.HasValue()) return json;
 
@@ -108,21 +103,17 @@ namespace RestSharp.Serialization.Json
                     name = prop.Name;
                 }
 
-                object value = null;
-                if (!data.TryGetValue(name, out value))
+                if (!data.TryGetValue(name, out var value))
                 {
-                    string[] parts = name.Split('.');
-                    IDictionary<string, object> currentData = data;
+                    var parts = name.Split('.');
+                    var currentData = data;
 
                     for (int i = 0; i < parts.Length; ++i)
                     {
-                        string actualName = parts[i].GetNameVariants(this.Culture)
+                        var actualName = parts[i].GetNameVariants(Culture)
                             .FirstOrDefault(currentData.ContainsKey);
 
-                        if (actualName == null)
-                        {
-                            break;
-                        }
+                        if (actualName == null) break;
 
                         if (i == parts.Length - 1)
                         {
@@ -146,27 +137,20 @@ namespace RestSharp.Serialization.Json
 
         private IDictionary BuildDictionary(Type type, object parent)
         {
-            IDictionary dict = (IDictionary) Activator.CreateInstance(type);
-            Type keyType = type.GetTypeInfo().GetGenericArguments()[0];
-            Type valueType = type.GetTypeInfo().GetGenericArguments()[1];
+            var dict = (IDictionary) Activator.CreateInstance(type);
+            var keyType = type.GetTypeInfo().GetGenericArguments()[0];
+            var valueType = type.GetTypeInfo().GetGenericArguments()[1];
 
-            foreach (KeyValuePair<string, object> child in (IDictionary<string, object>) parent)
+            foreach (var child in (IDictionary<string, object>) parent)
             {
-                object key = keyType != typeof(string)
+                var key = keyType != typeof(string)
                     ? Convert.ChangeType(child.Key, keyType, CultureInfo.InvariantCulture)
                     : child.Key;
 
-                object item;
-
-                if (valueType.GetTypeInfo().IsGenericType &&
-                    valueType.GetTypeInfo().GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    item = BuildList(valueType, child.Value);
-                }
-                else
-                {
-                    item = ConvertValue(valueType.GetTypeInfo(), child.Value);
-                }
+                var item = valueType.GetTypeInfo().IsGenericType &&
+                           valueType.GetTypeInfo().GetGenericTypeDefinition() == typeof(List<>)
+                    ? BuildList(valueType, child.Value)
+                    : ConvertValue(valueType.GetTypeInfo(), child.Value);
 
                 dict.Add(key, item);
             }
@@ -176,15 +160,16 @@ namespace RestSharp.Serialization.Json
 
         private IList BuildList(Type type, object parent)
         {
-            IList list = (IList) Activator.CreateInstance(type);
-            Type listType = type.GetTypeInfo().GetInterfaces()
-                .First
-                    (x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
-            Type itemType = listType.GetTypeInfo().GetGenericArguments()[0];
+            var list = (IList) Activator.CreateInstance(type);
+            var listType = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .First(x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
+            var itemType = listType.GetTypeInfo().GetGenericArguments()[0];
 
             if (parent is IList list1)
             {
-                foreach (object element in list1)
+                foreach (var element in list1)
                 {
                     if (itemType.GetTypeInfo().IsPrimitive)
                     {
@@ -210,7 +195,7 @@ namespace RestSharp.Serialization.Json
                             continue;
                         }
 
-                        object item = ConvertValue(itemType.GetTypeInfo(), element);
+                        var item = ConvertValue(itemType.GetTypeInfo(), element);
 
                         list.Add(item);
                     }
@@ -226,26 +211,20 @@ namespace RestSharp.Serialization.Json
 
         private object ConvertValue(TypeInfo typeInfo, object value)
         {
-            string stringValue = Convert.ToString(value, Culture);
+            var stringValue = Convert.ToString(value, Culture);
 
             // check for nullable and extract underlying type
             if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Since the type is nullable and no value is provided return null
-                if (string.IsNullOrEmpty(stringValue))
-                {
-                    return null;
-                }
+                if (stringValue.IsEmpty()) return null;
 
                 typeInfo = typeInfo.GetGenericArguments()[0].GetTypeInfo();
             }
 
             if (typeInfo.AsType() == typeof(object))
             {
-                if (value == null)
-                {
-                    return null;
-                }
+                if (value == null) return null;
 
                 typeInfo = value.GetType().GetTypeInfo();
             }
@@ -283,7 +262,7 @@ namespace RestSharp.Serialization.Json
                 else
                 {
                     // try parsing instead
-                    dt = stringValue.ParseJsonDate(this.Culture);
+                    dt = stringValue.ParseJsonDate(Culture);
                 }
 
                 if (type == typeof(DateTime))
@@ -320,12 +299,12 @@ namespace RestSharp.Serialization.Json
             }
             else if (type.GetTypeInfo().IsGenericType)
             {
-                Type genericTypeDef = type.GetGenericTypeDefinition();
+                var genericTypeDef = type.GetGenericTypeDefinition();
 
                 if (genericTypeDef == typeof(IEnumerable<>) || genericTypeDef == typeof(IList<>))
                 {
-                    Type itemType = typeInfo.GetGenericArguments()[0];
-                    Type listType = typeof(List<>).MakeGenericType(itemType);
+                    var itemType = typeInfo.GetGenericArguments()[0];
+                    var listType = typeof(List<>).MakeGenericType(itemType);
                     return BuildList(listType, value);
                 }
 
