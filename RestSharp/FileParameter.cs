@@ -16,19 +16,15 @@ namespace RestSharp
         ///<param name="filename">The filename to use in the request.</param>
         ///<param name="contentType">The content type to use in the request.</param>
         ///<returns>The <see cref="FileParameter"/></returns>
-        public static FileParameter Create(string name, byte[] data, string filename, string contentType)
-        {
-            long length = data.LongLength;
-
-            return new FileParameter
-                   {
-                       Writer = s => s.Write(data, 0, data.Length),
-                       FileName = filename,
-                       ContentType = contentType,
-                       ContentLength = length,
-                       Name = name
-                   };
-        }
+        public static FileParameter Create(string name, byte[] data, string filename, string contentType) =>
+            new FileParameter
+            {
+                Writer = s => s.Write(data, 0, data.Length),
+                FileName = filename,
+                ContentType = contentType,
+                ContentLength = data.LongLength,
+                Name = name
+            };
 
         ///<summary>
         /// Creates a file parameter from an array of bytes.
@@ -37,10 +33,28 @@ namespace RestSharp
         ///<param name="data">The data to use as the file's contents.</param>
         ///<param name="filename">The filename to use in the request.</param>
         ///<returns>The <see cref="FileParameter"/> using the default content type.</returns>
-        public static FileParameter Create(string name, byte[] data, string filename)
-        {
-            return Create(name, data, filename, null);
-        }
+        public static FileParameter Create(string name, byte[] data, string filename) => 
+            Create(name, data, filename, null);
+
+        /// <summary>
+        ///  Creates a file parameter from an array of bytes.
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request.</param>
+        /// <param name="writer">Delegate that will be called with the request stream so you can write to it..</param>
+        /// <param name="contentLength">The length of the data that will be written by te writer.</param>
+        /// <param name="fileName">The filename to use in the request.</param>
+        /// <param name="contentType">Optional: parameter content type</param>
+        /// <returns>The <see cref="FileParameter"/> using the default content type.</returns>
+        public static FileParameter Create(string name, Action<Stream> writer, long contentLength, string fileName,
+            string contentType = null) =>
+            new FileParameter
+            {
+                Name = name,
+                FileName = fileName,
+                ContentType = contentType,
+                Writer = writer,
+                ContentLength = contentLength
+            };
 
         /// <summary>
         /// The length of data to be sent
