@@ -479,7 +479,7 @@ namespace RestSharp
             if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];
 
-            if (ContentHandlers.Keys.Count == 1) 
+            if (contentType.IsEmpty()) 
                 return ContentHandlers.First().Value;
 
             int semicolonIndex = contentType.IndexOf(';');
