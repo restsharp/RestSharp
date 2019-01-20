@@ -222,6 +222,12 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
         /// <summary>
+        /// Set to false if you want to get ResponseStatus.Completed when deserialization fails.
+        /// Default is true.
+        /// </summary>
+        public bool FailOnDeserializationError { get; set; } = true;
+
+        /// <summary>
         /// Allow high-speed NTLM-authenticated connection sharing
         /// </summary>
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
@@ -735,7 +741,9 @@ namespace RestSharp
             }
             catch (Exception ex)
             {
-                response.ResponseStatus = ResponseStatus.Error;
+                if (FailOnDeserializationError)
+                  response.ResponseStatus = ResponseStatus.Error;
+                
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
             }
