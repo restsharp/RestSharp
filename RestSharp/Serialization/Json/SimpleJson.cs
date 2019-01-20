@@ -66,12 +66,12 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
-using SimpleJson.Reflection;
+using RestSharp.Reflection;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantExplicitArrayCreation
 // ReSharper disable SuggestUseVarKeywordEvident
-namespace SimpleJson
+namespace RestSharp
 {
     /// <summary>
     /// Represents the json array.
@@ -484,7 +484,7 @@ namespace SimpleJson
     }
 }
 
-namespace SimpleJson
+namespace RestSharp
 {
     /// <summary>
     /// This class encodes and decodes JSON strings.

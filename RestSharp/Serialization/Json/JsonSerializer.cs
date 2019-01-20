@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Xml;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
-using SimpleJson;
 
 namespace RestSharp.Serialization.Json
 {
@@ -22,7 +21,7 @@ namespace RestSharp.Serialization.Json
         public string Serialize(object obj) =>
             IsSerializedString(obj, out var serializedString)
                 ? serializedString
-                : SimpleJson.SimpleJson.SerializeObject(obj);
+                : SimpleJson.SerializeObject(obj);
 
         /// <summary>
         /// Determines if the object is already a serialized string.
@@ -71,7 +70,7 @@ namespace RestSharp.Serialization.Json
 
         private object FindRoot(string content)
         {
-            var json = SimpleJson.SimpleJson.DeserializeObject(content);
+            var json = SimpleJson.DeserializeObject(content);
 
             if (!RootElement.HasValue()) return json;
 
