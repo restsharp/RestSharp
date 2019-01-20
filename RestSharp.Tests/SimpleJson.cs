@@ -60,18 +60,17 @@ using System.Linq.Expressions;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 #if SIMPLE_JSON_DYNAMIC
-using System.Dynamic;
 #endif
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
-using RestSharp.Tests.Reflection;
+using RestSharp.Reflection;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantExplicitArrayCreation
 // ReSharper disable SuggestUseVarKeywordEvident
-namespace RestSharp.Tests
+namespace RestSharp
 {
     /// <summary>
     /// Represents the json array.
@@ -484,7 +483,7 @@ namespace RestSharp.Tests
     }
 }
 
-namespace RestSharp.Tests
+namespace RestSharp
 {
     /// <summary>
     /// This class encodes and decodes JSON strings.
