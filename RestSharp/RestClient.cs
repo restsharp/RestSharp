@@ -476,11 +476,11 @@ namespace RestSharp
 
         private Func<IDeserializer> GetHandler(string contentType)
         {
-            if (contentType == null)
-                throw new ArgumentNullException(nameof(contentType));
-
-            if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
+            if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];
+
+            if (ContentHandlers.Keys.Count == 1) 
+                return ContentHandlers.First().Value;
 
             int semicolonIndex = contentType.IndexOf(';');
 
