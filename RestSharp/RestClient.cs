@@ -83,7 +83,7 @@ namespace RestSharp
         public RestClient(string baseUrl) : this()
         {
             if (baseUrl.IsEmpty())
-                throw new ArgumentNullException("baseUrl");
+                throw new ArgumentNullException(nameof(baseUrl));
 
             BaseUrl = new Uri(baseUrl);
         }
@@ -471,7 +471,7 @@ namespace RestSharp
         private Func<IDeserializer> GetHandler(string contentType)
         {
             if (contentType == null)
-                throw new ArgumentNullException("contentType");
+                throw new ArgumentNullException(nameof(contentType));
 
             if (string.IsNullOrEmpty(contentType) && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];
@@ -481,8 +481,8 @@ namespace RestSharp
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
 
-            if (ContentHandlers.ContainsKey(contentType))
-                return ContentHandlers[contentType];
+            if (ContentHandlers.TryGetValue(contentType,  out var contentHandler))
+                return contentHandler;
 
             // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
             if (contentType.IndexOf('+') >= 0)
@@ -493,9 +493,9 @@ namespace RestSharp
                 if (structuredSyntaxSuffixMatch.Success)
                 {
                     var structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
-                    if (ContentHandlers.ContainsKey(structuredSyntaxSuffixWildcard))
+                    if (ContentHandlers.TryGetValue(structuredSyntaxSuffixWildcard, out var contentHandlerWildcard))
                     {
-                        return ContentHandlers[structuredSyntaxSuffixWildcard];
+                        return contentHandlerWildcard;
                     }
                 }
             }
@@ -556,7 +556,7 @@ namespace RestSharp
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (requestParameters.All(p => p.Name.ToLowerInvariant() != "accept"))
+            if (requestParameters.All(p => !string.Equals(p.Name, "accept", StringComparison.InvariantCultureIgnoreCase)))
             {
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
 

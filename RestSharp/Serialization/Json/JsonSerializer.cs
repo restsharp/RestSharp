@@ -90,7 +90,6 @@ namespace RestSharp.Serialization.Json
             foreach (var prop in props)
             {
                 string name;
-                var type = prop.PropertyType.GetTypeInfo();
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
@@ -128,6 +127,7 @@ namespace RestSharp.Serialization.Json
 
                 if (value != null)
                 {
+                    var type = prop.PropertyType.GetTypeInfo();
                     prop.SetValue(target, ConvertValue(type, value), null);
                 }
             }

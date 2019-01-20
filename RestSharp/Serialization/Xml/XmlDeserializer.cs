@@ -268,7 +268,6 @@ namespace RestSharp.Deserializers
                 }
                 else if (type.IsGenericType)
                 {
-                    var t = type.GetGenericArguments()[0];
                     var list = (IList) Activator.CreateInstance(asType);
                     var container = this.GetElementByName(root, name);
 
@@ -278,6 +277,7 @@ namespace RestSharp.Deserializers
 
                         if (first != null)
                         {
+                            var t = type.GetGenericArguments()[0];
                             var elements = container.Elements(first.Name);
 
                             PopulateListFromElements(t, elements, list);
@@ -454,12 +454,13 @@ namespace RestSharp.Deserializers
                 return root.Element(camelName);
 
             // try looking for element that matches sanitized property name (Order by depth)
-            var element = root.Descendants()
-                       .OrderBy(d => d.Ancestors().Count())
+            var orderedDescendants = root.Descendants()
+                       .OrderBy(d => d.Ancestors().Count());
+
+            var element = orderedDescendants
                        .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
-                   root.Descendants()
-                       .OrderBy(d => d.Ancestors().Count())
-                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName.ToLower());
+                   orderedDescendants
+                       .FirstOrDefault(d => string.Equals(d.Name.LocalName.RemoveUnderscoresAndDashes(), name.LocalName, StringComparison.OrdinalIgnoreCase));
 
             return element == null && name == "Value".AsNamespaced(name.NamespaceName) &&
                    (!root.HasAttributes || root.Attributes().All(x => x.Name != name))

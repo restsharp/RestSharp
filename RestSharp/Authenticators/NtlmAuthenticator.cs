@@ -52,7 +52,7 @@ namespace RestSharp.Authenticators
         /// <param name="credentials"></param>
         public NtlmAuthenticator(ICredentials credentials)
         {
-            this.credentials = credentials ?? throw new ArgumentNullException("credentials");
+            this.credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
