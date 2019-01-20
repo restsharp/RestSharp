@@ -21,7 +21,7 @@ namespace RestSharp.Serialization.Json
         /// <returns>JSON as String</returns>
         public string Serialize(object obj)
         {
-            if( IsSerializedString( obj, out var serializedString ) )
+            if (IsSerializedString(obj, out var serializedString))
             {
                 return serializedString;
             }
@@ -32,14 +32,14 @@ namespace RestSharp.Serialization.Json
         /// <summary>
         /// Determines if the object is already a serialized string.
         /// </summary>
-        private static bool IsSerializedString( object obj, out string serializedString )
+        private static bool IsSerializedString(object obj, out string serializedString)
         {
-            if( obj is string value )
+            if (obj is string value)
             {
                 string trimmed = value.Trim();
 
-                if( ( trimmed.StartsWith( "{" ) && trimmed.EndsWith( "}" ) )
-                    || ( trimmed.StartsWith( "[{" ) && trimmed.EndsWith( "}]" ) ) )
+                if ((trimmed.StartsWith("{") && trimmed.EndsWith("}"))
+                    || (trimmed.StartsWith("[{") && trimmed.EndsWith("}]")))
                 {
                     serializedString = value;
                     return true;
@@ -64,7 +64,7 @@ namespace RestSharp.Serialization.Json
         public string[] SupportedContentTypes { get; } = Serialization.ContentType.JsonAccept;
 
         public DataFormat DataFormat { get; } = DataFormat.Json;
-        
+
         public string Serialize(Parameter parameter) => Serialize(parameter.Value);
 
         public T Deserialize<T>(IRestResponse response)
@@ -246,6 +246,7 @@ namespace RestSharp.Serialization.Json
                 {
                     return null;
                 }
+
                 typeInfo = value.GetType().GetTypeInfo();
             }
 
@@ -369,6 +370,8 @@ namespace RestSharp.Serialization.Json
             return instance;
         }
     }
-    
-    public class JsonDeserializer : JsonSerializer { }
+
+    public class JsonDeserializer : JsonSerializer
+    {
+    }
 }
