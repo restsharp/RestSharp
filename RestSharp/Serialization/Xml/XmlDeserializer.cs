@@ -39,7 +39,7 @@ namespace RestSharp.Deserializers
         }
 
         public CultureInfo Culture { get; set; }
-        
+
         public string RootElement { get; set; }
 
         public string Namespace { get; set; }
@@ -75,7 +75,7 @@ namespace RestSharp.Deserializers
         private static void RemoveNamespace(XDocument xdoc)
         {
             if (xdoc.Root == null) return;
-            
+
             foreach (var e in xdoc.Root.DescendantsAndSelf())
             {
                 if (e.Name.Namespace != XNamespace.None)
@@ -95,9 +95,9 @@ namespace RestSharp.Deserializers
 
         protected virtual object Map(object x, XElement root)
         {
-            Type objType = x.GetType();
-            PropertyInfo[] props = objType.GetProperties();
-            bool deserializeFromContentAttributeAlreadyUsed = false;
+            var objType = x.GetType();
+            var props = objType.GetProperties();
+            var deserializeFromContentAttributeAlreadyUsed = false;
 
             foreach (var prop in props)
             {
@@ -107,24 +107,24 @@ namespace RestSharp.Deserializers
                 if (!typeIsPublic || !prop.CanWrite)
                     continue;
 
-                bool deserializeFromContent = false;
-                bool isNameDefinedInAttribute = false;
+                var deserializeFromContent = false;
+                var isNameDefinedInAttribute = false;
                 XName name = null;
                 var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
                 {
-                    DeserializeAsAttribute attribute = (DeserializeAsAttribute) attributes.First();
+                    var attribute = (DeserializeAsAttribute) attributes.First();
 
                     name = attribute.Name.AsNamespaced(Namespace);
                     isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
 
                     deserializeFromContent = attribute.Content;
 
-                    if(deserializeFromContentAttributeAlreadyUsed && deserializeFromContent)
+                    if (deserializeFromContentAttributeAlreadyUsed && deserializeFromContent)
                     {
                         throw new ArgumentException("Class cannot have two properties marked with " +
-                            "SerializeAs(Content = true) attribute.");
+                                                    "SerializeAs(Content = true) attribute.");
                     }
 
                     deserializeFromContentAttributeAlreadyUsed |= deserializeFromContent;
@@ -143,11 +143,12 @@ namespace RestSharp.Deserializers
                     if (deserializeFromContent)
                     {
                         var textNode = root.Nodes().FirstOrDefault(n => n is XText);
-                        if(textNode != null)
+                        if (textNode != null)
                         {
-                            value = ((XText)textNode).Value;
+                            value = ((XText) textNode).Value;
                             prop.SetValue(x, value, null);
                         }
+
                         continue;
                     }
 
@@ -167,6 +168,7 @@ namespace RestSharp.Deserializers
 
                         prop.SetValue(x, list, null);
                     }
+
                     continue;
                 }
 
@@ -455,12 +457,13 @@ namespace RestSharp.Deserializers
 
             // try looking for element that matches sanitized property name (Order by depth)
             var orderedDescendants = root.Descendants()
-                       .OrderBy(d => d.Ancestors().Count());
+                .OrderBy(d => d.Ancestors().Count());
 
             var element = orderedDescendants
-                       .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
-                   orderedDescendants
-                       .FirstOrDefault(d => string.Equals(d.Name.LocalName.RemoveUnderscoresAndDashes(), name.LocalName, StringComparison.OrdinalIgnoreCase));
+                              .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
+                          orderedDescendants
+                              .FirstOrDefault(d => string.Equals(d.Name.LocalName.RemoveUnderscoresAndDashes(),
+                                  name.LocalName, StringComparison.OrdinalIgnoreCase));
 
             return element == null && name == "Value".AsNamespaced(name.NamespaceName) &&
                    (!root.HasAttributes || root.Attributes().All(x => x.Name != name))

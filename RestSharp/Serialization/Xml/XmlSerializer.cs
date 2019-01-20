@@ -129,14 +129,14 @@ namespace RestSharp.Serializers
 
         private void Map(XContainer root, object obj)
         {
-            Type objType = obj.GetType();
-            var props = from p in objType.GetProperties()
-                                              let indexAttribute = p.GetAttribute<SerializeAsAttribute>()
-                                              where p.CanRead && p.CanWrite
-                                              orderby indexAttribute?.Index ?? int.MaxValue
-                                              select p;
-            SerializeAsAttribute globalOptions = objType.GetAttribute<SerializeAsAttribute>();
-            bool textContentAttributeAlreadyUsed = false;
+            var objType = obj.GetType();
+            var props = objType.GetProperties()
+                .Select(p => new {p, indexAttribute = p.GetAttribute<SerializeAsAttribute>()})
+                .Where(t => t.p.CanRead && t.p.CanWrite)
+                .OrderBy(t => t.indexAttribute?.Index ?? int.MaxValue)
+                .Select(t => t.p);
+            var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            var textContentAttributeAlreadyUsed = false;
 
             foreach (var prop in props)
             {
@@ -146,10 +146,10 @@ namespace RestSharp.Serializers
                 if (rawValue == null)
                     continue;
 
-                Type propType = prop.PropertyType;
-                bool useAttribute = false;
-                bool setTextContent = false;
-                SerializeAsAttribute options = prop.GetAttribute<SerializeAsAttribute>();
+                var propType = prop.PropertyType;
+                var useAttribute = false;
+                var setTextContent = false;
+                var options = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (options != null)
                 {
@@ -179,13 +179,15 @@ namespace RestSharp.Serializers
                 if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
                     propType == typeof(string))
                 {
-                    string value = this.GetSerializedValue(rawValue);
+                    var value = GetSerializedValue(rawValue);
 
                     if (useAttribute)
                     {
                         root.Add(new XAttribute(name, value));
                         continue;
-                    } else if (setTextContent)
+                    }
+
+                    if (setTextContent)
                     {
                         root.Add(new XText(value));
                         continue;
