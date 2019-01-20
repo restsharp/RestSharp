@@ -555,10 +555,8 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddHeader(string name, string value)
         {
-            bool InvalidHost(string host)
-            {
-                return Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
-            }
+            bool InvalidHost(string host) => 
+                Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
 
             if (name == "Host" && InvalidHost(value))
                 throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
