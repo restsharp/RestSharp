@@ -90,7 +90,7 @@ namespace RestSharp
         {
             var response = client.Execute<dynamic>(request);
             var generic = (RestResponse<dynamic>) response;
-            dynamic content = SimpleJson.SimpleJson.DeserializeObject(response.Content);
+            dynamic content = client.Deserialize<object>(response);
 
             generic.Data = content;
 

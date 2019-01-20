@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using RestSharp.Tests.SampleClasses;
-using SimpleJson;
 
 namespace RestSharp.Tests.TestData
 {
@@ -154,7 +153,7 @@ namespace RestSharp.Tests.TestData
             }.ToString();
 
         public static string CreateIsoDateJson() =>
-            SimpleJson.SimpleJson.SerializeObject(
+            SimpleJson.SerializeObject(
                 new Birthdate
                 {
                     Value = new DateTime(1910, 9, 25, 9, 30, 25, DateTimeKind.Utc)

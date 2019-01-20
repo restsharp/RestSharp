@@ -26,7 +26,6 @@ using NUnit.Framework;
 using RestSharp.Serialization.Json;
 using RestSharp.Tests.SampleClasses;
 using RestSharp.Tests.TestData;
-using SimpleJson;
 
 namespace RestSharp.Tests
 {
@@ -63,7 +62,7 @@ namespace RestSharp.Tests
             const string format = "dd yyyy MMM, hh:mm ss tt";
             var date = new DateTime(2010, 2, 8, 11, 11, 11);
             var formatted = new {StartDate = date.ToString(format, culture)};
-            var data = SimpleJson.SimpleJson.SerializeObject(formatted);
+            var data = SimpleJson.SerializeObject(formatted);
             var response = new RestResponse {Content = data};
             var serializer = new JsonSerializer
             {

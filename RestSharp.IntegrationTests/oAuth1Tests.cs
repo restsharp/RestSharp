@@ -10,7 +10,6 @@ using NUnit.Framework;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.IntegrationTests.Models;
-using SimpleJson;
 
 namespace RestSharp.IntegrationTests
 {
@@ -217,7 +216,7 @@ namespace RestSharp.IntegrationTests
 
             Assert.True(File.Exists(@"..\..\config.json"));
 
-            if (!(SimpleJson.SimpleJson.DeserializeObject(File.ReadAllText(@"..\..\config.json")) is JsonObject config)
+            if (!(SimpleJson.DeserializeObject(File.ReadAllText(@"..\..\config.json")) is JsonObject config)
             ) return;
             var client = new RestClient("https://api.twitter.com/1.1")
             {
