@@ -16,6 +16,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using System.Text;
 
@@ -81,16 +82,32 @@ namespace RestSharp.Extensions
         ///     http://www.shrinkrays.net/code-snippets/csharp/an-extension-method-for-converting-a-byte-array-to-a-string.aspx
         /// </summary>
         /// <param name="buffer">An array of bytes to convert</param>
+        /// <param name="encoding">Content encoding. Will fallback to UTF8 if not a valid encoding.</param>
         /// <returns>The byte as a string.</returns>
-        public static string AsString(this byte[] buffer)
+        public static string AsString(this byte[] buffer, string encoding)
         {
-            if (buffer == null)
-                return "";
+            Encoding enc;
+            try
+            {
+                enc = Encoding.GetEncoding(encoding);
+            }
+            catch (Exception)
+            {
+                enc = Encoding.UTF8;
+            }
 
-            // Ansi as default
-            var encoding = Encoding.UTF8;
-
-            return encoding.GetString(buffer, 0, buffer.Length);
+            return AsString(buffer, enc);
         }
+
+        /// <summary>
+        ///     Converts a byte array to a string, using its byte order mark to convert it to the right encoding.
+        ///     http://www.shrinkrays.net/code-snippets/csharp/an-extension-method-for-converting-a-byte-array-to-a-string.aspx
+        /// </summary>
+        /// <param name="buffer">An array of bytes to convert</param>
+        /// <returns>The byte as a string using UTF8.</returns>
+        public static string AsString(this byte[] buffer) => AsString(buffer, Encoding.UTF8);
+
+        private static string AsString(byte[] buffer, Encoding encoding) => 
+            buffer == null ? "" : encoding.GetString(buffer, 0, buffer.Length);
     }
 }
