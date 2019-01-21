@@ -550,7 +550,8 @@ namespace RestSharp
             foreach (var defaultParameter in DefaultParameters)
             {
                 var parameterExists =
-                    request.Parameters.Any(p => p.Name == defaultParameter.Name && p.Type == defaultParameter.Type);
+                    request.Parameters.Any(p => p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase) 
+                                                && p.Type == defaultParameter.Type);
 
                 if (AllowMultipleDefaultParametersWithSameName)
                 {
