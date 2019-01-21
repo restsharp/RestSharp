@@ -111,7 +111,8 @@ namespace RestSharp
             restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
             restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
             restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
-            restrictedHeaderActions.Add("If-Modified-Since", (r, v) => r.IfModifiedSince = Convert.ToDateTime(v, CultureInfo.InvariantCulture));
+            restrictedHeaderActions.Add("If-Modified-Since",
+                (r, v) => r.IfModifiedSince = Convert.ToDateTime(v, CultureInfo.InvariantCulture));
             restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
             restrictedHeaderActions.Add("Transfer-Encoding", (r, v) =>
             {
@@ -121,38 +122,34 @@ namespace RestSharp
             restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
         }
 
-        private static void ExtractErrorResponse(IHttpResponse httpResponse, Exception ex)
+        private static HttpResponse ExtractErrorResponse(Exception ex)
         {
+            var response = new HttpResponse {ErrorMessage = ex.Message};
             if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
             {
-                httpResponse.ResponseStatus = ResponseStatus.TimedOut;
-                httpResponse.ErrorMessage = ex.Message;
-                httpResponse.ErrorException = webException;
+                response.ResponseStatus = ResponseStatus.TimedOut;
+                response.ErrorException = webException;
             }
             else
             {
-                httpResponse.ErrorMessage = ex.Message;
-                httpResponse.ErrorException = ex;
-                httpResponse.ResponseStatus = ResponseStatus.Error;
+                response.ErrorException = ex;
+                response.ResponseStatus = ResponseStatus.Error;
             }
+
+            return response;
         }
 
         private HttpResponse GetResponse(HttpWebRequest request)
         {
-            var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
-
             try
             {
-                var webResponse = GetRawResponse(request);
-
-                ExtractResponseData(response, webResponse);
+                using (var webResponse = GetRawResponse(request))
+                    return ExtractResponseData(webResponse);
             }
             catch (Exception ex)
             {
-                ExtractErrorResponse(response, ex);
+                return ExtractErrorResponse(ex);
             }
-
-            return response;
         }
 
         private static HttpWebResponse GetRawResponse(HttpWebRequest request)
@@ -213,7 +210,7 @@ namespace RestSharp
             {
                 // Avoid to crash in UWP apps
             }
-            
+
             AppendHeaders(webRequest);
             AppendCookies(webRequest);
 
@@ -233,8 +230,8 @@ namespace RestSharp
 
             if (ClientCertificates != null)
                 webRequest.ClientCertificates.AddRange(ClientCertificates);
-            
-            AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });            
+
+            AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });
 
             if (AutomaticDecompression)
             {

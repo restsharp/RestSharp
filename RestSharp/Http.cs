@@ -363,57 +363,57 @@ namespace RestSharp
             WriteStringTo(requestStream, GetMultipartFooter());
         }
 
-        private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
+        private HttpResponse ExtractResponseData(HttpWebResponse webResponse)
         {
-            using (webResponse)
+            var response = new HttpResponse
             {
-                response.ContentEncoding = webResponse.ContentEncoding;
-                response.Server = webResponse.Server;
-                response.ProtocolVersion = webResponse.ProtocolVersion;
-                response.ContentType = webResponse.ContentType;
-                response.ContentLength = webResponse.ContentLength;
-
-                response.StatusCode = webResponse.StatusCode;
-                response.StatusDescription = webResponse.StatusDescription;
-                response.ResponseUri = webResponse.ResponseUri;
-                response.ResponseStatus = ResponseStatus.Completed;
-
-                if (webResponse.Cookies != null)
-                    foreach (Cookie cookie in webResponse.Cookies)
-                        response.Cookies.Add(new HttpCookie
-                        {
-                            Comment = cookie.Comment,
-                            CommentUri = cookie.CommentUri,
-                            Discard = cookie.Discard,
-                            Domain = cookie.Domain,
-                            Expired = cookie.Expired,
-                            Expires = cookie.Expires,
-                            HttpOnly = cookie.HttpOnly,
-                            Name = cookie.Name,
-                            Path = cookie.Path,
-                            Port = cookie.Port,
-                            Secure = cookie.Secure,
-                            TimeStamp = cookie.TimeStamp,
-                            Value = cookie.Value,
-                            Version = cookie.Version
-                        });
-
-                foreach (var headerName in webResponse.Headers.AllKeys)
-                {
-                    var headerValue = webResponse.Headers[headerName];
-
-                    response.Headers.Add(new HttpHeader
+                ContentEncoding = webResponse.ContentEncoding,
+                Server = webResponse.Server,
+                ProtocolVersion = webResponse.ProtocolVersion,
+                ContentType = webResponse.ContentType,
+                ContentLength = webResponse.ContentLength,
+                StatusCode = webResponse.StatusCode,
+                StatusDescription = webResponse.StatusDescription,
+                ResponseUri = webResponse.ResponseUri,
+                ResponseStatus = ResponseStatus.Completed
+            };
+            
+            if (webResponse.Cookies != null)
+                foreach (Cookie cookie in webResponse.Cookies)
+                    response.Cookies.Add(new HttpCookie
                     {
-                        Name = headerName,
-                        Value = headerValue
+                        Comment = cookie.Comment,
+                        CommentUri = cookie.CommentUri,
+                        Discard = cookie.Discard,
+                        Domain = cookie.Domain,
+                        Expired = cookie.Expired,
+                        Expires = cookie.Expires,
+                        HttpOnly = cookie.HttpOnly,
+                        Name = cookie.Name,
+                        Path = cookie.Path,
+                        Port = cookie.Port,
+                        Secure = cookie.Secure,
+                        TimeStamp = cookie.TimeStamp,
+                        Value = cookie.Value,
+                        Version = cookie.Version
                     });
-                }
 
-                var webResponseStream = webResponse.GetResponseStream();
-                ProcessResponseStream(webResponseStream, response);
+            foreach (var headerName in webResponse.Headers.AllKeys)
+            {
+                var headerValue = webResponse.Headers[headerName];
 
-                webResponse.Close();
+                response.Headers.Add(new HttpHeader
+                {
+                    Name = headerName,
+                    Value = headerValue
+                });
             }
+
+            var webResponseStream = webResponse.GetResponseStream();
+            ProcessResponseStream(webResponseStream, response);
+
+            webResponse.Close();
+            return response;
         }
 
         private void ProcessResponseStream(Stream webResponseStream, HttpResponse response)

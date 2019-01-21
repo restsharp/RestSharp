@@ -254,7 +254,7 @@ namespace RestSharp
         ///     Only query and form parameters are supported.
         /// </summary>
         public bool AllowMultipleDefaultParametersWithSameName { get; set; } = false;
-
+        
         /// <summary>
         ///     Registers a content handler to process response content
         /// </summary>

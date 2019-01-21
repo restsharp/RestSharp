@@ -275,13 +275,11 @@ namespace RestSharp
 
         private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
         {
-            var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
-
             try
             {
                 if (timeoutState.TimedOut)
                 {
-                    response.ResponseStatus = ResponseStatus.TimedOut;
+                    var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
                     ExecuteCallback(response, callback);
 
                     return;
@@ -289,7 +287,8 @@ namespace RestSharp
 
                 GetRawResponseAsync(result, webResponse =>
                 {
-                    ExtractResponseData(response, webResponse);
+                    var response = ExtractResponseData(webResponse);
+                    webResponse.Dispose();
                     ExecuteCallback(response, callback);
                 });
             }

@@ -68,10 +68,7 @@ namespace RestSharp
             }
         }
 
-        public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
-        {
-            return Execute(request, httpMethod, DoExecuteAsGet);
-        }
+        public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod) => Execute(request, httpMethod, DoExecuteAsGet);
 
         public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
         {
@@ -129,14 +126,8 @@ namespace RestSharp
             return response;
         }
 
-        private static HttpResponse DoExecuteAsGet(IHttp http, string method)
-        {
-            return http.AsGet(method);
-        }
+        private static HttpResponse DoExecuteAsGet(IHttp http, string method) => http.AsGet(method);
 
-        private static HttpResponse DoExecuteAsPost(IHttp http, string method)
-        {
-            return http.AsPost(method);
-        }
+        private static HttpResponse DoExecuteAsPost(IHttp http, string method) => http.AsPost(method);
     }
 }

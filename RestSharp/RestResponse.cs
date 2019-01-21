@@ -70,7 +70,7 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get => content ?? (content = RawBytes.AsString());
+            get => content ?? (content = RawBytes.AsString(ContentEncoding));
             set => content = value;
         }
 
@@ -160,9 +160,8 @@ namespace RestSharp
         /// </summary>
         public T Data { get; set; }
 
-        public static explicit operator RestResponse<T>(RestResponse response)
-        {
-            return new RestResponse<T>
+        public static explicit operator RestResponse<T>(RestResponse response) =>
+            new RestResponse<T>
             {
                 ContentEncoding = response.ContentEncoding,
                 ContentLength = response.ContentLength,
@@ -180,7 +179,6 @@ namespace RestSharp
                 StatusDescription = response.StatusDescription,
                 Request = response.Request
             };
-        }
     }
 
     /// <summary>
