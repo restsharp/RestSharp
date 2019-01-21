@@ -84,13 +84,21 @@ namespace RestSharp
         IRestResponse<T> Deserialize<T>(IRestResponse response);
         
         /// <summary>
-        /// Allows to use a custom way to encode parameters
+        /// Allows to use a custom way to encode URL parameters
         /// </summary>
-        /// <param name="encoder">A delegate to encode parameters</param>
+        /// <param name="encoder">A delegate to encode URL parameters</param>
         /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
         /// <returns></returns>
         IRestClient UseUrlEncoder(Func<string, string> encoder);
 
+        /// <summary>
+        /// Allows to use a custom way to encode query parameters
+        /// </summary>
+        /// <param name="queryEncoder">A delegate to encode query parameters</param>
+        /// <example>client.UseUrlEncoder((s, encoding) => HttpUtility.UrlEncode(s, encoding));</example>
+        /// <returns></returns>
+        IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder);
+            
         IRestResponse Execute(IRestRequest request);
 
         IRestResponse Execute(IRestRequest request, Method httpMethod);

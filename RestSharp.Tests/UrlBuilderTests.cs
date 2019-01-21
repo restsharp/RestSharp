@@ -34,6 +34,19 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void GET_with_empty_base_and_query_parameters_without_encoding()
+        {
+            var request = new RestRequest("http://example.com/resource?param1=value1")
+                .AddQueryParameter("foo", "bar,baz", false);
+
+            var client = new RestClient();
+            var expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
+            var output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
         public void GET_with_empty_request_and_query_parameters_without_encoding()
         {
             var request = new RestRequest();
@@ -117,6 +130,20 @@ namespace RestSharp.Tests
             var request = new RestRequest("resource/foo");
             var client = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource/foo");
+            var output = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void GET_with_empty_base_and_resource_containing_tokens()
+        {
+            var request = new RestRequest("http://example.com/resource/{foo}");
+
+            request.AddUrlSegment("foo", "bar");
+
+            var client = new RestClient();
+            var expected = new Uri("http://example.com/resource/bar");
             var output = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);

@@ -258,12 +258,12 @@ namespace RestSharp.Authenticators
             {
                 case OAuthParameterHandling.HttpAuthorizationHeader:
                     parameters.Add("oauth_signature", oauth.Signature);
-                    request.AddHeader("Authorization", GetAuthorizationHeader(parameters));
+                    request.AddOrUpdateParameter("Authorization", GetAuthorizationHeader(parameters), ParameterType.HttpHeader);
                     break;
 
                 case OAuthParameterHandling.UrlOrPostParameters:
                     parameters.Add("oauth_signature", oauth.Signature);
-                    request.Parameters.AddRange(
+                    var headers =
                         parameters.Where(p => !p.Name.IsNullOrBlank() &&
                                               (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
                             .Select(p => new Parameter
@@ -271,7 +271,9 @@ namespace RestSharp.Authenticators
                                 Name = p.Name,
                                 Value = HttpUtility.UrlDecode(p.Value),
                                 Type = ParameterType.GetOrPost
-                            }));
+                            });
+                    foreach (var header in headers)
+                        request.AddOrUpdateParameter(header);
                     break;
 
                 default:

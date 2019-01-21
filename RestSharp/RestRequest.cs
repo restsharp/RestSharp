@@ -61,11 +61,8 @@ namespace RestSharp
         ///     Sets Method property to value of method
         /// </summary>
         /// <param name="method">Method to use for this request</param>
-        public RestRequest(Method method) : this()
-        {
-            Method = method;
-        }
-        
+        public RestRequest(Method method) : this() => Method = method;
+
         public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml)
         {
         }

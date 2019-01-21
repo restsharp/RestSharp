@@ -27,13 +27,11 @@ using System.Net.Cache;
 using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Serialization;
 using RestSharp.Serialization.Json;
 using RestSharp.Serialization.Xml;
-using RestSharp.Serializers;
 
 namespace RestSharp
 {
@@ -94,12 +92,8 @@ namespace RestSharp
         /// <param name="serializer">The custom serializer instance</param>
         /// <returns></returns>
         [Obsolete("Use the overload that accepts the delegate factory")]
-        public IRestClient UseSerializer(IRestSerializer serializer)
-        {
-            UseSerializer(() => serializer);
-
-            return this;
-        }
+        public IRestClient UseSerializer(IRestSerializer serializer) =>
+            Fluent(() => UseSerializer(() => serializer));
 
         /// <summary>
         /// Replace the default serializer with a custom one
@@ -130,15 +124,15 @@ namespace RestSharp
         /// <param name="encoder">A delegate to encode parameters</param>
         /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
         /// <returns></returns>
-        public IRestClient UseUrlEncoder(Func<string, string> encoder)
-        {
-            Encode = encoder;
-            return this;
-        }
+        public IRestClient UseUrlEncoder(Func<string, string> encoder) => Fluent(() => Encode = encoder);
+
+        public IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) =>
+            Fluent(() => EncodeQuery = queryEncoder);
 
         private IDictionary<string, Func<IDeserializer>> ContentHandlers { get; }
         internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
         private Func<string, string> Encode { get; set; } = s => s.UrlEncode();
+        private Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
 
         private IList<string> AcceptTypes { get; }
 
@@ -370,10 +364,9 @@ namespace RestSharp
 
         private void DoBuildUriValidations(IRestRequest request)
         {
-            if (BaseUrl == null)
-            {
-                throw new NullReferenceException("RestClient must contain a value for BaseUrl");
-            }
+            if (BaseUrl == null && !request.Resource.ToLower().StartsWith("http"))
+                throw new ArgumentOutOfRangeException(nameof(request),
+                    "Request resource doesn't contain a valid scheme for an empty client base URL");
 
             var nullValuedParams = request.Parameters
                 .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
@@ -390,11 +383,13 @@ namespace RestSharp
 
         private UrlSegmentParamsValues GetUrlSegmentParamsValues(IRestRequest request)
         {
-            var assembled = request.Resource;
-            var hasResource = !string.IsNullOrEmpty(assembled);
+            var assembled = BaseUrl == null ? "" : request.Resource;
+            var baseUrl = BaseUrl ?? new Uri(request.Resource);
+            
+            var hasResource = !assembled.IsEmpty();
             var parameters = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
             parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
-            var builder = new UriBuilder(BaseUrl);
+            var builder = new UriBuilder(baseUrl);
 
             foreach (var parameter in parameters)
             {
@@ -402,9 +397,7 @@ namespace RestSharp
                 var paramValue = Encode(parameter.Value.ToString());
 
                 if (hasResource)
-                {
                     assembled = assembled.Replace(paramPlaceHolder, paramValue);
-                }
 
                 builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
             }
@@ -479,7 +472,7 @@ namespace RestSharp
             if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];
 
-            if (contentType.IsEmpty()) 
+            if (contentType.IsEmpty())
                 return ContentHandlers.First().Value;
 
             int semicolonIndex = contentType.IndexOf(';');
@@ -487,7 +480,7 @@ namespace RestSharp
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
 
-            if (ContentHandlers.TryGetValue(contentType,  out var contentHandler))
+            if (ContentHandlers.TryGetValue(contentType, out var contentHandler))
                 return contentHandler;
 
             // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
@@ -512,18 +505,18 @@ namespace RestSharp
         private void AuthenticateIfNeeded(RestClient client, IRestRequest request) =>
             Authenticator?.Authenticate(client, request);
 
-        private static string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
+        private string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
             string.Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
-        private static string EncodeParameter(Parameter parameter, Encoding encoding) =>
-            parameter.Value == null
-                ? parameter.Type == ParameterType.QueryStringWithoutEncode
-                    ? string.Concat(parameter.Name, "=")
-                    : string.Concat(parameter.Name.UrlEncode(encoding), "=")
-                : parameter.Type == ParameterType.QueryStringWithoutEncode
-                    ? string.Concat(parameter.Name, "=", parameter.Value.ToString())
-                    : string.Concat(parameter.Name.UrlEncode(encoding), "=",
-                        parameter.Value.ToString().UrlEncode(encoding));
+        private string EncodeParameter(Parameter parameter, Encoding encoding)
+        {
+            return
+                parameter.Type == ParameterType.QueryStringWithoutEncode
+                    ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
+                    : $"{EncodeQuery(parameter.Name, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
+
+            string StringOrEmpty(object value) => value == null ? "" : value.ToString();
+        }
 
         private static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
@@ -550,8 +543,9 @@ namespace RestSharp
             foreach (var defaultParameter in DefaultParameters)
             {
                 var parameterExists =
-                    request.Parameters.Any(p => p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase) 
-                                                && p.Type == defaultParameter.Type);
+                    request.Parameters.Any(p =>
+                        p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
+                        && p.Type == defaultParameter.Type);
 
                 if (AllowMultipleDefaultParametersWithSameName)
                 {
@@ -563,7 +557,8 @@ namespace RestSharp
             }
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (requestParameters.All(p => !string.Equals(p.Name, "accept", StringComparison.InvariantCultureIgnoreCase)))
+            if (requestParameters.All(
+                p => !string.Equals(p.Name, "accept", StringComparison.InvariantCultureIgnoreCase)))
             {
                 var accepts = string.Join(", ", AcceptTypes.ToArray());
 
@@ -743,8 +738,8 @@ namespace RestSharp
             catch (Exception ex)
             {
                 if (FailOnDeserializationError)
-                  response.ResponseStatus = ResponseStatus.Error;
-                
+                    response.ResponseStatus = ResponseStatus.Error;
+
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
             }
@@ -771,6 +766,12 @@ namespace RestSharp
 
             // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
             return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
+        }
+
+        private IRestClient Fluent(Action action)
+        {
+            action();
+            return this;
         }
 
         private class UrlSegmentParamsValues
