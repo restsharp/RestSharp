@@ -4,7 +4,7 @@
 
 [![Join the chat at https://gitter.im/RestSharp/RestSharp](https://badges.gitter.im/RestSharp/RestSharp.svg)](https://gitter.im/RestSharp/RestSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-### [Official Site][1] - [@RestSharp][2]  
+### [Official Site][1] - [@RestSharp][2] - [Google Group](https://groups.google.com/forum/#!forum/restsharp)
 
 ### License: Apache License 2.0
 
