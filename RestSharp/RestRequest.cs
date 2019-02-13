@@ -88,7 +88,7 @@ namespace RestSharp
                 Resource = Resource.Substring(0, queryStringStart);
 
                 foreach (var param in queryParams)
-                    AddQueryParameter(param.Name, param.Value);
+                    AddQueryParameter(param.Name, param.Value, false);
             }
 
             IEnumerable<NameValuePair> ParseQuery(string query) =>
