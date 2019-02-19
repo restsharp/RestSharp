@@ -202,7 +202,7 @@ namespace RestSharp
                 ContentLength = fileLength,
                 Writer = s =>
                 {
-                    using (var file = new StreamReader(new FileStream(path, FileMode.Open)))
+                    using (var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read)))
                     {
                         file.BaseStream.CopyTo(s);
                     }
