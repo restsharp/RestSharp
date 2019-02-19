@@ -8,7 +8,6 @@ namespace RestSharp.IntegrationTests
 {
     public class CustomRequestSerializerTests
     {
-        private SimpleServer _server;
         private const string BASE_URL = "http://localhost:8888/";
         
         [Test]
@@ -29,7 +28,7 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Should_use_custom_json_serializer()
+        public void Should_use_custom_json_serializer_for_addbody()
         {
             using (SimpleServer.Create(BASE_URL))
             {
@@ -41,6 +40,23 @@ namespace RestSharp.IntegrationTests
                 request.AddBody(body);
                 client.Execute(request);
                 
+                serializer.BodyString.ShouldBe(body.ToString());
+            }
+        }
+
+        [Test]
+        public void Should_use_custom_json_serializer()
+        {
+            using (SimpleServer.Create(BASE_URL))
+            {
+                var client = new RestClient(BASE_URL);
+                var serializer = new CustomJsonSerializer();
+                var body = new {Text = "text"};
+
+                var request = new RestRequest("/") {JsonSerializer = serializer};
+                request.AddJsonBody(body);
+                client.Execute(request);
+
                 serializer.BodyString.ShouldBe(body.ToString());
             }
         }
