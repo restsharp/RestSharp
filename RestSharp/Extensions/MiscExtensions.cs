@@ -86,14 +86,17 @@ namespace RestSharp.Extensions
         /// <returns>The byte as a string.</returns>
         public static string AsString(this byte[] buffer, string encoding)
         {
-            Encoding enc;
+            Encoding enc = Encoding.UTF8;
             try
             {
-                enc = Encoding.GetEncoding(encoding);
+                if (!string.IsNullOrEmpty(encoding))
+                {
+                    enc = Encoding.GetEncoding(encoding);
+                }
             }
             catch (Exception)
             {
-                enc = Encoding.UTF8;
+
             }
 
             return AsString(buffer, enc);
