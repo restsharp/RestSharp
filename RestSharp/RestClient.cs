@@ -183,7 +183,8 @@ namespace RestSharp
         public string UserAgent { get; set; }
 
         /// <summary>
-        ///     Timeout in milliseconds to use for requests made by this client instance
+        ///     Timeout in milliseconds to use for requests made by this client instance.
+        ///     If not set, the default timeout for HttpWebRequest is used.
         /// </summary>
         public int Timeout { get; set; }
 

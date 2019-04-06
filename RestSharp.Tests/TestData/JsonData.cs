@@ -26,7 +26,7 @@ namespace RestSharp.Tests.TestData
             };
 
             var friendsArray = new JsonArray();
-            friendsArray.AddRange(Enumerable.Range(0, 9).Select(i =>
+            friendsArray.AddRange(Enumerable.Range(0, 10).Select(i =>
                 new JsonObject
                 {
                     {"name", "Friend" + i},
@@ -62,7 +62,7 @@ namespace RestSharp.Tests.TestData
             };
 
             var friendsArray = new JsonArray();
-            friendsArray.AddRange(Enumerable.Range(0, 9).Select(i =>
+            friendsArray.AddRange(Enumerable.Range(0, 10).Select(i =>
                 new JsonObject
                 {
                     {"name", "Friend" + i},

@@ -9,7 +9,7 @@
     <RepositoryType>git</RepositoryType>
     <Description>Simple REST and HTTP API Client</Description>
     <Authors>John Sheehan, RestSharp Community</Authors>
-    <Version>106.6.7</Version>
+    <Version>106.6.9</Version>
     <Optimize>true</Optimize>
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -24,7 +24,7 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
   </ItemGroup>
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

@@ -88,7 +88,7 @@ namespace RestSharp
                 Resource = Resource.Substring(0, queryStringStart);
 
                 foreach (var param in queryParams)
-                    AddQueryParameter(param.Name, param.Value);
+                    AddQueryParameter(param.Name, param.Value, false);
             }
 
             IEnumerable<NameValuePair> ParseQuery(string query) =>
@@ -202,7 +202,7 @@ namespace RestSharp
                 ContentLength = fileLength,
                 Writer = s =>
                 {
-                    using (var file = new StreamReader(new FileStream(path, FileMode.Open)))
+                    using (var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read)))
                     {
                         file.BaseStream.CopyTo(s);
                     }
