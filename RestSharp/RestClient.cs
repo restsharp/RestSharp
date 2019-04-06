@@ -524,6 +524,10 @@ namespace RestSharp
 
         internal IHttp ConfigureHttp(IRestRequest request)
         {
+            if (request.Parameters.Any(p => String.IsNullOrWhiteSpace(p.Name)))
+            {
+                throw new ArgumentNullException("null", "Parameter name is missing. Please make sure that all the parameters names are not null.");
+            }
             var http = new Http
             {
                 Encoding = Encoding,
