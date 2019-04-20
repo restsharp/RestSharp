@@ -2,7 +2,7 @@ using RestSharp.Deserializers;
 
 namespace RestSharp.Serialization.Xml
 {
-    public interface IXmlDeserializer : IDeserializer
+    public interface IXmlDeserializer : IDeserializer, IWithRootElement
     {
         string RootElement { get; set; }
 
