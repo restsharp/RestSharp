@@ -27,7 +27,7 @@ namespace RestSharp.IntegrationTests
 
 
         [Test]
-        public void Handles_Different_Root_Element_On_Http_Error()
+        public void Copy_RootElement_From_Request_To_IWithRootElement_Deserializer()
         {
             _server.SetHandler(Handlers.Generic<ResponseHandler>());
             RestRequest request = new RestRequest("success")
