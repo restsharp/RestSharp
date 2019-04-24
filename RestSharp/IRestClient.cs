@@ -33,7 +33,11 @@ namespace RestSharp
 {
     public interface IRestClient
     {
+        [Obsolete("Use the overload that accepts the delegate factory")]
         IRestClient UseSerializer(IRestSerializer serializer);
+
+        IRestClient UseSerializer(Func<IRestSerializer> serializerFactory);
+        IRestClient UseSerializer<T>() where T : IRestSerializer, new();
 
         CookieContainer CookieContainer { get; set; }
 
