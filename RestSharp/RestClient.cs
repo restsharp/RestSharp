@@ -729,7 +729,7 @@ namespace RestSharp
                             xml.Namespace = request.XmlNamespace;
                     }
 
-                    if (handler is IWithRootElement deserializer && request.RootElement.IsEmpty())
+                    if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty())
                         deserializer.RootElement = request.RootElement;
 
                     if (handler != null)
