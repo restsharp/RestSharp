@@ -55,7 +55,8 @@ namespace RestSharp
             _allowedDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
-        }
+            OnAfterConfiguration = (h) => { };
+	   }
 
         /// <summary>
         ///     Sets Method property to value of method
@@ -659,6 +660,11 @@ namespace RestSharp
         ///     A function to run prior to deserializing starting (e.g. change settings if error encountered)
         /// </summary>
         public Action<IRestResponse> OnBeforeDeserialization { get; set; }
+
+        /// <summary>
+        ///     A function to run after configuration of the HTTP request (e.g. set last minute headers)
+        /// </summary>
+        public Action<IHttp> OnAfterConfiguration { get; set; }
 
         /// <summary>
         ///     Used by the default deserializers to explicitly set which date format string to use when parsing dates.

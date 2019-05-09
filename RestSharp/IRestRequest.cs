@@ -374,6 +374,8 @@ namespace RestSharp
 
         Action<IRestResponse> OnBeforeDeserialization { get; set; }
 
+        Action<IHttp> OnAfterConfiguration { get; set; }
+
         void IncreaseNumAttempts();
     }
 }
