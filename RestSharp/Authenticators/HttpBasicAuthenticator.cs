@@ -22,15 +22,26 @@ using System.Text;
 
 namespace RestSharp.Authenticators
 {
+    /// <summary>
+    /// Allows "basic access authentication" for HTTP requests.
+    /// </summary>
+    /// <remarks>
+    /// Encoding can be specified depending on what your server expect (see https://stackoverflow.com/a/7243567).
+    /// UTF-8 is used by default but some servers might expect ISO-8859-1 encoding.
+    /// </remarks>
     public class HttpBasicAuthenticator : IAuthenticator
     {
         private readonly string authHeader;
 
         public HttpBasicAuthenticator(string username, string password)
+            : this(username, password, useIso88591: false)
         {
-            var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)));
+        }
 
-            authHeader = string.Format("Basic {0}", token);
+        public HttpBasicAuthenticator(string username, string password, bool useIso88591)
+        {
+            var token = Convert.ToBase64String(Encoding.GetEncoding(useIso88591 ? "ISO-8859-1" : "UTF-8").GetBytes($"{username}:{password}"));
+            this.authHeader = $"Basic {token}";
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
