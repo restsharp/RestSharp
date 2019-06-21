@@ -354,6 +354,14 @@ namespace RestSharp
         IRestRequest AddUrlSegment(string name, string value);
 
         /// <summary>
+        ///     Shortcut to AddParameter(name, value, UrlSegment) overload
+        /// </summary>
+        /// <param name="name">Name of the segment to add</param>
+        /// <param name="value">Value of the segment to add</param>
+        /// <returns></returns>
+        IRestRequest AddUrlSegment(string name, object value);
+           
+        /// <summary>
         /// Shortcut to AddParameter(name, value, QueryString) overload
         /// </summary>
         /// <param name="name">Name of the parameter to add</param>
