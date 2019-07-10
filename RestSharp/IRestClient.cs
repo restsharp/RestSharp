@@ -33,6 +33,7 @@ namespace RestSharp
 {
     public interface IRestClient
     {
+        [Obsolete("Use the overload that accepts the delegate factory")]
         IRestClient UseSerializer(IRestSerializer serializer);
 
         CookieContainer CookieContainer { get; set; }
@@ -69,15 +70,19 @@ namespace RestSharp
 
         bool AllowMultipleDefaultParametersWithSameName { get; set; }
 
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback);
 
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback);
 
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod);
 
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod);
 
@@ -140,6 +145,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse,
             RestRequestAsyncHandle> callback, string httpMethod);
 
@@ -149,6 +155,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse,
             RestRequestAsyncHandle> callback, string httpMethod);
 
@@ -159,6 +166,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>,
             RestRequestAsyncHandle> callback, string httpMethod);
 
@@ -169,6 +177,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>,
             RestRequestAsyncHandle> callback, string httpMethod);
 
@@ -218,6 +227,7 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token);
 
         /// <summary>
@@ -226,6 +236,7 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="httpMethod">Override the request method</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod);
 
         /// <summary>
@@ -233,6 +244,7 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request);
 
         /// <summary>
@@ -240,6 +252,7 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
         Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request);
 
         /// <summary>
@@ -248,6 +261,7 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
         Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token);
 
         /// <summary>
@@ -255,6 +269,7 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
         Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request);
 
         /// <summary>
@@ -263,6 +278,7 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
         Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token);
 
         /// <summary>
@@ -270,6 +286,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token);
 
         /// <summary>
@@ -278,18 +295,21 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
         /// <param name="httpMethod">Override the request method</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token, Method httpMethod);
 
         /// <summary>
         /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request);
 
         /// <summary>
         /// Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
         Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request);
 
         /// <summary>
@@ -297,12 +317,14 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
         Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token);
 
         /// <summary>
         /// Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
         Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request);
 
         /// <summary>
@@ -310,6 +332,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
         Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token);
     }
 }
