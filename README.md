@@ -66,7 +66,7 @@ request.AddParameter("name", "value"); // adds to POST or URL querystring based 
 request.AddUrlSegment("id", "123"); // replaces matching token in request.Resource
 
 // add parameters for all properties on an object
-request.AddJsonObject(@object);
+request.AddObject(@object);
 
 // or just whitelisted properties
 request.AddObject(object, "PersonId", "Name", ...);
