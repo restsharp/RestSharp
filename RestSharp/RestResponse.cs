@@ -38,8 +38,8 @@ namespace RestSharp
         protected RestResponseBase()
         {
             ResponseStatus = ResponseStatus.None;
-            Headers = new List<Parameter>();
-            Cookies = new List<RestResponseCookie>();
+            Headers        = new List<Parameter>();
+            Cookies        = new List<RestResponseCookie>();
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get => content ?? (content = RawBytes.AsString(ContentEncoding));
+            get => content ??= RawBytes.AsString(ContentEncoding);
             set => content = value;
         }
 
@@ -141,11 +141,7 @@ namespace RestSharp
         ///     Assists with debugging responses by displaying in the debugger output
         /// </summary>
         /// <returns></returns>
-        protected string DebuggerDisplay()
-        {
-            return string.Format("StatusCode: {0}, Content-Type: {1}, Content-Length: {2})",
-                StatusCode, ContentType, ContentLength);
-        }
+        protected string DebuggerDisplay() => $"StatusCode: {StatusCode}, Content-Type: {ContentType}, Content-Length: {ContentLength})";
     }
 
     /// <summary>
@@ -163,21 +159,21 @@ namespace RestSharp
         public static explicit operator RestResponse<T>(RestResponse response) =>
             new RestResponse<T>
             {
-                ContentEncoding = response.ContentEncoding,
-                ContentLength = response.ContentLength,
-                ContentType = response.ContentType,
-                Cookies = response.Cookies,
-                ErrorMessage = response.ErrorMessage,
-                ErrorException = response.ErrorException,
-                Headers = response.Headers,
-                RawBytes = response.RawBytes,
-                ResponseStatus = response.ResponseStatus,
-                ResponseUri = response.ResponseUri,
-                ProtocolVersion = response.ProtocolVersion,
-                Server = response.Server,
-                StatusCode = response.StatusCode,
+                ContentEncoding   = response.ContentEncoding,
+                ContentLength     = response.ContentLength,
+                ContentType       = response.ContentType,
+                Cookies           = response.Cookies,
+                ErrorMessage      = response.ErrorMessage,
+                ErrorException    = response.ErrorException,
+                Headers           = response.Headers,
+                RawBytes          = response.RawBytes,
+                ResponseStatus    = response.ResponseStatus,
+                ResponseUri       = response.ResponseUri,
+                ProtocolVersion   = response.ProtocolVersion,
+                Server            = response.Server,
+                StatusCode        = response.StatusCode,
                 StatusDescription = response.StatusDescription,
-                Request = response.Request
+                Request           = response.Request
             };
     }
 

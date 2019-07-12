@@ -217,6 +217,12 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
         /// <summary>
+        /// Set to true if you want to get an exception when deserialization fails.
+        /// Default is true.
+        /// </summary>
+        public bool ThrowOnDeserializationError { get; set; } = false;
+
+        /// <summary>
         /// Set to false if you want to get ResponseStatus.Completed when deserialization fails.
         /// Default is true.
         /// </summary>
@@ -738,11 +744,14 @@ namespace RestSharp
             }
             catch (Exception ex)
             {
-                if (FailOnDeserializationError)
+                if (FailOnDeserializationError || ThrowOnDeserializationError)
                     response.ResponseStatus = ResponseStatus.Error;
 
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
+                
+                if (ThrowOnDeserializationError)
+                    throw new DeserializationException(response, ex);
             }
 
             response.Request = request;

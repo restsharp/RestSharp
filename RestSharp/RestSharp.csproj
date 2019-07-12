@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../netfx.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>

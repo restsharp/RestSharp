@@ -56,6 +56,8 @@ namespace RestSharp
 
         Encoding Encoding { get; set; }
 
+        bool ThrowOnDeserializationError { get; set; }
+        
         bool FailOnDeserializationError { get; set; }
         
         string ConnectionGroupName { get; set; }

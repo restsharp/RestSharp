@@ -87,7 +87,7 @@ namespace RestSharp.IntegrationTests
                 RestClient client = new RestClient(baseUrl);
                 RestRequest request = new RestRequest("success");
 
-                request.OnBeforeDeserialization += r => { throw new Exception(exceptionMessage); };
+                request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
 
                 var response = await client.ExecuteTaskAsync<Response>(request);
 
