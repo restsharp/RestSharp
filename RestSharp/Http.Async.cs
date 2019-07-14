@@ -20,6 +20,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using RestSharp.Extensions;
 
 namespace RestSharp
@@ -83,6 +84,8 @@ namespace RestSharp
                 }
                 else
                 {
+                    webRequest.GetResponseAsync();
+
                     timeoutState = new TimeOutState {Request = webRequest};
 
                     var asyncResult = webRequest.BeginGetResponse(
@@ -145,6 +148,7 @@ namespace RestSharp
             if (HasBody || HasFiles || AlwaysMultipartFormData)
             {
                 webRequest.ContentLength = CalculateContentLength();
+
                 asyncResult = webRequest.BeginGetRequestStream(
                     result => RequestStreamCallback(result, callback), webRequest);
             }
@@ -279,7 +283,7 @@ namespace RestSharp
             {
                 if (timeoutState.TimedOut)
                 {
-                    var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
+                    var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
                     ExecuteCallback(response, callback);
 
                     return;
@@ -304,7 +308,7 @@ namespace RestSharp
             callback(response);
         }
 
-        private static void PopulateErrorForIncompleteResponse(HttpResponse response)
+        private static void PopulateErrorForIncompleteResponse(IHttpResponse response)
         {
             if (response.ResponseStatus != ResponseStatus.Completed && response.ErrorException == null)
             {

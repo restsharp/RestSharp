@@ -74,21 +74,15 @@ namespace RestSharp.Serializers
         /// <returns>String</returns>
         public string TransformName(string input)
         {
-            string name = Name ?? input;
+            var name = Name ?? input;
 
-            switch (NameStyle)
+            return NameStyle switch
             {
-                case NameStyle.CamelCase:
-                    return name.ToCamelCase(Culture);
-
-                case NameStyle.PascalCase:
-                    return name.ToPascalCase(Culture);
-
-                case NameStyle.LowerCase:
-                    return name.ToLower();
-            }
-
-            return input;
+                NameStyle.CamelCase  => name.ToCamelCase(Culture),
+                NameStyle.PascalCase => name.ToPascalCase(Culture),
+                NameStyle.LowerCase  => name.ToLower(),
+                _                    => input
+            };
         }
     }
 

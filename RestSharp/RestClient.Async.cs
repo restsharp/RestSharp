@@ -55,6 +55,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback)
             => ExecuteAsync(request, callback, request.Method);
@@ -65,6 +66,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod) 
             => ExecuteAsync(request, callback, httpMethod, DoAsGetAsync);
@@ -75,6 +77,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
         {
@@ -89,6 +92,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">Override the request http method</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod)
         {
@@ -107,6 +111,7 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback) 
             => ExecuteAsync(request, (response, asyncHandle) => DeserializeResponse(request, callback, response, asyncHandle));
@@ -118,6 +123,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
         {
@@ -132,6 +138,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
         /// <param name="httpMethod">The HTTP method to execute</param>
+        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
         {
@@ -144,7 +151,8 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request) 
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
+        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request)
             => ExecuteGetTaskAsync<T>(request, CancellationToken.None);
 
         /// <summary>
@@ -153,7 +161,8 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token) 
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
+        public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
             => ExecuteTaskAsync<T>(request, token, Method.GET);
 
         /// <summary>
@@ -161,7 +170,8 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request) 
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
+        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request)
             => ExecutePostTaskAsync<T>(request, CancellationToken.None);
 
         /// <summary>
@@ -170,7 +180,8 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token) 
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
+        public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
             => ExecuteTaskAsync<T>(request, token, Method.POST);
 
         /// <summary>
@@ -179,7 +190,8 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="httpMethod">Override the request method</param>
-        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod) 
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
+        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod)
             => ExecuteTaskAsync<T>(request, CancellationToken.None, httpMethod);
 
         /// <summary>
@@ -187,7 +199,8 @@ namespace RestSharp
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request) 
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
+        public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request)
             => ExecuteTaskAsync<T>(request, CancellationToken.None);
 
         /// <summary>
@@ -197,6 +210,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
         /// <param name="httpMethod">Override the request method</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token,
             Method httpMethod)
         {
@@ -213,6 +227,7 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
         {
             if (request == null)
@@ -255,14 +270,16 @@ namespace RestSharp
         ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request) 
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
+        public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
             => ExecuteTaskAsync(request, CancellationToken.None);
 
         /// <summary>
         ///     Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request) 
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
+        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request)
             => ExecuteGetTaskAsync(request, CancellationToken.None);
 
         /// <summary>
@@ -270,14 +287,16 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token) 
+        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
+        public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
             => ExecuteTaskAsync(request, token, Method.GET);
 
         /// <summary>
         ///     Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request) 
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
+        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request)
             => ExecutePostTaskAsync(request, CancellationToken.None);
 
         /// <summary>
@@ -285,7 +304,8 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
-        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token) 
+        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
+        public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
             => ExecuteTaskAsync(request, token, Method.POST);
 
         /// <summary>
@@ -294,6 +314,7 @@ namespace RestSharp
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
         /// <param name="httpMethod">Override the request method</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token,
             Method httpMethod)
         {
@@ -309,6 +330,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
+        [Obsolete("This method will be renamed to ExecuteAsync soon")]
         public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
         {
             if (request == null)
@@ -347,6 +369,46 @@ namespace RestSharp
 
             return taskCompletionSource.Task;
         }
+
+        public virtual Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
+
+            try
+            {
+                var async = ExecuteAsync(
+                    request,
+                    (response, _) =>
+                    {
+                        if (token.IsCancellationRequested)
+                            taskCompletionSource.TrySetCanceled();
+                        // Don't run TrySetException, since we should set Error
+                        // properties and swallow exceptions to be consistent
+                        // with sync methods
+                        else
+                            taskCompletionSource.TrySetResult(response);
+                    });
+
+                var registration =
+                    token.Register(() =>
+                    {
+                        async.Abort();
+                        taskCompletionSource.TrySetCanceled();
+                    });
+
+                taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);
+            }
+            catch (Exception ex)
+            {
+                taskCompletionSource.TrySetException(ex);
+            }
+
+            return taskCompletionSource.Task;
+        }
+
 
         private RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod,
