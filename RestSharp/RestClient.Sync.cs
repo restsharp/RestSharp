@@ -111,7 +111,7 @@ namespace RestSharp
             try
             {
                 var http = ConfigureHttp(request);
-                request.OnAfterConfiguration(http);
+                request.OnBeforeRequest(http);
 
                 response = ConvertToRestResponse(request, getResponse(http, httpMethod));
             }
