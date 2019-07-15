@@ -73,5 +73,28 @@ namespace RestSharp
         /// Version of the cookie
         /// </summary>
         public int Version { get; set; }
+        
+        public HttpCookie HttpCookie { get; private set; }
+
+        internal static RestResponseCookie FromHttpCookie(HttpCookie cookie)
+            => new RestResponseCookie
+            {
+                Comment    = cookie.Comment,
+                CommentUri = cookie.CommentUri,
+                Discard    = cookie.Discard,
+                Domain     = cookie.Domain,
+                Expired    = cookie.Expired,
+                Expires    = cookie.Expires,
+                HttpOnly   = cookie.HttpOnly,
+                Name       = cookie.Name,
+                Path       = cookie.Path,
+                Port       = cookie.Port,
+                Secure     = cookie.Secure,
+                TimeStamp  = cookie.TimeStamp,
+                Value      = cookie.Value,
+                Version    = cookie.Version,
+                HttpCookie = cookie
+            };
+
     }
 }

@@ -286,7 +286,7 @@ namespace RestSharp.Authenticators
             if (!Realm.IsNullOrBlank())
                 sb.Append("realm=\"{0}\",".FormatWith(OAuthTools.UrlEncodeRelaxed(Realm)));
 
-            parameters.Sort((l, r) => l.Name.CompareTo(r.Name));
+            parameters.Sort((l, r) => string.Compare(l.Name, r.Name, StringComparison.Ordinal));
 
             var parameterCount = 0;
             var oathParameters =

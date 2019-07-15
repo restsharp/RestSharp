@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using RestSharp.Extensions;
 
@@ -30,7 +31,7 @@ namespace RestSharp
     [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
     public abstract class RestResponseBase
     {
-        private string content;
+        string content;
 
         /// <summary>
         ///     Default constructor
@@ -82,8 +83,10 @@ namespace RestSharp
         /// <summary>
         ///     Whether or not the response status code indicates success
         /// </summary>
-        public bool IsSuccessful => (int) StatusCode >= 200 && (int) StatusCode <= 299 &&
-                                    ResponseStatus == ResponseStatus.Completed;
+        public bool IsSuccessful =>
+            (int) StatusCode >= 200 &&
+            (int) StatusCode <= 299 &&
+            ResponseStatus   == ResponseStatus.Completed;
 
         /// <summary>
         ///     Description of HTTP status returned
@@ -141,7 +144,8 @@ namespace RestSharp
         ///     Assists with debugging responses by displaying in the debugger output
         /// </summary>
         /// <returns></returns>
-        protected string DebuggerDisplay() => $"StatusCode: {StatusCode}, Content-Type: {ContentType}, Content-Length: {ContentLength})";
+        protected string DebuggerDisplay()
+            => $"StatusCode: {StatusCode}, Content-Type: {ContentType}, Content-Length: {ContentLength})";
     }
 
     /// <summary>
@@ -183,5 +187,35 @@ namespace RestSharp
     [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
     public class RestResponse : RestResponseBase, IRestResponse
     {
+        internal RestResponse SetHeaders(IEnumerable<HttpHeader> headers)
+            => this.With(
+                x => x.Headers = headers.Select(p => new Parameter(p.Name, p.Value, ParameterType.HttpHeader)).ToList()
+            );
+
+        internal RestResponse SetCookies(IEnumerable<HttpCookie> cookies)
+            => this.With(
+                x => x.Cookies = cookies.Select(RestResponseCookie.FromHttpCookie).ToList()
+            );
+
+        internal static RestResponse FromHttpResponse(IHttpResponse httpResponse, IRestRequest request)
+            => new RestResponse
+                {
+                    Content           = httpResponse.Content,
+                    ContentEncoding   = httpResponse.ContentEncoding,
+                    ContentLength     = httpResponse.ContentLength,
+                    ContentType       = httpResponse.ContentType,
+                    ErrorException    = httpResponse.ErrorException,
+                    ErrorMessage      = httpResponse.ErrorMessage,
+                    RawBytes          = httpResponse.RawBytes,
+                    ResponseStatus    = httpResponse.ResponseStatus,
+                    ResponseUri       = httpResponse.ResponseUri,
+                    ProtocolVersion   = httpResponse.ProtocolVersion,
+                    Server            = httpResponse.Server,
+                    StatusCode        = httpResponse.StatusCode,
+                    StatusDescription = httpResponse.StatusDescription,
+                    Request           = request
+                }
+                .SetHeaders(httpResponse.Headers)
+                .SetCookies(httpResponse.Cookies);
     }
 }

@@ -41,22 +41,22 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         // silverlight friendly way to get current version      
-        private static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;
+        static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;
 
-        private static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+        static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
-        private static readonly Regex StructuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
+        static readonly Regex StructuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
 
         /// <summary>
         ///     Default constructor that registers default content handlers
         /// </summary>
         public RestClient()
         {
-            Encoding = Encoding.UTF8;
-            ContentHandlers = new Dictionary<string, Func<IDeserializer>>();
-            Serializers = new Dictionary<DataFormat, IRestSerializer>();
-            AcceptTypes = new List<string>();
-            DefaultParameters = new List<Parameter>();
+            Encoding               = Encoding.UTF8;
+            ContentHandlers        = new Dictionary<string, Func<IDeserializer>>();
+            Serializers            = new Dictionary<DataFormat, IRestSerializer>();
+            AcceptTypes            = new List<string>();
+            DefaultParameters      = new List<Parameter>();
             AutomaticDecompression = true;
 
             // register default serializers
@@ -93,7 +93,7 @@ namespace RestSharp
         /// <returns></returns>
         [Obsolete("Use the overload that accepts the delegate factory")]
         public IRestClient UseSerializer(IRestSerializer serializer) =>
-            Fluent(() => UseSerializer(() => serializer));
+            this.With(x => x.UseSerializer(() => serializer));
 
         /// <summary>
         /// Replace the default serializer with a custom one
@@ -124,19 +124,17 @@ namespace RestSharp
         /// <param name="encoder">A delegate to encode parameters</param>
         /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
         /// <returns></returns>
-        public IRestClient UseUrlEncoder(Func<string, string> encoder) => Fluent(() => Encode = encoder);
+        public IRestClient UseUrlEncoder(Func<string, string> encoder) => this.With(x => x.Encode = encoder);
 
         public IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) =>
-            Fluent(() => EncodeQuery = queryEncoder);
+            this.With(x => x.EncodeQuery = queryEncoder);
 
         private IDictionary<string, Func<IDeserializer>> ContentHandlers { get; }
         internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
-        private Func<string, string> Encode { get; set; } = s => s.UrlEncode();
-        private Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
-
-        private IList<string> AcceptTypes { get; }
-
-        private Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+        Func<string, string> Encode { get; set; } = s => s.UrlEncode();
+        Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
+        IList<string> AcceptTypes { get; }
+        Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 
         /// <summary>
         /// Enable or disable automatic gzip/deflate decompression
@@ -369,7 +367,7 @@ namespace RestSharp
             return MergeBaseUrlAndResource(applied.Uri, applied.Resource);
         }
 
-        private void DoBuildUriValidations(IRestRequest request)
+        void DoBuildUriValidations(IRestRequest request)
         {
             if (BaseUrl == null && !request.Resource.ToLower().StartsWith("http"))
                 throw new ArgumentOutOfRangeException(nameof(request),
@@ -388,20 +386,20 @@ namespace RestSharp
             }
         }
 
-        private UrlSegmentParamsValues GetUrlSegmentParamsValues(IRestRequest request)
+        UrlSegmentParamsValues GetUrlSegmentParamsValues(IRestRequest request)
         {
             var assembled = BaseUrl == null ? "" : request.Resource;
-            var baseUrl = BaseUrl ?? new Uri(request.Resource);
+            var baseUrl   = BaseUrl ?? new Uri(request.Resource);
 
             var hasResource = !assembled.IsEmpty();
-            var parameters = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
+            var parameters  = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
             parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
             var builder = new UriBuilder(baseUrl);
 
             foreach (var parameter in parameters)
             {
                 var paramPlaceHolder = $"{{{parameter.Name}}}";
-                var paramValue = Encode(parameter.Value.ToString());
+                var paramValue       = Encode(parameter.Value.ToString());
 
                 if (hasResource)
                     assembled = assembled.Replace(paramPlaceHolder, paramValue);
@@ -412,7 +410,7 @@ namespace RestSharp
             return new UrlSegmentParamsValues(builder.Uri, assembled);
         }
 
-        private static string MergeBaseUrlAndResource(Uri baseUrl, string resource)
+        static string MergeBaseUrlAndResource(Uri baseUrl, string resource)
         {
             var assembled = resource;
 
@@ -435,7 +433,7 @@ namespace RestSharp
             return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
         }
 
-        private string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
+        string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
         {
             var parameters = GetQueryStringParameters(request).ToList();
             parameters.AddRange(GetDefaultQueryStringParameters(request));
@@ -450,31 +448,29 @@ namespace RestSharp
             return string.Concat(mergedUri, separator, EncodeParameters(parameters, Encoding));
         }
 
-        private IEnumerable<Parameter> GetDefaultQueryStringParameters(IRestRequest request)
+        IEnumerable<Parameter> GetDefaultQueryStringParameters(IRestRequest request)
         {
             return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
                 ? DefaultParameters
-                    .Where(p => p.Type == ParameterType.GetOrPost ||
-                                p.Type == ParameterType.QueryString ||
-                                p.Type == ParameterType.QueryStringWithoutEncode)
+                    .Where(p => p.Type == ParameterType.GetOrPost   ||
+                        p.Type         == ParameterType.QueryString ||
+                        p.Type         == ParameterType.QueryStringWithoutEncode)
                 : DefaultParameters
                     .Where(p => p.Type == ParameterType.QueryString ||
-                                p.Type == ParameterType.QueryStringWithoutEncode);
+                        p.Type         == ParameterType.QueryStringWithoutEncode);
         }
 
-        private static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
-        {
-            return request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
+        static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
+            => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
                 ? request.Parameters
-                    .Where(p => p.Type == ParameterType.GetOrPost ||
-                                p.Type == ParameterType.QueryString ||
-                                p.Type == ParameterType.QueryStringWithoutEncode)
+                    .Where(p => p.Type == ParameterType.GetOrPost   ||
+                        p.Type         == ParameterType.QueryString ||
+                        p.Type         == ParameterType.QueryStringWithoutEncode)
                 : request.Parameters
                     .Where(p => p.Type == ParameterType.QueryString ||
-                                p.Type == ParameterType.QueryStringWithoutEncode);
-        }
+                        p.Type         == ParameterType.QueryStringWithoutEncode);
 
-        private Func<IDeserializer> GetHandler(string contentType)
+        Func<IDeserializer> GetHandler(string contentType)
         {
             if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*"))
                 return ContentHandlers["*"];
@@ -482,7 +478,7 @@ namespace RestSharp
             if (contentType.IsEmpty())
                 return ContentHandlers.First().Value;
 
-            int semicolonIndex = contentType.IndexOf(';');
+            var semicolonIndex = contentType.IndexOf(';');
 
             if (semicolonIndex > -1)
                 contentType = contentType.Substring(0, semicolonIndex);
@@ -509,13 +505,13 @@ namespace RestSharp
             return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
         }
 
-        private void AuthenticateIfNeeded(RestClient client, IRestRequest request) =>
+        void AuthenticateIfNeeded(IRestClient client, IRestRequest request) =>
             Authenticator?.Authenticate(client, request);
 
-        private string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
+        string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding) =>
             string.Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
-        private string EncodeParameter(Parameter parameter, Encoding encoding)
+        string EncodeParameter(Parameter parameter, Encoding encoding)
         {
             return
                 parameter.Type == ParameterType.QueryStringWithoutEncode
@@ -525,22 +521,22 @@ namespace RestSharp
             string StringOrEmpty(object value) => value == null ? "" : value.ToString();
         }
 
-        private static readonly ParameterType[] MultiParameterTypes =
+        static readonly ParameterType[] MultiParameterTypes =
             {ParameterType.QueryString, ParameterType.GetOrPost};
 
-        internal IHttp ConfigureHttp(IRestRequest request)
+        IHttp ConfigureHttp(IRestRequest request)
         {
             var http = new Http
             {
-                Encoding = Encoding,
+                Encoding                = Encoding,
                 AlwaysMultipartFormData = request.AlwaysMultipartFormData,
-                UseDefaultCredentials = request.UseDefaultCredentials,
-                ResponseWriter = request.ResponseWriter,
-                AdvancedResponseWriter = request.AdvancedResponseWriter,
-                CookieContainer = CookieContainer,
-                AutomaticDecompression = AutomaticDecompression,
-                WebRequestConfigurator = WebRequestConfigurator,
-                Encode = Encode
+                UseDefaultCredentials   = request.UseDefaultCredentials,
+                ResponseWriter          = request.ResponseWriter,
+                AdvancedResponseWriter  = request.AdvancedResponseWriter,
+                CookieContainer         = CookieContainer,
+                AutomaticDecompression  = AutomaticDecompression,
+                WebRequestConfigurator  = WebRequestConfigurator,
+                Encode                  = Encode
             };
 
             var requestParameters = new List<Parameter>();
@@ -572,9 +568,9 @@ namespace RestSharp
                 requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
             }
 
-            http.Url = BuildUri(request);
-            http.Host = BaseHost;
-            http.PreAuthenticate = PreAuthenticate;
+            http.Url                                  = BuildUri(request);
+            http.Host                                 = BaseHost;
+            http.PreAuthenticate                      = PreAuthenticate;
             http.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
 
             var userAgent = UserAgent ?? http.UserAgent;
@@ -603,8 +599,8 @@ namespace RestSharp
                 http.ClientCertificates = ClientCertificates;
 
             http.MaxRedirects = MaxRedirects;
-            http.CachePolicy = CachePolicy;
-            http.Pipelined = Pipelined;
+            http.CachePolicy  = CachePolicy;
+            http.Pipelined    = Pipelined;
 
             if (request.Credentials != null)
                 http.Credentials = request.Credentials;
@@ -629,10 +625,10 @@ namespace RestSharp
 
             http.Files = request.Files.Select(file => new HttpFile
             {
-                Name = file.Name,
-                ContentType = file.ContentType,
-                Writer = file.Writer,
-                FileName = file.FileName,
+                Name          = file.Name,
+                ContentType   = file.ContentType,
+                Writer        = file.Writer,
+                FileName      = file.FileName,
                 ContentLength = file.ContentLength
             }).ToList();
 
@@ -643,7 +639,7 @@ namespace RestSharp
             var proxy = Proxy ?? WebRequest.DefaultWebProxy;
             try
             {
-                proxy = proxy ?? WebRequest.GetSystemWebProxy();
+                proxy??=WebRequest.GetSystemWebProxy();
             }
             catch (PlatformNotSupportedException)
             {
@@ -657,56 +653,7 @@ namespace RestSharp
             return http;
         }
 
-        private static RestResponse ConvertToRestResponse(IRestRequest request, HttpResponse httpResponse)
-        {
-            var restResponse = new RestResponse
-            {
-                Content = httpResponse.Content,
-                ContentEncoding = httpResponse.ContentEncoding,
-                ContentLength = httpResponse.ContentLength,
-                ContentType = httpResponse.ContentType,
-                ErrorException = httpResponse.ErrorException,
-                ErrorMessage = httpResponse.ErrorMessage,
-                RawBytes = httpResponse.RawBytes,
-                ResponseStatus = httpResponse.ResponseStatus,
-                ResponseUri = httpResponse.ResponseUri,
-                ProtocolVersion = httpResponse.ProtocolVersion,
-                Server = httpResponse.Server,
-                StatusCode = httpResponse.StatusCode,
-                StatusDescription = httpResponse.StatusDescription,
-                Request = request
-            };
-
-            foreach (var header in httpResponse.Headers)
-                restResponse.Headers.Add(new Parameter(
-                    header.Name,
-                    header.Value,
-                    ParameterType.HttpHeader
-                ));
-
-            foreach (var cookie in httpResponse.Cookies)
-                restResponse.Cookies.Add(new RestResponseCookie
-                {
-                    Comment = cookie.Comment,
-                    CommentUri = cookie.CommentUri,
-                    Discard = cookie.Discard,
-                    Domain = cookie.Domain,
-                    Expired = cookie.Expired,
-                    Expires = cookie.Expires,
-                    HttpOnly = cookie.HttpOnly,
-                    Name = cookie.Name,
-                    Path = cookie.Path,
-                    Port = cookie.Port,
-                    Secure = cookie.Secure,
-                    TimeStamp = cookie.TimeStamp,
-                    Value = cookie.Value,
-                    Version = cookie.Version
-                });
-
-            return restResponse;
-        }
-
-        private IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
+        IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
         {
             request.OnBeforeDeserialization(raw);
 
@@ -746,7 +693,7 @@ namespace RestSharp
                 if (FailOnDeserializationError || ThrowOnDeserializationError)
                     response.ResponseStatus = ResponseStatus.Error;
 
-                response.ErrorMessage = ex.Message;
+                response.ErrorMessage   = ex.Message;
                 response.ErrorException = ex;
 
                 if (ThrowOnDeserializationError)
@@ -758,7 +705,7 @@ namespace RestSharp
             return response;
         }
 
-        private static bool IsWildcardStructuredSuffixSyntax(string contentType)
+        static bool IsWildcardStructuredSuffixSyntax(string contentType)
         {
             int i = 0;
 
@@ -777,17 +724,11 @@ namespace RestSharp
             return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
         }
 
-        private IRestClient Fluent(Action action)
-        {
-            action();
-            return this;
-        }
-
-        private class UrlSegmentParamsValues
+        class UrlSegmentParamsValues
         {
             public UrlSegmentParamsValues(Uri builderUri, string assembled)
             {
-                Uri = builderUri;
+                Uri      = builderUri;
                 Resource = assembled;
             }
 

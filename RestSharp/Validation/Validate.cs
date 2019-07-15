@@ -31,6 +31,7 @@ namespace RestSharp.Validation
         /// <param name="value">Value to validate</param>
         /// <param name="min">Exclusive minimum value</param>
         /// <param name="max">Exclusive maximum value</param>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void IsBetween(int value, int min, int max)
         {
             if (value < min || value > max)
@@ -44,6 +45,7 @@ namespace RestSharp.Validation
         /// </summary>
         /// <param name="value">String to be validated</param>
         /// <param name="maxSize">Maximum length of the string</param>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void IsValidLength(string value, int maxSize)
         {
             if (value == null)

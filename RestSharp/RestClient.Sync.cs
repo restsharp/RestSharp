@@ -22,12 +22,9 @@ namespace RestSharp
         public byte[] DownloadData(IRestRequest request, bool throwOnError)
         {
             var response = Execute(request);
-            if (response.ResponseStatus == ResponseStatus.Error && throwOnError)
-            {
-                throw response.ErrorException;
-            }
-
-            return response.RawBytes;
+            return response.ResponseStatus == ResponseStatus.Error && throwOnError
+                ? throw response.ErrorException
+                : response.RawBytes;
         }
 
         /// <summary>
@@ -54,18 +51,15 @@ namespace RestSharp
         {
             var method = Enum.GetName(typeof(Method), request.Method);
 
-            switch (request.Method)
+            return request.Method switch
             {
-                case Method.COPY:
-                case Method.POST:
-                case Method.PUT:
-                case Method.PATCH:
-                case Method.MERGE:
-                    return Execute(request, method, DoExecuteAsPost);
-
-                default:
-                    return Execute(request, method, DoExecuteAsGet);
-            }
+                Method.COPY  => Execute(request, method, DoExecuteAsPost),
+                Method.POST  => Execute(request, method, DoExecuteAsPost),
+                Method.PUT   => Execute(request, method, DoExecuteAsPost),
+                Method.PATCH => Execute(request, method, DoExecuteAsPost),
+                Method.MERGE => Execute(request, method, DoExecuteAsPost),
+                _            => Execute(request, method, DoExecuteAsGet)
+            };
         }
 
         public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod) => Execute(request, httpMethod, DoExecuteAsGet);
@@ -101,7 +95,7 @@ namespace RestSharp
         public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new() 
             => Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
 
-        private IRestResponse Execute(IRestRequest request, string httpMethod,
+        IRestResponse Execute(IRestRequest request, string httpMethod,
             Func<IHttp, string, HttpResponse> getResponse)
         {
             AuthenticateIfNeeded(this, request);
@@ -112,7 +106,7 @@ namespace RestSharp
             {
                 var http = ConfigureHttp(request);
 
-                response = ConvertToRestResponse(request, getResponse(http, httpMethod));
+                response = RestResponse.FromHttpResponse(getResponse(http, httpMethod), request);
             }
             catch (Exception ex)
             {
@@ -126,8 +120,8 @@ namespace RestSharp
             return response;
         }
 
-        private static HttpResponse DoExecuteAsGet(IHttp http, string method) => http.AsGet(method);
+        static HttpResponse DoExecuteAsGet(IHttp http, string method) => http.AsGet(method);
 
-        private static HttpResponse DoExecuteAsPost(IHttp http, string method) => http.AsPost(method);
+        static HttpResponse DoExecuteAsPost(IHttp http, string method) => http.AsPost(method);
     }
 }

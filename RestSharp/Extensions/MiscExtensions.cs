@@ -32,6 +32,7 @@ namespace RestSharp.Extensions
         /// </summary>
         /// <param name="input">Bytes to save</param>
         /// <param name="path">Full path to save file to</param>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void SaveAs(this byte[] input, string path)
         {
             File.WriteAllBytes(path, input);
@@ -42,19 +43,18 @@ namespace RestSharp.Extensions
         /// </summary>
         /// <param name="input">Stream to read</param>
         /// <returns>byte[]</returns>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static byte[] ReadAsBytes(this Stream input)
         {
             var buffer = new byte[16 * 1024];
 
-            using (var ms = new MemoryStream())
-            {
-                int read;
+            using var ms = new MemoryStream();
+            int read;
 
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                    ms.Write(buffer, 0, read);
+            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                ms.Write(buffer, 0, read);
 
-                return ms.ToArray();
-            }
+            return ms.ToArray();
         }
 
         /// <summary>
@@ -62,6 +62,7 @@ namespace RestSharp.Extensions
         /// </summary>
         /// <param name="input">The input stream.</param>
         /// <param name="output">The output stream.</param>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void CopyTo(this Stream input, Stream output)
         {
             var buffer = new byte[32768];
@@ -84,6 +85,7 @@ namespace RestSharp.Extensions
         /// <param name="buffer">An array of bytes to convert</param>
         /// <param name="encoding">Content encoding. Will fallback to UTF8 if not a valid encoding.</param>
         /// <returns>The byte as a string.</returns>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static string AsString(this byte[] buffer, string encoding)
         {
             Encoding enc;
@@ -105,6 +107,7 @@ namespace RestSharp.Extensions
         /// </summary>
         /// <param name="buffer">An array of bytes to convert</param>
         /// <returns>The byte as a string using UTF8.</returns>
+        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static string AsString(this byte[] buffer) => AsString(buffer, Encoding.UTF8);
 
         private static string AsString(byte[] buffer, Encoding encoding) => 

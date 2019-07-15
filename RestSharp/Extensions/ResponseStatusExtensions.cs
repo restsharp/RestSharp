@@ -11,33 +11,15 @@ namespace RestSharp.Extensions
         /// <param name="responseStatus">The response status.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">responseStatus</exception>
-        public static WebException ToWebException(this ResponseStatus responseStatus)
+        public static WebException ToWebException(this ResponseStatus responseStatus) => responseStatus switch
         {
-            switch (responseStatus)
-            {
-                case ResponseStatus.None:
-                    return new WebException("The request could not be processed.",
-                        WebExceptionStatus.ServerProtocolViolation
-                    );
-
-                case ResponseStatus.Error:
-                    return new WebException("An error occurred while processing the request.",
-                        WebExceptionStatus.ServerProtocolViolation
-                    );
-
-                case ResponseStatus.TimedOut:
-                    return new WebException("The request timed-out.",
-                        WebExceptionStatus.Timeout
-                    );
-
-                case ResponseStatus.Aborted:
-                    return new WebException("The request was aborted.",
-                        WebExceptionStatus.Timeout
-                    );
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(responseStatus));
-            }
-        }
+            ResponseStatus.None => new WebException("The request could not be processed.",
+                WebExceptionStatus.ServerProtocolViolation),
+            ResponseStatus.Error => new WebException("An error occurred while processing the request.",
+                WebExceptionStatus.ServerProtocolViolation),
+            ResponseStatus.TimedOut => new WebException("The request timed-out.", WebExceptionStatus.Timeout),
+            ResponseStatus.Aborted  => new WebException("The request was aborted.", WebExceptionStatus.Timeout),
+            _                       => throw new ArgumentOutOfRangeException(nameof(responseStatus))
+        };
     }
 }
