@@ -333,7 +333,7 @@ namespace RestSharp
             AcceptTypes.Clear();
             this.RemoveDefaultParameter("Accept");
         }
-
+        
         public IRestResponse<T> Deserialize<T>(IRestResponse response)
             => Deserialize<T>(response.Request, response);
 

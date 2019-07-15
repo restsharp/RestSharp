@@ -187,12 +187,12 @@ namespace RestSharp
     [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
     public class RestResponse : RestResponseBase, IRestResponse
     {
-        internal RestResponse SetHeaders(IEnumerable<HttpHeader> headers)
+        RestResponse SetHeaders(IEnumerable<HttpHeader> headers)
             => this.With(
                 x => x.Headers = headers.Select(p => new Parameter(p.Name, p.Value, ParameterType.HttpHeader)).ToList()
             );
 
-        internal RestResponse SetCookies(IEnumerable<HttpCookie> cookies)
+        RestResponse SetCookies(IEnumerable<HttpCookie> cookies)
             => this.With(
                 x => x.Cookies = cookies.Select(RestResponseCookie.FromHttpCookie).ToList()
             );

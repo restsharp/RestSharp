@@ -23,9 +23,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using RestSharp.Extensions;
 using RestSharp.Serialization.Json;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
+
 // ReSharper disable IntroduceOptionalParameters.Global
 
 namespace RestSharp
@@ -38,20 +40,20 @@ namespace RestSharp
         /// <summary>
         ///     Local list of Allowed Decompression Methods
         /// </summary>
-        private readonly IList<DecompressionMethods> _allowedDecompressionMethods;
+        readonly IList<DecompressionMethods> _allowedDecompressionMethods;
 
-        private Action<Stream> _responseWriter;
-        private Action<Stream, IHttpResponse> _advancedResponseWriter;
+        Action<Stream> _responseWriter;
+        Action<Stream, IHttpResponse> _advancedResponseWriter;
 
         /// <summary>
         ///     Default constructor
         /// </summary>
         public RestRequest()
         {
-            RequestFormat = DataFormat.Xml;
-            Method = Method.GET;
-            Parameters = new List<Parameter>();
-            Files = new List<FileParameter>();
+            RequestFormat                = DataFormat.Xml;
+            Method                       = Method.GET;
+            Parameters                   = new List<Parameter>();
+            Files                        = new List<FileParameter>();
             _allowedDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
@@ -66,7 +68,7 @@ namespace RestSharp
         public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml)
         {
         }
-        
+
         public RestRequest(string resource, DataFormat dataFormat) : this(resource, Method.GET, dataFormat)
         {
         }
@@ -77,8 +79,8 @@ namespace RestSharp
 
         public RestRequest(string resource, Method method, DataFormat dataFormat) : this()
         {
-            Resource = resource ?? "";
-            Method = method;
+            Resource      = resource ?? "";
+            Method        = method;
             RequestFormat = dataFormat;
 
             var queryStringStart = Resource.IndexOf('?');
@@ -113,7 +115,7 @@ namespace RestSharp
         public RestRequest(Uri resource) : this(resource, Method.GET, DataFormat.Xml)
         {
         }
-        
+
         /// <summary>
         ///     Gets or sets a user-defined state object that contains information about a request and which can be later
         ///     retrieved when the request completes.
@@ -154,8 +156,9 @@ namespace RestSharp
             set
             {
                 if (AdvancedResponseWriter != null)
-                    throw new ArgumentException("AdvancedResponseWriter is not null. Only one response writer can be used.");
-                
+                    throw new ArgumentException(
+                        "AdvancedResponseWriter is not null. Only one response writer can be used.");
+
                 _responseWriter = value;
             }
         }
@@ -170,7 +173,7 @@ namespace RestSharp
             {
                 if (ResponseWriter != null)
                     throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
-                
+
                 _advancedResponseWriter = value;
             }
         }
@@ -192,20 +195,18 @@ namespace RestSharp
         /// <returns>This request</returns>
         public IRestRequest AddFile(string name, string path, string contentType = null)
         {
-            var f = new FileInfo(path);
+            var f          = new FileInfo(path);
             var fileLength = f.Length;
 
             return AddFile(new FileParameter
             {
-                Name = name,
-                FileName = Path.GetFileName(path),
+                Name          = name,
+                FileName      = Path.GetFileName(path),
                 ContentLength = fileLength,
                 Writer = s =>
                 {
-                    using (var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read)))
-                    {
-                        file.BaseStream.CopyTo(s);
-                    }
+                    using var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read));
+                    file.BaseStream.CopyTo(s);
                 },
                 ContentType = contentType
             });
@@ -231,18 +232,18 @@ namespace RestSharp
         /// <param name="contentLength">The length (in bytes) of the file content.</param>
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
-        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength,
-            string contentType = null)
-        {
-            return AddFile(new FileParameter
+        public IRestRequest AddFile(
+            string name, Action<Stream> writer, string fileName, long contentLength,
+            string contentType = null
+        )
+            => AddFile(new FileParameter
             {
-                Name = name,
-                Writer = writer,
-                FileName = fileName,
+                Name          = name,
+                Writer        = writer,
+                FileName      = fileName,
                 ContentLength = contentLength,
-                ContentType = contentType
+                ContentType   = contentType
             });
-        }
 
         /// <summary>
         ///     Add bytes to the Files collection as if it was a file of specific type
@@ -252,17 +253,19 @@ namespace RestSharp
         /// <param name="filename">The file name to use for the uploaded file</param>
         /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
         /// <returns></returns>
-        public IRestRequest AddFileBytes(string name, byte[] bytes, string filename,
-            string contentType = "application/x-gzip")
+        public IRestRequest AddFileBytes(
+            string name, byte[] bytes, string filename,
+            string contentType = "application/x-gzip"
+        )
         {
             long length = bytes.Length;
 
             return AddFile(new FileParameter
             {
-                Name = name,
-                FileName = filename,
+                Name          = name,
+                FileName      = filename,
                 ContentLength = length,
-                ContentType = contentType,
+                ContentType   = contentType,
                 Writer = s =>
                 {
                     using (var file = new StreamReader(new MemoryStream(bytes)))
@@ -357,7 +360,7 @@ namespace RestSharp
                 xmlNamespace = XmlSerializer.Namespace;
 
             AddParameter(new XmlParameter("", obj, xmlNamespace));
-            
+
             return this;
         }
 
@@ -373,19 +376,19 @@ namespace RestSharp
         public IRestRequest AddObject(object obj, params string[] includedProperties)
         {
             // automatically create parameters from object props
-            var type = obj.GetType();
+            var type  = obj.GetType();
             var props = type.GetProperties();
 
             foreach (var prop in props)
             {
                 var isAllowed = includedProperties.Length == 0 ||
-                                includedProperties.Length > 0 && includedProperties.Contains(prop.Name);
+                    includedProperties.Length > 0 && includedProperties.Contains(prop.Name);
 
                 if (!isAllowed)
                     continue;
 
                 var propType = prop.PropertyType;
-                var val = prop.GetValue(obj, null);
+                var val      = prop.GetValue(obj, null);
 
                 if (val == null)
                     continue;
@@ -394,8 +397,8 @@ namespace RestSharp
                 {
                     var elementType = propType.GetElementType();
 
-                    if (((Array) val).Length > 0 &&
-                        elementType != null &&
+                    if (((Array) val).Length > 0     &&
+                        elementType          != null &&
                         (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
                     {
                         // convert the array to an array of strings
@@ -422,24 +425,14 @@ namespace RestSharp
         /// </summary>
         /// <param name="obj">The object with properties to add as parameters</param>
         /// <returns>This request</returns>
-        public IRestRequest AddObject(object obj)
-        {
-            AddObject(obj, new string[] { });
-
-            return this;
-        }
+        public IRestRequest AddObject(object obj) => this.With(x => x.AddObject(obj, new string[] { }));
 
         /// <summary>
         ///     Add the parameter to the request
         /// </summary>
         /// <param name="p">Parameter to add</param>
         /// <returns></returns>
-        public IRestRequest AddParameter(Parameter p)
-        {
-            Parameters.Add(p);
-
-            return this;
-        }
+        public IRestRequest AddParameter(Parameter p) => this.With(x => x.Parameters.Add(p));
 
         /// <summary>
         ///     Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
@@ -552,7 +545,7 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddHeader(string name, string value)
         {
-            bool InvalidHost(string host) => 
+            bool InvalidHost(string host) =>
                 Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
 
             if (name == "Host" && InvalidHost(value))
@@ -616,7 +609,7 @@ namespace RestSharp
         ///     See AddParameter() for explanation of the types of parameters that can be passed
         /// </summary>
         public List<Parameter> Parameters { get; }
-        
+
         /// <summary>
         ///     Container of all the files to be uploaded with the request.
         /// </summary>
@@ -692,10 +685,7 @@ namespace RestSharp
         /// <summary>
         ///     Internal Method so that RestClient can increase the number of attempts
         /// </summary>
-        public void IncreaseNumAttempts()
-        {
-            Attempts++;
-        }
+        public void IncreaseNumAttempts() => Attempts++;
 
         /// <summary>
         ///     How many attempts were made to send this Request?
@@ -706,12 +696,7 @@ namespace RestSharp
         /// </remarks>
         public int Attempts { get; private set; }
 
-        private IRestRequest AddFile(FileParameter file)
-        {
-            Files.Add(file);
-
-            return this;
-        }
+        IRestRequest AddFile(FileParameter file) => this.With(x => x.Files.Add(file));
 
         /// <summary>
         ///     Shortcut to AddParameter(name, value, UrlSegment) overload

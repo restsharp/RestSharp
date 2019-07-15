@@ -361,27 +361,17 @@ namespace RestSharp
         public static IRestClient AddDefaultQueryParameter(this IRestClient restClient, string name, string value)
             => restClient.AddDefaultParameter(name, value, ParameterType.QueryString);
 
-        private static void ThrowIfError(IRestResponse response)
+        static void ThrowIfError(IRestResponse response)
         {
-            Exception exception;
-            switch (response.ResponseStatus)
+            var exception = response.ResponseStatus switch
             {
-                case ResponseStatus.Aborted:
-                    exception = new WebException("Request aborted");
-                    break;
-                case ResponseStatus.Error:
-                    exception = response.ErrorException;
-                    break;
-                case ResponseStatus.TimedOut:
-                    exception = new TimeoutException("Request timed out");
-                    break;
-                case ResponseStatus.None:
-                case ResponseStatus.Completed:
-                    exception = null;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ResponseStatus.Aborted   => new WebException("Request aborted"),
+                ResponseStatus.Error     => response.ErrorException,
+                ResponseStatus.TimedOut  => new TimeoutException("Request timed out"),
+                ResponseStatus.None      => null,
+                ResponseStatus.Completed => null,
+                _                        => throw new ArgumentOutOfRangeException()
+            };
 
             if (exception != null)
                 throw exception;
