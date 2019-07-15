@@ -31,22 +31,17 @@ namespace RestSharp.Tests
             var mockClient = new Mock<IRestClient>();
             var mockRequest = new Mock<IRestRequest>();
 
-            mockRequest.SetupGet(x => x.Parameters).Returns(new List<Parameter>
-            {
-                new Parameter
-                {
-                    Name = "NotMatching"
-                }
-            });
+            mockRequest.SetupGet(x => x.Parameters).Returns(
+                new List<Parameter> {new Parameter("NotMatching", null, default)});
 
             var expectedToken =
-                $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", username, password)))}";
+                $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"))}";
 
             // Act
             authenticator.Authenticate(mockClient.Object, mockRequest.Object);
 
             // Assert
-            mockRequest.Verify(x => 
+            mockRequest.Verify(x =>
                 x.AddParameter("Authorization", expectedToken, ParameterType.HttpHeader), Times.Once);
         }
 
@@ -59,19 +54,14 @@ namespace RestSharp.Tests
             var mockClient = new Mock<IRestClient>();
             var mockRequest = new Mock<IRestRequest>();
 
-            mockRequest.SetupGet(x => x.Parameters).Returns(new List<Parameter>
-            {
-                new Parameter
-                {
-                    Name = parameterName
-                }
-            });
-            
+            mockRequest.SetupGet(x => x.Parameters).Returns(
+                new List<Parameter> {new Parameter(parameterName, null, default)});
+
             // Act
             authenticator.Authenticate(mockClient.Object, mockRequest.Object);
 
             // Assert
-            mockRequest.Verify(x => 
+            mockRequest.Verify(x =>
                 x.AddParameter("Authorization", It.IsAny<string>(), ParameterType.HttpHeader), Times.Never);
         }
     }

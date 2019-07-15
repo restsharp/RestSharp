@@ -183,15 +183,16 @@ namespace RestSharp.Authenticators
         {
             var requestUrl = client.BuildUriWithoutQueryParameters(request);
             if (requestUrl.Contains('?'))
-                throw new ApplicationException("Using query parameters in the base URL is not supported for OAuth calls. Consider using AddDefaultQueryParameter instead.");
-            
+                throw new ApplicationException(
+                    "Using query parameters in the base URL is not supported for OAuth calls. Consider using AddDefaultQueryParameter instead.");
+
             var url = client.BuildUri(request).ToString();
             var queryStringStart = url.IndexOf('?');
-             if (queryStringStart != -1)
+            if (queryStringStart != -1)
                 url = url.Substring(0, queryStringStart);
-            
+
             var method = request.Method.ToString().ToUpperInvariant();
-            
+
             var parameters = new WebParameterCollection();
 
             // include all GET and POST parameters before generating the signature
@@ -258,7 +259,8 @@ namespace RestSharp.Authenticators
             {
                 case OAuthParameterHandling.HttpAuthorizationHeader:
                     parameters.Add("oauth_signature", oauth.Signature);
-                    request.AddOrUpdateParameter("Authorization", GetAuthorizationHeader(parameters), ParameterType.HttpHeader);
+                    request.AddOrUpdateParameter("Authorization", GetAuthorizationHeader(parameters),
+                        ParameterType.HttpHeader);
                     break;
 
                 case OAuthParameterHandling.UrlOrPostParameters:
@@ -266,12 +268,8 @@ namespace RestSharp.Authenticators
                     var headers =
                         parameters.Where(p => !p.Name.IsNullOrBlank() &&
                                               (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
-                            .Select(p => new Parameter
-                            {
-                                Name = p.Name,
-                                Value = HttpUtility.UrlDecode(p.Value),
-                                Type = ParameterType.GetOrPost
-                            });
+                            .Select(p =>
+                                new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
                     foreach (var header in headers)
                         request.AddOrUpdateParameter(header);
                     break;

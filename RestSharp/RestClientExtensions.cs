@@ -312,12 +312,7 @@ namespace RestSharp
         /// <param name="value">Value of the parameter</param>
         /// <returns>This request</returns>
         public static IRestClient AddDefaultParameter(this IRestClient restClient, string name, object value)
-            => restClient.AddDefaultParameter(new Parameter
-            {
-                Name = name,
-                Value = value,
-                Type = ParameterType.GetOrPost
-            });
+            => restClient.AddDefaultParameter(new Parameter(name, value, ParameterType.GetOrPost));
 
         /// <summary>
         /// Adds a default parameter to the request. There are four types of parameters:
@@ -334,12 +329,7 @@ namespace RestSharp
         /// <returns>This request</returns>
         public static IRestClient AddDefaultParameter(this IRestClient restClient, string name, object value,
             ParameterType type)
-            => restClient.AddDefaultParameter(new Parameter
-            {
-                Name = name,
-                Value = value,
-                Type = type
-            });
+            => restClient.AddDefaultParameter(new Parameter(name, value, type));
 
         /// <summary>
         /// Adds a default header to the RestClient. Used on every request made by this client instance.
@@ -348,7 +338,7 @@ namespace RestSharp
         /// <param name="name">Name of the header to add</param>
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
-        public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value) 
+        public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
             => restClient.AddDefaultParameter(name, value, ParameterType.HttpHeader);
 
         /// <summary>
@@ -358,7 +348,7 @@ namespace RestSharp
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
-        public static IRestClient AddDefaultUrlSegment(this IRestClient restClient, string name, string value) 
+        public static IRestClient AddDefaultUrlSegment(this IRestClient restClient, string name, string value)
             => restClient.AddDefaultParameter(name, value, ParameterType.UrlSegment);
 
         /// <summary>

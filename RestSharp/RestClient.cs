@@ -261,7 +261,7 @@ namespace RestSharp
         ///     Only query and form parameters are supported.
         /// </summary>
         public bool AllowMultipleDefaultParametersWithSameName { get; set; } = false;
-        
+
         /// <summary>
         ///     Registers a content handler to process response content
         /// </summary>
@@ -392,7 +392,7 @@ namespace RestSharp
         {
             var assembled = BaseUrl == null ? "" : request.Resource;
             var baseUrl = BaseUrl ?? new Uri(request.Resource);
-            
+
             var hasResource = !assembled.IsEmpty();
             var parameters = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
             parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
@@ -678,12 +678,11 @@ namespace RestSharp
             };
 
             foreach (var header in httpResponse.Headers)
-                restResponse.Headers.Add(new Parameter
-                {
-                    Name = header.Name,
-                    Value = header.Value,
-                    Type = ParameterType.HttpHeader
-                });
+                restResponse.Headers.Add(new Parameter(
+                    header.Name,
+                    header.Value,
+                    ParameterType.HttpHeader
+                ));
 
             foreach (var cookie in httpResponse.Cookies)
                 restResponse.Cookies.Add(new RestResponseCookie
@@ -749,7 +748,7 @@ namespace RestSharp
 
                 response.ErrorMessage = ex.Message;
                 response.ErrorException = ex;
-                
+
                 if (ThrowOnDeserializationError)
                     throw new DeserializationException(response, ex);
             }
