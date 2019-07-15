@@ -90,7 +90,7 @@ var name = response2.Data.Name;
 client.DownloadData(request).SaveAs(path);
 
 // easy async support
-await client.ExecuteAsync(request);
+await client.ExecuteTaskAsync(request);
 
 // async with deserialization
 var asyncHandle = client.PostAsync<Person>(request, response => {
