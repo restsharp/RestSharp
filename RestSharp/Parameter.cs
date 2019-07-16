@@ -16,8 +16,7 @@
 
 #endregion
 
-using System;
-using RestSharp.Serialization;
+using RestSharp.Validation;
 
 namespace RestSharp
 {
@@ -28,8 +27,7 @@ namespace RestSharp
     {
         public Parameter(string name, object value, ParameterType type)
         {
-            if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException(nameof(name), "Parameter name must be specified");
+            Ensure.NotEmpty(name, nameof(name));
             
             Name = name;
             Value = value;

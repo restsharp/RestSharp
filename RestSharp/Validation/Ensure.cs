@@ -9,5 +9,11 @@ namespace RestSharp.Validation
             if (parameter == null)
                 throw new ArgumentNullException(name);
         }
+
+        public static void NotEmpty(string parameter, string name)
+        {
+            if (string.IsNullOrWhiteSpace(parameter))
+                throw new ArgumentNullException(name);
+        }
     }
 }
