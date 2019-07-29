@@ -91,7 +91,7 @@ namespace RestSharp.Extensions
             Encoding enc;
             try
             {
-                enc = Encoding.GetEncoding(encoding);
+                enc = !string.IsNullOrEmpty(encoding) ? Encoding.GetEncoding(encoding) : Encoding.UTF8;
             }
             catch (Exception)
             {
