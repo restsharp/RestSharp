@@ -47,6 +47,15 @@ namespace RestSharp.IntegrationTests
             RequestHandler.Url.Segments.ShouldBe(new[] {"/", "bar/", "bar1"});
         }
 
+        [Test]
+        public void Should_not_throw_exception_when_name_is_null()
+        {
+            var client = new RestClient(BASE_URL + "{foo}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+            var request = new RestRequest("{foo1}").AddParameter(null, "value", ParameterType.RequestBody);
+
+            client.Execute(request);
+        }
+
         private static class RequestHandler
         {
             public static Uri Url { get; private set; }
