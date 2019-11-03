@@ -550,7 +550,6 @@ namespace RestSharp
                         p.Name?.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase) ?? false
                         && p.Type == defaultParameter.Type);
 
-
                 if (AllowMultipleDefaultParametersWithSameName)
                 {
                     var isMultiParameter = MultiParameterTypes.Any(pt => pt == defaultParameter.Type);
