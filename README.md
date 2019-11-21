@@ -10,7 +10,7 @@
 
 ### Note on RestSharp.Signed
 
-The `RestSharp` package is now signed so there is no need to install `RestSharp.Signed`, which is obsolete from v160.0.0.
+The `RestSharp` package is now signed so there is no need to install `RestSharp.Signed`, which is obsolete from v106.0.0.
 
 ### Note on JSON serialization
 
