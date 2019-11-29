@@ -343,7 +343,7 @@ namespace RestSharp
             => restClient.AddDefaultParameter(name, value, ParameterType.HttpHeader);
 
         /// <summary>
-        /// Adds a default header to the RestClient. Used on every request made by this client instance.
+        /// Adds default headers to the RestClient. Used on every request made by this client instance.
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="headers">Dictionary containing the Names and Values of the headers to add</param>
@@ -354,7 +354,7 @@ namespace RestSharp
             {
                 restClient.AddDefaultParameter(header.Key, header.Value, ParameterType.HttpHeader);
             }
-            
+
             return restClient;
         }
 
