@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -340,6 +341,20 @@ namespace RestSharp
         /// <returns></returns>
         public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
             => restClient.AddDefaultParameter(name, value, ParameterType.HttpHeader);
+
+        /// <summary>
+        /// Adds a default header to the RestClient. Used on every request made by this client instance.
+        /// </summary>
+        /// <param name="restClient">The IRestClient instance</param>
+        /// <param name="headers">Dictionary containing the Names and Values of the headers to add</param>
+        /// <returns></returns>
+        public static IRestClient AddDefaultHeader(this IRestClient restClient, Dictionary<string, string> headers)
+        {
+            foreach (var header in headers)
+            {
+                restClient.AddDefaultParameter(header.Key, header.Value, ParameterType.HttpHeader);
+            }
+        }
 
         /// <summary>
         /// Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
