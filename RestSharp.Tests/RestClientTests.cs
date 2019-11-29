@@ -49,7 +49,7 @@ namespace RestSharp.Tests
             var req = new RestRequest();
             var client = new RestClient(BASE_URL) { Proxy = null };
 
-            Assert.DoesNotThrow(client.AddDefaultHeader(headers));
+            Assert.DoesNotThrow(() => client.AddDefaultHeader(headers));
             Assert.DoesNotThrow(() => client.Execute(req));
             Assert.IsNull(client.Proxy);
         }
