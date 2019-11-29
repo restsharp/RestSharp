@@ -354,6 +354,8 @@ namespace RestSharp
             {
                 restClient.AddDefaultParameter(header.Key, header.Value, ParameterType.HttpHeader);
             }
+            
+            return restClient;
         }
 
         /// <summary>
