@@ -4,7 +4,7 @@
     {
         public WebPair(string name, string value)
         {
-            Name = name;
+            Name  = name;
             Value = value;
         }
 

@@ -10,17 +10,14 @@ namespace RestSharp.Authenticators.OAuth.Extensions
     {
         public static bool IsNullOrBlank(this string value) => string.IsNullOrWhiteSpace(value);
 
-        public static bool EqualsIgnoreCase(this string left, string right) =>
-            string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+        public static bool EqualsIgnoreCase(this string left, string right) => string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
 
-        public static bool EqualsAny(this string input, params string[] args) => 
-            args.Aggregate(false, (current, arg) => current | input.Equals(arg));
+        public static bool EqualsAny(this string input, params string[] args) => args.Aggregate(false, (current, arg) => current | input.Equals(arg));
 
-        public static string FormatWith(this string format, params object[] args) => 
-            string.Format(format, args);
+        public static string FormatWith(this string format, params object[] args) => string.Format(format, args);
 
-        public static string FormatWithInvariantCulture(this string format, params object[] args) => 
-            string.Format(CultureInfo.InvariantCulture, format, args);
+        public static string FormatWithInvariantCulture(this string format, params object[] args)
+            => string.Format(CultureInfo.InvariantCulture, format, args);
 
         public static string Then(this string input, string value) => string.Concat(input, value);
 
@@ -37,7 +34,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
         public static string PercentEncode(this string s)
         {
             var bytes = s.GetBytes();
-            var sb = new StringBuilder();
+            var sb    = new StringBuilder();
 
             foreach (var b in bytes)
                 sb.AppendFormat("%{0:X2}", b);

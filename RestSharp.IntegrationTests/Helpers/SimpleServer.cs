@@ -1,33 +1,41 @@
 ﻿using System;
 using System.Net;
+using NUnit.Framework.Internal;
 
 namespace RestSharp.IntegrationTests.Helpers
 {
     public class SimpleServer : IDisposable
     {
-        private readonly WebServer _server;
+        static readonly Random Random = new Randomizer(DateTimeOffset.Now.Millisecond);
 
-        public static SimpleServer Create(string url, Action<HttpListenerContext> handler = null,
-            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
-        {
-            return new SimpleServer(url, handler, authenticationSchemes);
-        }
+        readonly WebServer _server;
+        
+        public string Url { get; }
+        public string ServerUrl { get; }
 
-        private SimpleServer(string url, Action<HttpListenerContext> handler = null,
-            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
+        SimpleServer(
+            int port,
+            Action<HttpListenerContext> handler = null,
+            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous
+        )
         {
-            _server = new WebServer(url, handler, authenticationSchemes);
+            Url = $"http://localhost:{port}/";;
+            ServerUrl = $"http://{Environment.MachineName}:{port}/";
+            _server = new WebServer(Url, handler, authenticationSchemes);
             _server.Run();
         }
 
-        public void Dispose()
+        public void Dispose() => _server.Stop();
+
+        public static SimpleServer Create(
+            Action<HttpListenerContext> handler = null,
+            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous
+        )
         {
-            _server.Stop();
+            var port = Random.Next(1000, 9999);
+            return new SimpleServer(port, handler, authenticationSchemes);
         }
 
-        public void SetHandler(Action<HttpListenerContext> handler)
-        {
-            _server.ChangeHandler(handler);
-        }
+        public void SetHandler(Action<HttpListenerContext> handler) => _server.ChangeHandler(handler);
     }
 }

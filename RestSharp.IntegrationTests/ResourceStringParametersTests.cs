@@ -8,27 +8,20 @@ namespace RestSharp.IntegrationTests
 {
     public class ResourcestringParametersTests
     {
-        private SimpleServer _server;
-        private const string BASE_URL = "http://localhost:8888/";
+        SimpleServer _server;
 
         [SetUp]
-        public void SetupServer()
-        {
-            _server = SimpleServer.Create(BASE_URL, RequestHandler.Handle);
-        }
+        public void SetupServer() => _server = SimpleServer.Create(RequestHandler.Handle);
 
         [TearDown]
-        public void DisposeServer()
-        {
-            _server.Dispose();
-        }
+        public void DisposeServer() => _server.Dispose();
 
         [Test]
         public void Should_keep_to_parameters_with_the_same_name()
         {
-            var client = new RestClient(BASE_URL);
+            var client     = new RestClient(_server.Url);
             var parameters = "?priority=Low&priority=Medium";
-            var request = new RestRequest(parameters);
+            var request    = new RestRequest(parameters);
 
             client.Get(request);
 
@@ -36,16 +29,15 @@ namespace RestSharp.IntegrationTests
             query.ShouldBe(parameters);
         }
 
-        private static class RequestHandler
+        static class RequestHandler
         {
             public static Uri Url { get; private set; }
-            
+
             public static void Handle(HttpListenerContext context)
             {
                 Url = context.Request.Url;
                 Handlers.Echo(context);
             }
-            
         }
     }
 }

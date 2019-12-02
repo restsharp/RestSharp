@@ -12,25 +12,27 @@ namespace RestSharp.Tests
         public void UrlEncode_Throws_ArgumentNullException_For_Null_Input()
         {
             const string nullString = null;
+
             Assert.Throws<ArgumentNullException>(
-                delegate { nullString.UrlEncode(); });
+                delegate { nullString.UrlEncode(); }
+            );
         }
 
         [Test]
         public void UrlEncode_Returns_Correct_Length_When_Less_Than_Limit()
         {
-            const int numLessThanLimit = 32766;
-            var stringWithLimitLength = new string('*', numLessThanLimit);
-            var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+            const int numLessThanLimit      = 32766;
+            var       stringWithLimitLength = new string('*', numLessThanLimit);
+            var       encodedAndDecoded     = stringWithLimitLength.UrlEncode().UrlDecode();
             Assert.AreEqual(numLessThanLimit, encodedAndDecoded.Length);
         }
 
         [Test]
         public void UrlEncode_Returns_Correct_Length_When_More_Than_Limit()
         {
-            const int numGreaterThanLimit = 65000;
-            var stringWithLimitLength = new string('*', numGreaterThanLimit);
-            var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+            const int numGreaterThanLimit   = 65000;
+            var       stringWithLimitLength = new string('*', numGreaterThanLimit);
+            var       encodedAndDecoded     = stringWithLimitLength.UrlEncode().UrlDecode();
             Assert.AreEqual(numGreaterThanLimit, encodedAndDecoded.Length);
         }
 
@@ -42,12 +44,10 @@ namespace RestSharp.Tests
             Assert.True(string.Equals("%C3%B8", parameter.UrlEncode(), StringComparison.OrdinalIgnoreCase));
         }
 
-        [Test]
-        [TestCase("this_is_a_test", true, "ThisIsATest")]
-        [TestCase("this_is_a_test", false, "This_Is_A_Test")]
+        [Test, TestCase("this_is_a_test", true, "ThisIsATest"), TestCase("this_is_a_test", false, "This_Is_A_Test")]
         public void ToPascalCase(string start, bool removeUnderscores, string finish)
         {
-            string result = start.ToPascalCase(removeUnderscores, CultureInfo.InvariantCulture);
+            var result = start.ToPascalCase(removeUnderscores, CultureInfo.InvariantCulture);
 
             Assert.AreEqual(finish, result);
         }

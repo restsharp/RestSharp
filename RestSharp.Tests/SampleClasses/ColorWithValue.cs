@@ -1,6 +1,8 @@
-﻿namespace RestSharp.Tests.SampleClasses
+﻿using RestSharp.Deserializers;
+
+namespace RestSharp.Tests.SampleClasses
 {
-    [Deserializers.DeserializeAs(Name = "Color")]
+    [DeserializeAs(Name = "Color")]
     public class ColorWithValue
     {
         public string Name { get; set; }

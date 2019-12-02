@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
@@ -9,12 +8,9 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class ProxyTests
     {
-        private const string BASE_URL_SERVER = "http://localhost:8888/";
-        private string BASE_URL_CLIENT;
-
-        public ProxyTests()
+        class RequestBodyCapturer
         {
-            BASE_URL_CLIENT = $"http://{Environment.MachineName}:8888/";
+            public const string RESOURCE = "Capture";
         }
 
         [Test]
@@ -22,14 +18,14 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.GET;
 
-            using (SimpleServer.Create(BASE_URL_SERVER, Handlers.Generic<RequestBodyCapturer>()))
+            using (var server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>()))
             {
-                RestClient client = new RestClient(BASE_URL_CLIENT);
-                client.Proxy = new WebProxy("non_existent_proxy", false);
-                RestRequest request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+                var client = new RestClient(server.ServerUrl)
+                    {Proxy = new WebProxy("non_existent_proxy", false)};
+                var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
                 const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
+                const string bodyData    = "abc123 foo bar baz BING!";
 
                 request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
                 var response = client.Execute(request);
@@ -39,7 +35,10 @@ namespace RestSharp.IntegrationTests
 #if NETCORE
                 Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
 #else
-                Assert.AreEqual(WebExceptionStatus.ProxyNameResolutionFailure, ((WebException)response.ErrorException).Status);
+                Assert.AreEqual(
+                    WebExceptionStatus.ProxyNameResolutionFailure,
+                    ((WebException) response.ErrorException).Status
+                );
 #endif
             }
         }
@@ -47,49 +46,13 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Set_Invalid_Proxy_Fails_RAW()
         {
-            const Method httpMethod = Method.GET;
-
-            using (SimpleServer.Create(BASE_URL_SERVER, Handlers.Generic<RequestBodyCapturer>()))
+            using (var server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>()))
             {
-                const string contentType = "text/plain";
-                const string bodyData = "abc123 foo bar baz BING!";
-                var requestUri = new Uri(new Uri(BASE_URL_CLIENT), RequestBodyCapturer.RESOURCE);
+                var requestUri = new Uri(new Uri(server.ServerUrl), RequestBodyCapturer.RESOURCE);
                 var webRequest = (HttpWebRequest) WebRequest.Create(requestUri);
                 webRequest.Proxy = new WebProxy("non_existent_proxy", false);
-                //webRequest.Proxy = new WebProxy("non_existing", false);
-                // webRequest.Proxy = HttpWebRequest.DefaultWebProxy;
-               
+
                 Assert.Throws<WebException>(() => webRequest.GetResponse());
-
-                // Assert.False(response.IsSuccessful);
-                // Assert.IsInstanceOf<WebException>(response.ErrorException);
-                // Assert.AreEqual("The proxy name could not be resolved: 'non_existent_proxy'", response.ErrorMessage);
-            }
-        }
-
-        private class RequestBodyCapturer
-        {
-            public const string RESOURCE = "Capture";
-
-            public static string CapturedContentType { get; set; }
-
-            public static bool CapturedHasEntityBody { get; set; }
-
-            public static string CapturedEntityBody { get; set; }
-
-            public static void Capture(HttpListenerContext context)
-            {
-                HttpListenerRequest request = context.Request;
-
-                CapturedContentType = request.ContentType;
-                CapturedHasEntityBody = request.HasEntityBody;
-                CapturedEntityBody = StreamToString(request.InputStream);
-            }
-
-            private static string StreamToString(Stream stream)
-            {
-                StreamReader streamReader = new StreamReader(stream);
-                return streamReader.ReadToEnd();
             }
         }
     }

@@ -12,12 +12,39 @@ namespace RestSharp.Tests
     public class UrlBuilderTests
     {
         [Test]
+        public void GET_with_empty_base_and_query_parameters_without_encoding()
+        {
+            var request = new RestRequest("http://example.com/resource?param1=value1")
+                .AddQueryParameter("foo", "bar,baz", false);
+
+            var client   = new RestClient();
+            var expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
+            var output   = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void GET_with_empty_base_and_resource_containing_tokens()
+        {
+            var request = new RestRequest("http://example.com/resource/{foo}");
+
+            request.AddUrlSegment("foo", "bar");
+
+            var client   = new RestClient();
+            var expected = new Uri("http://example.com/resource/bar");
+            var output   = client.BuildUri(request);
+
+            Assert.AreEqual(expected, output);
+        }
+
+        [Test]
         public void GET_with_empty_request()
         {
-            var request = new RestRequest();
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest();
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -25,23 +52,10 @@ namespace RestSharp.Tests
         [Test]
         public void GET_with_empty_request_and_bare_hostname()
         {
-            var request = new RestRequest();
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest();
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/");
-            var output = client.BuildUri(request);
-
-            Assert.AreEqual(expected, output);
-        }
-
-        [Test]
-        public void GET_with_empty_base_and_query_parameters_without_encoding()
-        {
-            var request = new RestRequest("http://example.com/resource?param1=value1")
-                .AddQueryParameter("foo", "bar,baz", false);
-
-            var client = new RestClient();
-            var expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -53,26 +67,23 @@ namespace RestSharp.Tests
 
             request.AddQueryParameter("foo", "bar,baz", false);
 
-            var client = new RestClient("http://example.com/resource?param1=value1");
+            var client   = new RestClient("http://example.com/resource?param1=value1");
             var expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
 
         [Test]
-        public void GET_with_Invalid_Url_string_throws_exception()
-        {
-            Assert.Throws<UriFormatException>(delegate { new RestClient("invalid url"); });
-        }
+        public void GET_with_Invalid_Url_string_throws_exception() => Assert.Throws<UriFormatException>(delegate { new RestClient("invalid url"); });
 
         [Test]
         public void GET_with_leading_slash()
         {
-            var request = new RestRequest("/resource");
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest("/resource");
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -84,9 +95,9 @@ namespace RestSharp.Tests
 
             request.AddParameter("foo", "bar");
 
-            var client = new RestClient(new Uri("http://example.com"));
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource?foo=bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -102,6 +113,7 @@ namespace RestSharp.Tests
             request.AddParameter("start", "50");
 
             var client = new RestClient("http://api.linkedin.com");
+
             var expected =
                 new Uri("http://api.linkedin.com/v1/people/~/network/updates?type=STAT&type=PICT&count=50&start=50");
             var output = client.BuildUri(request);
@@ -116,7 +128,7 @@ namespace RestSharp.Tests
 
             request.AddUrlSegment("foo", null);
 
-            var client = new RestClient("http://example.com/api/1.0");
+            var client    = new RestClient("http://example.com/api/1.0");
             var exception = Assert.Throws<ArgumentException>(() => client.BuildUri(request));
 
             Assert.IsNotNull(exception);
@@ -127,24 +139,10 @@ namespace RestSharp.Tests
         [Test]
         public void GET_with_resource_containing_slashes()
         {
-            var request = new RestRequest("resource/foo");
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest("resource/foo");
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource/foo");
-            var output = client.BuildUri(request);
-
-            Assert.AreEqual(expected, output);
-        }
-
-        [Test]
-        public void GET_with_empty_base_and_resource_containing_tokens()
-        {
-            var request = new RestRequest("http://example.com/resource/{foo}");
-
-            request.AddUrlSegment("foo", "bar");
-
-            var client = new RestClient();
-            var expected = new Uri("http://example.com/resource/bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -156,9 +154,9 @@ namespace RestSharp.Tests
 
             request.AddUrlSegment("foo", "bar");
 
-            var client = new RestClient(new Uri("http://example.com"));
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource/bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -171,9 +169,9 @@ namespace RestSharp.Tests
             request.AddUrlSegment("foo", "bar");
             request.AddUrlSegment("baz", "bat");
 
-            var client = new RestClient(new Uri("http://example.com/{foo}"));
+            var client   = new RestClient(new Uri("http://example.com/{foo}"));
             var expected = new Uri("http://example.com/bar/resource/bat");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -185,9 +183,9 @@ namespace RestSharp.Tests
 
             request.AddUrlSegment("foo", "bar");
 
-            var client = new RestClient(new Uri("http://example.com/{foo}"));
+            var client   = new RestClient(new Uri("http://example.com/{foo}"));
             var expected = new Uri("http://example.com/bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -200,9 +198,9 @@ namespace RestSharp.Tests
             request.AddUrlSegment("foo", "bar");
             request.AddUrlSegment("baz", "bat");
 
-            var client = new RestClient("http://example.com/{foo}");
+            var client   = new RestClient("http://example.com/{foo}");
             var expected = new Uri("http://example.com/bar/resource/bat");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -214,9 +212,9 @@ namespace RestSharp.Tests
 
             request.AddUrlSegment("foo", "bar");
 
-            var client = new RestClient("http://example.com/{foo}");
+            var client   = new RestClient("http://example.com/{foo}");
             var expected = new Uri("http://example.com/bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -225,12 +223,12 @@ namespace RestSharp.Tests
         public void GET_wth_trailing_slash_and_query_parameters()
         {
             var request = new RestRequest("/resource/");
-            var client = new RestClient("http://example.com");
+            var client  = new RestClient("http://example.com");
 
             request.AddParameter("foo", "bar");
 
             var expected = new Uri("http://example.com/resource/?foo=bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             client.Execute(request);
 
@@ -240,10 +238,10 @@ namespace RestSharp.Tests
         [Test]
         public void POST_with_leading_slash()
         {
-            var request = new RestRequest("/resource", Method.POST);
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest("/resource", Method.POST);
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -251,10 +249,10 @@ namespace RestSharp.Tests
         [Test]
         public void POST_with_leading_slash_and_baseurl_trailing_slash()
         {
-            var request = new RestRequest("/resource", Method.POST);
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest("/resource", Method.POST);
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -266,9 +264,9 @@ namespace RestSharp.Tests
 
             request.AddParameter("foo", "bar", ParameterType.QueryString);
 
-            var client = new RestClient("http://example.com");
+            var client   = new RestClient("http://example.com");
             var expected = new Uri("http://example.com/resource?foo=bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -276,10 +274,10 @@ namespace RestSharp.Tests
         [Test]
         public void POST_with_resource_containing_slashes()
         {
-            var request = new RestRequest("resource/foo", Method.POST);
-            var client = new RestClient(new Uri("http://example.com"));
+            var request  = new RestRequest("resource/foo", Method.POST);
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource/foo");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -291,9 +289,9 @@ namespace RestSharp.Tests
 
             request.AddUrlSegment("foo", "bar");
 
-            var client = new RestClient(new Uri("http://example.com"));
+            var client   = new RestClient(new Uri("http://example.com"));
             var expected = new Uri("http://example.com/resource/bar");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -306,9 +304,9 @@ namespace RestSharp.Tests
             request.AddOrUpdateParameter("param2", "value2");
             request.AddOrUpdateParameter("param3", "value3");
 
-            var client = new RestClient("http://example.com/resource?param1=value1");
+            var client   = new RestClient("http://example.com/resource?param1=value1");
             var expected = new Uri("http://example.com/resource?param1=value1&param2=value2&param3=value3");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -323,7 +321,7 @@ namespace RestSharp.Tests
 
             var client = new RestClient("http://example.com/resource");
 
-            var expectedDefaultEncoding = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
+            var expectedDefaultEncoding  = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
             var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%F8d");
             Assert.AreEqual(expectedDefaultEncoding, client.BuildUri(request));
             // now changing encoding
@@ -336,9 +334,9 @@ namespace RestSharp.Tests
         {
             var request = new RestRequest("https://www.example1.com/connect/authorize");
 
-            var client = new RestClient("https://www.example1.com/");
+            var client   = new RestClient("https://www.example1.com/");
             var expected = new Uri("https://www.example1.com/connect/authorize");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
         }
@@ -364,11 +362,24 @@ namespace RestSharp.Tests
 
             request.AddParameter("param2", "value2");
 
-            var client = new RestClient("http://example.com/resource?param1=value1");
+            var client   = new RestClient("http://example.com/resource?param1=value1");
             var expected = new Uri("http://example.com/resource?param1=value1&param2=value2");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
+        }
+
+        [Test]
+        public void Should_not_touch_request_url()
+        {
+            const string baseUrl    = "http://rs.test.org";
+            const string requestUrl = "reportserver?/Prod/Report";
+
+            var client    = new RestClient(baseUrl);
+            var req       = new RestRequest(requestUrl, Method.POST);
+            var resultUrl = client.BuildUri(req).ToString();
+
+            resultUrl.ShouldBe($"{baseUrl}/{requestUrl}");
         }
 
         [Test]
@@ -379,24 +390,11 @@ namespace RestSharp.Tests
             request.AddOrUpdateParameter("param2", "value2");
             request.AddOrUpdateParameter("param2", "value2-1");
 
-            var client = new RestClient("http://example.com/resource?param1=value1");
+            var client   = new RestClient("http://example.com/resource?param1=value1");
             var expected = new Uri("http://example.com/resource?param1=value1&param2=value2-1");
-            var output = client.BuildUri(request);
+            var output   = client.BuildUri(request);
 
             Assert.AreEqual(expected, output);
-        }
-
-        [Test]
-        public void Should_not_touch_request_url()
-        {
-            const string baseUrl = "http://rs.test.org";
-            const string requestUrl = "reportserver?/Prod/Report";
-            
-            var client = new RestClient(baseUrl);
-            var req = new RestRequest(requestUrl, Method.POST);
-            var resultUrl = client.BuildUri(req).ToString();
-            
-            resultUrl.ShouldBe($"{baseUrl}/{requestUrl}");
         }
     }
 }

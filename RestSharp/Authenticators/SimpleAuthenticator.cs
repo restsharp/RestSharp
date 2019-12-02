@@ -20,19 +20,19 @@ namespace RestSharp.Authenticators
 {
     public class SimpleAuthenticator : IAuthenticator
     {
-        private readonly string password;
+        readonly string password;
 
-        private readonly string passwordKey;
+        readonly string passwordKey;
 
-        private readonly string username;
-        private readonly string usernameKey;
+        readonly string username;
+        readonly string usernameKey;
 
         public SimpleAuthenticator(string usernameKey, string username, string passwordKey, string password)
         {
             this.usernameKey = usernameKey;
-            this.username = username;
+            this.username    = username;
             this.passwordKey = passwordKey;
-            this.password = password;
+            this.password    = password;
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)

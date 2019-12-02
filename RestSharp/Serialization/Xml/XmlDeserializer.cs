@@ -25,7 +25,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using RestSharp.Serialization.Xml;
 
@@ -33,10 +32,7 @@ namespace RestSharp.Deserializers
 {
     public class XmlDeserializer : IXmlDeserializer
     {
-        public XmlDeserializer()
-        {
-            Culture = CultureInfo.InvariantCulture;
-        }
+        public XmlDeserializer() => Culture = CultureInfo.InvariantCulture;
 
         public CultureInfo Culture { get; set; }
 
@@ -49,9 +45,9 @@ namespace RestSharp.Deserializers
         public virtual T Deserialize<T>(IRestResponse response)
         {
             if (string.IsNullOrEmpty(response.Content))
-                return default(T);
+                return default;
 
-            var doc = XDocument.Parse(response.Content);
+            var doc  = XDocument.Parse(response.Content);
             var root = doc.Root;
 
             if (RootElement.HasValue() && doc.Root != null)
@@ -61,7 +57,7 @@ namespace RestSharp.Deserializers
             if (!Namespace.HasValue())
                 RemoveNamespace(doc);
 
-            var x = Activator.CreateInstance<T>();
+            var x       = Activator.CreateInstance<T>();
             var objType = x.GetType();
 
             if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
@@ -72,7 +68,7 @@ namespace RestSharp.Deserializers
             return x;
         }
 
-        private static void RemoveNamespace(XDocument xdoc)
+        static void RemoveNamespace(XDocument xdoc)
         {
             if (xdoc.Root == null) return;
 
@@ -85,55 +81,55 @@ namespace RestSharp.Deserializers
                     .Any(a => a.IsNamespaceDeclaration || a.Name.Namespace != XNamespace.None))
                     e.ReplaceAttributes(
                         e.Attributes()
-                            .Select(a => a.IsNamespaceDeclaration
-                                ? null
-                                : a.Name.Namespace != XNamespace.None
-                                    ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
-                                    : a));
+                            .Select(
+                                a => a.IsNamespaceDeclaration
+                                    ? null
+                                    : a.Name.Namespace != XNamespace.None
+                                        ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
+                                        : a
+                            )
+                    );
             }
         }
 
         protected virtual object Map(object x, XElement root)
         {
-            var objType = x.GetType();
-            var props = objType.GetProperties();
+            var objType                                    = x.GetType();
+            var props                                      = objType.GetProperties();
             var deserializeFromContentAttributeAlreadyUsed = false;
 
             foreach (var prop in props)
             {
-                var type = prop.PropertyType.GetTypeInfo();
+                var type         = prop.PropertyType.GetTypeInfo();
                 var typeIsPublic = type.IsPublic || type.IsNestedPublic;
 
                 if (!typeIsPublic || !prop.CanWrite)
                     continue;
 
-                var deserializeFromContent = false;
-                var isNameDefinedInAttribute = false;
-                XName name = null;
-                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+                var   deserializeFromContent   = false;
+                var   isNameDefinedInAttribute = false;
+                XName name                     = null;
+                var   attributes               = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
                 {
                     var attribute = (DeserializeAsAttribute) attributes.First();
 
-                    name = attribute.Name.AsNamespaced(Namespace);
+                    name                     = attribute.Name.AsNamespaced(Namespace);
                     isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
 
                     deserializeFromContent = attribute.Content;
 
                     if (deserializeFromContentAttributeAlreadyUsed && deserializeFromContent)
-                    {
-                        throw new ArgumentException("Class cannot have two properties marked with " +
-                                                    "SerializeAs(Content = true) attribute.");
-                    }
+                        throw new ArgumentException(
+                            "Class cannot have two properties marked with " +
+                            "SerializeAs(Content = true) attribute."
+                        );
 
                     deserializeFromContentAttributeAlreadyUsed |= deserializeFromContent;
                 }
 
-                if (name == null)
-                {
-                    name = prop.Name.AsNamespaced(Namespace);
-                }
+                if (name == null) name = prop.Name.AsNamespaced(Namespace);
 
                 var value = GetValueFromXml(root, name, prop, isNameDefinedInAttribute);
 
@@ -143,6 +139,7 @@ namespace RestSharp.Deserializers
                     if (deserializeFromContent)
                     {
                         var textNode = root.Nodes().FirstOrDefault(n => n is XText);
+
                         if (textNode != null)
                         {
                             value = ((XText) textNode).Value;
@@ -156,8 +153,8 @@ namespace RestSharp.Deserializers
                     if (type.IsGenericType)
                     {
                         var genericType = type.GetGenericArguments()[0];
-                        var first = GetElementByName(root, genericType.Name);
-                        var list = (IList) Activator.CreateInstance(type.AsType());
+                        var first       = GetElementByName(root, genericType.Name);
+                        var list        = (IList) Activator.CreateInstance(type.AsType());
 
                         if (first != null && root != null)
                         {
@@ -185,6 +182,7 @@ namespace RestSharp.Deserializers
                 }
 
                 var asType = type.AsType();
+
                 if (asType == typeof(bool))
                 {
                     var toConvert = value.ToString()
@@ -270,8 +268,8 @@ namespace RestSharp.Deserializers
                 }
                 else if (type.IsGenericType)
                 {
-                    var list = (IList) Activator.CreateInstance(asType);
-                    var container = this.GetElementByName(root, name);
+                    var list      = (IList) Activator.CreateInstance(asType);
+                    var container = GetElementByName(root, name);
 
                     if (container.HasElements)
                     {
@@ -279,7 +277,7 @@ namespace RestSharp.Deserializers
 
                         if (first != null)
                         {
-                            var t = type.GetGenericArguments()[0];
+                            var t        = type.GetGenericArguments()[0];
                             var elements = container.Elements(first.Name);
 
                             PopulateListFromElements(t, elements, list);
@@ -308,6 +306,7 @@ namespace RestSharp.Deserializers
                     {
                         // nested property classes
                         if (root == null) continue;
+
                         var element = GetElementByName(root, name);
 
                         if (element == null) continue;
@@ -322,7 +321,7 @@ namespace RestSharp.Deserializers
             return x;
         }
 
-        private static bool TryGetFromString(string inputString, out object result, Type type)
+        static bool TryGetFromString(string inputString, out object result, Type type)
         {
             var converter = TypeDescriptor.GetConverter(type);
 
@@ -338,22 +337,23 @@ namespace RestSharp.Deserializers
             return false;
         }
 
-        private void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
+        void PopulateListFromElements(Type t, IEnumerable<XElement> elements, IList list)
         {
             foreach (var item in elements.Select(element => CreateAndMap(t, element)))
                 list.Add(item);
         }
 
-        private object HandleListDerivative(XElement root, string propName, Type type)
+        object HandleListDerivative(XElement root, string propName, Type type)
         {
             var t = type.IsGenericType
                 ? type.GetGenericArguments()[0]
                 : type.BaseType.GetGenericArguments()[0];
 
             var list = (IList) Activator.CreateInstance(type);
+
             IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(Namespace))
                 .ToList();
-            var name = t.Name;
+            var name      = t.Name;
             var attribute = t.GetAttribute<DeserializeAsAttribute>();
 
             if (attribute != null)
@@ -460,15 +460,19 @@ namespace RestSharp.Deserializers
                 .OrderBy(d => d.Ancestors().Count());
 
             var element = orderedDescendants
-                              .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
-                          orderedDescendants
-                              .FirstOrDefault(d => string.Equals(d.Name.LocalName.RemoveUnderscoresAndDashes(),
-                                  name.LocalName, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
+                orderedDescendants
+                    .FirstOrDefault(
+                        d => string.Equals(
+                            d.Name.LocalName.RemoveUnderscoresAndDashes(),
+                            name.LocalName, StringComparison.OrdinalIgnoreCase
+                        )
+                    );
 
             return element == null && name == "Value".AsNamespaced(name.NamespaceName) &&
-                   (!root.HasAttributes || root.Attributes().All(x => x.Name != name))
-                ? root
-                : element;
+                (!root.HasAttributes || root.Attributes().All(x => x.Name != name))
+                    ? root
+                    : element;
         }
 
         protected virtual XAttribute GetAttributeByName(XElement root, XName name, bool useExactName)
@@ -490,7 +494,8 @@ namespace RestSharp.Deserializers
                 .FirstOrDefault(
                     d => useExactName
                         ? d.Name == name
-                        : names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes()));
+                        : names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes())
+                );
         }
     }
 }

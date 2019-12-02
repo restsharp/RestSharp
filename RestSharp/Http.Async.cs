@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -30,23 +31,30 @@ namespace RestSharp
     /// </summary>
     public partial class Http
     {
-        private TimeOutState timeoutState;
+        TimeOutState timeoutState;
 
+        [Obsolete]
         public HttpWebRequest DeleteAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("DELETE", action);
 
+        [Obsolete]
         public HttpWebRequest GetAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("GET", action);
 
+        [Obsolete]
         public HttpWebRequest HeadAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("HEAD", action);
 
-        public HttpWebRequest OptionsAsync(Action<HttpResponse> action) =>
-            GetStyleMethodInternalAsync("OPTIONS", action);
+        [Obsolete]
+        public HttpWebRequest OptionsAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("OPTIONS", action);
 
+        [Obsolete]
         public HttpWebRequest PostAsync(Action<HttpResponse> action) => PutPostInternalAsync("POST", action);
 
+        [Obsolete]
         public HttpWebRequest PutAsync(Action<HttpResponse> action) => PutPostInternalAsync("PUT", action);
 
+        [Obsolete]
         public HttpWebRequest PatchAsync(Action<HttpResponse> action) => PutPostInternalAsync("PATCH", action);
 
+        [Obsolete]
         public HttpWebRequest MergeAsync(Action<HttpResponse> action) => PutPostInternalAsync("MERGE", action);
 
         /// <summary>
@@ -55,8 +63,8 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod) =>
-            PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
+        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
+            => PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
 
         /// <summary>
         ///     Execute an async GET-style request with the specified HTTP Method.
@@ -64,18 +72,16 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod) =>
-            GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
+        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
+            => GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
 
-        private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+        HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
         {
             HttpWebRequest webRequest = null;
 
             try
             {
-                var url = Url;
-
-                webRequest = ConfigureAsyncWebRequest(method, url);
+                webRequest = ConfigureAsyncWebRequest(method, Url);
 
                 if (HasBody && (method == "DELETE" || method == "OPTIONS"))
                 {
@@ -89,9 +95,10 @@ namespace RestSharp
                     timeoutState = new TimeOutState {Request = webRequest};
 
                     var asyncResult = webRequest.BeginGetResponse(
-                        result => ResponseCallback(result, callback), webRequest);
+                        result => ResponseCallback(result, callback), webRequest
+                    );
 
-                    SetTimeout(asyncResult, timeoutState);
+                    SetTimeout(asyncResult);
                 }
             }
             catch (Exception ex)
@@ -102,27 +109,7 @@ namespace RestSharp
             return webRequest;
         }
 
-        private HttpResponse CreateErrorResponse(Exception ex)
-        {
-            var response = new HttpResponse();
-
-            if (ex is WebException webException && webException.Status == WebExceptionStatus.RequestCanceled)
-            {
-                response.ResponseStatus = timeoutState.TimedOut
-                    ? ResponseStatus.TimedOut
-                    : ResponseStatus.Aborted;
-
-                return response;
-            }
-
-            response.ErrorMessage = ex.Message;
-            response.ErrorException = ex;
-            response.ResponseStatus = ResponseStatus.Error;
-
-            return response;
-        }
-
-        private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
+        HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
         {
             HttpWebRequest webRequest = null;
 
@@ -140,7 +127,57 @@ namespace RestSharp
             return webRequest;
         }
 
-        private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
+        async Task<HttpResponse> AsyncTest(WebRequest webRequest, CancellationToken cancellationToken)
+        {
+            var ct = Timeout > 0 ? GetTimeoutToken() : cancellationToken;
+
+            using var requestStream = await webRequest.GetRequestStreamAsync(ct);
+
+            if (HasFiles || AlwaysMultipartFormData)
+                await WriteMultipartFormDataAsync(requestStream, ct);
+            else if (RequestBodyBytes != null)
+                await requestStream.WriteAsync(RequestBodyBytes, 0, RequestBodyBytes.Length, ct);
+            else if (RequestBody != null)
+                await requestStream.WriteStringAsync(RequestBody, Encoding, ct);
+
+            try
+            {
+                using var webResponse = await webRequest.GetResponseAsync(ct);
+
+                return ExtractResponseData((HttpWebResponse) webResponse);
+            }
+            catch (Exception e)
+            {
+                return CreateErrorResponse(e);
+            }
+
+            CancellationToken GetTimeoutToken()
+            {
+                var timeoutTokenSource = new CancellationTokenSource(Timeout);
+                var timeoutToken       = timeoutTokenSource.Token;
+                return CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutToken).Token;
+            }
+        }
+
+        async Task WriteMultipartFormDataAsync(Stream requestStream, CancellationToken cancellationToken)
+        {
+            foreach (var param in Parameters)
+                await requestStream.WriteStringAsync(GetMultipartFormData(param), Encoding, cancellationToken);
+
+            foreach (var file in Files)
+            {
+                // Add just the first part of this param, since we will write the file data directly to the Stream
+                await requestStream.WriteStringAsync(GetMultipartFileHeader(file), Encoding, cancellationToken);
+
+                // Write the file data directly to the Stream, rather than serializing it to a string.
+                file.Writer(requestStream);
+                await requestStream.WriteStringAsync(LineBreak, Encoding, cancellationToken);
+            }
+
+            await requestStream.WriteStringAsync(GetMultipartFooter(), Encoding, cancellationToken);
+        }
+
+        void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
         {
             IAsyncResult asyncResult;
             timeoutState = new TimeOutState {Request = webRequest};
@@ -150,17 +187,52 @@ namespace RestSharp
                 webRequest.ContentLength = CalculateContentLength();
 
                 asyncResult = webRequest.BeginGetRequestStream(
-                    result => RequestStreamCallback(result, callback), webRequest);
+                    RequestStreamCallback, webRequest
+                );
             }
             else
             {
                 asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
             }
 
-            SetTimeout(asyncResult, timeoutState);
+            SetTimeout(asyncResult);
+
+            void RequestStreamCallback(IAsyncResult result)
+            {
+                if (timeoutState.TimedOut)
+                {
+                    var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+
+                    ExecuteCallback(response, callback);
+
+                    return;
+                }
+
+                // write body to request stream
+                try
+                {
+                    using (var requestStream = webRequest.EndGetRequestStream(result))
+                    {
+                        if (HasFiles || AlwaysMultipartFormData)
+                            WriteMultipartFormData(requestStream);
+                        else if (RequestBodyBytes != null)
+                            requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
+                        else if (RequestBody != null)
+                            requestStream.WriteString(RequestBody, Encoding);
+                    }
+
+                    var response = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
+
+                    SetTimeout(response);
+                }
+                catch (Exception ex)
+                {
+                    ExecuteCallback(CreateErrorResponse(ex), callback);
+                }
+            }
         }
 
-        private long CalculateContentLength()
+        long CalculateContentLength()
         {
             if (RequestBodyBytes != null)
                 return RequestBodyBytes.Length;
@@ -178,74 +250,39 @@ namespace RestSharp
                 length += Encoding.GetByteCount(LineBreak);
             }
 
-            length = Parameters.Aggregate(length,
-                (current, param) => current + Encoding.GetByteCount(GetMultipartFormData(param)));
+            length = Parameters.Aggregate(
+                length,
+                (current, param) => current + Encoding.GetByteCount(GetMultipartFormData(param))
+            );
 
             length += Encoding.GetByteCount(GetMultipartFooter());
 
             return length;
         }
 
-        private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
-        {
-            var webRequest = (HttpWebRequest) result.AsyncState;
-
-            if (timeoutState.TimedOut)
-            {
-                var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
-
-                ExecuteCallback(response, callback);
-
-                return;
-            }
-
-            // write body to request stream
-            try
-            {
-                using (var requestStream = webRequest.EndGetRequestStream(result))
-                {
-                    if (HasFiles || AlwaysMultipartFormData)
-                        WriteMultipartFormData(requestStream);
-                    else if (RequestBodyBytes != null)
-                        requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
-                    else if (RequestBody != null)
-                        WriteStringTo(requestStream, RequestBody);
-                }
-
-                var asyncResult = webRequest.BeginGetResponse(r => ResponseCallback(r, callback), webRequest);
-
-                SetTimeout(asyncResult, timeoutState);
-            }
-            catch (Exception ex)
-            {
-                ExecuteCallback(CreateErrorResponse(ex), callback);
-            }
-        }
-
-        private void SetTimeout(IAsyncResult asyncResult, TimeOutState timeOutState)
+        void SetTimeout(IAsyncResult asyncResult)
         {
             if (Timeout != 0)
-                ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle,
-                    TimeoutCallback, timeOutState, Timeout, true);
-        }
+                ThreadPool.RegisterWaitForSingleObject(
+                    asyncResult.AsyncWaitHandle,
+                    TimeoutCallback, timeoutState, Timeout, true
+                );
 
-        private static void TimeoutCallback(object state, bool timedOut)
-        {
-            if (!timedOut)
-                return;
-
-            if (!(state is TimeOutState timeoutState))
-                return;
-
-            lock (timeoutState)
+            static void TimeoutCallback(object state, bool timedOut)
             {
-                timeoutState.TimedOut = true;
-            }
+                if (!timedOut)
+                    return;
 
-            timeoutState.Request?.Abort();
+                if (!(state is TimeOutState tos))
+                    return;
+
+                lock (tos) tos.TimedOut = true;
+
+                tos.Request?.Abort();
+            }
         }
 
-        private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+        static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
         {
             HttpWebResponse raw;
 
@@ -277,7 +314,7 @@ namespace RestSharp
             raw?.Close();
         }
 
-        private void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
+        void ResponseCallback(IAsyncResult result, Action<HttpResponse> callback)
         {
             try
             {
@@ -289,12 +326,14 @@ namespace RestSharp
                     return;
                 }
 
-                GetRawResponseAsync(result, webResponse =>
-                {
-                    var response = ExtractResponseData(webResponse);
-                    webResponse.Dispose();
-                    ExecuteCallback(response, callback);
-                });
+                GetRawResponseAsync(
+                    result, webResponse =>
+                    {
+                        var response = ExtractResponseData(webResponse);
+                        webResponse.Dispose();
+                        ExecuteCallback(response, callback);
+                    }
+                );
             }
             catch (Exception ex)
             {
@@ -302,28 +341,44 @@ namespace RestSharp
             }
         }
 
-        private static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
+        static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
         {
             PopulateErrorForIncompleteResponse(response);
             callback(response);
         }
 
-        private static void PopulateErrorForIncompleteResponse(IHttpResponse response)
+        static void PopulateErrorForIncompleteResponse(IHttpResponse response)
         {
-            if (response.ResponseStatus != ResponseStatus.Completed && response.ErrorException == null)
+            if (response.ResponseStatus == ResponseStatus.Completed || response.ErrorException != null) return;
+
+            response.ErrorException = response.ResponseStatus.ToWebException();
+            response.ErrorMessage   = response.ErrorException.Message;
+        }
+
+        HttpResponse CreateErrorResponse(Exception ex)
+        {
+            var response = new HttpResponse();
+
+            if (ex is WebException webException && webException.Status == WebExceptionStatus.RequestCanceled)
             {
-                response.ErrorException = response.ResponseStatus.ToWebException();
-                response.ErrorMessage = response.ErrorException.Message;
+                response.ResponseStatus = timeoutState.TimedOut
+                    ? ResponseStatus.TimedOut
+                    : ResponseStatus.Aborted;
+
+                return response;
             }
+
+            response.ErrorMessage   = ex.Message;
+            response.ErrorException = ex;
+            response.ResponseStatus = ResponseStatus.Error;
+
+            return response;
         }
 
         [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
-        protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
-        {
-            return ConfigureWebRequest(method, url);
-        }
+        protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url) => ConfigureWebRequest(method, url);
 
-        private class TimeOutState
+        class TimeOutState
         {
             public bool TimedOut { get; set; }
 

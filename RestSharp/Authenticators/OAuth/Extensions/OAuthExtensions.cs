@@ -8,9 +8,9 @@ namespace RestSharp.Authenticators.OAuth.Extensions
     {
         public static string ToRequestValue(this OAuthSignatureMethod signatureMethod)
         {
-            string value = signatureMethod.ToString()
-                                          .ToUpper();
-            int shaIndex = value.IndexOf("SHA");
+            var value = signatureMethod.ToString()
+                .ToUpper();
+            var shaIndex = value.IndexOf("SHA");
 
             return shaIndex > -1
                 ? value.Insert(shaIndex, "-")
@@ -37,8 +37,8 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string HashWith(this string input, HashAlgorithm algorithm)
         {
-            byte[] data = Encoding.UTF8.GetBytes(input);
-            byte[] hash = algorithm.ComputeHash(data);
+            var data = Encoding.UTF8.GetBytes(input);
+            var hash = algorithm.ComputeHash(data);
 
             return Convert.ToBase64String(hash);
         }

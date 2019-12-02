@@ -21,12 +21,12 @@ using System;
 namespace RestSharp.Validation
 {
     /// <summary>
-    /// Helper methods for validating values
+    ///     Helper methods for validating values
     /// </summary>
     public class Validate
     {
         /// <summary>
-        /// Validate an integer value is between the specified values (exclusive of min/max)
+        ///     Validate an integer value is between the specified values (exclusive of min/max)
         /// </summary>
         /// <param name="value">Value to validate</param>
         /// <param name="min">Exclusive minimum value</param>
@@ -34,29 +34,20 @@ namespace RestSharp.Validation
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void IsBetween(int value, int min, int max)
         {
-            if (value < min || value > max)
-            {
-                throw new ArgumentException(string.Format("Value ({0}) is not between {1} and {2}.", value, min, max));
-            }
+            if (value < min || value > max) throw new ArgumentException(string.Format("Value ({0}) is not between {1} and {2}.", value, min, max));
         }
 
         /// <summary>
-        /// Validate a string length
+        ///     Validate a string length
         /// </summary>
         /// <param name="value">String to be validated</param>
         /// <param name="maxSize">Maximum length of the string</param>
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void IsValidLength(string value, int maxSize)
         {
-            if (value == null)
-            {
-                return;
-            }
+            if (value == null) return;
 
-            if (value.Length > maxSize)
-            {
-                throw new ArgumentException(string.Format("String is longer than max allowed size ({0}).", maxSize));
-            }
+            if (value.Length > maxSize) throw new ArgumentException(string.Format("String is longer than max allowed size ({0}).", maxSize));
         }
     }
 }

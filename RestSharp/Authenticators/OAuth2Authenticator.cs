@@ -36,7 +36,7 @@ namespace RestSharp.Authenticators
         /// <summary>
         ///     Access token to be used when authenticating.
         /// </summary>
-        private readonly string accessToken;
+        readonly string accessToken;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OAuth2Authenticator" /> class.
@@ -44,10 +44,7 @@ namespace RestSharp.Authenticators
         /// <param name="accessToken">
         ///     The access token.
         /// </param>
-        protected OAuth2Authenticator(string accessToken)
-        {
-            this.accessToken = accessToken;
-        }
+        protected OAuth2Authenticator(string accessToken) => this.accessToken = accessToken;
 
         /// <summary>
         ///     Gets the access token.
@@ -72,14 +69,10 @@ namespace RestSharp.Authenticators
         ///     The access token.
         /// </param>
         public OAuth2UriQueryParameterAuthenticator(string accessToken)
-            : base(accessToken)
-        {
-        }
+            : base(accessToken) { }
 
         public override void Authenticate(IRestClient client, IRestRequest request)
-        {
-            request.AddParameter("oauth_token", AccessToken, ParameterType.GetOrPost);
-        }
+            => request.AddParameter("oauth_token", AccessToken, ParameterType.GetOrPost);
     }
 
     /// <summary>
@@ -93,7 +86,7 @@ namespace RestSharp.Authenticators
         /// <summary>
         ///     Stores the Authorization header value as "[tokenType] accessToken". used for performance.
         /// </summary>
-        private readonly string authorizationValue;
+        readonly string authorizationValue;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OAuth2AuthorizationRequestHeaderAuthenticator" /> class.
@@ -102,9 +95,7 @@ namespace RestSharp.Authenticators
         ///     The access token.
         /// </param>
         public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken)
-            : this(accessToken, "OAuth")
-        {
-        }
+            : this(accessToken, "OAuth") { }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OAuth2AuthorizationRequestHeaderAuthenticator" /> class.
@@ -117,10 +108,7 @@ namespace RestSharp.Authenticators
         /// </param>
         public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken, string tokenType)
             : base(accessToken)
-        {
-            // Conatenate during constructor so that it is only done once. can improve performance.
-            authorizationValue = tokenType + " " + accessToken;
-        }
+            => authorizationValue = tokenType + " " + accessToken;
 
         public override void Authenticate(IRestClient client, IRestRequest request)
         {

@@ -20,7 +20,7 @@ namespace RestSharp.Authenticators.OAuth
 
         public override void Add(string name, string value)
         {
-            WebParameter parameter = new WebParameter(name, value);
+            var parameter = new WebParameter(name, value);
 
             base.Add(parameter);
         }

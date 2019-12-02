@@ -33,10 +33,7 @@ namespace RestSharp.Extensions
         /// <param name="input">Bytes to save</param>
         /// <param name="path">Full path to save file to</param>
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
-        public static void SaveAs(this byte[] input, string path)
-        {
-            File.WriteAllBytes(path, input);
-        }
+        public static void SaveAs(this byte[] input, string path) => File.WriteAllBytes(path, input);
 
         /// <summary>
         ///     Read a stream into a byte array
@@ -49,7 +46,7 @@ namespace RestSharp.Extensions
             var buffer = new byte[16 * 1024];
 
             using var ms = new MemoryStream();
-            int read;
+            int       read;
 
             while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
                 ms.Write(buffer, 0, read);
@@ -89,6 +86,7 @@ namespace RestSharp.Extensions
         public static string AsString(this byte[] buffer, string encoding)
         {
             Encoding enc;
+
             try
             {
                 enc = Encoding.GetEncoding(encoding);
@@ -110,7 +108,6 @@ namespace RestSharp.Extensions
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static string AsString(this byte[] buffer) => AsString(buffer, Encoding.UTF8);
 
-        private static string AsString(byte[] buffer, Encoding encoding) => 
-            buffer == null ? "" : encoding.GetString(buffer, 0, buffer.Length);
+        static string AsString(byte[] buffer, Encoding encoding) => buffer == null ? "" : encoding.GetString(buffer, 0, buffer.Length);
     }
 }

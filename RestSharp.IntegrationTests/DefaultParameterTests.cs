@@ -8,25 +8,18 @@ namespace RestSharp.IntegrationTests
 {
     public class DefaultParameterTests
     {
-        private SimpleServer _server;
-        private const string BASE_URL = "http://localhost:8888/";
+        SimpleServer _server;
 
         [SetUp]
-        public void SetupServer()
-        {
-            _server = SimpleServer.Create(BASE_URL, RequestHandler.Handle);
-        }
+        public void SetupServer() => _server = SimpleServer.Create(RequestHandler.Handle);
 
         [TearDown]
-        public void DisposeServer()
-        {
-            _server.Dispose();
-        }
+        public void DisposeServer() => _server.Dispose();
 
         [Test]
         public void Should_add_default_and_request_query_get_parameters()
         {
-            var client = new RestClient(BASE_URL).AddDefaultParameter("foo", "bar", ParameterType.QueryString);
+            var client  = new RestClient(_server.Url).AddDefaultParameter("foo", "bar", ParameterType.QueryString);
             var request = new RestRequest().AddParameter("foo1", "bar1", ParameterType.QueryString);
 
             client.Get(request);
@@ -39,7 +32,7 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_add_default_and_request_url_get_parameters()
         {
-            var client = new RestClient(BASE_URL + "{foo}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+            var client  = new RestClient(_server.Url + "{foo}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
             var request = new RestRequest("{foo1}").AddParameter("foo1", "bar1", ParameterType.UrlSegment);
 
             client.Get(request);
@@ -47,16 +40,15 @@ namespace RestSharp.IntegrationTests
             RequestHandler.Url.Segments.ShouldBe(new[] {"/", "bar/", "bar1"});
         }
 
-        private static class RequestHandler
+        static class RequestHandler
         {
             public static Uri Url { get; private set; }
-            
+
             public static void Handle(HttpListenerContext context)
             {
                 Url = context.Request.Url;
                 Handlers.Echo(context);
             }
-            
         }
     }
 }

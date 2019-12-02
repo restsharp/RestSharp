@@ -23,9 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using RestSharp.Extensions;
-using RestSharp.Serialization;
 using RestSharp.Serialization.Xml;
-using RestSharp.Serializers;
 
 namespace RestSharp.Serializers
 {
@@ -37,19 +35,13 @@ namespace RestSharp.Serializers
         /// <summary>
         ///     Default constructor, does not specify namespace
         /// </summary>
-        public XmlSerializer()
-        {
-            ContentType = Serialization.ContentType.Xml;
-        }
+        public XmlSerializer() => ContentType = Serialization.ContentType.Xml;
 
         /// <summary>
         ///     Specify the namespaced to be used when serializing
         /// </summary>
         /// <param name="namespace">XML namespace</param>
-        public XmlSerializer(string @namespace) : this()
-        {
-            Namespace = @namespace;
-        }
+        public XmlSerializer(string @namespace) : this() => Namespace = @namespace;
 
         /// <summary>
         ///     Serialize the object as XML
@@ -58,9 +50,9 @@ namespace RestSharp.Serializers
         /// <returns>XML as string</returns>
         public string Serialize(object obj)
         {
-            var doc = new XDocument();
-            var t = obj.GetType();
-            var name = t.Name;
+            var doc     = new XDocument();
+            var t       = obj.GetType();
+            var name    = t.Name;
             var options = t.GetAttribute<SerializeAsAttribute>();
 
             if (options != null)
@@ -127,29 +119,30 @@ namespace RestSharp.Serializers
         /// </summary>
         public string ContentType { get; set; }
 
-        private void Map(XContainer root, object obj)
+        void Map(XContainer root, object obj)
         {
             var objType = obj.GetType();
+
             var props = objType.GetProperties()
                 .Select(p => new {p, indexAttribute = p.GetAttribute<SerializeAsAttribute>()})
                 .Where(t => t.p.CanRead && t.p.CanWrite)
                 .OrderBy(t => t.indexAttribute?.Index ?? int.MaxValue)
                 .Select(t => t.p);
-            var globalOptions = objType.GetAttribute<SerializeAsAttribute>();
+            var globalOptions                   = objType.GetAttribute<SerializeAsAttribute>();
             var textContentAttributeAlreadyUsed = false;
 
             foreach (var prop in props)
             {
-                var name = prop.Name;
+                var name     = prop.Name;
                 var rawValue = prop.GetValue(obj, null);
 
                 if (rawValue == null)
                     continue;
 
-                var propType = prop.PropertyType;
-                var useAttribute = false;
+                var propType       = prop.PropertyType;
+                var useAttribute   = false;
                 var setTextContent = false;
-                var options = prop.GetAttribute<SerializeAsAttribute>();
+                var options        = prop.GetAttribute<SerializeAsAttribute>();
 
                 if (options != null)
                 {
@@ -164,18 +157,21 @@ namespace RestSharp.Serializers
                     setTextContent = options.Content;
 
                     if (textContentAttributeAlreadyUsed && setTextContent)
-                    {
-                        throw new ArgumentException("Class cannot have two properties marked with " +
-                            "SerializeAs(Content = true) attribute.");
-                    }
+                        throw new ArgumentException(
+                            "Class cannot have two properties marked with " +
+                            "SerializeAs(Content = true) attribute."
+                        );
 
                     textContentAttributeAlreadyUsed |= setTextContent;
                 }
                 else if (globalOptions != null)
+                {
                     name = globalOptions.TransformName(name);
+                }
 
-                var nsName = name.AsNamespaced(Namespace);
+                var nsName  = name.AsNamespaced(Namespace);
                 var element = new XElement(nsName);
+
                 if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
                     propType == typeof(string))
                 {
@@ -203,7 +199,7 @@ namespace RestSharp.Serializers
                     {
                         if (itemTypeName == "")
                         {
-                            var type = item.GetType();
+                            var type    = item.GetType();
                             var setting = type.GetAttribute<SerializeAsAttribute>();
 
                             itemTypeName = setting != null && setting.Name.HasValue()
@@ -226,7 +222,7 @@ namespace RestSharp.Serializers
             }
         }
 
-        private string GetSerializedValue(object obj)
+        string GetSerializedValue(object obj)
         {
             var output = obj;
 
@@ -243,7 +239,7 @@ namespace RestSharp.Serializers
             return IsNumeric(obj) ? SerializeNumber(obj) : output.ToString();
         }
 
-        private static string SerializeNumber(object number)
+        static string SerializeNumber(object number)
         {
             switch (number)
             {
@@ -268,7 +264,7 @@ namespace RestSharp.Serializers
         ///     Determines if a given object is numeric in any way
         ///     (can be integer, double, null, etc).
         /// </summary>
-        private static bool IsNumeric(object value)
+        static bool IsNumeric(object value)
         {
             switch (value)
             {

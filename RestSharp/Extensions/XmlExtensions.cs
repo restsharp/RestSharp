@@ -21,12 +21,12 @@ using System.Xml.Linq;
 namespace RestSharp.Extensions
 {
     /// <summary>
-    /// XML Extension Methods
+    ///     XML Extension Methods
     /// </summary>
     public static class XmlExtensions
     {
         /// <summary>
-        /// Returns the name of an element with the namespace if specified
+        ///     Returns the name of an element with the namespace if specified
         /// </summary>
         /// <param name="name">Element name</param>
         /// <param name="namespace">XML Namespace</param>
@@ -35,10 +35,7 @@ namespace RestSharp.Extensions
         {
             XName xName = name;
 
-            if (@namespace.HasValue())
-            {
-                xName = XName.Get(name, @namespace);
-            }
+            if (@namespace.HasValue()) xName = XName.Get(name, @namespace);
 
             return xName;
         }

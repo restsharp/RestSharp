@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml.Serialization;
-using RestSharp.Serialization;
 using RestSharp.Serialization.Xml;
 
 namespace RestSharp.Serializers
@@ -17,7 +16,7 @@ namespace RestSharp.Serializers
         public DotNetXmlSerializer()
         {
             ContentType = Serialization.ContentType.Xml;
-            Encoding = Encoding.UTF8;
+            Encoding    = Encoding.UTF8;
         }
 
         /// <inheritdoc />
@@ -27,9 +26,7 @@ namespace RestSharp.Serializers
         /// <param name="namespace">XML namespace</param>
         public DotNetXmlSerializer(string @namespace)
             : this()
-        {
-            Namespace = @namespace;
-        }
+            => Namespace = @namespace;
 
         /// <summary>
         ///     Encoding for serialized content
@@ -48,7 +45,7 @@ namespace RestSharp.Serializers
             ns.Add(string.Empty, Namespace);
 
             var serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
-            var writer = new EncodingStringWriter(Encoding);
+            var writer     = new EncodingStringWriter(Encoding);
 
             serializer.Serialize(writer, obj, ns);
 
@@ -75,7 +72,7 @@ namespace RestSharp.Serializers
         /// </summary>
         public string ContentType { get; set; }
 
-        private class EncodingStringWriter : StringWriter
+        class EncodingStringWriter : StringWriter
         {
             // Need to subclass StringWriter in order to override Encoding
             public EncodingStringWriter(Encoding encoding) => Encoding = encoding;

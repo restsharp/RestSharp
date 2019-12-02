@@ -14,50 +14,45 @@ namespace RestSharp.IntegrationTests
         [SetUp]
         public void SetupServer()
         {
-            _server = SimpleServer.Create(BaseUrl, RequestHandler.Handle);
-            _client = new RestClient(BaseUrl);
+            _server = SimpleServer.Create(RequestHandler.Handle);
+            _client = new RestClient(_server.Url);
         }
 
         [TearDown]
-        public void ShutdownServer()
-        {
-            _server.Dispose();
-        }
+        public void ShutdownServer() => _server.Dispose();
 
-        private const string LineBreak = "\r\n";
+        const string LineBreak = "\r\n";
 
-        private readonly string _expected =
-            "-------------------------------28947758029299" + LineBreak +
-            "Content-Disposition: form-data; name=\"foo\"" + LineBreak + LineBreak +
-            "bar" + LineBreak +
-            "-------------------------------28947758029299" + LineBreak +
+        readonly string _expected =
+            "-------------------------------28947758029299"               + LineBreak +
+            "Content-Disposition: form-data; name=\"foo\""                + LineBreak + LineBreak +
+            "bar"                                                         + LineBreak +
+            "-------------------------------28947758029299"               + LineBreak +
             "Content-Disposition: form-data; name=\"a name with spaces\"" + LineBreak + LineBreak +
-            "somedata" + LineBreak +
-            "-------------------------------28947758029299--" + LineBreak;
+            "somedata"                                                    + LineBreak +
+            "-------------------------------28947758029299--"             + LineBreak;
 
-        private readonly string _expectedFileAndBodyRequestContent =
-            "-------------------------------28947758029299" + LineBreak +
-            "Content-Type: application/json" + LineBreak +
-            "Content-Disposition: form-data; name=\"controlName\"" + LineBreak + LineBreak +
-            "test" + LineBreak +
-            "-------------------------------28947758029299" + LineBreak +
+        readonly string _expectedFileAndBodyRequestContent =
+            "-------------------------------28947758029299"                                + LineBreak +
+            "Content-Type: application/json"                                               + LineBreak +
+            "Content-Disposition: form-data; name=\"controlName\""                         + LineBreak + LineBreak +
+            "test"                                                                         + LineBreak +
+            "-------------------------------28947758029299"                                + LineBreak +
             "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" + LineBreak +
-            "Content-Type: application/octet-stream" + LineBreak + LineBreak +
-            "This is a test file for RestSharp." + LineBreak +
-            "-------------------------------28947758029299--" + LineBreak;
+            "Content-Type: application/octet-stream"                                       + LineBreak + LineBreak +
+            "This is a test file for RestSharp."                                           + LineBreak +
+            "-------------------------------28947758029299--"                              + LineBreak;
 
-        private readonly string _expectedDefaultMultipartContentType =
+        readonly string _expectedDefaultMultipartContentType =
             "multipart/form-data; boundary=-----------------------------28947758029299";
 
-        private readonly string _expectedCustomMultipartContentType =
+        readonly string _expectedCustomMultipartContentType =
             "multipart/vnd.resteasy+form-data; boundary=-----------------------------28947758029299";
 
-        private SimpleServer _server;
-        private RestClient _client;
+        SimpleServer _server;
+        RestClient   _client;
 
-        private const string BaseUrl = "http://localhost:8888/";
-
-        private static class RequestHandler
+        static class RequestHandler
         {
             public static string CapturedContentType { get; set; }
 
@@ -68,7 +63,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        private static void AddParameters(IRestRequest request)
+        static void AddParameters(IRestRequest request)
         {
             request.AddParameter("foo", "bar");
             request.AddParameter("a name with spaces", "somedata");
@@ -80,7 +75,7 @@ namespace RestSharp.IntegrationTests
             var request = new RestRequest("?json_route=/posts")
             {
                 AlwaysMultipartFormData = true,
-                Method = Method.POST
+                Method                  = Method.POST
             };
 
             request.AddParameter("title", "test", ParameterType.RequestBody);
@@ -96,7 +91,7 @@ namespace RestSharp.IntegrationTests
             var request = new RestRequest("?json_route=/posts")
             {
                 AlwaysMultipartFormData = true,
-                Method = Method.POST
+                Method                  = Method.POST
             };
 
             request.AddParameter("title", "test", ParameterType.RequestBody);
@@ -105,11 +100,13 @@ namespace RestSharp.IntegrationTests
 
             using (var eventWaitHandle = new AutoResetEvent(false))
             {
-                _client.ExecuteAsync(request, response =>
-                {
-                    syncResponse = response;
-                    eventWaitHandle.Set();
-                });
+                _client.ExecuteAsync(
+                    request, response =>
+                    {
+                        syncResponse = response;
+                        eventWaitHandle.Set();
+                    }
+                );
 
                 eventWaitHandle.WaitOne();
             }
@@ -123,7 +120,7 @@ namespace RestSharp.IntegrationTests
             var request = new RestRequest("?json_route=/posts")
             {
                 AlwaysMultipartFormData = true,
-                Method = Method.POST
+                Method                  = Method.POST
             };
 
             request.AddParameter("title", "test", ParameterType.RequestBody);
@@ -168,7 +165,7 @@ namespace RestSharp.IntegrationTests
         {
             var request = new RestRequest("/", Method.POST);
 
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            var path              = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
             var customContentType = "multipart/vnd.resteasy+form-data";
             request.AddHeader("Content-Type", customContentType);
 
@@ -227,11 +224,13 @@ namespace RestSharp.IntegrationTests
 
             AddParameters(request);
 
-            _client.ExecuteAsync(request, (restResponse, handle) =>
-            {
-                Console.WriteLine(restResponse.Content);
-                Assert.AreEqual(_expected, restResponse.Content);
-            });
+            _client.ExecuteAsync(
+                request, (restResponse, handle) =>
+                {
+                    Console.WriteLine(restResponse.Content);
+                    Assert.AreEqual(_expected, restResponse.Content);
+                }
+            );
         }
     }
 }

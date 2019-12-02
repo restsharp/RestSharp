@@ -2,37 +2,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using RestSharp.Serialization;
-using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 
 namespace RestSharp
 {
     internal static class RestRequestExtensions
     {
-        internal static void AddBody(this IHttp http, IEnumerable<Parameter> parameters,
-            IDictionary<DataFormat, IRestSerializer> restSerializers, params ISerializer[] serializers)
+        internal static void AddBody(
+            this IHttp http,
+            IEnumerable<Parameter> parameters,
+            IDictionary<DataFormat, IRestSerializer> restSerializers,
+            params ISerializer[] serializers
+        )
         {
             var body = parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
             if (body == null) return;
 
             if (body.DataFormat == DataFormat.None)
+            {
                 http.AddBody(body.ContentType, body.Name, body.Value);
+            }
             else
             {
-                var contentType = body.ContentType ?? ContentType.FromDataFormat[body.DataFormat];
+                var contentType       = body.ContentType ?? ContentType.FromDataFormat[body.DataFormat];
                 var requestSerializer = serializers.FirstOrDefault(x => x != null && x.ContentType == contentType);
+
                 if (requestSerializer != null)
                 {
-                    http.AddBody(requestSerializer.ContentType, requestSerializer.ContentType,
-                        requestSerializer.Serialize(body.Value));
+                    http.AddBody(
+                        requestSerializer.ContentType, requestSerializer.ContentType,
+                        requestSerializer.Serialize(body.Value)
+                    );
                 }
                 else
                 {
                     if (!restSerializers.TryGetValue(body.DataFormat, out var serializer))
-                    {
                         throw new InvalidDataContractException(
-                            $"Can't find serializer for content type {body.DataFormat}");
-                    }
+                            $"Can't find serializer for content type {body.DataFormat}"
+                        );
 
                     http.AddBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(body));
                 }
@@ -58,12 +65,14 @@ namespace RestSharp
             }
             else
             {
-                http.Parameters.Add(new HttpParameter
-                {
-                    Name = name,
-                    Value = value.ToString(),
-                    ContentType = contentType
-                });
+                http.Parameters.Add(
+                    new HttpParameter
+                    {
+                        Name        = name,
+                        Value       = value.ToString(),
+                        ContentType = contentType
+                    }
+                );
             }
         }
     }

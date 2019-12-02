@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using System.Linq;
+﻿using System.Linq;
+using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
@@ -7,25 +7,25 @@ namespace RestSharp.Tests
     public class SimpleJsonTests
     {
         [Test]
-        public void SerializeObject_should_not_assume_strings_wrapped_in_curly_braces_are_json()
+        public void EscapeToJavascriptString_should_not_double_escape()
         {
-            var objectWithCurlyString = new { Name = "{value}" };
+            var preformattedString = "{ \"name\" : \"value\" }";
+            var expectedSlashCount = preformattedString.Count(x => x == '\\');
 
-            string result = SimpleJson.SerializeObject(objectWithCurlyString);
+            var result           = SimpleJson.EscapeToJavascriptString(preformattedString);
+            var actualSlashCount = result.Count(x => x == '\\');
 
-            Assert.AreEqual("{\"Name\":\"{value}\"}", result);
+            Assert.AreEqual(expectedSlashCount, actualSlashCount);
         }
 
         [Test]
-        public void EscapeToJavascriptString_should_not_double_escape()
+        public void SerializeObject_should_not_assume_strings_wrapped_in_curly_braces_are_json()
         {
-            string preformattedString = "{ \"name\" : \"value\" }";
-            int expectedSlashCount = preformattedString.Count(x => x == '\\');
+            var objectWithCurlyString = new {Name = "{value}"};
 
-            string result = SimpleJson.EscapeToJavascriptString(preformattedString);
-            int actualSlashCount = result.Count(x => x == '\\');
+            var result = SimpleJson.SerializeObject(objectWithCurlyString);
 
-            Assert.AreEqual(expectedSlashCount, actualSlashCount);
+            Assert.AreEqual("{\"Name\":\"{value}\"}", result);
         }
     }
 }

@@ -7,11 +7,12 @@ namespace RestSharp.Extensions
     public static class RSACryptoServiceProviderExtensions
     {
         /// <summary>
-        /// Imports the specified XML String into the crypto service provider
+        ///     Imports the specified XML String into the crypto service provider
         /// </summary>
         /// <remarks>
-        ///  .NET Core 2.0 doesn't provide an implementation of RSACryptoServiceProvider.FromXmlString/ToXmlString, so we have to do it ourselves.
-        /// Source: https://gist.github.com/Jargon64/5b172c452827e15b21882f1d76a94be4/
+        ///     .NET Core 2.0 doesn't provide an implementation of RSACryptoServiceProvider.FromXmlString/ToXmlString, so we have
+        ///     to do it ourselves.
+        ///     Source: https://gist.github.com/Jargon64/5b172c452827e15b21882f1d76a94be4/
         /// </remarks>
         public static void FromXmlString2(this RSACryptoServiceProvider rsa, string xmlString)
         {
@@ -29,14 +30,9 @@ namespace RestSharp.Extensions
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmlString);
 
-            if (!xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
-            {
-                throw new InvalidOperationException("Invalid XML RSA key.");
-            }
-
+            if (!xmlDoc.DocumentElement.Name.Equals("RSAKeyValue")) throw new InvalidOperationException("Invalid XML RSA key.");
 
             foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
-            {
                 switch (node.Name)
                 {
                     case "Modulus":
@@ -66,7 +62,6 @@ namespace RestSharp.Extensions
                     default:
                         throw new InvalidOperationException("Unknown node name: " + node.Name);
                 }
-            }
 
             rsa.ImportParameters(parameters);
         }

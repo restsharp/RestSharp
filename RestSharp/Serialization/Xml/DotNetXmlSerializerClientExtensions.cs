@@ -6,14 +6,17 @@ namespace RestSharp.Serialization.Xml
 {
     public static class DotNetXmlSerializerClientExtensions
     {
-        public static IRestClient UseDotNetXmlSerializer(this IRestClient restClient,
-            string xmlNamespace = null, Encoding encoding = null)
+        public static IRestClient UseDotNetXmlSerializer(
+            this IRestClient restClient,
+            string xmlNamespace = null,
+            Encoding encoding = null
+        )
         {
-            var xmlSerializer = new DotNetXmlSerializer();
+            var xmlSerializer                                 = new DotNetXmlSerializer();
             if (xmlNamespace != null) xmlSerializer.Namespace = xmlNamespace;
-            if (encoding != null) xmlSerializer.Encoding = encoding;
+            if (encoding     != null) xmlSerializer.Encoding  = encoding;
 
-            var xmlDeserializer = new DotNetXmlDeserializer();
+            var xmlDeserializer                            = new DotNetXmlDeserializer();
             if (encoding != null) xmlDeserializer.Encoding = encoding;
 
             var serializer = new XmlRestSerializer()

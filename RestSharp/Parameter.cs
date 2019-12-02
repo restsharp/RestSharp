@@ -21,51 +21,48 @@ using RestSharp.Validation;
 namespace RestSharp
 {
     /// <summary>
-    /// Parameter container for REST requests
+    ///     Parameter container for REST requests
     /// </summary>
     public class Parameter
     {
         public Parameter(string name, object value, ParameterType type)
         {
             Ensure.NotEmpty(name, nameof(name));
-            
-            Name = name;
+
+            Name  = name;
             Value = value;
-            Type = type;
+            Type  = type;
         }
 
-        public Parameter(string name, object value, string contentType, ParameterType type) : this(name, value, type)
-        {
-            ContentType = contentType;
-        }
+        public Parameter(string name, object value, string contentType, ParameterType type) : this(name, value, type) => ContentType = contentType;
 
         /// <summary>
-        /// Name of the parameter
+        ///     Name of the parameter
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Value of the parameter
+        ///     Value of the parameter
         /// </summary>
         public object Value { get; set; }
 
         /// <summary>
-        /// Type of the parameter
+        ///     Type of the parameter
         /// </summary>
         public ParameterType Type { get; set; }
 
         /// <summary>
-        /// Body parameter data type
+        ///     Body parameter data type
         /// </summary>
         public DataFormat DataFormat { get; set; } = DataFormat.None;
 
         /// <summary>
-        /// MIME content type of the parameter
+        ///     MIME content type of the parameter
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        /// Return a human-readable representation of this parameter
+        ///     Return a human-readable representation of this parameter
         /// </summary>
         /// <returns>String</returns>
         public override string ToString() => $"{Name}={Value}";
@@ -76,8 +73,8 @@ namespace RestSharp
         public XmlParameter(string name, object value, string xmlNamespace = null) : base(name, value, ParameterType.RequestBody)
         {
             XmlNamespace = xmlNamespace;
-            DataFormat = DataFormat.Xml;
-            ContentType = Serialization.ContentType.Xml;
+            DataFormat   = DataFormat.Xml;
+            ContentType  = Serialization.ContentType.Xml;
         }
 
         public string XmlNamespace { get; }
@@ -87,7 +84,7 @@ namespace RestSharp
     {
         public JsonParameter(string name, object value) : base(name, value, ParameterType.RequestBody)
         {
-            DataFormat = DataFormat.Json;
+            DataFormat  = DataFormat.Json;
             ContentType = Serialization.ContentType.Json;
         }
     }

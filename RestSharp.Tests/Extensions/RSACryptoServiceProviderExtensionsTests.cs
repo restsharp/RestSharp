@@ -8,7 +8,22 @@ namespace RestSharp.Tests.Extensions
     [TestFixture]
     public class RSACryptoServiceProviderExtensionsTests
     {
-        
+        [Test]
+        public void FromXmlStringImpl_GivenInvalidPrivateKeyXml_ThrowsInvalidOperationException()
+        {
+            const string samplePrivateKeyXml =
+                "<something></something>";
+
+            using (var provider = new RSACryptoServiceProvider())
+            {
+                var exception = Assert.Throws<InvalidOperationException>(
+                    () =>
+                        RSACryptoServiceProviderExtensions.FromXmlStringImpl(provider, samplePrivateKeyXml)
+                );
+                Assert.AreEqual("Invalid XML RSA key.", exception.Message);
+            }
+        }
+
 #if !NETCOREAPP
         [Test]
         public void FromXmlStringImpl_GivenPrivateKeyXml_GivesSameResultAsDotNetImplementation()
@@ -38,20 +53,6 @@ namespace RestSharp.Tests.Extensions
 #endif
 
         [Test]
-        public void FromXmlStringImpl_GivenInvalidPrivateKeyXml_ThrowsInvalidOperationException()
-        {
-            const string samplePrivateKeyXml =
-                "<something></something>";
-
-            using (var provider = new RSACryptoServiceProvider())
-            {
-                var exception = Assert.Throws<InvalidOperationException>(() =>
-                    RSACryptoServiceProviderExtensions.FromXmlStringImpl(provider, samplePrivateKeyXml));
-                Assert.AreEqual("Invalid XML RSA key.", exception.Message);
-            }
-        }
-
-        [Test]
         public void FromXmlStringImpl_GivenPrivateKeyXmlWithUnknownNode_ThrowsInvalidOperationException()
         {
             const string samplePrivateKeyXml =
@@ -59,8 +60,10 @@ namespace RestSharp.Tests.Extensions
 
             using (var provider = new RSACryptoServiceProvider())
             {
-                var exception = Assert.Throws<InvalidOperationException>(() =>
-                    RSACryptoServiceProviderExtensions.FromXmlStringImpl(provider, samplePrivateKeyXml));
+                var exception = Assert.Throws<InvalidOperationException>(
+                    () =>
+                        RSACryptoServiceProviderExtensions.FromXmlStringImpl(provider, samplePrivateKeyXml)
+                );
                 Assert.AreEqual("Unknown node name: pi", exception.Message);
             }
         }

@@ -6,27 +6,24 @@ namespace RestSharp.Tests
 {
     public class CultureChange : IDisposable
     {
-        public CultureInfo PreviousCulture { get; private set; }
-
         public CultureChange(string culture)
         {
-            if (culture == null)
-            {
-                throw new ArgumentNullException("culture");
-            }
+            if (culture == null) throw new ArgumentNullException("culture");
 
-            this.PreviousCulture = Thread.CurrentThread.CurrentCulture;
+            PreviousCulture = Thread.CurrentThread.CurrentCulture;
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
         }
 
+        public CultureInfo PreviousCulture { get; private set; }
+
         public void Dispose()
         {
-            if (this.PreviousCulture != null)
+            if (PreviousCulture != null)
             {
-                Thread.CurrentThread.CurrentCulture = this.PreviousCulture;
+                Thread.CurrentThread.CurrentCulture = PreviousCulture;
 
-                this.PreviousCulture = null;
+                PreviousCulture = null;
             }
         }
     }

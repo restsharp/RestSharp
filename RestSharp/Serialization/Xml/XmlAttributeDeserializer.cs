@@ -27,19 +27,19 @@ namespace RestSharp.Serialization.Xml
     {
         protected override object GetValueFromXml(XElement root, XName name, PropertyInfo prop, bool useExactName)
         {
-            bool isAttribute = false;
-            
+            var isAttribute = false;
+
             //Check for the DeserializeAs attribute on the property
             var options = prop.GetAttribute<DeserializeAsAttribute>();
 
             if (options != null)
             {
-                name = options.Name ?? name;
+                name        = options.Name ?? name;
                 isAttribute = options.Attribute;
             }
 
             if (!isAttribute) return base.GetValueFromXml(root, name, prop, useExactName);
-            
+
             var attributeVal = GetAttributeByName(root, name, useExactName);
 
             return attributeVal?.Value ?? base.GetValueFromXml(root, name, prop, useExactName);

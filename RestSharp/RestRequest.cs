@@ -18,13 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using RestSharp.Extensions;
-using RestSharp.Serialization.Json;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 
@@ -37,13 +35,16 @@ namespace RestSharp
     /// </summary>
     public class RestRequest : IRestRequest
     {
+        static readonly Regex PortSplitRegex = new Regex(@":\d+");
+
         /// <summary>
         ///     Local list of Allowed Decompression Methods
         /// </summary>
         readonly IList<DecompressionMethods> _allowedDecompressionMethods;
 
-        Action<Stream> _responseWriter;
         Action<Stream, IHttpResponse> _advancedResponseWriter;
+
+        Action<Stream> _responseWriter;
 
         /// <summary>
         ///     Default constructor
@@ -65,17 +66,11 @@ namespace RestSharp
         /// <param name="method">Method to use for this request</param>
         public RestRequest(Method method) : this() => Method = method;
 
-        public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml)
-        {
-        }
+        public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml) { }
 
-        public RestRequest(string resource, DataFormat dataFormat) : this(resource, Method.GET, dataFormat)
-        {
-        }
+        public RestRequest(string resource, DataFormat dataFormat) : this(resource, Method.GET, dataFormat) { }
 
-        public RestRequest(string resource) : this(resource, Method.GET, DataFormat.Xml)
-        {
-        }
+        public RestRequest(string resource) : this(resource, Method.GET, DataFormat.Xml) { }
 
         public RestRequest(string resource, Method method, DataFormat dataFormat) : this()
         {
@@ -84,6 +79,7 @@ namespace RestSharp
             RequestFormat = dataFormat;
 
             var queryStringStart = Resource.IndexOf('?');
+
             if (queryStringStart >= 0 && Resource.IndexOf('=') > queryStringStart)
             {
                 var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
@@ -93,28 +89,28 @@ namespace RestSharp
                     AddQueryParameter(param.Name, param.Value, false);
             }
 
-            IEnumerable<NameValuePair> ParseQuery(string query) =>
-                query.Split('&').Select(x =>
-                {
-                    var pair = x.Split('=');
-                    return pair.Length == 2 ? new NameValuePair(pair[0], pair[1]) : NameValuePair.Empty;
-                }).Where(x => !x.IsEmpty);
+            IEnumerable<NameValuePair> ParseQuery(string query)
+                => query.Split('&')
+                    .Select(
+                        x =>
+                        {
+                            var pair = x.Split('=');
+                            return pair.Length == 2 ? new NameValuePair(pair[0], pair[1]) : NameValuePair.Empty;
+                        }
+                    )
+                    .Where(x => !x.IsEmpty);
         }
 
         public RestRequest(Uri resource, Method method, DataFormat dataFormat)
-            : this(resource.IsAbsoluteUri
-                ? resource.AbsolutePath + resource.Query
-                : resource.OriginalString, method, dataFormat)
-        {
-        }
+            : this(
+                resource.IsAbsoluteUri
+                    ? resource.AbsolutePath + resource.Query
+                    : resource.OriginalString, method, dataFormat
+            ) { }
 
-        public RestRequest(Uri resource, Method method) : this(resource, method, DataFormat.Xml)
-        {
-        }
+        public RestRequest(Uri resource, Method method) : this(resource, method, DataFormat.Xml) { }
 
-        public RestRequest(Uri resource) : this(resource, Method.GET, DataFormat.Xml)
-        {
-        }
+        public RestRequest(Uri resource) : this(resource, Method.GET, DataFormat.Xml) { }
 
         /// <summary>
         ///     Gets or sets a user-defined state object that contains information about a request and which can be later
@@ -125,10 +121,9 @@ namespace RestSharp
         /// <summary>
         ///     List of Allowed Decompresison Methods
         /// </summary>
-        public IList<DecompressionMethods> AllowedDecompressionMethods =>
-            _allowedDecompressionMethods.Any()
-                ? _allowedDecompressionMethods
-                : new[] {DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip};
+        public IList<DecompressionMethods> AllowedDecompressionMethods => _allowedDecompressionMethods.Any()
+            ? _allowedDecompressionMethods
+            : new[] {DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip};
 
         /// <summary>
         ///     Always send a multipart/form-data request - even when no Files are present.
@@ -157,14 +152,15 @@ namespace RestSharp
             {
                 if (AdvancedResponseWriter != null)
                     throw new ArgumentException(
-                        "AdvancedResponseWriter is not null. Only one response writer can be used.");
+                        "AdvancedResponseWriter is not null. Only one response writer can be used."
+                    );
 
                 _responseWriter = value;
             }
         }
 
         /// <summary>
-        /// Set this to handle the response stream yourself, based on the response details
+        ///     Set this to handle the response stream yourself, based on the response details
         /// </summary>
         public Action<Stream, IHttpResponse> AdvancedResponseWriter
         {
@@ -198,18 +194,20 @@ namespace RestSharp
             var f          = new FileInfo(path);
             var fileLength = f.Length;
 
-            return AddFile(new FileParameter
-            {
-                Name          = name,
-                FileName      = Path.GetFileName(path),
-                ContentLength = fileLength,
-                Writer = s =>
+            return AddFile(
+                new FileParameter
                 {
-                    using var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read));
-                    file.BaseStream.CopyTo(s);
-                },
-                ContentType = contentType
-            });
+                    Name          = name,
+                    FileName      = Path.GetFileName(path),
+                    ContentLength = fileLength,
+                    Writer = s =>
+                    {
+                        using var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read));
+                        file.BaseStream.CopyTo(s);
+                    },
+                    ContentType = contentType
+                }
+            );
         }
 
         /// <summary>
@@ -233,17 +231,22 @@ namespace RestSharp
         /// <param name="contentType">The MIME type of the file to upload</param>
         /// <returns>This request</returns>
         public IRestRequest AddFile(
-            string name, Action<Stream> writer, string fileName, long contentLength,
+            string name,
+            Action<Stream> writer,
+            string fileName,
+            long contentLength,
             string contentType = null
         )
-            => AddFile(new FileParameter
-            {
-                Name          = name,
-                Writer        = writer,
-                FileName      = fileName,
-                ContentLength = contentLength,
-                ContentType   = contentType
-            });
+            => AddFile(
+                new FileParameter
+                {
+                    Name          = name,
+                    Writer        = writer,
+                    FileName      = fileName,
+                    ContentLength = contentLength,
+                    ContentType   = contentType
+                }
+            );
 
         /// <summary>
         ///     Add bytes to the Files collection as if it was a file of specific type
@@ -254,26 +257,27 @@ namespace RestSharp
         /// <param name="contentType">Specific content type. Es: application/x-gzip </param>
         /// <returns></returns>
         public IRestRequest AddFileBytes(
-            string name, byte[] bytes, string filename,
+            string name,
+            byte[] bytes,
+            string filename,
             string contentType = "application/x-gzip"
         )
         {
             long length = bytes.Length;
 
-            return AddFile(new FileParameter
-            {
-                Name          = name,
-                FileName      = filename,
-                ContentLength = length,
-                ContentType   = contentType,
-                Writer = s =>
+            return AddFile(
+                new FileParameter
                 {
-                    using (var file = new StreamReader(new MemoryStream(bytes)))
+                    Name          = name,
+                    FileName      = filename,
+                    ContentLength = length,
+                    ContentType   = contentType,
+                    Writer = s =>
                     {
-                        file.BaseStream.CopyTo(s);
+                        using (var file = new StreamReader(new MemoryStream(bytes))) file.BaseStream.CopyTo(s);
                     }
                 }
-            });
+            );
         }
 
         /// <summary>
@@ -440,8 +444,7 @@ namespace RestSharp
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
         /// <returns>This request</returns>
-        public IRestRequest AddParameter(string name, object value)
-            => AddParameter(new Parameter(name, value, ParameterType.GetOrPost));
+        public IRestRequest AddParameter(string name, object value) => AddParameter(new Parameter(name, value, ParameterType.GetOrPost));
 
         /// <summary>
         ///     Adds a parameter to the request. There are four types of parameters:
@@ -454,8 +457,7 @@ namespace RestSharp
         /// <param name="value">Value of the parameter</param>
         /// <param name="type">The type of parameter to add</param>
         /// <returns>This request</returns>
-        public IRestRequest AddParameter(string name, object value, ParameterType type)
-            => AddParameter(new Parameter(name, value, type));
+        public IRestRequest AddParameter(string name, object value, ParameterType type) => AddParameter(new Parameter(name, value, type));
 
         /// <summary>
         ///     Adds a parameter to the request. There are four types of parameters:
@@ -534,8 +536,6 @@ namespace RestSharp
         public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
             => AddOrUpdateParameter(new Parameter(name, value, contentType, type));
 
-        private static readonly Regex PortSplitRegex = new Regex(@":\d+");
-
         /// <inheritdoc />
         /// <summary>
         ///     Shortcut to AddParameter(name, value, HttpHeader) overload
@@ -545,11 +545,11 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddHeader(string name, string value)
         {
-            bool InvalidHost(string host) =>
-                Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
+            bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
 
             if (name == "Host" && InvalidHost(value))
                 throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
+
             return AddParameter(name, value, ParameterType.HttpHeader);
         }
 
@@ -560,8 +560,7 @@ namespace RestSharp
         /// <param name="name">Name of the cookie to add</param>
         /// <param name="value">Value of the cookie to add</param>
         /// <returns></returns>
-        public IRestRequest AddCookie(string name, string value)
-            => AddParameter(name, value, ParameterType.Cookie);
+        public IRestRequest AddCookie(string name, string value) => AddParameter(name, value, ParameterType.Cookie);
 
         /// <summary>
         ///     Shortcut to AddParameter(name, value, UrlSegment) overload
@@ -569,8 +568,7 @@ namespace RestSharp
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
-        public IRestRequest AddUrlSegment(string name, string value)
-            => AddParameter(name, value, ParameterType.UrlSegment);
+        public IRestRequest AddUrlSegment(string name, string value) => AddParameter(name, value, ParameterType.UrlSegment);
 
         /// <summary>
         ///     Shortcut to AddParameter(name, value, QueryString) overload
@@ -578,8 +576,7 @@ namespace RestSharp
         /// <param name="name">Name of the parameter to add</param>
         /// <param name="value">Value of the parameter to add</param>
         /// <returns></returns>
-        public IRestRequest AddQueryParameter(string name, string value)
-            => AddParameter(name, value, ParameterType.QueryString);
+        public IRestRequest AddQueryParameter(string name, string value) => AddParameter(name, value, ParameterType.QueryString);
 
         /// <summary>
         ///     Shortcut to AddParameter(name, value, QueryString) overload
@@ -696,15 +693,14 @@ namespace RestSharp
         /// </remarks>
         public int Attempts { get; private set; }
 
-        IRestRequest AddFile(FileParameter file) => this.With(x => x.Files.Add(file));
-
         /// <summary>
         ///     Shortcut to AddParameter(name, value, UrlSegment) overload
         /// </summary>
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
-        public IRestRequest AddUrlSegment(string name, object value)
-            => AddParameter(name, value, ParameterType.UrlSegment);
+        public IRestRequest AddUrlSegment(string name, object value) => AddParameter(name, value, ParameterType.UrlSegment);
+
+        IRestRequest AddFile(FileParameter file) => this.With(x => x.Files.Add(file));
     }
 }

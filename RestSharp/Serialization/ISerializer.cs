@@ -20,8 +20,7 @@ namespace RestSharp.Serializers
 {
     public interface ISerializer
     {
-        string Serialize(object obj);
-
         string ContentType { get; set; }
+        string Serialize(object obj);
     }
 }

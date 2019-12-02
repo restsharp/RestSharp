@@ -8,74 +8,48 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 {
     internal static class CollectionExtensions
     {
-        public static IEnumerable<T> AsEnumerable<T>(this T item)
-        {
-            return new[] { item };
-        }
+        public static IEnumerable<T> AsEnumerable<T>(this T item) => new[] {item};
 
-        public static IEnumerable<T> And<T>(this T item, T other)
-        {
-            return new[] { item, other };
-        }
+        public static IEnumerable<T> And<T>(this T item, T other) => new[] {item, other};
 
         public static IEnumerable<T> And<T>(this IEnumerable<T> items, T item)
         {
-            foreach (T i in items)
-            {
-                yield return i;
-            }
+            foreach (var i in items) yield return i;
 
             yield return item;
         }
 
         public static TK TryWithKey<T, TK>(this IDictionary<T, TK> dictionary, T key)
-        {
-            return dictionary.ContainsKey(key)
+            => dictionary.ContainsKey(key)
                 ? dictionary[key]
-                : default(TK);
-        }
+                : default;
 
-        public static IEnumerable<T> ToEnumerable<T>(this object[] items) where T : class
-        {
-            return items.Select(item => item as T);
-        }
+        public static IEnumerable<T> ToEnumerable<T>(this object[] items) where T : class => items.Select(item => item as T);
 
         public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
         {
-            foreach (T item in items)
-            {
-                action(item);
-            }
+            foreach (var item in items) action(item);
         }
 
         public static void AddRange(this IDictionary<string, string> collection, NameValueCollection range)
         {
-            foreach (string key in range.AllKeys)
-            {
-                collection.Add(key, range[key]);
-            }
+            foreach (var key in range.AllKeys) collection.Add(key, range[key]);
         }
 
         public static string ToQueryString(this NameValueCollection collection)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            if (collection.Count > 0)
-            {
-                sb.Append('?');
-            }
+            if (collection.Count > 0) sb.Append('?');
 
-            int count = 0;
+            var count = 0;
 
-            foreach (string key in collection.AllKeys)
+            foreach (var key in collection.AllKeys)
             {
                 sb.AppendFormat("{0}={1}", key, collection[key].UrlEncode());
                 count++;
 
-                if (count >= collection.Count)
-                {
-                    continue;
-                }
+                if (count >= collection.Count) continue;
 
                 sb.Append('&');
             }
@@ -85,11 +59,11 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static string Concatenate(this WebParameterCollection collection, string separator, string spacer)
         {
-            StringBuilder sb = new StringBuilder();
-            int total = collection.Count;
-            int count = 0;
+            var sb    = new StringBuilder();
+            var total = collection.Count;
+            var count = 0;
 
-            foreach (WebPair item in collection)
+            foreach (var item in collection)
             {
                 sb.Append(item.Name);
                 sb.Append(separator);
@@ -97,10 +71,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
                 count++;
 
-                if (count < total)
-                {
-                    sb.Append(spacer);
-                }
+                if (count < total) sb.Append(spacer);
             }
 
             return sb.ToString();

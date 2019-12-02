@@ -19,8 +19,8 @@
 using System;
 using System.Globalization;
 using System.Net;
-using RestSharp.Extensions;
 using RestSharp.Authenticators.OAuth.Extensions;
+using RestSharp.Extensions;
 
 namespace RestSharp
 {
@@ -83,121 +83,109 @@ namespace RestSharp
         /// <returns></returns>
         public HttpResponse AsPost(string httpMethod) => PostPutInternal(httpMethod.ToUpperInvariant());
 
-        private HttpResponse GetStyleMethodInternal(string method)
+        HttpResponse GetStyleMethodInternal(string method)
+            => ExecuteRequest(
+                method, r =>
+                {
+                    if (!HasBody || !CanGetWithBody()) return;
+
+                    r.ContentType = RequestContentType;
+                    WriteRequestBody(r);
+
+                    bool CanGetWithBody() => method == "DELETE" || method == "OPTIONS";
+                }
+            );
+
+        HttpResponse PostPutInternal(string method)
+            => ExecuteRequest(
+                method, r =>
+                {
+                    PreparePostBody(r);
+                    WriteRequestBody(r);
+                }
+            );
+
+        HttpResponse ExecuteRequest(string httpMethod, Action<HttpWebRequest> prepareRequest)
         {
-            var webRequest = ConfigureWebRequest(method, Url);
+            var webRequest = ConfigureWebRequest(httpMethod, Url);
 
-            if (HasBody && (method == "DELETE" || method == "OPTIONS"))
-            {
-                webRequest.ContentType = RequestContentType;
-                WriteRequestBody(webRequest);
-            }
+            prepareRequest(webRequest);
 
-            return GetResponse(webRequest);
-        }
-
-        private HttpResponse PostPutInternal(string method)
-        {
-            var webRequest = ConfigureWebRequest(method, Url);
-
-            PreparePostBody(webRequest);
-
-            WriteRequestBody(webRequest);
-            return GetResponse(webRequest);
-        }
-
-        partial void AddSyncHeaderActions()
-        {
-            restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
-            restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
-            restrictedHeaderActions.Add("Expect", (r, v) => r.Expect = v);
-            restrictedHeaderActions.Add("If-Modified-Since",
-                (r, v) => r.IfModifiedSince = Convert.ToDateTime(v, CultureInfo.InvariantCulture));
-            restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
-            restrictedHeaderActions.Add("Transfer-Encoding", (r, v) =>
-            {
-                r.TransferEncoding = v;
-                r.SendChunked = true;
-            });
-            restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
-        }
-
-        private static HttpResponse ExtractErrorResponse(Exception ex)
-        {
-            var response = new HttpResponse {ErrorMessage = ex.Message};
-            if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
-            {
-                response.ResponseStatus = ResponseStatus.TimedOut;
-                response.ErrorException = webException;
-            }
-            else
-            {
-                response.ErrorException = ex;
-                response.ResponseStatus = ResponseStatus.Error;
-            }
-
-            return response;
-        }
-
-        private HttpResponse GetResponse(HttpWebRequest request)
-        {
             try
             {
-                using (var webResponse = GetRawResponse(request))
-                    return ExtractResponseData(webResponse);
+                using var webResponse = GetRawResponse(webRequest);
+
+                return ExtractResponseData(webResponse);
             }
             catch (Exception ex)
             {
                 return ExtractErrorResponse(ex);
             }
+
+            static HttpResponse ExtractErrorResponse(Exception ex)
+            {
+                var response = new HttpResponse {ErrorMessage = ex.Message};
+
+                if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
+                {
+                    response.ResponseStatus = ResponseStatus.TimedOut;
+                    response.ErrorException = webException;
+                }
+                else
+                {
+                    response.ErrorException = ex;
+                    response.ResponseStatus = ResponseStatus.Error;
+                }
+
+                return response;
+            }
+
+            static HttpWebResponse GetRawResponse(WebRequest request)
+            {
+                try
+                {
+                    return (HttpWebResponse) request.GetResponse();
+                }
+                catch (WebException ex)
+                {
+                    // Check to see if this is an HTTP error or a transport error.
+                    // In cases where an HTTP error occurs ( status code >= 400 )
+                    // return the underlying HTTP response, otherwise assume a
+                    // transport exception (ex: connection timeout) and
+                    // rethrow the exception
+
+                    if (ex.Response is HttpWebResponse response)
+                        return response;
+
+                    throw;
+                }
+            }
         }
 
-        private static HttpWebResponse GetRawResponse(HttpWebRequest request)
-        {
-            try
-            {
-                return (HttpWebResponse) request.GetResponse();
-            }
-            catch (WebException ex)
-            {
-                // Check to see if this is an HTTP error or a transport error.
-                // In cases where an HTTP error occurs ( status code >= 400 )
-                // return the underlying HTTP response, otherwise assume a
-                // transport exception (ex: connection timeout) and
-                // rethrow the exception
-
-                if (ex.Response is HttpWebResponse response)
-                    return response;
-
-                throw;
-            }
-        }
-
-        private void WriteRequestBody(HttpWebRequest webRequest)
+        void WriteRequestBody(WebRequest webRequest)
         {
             if (HasBody || HasFiles || AlwaysMultipartFormData)
                 webRequest.ContentLength = CalculateContentLength();
 
-            using (var requestStream = webRequest.GetRequestStream())
-            {
-                if (HasFiles || AlwaysMultipartFormData)
-                    WriteMultipartFormData(requestStream);
-                else if (RequestBodyBytes != null)
-                    requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
-                else if (RequestBody != null)
-                    WriteStringTo(requestStream, RequestBody);
-            }
+            using var requestStream = webRequest.GetRequestStream();
+
+            if (HasFiles || AlwaysMultipartFormData)
+                WriteMultipartFormData(requestStream);
+            else if (RequestBodyBytes != null)
+                requestStream.Write(RequestBodyBytes, 0, RequestBodyBytes.Length);
+            else if (RequestBody != null)
+                requestStream.WriteString(RequestBody, Encoding);
         }
 
         [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
         protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
-            var webRequest = CreateWebRequest(url);
+            var webRequest = CreateWebRequest(url) ?? CreateRequest(url);
 
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 
-            webRequest.PreAuthenticate = PreAuthenticate;
-            webRequest.Pipelined = Pipelined;
+            webRequest.PreAuthenticate                      = PreAuthenticate;
+            webRequest.Pipelined                            = Pipelined;
             webRequest.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
 #if NETSTANDARD2_0
             webRequest.Proxy = null;
@@ -211,8 +199,8 @@ namespace RestSharp
                 // Avoid to crash in UWP apps
             }
 
-            AppendHeaders(webRequest);
-            AppendCookies(webRequest);
+            AppendHeaders();
+            AppendCookies();
 
             if (Host != null) webRequest.Host = Host;
 
@@ -234,10 +222,8 @@ namespace RestSharp
             AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });
 
             if (AutomaticDecompression)
-            {
                 webRequest.AutomaticDecompression =
                     DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
-            }
 
             if (Timeout != 0)
                 webRequest.Timeout = Timeout;
@@ -262,6 +248,34 @@ namespace RestSharp
             WebRequestConfigurator?.Invoke(webRequest);
 
             return webRequest;
+
+            // handle restricted headers the .NET way - thanks @dimebrain!
+            // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
+            void AppendHeaders()
+            {
+                foreach (var header in Headers)
+                    if (restrictedHeaderActions.TryGetValue(header.Name, out var restrictedHeaderAction))
+                        restrictedHeaderAction.Invoke(webRequest, header.Value);
+                    else
+                        webRequest.Headers.Add(header.Name, header.Value);
+            }
+
+            void AppendCookies()
+            {
+                webRequest.CookieContainer = CookieContainer ?? new CookieContainer();
+
+                foreach (var httpCookie in Cookies)
+                {
+                    var cookie = new Cookie
+                    {
+                        Name   = httpCookie.Name,
+                        Value  = httpCookie.Value,
+                        Domain = webRequest.RequestUri.Host
+                    };
+
+                    webRequest.CookieContainer.Add(cookie);
+                }
+            }
         }
     }
 }

@@ -3,11 +3,5 @@
 namespace RestSharp.Authenticators.OAuth
 {
     [DataContract]
-    public enum OAuthType
-    {
-        RequestToken,
-        AccessToken,
-        ProtectedResource,
-        ClientAuthentication
-    }
+    public enum OAuthType { RequestToken, AccessToken, ProtectedResource, ClientAuthentication }
 }

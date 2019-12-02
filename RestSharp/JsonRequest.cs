@@ -22,7 +22,8 @@ namespace RestSharp
             => this.With(x => _customResponses.Add(statusCode, () => response));
 
         public JsonRequest<TRequest, TResponse> ResponseForStatusCode(
-            HttpStatusCode statusCode, Func<TResponse> getResponse
+            HttpStatusCode statusCode,
+            Func<TResponse> getResponse
         )
             => this.With(x => _customResponses.Add(statusCode, getResponse));
 

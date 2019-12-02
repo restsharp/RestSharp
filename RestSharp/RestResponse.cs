@@ -83,10 +83,9 @@ namespace RestSharp
         /// <summary>
         ///     Whether or not the response status code indicates success
         /// </summary>
-        public bool IsSuccessful =>
-            (int) StatusCode >= 200 &&
-            (int) StatusCode <= 299 &&
-            ResponseStatus   == ResponseStatus.Completed;
+        public bool IsSuccessful => (int) StatusCode >= 200 &&
+            (int) StatusCode                         <= 299 &&
+            ResponseStatus                           == ResponseStatus.Completed;
 
         /// <summary>
         ///     Description of HTTP status returned
@@ -144,8 +143,7 @@ namespace RestSharp
         ///     Assists with debugging responses by displaying in the debugger output
         /// </summary>
         /// <returns></returns>
-        protected string DebuggerDisplay()
-            => $"StatusCode: {StatusCode}, Content-Type: {ContentType}, Content-Length: {ContentLength})";
+        protected string DebuggerDisplay() => $"StatusCode: {StatusCode}, Content-Type: {ContentType}, Content-Length: {ContentLength})";
     }
 
     /// <summary>
@@ -160,8 +158,8 @@ namespace RestSharp
         /// </summary>
         public T Data { get; set; }
 
-        public static explicit operator RestResponse<T>(RestResponse response) =>
-            new RestResponse<T>
+        public static explicit operator RestResponse<T>(RestResponse response)
+            => new RestResponse<T>
             {
                 ContentEncoding   = response.ContentEncoding,
                 ContentLength     = response.ContentLength,

@@ -28,7 +28,7 @@ namespace RestSharp
     /// </summary>
     public class HttpResponse : IHttpResponse
     {
-        private string content;
+        string content;
 
         /// <summary>
         ///     Default constructor
@@ -36,8 +36,8 @@ namespace RestSharp
         public HttpResponse()
         {
             ResponseStatus = ResponseStatus.None;
-            Headers = new List<HttpHeader>();
-            Cookies = new List<HttpCookie>();
+            Headers        = new List<HttpHeader>();
+            Cookies        = new List<HttpCookie>();
         }
 
         /// <summary>

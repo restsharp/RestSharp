@@ -8,15 +8,17 @@ namespace RestSharp.Authenticators.OAuth
 {
     internal class WebPairCollection : IList<WebPair>
     {
-        private List<WebPair> parameters;
+        List<WebPair> parameters;
 
         public WebPairCollection(IEnumerable<WebPair> parameters) => this.parameters = new List<WebPair>(parameters);
 
         public WebPairCollection(NameValueCollection collection)
-            : this() => AddCollection(collection);
+            : this()
+            => AddCollection(collection);
 
         public WebPairCollection(IDictionary<string, string> collection)
-            : this() => AddCollection(collection);
+            : this()
+            => AddCollection(collection);
 
         public WebPairCollection() => parameters = new List<WebPair>(0);
 
@@ -38,8 +40,7 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual bool Contains(WebPair parameter) => parameters.Contains(parameter);
 
-        public virtual void CopyTo(WebPair[] parametersArray, int arrayIndex) =>
-            parameters.CopyTo(parametersArray, arrayIndex);
+        public virtual void CopyTo(WebPair[] parametersArray, int arrayIndex) => parameters.CopyTo(parametersArray, arrayIndex);
 
         public virtual bool Remove(WebPair parameter) => parameters.Remove(parameter);
 
@@ -61,14 +62,14 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual void AddRange(NameValueCollection collection) => AddCollection(collection);
 
-        private void AddCollection(NameValueCollection collection) =>
-            parameters.AddRange(collection.AllKeys.Select(key => new WebPair(key, collection[key])));
+        void AddCollection(NameValueCollection collection)
+            => parameters.AddRange(collection.AllKeys.Select(key => new WebPair(key, collection[key])));
 
-        public void AddCollection(IDictionary<string, string> collection) =>
-            parameters.AddRange(collection.Keys.Select(key => new WebPair(key, collection[key])));
+        public void AddCollection(IDictionary<string, string> collection)
+            => parameters.AddRange(collection.Keys.Select(key => new WebPair(key, collection[key])));
 
-        private void AddCollection(IEnumerable<WebPair> collection) =>
-            parameters.AddRange(collection.Select(parameter => new WebPair(parameter.Name, parameter.Value)));
+        void AddCollection(IEnumerable<WebPair> collection)
+            => parameters.AddRange(collection.Select(parameter => new WebPair(parameter.Name, parameter.Value)));
 
         public virtual void AddRange(WebPairCollection collection) => AddCollection(collection);
 
@@ -85,7 +86,7 @@ namespace RestSharp.Authenticators.OAuth
 
         public virtual bool RemoveAll(IEnumerable<WebPair> parametersToRemove)
         {
-            var array = parametersToRemove.ToArray();
+            var array   = parametersToRemove.ToArray();
             var success = array.Aggregate(true, (current, parameter) => current & parameters.Remove(parameter));
 
             return success && array.Length > 0;

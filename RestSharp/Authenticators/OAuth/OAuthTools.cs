@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using System.Xml;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
 
@@ -12,33 +11,33 @@ namespace RestSharp.Authenticators.OAuth
     [DataContract]
     internal static class OAuthTools
     {
-        private const string ALPHA_NUMERIC = UPPER + LOWER + DIGIT;
+        const string ALPHA_NUMERIC = UPPER + LOWER + DIGIT;
 
-        private const string DIGIT = "1234567890";
+        const string DIGIT = "1234567890";
 
-        private const string LOWER = "abcdefghijklmnopqrstuvwxyz";
+        const string LOWER = "abcdefghijklmnopqrstuvwxyz";
 
-        private const string UNRESERVED = ALPHA_NUMERIC + "-._~";
+        const string UNRESERVED = ALPHA_NUMERIC + "-._~";
 
-        private const string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        private static readonly Random random;
+        static readonly Random random;
 
-        private static readonly object randomLock = new object();
+        static readonly object randomLock = new object();
 
-        private static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
 
         /// <summary>
         ///     All text parameters are UTF-8 encoded (per section 5.1).
         /// </summary>
-        private static readonly Encoding encoding = Encoding.UTF8;
+        static readonly Encoding encoding = Encoding.UTF8;
 
         /// <summary>
         ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
         /// </summary>
-        private static readonly string[] uriRfc3986CharsToEscape = {"!", "*", "'", "(", ")"};
+        static readonly string[] uriRfc3986CharsToEscape = {"!", "*", "'", "(", ")"};
 
-        private static readonly string[] uriRfc3968EscapedHex = {"%21", "%2A", "%27", "%28", "%29"};
+        static readonly string[] uriRfc3968EscapedHex = {"%21", "%2A", "%27", "%28", "%29"};
 
         static OAuthTools()
         {
@@ -71,10 +70,7 @@ namespace RestSharp.Authenticators.OAuth
         ///     Generates a timestamp based on the current elapsed seconds since '01/01/1970 0000 GMT"
         /// </summary>
         /// <returns></returns>
-        public static string GetTimestamp()
-        {
-            return GetTimestamp(DateTime.UtcNow);
-        }
+        public static string GetTimestamp() => GetTimestamp(DateTime.UtcNow);
 
         /// <summary>
         ///     Generates a timestamp based on the elapsed seconds of a given time since '01/01/1970 0000 GMT"
@@ -105,6 +101,7 @@ namespace RestSharp.Authenticators.OAuth
         {
             // Escape RFC 3986 chars first.
             var escapedRfc3986 = new StringBuilder(value);
+
             for (var i = 0; i < uriRfc3986CharsToEscape.Length; i++)
             {
                 var t = uriRfc3986CharsToEscape[i];
@@ -113,7 +110,7 @@ namespace RestSharp.Authenticators.OAuth
             }
 
             // Do RFC 2396 escaping by calling the .NET method to do the work.
-            string escapedRfc2396 = Uri.EscapeDataString(escapedRfc3986.ToString());
+            var escapedRfc2396 = Uri.EscapeDataString(escapedRfc3986.ToString());
 
             // Return the fully-RFC3986-escaped string.
             return escapedRfc2396;
@@ -135,13 +132,15 @@ namespace RestSharp.Authenticators.OAuth
             // unreserved = ALPHA, DIGIT, '-', '.', '_', '~'
             var result = "";
 
-            value.ForEach(c =>
-            {
-                result += UNRESERVED.Contains(c)
-                    ? c.ToString()
-                    : c.ToString()
-                        .PercentEncode();
-            });
+            value.ForEach(
+                c =>
+                {
+                    result += UNRESERVED.Contains(c)
+                        ? c.ToString()
+                        : c.ToString()
+                            .PercentEncode();
+                }
+            );
 
             return result;
         }
@@ -155,7 +154,7 @@ namespace RestSharp.Authenticators.OAuth
         /// <returns></returns>
         public static string NormalizeRequestParameters(WebParameterCollection parameters)
         {
-            var copy = SortParametersExcludingSignature(parameters);
+            var copy         = SortParametersExcludingSignature(parameters);
             var concatenated = copy.Concatenate("=", "&");
 
             return concatenated;
@@ -168,21 +167,29 @@ namespace RestSharp.Authenticators.OAuth
         /// <returns>A sorted parameter collection</returns>
         public static WebParameterCollection SortParametersExcludingSignature(WebParameterCollection parameters)
         {
-            var copy = new WebParameterCollection(parameters);
+            var copy       = new WebParameterCollection(parameters);
             var exclusions = copy.Where(n => n.Name.EqualsIgnoreCase("oauth_signature"));
 
             copy.RemoveAll(exclusions);
-            copy.ForEach(p =>
-            {
-                p.Name = UrlEncodeStrict(p.Name);
-                p.Value = UrlEncodeStrict(p.Value);
-            });
-            copy.Sort((x, y) => {
-                int compareName = string.CompareOrdinal(x.Name, y.Name);
-                return (compareName != 0)
-                    ? compareName
-                    : string.CompareOrdinal(x.Value, y.Value);
-                 });
+
+            copy.ForEach(
+                p =>
+                {
+                    p.Name  = UrlEncodeStrict(p.Name);
+                    p.Value = UrlEncodeStrict(p.Value);
+                }
+            );
+
+            copy.Sort(
+                (x, y) =>
+                {
+                    var compareName = string.CompareOrdinal(x.Name, y.Name);
+
+                    return compareName != 0
+                        ? compareName
+                        : string.CompareOrdinal(x.Value, y.Value);
+                }
+            );
 
             return copy;
         }
@@ -199,16 +206,19 @@ namespace RestSharp.Authenticators.OAuth
             if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
-            var sb = new StringBuilder();
+            var sb         = new StringBuilder();
             var requestUrl = "{0}://{1}".FormatWith(url.Scheme, url.Host);
-            var qualified = ":{0}".FormatWith(url.Port);
-            var basic = url.Scheme == "http" && url.Port == 80;
-            var secure = url.Scheme == "https" && url.Port == 443;
+            var qualified  = ":{0}".FormatWith(url.Port);
+            var basic      = url.Scheme == "http"  && url.Port == 80;
+            var secure     = url.Scheme == "https" && url.Port == 443;
 
             sb.Append(requestUrl);
-            sb.Append(!basic && !secure
-                ? qualified
-                : "");
+
+            sb.Append(
+                !basic && !secure
+                    ? qualified
+                    : ""
+            );
             sb.Append(url.AbsolutePath);
 
             return sb.ToString(); //.ToLower();
@@ -227,8 +237,8 @@ namespace RestSharp.Authenticators.OAuth
             var sb = new StringBuilder();
 
             // Separating &'s are not URL encoded
-            var requestMethod = method.ToUpper().Then("&");
-            var requestUrl = UrlEncodeRelaxed(ConstructRequestUrl(url.AsUri())).Then("&");
+            var requestMethod     = method.ToUpper().Then("&");
+            var requestUrl        = UrlEncodeRelaxed(ConstructRequestUrl(url.AsUri())).Then("&");
             var requestParameters = UrlEncodeRelaxed(NormalizeRequestParameters(parameters));
 
             sb.Append(requestMethod);
@@ -246,11 +256,12 @@ namespace RestSharp.Authenticators.OAuth
         /// <param name="signatureBase">The signature base</param>
         /// <param name="consumerSecret">The consumer key</param>
         /// <returns></returns>
-        public static string GetSignature(OAuthSignatureMethod signatureMethod, string signatureBase,
-            string consumerSecret)
-        {
-            return GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, signatureBase, consumerSecret, null);
-        }
+        public static string GetSignature(
+            OAuthSignatureMethod signatureMethod,
+            string signatureBase,
+            string consumerSecret
+        )
+            => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, signatureBase, consumerSecret, null);
 
         /// <summary>
         ///     Creates a signature value given a signature base and the consumer secret.
@@ -261,12 +272,13 @@ namespace RestSharp.Authenticators.OAuth
         /// <param name="signatureBase">The signature base</param>
         /// <param name="consumerSecret">The consumer key</param>
         /// <returns></returns>
-        public static string GetSignature(OAuthSignatureMethod signatureMethod,
+        public static string GetSignature(
+            OAuthSignatureMethod signatureMethod,
             OAuthSignatureTreatment signatureTreatment,
-            string signatureBase, string consumerSecret)
-        {
-            return GetSignature(signatureMethod, signatureTreatment, signatureBase, consumerSecret, null);
-        }
+            string signatureBase,
+            string consumerSecret
+        )
+            => GetSignature(signatureMethod, signatureTreatment, signatureBase, consumerSecret, null);
 
         /// <summary>
         ///     Creates a signature value given a signature base and the consumer secret and a known token secret.
@@ -276,12 +288,13 @@ namespace RestSharp.Authenticators.OAuth
         /// <param name="consumerSecret">The consumer secret</param>
         /// <param name="tokenSecret">The token secret</param>
         /// <returns></returns>
-        public static string GetSignature(OAuthSignatureMethod signatureMethod, string signatureBase,
+        public static string GetSignature(
+            OAuthSignatureMethod signatureMethod,
+            string signatureBase,
             string consumerSecret,
-            string tokenSecret)
-        {
-            return GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, consumerSecret, tokenSecret);
-        }
+            string tokenSecret
+        )
+            => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, consumerSecret, tokenSecret);
 
         /// <summary>
         ///     Creates a signature value given a signature base and the consumer secret and a known token secret.
@@ -292,16 +305,20 @@ namespace RestSharp.Authenticators.OAuth
         /// <param name="consumerSecret">The consumer secret</param>
         /// <param name="tokenSecret">The token secret</param>
         /// <returns></returns>
-        public static string GetSignature(OAuthSignatureMethod signatureMethod,
+        public static string GetSignature(
+            OAuthSignatureMethod signatureMethod,
             OAuthSignatureTreatment signatureTreatment,
-            string signatureBase, string consumerSecret, string tokenSecret)
+            string signatureBase,
+            string consumerSecret,
+            string tokenSecret
+        )
         {
             if (tokenSecret.IsNullOrBlank())
                 tokenSecret = string.Empty;
 
             var unencodedConsumerSecret = consumerSecret;
             consumerSecret = Uri.EscapeDataString(consumerSecret);
-            tokenSecret = Uri.EscapeDataString(tokenSecret);
+            tokenSecret    = Uri.EscapeDataString(tokenSecret);
 
             string signature;
 
@@ -310,34 +327,35 @@ namespace RestSharp.Authenticators.OAuth
                 case OAuthSignatureMethod.HmacSha1:
                 {
                     var crypto = new HMACSHA1();
-                    var key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                    var key    = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                     crypto.Key = encoding.GetBytes(key);
-                    signature = signatureBase.HashWith(crypto);
+                    signature  = signatureBase.HashWith(crypto);
                     break;
                 }
 
                 case OAuthSignatureMethod.HmacSha256:
                 {
                     var crypto = new HMACSHA256();
-                    var key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
+                    var key    = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                     crypto.Key = encoding.GetBytes(key);
-                    signature = signatureBase.HashWith(crypto);
+                    signature  = signatureBase.HashWith(crypto);
                     break;
                 }
 
                 case OAuthSignatureMethod.RsaSha1:
                 {
-                    using (var provider = new RSACryptoServiceProvider { PersistKeyInCsp = false })
+                    using (var provider = new RSACryptoServiceProvider {PersistKeyInCsp = false})
                     {
                         provider.FromXmlString2(unencodedConsumerSecret);
 
-                        SHA1Managed hasher = new SHA1Managed();
-                        byte[] hash = hasher.ComputeHash(encoding.GetBytes(signatureBase));
+                        var hasher = new SHA1Managed();
+                        var hash   = hasher.ComputeHash(encoding.GetBytes(signatureBase));
 
                         signature = Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
                     }
+
                     break;
                 }
 

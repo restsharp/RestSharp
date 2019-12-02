@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using RestSharp.Serializers;
 using RestSharp.Deserializers;
+using RestSharp.Serializers;
 
 namespace RestSharp.Tests.SampleClasses
 {
@@ -43,20 +43,11 @@ namespace RestSharp.Tests.SampleClasses
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy
-        {
-            get { return this.Ignore; }
-        }
+        public string IgnoreProxy => Ignore;
 
-        protected string ReadOnly
-        {
-            get { return null; }
-        }
+        protected string ReadOnly => null;
 
-        public string ReadOnlyProxy
-        {
-            get { return this.ReadOnly; }
-        }
+        public string ReadOnlyProxy => ReadOnly;
 
         public FoeList Foes { get; set; }
 
@@ -125,20 +116,11 @@ namespace RestSharp.Tests.SampleClasses
 
         protected string Ignore { get; set; }
 
-        public string IgnoreProxy
-        {
-            get { return this.Ignore; }
-        }
+        public string IgnoreProxy => Ignore;
 
-        protected string ReadOnly
-        {
-            get { return null; }
-        }
+        protected string ReadOnly => null;
 
-        public string ReadOnlyProxy
-        {
-            get { return this.ReadOnly; }
-        }
+        public string ReadOnlyProxy => ReadOnly;
 
         public Dictionary<string, Foe> Foes { get; set; }
 
@@ -147,23 +129,9 @@ namespace RestSharp.Tests.SampleClasses
         public Disposition Disposition { get; set; }
     }
 
-    public enum Order
-    {
-        First,
+    public enum Order { First, Second, Third }
 
-        Second,
-
-        Third
-    }
-
-    public enum Disposition
-    {
-        Friendly,
-
-        SoSo,
-
-        SteerVeryClear
-    }
+    public enum Disposition { Friendly, SoSo, SteerVeryClear }
 
     public class Friend
     {
@@ -309,15 +277,13 @@ namespace RestSharp.Tests.SampleClasses
 
     public class Note
     {
-        public const string TITLE = "What a note.";
+        public const string TITLE   = "What a note.";
         public const string MESSAGE = "Content";
 
-        [SerializeAs(Attribute = true)]
-        [DeserializeAs(Attribute = true)]
+        [SerializeAs(Attribute = true), DeserializeAs(Attribute = true)]
         public int Id { get; set; }
 
-        [SerializeAs(Content = true)]
-        [DeserializeAs(Content = true)]
+        [SerializeAs(Content = true), DeserializeAs(Content = true)]
         public string Message { get; set; }
 
         public string Title { get; set; }
@@ -325,12 +291,10 @@ namespace RestSharp.Tests.SampleClasses
 
     public class WrongNote
     {
-        [SerializeAs(Content = true)]
-        [DeserializeAs(Content = true)]
+        [SerializeAs(Content = true), DeserializeAs(Content = true)]
         public int Id { get; set; }
 
-        [SerializeAs(Content = true)]
-        [DeserializeAs(Content = true)]
+        [SerializeAs(Content = true), DeserializeAs(Content = true)]
         public string Text { get; set; }
     }
 

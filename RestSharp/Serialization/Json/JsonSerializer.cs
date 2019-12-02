@@ -12,48 +12,25 @@ namespace RestSharp.Serialization.Json
 {
     public class JsonSerializer : IRestSerializer, IWithRootElement
     {
+        public string DateFormat { get; set; }
+
+        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
+
         /// <summary>
-        /// Serialize the object as JSON
-        /// If the object is already a serialized string returns it's value
+        ///     Serialize the object as JSON
+        ///     If the object is already a serialized string returns it's value
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
-        public string Serialize(object obj) =>
-            IsSerializedString(obj, out var serializedString)
+        public string Serialize(object obj)
+            => IsSerializedString(obj, out var serializedString)
                 ? serializedString
                 : SimpleJson.SerializeObject(obj);
 
         /// <summary>
-        /// Determines if the object is already a serialized string.
-        /// </summary>
-        private static bool IsSerializedString(object obj, out string serializedString)
-        {
-            if (obj is string value)
-            {
-                var trimmed = value.Trim();
-
-                if (trimmed.StartsWith("{") && trimmed.EndsWith("}")
-                    || trimmed.StartsWith("[{") && trimmed.EndsWith("}]"))
-                {
-                    serializedString = value;
-                    return true;
-                }
-            }
-
-            serializedString = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Content type for serialized content
+        ///     Content type for serialized content
         /// </summary>
         public string ContentType { get; set; } = Serialization.ContentType.Json;
-
-        public string RootElement { get; set; }
-
-        public string DateFormat { get; set; }
-
-        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
         public string[] SupportedContentTypes { get; } = Serialization.ContentType.JsonAccept;
 
@@ -68,7 +45,30 @@ namespace RestSharp.Serialization.Json
             return (T) ConvertValue(typeof(T).GetTypeInfo(), json);
         }
 
-        private object FindRoot(string content)
+        public string RootElement { get; set; }
+
+        /// <summary>
+        ///     Determines if the object is already a serialized string.
+        /// </summary>
+        static bool IsSerializedString(object obj, out string serializedString)
+        {
+            if (obj is string value)
+            {
+                var trimmed = value.Trim();
+
+                if (trimmed.StartsWith("{")     && trimmed.EndsWith("}")
+                    || trimmed.StartsWith("[{") && trimmed.EndsWith("}]"))
+                {
+                    serializedString = value;
+                    return true;
+                }
+            }
+
+            serializedString = null;
+            return false;
+        }
+
+        object FindRoot(string content)
         {
             var json = SimpleJson.DeserializeObject(content);
 
@@ -79,9 +79,10 @@ namespace RestSharp.Serialization.Json
             return dictionary.TryGetValue(RootElement, out var result) ? result : json;
         }
 
-        private object Map(object target, IDictionary<string, object> data)
+        object Map(object target, IDictionary<string, object> data)
         {
             var objType = target.GetType().GetTypeInfo();
+
             var props = objType.GetProperties()
                 .Where(p => p.CanWrite)
                 .ToList();
@@ -89,7 +90,7 @@ namespace RestSharp.Serialization.Json
             foreach (var prop in props)
             {
                 string name;
-                var attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
+                var    attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
                 if (attributes.Any())
                 {
@@ -103,24 +104,21 @@ namespace RestSharp.Serialization.Json
 
                 if (!data.TryGetValue(name, out var value))
                 {
-                    var parts = name.Split('.');
+                    var parts       = name.Split('.');
                     var currentData = data;
 
-                    for (int i = 0; i < parts.Length; ++i)
+                    for (var i = 0; i < parts.Length; ++i)
                     {
-                        var actualName = parts[i].GetNameVariants(Culture)
+                        var actualName = parts[i]
+                            .GetNameVariants(Culture)
                             .FirstOrDefault(currentData.ContainsKey);
 
                         if (actualName == null) break;
 
                         if (i == parts.Length - 1)
-                        {
                             value = currentData[actualName];
-                        }
                         else
-                        {
                             currentData = (IDictionary<string, object>) currentData[actualName];
-                        }
                     }
                 }
 
@@ -134,10 +132,10 @@ namespace RestSharp.Serialization.Json
             return target;
         }
 
-        private IDictionary BuildDictionary(Type type, object parent)
+        IDictionary BuildDictionary(Type type, object parent)
         {
-            var dict = (IDictionary) Activator.CreateInstance(type);
-            var keyType = type.GetTypeInfo().GetGenericArguments()[0];
+            var dict      = (IDictionary) Activator.CreateInstance(type);
+            var keyType   = type.GetTypeInfo().GetGenericArguments()[0];
             var valueType = type.GetTypeInfo().GetGenericArguments()[1];
 
             foreach (var child in (IDictionary<string, object>) parent)
@@ -147,9 +145,9 @@ namespace RestSharp.Serialization.Json
                     : child.Key;
 
                 var item = valueType.GetTypeInfo().IsGenericType &&
-                           valueType.GetTypeInfo().GetGenericTypeDefinition() == typeof(List<>)
-                    ? BuildList(valueType, child.Value)
-                    : ConvertValue(valueType.GetTypeInfo(), child.Value);
+                    valueType.GetTypeInfo().GetGenericTypeDefinition() == typeof(List<>)
+                        ? BuildList(valueType, child.Value)
+                        : ConvertValue(valueType.GetTypeInfo(), child.Value);
 
                 dict.Add(key, item);
             }
@@ -157,9 +155,10 @@ namespace RestSharp.Serialization.Json
             return dict;
         }
 
-        private IList BuildList(Type type, object parent)
+        IList BuildList(Type type, object parent)
         {
             var list = (IList) Activator.CreateInstance(type);
+
             var listType = type
                 .GetTypeInfo()
                 .GetInterfaces()
@@ -167,12 +166,10 @@ namespace RestSharp.Serialization.Json
             var itemType = listType.GetTypeInfo().GetGenericArguments()[0];
 
             if (parent is IList list1)
-            {
                 foreach (var element in list1)
-                {
                     if (itemType.GetTypeInfo().IsPrimitive)
                     {
-                        object item = ConvertValue(itemType.GetTypeInfo(), element);
+                        var item = ConvertValue(itemType.GetTypeInfo(), element);
 
                         list.Add(item);
                     }
@@ -198,17 +195,13 @@ namespace RestSharp.Serialization.Json
 
                         list.Add(item);
                     }
-                }
-            }
             else
-            {
                 list.Add(ConvertValue(itemType.GetTypeInfo(), parent));
-            }
 
             return list;
         }
 
-        private object ConvertValue(TypeInfo typeInfo, object value)
+        object ConvertValue(TypeInfo typeInfo, object value)
         {
             var stringValue = Convert.ToString(value, Culture);
 
@@ -229,57 +222,34 @@ namespace RestSharp.Serialization.Json
             }
 
             var type = typeInfo.AsType();
-            if (typeInfo.IsPrimitive)
-            {
-                return value.ChangeType(type, Culture);
-            }
+            if (typeInfo.IsPrimitive) return value.ChangeType(type, Culture);
 
-            if (typeInfo.IsEnum)
-            {
-                return type.FindEnumValue(stringValue, Culture);
-            }
+            if (typeInfo.IsEnum) return type.FindEnumValue(stringValue, Culture);
 
-            if (type == typeof(Uri))
-            {
-                return new Uri(stringValue, UriKind.RelativeOrAbsolute);
-            }
+            if (type == typeof(Uri)) return new Uri(stringValue, UriKind.RelativeOrAbsolute);
 
-            if (type == typeof(string))
-            {
-                return stringValue;
-            }
+            if (type == typeof(string)) return stringValue;
 
             if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
             {
                 DateTime dt;
 
                 if (DateFormat.HasValue())
-                {
-                    dt = DateTime.ParseExact(stringValue, DateFormat, Culture,
-                        DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                }
+                    dt = DateTime.ParseExact(
+                        stringValue, DateFormat, Culture,
+                        DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+                    );
                 else
-                {
                     // try parsing instead
                     dt = stringValue.ParseJsonDate(Culture);
-                }
 
-                if (type == typeof(DateTime))
-                {
-                    return dt;
-                }
+                if (type == typeof(DateTime)) return dt;
 
-                if (type == typeof(DateTimeOffset))
-                {
-                    return (DateTimeOffset) dt;
-                }
+                if (type == typeof(DateTimeOffset)) return (DateTimeOffset) dt;
             }
             else if (type == typeof(decimal))
             {
-                if (value is double d)
-                {
-                    return (decimal) d;
-                }
+                if (value is double d) return (decimal) d;
 
                 return stringValue.Contains("e")
                     ? decimal.Parse(stringValue, NumberStyles.Float, Culture)
@@ -307,15 +277,9 @@ namespace RestSharp.Serialization.Json
                     return BuildList(listType, value);
                 }
 
-                if (genericTypeDef == typeof(List<>))
-                {
-                    return BuildList(type, value);
-                }
+                if (genericTypeDef == typeof(List<>)) return BuildList(type, value);
 
-                if (genericTypeDef == typeof(Dictionary<,>))
-                {
-                    return BuildDictionary(type, value);
-                }
+                if (genericTypeDef == typeof(Dictionary<,>)) return BuildDictionary(type, value);
 
                 // nested property classes
                 return CreateAndMap(type, value);
@@ -339,9 +303,9 @@ namespace RestSharp.Serialization.Json
             return null;
         }
 
-        private object CreateAndMap(Type type, object element)
+        object CreateAndMap(Type type, object element)
         {
-            object instance = Activator.CreateInstance(type);
+            var instance = Activator.CreateInstance(type);
 
             Map(instance, (IDictionary<string, object>) element);
 
@@ -349,7 +313,5 @@ namespace RestSharp.Serialization.Json
         }
     }
 
-    public class JsonDeserializer : JsonSerializer
-    {
-    }
+    public class JsonDeserializer : JsonSerializer { }
 }

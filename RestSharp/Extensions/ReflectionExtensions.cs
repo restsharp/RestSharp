@@ -24,34 +24,28 @@ using System.Reflection;
 namespace RestSharp.Extensions
 {
     /// <summary>
-    /// Reflection extensions
+    ///     Reflection extensions
     /// </summary>
     public static class ReflectionExtensions
     {
         /// <summary>
-        /// Retrieve an attribute from a member (property)
+        ///     Retrieve an attribute from a member (property)
         /// </summary>
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="prop">Member to retrieve attribute from</param>
         /// <returns></returns>
-        public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute
-        {
-            return Attribute.GetCustomAttribute(prop, typeof(T)) as T;
-        }
+        public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute => Attribute.GetCustomAttribute(prop, typeof(T)) as T;
 
         /// <summary>
-        /// Retrieve an attribute from a type
+        ///     Retrieve an attribute from a type
         /// </summary>
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="type">Type to retrieve attribute from</param>
         /// <returns></returns>
-        public static T GetAttribute<T>(this Type type) where T : Attribute
-        {
-            return Attribute.GetCustomAttribute(type, typeof(T)) as T;
-        }
+        public static T GetAttribute<T>(this Type type) where T : Attribute => Attribute.GetCustomAttribute(type, typeof(T)) as T;
 
         /// <summary>
-        /// Checks a type to see if it derives from a raw generic (e.g. List[[]])
+        ///     Checks a type to see if it derives from a raw generic (e.g. List[[]])
         /// </summary>
         /// <param name="toCheck"></param>
         /// <param name="generic"></param>
@@ -64,10 +58,8 @@ namespace RestSharp.Extensions
                     ? toCheck.GetGenericTypeDefinition()
                     : toCheck;
 
-                if (generic == cur)
-                {
-                    return true;
-                }
+                if (generic == cur) return true;
+
                 toCheck = toCheck.GetTypeInfo().BaseType;
             }
 
@@ -75,19 +67,13 @@ namespace RestSharp.Extensions
         }
 
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
-        public static object ChangeType(this object source, TypeInfo newType)
-        {
-            return Convert.ChangeType(source, newType.AsType());
-        }
+        public static object ChangeType(this object source, TypeInfo newType) => Convert.ChangeType(source, newType.AsType());
 
-        public static object ChangeType(this object source, Type newType, CultureInfo culture)
-        {
-            return Convert.ChangeType(source, newType);
-        }
+        public static object ChangeType(this object source, Type newType, CultureInfo culture) => Convert.ChangeType(source, newType);
 
         /// <summary>
-        /// Find a value from a System.Enum by trying several possible variants
-        /// of the string value of the enum.
+        ///     Find a value from a System.Enum by trying several possible variants
+        ///     of the string value of the enum.
         /// </summary>
         /// <param name="type">Type of enum</param>
         /// <param name="value">Value for which to search</param>
@@ -97,20 +83,20 @@ namespace RestSharp.Extensions
         {
             var caseInsensitiveComparer = StringComparer.Create(culture, true);
 
-            Enum ret = Enum.GetValues(type)
+            var ret = Enum.GetValues(type)
                 .Cast<Enum>()
-                .FirstOrDefault(v => v.ToString()
-                    .GetNameVariants(culture)
-                    .Contains(value, caseInsensitiveComparer));
+                .FirstOrDefault(
+                    v => v.ToString()
+                        .GetNameVariants(culture)
+                        .Contains(value, caseInsensitiveComparer)
+                );
 
             if (ret != null) return ret;
 
             var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
 
             if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
-            {
                 ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
-            }
 
             return ret;
         }

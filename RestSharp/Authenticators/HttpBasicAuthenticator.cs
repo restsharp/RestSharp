@@ -24,7 +24,7 @@ namespace RestSharp.Authenticators
 {
     public class HttpBasicAuthenticator : IAuthenticator
     {
-        private readonly string authHeader;
+        readonly string authHeader;
 
         public HttpBasicAuthenticator(string username, string password)
         {

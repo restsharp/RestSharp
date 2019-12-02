@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 
@@ -9,87 +10,71 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class AsyncRequestBodyTests
     {
-        private SimpleServer _server;
-        private RestClient _client;
-        private const string BaseUrl = "http://localhost:8888/";
+        [OneTimeSetUp]
+        public void Setup() => _server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
 
-        [TearDown]
-        public void ShutdownServer() => _server.Dispose();
+        [OneTimeTearDown]
+        public void Teardown() => _server.Dispose();
 
         [SetUp]
-        public void CreateClient()
+        public void CreateClient() => _client = new RestClient(_server.Url);
+
+        SimpleServer _server;
+        RestClient   _client;
+
+        static void AssertHasNoRequestBody()
         {
-            _server = SimpleServer.Create(BaseUrl, Handlers.Generic<RequestBodyCapturer>());
-            _client = new RestClient(BaseUrl);
+            Assert.Null(RequestBodyCapturer.CapturedContentType);
+            Assert.AreEqual(false, RequestBodyCapturer.CapturedHasEntityBody);
+            Assert.AreEqual(string.Empty, RequestBodyCapturer.CapturedEntityBody);
+        }
+
+        static void AssertHasRequestBody(string contentType, string bodyData)
+        {
+            Assert.AreEqual(contentType, RequestBodyCapturer.CapturedContentType);
+            Assert.AreEqual(true, RequestBodyCapturer.CapturedHasEntityBody);
+            Assert.AreEqual(bodyData, RequestBodyCapturer.CapturedEntityBody);
+        }
+
+        class RequestBodyCapturer
+        {
+            public const string RESOURCE = "Capture";
+
+            public static string CapturedContentType { get; set; }
+
+            public static bool CapturedHasEntityBody { get; set; }
+
+            public static string CapturedEntityBody { get; set; }
+
+            public static void Capture(HttpListenerContext context)
+            {
+                var request = context.Request;
+
+                CapturedContentType   = request.ContentType;
+                CapturedHasEntityBody = request.HasEntityBody;
+                CapturedEntityBody    = StreamToString(request.InputStream);
+            }
+
+            static string StreamToString(Stream stream)
+            {
+                var streamReader = new StreamReader(stream);
+                return streamReader.ReadToEnd();
+            }
         }
 
         [Test]
-        public void Can_Not_Be_Added_To_GET_Request()
+        public void Can_Be_Added_To_COPY_Request()
         {
-            const Method httpMethod = Method.GET;
+            const Method httpMethod = Method.COPY;
 
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
             const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
             request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
-
-            _client.ExecuteAsync(request, response => resetEvent.Set());
-            resetEvent.WaitOne();
-
-            AssertHasNoRequestBody();
-        }
-
-        [Test]
-        public void Can_Have_No_Body_Added_To_POST_Request()
-        {
-            const Method httpMethod = Method.POST;
-
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
-
-            _client.ExecuteAsync(request, response => resetEvent.Set());
-            resetEvent.WaitOne();
-
-            AssertHasNoRequestBody();
-        }
-
-        [Test]
-        public void Can_Be_Added_To_POST_Request()
-        {
-            const Method httpMethod = Method.POST;
-
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
-
-            const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
-
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
-
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
-
-            _client.ExecuteAsync(request, response => resetEvent.Set());
-            resetEvent.WaitOne();
-
-            AssertHasRequestBody(contentType, bodyData);
-        }
-
-        [Test]
-        public void Can_Be_Added_To_PUT_Request()
-        {
-            const Method httpMethod = Method.PUT;
-
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
-
-            const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
-
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
-
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
+            var resetEvent = new ManualResetEvent(false);
 
             _client.ExecuteAsync(request, response => resetEvent.Set());
             resetEvent.WaitOne();
@@ -102,14 +87,14 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.DELETE;
 
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
             const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
             request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
+            var resetEvent = new ManualResetEvent(false);
 
             _client.ExecuteAsync(request, response => resetEvent.Set());
             resetEvent.WaitOne();
@@ -118,38 +103,18 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Can_Not_Be_Added_To_HEAD_Request()
-        {
-            const Method httpMethod = Method.HEAD;
-
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
-
-            const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
-
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
-
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
-
-            _client.ExecuteAsync(request, response => resetEvent.Set());
-            resetEvent.WaitOne();
-
-            AssertHasNoRequestBody();
-        }
-
-        [Test]
         public void Can_Be_Added_To_OPTIONS_Request()
         {
             const Method httpMethod = Method.OPTIONS;
 
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
             const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
             request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
+            var resetEvent = new ManualResetEvent(false);
 
             _client.ExecuteAsync(request, response => resetEvent.Set());
             resetEvent.WaitOne();
@@ -162,14 +127,14 @@ namespace RestSharp.IntegrationTests
         {
             const Method httpMethod = Method.PATCH;
 
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
             const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
             request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
+            var resetEvent = new ManualResetEvent(false);
 
             _client.ExecuteAsync(request, response => resetEvent.Set());
             resetEvent.WaitOne();
@@ -178,18 +143,18 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Can_Be_Added_To_COPY_Request()
+        public void Can_Be_Added_To_POST_Request()
         {
-            const Method httpMethod = Method.COPY;
+            const Method httpMethod = Method.POST;
 
-            RestRequest request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
             const string contentType = "text/plain";
-            const string bodyData = "abc123 foo bar baz BING!";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
             request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
+            var resetEvent = new ManualResetEvent(false);
 
             _client.ExecuteAsync(request, response => resetEvent.Set());
             resetEvent.WaitOne();
@@ -197,44 +162,78 @@ namespace RestSharp.IntegrationTests
             AssertHasRequestBody(contentType, bodyData);
         }
 
-        private static void AssertHasNoRequestBody()
+        [Test]
+        public void Can_Be_Added_To_PUT_Request()
         {
-            Assert.Null(RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual(false, RequestBodyCapturer.CapturedHasEntityBody);
-            Assert.AreEqual(string.Empty, RequestBodyCapturer.CapturedEntityBody);
+            const Method httpMethod = Method.PUT;
+
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+
+            const string contentType = "text/plain";
+            const string bodyData    = "abc123 foo bar baz BING!";
+
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+
+            var resetEvent = new ManualResetEvent(false);
+
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
+
+            AssertHasRequestBody(contentType, bodyData);
         }
 
-        private static void AssertHasRequestBody(string contentType, string bodyData)
+        [Test]
+        public void Can_Have_No_Body_Added_To_POST_Request()
         {
-            Assert.AreEqual(contentType, RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual(true, RequestBodyCapturer.CapturedHasEntityBody);
-            Assert.AreEqual(bodyData, RequestBodyCapturer.CapturedEntityBody);
+            const Method httpMethod = Method.POST;
+
+            var request    = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var resetEvent = new ManualResetEvent(false);
+
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
+
+            AssertHasNoRequestBody();
         }
 
-        private class RequestBodyCapturer
+        [Test]
+        public void Can_Not_Be_Added_To_GET_Request()
         {
-            public const string Resource = "Capture";
+            const Method httpMethod = Method.GET;
 
-            public static string CapturedContentType { get; set; }
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
 
-            public static bool CapturedHasEntityBody { get; set; }
+            const string contentType = "text/plain";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
-            public static string CapturedEntityBody { get; set; }
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            public static void Capture(HttpListenerContext context)
-            {
-                HttpListenerRequest request = context.Request;
+            var resetEvent = new ManualResetEvent(false);
 
-                CapturedContentType = request.ContentType;
-                CapturedHasEntityBody = request.HasEntityBody;
-                CapturedEntityBody = StreamToString(request.InputStream);
-            }
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
 
-            private static string StreamToString(Stream stream)
-            {
-                StreamReader streamReader = new StreamReader(stream);
-                return streamReader.ReadToEnd();
-            }
+            AssertHasNoRequestBody();
+        }
+
+        [Test]
+        public void Can_Not_Be_Added_To_HEAD_Request()
+        {
+            const Method httpMethod = Method.HEAD;
+
+            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+
+            const string contentType = "text/plain";
+            const string bodyData    = "abc123 foo bar baz BING!";
+
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+
+            var resetEvent = new ManualResetEvent(false);
+
+            _client.ExecuteAsync(request, response => resetEvent.Set());
+            resetEvent.WaitOne();
+
+            AssertHasNoRequestBody();
         }
     }
 }

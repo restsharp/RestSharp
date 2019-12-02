@@ -2,9 +2,6 @@
 {
     public class NullHttp : Http
     {
-        public new HttpResponse Get()
-        {
-            return new HttpResponse();
-        }
+        public new HttpResponse Get() => new HttpResponse();
     }
 }

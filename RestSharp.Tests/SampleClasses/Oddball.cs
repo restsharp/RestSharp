@@ -1,16 +1,19 @@
-﻿namespace RestSharp.Tests.SampleClasses
+﻿using System.Collections.Generic;
+using RestSharp.Deserializers;
+
+namespace RestSharp.Tests.SampleClasses
 {
-    [Deserializers.DeserializeAs(Name = "oddballRootName")]
+    [DeserializeAs(Name = "oddballRootName")]
     public class Oddball
     {
         public string Sid { get; set; }
 
         public string FriendlyName { get; set; }
 
-        [Deserializers.DeserializeAs(Name = "oddballPropertyName")]
+        [DeserializeAs(Name = "oddballPropertyName")]
         public string GoodPropertyName { get; set; }
 
-        [Deserializers.DeserializeAs(Name = "oddballListName")]
-        public System.Collections.Generic.List<string> ListWithGoodName { get; set; } 
+        [DeserializeAs(Name = "oddballListName")]
+        public List<string> ListWithGoodName { get; set; }
     }
 }

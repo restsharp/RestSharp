@@ -8,21 +8,19 @@ namespace RestSharp.IntegrationTests
 {
     public class CustomRequestSerializerTests
     {
-        private const string BASE_URL = "http://localhost:8888/";
-        
         [Test]
         public void Should_use_custom_xml_serializer()
         {
-            using (SimpleServer.Create(BASE_URL))
+            using (var server = SimpleServer.Create())
             {
-                var client = new RestClient(BASE_URL);
+                var client     = new RestClient(server.Url);
                 var serializer = new CustomXmlSerializer();
-                var body = new {Text = "text"};
-                
+                var body       = new {Text = "text"};
+
                 var request = new RestRequest("/") {XmlSerializer = serializer};
                 request.AddXmlBody(body);
                 client.Execute(request);
-                
+
                 serializer.BodyString.ShouldBe(body.ToString());
             }
         }
@@ -30,16 +28,16 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_use_custom_json_serializer_for_addbody()
         {
-            using (SimpleServer.Create(BASE_URL))
+            using (var server = SimpleServer.Create())
             {
-                var client = new RestClient(BASE_URL);
+                var client     = new RestClient(server.Url);
                 var serializer = new CustomJsonSerializer();
-                var body = new {Text = "text"};
-                
+                var body       = new {Text = "text"};
+
                 var request = new RestRequest("/") {JsonSerializer = serializer, RequestFormat = DataFormat.Json};
                 request.AddBody(body);
                 client.Execute(request);
-                
+
                 serializer.BodyString.ShouldBe(body.ToString());
             }
         }
@@ -47,11 +45,11 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_use_custom_json_serializer()
         {
-            using (SimpleServer.Create(BASE_URL))
+            using (var server = SimpleServer.Create())
             {
-                var client = new RestClient(BASE_URL);
+                var client     = new RestClient(server.Url);
                 var serializer = new CustomJsonSerializer();
-                var body = new {Text = "text"};
+                var body       = new {Text = "text"};
 
                 var request = new RestRequest("/") {JsonSerializer = serializer};
                 request.AddJsonBody(body);
@@ -61,7 +59,7 @@ namespace RestSharp.IntegrationTests
             }
         }
 
-        private class CustomXmlSerializer : IXmlSerializer
+        class CustomXmlSerializer : IXmlSerializer
         {
             public string BodyString { get; private set; }
 
@@ -73,7 +71,7 @@ namespace RestSharp.IntegrationTests
             public string DateFormat { get; set; }
         }
 
-        private class CustomJsonSerializer : ISerializer
+        class CustomJsonSerializer : ISerializer
         {
             public string BodyString { get; private set; }
 

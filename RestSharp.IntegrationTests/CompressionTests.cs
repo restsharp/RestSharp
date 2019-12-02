@@ -9,72 +9,61 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class CompressionTests
     {
-        [Test]
-        public void Can_Handle_Gzip_Compressed_Content()
-        {
-            Uri baseUrl = new Uri("http://localhost:8888/");
-
-            using (SimpleServer.Create(baseUrl.AbsoluteUri, GzipEchoValue("This is some gzipped content")))
+        static Action<HttpListenerContext> GzipEchoValue(string value)
+            => context =>
             {
-                RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("");
-                IRestResponse response = client.Execute(request);
+                context.Response.Headers.Add("Content-encoding", "gzip");
 
-                Assert.AreEqual("This is some gzipped content", response.Content);
-            }
-        }
+                using (var gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true)) gzip.WriteStringUtf8(value);
+            };
+
+        static Action<HttpListenerContext> DeflateEchoValue(string value)
+            => context =>
+            {
+                context.Response.Headers.Add("Content-encoding", "deflate");
+
+                using (var gzip =
+                    new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true))
+                    gzip.WriteStringUtf8(value);
+            };
 
         [Test]
         public void Can_Handle_Deflate_Compressed_Content()
         {
-            Uri baseUrl = new Uri("http://localhost:8888/");
-
-            using (SimpleServer.Create(baseUrl.AbsoluteUri, DeflateEchoValue("This is some deflated content")))
+            using (var server = SimpleServer.Create(DeflateEchoValue("This is some deflated content")))
             {
-                RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("");
-                IRestResponse response = client.Execute(request);
+                var client   = new RestClient(server.Url);
+                var request  = new RestRequest("");
+                var response = client.Execute(request);
 
                 Assert.AreEqual("This is some deflated content", response.Content);
             }
         }
 
         [Test]
+        public void Can_Handle_Gzip_Compressed_Content()
+        {
+            using (var server = SimpleServer.Create(GzipEchoValue("This is some gzipped content")))
+            {
+                var client   = new RestClient(server.Url);
+                var request  = new RestRequest("");
+                var response = client.Execute(request);
+
+                Assert.AreEqual("This is some gzipped content", response.Content);
+            }
+        }
+
+        [Test]
         public void Can_Handle_Uncompressed_Content()
         {
-            Uri baseUrl = new Uri("http://localhost:8888/");
-
-            using (SimpleServer.Create(baseUrl.AbsoluteUri, Handlers.EchoValue("This is some sample content")))
+            using (var server = SimpleServer.Create(Handlers.EchoValue("This is some sample content")))
             {
-                RestClient client = new RestClient(baseUrl);
-                RestRequest request = new RestRequest("");
-                IRestResponse response = client.Execute(request);
+                var client   = new RestClient(server.Url);
+                var request  = new RestRequest("");
+                var response = client.Execute(request);
 
                 Assert.AreEqual("This is some sample content", response.Content);
             }
         }
-
-        private static Action<HttpListenerContext> GzipEchoValue(string value) =>
-            context =>
-            {
-                context.Response.Headers.Add("Content-encoding", "gzip");
-
-                using (GZipStream gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true))
-                {
-                    gzip.WriteStringUtf8(value);
-                }
-            };
-
-        private static Action<HttpListenerContext> DeflateEchoValue(string value) =>
-            context =>
-            {
-                context.Response.Headers.Add("Content-encoding", "deflate");
-
-                using (DeflateStream gzip =
-                    new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true))
-                {
-                    gzip.WriteStringUtf8(value);
-                }
-            };
     }
 }

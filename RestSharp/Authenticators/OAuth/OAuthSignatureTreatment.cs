@@ -3,9 +3,5 @@
 namespace RestSharp.Authenticators.OAuth
 {
     [DataContract]
-    public enum OAuthSignatureTreatment
-    {
-        Escaped,
-        Unescaped
-    }
+    public enum OAuthSignatureTreatment { Escaped, Unescaped }
 }

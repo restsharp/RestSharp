@@ -6,18 +6,10 @@ namespace RestSharp
     {
         public HttpWebRequest WebRequest;
 
-        public RestRequestAsyncHandle()
-        {
-        }
+        public RestRequestAsyncHandle() { }
 
-        public RestRequestAsyncHandle(HttpWebRequest webRequest)
-        {
-            WebRequest = webRequest;
-        }
+        public RestRequestAsyncHandle(HttpWebRequest webRequest) => WebRequest = webRequest;
 
-        public void Abort()
-        {
-            WebRequest?.Abort();
-        }
+        public void Abort() => WebRequest?.Abort();
     }
 }

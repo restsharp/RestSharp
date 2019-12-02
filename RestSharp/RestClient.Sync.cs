@@ -22,6 +22,7 @@ namespace RestSharp
         public byte[] DownloadData(IRestRequest request, bool throwOnError)
         {
             var response = Execute(request);
+
             return response.ResponseStatus == ResponseStatus.Error && throwOnError
                 ? throw response.ErrorException
                 : response.RawBytes;
@@ -36,12 +37,12 @@ namespace RestSharp
         public virtual IRestResponse Execute(IRestRequest request, Method httpMethod)
         {
             if (request == null)
-                throw new ArgumentNullException(nameof(request));            
+                throw new ArgumentNullException(nameof(request));
 
             request.Method = httpMethod;
             return Execute(request);
         }
-        
+
         /// <summary>
         ///     Executes the request and returns a response, authenticating if needed
         /// </summary>
@@ -79,24 +80,26 @@ namespace RestSharp
             request.Method = httpMethod;
             return Execute<T>(request);
         }
-        
+
         /// <summary>
         ///     Executes the specified request and deserializes the response content using the appropriate content handler
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to execute</param>
         /// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
-        public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new() 
-            => Deserialize<T>(request, Execute(request));
+        public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new() => Deserialize<T>(request, Execute(request));
 
-        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new() 
+        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
             => Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
 
-        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new() 
+        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
             => Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
 
-        IRestResponse Execute(IRestRequest request, string httpMethod,
-            Func<IHttp, string, HttpResponse> getResponse)
+        IRestResponse Execute(
+            IRestRequest request,
+            string httpMethod,
+            Func<IHttp, string, HttpResponse> getResponse
+        )
         {
             AuthenticateIfNeeded(this, request);
 
@@ -111,9 +114,10 @@ namespace RestSharp
             catch (Exception ex)
             {
                 response.ResponseStatus = ResponseStatus.Error;
-                response.ErrorMessage = ex.Message;
+                response.ErrorMessage   = ex.Message;
                 response.ErrorException = ex;
             }
+
             response.Request = request;
             response.Request.IncreaseNumAttempts();
 

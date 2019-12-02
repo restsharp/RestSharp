@@ -20,18 +20,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
-
 using System.Net.Cache;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace RestSharp
 {
     public interface IHttp
     {
         Action<Stream> ResponseWriter { get; set; }
-        
+
         Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 
         CookieContainer CookieContainer { get; set; }
@@ -39,12 +38,12 @@ namespace RestSharp
         ICredentials Credentials { get; set; }
 
         /// <summary>
-        /// Enable or disable automatic gzip/deflate decompression
+        ///     Enable or disable automatic gzip/deflate decompression
         /// </summary>
         bool AutomaticDecompression { get; set; }
 
         /// <summary>
-        /// Always send a multipart/form-data request - even when no Files are present.
+        ///     Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         bool AlwaysMultipartFormData { get; set; }
 
@@ -83,11 +82,11 @@ namespace RestSharp
         bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
         RequestCachePolicy CachePolicy { get; set; }
-        
+
         string ConnectionGroupName { get; set; }
 
         /// <summary>
-        /// An alternative to RequestBody, for when the caller already has the byte array.
+        ///     An alternative to RequestBody, for when the caller already has the byte array.
         /// </summary>
         byte[] RequestBodyBytes { get; set; }
 
@@ -96,21 +95,35 @@ namespace RestSharp
         string Host { get; set; }
 
         IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
-            
+
+        IWebProxy Proxy { get; set; }
+
+        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+
+        Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+
+        [Obsolete]
         HttpWebRequest DeleteAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest GetAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest HeadAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest OptionsAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest PostAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest PutAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest PatchAsync(Action<HttpResponse> action);
 
+        [Obsolete]
         HttpWebRequest MergeAsync(Action<HttpResponse> action);
 
         HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
@@ -136,11 +149,5 @@ namespace RestSharp
         HttpResponse AsPost(string httpMethod);
 
         HttpResponse AsGet(string httpMethod);
-
-        IWebProxy Proxy { get; set; }
-        
-        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-        
-        Action<HttpWebRequest> WebRequestConfigurator { get; set; }
     }
 }
