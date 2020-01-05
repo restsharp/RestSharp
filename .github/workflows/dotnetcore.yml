@@ -17,7 +17,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
-    - name: Run tests netcoreapp3.0
+    - name: Run tests netcoreapp3.1
       run: dotnet test -c Release -f netcoreapp3.1
       
     - name: Run tests net452

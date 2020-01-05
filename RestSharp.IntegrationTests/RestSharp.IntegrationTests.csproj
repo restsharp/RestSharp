@@ -13,7 +13,7 @@
         <WarningLevel>0</WarningLevel>
     </PropertyGroup>
     
-    <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.0'">
+    <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1'">
         <DefineConstants>NETCORE</DefineConstants>
     </PropertyGroup>
     
