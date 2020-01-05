@@ -89,18 +89,17 @@ namespace RestSharp.IntegrationTests
         {
             const string exceptionMessage = "Thrown from OnBeforeDeserialization";
 
-            using (var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>()))
-            {
-                var client  = new RestClient(server.Url);
-                var request = new RestRequest("success");
+            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
 
-                request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
+            var client  = new RestClient(server.Url);
+            var request = new RestRequest("success");
 
-                var response = await client.ExecuteTaskAsync<Response>(request);
+            request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
 
-                Assert.AreEqual(exceptionMessage, response.ErrorMessage);
-                Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
-            }
+            var response = await client.ExecuteTaskAsync<Response>(request);
+
+            Assert.AreEqual(exceptionMessage, response.ErrorMessage);
+            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
         }
 
         [Test]
@@ -198,18 +197,17 @@ namespace RestSharp.IntegrationTests
         [Test]
         public async Task Can_Timeout_GET_TaskAsync()
         {
-            using (var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>()))
-            {
-                var client  = new RestClient(server.Url);
-                var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
+            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
 
-                // Half the value of ResponseHandler.Timeout
-                request.Timeout = 500;
+            var client  = new RestClient(server.Url);
+            var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
 
-                var response = await client.ExecuteTaskAsync(request);
+            // Half the value of ResponseHandler.Timeout
+            request.Timeout = 500;
 
-                Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
-            }
+            var response = await client.ExecuteTaskAsync(request);
+
+            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
         }
 
         [Test]

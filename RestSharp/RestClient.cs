@@ -421,7 +421,7 @@ namespace RestSharp
 
             if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled;
 
-            var usingBaseUri                                                                         = baseUrl;
+            var usingBaseUri                                                                  = baseUrl;
             if (!baseUrl.AbsoluteUri.EndsWith("/") && !IsNullOrEmpty(assembled)) usingBaseUri = new Uri(baseUrl.AbsoluteUri + "/");
 
             return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
@@ -652,12 +652,12 @@ namespace RestSharp
 
         IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
         {
-            request.OnBeforeDeserialization(raw);
-
             IRestResponse<T> response = new RestResponse<T>();
 
             try
             {
+                request.OnBeforeDeserialization(raw);
+
                 response = raw.ToAsyncResponse<T>();
 
                 // Only attempt to deserialize if the request has not errored due

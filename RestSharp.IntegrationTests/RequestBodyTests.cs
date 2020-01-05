@@ -10,6 +10,7 @@ namespace RestSharp.IntegrationTests
     public class RequestBodyTests
     {
         SimpleServer _server;
+        const string NewLine = "\r\n";
 
         static void AssertHasNoRequestBody()
         {
@@ -238,17 +239,17 @@ namespace RestSharp.IntegrationTests
             client.Execute(request);
 
             var expectedBody = expectedFormBoundary +
-                Environment.NewLine
+                NewLine
                 + "Content-Type: " +
                 contentType
-                + Environment.NewLine
+                + NewLine
                 + @"Content-Disposition: form-data; name=""" + multipartName + @""""
-                + Environment.NewLine
-                + Environment.NewLine
+                + NewLine
+                + NewLine
                 + bodyData
-                + Environment.NewLine
+                + NewLine
                 + expectedFormBoundary + "--"
-                + Environment.NewLine;
+                + NewLine;
 
             Assert.AreEqual(
                 expectedBody, RequestBodyCapturer.CapturedEntityBody, "Empty multipart generated: " + RequestBodyCapturer.CapturedEntityBody
@@ -268,7 +269,7 @@ namespace RestSharp.IntegrationTests
 
             client.Execute(request);
 
-            Assert.AreEqual("http://localhost:8888/Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
+            Assert.AreEqual($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
             Assert.AreEqual("application/json", RequestBodyCapturer.CapturedContentType);
             Assert.AreEqual("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
         }

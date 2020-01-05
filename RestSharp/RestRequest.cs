@@ -37,9 +37,6 @@ namespace RestSharp
     {
         static readonly Regex PortSplitRegex = new Regex(@":\d+");
 
-        /// <summary>
-        ///     Local list of Allowed Decompression Methods
-        /// </summary>
         readonly IList<DecompressionMethods> _allowedDecompressionMethods;
 
         Action<Stream, IHttpResponse> _advancedResponseWriter;
@@ -89,16 +86,18 @@ namespace RestSharp
                     AddQueryParameter(param.Name, param.Value, false);
             }
 
-            IEnumerable<NameValuePair> ParseQuery(string query)
+            static IEnumerable<NameValuePair> ParseQuery(string query)
                 => query.Split('&')
                     .Select(
                         x =>
                         {
-                            var pair = x.Split('=');
-                            return pair.Length == 2 ? new NameValuePair(pair[0], pair[1]) : NameValuePair.Empty;
+                            var position = x.IndexOf('=');
+
+                            return position > 0
+                                ? new NameValuePair(x.Substring(0, position), x.Substring(position + 1))
+                                : new NameValuePair(x, string.Empty);
                         }
-                    )
-                    .Where(x => !x.IsEmpty);
+                    );
         }
 
         public RestRequest(Uri resource, Method method, DataFormat dataFormat)
@@ -274,7 +273,9 @@ namespace RestSharp
                     ContentType   = contentType,
                     Writer = s =>
                     {
-                        using (var file = new StreamReader(new MemoryStream(bytes))) file.BaseStream.CopyTo(s);
+                        using var file = new StreamReader(new MemoryStream(bytes));
+
+                        file.BaseStream.CopyTo(s);
                     }
                 }
             );
@@ -289,20 +290,12 @@ namespace RestSharp
         /// <returns>This request</returns>
         [Obsolete("Use AddXmlBody")]
         public IRestRequest AddBody(object obj, string xmlNamespace)
-        {
-            switch (RequestFormat)
+            => RequestFormat switch
             {
-                case DataFormat.Json:
-                    AddJsonBody(obj);
-                    break;
-
-                case DataFormat.Xml:
-                    AddXmlBody(obj, xmlNamespace);
-                    break;
-            }
-
-            return this;
-        }
+                DataFormat.Json => AddJsonBody(obj),
+                DataFormat.Xml  => AddXmlBody(obj, xmlNamespace),
+                _               => this
+            };
 
         /// <summary>
         ///     Serializes obj to data format specified by RequestFormat and adds it to the request body.
@@ -312,20 +305,12 @@ namespace RestSharp
         /// <returns>This request</returns>
         [Obsolete("Use AddXmlBody or AddJsonBody")]
         public IRestRequest AddBody(object obj)
-        {
-            switch (RequestFormat)
+            => RequestFormat switch
             {
-                case DataFormat.Json:
-                    AddJsonBody(obj);
-                    break;
-
-                case DataFormat.Xml:
-                    AddXmlBody(obj);
-                    break;
-            }
-
-            return this;
-        }
+                DataFormat.Json => AddJsonBody(obj),
+                DataFormat.Xml  => AddXmlBody(obj),
+                _               => this
+            };
 
         /// <summary>
         ///     Serializes obj to JSON format and adds it to the request body.
@@ -336,9 +321,7 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            AddParameter(new JsonParameter("", obj));
-
-            return this;
+            return AddParameter(new JsonParameter("", obj));
         }
 
         /// <summary>
@@ -385,36 +368,27 @@ namespace RestSharp
 
             foreach (var prop in props)
             {
-                var isAllowed = includedProperties.Length == 0 ||
-                    includedProperties.Length > 0 && includedProperties.Contains(prop.Name);
-
-                if (!isAllowed)
+                if (!IsAllowedProperty(prop.Name))
                     continue;
 
-                var propType = prop.PropertyType;
-                var val      = prop.GetValue(obj, null);
+                var val = prop.GetValue(obj, null);
 
                 if (val == null)
                     continue;
 
+                var propType = prop.PropertyType;
+
                 if (propType.IsArray)
                 {
                     var elementType = propType.GetElementType();
+                    var array       = (Array) val;
 
-                    if (((Array) val).Length > 0     &&
-                        elementType          != null &&
-                        (elementType.IsPrimitive || elementType.IsValueType || elementType == typeof(string)))
+                    if (array.Length > 0 && elementType != null)
                     {
                         // convert the array to an array of strings
-                        var values = (from object item in (Array) val
-                            select item.ToString()).ToArray();
+                        var values = array.Cast<object>().Select(item => item.ToString());
 
                         val = string.Join(",", values);
-                    }
-                    else
-                    {
-                        // try to cast it
-                        val = string.Join(",", (string[]) val);
                     }
                 }
 
@@ -422,6 +396,11 @@ namespace RestSharp
             }
 
             return this;
+
+            bool IsAllowedProperty(string propertyName)
+                => includedProperties.Length == 0
+                    || includedProperties.Length > 0
+                    && includedProperties.Contains(propertyName);
         }
 
         /// <summary>
@@ -482,9 +461,10 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddOrUpdateParameter(Parameter p)
         {
-            if (Parameters.Any(param => param.Name == p.Name))
+            var parameter = Parameters.FirstOrDefault(param => param.Name == p.Name);
+
+            if (parameter != null)
             {
-                var parameter = Parameters.First(param => param.Name == p.Name);
                 parameter.Value = p.Value;
                 return this;
             }
@@ -545,7 +525,7 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddHeader(string name, string value)
         {
-            bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
+            static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
 
             if (name == "Host" && InvalidHost(value))
                 throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
 using RestSharp.IntegrationTests.SampleDeserializers;
@@ -11,27 +9,30 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class RootElementTests
     {
-        [SetUp]
-        public void SetupServer()
+        [Test]
+        public void Copy_RootElement_From_Request_To_IWithRootElement_Deserializer()
         {
-            _server = SimpleServer.Create(UrlToStatusCodeHandler);
-            _client = new RestClient(_server.Url);
-        }
+            using var server = HttpServerFixture.StartServer("success", Handle);
 
-        [TearDown]
-        public void ShutdownServer() => _server.Dispose();
+            var client = new RestClient(server.Url);
 
-        SimpleServer _server;
-        RestClient   _client;
-
-        public class ResponseHandler
-        {
-            void Success(HttpListenerContext context)
+            var request = new RestRequest("success")
             {
-                context.Response.StatusCode = 200;
-                context.Response.Headers.Add("Content-Type", ContentType.Xml);
+                RootElement = "Success"
+            };
+            
+            var deserializer = new CustomDeserializer();
+            client.AddHandler(ContentType.Xml, () => deserializer);
+            client.Execute<Response>(request);
 
-                context.Response.OutputStream.WriteStringUtf8(
+            Assert.AreEqual(request.RootElement, deserializer.RootElement);
+
+            static void Handle(HttpListenerRequest req, HttpListenerResponse response)
+            {
+                response.StatusCode = 200;
+                response.Headers.Add("Content-Type", ContentType.Xml);
+
+                response.OutputStream.WriteStringUtf8(
                     @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Success>
@@ -40,29 +41,6 @@ namespace RestSharp.IntegrationTests
 </Response>"
                 );
             }
-        }
-
-        public class Response
-        {
-            public string Message { get; set; }
-        }
-
-        static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
-
-        [Test]
-        public void Copy_RootElement_From_Request_To_IWithRootElement_Deserializer()
-        {
-            _server.SetHandler(Handlers.Generic<ResponseHandler>());
-
-            var request = new RestRequest("success")
-            {
-                RootElement = "Success"
-            };
-            var deserializer = new CustomDeserializer();
-            _client.AddHandler(ContentType.Xml, () => deserializer);
-            _client.Execute<Response>(request);
-
-            Assert.AreEqual(deserializer.RootElement, request.RootElement);
         }
     }
 }

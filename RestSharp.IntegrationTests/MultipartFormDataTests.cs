@@ -149,7 +149,7 @@ namespace RestSharp.IntegrationTests
         {
             var request = new RestRequest("/", Method.POST);
 
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             request.AddFile("fileName", path);
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
@@ -165,7 +165,7 @@ namespace RestSharp.IntegrationTests
         {
             var request = new RestRequest("/", Method.POST);
 
-            var path              = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            var path              = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             var customContentType = "multipart/vnd.resteasy+form-data";
             request.AddHeader("Content-Type", customContentType);
 
@@ -187,7 +187,7 @@ namespace RestSharp.IntegrationTests
                 AlwaysMultipartFormData = true
             };
 
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             request.AddFile("fileName", path);
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
@@ -205,7 +205,7 @@ namespace RestSharp.IntegrationTests
                 AlwaysMultipartFormData = true
             };
 
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\TestFile.txt");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             request.AddFile("fileName", path);
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);

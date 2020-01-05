@@ -47,7 +47,7 @@ namespace RestSharp.IntegrationTests
         {
             var request  = new RestRequest("Assets/Koala.jpg");
             var response = _client.DownloadData(request);
-            var expected = File.ReadAllBytes(_path + "\\Assets\\Koala.jpg");
+            var expected = File.ReadAllBytes(Path.Combine(_path, "Assets", "Koala.jpg"));
 
             Assert.AreEqual(expected, response);
         }
@@ -69,7 +69,7 @@ namespace RestSharp.IntegrationTests
             }
 
             var fromTemp = File.ReadAllBytes(tempFile);
-            var expected = File.ReadAllBytes(_path + "\\Assets\\Koala.jpg");
+            var expected = File.ReadAllBytes(Path.Combine(_path, "Assets", "Koala.jpg"));
 
             Assert.AreEqual(expected, fromTemp);
         }

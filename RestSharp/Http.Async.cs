@@ -90,7 +90,7 @@ namespace RestSharp
                 }
                 else
                 {
-                    webRequest.GetResponseAsync();
+                    // webRequest.GetResponseAsync();
 
                     timeoutState = new TimeOutState {Request = webRequest};
 
@@ -359,18 +359,20 @@ namespace RestSharp
         {
             var response = new HttpResponse();
 
-            if (ex is WebException webException && webException.Status == WebExceptionStatus.RequestCanceled)
-            {
-                response.ResponseStatus = timeoutState.TimedOut
-                    ? ResponseStatus.TimedOut
-                    : ResponseStatus.Aborted;
-
-                return response;
-            }
-
             response.ErrorMessage   = ex.Message;
             response.ErrorException = ex;
-            response.ResponseStatus = ResponseStatus.Error;
+
+            if (ex is WebException webException)
+            {
+                response.ResponseStatus = webException.Status switch
+                {
+                    WebExceptionStatus.RequestCanceled => timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted,
+                    WebExceptionStatus.Timeout         => ResponseStatus.TimedOut,
+                    _                                  => ResponseStatus.Error
+                };
+            }
+            else
+                response.ResponseStatus = ResponseStatus.Error;
 
             return response;
         }

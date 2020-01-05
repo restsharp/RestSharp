@@ -21,10 +21,10 @@ namespace RestSharp.IntegrationTests
         /// <param name="context"></param>
         static void TimeoutHandler(HttpListenerContext context) => Thread.Sleep(101000);
 
-        [OneTimeSetUp]
+        [SetUp]
         public void Setup() => _server = SimpleServer.Create(TimeoutHandler);
 
-        [OneTimeTearDown]
+        [TearDown]
         public void Teardown() => _server.Dispose();
 
         SimpleServer _server;
@@ -88,10 +88,10 @@ namespace RestSharp.IntegrationTests
             resetEvent.WaitOne();
 
             Assert.NotNull(response);
-            Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
+            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
             Assert.NotNull(response.ErrorException);
             Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual(response.ErrorException.Message, "The request timed-out.");
+            Assert.IsTrue(response.ErrorException.Message.Contains("timed"));
         }
 
         [Test]
@@ -102,11 +102,11 @@ namespace RestSharp.IntegrationTests
             var response = await client.ExecuteTaskAsync(request);
 
             Assert.NotNull(response);
-            Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
+            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
 
             Assert.NotNull(response.ErrorException);
             Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual(response.ErrorException.Message, "The request timed-out.");
+            Assert.IsTrue(response.ErrorException.Message.Contains("timed"));
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace RestSharp.IntegrationTests
 #endif
         public async Task Task_Handles_Non_Existent_Domain()
         {
-            var client = new RestClient("http://192.168.1.200:8001");
+            var client = new RestClient("http://this.cannot.exist:8001");
 
             var request = new RestRequest("/")
             {
@@ -143,7 +143,7 @@ namespace RestSharp.IntegrationTests
             var response = await client.ExecuteTaskAsync<StupidClass>(request);
 
             Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual(WebExceptionStatus.ConnectFailure, ((WebException) response.ErrorException).Status);
+            Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException) response.ErrorException).Status);
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
         }
     }
