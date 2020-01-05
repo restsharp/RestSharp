@@ -53,17 +53,16 @@ namespace RestSharp.IntegrationTests
         {
             const string val = "Basic async task test";
 
-            using (var server = SimpleServer.Create(Handlers.EchoValue(val)))
-            {
-                var client                  = new RestClient(server.Url);
-                var request                 = new RestRequest("timeout");
-                var cancellationTokenSource = new CancellationTokenSource();
-                var task                    = client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            using var server = SimpleServer.Create(Handlers.EchoValue(val));
 
-                cancellationTokenSource.Cancel();
+            var client                  = new RestClient(server.Url);
+            var request                 = new RestRequest("timeout");
+            var cancellationTokenSource = new CancellationTokenSource();
+            var task                    = client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
-                Assert.True(task.IsCanceled);
-            }
+            cancellationTokenSource.Cancel();
+
+            Assert.True(task.IsCanceled);
         }
 
         [Test]
@@ -71,17 +70,16 @@ namespace RestSharp.IntegrationTests
         {
             const string val = "Basic async task test";
 
-            using (var server = SimpleServer.Create(Handlers.EchoValue(val)))
-            {
-                var client                  = new RestClient(server.Url);
-                var request                 = new RestRequest("timeout");
-                var cancellationTokenSource = new CancellationTokenSource();
-                var task                    = client.ExecuteTaskAsync<Response>(request, cancellationTokenSource.Token);
+            using var server = SimpleServer.Create(Handlers.EchoValue(val));
 
-                cancellationTokenSource.Cancel();
+            var client                  = new RestClient(server.Url);
+            var request                 = new RestRequest("timeout");
+            var cancellationTokenSource = new CancellationTokenSource();
+            var task                    = client.ExecuteTaskAsync<Response>(request, cancellationTokenSource.Token);
 
-                Assert.True(task.IsCanceled);
-            }
+            cancellationTokenSource.Cancel();
+
+            Assert.True(task.IsCanceled);
         }
 
         [Test]

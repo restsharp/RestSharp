@@ -12,16 +12,16 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 3.1.100
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
+
+    - name: Run tests netcoreapp3.0
+      run: dotnet test -c Release -f netcoreapp3.0
       
     - name: Run tests net452
       run: dotnet test -c Release -f net452
       
     - name: Run tests net48
       run: dotnet test -c Release -f net48
-      
-    - name: Run tests netcoreapp3.0
-      run: dotnet test -c Release -f netcoreapp3.0

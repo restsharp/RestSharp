@@ -2,7 +2,7 @@
     <Import Project="../netfx.props" />
     
     <PropertyGroup>
-        <TargetFrameworks>net452;netcoreapp3.0</TargetFrameworks>
+        <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
         <IsPackable>false</IsPackable>
         <SignAssembly>true</SignAssembly>
         <LangVersion>8</LangVersion>
