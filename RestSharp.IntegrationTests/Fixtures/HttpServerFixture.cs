@@ -1,20 +1,19 @@
 using System;
 using System.Net;
-using MockHttpServer;
 
-namespace RestSharp.IntegrationTests.Helpers
+namespace RestSharp.IntegrationTests.Fixtures
 {
     public class HttpServerFixture : IDisposable
     {
         public static HttpServerFixture StartServer(string url, Action<HttpListenerRequest, HttpListenerResponse> handle)
         {
-            var server = new MockServer(0, url, (request, response, _) => handle(request, response));
+            var server = new TestHttpServer(0, url, (request, response, _) => handle(request, response));
             return new HttpServerFixture(server);
         }
 
         public static HttpServerFixture StartServer(Action<HttpListenerRequest, HttpListenerResponse> handle) => StartServer("", handle);
 
-        HttpServerFixture(MockServer server)
+        HttpServerFixture(TestHttpServer server)
         {
             Url     = $"http://localhost:{server.Port}";
             _server = server;
@@ -22,7 +21,7 @@ namespace RestSharp.IntegrationTests.Helpers
 
         public string Url { get; }
 
-        MockServer _server;
+        readonly TestHttpServer _server;
         public void Dispose() => _server.Dispose();
     }
 }

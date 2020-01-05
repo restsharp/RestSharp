@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using MockHttpServer;
 using NUnit.Framework;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.IntegrationTests.Helpers;
 using RestSharp.Serialization.Json;
 
@@ -10,7 +10,7 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class StructuredSyntaxSuffixTests
     {
-        MockServer _server;
+        TestHttpServer _server;
         string _url;
 
         class Person
@@ -26,7 +26,7 @@ namespace RestSharp.IntegrationTests
         [SetUp]
         public void Setup()
         {
-            _server = new MockServer(0, "", HandleRequest);
+            _server = new TestHttpServer(0, "", HandleRequest);
             _url = $"http://localhost:{_server.Port}";
 
             static void HandleRequest(HttpListenerRequest request, HttpListenerResponse response, Dictionary<string, string> p)
