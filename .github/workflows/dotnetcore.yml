@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -22,3 +21,15 @@ jobs:
       
     - name: Run tests net452
       run: dotnet test -c Release -f net452
+      
+  nuget:
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Create NuGet package
+      run: dotnet pack -c Release -o nuget
+    - name: Push NuGet package
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }}
