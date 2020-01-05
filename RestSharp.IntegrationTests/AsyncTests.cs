@@ -49,23 +49,6 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
-        public void Can_Cancel_GET_TaskAsync()
-        {
-            const string val = "Basic async task test";
-
-            using var server = SimpleServer.Create(Handlers.EchoValue(val));
-
-            var client                  = new RestClient(server.Url);
-            var request                 = new RestRequest("timeout");
-            var cancellationTokenSource = new CancellationTokenSource();
-            var task                    = client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
-
-            cancellationTokenSource.Cancel();
-
-            Assert.True(task.IsCanceled);
-        }
-
-        [Test]
         public void Can_Cancel_GET_TaskAsync_With_Response_Type()
         {
             const string val = "Basic async task test";
