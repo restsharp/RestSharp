@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Text;
 using NUnit.Framework;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.IntegrationTests.Helpers;
 
 namespace RestSharp.IntegrationTests
@@ -15,13 +18,27 @@ namespace RestSharp.IntegrationTests
         [SetUp]
         public void CreateClient()
         {
-            _server = SimpleServer.Create(c => Handlers.FileHandler(c, _path));
+            _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
             _client = new RestClient(_server.Url);
         }
 
-        SimpleServer    _server;
-        RestClient      _client;
-        readonly string _path = AppDomain.CurrentDomain.BaseDirectory;
+        void FileHandler(HttpListenerRequest request, HttpListenerResponse response)
+        {
+            var pathToFile = Path.Combine(
+                _path,
+                Path.Combine(
+                    request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
+                )
+            );
+
+            using var reader = new StreamReader(pathToFile);
+
+            reader.BaseStream.CopyTo(response.OutputStream);
+        }
+
+        HttpServerFixture _server;
+        RestClient        _client;
+        readonly string   _path = AppDomain.CurrentDomain.BaseDirectory;
 
         [Test]
         public void AdvancedResponseWriter_without_ResponseWriter_reads_stream()
@@ -38,7 +55,7 @@ namespace RestSharp.IntegrationTests
                 }
             };
 
-            _client.Execute(rr);
+            var response = _client.Execute(rr);
             Assert.IsTrue(string.Compare("JFIF", tag, StringComparison.Ordinal) == 0);
         }
 

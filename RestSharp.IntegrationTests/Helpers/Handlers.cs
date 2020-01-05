@@ -25,13 +25,15 @@ namespace RestSharp.IntegrationTests.Helpers
         public static void FileHandler(HttpListenerContext context, string path)
         {
             var pathToFile = Path.Combine(
-                path, Path.Combine(
-                    context.Request.Url.Segments.Select(s => s.Replace("/", ""))
-                        .ToArray()
+                path,
+                Path.Combine(
+                    context.Request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
                 )
             );
 
-            using (var reader = new StreamReader(pathToFile)) reader.BaseStream.CopyTo(context.Response.OutputStream);
+            using var reader = new StreamReader(pathToFile);
+
+            reader.BaseStream.CopyTo(context.Response.OutputStream);
         }
 
         /// <summary>
