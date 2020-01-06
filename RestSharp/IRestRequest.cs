@@ -145,7 +145,15 @@ namespace RestSharp
         /// </summary>
         IList<DecompressionMethods> AllowedDecompressionMethods { get; }
 
+        /// <summary>
+        ///     When supplied, the function will be called before calling the deserializer
+        /// </summary>
         Action<IRestResponse> OnBeforeDeserialization { get; set; }
+        
+        /// <summary>
+        ///     When supplied, the function will be called before making a request
+        /// </summary>
+        Action<IHttp> OnBeforeRequest { get; set; }
 
         /// <summary>
         ///     Adds a file to the Files collection to be included with a POST or PUT request
@@ -384,10 +392,6 @@ namespace RestSharp
         IRestRequest AddQueryParameter(string name, string value, bool encode);
 
         IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod);
-
-        Action<IRestResponse> OnBeforeDeserialization { get; set; }
-
-        Action<IHttp> OnBeforeRequest { get; set; }
 
         void IncreaseNumAttempts();
     }
