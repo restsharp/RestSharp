@@ -1,6 +1,6 @@
 # RestSharp - Simple .NET REST Client 
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5vdwwducje0miayf?svg=true)](https://ci.appveyor.com/project/hallem/restsharp)
+![](https://github.com//restsharp/RestSharp/workflows/Build%20and%20deploy/badge.svg)
 
 [![Join the chat at https://gitter.im/RestSharp/RestSharp](https://badges.gitter.im/RestSharp/RestSharp.svg)](https://gitter.im/RestSharp/RestSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 

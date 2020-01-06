@@ -5,7 +5,7 @@ module.exports = {
   themeConfig: {
     logo: '/restsharp.png',
     nav: [
-      { text: "Updates", link: "/updates/" },
+      { text: "Google Group", link: "https://groups.google.com/forum/#!forum/restsharp" },
       { text: 'Gitter', link: 'https://gitter.im/RestSharp/RestSharp' },
       { text: 'NuGet', link: 'https://nuget.org/packages/RestSharp' }
     ],
