@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+using System;
+using System;
+using NUnit.Framework;
 using Shouldly;
 
 namespace RestSharp.Tests
@@ -34,6 +36,38 @@ namespace RestSharp.Tests
 
             Should.NotThrow(() => client.Execute(req));
             client.Proxy.ShouldBeNull();
+        }
+        
+        [Test]
+        public void BuildUri_should_build_with_passing_link_as_Uri()
+        {
+            // arrange
+            var relative = new Uri("/foo/bar/baz", UriKind.Relative);
+            var absoluteUri = new Uri(new Uri(BaseUrl), relative);
+            var req = new RestRequest(absoluteUri);
+            
+            // act
+            var client = new RestClient();
+            var builtUri = client.BuildUri(req);
+            
+            // assert
+            absoluteUri.ShouldBe(builtUri);
+        }
+        
+        [Test]
+        public void BuildUri_should_build_with_passing_link_as_Uri_with_set_BaseUrl()
+        {
+            // arrange
+            var baseUrl = new Uri(BaseUrl);
+            var relative = new Uri("/foo/bar/baz", UriKind.Relative);
+            var req = new RestRequest(relative);
+            
+            // act
+            var client = new RestClient(baseUrl);
+            var builtUri = client.BuildUri(req);
+            
+            // assert
+            new Uri(baseUrl, relative).ShouldBe(builtUri);
         }
     }
 }

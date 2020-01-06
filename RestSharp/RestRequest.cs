@@ -104,7 +104,7 @@ namespace RestSharp
         public RestRequest(Uri resource, Method method, DataFormat dataFormat)
             : this(
                 resource.IsAbsoluteUri
-                    ? resource.AbsolutePath + resource.Query
+                    ? resource.AbsoluteUri
                     : resource.OriginalString, method, dataFormat
             ) { }
 
