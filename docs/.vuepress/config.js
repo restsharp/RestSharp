@@ -15,9 +15,9 @@ module.exports = {
         title: 'Getting Started',
         path: '/getting-started/',
         collapsable: false,
-        children: [
-          '/getting-started/upgrade-v6'
-        ]
+        // children: [
+        //   '/getting-started/upgrade-v6'
+        // ]
       },
       {
         title: 'Using RestSharp',
