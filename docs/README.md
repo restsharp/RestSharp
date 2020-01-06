@@ -14,7 +14,7 @@ features:
   details: Almost every aspect of an HTTP call can be customized
 - title: Authentication
   details: Basic, OAuth 1, OAuth 2, JWT, NTLM are supported. Not enough? Write your own!
-- title: Multi-part forms, JSON and XML request body, and files
+- title: Forms, request body, and files
   details: Send objects as the request body in JSON or XML, or as a form. Upload and download files as bytes or as streams.
 - title: Parameters
   details: Add query, URL segment, body, form or header parameter using an easy and fluent API
