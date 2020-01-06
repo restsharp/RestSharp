@@ -13,7 +13,16 @@ on:
       - '*'
 
 jobs:
-  build:
+  test-netcore-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run tests netcoreapp3.1
+        run: dotnet test -c Release -f netcoreapp3.1
+
+  test-netcore-win:
     runs-on: windows-latest
     
     steps:
@@ -22,12 +31,18 @@ jobs:
     - name: Run tests netcoreapp3.1
       run: dotnet test -c Release -f netcoreapp3.1
       
-    - name: Run tests net452
-      run: dotnet test -c Release -f net452
-      
+  test-net452:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run tests net452
+        run: dotnet test -c Release -f net452
+    
   nuget:
     runs-on: windows-latest
-    needs: build
+    needs: [test-netcore-win,test-netcore-linux,test-net452]
 
     steps:
     - uses: actions/checkout@v1
