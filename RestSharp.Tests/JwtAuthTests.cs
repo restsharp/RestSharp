@@ -85,7 +85,32 @@ namespace RestSharp.Tests
 
             Assert.True(authParam.Type == ParameterType.HttpHeader);
             Assert.AreEqual(_expectedAuthHeaderContent, authParam.Value);
-            Assert.AreNotEqual("second_header_auth_token", authParam.Value);
+            Assert.AreNotEqual("Bearer second_header_auth_token", authParam.Value);
+        }
+
+        [Test]
+        public void Updates_Auth_Header()
+        {
+            var client  = new RestClient();
+            var request = new RestRequest();
+
+            var authenticator = new JwtAuthenticator(_expectedAuthHeaderContent);
+
+            client.Authenticator = authenticator;
+            client.Authenticator.Authenticate(client, request);
+            
+            authenticator.SetBearerToken("second_header_auth_token");
+            client.Authenticator.Authenticate(client, request);
+
+            var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+
+            Assert.AreEqual(1, paramList.Count);
+
+            var authParam = paramList[0];
+
+            Assert.True(authParam.Type == ParameterType.HttpHeader);
+            Assert.AreNotEqual(_expectedAuthHeaderContent, authParam.Value);
+            Assert.AreEqual("Bearer second_header_auth_token", authParam.Value);
         }
 
         [Test]

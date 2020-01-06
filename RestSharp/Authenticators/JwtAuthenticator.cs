@@ -17,6 +17,8 @@
 
 #endregion
 
+using System;
+using System.Linq;
 using RestSharp.Validation;
 
 namespace RestSharp.Authenticators
@@ -27,16 +29,44 @@ namespace RestSharp.Authenticators
     /// </summary>
     public class JwtAuthenticator : IAuthenticator
     {
-        readonly string _authHeader;
+        string _authHeader;
+        bool _forceTokenUpdate;
 
-        public JwtAuthenticator(string accessToken)
+        // ReSharper disable once IntroduceOptionalParameters.Global
+        public JwtAuthenticator(string accessToken) : this(accessToken, false)
+        {
+        }
+
+        public JwtAuthenticator(string accessToken, bool forceTokenUpdate)
+        {
+            SetBearerToken(accessToken);
+            _forceTokenUpdate = forceTokenUpdate;
+        }
+
+        /// <summary>
+        /// Set the new bearer token so the request gets the new header value
+        /// </summary>
+        /// <param name="accessToken"></param>
+        public void SetBearerToken(string accessToken)
         {
             Ensure.NotEmpty(accessToken, nameof(accessToken));
 
             _authHeader = $"Bearer {accessToken}";
+            _forceTokenUpdate = true;
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
-            => request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader);
+        {
+            if (_forceTokenUpdate)
+            {
+                request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader);
+                return;
+            }
+
+            // only add the Authorization parameter if it hasn't been added by a previous Execute
+            if (!request.Parameters.Any(p => p.Type.Equals(ParameterType.HttpHeader) &&
+                                             p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)))
+                request.AddParameter("Authorization", _authHeader, ParameterType.HttpHeader);
+        }
     }
 }
