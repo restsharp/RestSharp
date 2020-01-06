@@ -210,7 +210,20 @@ namespace RestSharp.Serializers
                         var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
 
                         Map(instance, item);
-                        element.Add(instance);
+
+                        if (setTextContent)
+                        {
+                            root.Add(instance);
+                        }
+                        else
+                        {
+                            element.Add(instance);
+                        }
+                    }
+
+                    if (setTextContent)
+                    {
+                        continue;
                     }
                 }
                 else

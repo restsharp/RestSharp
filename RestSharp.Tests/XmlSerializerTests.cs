@@ -84,6 +84,13 @@ namespace RestSharp.Tests
         }
 
         [SerializeAs(Name = "People")]
+        class Contacts
+        {
+            [SerializeAs(Content = true)]
+            public List<Person> People { get; set; }
+        }
+
+        [SerializeAs(Name = "People")]
         class PersonList : List<Person> { }
 
         class ContactData
@@ -302,6 +309,49 @@ namespace RestSharp.Tests
             doc.Add(root);
 
             return doc;
+        }
+
+        [Test]
+        public void Can_serialize_a_list_which_is_the_content_of_root_element()
+        {
+            var contacts = new Contacts
+            {
+                People = new List<Person>
+                {
+                    new Person
+                    {
+                        Name = "Foo",
+                        Age = 50,
+                        Price = 19.95m,
+                        StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                        Items = new List<Item>
+                        {
+                            new Item {Name = "One", Value = 1},
+                            new Item {Name = "Two", Value = 2},
+                            new Item {Name = "Three", Value = 3}
+                        }
+                    },
+                    new Person
+                    {
+                        Name = "Bar",
+                        Age = 23,
+                        Price = 23.23m,
+                        StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
+                        Items = new List<Item>
+                        {
+                            new Item {Name = "One", Value = 1},
+                            new Item {Name = "Two", Value = 2},
+                            new Item {Name = "Three", Value = 3}
+                        }
+                    }
+                }
+            };
+
+            var xml = new XmlSerializer();
+            var doc = xml.Serialize(contacts);
+            var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
+
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
         [Test]
