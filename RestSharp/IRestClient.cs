@@ -63,6 +63,8 @@ namespace RestSharp
         bool ThrowOnDeserializationError { get; set; }
 
         bool FailOnDeserializationError { get; set; }
+        
+        bool ThrowOnAnyError { get; set; }
 
         string ConnectionGroupName { get; set; }
 

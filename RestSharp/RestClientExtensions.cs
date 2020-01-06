@@ -444,7 +444,7 @@ namespace RestSharp
                 ResponseStatus.TimedOut  => new TimeoutException("Request timed out"),
                 ResponseStatus.None      => null,
                 ResponseStatus.Completed => null,
-                _                        => throw new ArgumentOutOfRangeException()
+                _                        => throw response.ErrorException ?? new ArgumentOutOfRangeException()
             };
 
             if (exception != null)

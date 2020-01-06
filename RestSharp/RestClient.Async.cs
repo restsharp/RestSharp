@@ -389,8 +389,7 @@ namespace RestSharp
             Method httpMethod
         )
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
+            Ensure.NotNull(request, nameof(request));
 
             request.Method = httpMethod;
             return ExecuteTaskAsync<T>(request, token);

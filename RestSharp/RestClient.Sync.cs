@@ -115,6 +115,8 @@ namespace RestSharp
             }
             catch (Exception ex)
             {
+                if (ThrowOnAnyError) throw;
+                
                 response.ResponseStatus = ResponseStatus.Error;
                 response.ErrorMessage   = ex.Message;
                 response.ErrorException = ex;

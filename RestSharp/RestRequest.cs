@@ -55,7 +55,7 @@ namespace RestSharp
             _allowedDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
-            OnBeforeRequest = (h) => { };
+            OnBeforeRequest = h => { };
 	   }
 
         /// <summary>

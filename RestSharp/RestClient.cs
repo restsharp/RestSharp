@@ -206,6 +206,12 @@ namespace RestSharp
         public bool FailOnDeserializationError { get; set; } = true;
 
         /// <summary>
+        /// Changes the default behaviour when RestSharp swallows server errors in favour
+        /// of setting error properties on the response object. Default is false.
+        /// </summary>
+        public bool ThrowOnAnyError { get; set; } = false;
+
+        /// <summary>
         ///     Allow high-speed NTLM-authenticated connection sharing
         /// </summary>
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
@@ -657,7 +663,7 @@ namespace RestSharp
 
             try
             {
-                request.OnBeforeDeserialization(raw);
+                request.OnBeforeDeserialization?.Invoke(raw);
 
                 response = raw.ToAsyncResponse<T>();
 
@@ -688,6 +694,8 @@ namespace RestSharp
             }
             catch (Exception ex)
             {
+                if (ThrowOnAnyError) throw;
+                
                 if (FailOnDeserializationError || ThrowOnDeserializationError)
                     response.ResponseStatus = ResponseStatus.Error;
 
