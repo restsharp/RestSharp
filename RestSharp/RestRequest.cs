@@ -533,6 +533,30 @@ namespace RestSharp
 
             return AddParameter(name, value, ParameterType.HttpHeader);
         }
+        
+        /// <summary>
+        /// Uses AddHeader(name, value) in a convenient way to pass
+        /// in multiple headers at once.
+        /// </summary>
+        /// <param name="headers">Key/Value pairs containing the name: value of the headers</param>
+        /// <returns>This request</returns>
+        public IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers)
+        {
+            var duplicateKeys = headers
+                .GroupBy(pair => pair.Key.ToUpperInvariant())
+                .Where(group => group.Count() > 1)
+                .Select(group => group.Key);
+
+            if (duplicateKeys.Count() > 0)
+                throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+
+            foreach (var pair in headers)
+            {
+                AddHeader(pair.Key, pair.Value);
+            }
+
+            return this;
+        }
 
         /// <inheritdoc />
         /// <summary>

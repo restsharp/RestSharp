@@ -349,6 +349,14 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         IRestRequest AddHeader(string name, string value);
+        
+        /// <summary>
+        /// Uses AddHeader(name, value) in a convenient way to pass
+        /// in multiple headers at once.
+        /// </summary>
+        /// <param name="headers">Key/Value pairs containing the name: value of the headers</param>
+        /// <returns>This request</returns>
+        IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers);
 
         /// <summary>
         ///     Shortcut to AddParameter(name, value, Cookie) overload
