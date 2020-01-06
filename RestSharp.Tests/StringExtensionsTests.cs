@@ -37,6 +37,21 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void UrlEncode_Does_Not_Fail_When_4_Byte_Unicode_Character_Lies_Between_Chunks()
+        {
+            var stringWithLimitLength = new string('*', 32765);
+            stringWithLimitLength += "😉*****"; // 2 + 5 chars
+            var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+            Assert.AreEqual(stringWithLimitLength, encodedAndDecoded);
+
+            // now between another 2 chunks
+            stringWithLimitLength = new string('*', 32766 * 2 - 1);
+            stringWithLimitLength += "😉*****"; // 2 + 5 chars
+            encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+            Assert.AreEqual(stringWithLimitLength, encodedAndDecoded);
+        }
+
+        [Test]
         public void UrlEncodeTest()
         {
             const string parameter = "ø";

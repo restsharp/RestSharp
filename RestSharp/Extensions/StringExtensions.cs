@@ -64,7 +64,12 @@ namespace RestSharp.Extensions
 
             while (index < input.Length)
             {
-                var length    = Math.Min(input.Length - index, maxLength);
+                var length = Math.Min(input.Length - index, maxLength);
+                while (CharUnicodeInfo.GetUnicodeCategory(input[index + length - 1]) == UnicodeCategory.Surrogate)
+                {
+                    length--;
+                }
+
                 var subString = input.Substring(index, length);
 
                 sb.Append(Uri.EscapeDataString(subString));
