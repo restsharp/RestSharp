@@ -46,7 +46,8 @@ namespace RestSharp.Extensions
             var buffer = new byte[16 * 1024];
 
             using var ms = new MemoryStream();
-            int       read;
+
+            int read;
 
             while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
                 ms.Write(buffer, 0, read);
@@ -85,15 +86,16 @@ namespace RestSharp.Extensions
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static string AsString(this byte[] buffer, string encoding)
         {
-            Encoding enc;
+            var enc = Encoding.UTF8;
 
             try
             {
-                enc = Encoding.GetEncoding(encoding);
+                if (!string.IsNullOrEmpty(encoding))
+                    enc = Encoding.GetEncoding(encoding);
             }
             catch (Exception)
             {
-                enc = Encoding.UTF8;
+                // Use UTF8 as the default
             }
 
             return AsString(buffer, enc);
