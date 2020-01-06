@@ -538,7 +538,8 @@ namespace RestSharp
                 var parameterExists =
                     request.Parameters.Any(
                         p =>
-                            p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
+                            p.Name != null 
+                            && p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
                             && p.Type == defaultParameter.Type
                     );
 
