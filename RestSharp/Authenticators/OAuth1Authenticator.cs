@@ -237,12 +237,12 @@ namespace RestSharp.Authenticators
             // http://tools.ietf.org/html/rfc5849#section-3.4.1
             // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
             // or implement a separate class for each OAuth version
-            Func<Parameter, bool> baseQuery = x => x.Type == ParameterType.GetOrPost || x.Type == ParameterType.QueryString;
+            static bool BaseQuery(Parameter x) => x.Type == ParameterType.GetOrPost || x.Type == ParameterType.QueryString || x.Type == ParameterType.QueryStringWithoutEncode;
 
             var query =
                 request.AlwaysMultipartFormData || request.Files.Count > 0
-                    ? baseQuery
-                    : x => baseQuery(x) && x.Name.StartsWith("oauth_");
+                    ? (Func<Parameter, bool>) BaseQuery
+                    : x => BaseQuery(x) && x.Name.StartsWith("oauth_");
 
             parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
             parameters.AddRange(request.Parameters.Where(query).ToWebParameters());
