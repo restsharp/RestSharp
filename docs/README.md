@@ -21,3 +21,6 @@ features:
 footer: Apache 2.0 Licensed | Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community.
 ---
 
+RestSharp is probably the most popular HTTP client library for .NET. Featuring automatic serialization and deserialization, request and response type detection, variety of authentications and other useful features, it is being used by hundreds of thousands of projects.
+
+RestSharp passed over 32 million downloads on NuGet, with average daily download count of 10,000. It's being used by many popular OSS projects, including Roslyn and Swagger.
