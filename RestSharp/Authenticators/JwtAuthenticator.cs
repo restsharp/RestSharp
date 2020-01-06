@@ -19,6 +19,7 @@
 
 using System;
 using System.Linq;
+using RestSharp.Validation;
 
 namespace RestSharp.Authenticators
 {
@@ -28,14 +29,13 @@ namespace RestSharp.Authenticators
     /// </summary>
     public class JwtAuthenticator : IAuthenticator
     {
-        readonly string authHeader;
+        readonly string _authHeader;
 
         public JwtAuthenticator(string accessToken)
         {
-            if (accessToken == null)
-                throw new ArgumentNullException(nameof(accessToken));
+            Ensure.NotEmpty(accessToken, nameof(accessToken));
 
-            authHeader = string.Format("Bearer {0}", accessToken);
+            _authHeader = $"Bearer {accessToken}";
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
@@ -45,7 +45,7 @@ namespace RestSharp.Authenticators
                 p => p.Type.Equals(ParameterType.HttpHeader) &&
                     p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase)
             ))
-                request.AddParameter("Authorization", authHeader, ParameterType.HttpHeader);
+                request.AddParameter("Authorization", _authHeader, ParameterType.HttpHeader);
         }
     }
 }

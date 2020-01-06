@@ -10,27 +10,26 @@ namespace RestSharp.Tests
     [TestFixture]
     public class JwtAuthTests
     {
-        readonly string testJwt;
-
-        readonly string expectedAuthHeaderContent;
+        readonly string _testJwt;
+        readonly string _expectedAuthHeaderContent;
 
         public JwtAuthTests()
         {
             Thread.CurrentThread.CurrentCulture   = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
 
-            testJwt = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9"  + "." +
+            _testJwt = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9"  + "." +
                 "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo" +
                 "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ" + "." +
                 "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-            expectedAuthHeaderContent = string.Format("Bearer {0}", testJwt);
+            _expectedAuthHeaderContent = $"Bearer {_testJwt}";
         }
 
         [Test]
         public void Can_Set_ValidFormat_Auth_Header()
         {
-            var client  = new RestClient {Authenticator = new JwtAuthenticator(testJwt)};
+            var client  = new RestClient {Authenticator = new JwtAuthenticator(_testJwt)};
             var request = new RestRequest();
 
             //In real case client.Execute(request) will invoke Authenticate method
@@ -39,19 +38,19 @@ namespace RestSharp.Tests
             var authParam = request.Parameters.Single(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase));
 
             Assert.True(authParam.Type == ParameterType.HttpHeader);
-            Assert.AreEqual(expectedAuthHeaderContent, authParam.Value);
+            Assert.AreEqual(_expectedAuthHeaderContent, authParam.Value);
         }
 
         [Test]
         public void Check_Only_Header_Authorization()
         {
-            var client  = new RestClient {Authenticator = new JwtAuthenticator(testJwt)};
+            var client  = new RestClient {Authenticator = new JwtAuthenticator(_testJwt)};
             var request = new RestRequest();
 
-            //Paranoic server needs "two-factor authentication": jwt header and query param key for example
+            // Paranoid server needs "two-factor authentication": jwt header and query param key for example
             request.AddParameter("Authorization", "manualAuth", ParameterType.QueryString);
 
-            //In real case client.Execute(request) will invoke Authenticate method
+            // In real case client.Execute(request) will invoke Authenticate method
             client.Authenticator.Authenticate(client, request);
 
             var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
@@ -62,7 +61,7 @@ namespace RestSharp.Tests
             var headerAuthParam = paramList.Single(p => p.Type.Equals(ParameterType.HttpHeader));
 
             Assert.AreEqual("manualAuth", queryAuthParam.Value);
-            Assert.AreEqual(expectedAuthHeaderContent, headerAuthParam.Value);
+            Assert.AreEqual(_expectedAuthHeaderContent, headerAuthParam.Value);
         }
 
         [Test]
@@ -71,7 +70,7 @@ namespace RestSharp.Tests
             var client  = new RestClient();
             var request = new RestRequest();
 
-            request.AddHeader("Authorization", expectedAuthHeaderContent);
+            request.AddHeader("Authorization", _expectedAuthHeaderContent);
 
             client.Authenticator = new JwtAuthenticator("second_header_auth_token");
 
@@ -85,7 +84,7 @@ namespace RestSharp.Tests
             var authParam = paramList[0];
 
             Assert.True(authParam.Type == ParameterType.HttpHeader);
-            Assert.AreEqual(expectedAuthHeaderContent, authParam.Value);
+            Assert.AreEqual(_expectedAuthHeaderContent, authParam.Value);
             Assert.AreNotEqual("second_header_auth_token", authParam.Value);
         }
 
