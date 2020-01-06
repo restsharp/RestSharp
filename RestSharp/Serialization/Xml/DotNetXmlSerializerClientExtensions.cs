@@ -23,7 +23,7 @@ namespace RestSharp.Serialization.Xml
                 .WithXmlSerializer(xmlSerializer)
                 .WithXmlDeserializer(xmlDeserializer);
 
-            return restClient.UseSerializer(serializer);
+            return restClient.UseSerializer(() => serializer);
         }
     }
 }
