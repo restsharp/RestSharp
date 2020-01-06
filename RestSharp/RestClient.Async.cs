@@ -443,7 +443,9 @@ namespace RestSharp
             Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest
         )
         {
-            AuthenticateIfNeeded(this, request);
+            request.SerializeRequestBody(Serializers, request.XmlSerializer, request.JsonSerializer);
+            
+            AuthenticateIfNeeded(request);
 
             var http = ConfigureHttp(request);
 

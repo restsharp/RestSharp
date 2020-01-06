@@ -102,7 +102,9 @@ namespace RestSharp
             Func<IHttp, string, HttpResponse> getResponse
         )
         {
-            AuthenticateIfNeeded(this, request);
+            request.SerializeRequestBody(Serializers, request.XmlSerializer, request.JsonSerializer);
+            
+            AuthenticateIfNeeded(request);
 
             IRestResponse response = new RestResponse();
 

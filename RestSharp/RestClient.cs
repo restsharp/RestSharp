@@ -505,7 +505,7 @@ namespace RestSharp
             return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
         }
 
-        void AuthenticateIfNeeded(IRestClient client, IRestRequest request) => Authenticator?.Authenticate(client, request);
+        void AuthenticateIfNeeded(IRestRequest request) => Authenticator?.Authenticate(this, request);
 
         string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
             => Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
@@ -635,7 +635,8 @@ namespace RestSharp
                 )
                 .ToList();
 
-            http.AddBody(requestParameters, Serializers, request.XmlSerializer, request.JsonSerializer);
+            if (request.Body != null)
+                http.AddBody(request.Body);
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 

@@ -141,6 +141,11 @@ namespace RestSharp
         ///     By default the included XmlSerializer is used.
         /// </summary>
         public IXmlSerializer XmlSerializer { get; set; }
+        
+        /// <summary>
+        ///     Serialized request body to be accessed in authenticators
+        /// </summary>
+        public RequestBody Body { get; set; }
 
         /// <summary>
         ///     Set this to write response to Stream rather than reading into memory.

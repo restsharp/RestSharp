@@ -154,6 +154,11 @@ namespace RestSharp
         ///     When supplied, the function will be called before making a request
         /// </summary>
         Action<IHttp> OnBeforeRequest { get; set; }
+        
+        /// <summary>
+        ///     Serialized request body to be accessed in authenticators
+        /// </summary>
+        RequestBody Body { get; set; }
 
         /// <summary>
         ///     Adds a file to the Files collection to be included with a POST or PUT request
