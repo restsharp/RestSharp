@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Text;
 using RestSharp.Deserializers;
 using RestSharp.Serializers;
 
