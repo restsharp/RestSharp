@@ -385,6 +385,10 @@ namespace RestSharp
 
         IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod);
 
+        Action<IRestResponse> OnBeforeDeserialization { get; set; }
+
+        Action<IHttp> OnBeforeRequest { get; set; }
+
         void IncreaseNumAttempts();
     }
 }
