@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -324,6 +325,24 @@ namespace RestSharp
         }
 
         /// <summary>
+        ///     Add a new or update an existing parameter to use on every request made with this client instance
+        /// </summary>
+        /// <param name="restClient"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static IRestClient AddOrUpdateDefaultParameter(this IRestClient restClient, Parameter p)
+        {
+            var existing = restClient.DefaultParameters.FirstOrDefault(x => x.Equals(p));
+
+            if (existing != null)
+                restClient.DefaultParameters.Remove(existing);
+
+            restClient.DefaultParameters.Add(p);
+
+            return restClient;
+        }
+
+        /// <summary>
         ///     Removes a parameter from the default parameters that are used on every request made with this client instance
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
@@ -381,6 +400,20 @@ namespace RestSharp
         /// <returns></returns>
         public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
             => restClient.AddDefaultParameter(name, value, ParameterType.HttpHeader);
+
+        /// <summary>
+        /// Adds default headers to the RestClient. Used on every request made by this client instance.
+        /// </summary>
+        /// <param name="restClient">The IRestClient instance</param>
+        /// <param name="headers">Dictionary containing the Names and Values of the headers to add</param>
+        /// <returns></returns>
+        public static IRestClient AddDefaultHeaders(this IRestClient restClient, Dictionary<string, string> headers)
+        {
+            foreach (var header in headers)
+                restClient.AddOrUpdateDefaultParameter(new Parameter(header.Key, header.Value, ParameterType.HttpHeader));
+
+            return restClient;
+        }
 
         /// <summary>
         ///     Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.

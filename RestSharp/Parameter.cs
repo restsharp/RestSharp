@@ -16,6 +16,7 @@
 
 #endregion
 
+using System;
 using RestSharp.Validation;
 
 namespace RestSharp
@@ -23,7 +24,7 @@ namespace RestSharp
     /// <summary>
     ///     Parameter container for REST requests
     /// </summary>
-    public class Parameter
+    public class Parameter : IEquatable<Parameter>
     {
         public Parameter(string name, object value, ParameterType type)
         {
@@ -67,6 +68,36 @@ namespace RestSharp
         /// </summary>
         /// <returns>String</returns>
         public override string ToString() => $"{Name}={Value}";
+
+        public bool Equals(Parameter other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Name == other.Name
+                && Equals(Value, other.Value)
+                && Type        == other.Type
+                && DataFormat  == other.DataFormat
+                && ContentType == other.ContentType;
+        }
+
+        public override bool Equals(object obj)
+            => !ReferenceEquals(null, obj)
+                && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && Equals((Parameter) obj));
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Name != null ? Name.GetHashCode() : 0;
+
+                hashCode = (hashCode * 397) ^ (Value != null ? Value.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int) Type;
+                hashCode = (hashCode * 397) ^ (int) DataFormat;
+                hashCode = (hashCode * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 
     public class XmlParameter : Parameter

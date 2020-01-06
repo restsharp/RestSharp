@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Helpers;
