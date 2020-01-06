@@ -445,10 +445,14 @@ namespace RestSharp
         )
         {
             AuthenticateIfNeeded(this, request);
+
             var http = ConfigureHttp(request);
 
-            var                  asyncHandle = new RestRequestAsyncHandle();
-            Action<HttpResponse> responseCb  = r => ProcessResponse(request, r, asyncHandle, callback);
+            request.OnBeforeRequest?.Invoke(http);
+
+            var asyncHandle = new RestRequestAsyncHandle();
+
+            Action<HttpResponse> responseCb = r => ProcessResponse(request, r, asyncHandle, callback);
 
             if (UseSynchronizationContext && SynchronizationContext.Current != null)
             {

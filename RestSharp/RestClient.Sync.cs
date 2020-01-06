@@ -108,6 +108,8 @@ namespace RestSharp
             try
             {
                 var http = ConfigureHttp(request);
+                
+                request.OnBeforeRequest?.Invoke(http);
 
                 response = RestResponse.FromHttpResponse(getResponse(http, httpMethod), request);
             }
