@@ -326,7 +326,7 @@ namespace RestSharp.Authenticators.OAuth
                 HmacSha1   => GetHmacSignature(new HMACSHA1(), consumerSecret, tokenSecret, signatureBase),
                 HmacSha256 => GetHmacSignature(new HMACSHA256(), consumerSecret, tokenSecret, signatureBase),
                 RsaSha1    => GetRsaSignature(),
-                PlainText  => $"{consumerSecret}%{tokenSecret}",
+                PlainText  => $"{consumerSecret}&{tokenSecret}",
                 _          => throw new NotImplementedException("Only HMAC-SHA1, HMAC-SHA256, and RSA-SHA1 are currently supported.")
             };
 
@@ -351,7 +351,7 @@ namespace RestSharp.Authenticators.OAuth
 
         static string GetHmacSignature(KeyedHashAlgorithm crypto, string consumerSecret, string tokenSecret, string signatureBase)
         {
-            var key = $"{consumerSecret}%{tokenSecret}";
+            var key = $"{consumerSecret}&{tokenSecret}";
             crypto.Key = Encoding.GetBytes(key);
             return signatureBase.HashWith(crypto);
         }

@@ -145,9 +145,9 @@ namespace RestSharp
 
         IRestResponse Execute(IRestRequest request, Method httpMethod);
 
-        IRestResponse<T> Execute<T>(IRestRequest request) where T : new();
+        IRestResponse<T> Execute<T>(IRestRequest request);
 
-        IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod) where T : new();
+        IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod);
 
         byte[] DownloadData(IRestRequest request);
 
@@ -251,9 +251,9 @@ namespace RestSharp
 
         IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod);
 
-        IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new();
+        IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod);
 
-        IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new();
+        IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod);
 
         /// <summary>
         ///     Executes the request and callback asynchronously, authenticating if needed

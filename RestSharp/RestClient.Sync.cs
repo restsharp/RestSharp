@@ -1,4 +1,5 @@
 ﻿using System;
+using RestSharp.Validation;
 
 namespace RestSharp
 {
@@ -72,10 +73,9 @@ namespace RestSharp
             return Execute(request, httpMethod, DoExecuteAsPost);
         }
 
-        public virtual IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod) where T : new()
+        public virtual IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
+            Ensure.NotNull(request, nameof(request));
 
             request.Method = httpMethod;
             return Execute<T>(request);
@@ -87,12 +87,13 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to execute</param>
         /// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
-        public virtual IRestResponse<T> Execute<T>(IRestRequest request) where T : new() => Deserialize<T>(request, Execute(request));
+        public virtual IRestResponse<T> Execute<T>(IRestRequest request)
+            => Deserialize<T>(request, Execute(request));
 
-        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
+        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod)
             => Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
 
-        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
+        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod)
             => Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
 
         IRestResponse Execute(

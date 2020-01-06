@@ -462,7 +462,7 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddOrUpdateParameter(Parameter parameter)
         {
-            var p = Parameters.FirstOrDefault(param => param.Name == parameter.Name);
+            var p = Parameters.FirstOrDefault(x => x.Name == parameter.Name);
 
             if (p != null)
             {
@@ -470,7 +470,7 @@ namespace RestSharp
                 return this;
             }
 
-            Parameters.Add(p);
+            Parameters.Add(parameter);
             return this;
         }
 
