@@ -1,0 +1,29 @@
+name: Publish the docs
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    on:
+      push:
+        paths:
+          - 'docs/**'
+          - 'yarn.lock'
+          - 'package.json'
+
+    steps:
+      - uses: actions/checkout@v1
+      
+      - name: Vuepress
+        run: |
+          yarn install
+          yarn docs:build
+          
+      - name: GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs/.vuepress/dist

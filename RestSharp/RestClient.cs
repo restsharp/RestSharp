@@ -195,7 +195,7 @@ namespace RestSharp
 
         /// <summary>
         ///     Set to true if you want to get an exception when deserialization fails.
-        ///     Default is true.
+        ///     Default is false.
         /// </summary>
         public bool ThrowOnDeserializationError { get; set; } = false;
 

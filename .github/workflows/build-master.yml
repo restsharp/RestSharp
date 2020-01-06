@@ -1,16 +1,20 @@
-name: .NET Core
+name: Build and deploy
 
 on: [push]
 
 jobs:
   build:
     runs-on: windows-latest
+    
+    on:
+      push:
+        paths-ignore:
+          - 'docs/**'
+          - 'yarn.lock'
+          - 'package.json'
 
     steps:
     - uses: actions/checkout@v1
-
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
 
     - name: Run tests netcoreapp3.1
       run: dotnet test -c Release -f netcoreapp3.1
@@ -21,6 +25,14 @@ jobs:
   nuget:
     runs-on: windows-latest
     needs: build
+    on:
+      push:
+        paths-ignore:
+          - 'docs/**'
+        branches:
+          - master
+        tags:
+          - '*'
 
     steps:
     - uses: actions/checkout@v1
@@ -30,3 +42,5 @@ jobs:
 
     - name: Push NuGet package
       run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      
+  

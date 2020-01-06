@@ -1,0 +1,41 @@
+name: Build and test PRs
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    on:
+      pull_request:
+        paths-ignore:
+          - 'docs/**'
+          - 'yarn.lock'
+          - 'package.json'
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run tests netcoreapp3.1
+        run: dotnet test -c Release -f netcoreapp3.1
+
+      - name: Run tests net452
+        run: dotnet test -c Release -f net452
+        
+  docs:
+    runs-on: ubuntu-latest
+
+    on:
+      pull_request:
+        paths:
+          - 'docs/**'
+          - 'yarn.lock'
+          - 'package.json'
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Vuepress
+        run: |
+          yarn install
+          yarn docs:build
