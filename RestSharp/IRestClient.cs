@@ -33,6 +33,13 @@ namespace RestSharp
 {
     public interface IRestClient
     {
+        [Obsolete("Use the overload that accepts the delegate factory")]
+        IRestClient UseSerializer(IRestSerializer serializer);
+
+        IRestClient UseSerializer(Func<IRestSerializer> serializerFactory);
+        
+        IRestClient UseSerializer<T>() where T : IRestSerializer, new();
+
         CookieContainer CookieContainer { get; set; }
 
         bool AutomaticDecompression { get; set; }
@@ -87,9 +94,6 @@ namespace RestSharp
         ///     overriding certificate errors in the scope of a request.
         /// </summary>
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-
-        [Obsolete("Use the overload that accepts the delegate factory")]
-        IRestClient UseSerializer(IRestSerializer serializer);
 
         [Obsolete("This method will be removed soon in favour of the proper async call")]
         RestRequestAsyncHandle ExecuteAsync(
