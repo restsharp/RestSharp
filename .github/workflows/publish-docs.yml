@@ -1,17 +1,15 @@
 name: Publish the docs
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - 'yarn.lock'
+      - 'package.json'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    on:
-      push:
-        paths:
-          - 'docs/**'
-          - 'yarn.lock'
-          - 'package.json'
 
     steps:
       - uses: actions/checkout@v1

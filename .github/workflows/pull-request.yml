@@ -6,13 +6,6 @@ jobs:
   build:
     runs-on: windows-latest
 
-    on:
-      pull_request:
-        paths-ignore:
-          - 'docs/**'
-          - 'yarn.lock'
-          - 'package.json'
-
     steps:
       - uses: actions/checkout@v1
 
@@ -24,13 +17,6 @@ jobs:
         
   docs:
     runs-on: ubuntu-latest
-
-    on:
-      pull_request:
-        paths:
-          - 'docs/**'
-          - 'yarn.lock'
-          - 'package.json'
 
     steps:
       - uses: actions/checkout@v1
