@@ -299,11 +299,19 @@ namespace RestSharp
         IRestRequest AddParameter(string name, object value, string contentType, ParameterType type);
 
         /// <summary>
-        ///     Add or update the parameter to the request
+        ///     Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
+        ///     request
         /// </summary>
-        /// <param name="p">Parameter to add</param>
+        /// <param name="parameter">Parameter to add</param>
         /// <returns></returns>
-        IRestRequest AddOrUpdateParameter(Parameter p);
+        IRestRequest AddOrUpdateParameter(Parameter parameter);
+        
+        /// <summary>
+        ///      Add or update parameters to the request
+        /// </summary>
+        /// <param name="parameters">Collection of parameters to add</param>
+        /// <returns></returns>
+        IRestRequest AddOrUpdateParameters(IEnumerable<Parameter> parameters);
 
         /// <summary>
         ///     Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)

@@ -10,7 +10,7 @@ namespace RestSharp.Tests
     {
         [SetUp]
         public void Setup()
-            => authenticator = new OAuth1Authenticator
+            => _authenticator = new OAuth1Authenticator
             {
                 CallbackUrl        = "CallbackUrl",
                 ClientPassword     = "ClientPassword",
@@ -28,7 +28,7 @@ namespace RestSharp.Tests
                 Version            = "Version"
             };
 
-        OAuth1Authenticator authenticator;
+        OAuth1Authenticator _authenticator;
 
         [Test]
         public void Authenticate_ShouldAddAuthorizationAsTextValueToRequest_OnHttpAuthorizationHeaderHandling()
@@ -39,10 +39,10 @@ namespace RestSharp.Tests
             var client  = new RestClient(url);
             var request = new RestRequest();
 
-            authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
+            _authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
 
             // Act
-            authenticator.Authenticate(client, request);
+            _authenticator.Authenticate(client, request);
 
             // Assert
             var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
@@ -71,10 +71,10 @@ namespace RestSharp.Tests
             var request = new RestRequest();
             request.AddQueryParameter("queryparameter", "foobartemp");
 
-            authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
+            _authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
 
             // Act
-            authenticator.Authenticate(client, request);
+            _authenticator.Authenticate(client, request);
 
             // Assert
             var parameters = request.Parameters;

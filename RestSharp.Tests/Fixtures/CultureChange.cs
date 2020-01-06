@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
+using RestSharp.Validation;
 
-namespace RestSharp.Tests
+namespace RestSharp.Tests.Fixtures
 {
     public class CultureChange : IDisposable
     {
         public CultureChange(string culture)
         {
-            if (culture == null) throw new ArgumentNullException("culture");
+            Ensure.NotEmpty(culture, nameof(culture));
 
             PreviousCulture = Thread.CurrentThread.CurrentCulture;
 
@@ -19,12 +20,11 @@ namespace RestSharp.Tests
 
         public void Dispose()
         {
-            if (PreviousCulture != null)
-            {
-                Thread.CurrentThread.CurrentCulture = PreviousCulture;
+            if (PreviousCulture == null) return;
 
-                PreviousCulture = null;
-            }
+            Thread.CurrentThread.CurrentCulture = PreviousCulture;
+
+            PreviousCulture = null;
         }
     }
 }

@@ -46,14 +46,13 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Set_Invalid_Proxy_Fails_RAW()
         {
-            using (var server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>()))
-            {
-                var requestUri = new Uri(new Uri(server.ServerUrl), RequestBodyCapturer.RESOURCE);
-                var webRequest = (HttpWebRequest) WebRequest.Create(requestUri);
-                webRequest.Proxy = new WebProxy("non_existent_proxy", false);
+            using var server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
 
-                Assert.Throws<WebException>(() => webRequest.GetResponse());
-            }
+            var requestUri = new Uri(new Uri(server.ServerUrl), RequestBodyCapturer.RESOURCE);
+            var webRequest = (HttpWebRequest) WebRequest.Create(requestUri);
+            webRequest.Proxy = new WebProxy("non_existent_proxy", false);
+
+            Assert.Throws<WebException>(() => webRequest.GetResponse());
         }
     }
 }

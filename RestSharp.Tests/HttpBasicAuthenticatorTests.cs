@@ -13,18 +13,20 @@ namespace RestSharp.Tests
         [SetUp]
         public void Setup()
         {
-            username = "username";
-            password = "password";
+            _username = "username";
+            _password = "password";
 
-            authenticator = new HttpBasicAuthenticator(username, password);
+            _authenticator = new HttpBasicAuthenticator(_username, _password);
         }
 
-        string username;
-        string password;
+        string _username;
+        string _password;
 
-        HttpBasicAuthenticator authenticator;
+        HttpBasicAuthenticator _authenticator;
 
-        [TestCase("Authorization"), TestCase("authorization"), TestCase("AUTHORIZATION")]
+        [TestCase("Authorization")]
+        [TestCase("authorization")]
+        [TestCase("AUTHORIZATION")]
         public void Authenticate_ShouldNotAddAuthorizationParameter_IfAlreadyAssigned(string parameterName)
         {
             // Arrange
@@ -37,7 +39,7 @@ namespace RestSharp.Tests
                 );
 
             // Act
-            authenticator.Authenticate(mockClient.Object, mockRequest.Object);
+            _authenticator.Authenticate(mockClient.Object, mockRequest.Object);
 
             // Assert
             mockRequest.Verify(
@@ -59,10 +61,10 @@ namespace RestSharp.Tests
                 );
 
             var expectedToken =
-                $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"))}";
+                $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_username}:{_password}"))}";
 
             // Act
-            authenticator.Authenticate(mockClient.Object, mockRequest.Object);
+            _authenticator.Authenticate(mockClient.Object, mockRequest.Object);
 
             // Assert
             mockRequest.Verify(

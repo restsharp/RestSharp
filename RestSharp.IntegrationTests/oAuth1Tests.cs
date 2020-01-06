@@ -35,7 +35,8 @@ namespace RestSharp.IntegrationTests
             public int Position { get; set; }
         }
 
-        //[Test]
+        [Test]
+        [Ignore("Needs Netflix token")]
         public void Can_Authenticate_Netflix_With_OAuth()
         {
             const string consumerKey    = "";
@@ -112,7 +113,8 @@ namespace RestSharp.IntegrationTests
             Assert.AreEqual(2, queueResponse.Data.Items.Count);
         }
 
-        [Test, Ignore("Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_LinkedIN_With_OAuth()
         {
             const string consumerKey    = "TODO_CONSUMER_KEY_HERE";
@@ -206,7 +208,8 @@ namespace RestSharp.IntegrationTests
             Assert.IsTrue(actual.SequenceEqual(expected));
         }
 
-        [Test, Ignore("Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_Twitter()
         {
             // To pass this test, place a file config.json in the RestSharp.IntegrationTests folder
@@ -247,7 +250,8 @@ namespace RestSharp.IntegrationTests
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Test, Ignore("Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_With_OAuth()
         {
             const string consumerKey    = "";
@@ -313,7 +317,8 @@ namespace RestSharp.IntegrationTests
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Test, Ignore("Provide your own consumer key/secret before running")]
+        [Test]
+        [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Query_Vimeo()
         {
             const string consumerKey    = "TODO_CONSUMER_KEY_HERE";
@@ -343,9 +348,10 @@ namespace RestSharp.IntegrationTests
             Assert.True(response.Content.Contains("\"stat\":\"ok\""));
         }
 
-        [Test, Ignore(
-             "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test"
-         )]
+        [Test]
+        [Ignore(
+            "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test"
+        )]
         public void Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN()
         {
             const string consumerKey    = "TODO_CONSUMER_KEY_HERE";

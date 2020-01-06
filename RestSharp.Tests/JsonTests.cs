@@ -1,22 +1,4 @@
-﻿#region License
-
-//   Copyright 2010 John Sheehan
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License. 
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,6 +6,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RestSharp.Serialization.Json;
+using RestSharp.Tests.Fixtures;
 using RestSharp.Tests.SampleClasses;
 using RestSharp.Tests.TestData;
 
@@ -32,7 +15,7 @@ namespace RestSharp.Tests
     [TestFixture]
     public class JsonTests
     {
-        const string ALTERNATIVE_CULTURE = "pt-PT";
+        const string AlternativeCulture = "pt-PT";
 
         static readonly string CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -460,7 +443,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Names_With_Dashes_With_Default_Root_Alternative_Culture()
         {
-            using (new CultureChange(ALTERNATIVE_CULTURE)) Can_Deserialize_Names_With_Dashes_With_Default_Root();
+            using (new CultureChange(AlternativeCulture)) Can_Deserialize_Names_With_Dashes_With_Default_Root();
         }
 
         [Test]
@@ -504,7 +487,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Names_With_Underscores_With_Default_Root_Alternative_Culture()
         {
-            using (new CultureChange(ALTERNATIVE_CULTURE)) Can_Deserialize_Names_With_Underscores_With_Default_Root();
+            using (new CultureChange(AlternativeCulture)) Can_Deserialize_Names_With_Underscores_With_Default_Root();
         }
 
         [Test]
@@ -838,7 +821,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_With_Default_Root_Alternative_Culture()
         {
-            using (new CultureChange(ALTERNATIVE_CULTURE)) Can_Deserialize_With_Default_Root();
+            using (new CultureChange(AlternativeCulture)) Can_Deserialize_With_Default_Root();
         }
 
         [Test]

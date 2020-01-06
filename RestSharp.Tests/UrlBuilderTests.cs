@@ -75,7 +75,13 @@ namespace RestSharp.Tests
         }
 
         [Test]
-        public void GET_with_Invalid_Url_string_throws_exception() => Assert.Throws<UriFormatException>(delegate { new RestClient("invalid url"); });
+        public void GET_with_Invalid_Url_string_throws_exception()
+            => Assert.Throws<UriFormatException>(
+                () =>
+                {
+                    var unused = new RestClient("invalid url");
+                }
+            );
 
         [Test]
         public void GET_with_leading_slash()

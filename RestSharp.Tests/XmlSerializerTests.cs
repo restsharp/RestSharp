@@ -1,22 +1,4 @@
-﻿#region License
-
-//   Copyright 2010 John Sheehan
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License. 
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
@@ -34,6 +16,277 @@ namespace RestSharp.Tests
         {
             Thread.CurrentThread.CurrentCulture   = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InstalledUICulture;
+        }
+
+        [Test]
+        public void Can_serialize_a_list_which_is_the_content_of_root_element()
+        {
+            var contacts = new Contacts
+            {
+                People = new List<Person>
+                {
+                    new Person
+                    {
+                        Name      = "Foo",
+                        Age       = 50,
+                        Price     = 19.95m,
+                        StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                        Items = new List<Item>
+                        {
+                            new Item {Name = "One", Value   = 1},
+                            new Item {Name = "Two", Value   = 2},
+                            new Item {Name = "Three", Value = 3}
+                        }
+                    },
+                    new Person
+                    {
+                        Name      = "Bar",
+                        Age       = 23,
+                        Price     = 23.23m,
+                        StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
+                        Items = new List<Item>
+                        {
+                            new Item {Name = "One", Value   = 1},
+                            new Item {Name = "Two", Value   = 2},
+                            new Item {Name = "Three", Value = 3}
+                        }
+                    }
+                }
+            };
+
+            var xml      = new XmlSerializer();
+            var doc      = xml.Serialize(contacts);
+            var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_a_list_which_is_the_root_element()
+        {
+            var pocoList = new PersonList
+            {
+                new Person
+                {
+                    Name      = "Foo",
+                    Age       = 50,
+                    Price     = 19.95m,
+                    StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                    Items = new List<Item>
+                    {
+                        new Item {Name = "One", Value   = 1},
+                        new Item {Name = "Two", Value   = 2},
+                        new Item {Name = "Three", Value = 3}
+                    }
+                },
+                new Person
+                {
+                    Name      = "Bar",
+                    Age       = 23,
+                    Price     = 23.23m,
+                    StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
+                    Items = new List<Item>
+                    {
+                        new Item {Name = "One", Value   = 1},
+                        new Item {Name = "Two", Value   = 2},
+                        new Item {Name = "Three", Value = 3}
+                    }
+                }
+            };
+            var xml      = new XmlSerializer();
+            var doc      = xml.Serialize(pocoList);
+            var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_Serialize_An_Object_To_Node_With_Attribute_And_Text_Content()
+        {
+            var note = new Note
+            {
+                Id      = 1,
+                Title   = Note.TITLE,
+                Message = Note.MESSAGE
+            };
+
+            var xml = new XmlSerializer();
+            var doc = xml.Serialize(note);
+
+            var expected    = GetNoteXDoc();
+            var expectedStr = expected.ToString();
+
+            Assert.AreEqual(expectedStr, doc);
+        }
+
+        [Test]
+        public void Can_serialize_Enum()
+        {
+            var enumClass = new ClassWithEnum {Color = Color.Red};
+            var xml       = new XmlSerializer();
+            var doc       = xml.Serialize(enumClass);
+            var expected  = new XDocument();
+            var root      = new XElement("ClassWithEnum");
+
+            root.Add(new XElement("Color", "Red"));
+            expected.Add(root);
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_simple_POCO()
+        {
+            var poco = new Person
+            {
+                Name      = "Foo",
+                Age       = 50,
+                Price     = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                Items = new List<Item>
+                {
+                    new Item {Name = "One", Value   = 1},
+                    new Item {Name = "Two", Value   = 2},
+                    new Item {Name = "Three", Value = 3}
+                }
+            };
+            var xml      = new XmlSerializer();
+            var doc      = xml.Serialize(poco);
+            var expected = GetSimplePocoXDoc();
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_simple_POCO_With_Attribute_Options_Defined()
+        {
+            var poco = new WackyPerson
+            {
+                Name      = "Foo",
+                Age       = 50,
+                Price     = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+            };
+            var xml      = new XmlSerializer();
+            var doc      = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWackyNames();
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_simple_POCO_With_Attribute_Options_Defined_And_Property_Containing_IList_Elements()
+        {
+            var poco = new WackyPerson
+            {
+                Name      = "Foo",
+                Age       = 50,
+                Price     = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                ContactData = new ContactData
+                {
+                    EmailAddresses = new List<EmailAddress>
+                    {
+                        new EmailAddress
+                        {
+                            Address  = "test@test.com",
+                            Location = "Work"
+                        }
+                    }
+                }
+            };
+            var xml      = new XmlSerializer();
+            var doc      = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWackyNamesWithIListProperty();
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_simple_POCO_With_DateFormat_Specified()
+        {
+            var poco = new Person
+            {
+                Name      = "Foo",
+                Age       = 50,
+                Price     = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+            };
+            var xml      = new XmlSerializer {DateFormat = DateFormat.ISO_8601};
+            var doc      = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWithIsoDate();
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_simple_POCO_With_Different_Root_Element()
+        {
+            var poco = new Person
+            {
+                Name      = "Foo",
+                Age       = 50,
+                Price     = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+            };
+            var xml      = new XmlSerializer {RootElement = "Result"};
+            var doc      = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWithRoot();
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
+        {
+            var poco = new Person
+            {
+                Name      = "Foo",
+                Age       = 50,
+                Price     = 19.95m,
+                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                IsCool    = false
+            };
+            var xml      = new XmlSerializer {DateFormat = DateFormat.ISO_8601};
+            var doc      = xml.Serialize(poco);
+            var expected = GetSimplePocoXDocWithXmlProperty();
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
+        public void Cannot_Serialize_An_Object_With_Two_Properties_With_Text_Content_Attributes()
+        {
+            var note = new WrongNote
+            {
+                Id   = 1,
+                Text = "What a note."
+            };
+
+            var xml = new XmlSerializer();
+
+            Assert.Throws(
+                typeof(ArgumentException), () =>
+                {
+                    var doc = xml.Serialize(note);
+                }
+            );
+        }
+
+        [Test]
+        public void Serializes_Properties_In_Specified_Order()
+        {
+            var ordered = new OrderedProperties
+            {
+                Name      = "Name",
+                Age       = 99,
+                StartDate = new DateTime(2010, 1, 1)
+            };
+            var xml      = new XmlSerializer();
+            var doc      = xml.Serialize(ordered);
+            var expected = GetSortedPropsXDoc();
+
+            Assert.AreEqual(expected.ToString(), doc);
         }
 
         class Person
@@ -309,277 +562,6 @@ namespace RestSharp.Tests
             doc.Add(root);
 
             return doc;
-        }
-
-        [Test]
-        public void Can_serialize_a_list_which_is_the_content_of_root_element()
-        {
-            var contacts = new Contacts
-            {
-                People = new List<Person>
-                {
-                    new Person
-                    {
-                        Name = "Foo",
-                        Age = 50,
-                        Price = 19.95m,
-                        StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                        Items = new List<Item>
-                        {
-                            new Item {Name = "One", Value = 1},
-                            new Item {Name = "Two", Value = 2},
-                            new Item {Name = "Three", Value = 3}
-                        }
-                    },
-                    new Person
-                    {
-                        Name = "Bar",
-                        Age = 23,
-                        Price = 23.23m,
-                        StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                        Items = new List<Item>
-                        {
-                            new Item {Name = "One", Value = 1},
-                            new Item {Name = "Two", Value = 2},
-                            new Item {Name = "Three", Value = 3}
-                        }
-                    }
-                }
-            };
-
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(contacts);
-            var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_a_list_which_is_the_root_element()
-        {
-            var pocoList = new PersonList
-            {
-                new Person
-                {
-                    Name      = "Foo",
-                    Age       = 50,
-                    Price     = 19.95m,
-                    StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item>
-                    {
-                        new Item {Name = "One", Value   = 1},
-                        new Item {Name = "Two", Value   = 2},
-                        new Item {Name = "Three", Value = 3}
-                    }
-                },
-                new Person
-                {
-                    Name      = "Bar",
-                    Age       = 23,
-                    Price     = 23.23m,
-                    StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                    Items = new List<Item>
-                    {
-                        new Item {Name = "One", Value   = 1},
-                        new Item {Name = "Two", Value   = 2},
-                        new Item {Name = "Three", Value = 3}
-                    }
-                }
-            };
-            var xml      = new XmlSerializer();
-            var doc      = xml.Serialize(pocoList);
-            var expected = GetPeopleXDoc(CultureInfo.InvariantCulture);
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_Serialize_An_Object_To_Node_With_Attribute_And_Text_Content()
-        {
-            var note = new Note
-            {
-                Id      = 1,
-                Title   = Note.TITLE,
-                Message = Note.MESSAGE
-            };
-
-            var xml = new XmlSerializer();
-            var doc = xml.Serialize(note);
-
-            var expected    = GetNoteXDoc();
-            var expectedStr = expected.ToString();
-
-            Assert.AreEqual(expectedStr, doc);
-        }
-
-        [Test]
-        public void Can_serialize_Enum()
-        {
-            var enumClass = new ClassWithEnum {Color = Color.Red};
-            var xml       = new XmlSerializer();
-            var doc       = xml.Serialize(enumClass);
-            var expected  = new XDocument();
-            var root      = new XElement("ClassWithEnum");
-
-            root.Add(new XElement("Color", "Red"));
-            expected.Add(root);
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_simple_POCO()
-        {
-            var poco = new Person
-            {
-                Name      = "Foo",
-                Age       = 50,
-                Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                Items = new List<Item>
-                {
-                    new Item {Name = "One", Value   = 1},
-                    new Item {Name = "Two", Value   = 2},
-                    new Item {Name = "Three", Value = 3}
-                }
-            };
-            var xml      = new XmlSerializer();
-            var doc      = xml.Serialize(poco);
-            var expected = GetSimplePocoXDoc();
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_simple_POCO_With_Attribute_Options_Defined()
-        {
-            var poco = new WackyPerson
-            {
-                Name      = "Foo",
-                Age       = 50,
-                Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-            };
-            var xml      = new XmlSerializer();
-            var doc      = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWackyNames();
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_simple_POCO_With_Attribute_Options_Defined_And_Property_Containing_IList_Elements()
-        {
-            var poco = new WackyPerson
-            {
-                Name      = "Foo",
-                Age       = 50,
-                Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                ContactData = new ContactData
-                {
-                    EmailAddresses = new List<EmailAddress>
-                    {
-                        new EmailAddress
-                        {
-                            Address  = "test@test.com",
-                            Location = "Work"
-                        }
-                    }
-                }
-            };
-            var xml      = new XmlSerializer();
-            var doc      = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWackyNamesWithIListProperty();
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_simple_POCO_With_DateFormat_Specified()
-        {
-            var poco = new Person
-            {
-                Name      = "Foo",
-                Age       = 50,
-                Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-            };
-            var xml      = new XmlSerializer {DateFormat = DateFormat.ISO_8601};
-            var doc      = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithIsoDate();
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_simple_POCO_With_Different_Root_Element()
-        {
-            var poco = new Person
-            {
-                Name      = "Foo",
-                Age       = 50,
-                Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
-            };
-            var xml      = new XmlSerializer {RootElement = "Result"};
-            var doc      = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithRoot();
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Can_serialize_simple_POCO_With_XmlFormat_Specified()
-        {
-            var poco = new Person
-            {
-                Name      = "Foo",
-                Age       = 50,
-                Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                IsCool    = false
-            };
-            var xml      = new XmlSerializer {DateFormat = DateFormat.ISO_8601};
-            var doc      = xml.Serialize(poco);
-            var expected = GetSimplePocoXDocWithXmlProperty();
-
-            Assert.AreEqual(expected.ToString(), doc);
-        }
-
-        [Test]
-        public void Cannot_Serialize_An_Object_With_Two_Properties_With_Text_Content_Attributes()
-        {
-            var note = new WrongNote
-            {
-                Id   = 1,
-                Text = "What a note."
-            };
-
-            var xml = new XmlSerializer();
-
-            Assert.Throws(
-                typeof(ArgumentException), () =>
-                {
-                    var doc = xml.Serialize(note);
-                }
-            );
-        }
-
-        [Test]
-        public void Serializes_Properties_In_Specified_Order()
-        {
-            var ordered = new OrderedProperties
-            {
-                Name      = "Name",
-                Age       = 99,
-                StartDate = new DateTime(2010, 1, 1)
-            };
-            var xml      = new XmlSerializer();
-            var doc      = xml.Serialize(ordered);
-            var expected = GetSortedPropsXDoc();
-
-            Assert.AreEqual(expected.ToString(), doc);
         }
     }
 }

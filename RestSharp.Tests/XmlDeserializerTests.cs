@@ -1,22 +1,4 @@
-﻿#region License
-
-//   Copyright 2010 John Sheehan
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License. 
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -33,9 +15,9 @@ namespace RestSharp.Tests
     [TestFixture]
     public class XmlDeserializerTests
     {
-        const string GUID_STRING = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
+        const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-        readonly string sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
+        public readonly string sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
 
         string PathFor(string sampleFile) => Path.Combine(sampleDataPath, sampleFile);
 
@@ -52,7 +34,7 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("Is_Cool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XAttribute("Read_Only", "dummy"));
-            root.Add(new XElement("Unique_Id", new Guid(GUID_STRING)));
+            root.Add(new XElement("Unique_Id", new Guid(GuidString)));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("Url_Path", "/foo/bar"));
 
@@ -102,7 +84,7 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("is_cool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XAttribute("read_only", "dummy"));
-            root.Add(new XElement("unique_id", new Guid(GUID_STRING)));
+            root.Add(new XElement("unique_id", new Guid(GuidString)));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("url_path", "/foo/bar"));
 
@@ -152,7 +134,7 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("Is-Cool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XAttribute("Read-Only", "dummy"));
-            root.Add(new XElement("Unique-Id", new Guid(GUID_STRING)));
+            root.Add(new XElement("Unique-Id", new Guid(GuidString)));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("Url-Path", "/foo/bar"));
 
@@ -216,7 +198,7 @@ namespace RestSharp.Tests
             root.Add(new XElement("IsCool", false));
             root.Add(new XElement("Ignore", "dummy"));
             root.Add(new XElement("ReadOnly", "dummy"));
-            root.Add(new XElement("UniqueId", new Guid(GUID_STRING)));
+            root.Add(new XElement("UniqueId", new Guid(GuidString)));
             root.Add(new XElement("EmptyGuid", ""));
             root.Add(new XElement("Url", "http://example.com"));
             root.Add(new XElement("UrlPath", "/foo/bar"));
@@ -261,7 +243,7 @@ namespace RestSharp.Tests
             root.Add(new XAttribute("IsCool", false));
             root.Add(new XAttribute("Ignore", "dummy"));
             root.Add(new XAttribute("ReadOnly", "dummy"));
-            root.Add(new XAttribute("UniqueId", new Guid(GUID_STRING)));
+            root.Add(new XAttribute("UniqueId", new Guid(GuidString)));
             root.Add(new XAttribute("Url", "http://example.com"));
             root.Add(new XAttribute("UrlPath", "/foo/bar"));
 
@@ -329,7 +311,7 @@ namespace RestSharp.Tests
             root.Add(
                 new XElement("Id", 123),
                 new XElement("StartDate", new DateTime(2010, 2, 21, 9, 35, 00).ToString(culture)),
-                new XElement("UniqueId", new Guid(GUID_STRING))
+                new XElement("UniqueId", new Guid(GuidString))
             );
 
             doc.Add(root);
@@ -388,7 +370,7 @@ namespace RestSharp.Tests
             root.Add(
                 idElement,
                 new XElement("StartDate", null),
-                new XElement("UniqueId", new Guid(GUID_STRING))
+                new XElement("UniqueId", new Guid(GuidString))
             );
 
             doc.Add(root);
@@ -482,7 +464,7 @@ namespace RestSharp.Tests
             Assert.AreEqual(long.MaxValue, p.BigNumber);
             Assert.AreEqual(99.9999m, p.Percent);
             Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), p.UniqueId);
             Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.BestFriend);
@@ -626,7 +608,7 @@ namespace RestSharp.Tests
             Assert.AreEqual(long.MaxValue, p.BigNumber);
             Assert.AreEqual(99.9999m, p.Percent);
             Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), p.UniqueId);
             Assert.AreEqual(Guid.Empty, p.EmptyGuid);
             Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
@@ -656,7 +638,7 @@ namespace RestSharp.Tests
             Assert.NotNull(output.UniqueId);
             Assert.AreEqual(123, output.Id);
             Assert.AreEqual(new DateTime(2010, 2, 21, 9, 35, 00), output.StartDate);
-            Assert.AreEqual(new Guid(GUID_STRING), output.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), output.UniqueId);
         }
 
         [Test]
@@ -801,7 +783,7 @@ namespace RestSharp.Tests
             Assert.AreEqual(long.MaxValue, p.BigNumber);
             Assert.AreEqual(99.9999m, p.Percent);
             Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), p.UniqueId);
             Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
@@ -823,7 +805,7 @@ namespace RestSharp.Tests
 
             Assert.Null(output.Id);
             Assert.Null(output.StartDate);
-            Assert.AreEqual(new Guid(GUID_STRING), output.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), output.UniqueId);
         }
 
         [Test]
@@ -840,7 +822,7 @@ namespace RestSharp.Tests
             Assert.AreEqual(long.MaxValue, p.BigNumber);
             Assert.AreEqual(99.9999m, p.Percent);
             Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), p.UniqueId);
             Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
@@ -867,7 +849,7 @@ namespace RestSharp.Tests
             Assert.AreEqual(long.MaxValue, p.BigNumber);
             Assert.AreEqual(99.9999m, p.Percent);
             Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), p.UniqueId);
             Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);
@@ -894,7 +876,7 @@ namespace RestSharp.Tests
             Assert.AreEqual(long.MaxValue, p.BigNumber);
             Assert.AreEqual(99.9999m, p.Percent);
             Assert.AreEqual(false, p.IsCool);
-            Assert.AreEqual(new Guid(GUID_STRING), p.UniqueId);
+            Assert.AreEqual(new Guid(GuidString), p.UniqueId);
             Assert.AreEqual(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
             Assert.AreEqual(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
             Assert.NotNull(p.Friends);

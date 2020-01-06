@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -235,70 +236,30 @@ namespace RestSharp.Authenticators
             // according to the RFC 5849 - The OAuth 1.0 Protocol
             // http://tools.ietf.org/html/rfc5849#section-3.4.1
             // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
-            // or implement a seperate class for each OAuth version
-            if (!request.AlwaysMultipartFormData && !request.Files.Any())
-            {
-                parameters.AddRange(
-                    client.DefaultParameters
-                        .Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
-                        .Select(p => new WebPair(p.Name, p.Value.ToString()))
-                );
+            // or implement a separate class for each OAuth version
+            Func<Parameter, bool> baseQuery = x => x.Type == ParameterType.GetOrPost || x.Type == ParameterType.QueryString;
 
-                parameters.AddRange(
-                    request.Parameters
-                        .Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
-                        .Select(p => new WebPair(p.Name, p.Value.ToString()))
-                );
-            }
+            var query =
+                request.AlwaysMultipartFormData || request.Files.Count > 0
+                    ? baseQuery
+                    : x => baseQuery(x) && x.Name.StartsWith("oauth_");
+
+            parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
+            parameters.AddRange(request.Parameters.Where(query).ToWebParameters());
+
+            if (Type == OAuthType.RequestToken)
+                workflow.RequestTokenUrl = url;
             else
+                workflow.AccessTokenUrl = url;
+
+            var oauth = Type switch
             {
-                // if we are sending a multipart request, only the "oauth_" parameters should be included in the signature
-
-                parameters.AddRange(
-                    client.DefaultParameters
-                        .Where(
-                            p => (p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
-                                && p.Name.StartsWith("oauth_")
-                        )
-                        .Select(p => new WebPair(p.Name, p.Value.ToString()))
-                );
-
-                parameters.AddRange(
-                    request.Parameters
-                        .Where(
-                            p => (p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString)
-                                && p.Name.StartsWith("oauth_")
-                        )
-                        .Select(p => new WebPair(p.Name, p.Value.ToString()))
-                );
-            }
-
-            OAuthWebQueryInfo oauth;
-
-            switch (Type)
-            {
-                case OAuthType.RequestToken:
-                    workflow.RequestTokenUrl = url;
-                    oauth                    = workflow.BuildRequestTokenInfo(method, parameters);
-                    break;
-
-                case OAuthType.AccessToken:
-                    workflow.AccessTokenUrl = url;
-                    oauth                   = workflow.BuildAccessTokenInfo(method, parameters);
-                    break;
-
-                case OAuthType.ClientAuthentication:
-                    workflow.AccessTokenUrl = url;
-                    oauth                   = workflow.BuildClientAuthAccessTokenInfo(method, parameters);
-                    break;
-
-                case OAuthType.ProtectedResource:
-                    oauth = workflow.BuildProtectedResourceInfo(method, parameters, url);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                OAuthType.RequestToken         => workflow.BuildRequestTokenInfo(method, parameters),
+                OAuthType.AccessToken          => workflow.BuildAccessTokenInfo(method, parameters),
+                OAuthType.ClientAuthentication => workflow.BuildClientAuthAccessTokenInfo(method, parameters),
+                OAuthType.ProtectedResource    => workflow.BuildProtectedResourceInfo(method, parameters, url),
+                _                              => throw new ArgumentOutOfRangeException()
+            };
 
             switch (ParameterHandling)
             {
@@ -324,8 +285,7 @@ namespace RestSharp.Authenticators
                                     new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost)
                             );
 
-                    foreach (var header in headers)
-                        request.AddOrUpdateParameter(header);
+                    request.AddOrUpdateParameters(headers);
                     break;
 
                 default:
@@ -367,5 +327,10 @@ namespace RestSharp.Authenticators
 
             return authorization;
         }
+    }
+
+    internal static class ParametersExtensions
+    {
+        internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString()));
     }
 }

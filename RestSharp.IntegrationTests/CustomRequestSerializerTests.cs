@@ -11,52 +11,49 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_use_custom_xml_serializer()
         {
-            using (var server = SimpleServer.Create())
-            {
-                var client     = new RestClient(server.Url);
-                var serializer = new CustomXmlSerializer();
-                var body       = new {Text = "text"};
+            using var server = SimpleServer.Create();
 
-                var request = new RestRequest("/") {XmlSerializer = serializer};
-                request.AddXmlBody(body);
-                client.Execute(request);
+            var client     = new RestClient(server.Url);
+            var serializer = new CustomXmlSerializer();
+            var body       = new {Text = "text"};
 
-                serializer.BodyString.ShouldBe(body.ToString());
-            }
+            var request = new RestRequest("/") {XmlSerializer = serializer};
+            request.AddXmlBody(body);
+            client.Execute(request);
+
+            serializer.BodyString.ShouldBe(body.ToString());
         }
 
         [Test]
         public void Should_use_custom_json_serializer_for_addbody()
         {
-            using (var server = SimpleServer.Create())
-            {
-                var client     = new RestClient(server.Url);
-                var serializer = new CustomJsonSerializer();
-                var body       = new {Text = "text"};
+            using var server = SimpleServer.Create();
 
-                var request = new RestRequest("/") {JsonSerializer = serializer, RequestFormat = DataFormat.Json};
-                request.AddBody(body);
-                client.Execute(request);
+            var client     = new RestClient(server.Url);
+            var serializer = new CustomJsonSerializer();
+            var body       = new {Text = "text"};
 
-                serializer.BodyString.ShouldBe(body.ToString());
-            }
+            var request = new RestRequest("/") {JsonSerializer = serializer, RequestFormat = DataFormat.Json};
+            request.AddBody(body);
+            client.Execute(request);
+
+            serializer.BodyString.ShouldBe(body.ToString());
         }
 
         [Test]
         public void Should_use_custom_json_serializer()
         {
-            using (var server = SimpleServer.Create())
-            {
-                var client     = new RestClient(server.Url);
-                var serializer = new CustomJsonSerializer();
-                var body       = new {Text = "text"};
+            using var server = SimpleServer.Create();
 
-                var request = new RestRequest("/") {JsonSerializer = serializer};
-                request.AddJsonBody(body);
-                client.Execute(request);
+            var client     = new RestClient(server.Url);
+            var serializer = new CustomJsonSerializer();
+            var body       = new {Text = "text"};
 
-                serializer.BodyString.ShouldBe(body.ToString());
-            }
+            var request = new RestRequest("/") {JsonSerializer = serializer};
+            request.AddJsonBody(body);
+            client.Execute(request);
+
+            serializer.BodyString.ShouldBe(body.ToString());
         }
 
         class CustomXmlSerializer : IXmlSerializer

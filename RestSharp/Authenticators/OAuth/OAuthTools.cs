@@ -5,46 +5,47 @@ using System.Security.Cryptography;
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
+using static RestSharp.Authenticators.OAuth.OAuthSignatureMethod;
 
 namespace RestSharp.Authenticators.OAuth
 {
     [DataContract]
     internal static class OAuthTools
     {
-        const string ALPHA_NUMERIC = UPPER + LOWER + DIGIT;
+        const string AlphaNumeric = Upper + Lower + Digit;
 
-        const string DIGIT = "1234567890";
+        const string Digit = "1234567890";
 
-        const string LOWER = "abcdefghijklmnopqrstuvwxyz";
+        const string Lower = "abcdefghijklmnopqrstuvwxyz";
 
-        const string UNRESERVED = ALPHA_NUMERIC + "-._~";
+        const string Unreserved = AlphaNumeric + "-._~";
 
-        const string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        static readonly Random random;
+        static readonly Random Random;
 
-        static readonly object randomLock = new object();
+        static readonly object RandomLock = new object();
 
-        static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
 
         /// <summary>
         ///     All text parameters are UTF-8 encoded (per section 5.1).
         /// </summary>
-        static readonly Encoding encoding = Encoding.UTF8;
+        static readonly Encoding Encoding = Encoding.UTF8;
 
         /// <summary>
         ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
         /// </summary>
-        static readonly string[] uriRfc3986CharsToEscape = {"!", "*", "'", "(", ")"};
+        static readonly string[] UriRfc3986CharsToEscape = {"!", "*", "'", "(", ")"};
 
-        static readonly string[] uriRfc3968EscapedHex = {"%21", "%2A", "%27", "%28", "%29"};
+        static readonly string[] UriRfc3968EscapedHex = {"%21", "%2A", "%27", "%28", "%29"};
 
         static OAuthTools()
         {
             var bytes = new byte[4];
 
-            rng.GetBytes(bytes);
-            random = new Random(BitConverter.ToInt32(bytes, 0));
+            Rng.GetBytes(bytes);
+            Random = new Random(BitConverter.ToInt32(bytes, 0));
         }
 
         /// <summary>
@@ -53,14 +54,14 @@ namespace RestSharp.Authenticators.OAuth
         /// <returns></returns>
         public static string GetNonce()
         {
-            const string chars = LOWER + DIGIT;
+            const string chars = Lower + Digit;
 
             var nonce = new char[16];
 
-            lock (randomLock)
+            lock (RandomLock)
             {
                 for (var i = 0; i < nonce.Length; i++)
-                    nonce[i] = chars[random.Next(0, chars.Length)];
+                    nonce[i] = chars[Random.Next(0, chars.Length)];
             }
 
             return new string(nonce);
@@ -102,11 +103,11 @@ namespace RestSharp.Authenticators.OAuth
             // Escape RFC 3986 chars first.
             var escapedRfc3986 = new StringBuilder(value);
 
-            for (var i = 0; i < uriRfc3986CharsToEscape.Length; i++)
+            for (var i = 0; i < UriRfc3986CharsToEscape.Length; i++)
             {
-                var t = uriRfc3986CharsToEscape[i];
+                var t = UriRfc3986CharsToEscape[i];
 
-                escapedRfc3986.Replace(t, uriRfc3968EscapedHex[i]);
+                escapedRfc3986.Replace(t, UriRfc3968EscapedHex[i]);
             }
 
             // Do RFC 2396 escaping by calling the .NET method to do the work.
@@ -135,7 +136,7 @@ namespace RestSharp.Authenticators.OAuth
             value.ForEach(
                 c =>
                 {
-                    result += UNRESERVED.Contains(c)
+                    result += Unreserved.Contains(c)
                         ? c.ToString()
                         : c.ToString()
                             .PercentEncode();
@@ -320,61 +321,39 @@ namespace RestSharp.Authenticators.OAuth
             consumerSecret = Uri.EscapeDataString(consumerSecret);
             tokenSecret    = Uri.EscapeDataString(tokenSecret);
 
-            string signature;
-
-            switch (signatureMethod)
+            var signature = signatureMethod switch
             {
-                case OAuthSignatureMethod.HmacSha1:
-                {
-                    var crypto = new HMACSHA1();
-                    var key    = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
-
-                    crypto.Key = encoding.GetBytes(key);
-                    signature  = signatureBase.HashWith(crypto);
-                    break;
-                }
-
-                case OAuthSignatureMethod.HmacSha256:
-                {
-                    var crypto = new HMACSHA256();
-                    var key    = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
-
-                    crypto.Key = encoding.GetBytes(key);
-                    signature  = signatureBase.HashWith(crypto);
-                    break;
-                }
-
-                case OAuthSignatureMethod.RsaSha1:
-                {
-                    using (var provider = new RSACryptoServiceProvider {PersistKeyInCsp = false})
-                    {
-                        provider.FromXmlString2(unencodedConsumerSecret);
-
-                        var hasher = new SHA1Managed();
-                        var hash   = hasher.ComputeHash(encoding.GetBytes(signatureBase));
-
-                        signature = Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
-                    }
-
-                    break;
-                }
-
-                case OAuthSignatureMethod.PlainText:
-                {
-                    signature = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
-
-                    break;
-                }
-
-                default:
-                    throw new NotImplementedException("Only HMAC-SHA1, HMAC-SHA256, and RSA-SHA1 are currently supported.");
-            }
+                HmacSha1   => GetHmacSignature(new HMACSHA1(), consumerSecret, tokenSecret, signatureBase),
+                HmacSha256 => GetHmacSignature(new HMACSHA256(), consumerSecret, tokenSecret, signatureBase),
+                RsaSha1    => GetRsaSignature(),
+                PlainText  => $"{consumerSecret}%{tokenSecret}",
+                _          => throw new NotImplementedException("Only HMAC-SHA1, HMAC-SHA256, and RSA-SHA1 are currently supported.")
+            };
 
             var result = signatureTreatment == OAuthSignatureTreatment.Escaped
                 ? UrlEncodeRelaxed(signature)
                 : signature;
 
             return result;
+
+            string GetRsaSignature()
+            {
+                using var provider = new RSACryptoServiceProvider {PersistKeyInCsp = false};
+
+                provider.FromXmlString2(unencodedConsumerSecret);
+
+                var hasher = new SHA1Managed();
+                var hash   = hasher.ComputeHash(Encoding.GetBytes(signatureBase));
+
+                return Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
+            }
+        }
+
+        static string GetHmacSignature(KeyedHashAlgorithm crypto, string consumerSecret, string tokenSecret, string signatureBase)
+        {
+            var key = $"{consumerSecret}%{tokenSecret}";
+            crypto.Key = Encoding.GetBytes(key);
+            return signatureBase.HashWith(crypto);
         }
     }
 }

@@ -458,19 +458,32 @@ namespace RestSharp
         ///     Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
         ///     request
         /// </summary>
-        /// <param name="p">Parameter to add</param>
+        /// <param name="parameter">Parameter to add</param>
         /// <returns></returns>
-        public IRestRequest AddOrUpdateParameter(Parameter p)
+        public IRestRequest AddOrUpdateParameter(Parameter parameter)
         {
-            var parameter = Parameters.FirstOrDefault(param => param.Name == p.Name);
+            var p = Parameters.FirstOrDefault(param => param.Name == parameter.Name);
 
-            if (parameter != null)
+            if (p != null)
             {
-                parameter.Value = p.Value;
+                p.Value = parameter.Value;
                 return this;
             }
 
             Parameters.Add(p);
+            return this;
+        }
+
+        /// <summary>
+        ///      Add or update parameters to the request
+        /// </summary>
+        /// <param name="parameters">Collection of parameters to add</param>
+        /// <returns></returns>
+        public IRestRequest AddOrUpdateParameters(IEnumerable<Parameter> parameters)
+        {
+            foreach (var parameter in parameters)
+                AddOrUpdateParameter(parameter);
+
             return this;
         }
 

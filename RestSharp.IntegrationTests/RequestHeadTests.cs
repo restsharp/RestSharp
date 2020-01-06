@@ -14,7 +14,7 @@ namespace RestSharp.IntegrationTests
 
         class RequestHeadCapturer
         {
-            public const string RESOURCE = "Capture";
+            public const string Resource = "Capture";
 
             public static NameValueCollection CapturedHeaders { get; set; }
 
@@ -37,7 +37,7 @@ namespace RestSharp.IntegrationTests
 
             var client = new RestClient(server.Url);
 
-            var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
+            var request = new RestRequest(RequestHeadCapturer.Resource, httpMethod)
             {
                 UseDefaultCredentials = true
             };
@@ -64,7 +64,7 @@ namespace RestSharp.IntegrationTests
 
             var client = new RestClient(server.Url);
 
-            var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
+            var request = new RestRequest(RequestHeadCapturer.Resource, httpMethod)
             {
                 // UseDefaultCredentials is currently false by default,
                 // but to make the test more robust in case that ever
@@ -89,7 +89,7 @@ namespace RestSharp.IntegrationTests
 
             var client = new RestClient(server.Url);
 
-            var request = new RestRequest(RequestHeadCapturer.RESOURCE, httpMethod)
+            var request = new RestRequest(RequestHeadCapturer.Resource, httpMethod)
             {
                 UseDefaultCredentials = true
             };

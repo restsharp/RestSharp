@@ -55,7 +55,7 @@ namespace RestSharp.IntegrationTests
                 }
             };
 
-            var response = _client.Execute(rr);
+            _client.Execute(rr);
             Assert.IsTrue(string.Compare("JFIF", tag, StringComparison.Ordinal) == 0);
         }
 

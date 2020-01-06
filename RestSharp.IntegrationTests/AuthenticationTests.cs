@@ -22,7 +22,8 @@ namespace RestSharp.IntegrationTests
             context.Response.OutputStream.WriteStringUtf8(string.Join("|", parts));
         }
 
-        //[Test]
+        [Test]
+        [Ignore("Need Twitter tokens")]
         public void Can_Authenticate_With_OAuth()
         {
             var baseUrl = new Uri("https://api.twitter.com");
@@ -86,17 +87,16 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Can_Authenticate_With_Basic_Http_Auth()
         {
-            using (var server = SimpleServer.Create(UsernamePasswordEchoHandler))
-            {
-                var client = new RestClient(server.Url)
-                {
-                    Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
-                };
-                var request  = new RestRequest("test");
-                var response = client.Execute(request);
+            using var server = SimpleServer.Create(UsernamePasswordEchoHandler);
 
-                Assert.AreEqual("testuser|testpassword", response.Content);
-            }
+            var client = new RestClient(server.Url)
+            {
+                Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
+            };
+            var request  = new RestRequest("test");
+            var response = client.Execute(request);
+
+            Assert.AreEqual("testuser|testpassword", response.Content);
         }
     }
 }

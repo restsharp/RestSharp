@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../netfx.props" />
+  
   <PropertyGroup>
     <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
@@ -13,12 +16,11 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="Shouldly" Version="3.0.2" />
   </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="NuSpecUpdateTask.cs" />
-  </ItemGroup>
+  
   <ItemGroup>
     <None Update="SampleData\header_and_rows.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
