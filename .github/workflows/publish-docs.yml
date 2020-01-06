@@ -6,6 +6,7 @@ on:
       - 'docs/**'
       - 'yarn.lock'
       - 'package.json'
+      - '.github/workflows/publish-docs.yml'
 
 jobs:
   build:
