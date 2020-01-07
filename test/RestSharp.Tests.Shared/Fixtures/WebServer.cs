@@ -31,16 +31,23 @@ namespace RestSharp.Tests.Shared.Fixtures
                 {
                     var token = (CancellationToken) o;
 
-                    while (!token.IsCancellationRequested && _listener.IsListening)
-                        ThreadPool.QueueUserWorkItem(
-                            c =>
-                            {
-                                if (!(c is HttpListenerContext ctx)) return;
+                    try
+                    {
+                        while (!token.IsCancellationRequested && _listener.IsListening)
+                            ThreadPool.QueueUserWorkItem(
+                                c =>
+                                {
+                                    if (!(c is HttpListenerContext ctx)) return;
 
-                                _responderMethod?.Invoke(ctx);
-                                ctx.Response.OutputStream.Close();
-                            }, _listener.IsListening ? _listener.GetContext() : null
-                        );
+                                    _responderMethod?.Invoke(ctx);
+                                    ctx.Response.OutputStream.Close();
+                                }, _listener.IsListening ? _listener.GetContext() : null
+                            );
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 }, _cts.Token
             );
         }
