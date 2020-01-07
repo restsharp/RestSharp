@@ -4,7 +4,7 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
         <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
-        <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/master/restsharp.png</PackageIconUrl>
+        <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/master/docs/.vuepress/public/restsharp.png</PackageIconUrl>
         <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
         <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
         <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
