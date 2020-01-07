@@ -64,9 +64,6 @@ namespace RestSharp.Tests.Shared.Fixtures
         public void Stop()
         {
             _cts.Cancel();
-            
-            Thread.Sleep(10);
-                
             _listener.Stop();
             _listener.Close();
             _cts.Dispose();

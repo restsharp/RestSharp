@@ -16,39 +16,36 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Set_Invalid_Proxy_Fails()
         {
-            const Method httpMethod = Method.GET;
+            using var server = HttpServerFixture.StartServer((_, __) => { });
 
-            using (var server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>()))
-            {
-                var client = new RestClient(server.ServerUrl)
-                    {Proxy = new WebProxy("non_existent_proxy", false)};
-                var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var client = new RestClient(server.Url) {Proxy = new WebProxy("non_existent_proxy", false)};
+            var request = new RestRequest();
 
-                const string contentType = "text/plain";
-                const string bodyData    = "abc123 foo bar baz BING!";
+            const string contentType = "text/plain";
+            const string bodyData    = "abc123 foo bar baz BING!";
 
-                request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
-                var response = client.Execute(request);
-                Assert.False(response.IsSuccessful);
-                Assert.IsInstanceOf<WebException>(response.ErrorException);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            var response = client.Get(request);
+            
+            Assert.False(response.IsSuccessful);
+            Assert.IsInstanceOf<WebException>(response.ErrorException);
 
 #if NETCORE
-                Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
+            Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
 #else
                 Assert.AreEqual(
                     WebExceptionStatus.ProxyNameResolutionFailure,
                     ((WebException) response.ErrorException).Status
                 );
 #endif
-            }
         }
 
         [Test]
         public void Set_Invalid_Proxy_Fails_RAW()
         {
-            using var server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
+            using var server = HttpServerFixture.StartServer((_, __) => { });
 
-            var requestUri = new Uri(new Uri(server.ServerUrl), RequestBodyCapturer.RESOURCE);
+            var requestUri = new Uri(new Uri(server.Url), "");
             var webRequest = (HttpWebRequest) WebRequest.Create(requestUri);
             webRequest.Proxy = new WebProxy("non_existent_proxy", false);
 
