@@ -40,7 +40,7 @@ namespace RestSharp.Tests.Shared.Fixtures
                                     if (!(c is HttpListenerContext ctx)) return;
 
                                     _responderMethod?.Invoke(ctx);
-                                    ctx.Response.OutputStream.Close();
+                                    ctx.Response.OutputStream?.Close();
                                 }, _listener.IsListening ? _listener.GetContext() : null
                             );
                     }
