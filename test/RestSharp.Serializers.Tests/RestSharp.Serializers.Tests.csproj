@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-
+        <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
         <IsPackable>false</IsPackable>
-
+        <SignAssembly>true</SignAssembly>
         <LangVersion>8</LangVersion>
+        <AssemblyOriginatorKeyFile>..\..\RestSharp.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
     <ItemGroup>
