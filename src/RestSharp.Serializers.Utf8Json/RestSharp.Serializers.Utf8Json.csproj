@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+        <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
+        <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/master/restsharp.png</PackageIconUrl>
+        <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
+        <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Description>Simple REST and HTTP API Client</Description>
+        <Authors>John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community</Authors>
+        <Version>106.8.10</Version>
+        <Optimize>true</Optimize>
+        <AssemblyOriginatorKeyFile>..\..\RestSharp.snk</AssemblyOriginatorKeyFile>
+        <SignAssembly>true</SignAssembly>
+        <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+        <UpdateVersionProperties>true</UpdateVersionProperties>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <LangVersion>8</LangVersion>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Utf8Json" Version="1.3.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
+    </ItemGroup>
+
+</Project>

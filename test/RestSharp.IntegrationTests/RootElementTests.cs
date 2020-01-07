@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using NUnit.Framework;
-using RestSharp.IntegrationTests.Fixtures;
-using RestSharp.IntegrationTests.Helpers;
 using RestSharp.IntegrationTests.SampleDeserializers;
 using RestSharp.Serialization;
+using RestSharp.Tests.Shared.Extensions;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests
 {

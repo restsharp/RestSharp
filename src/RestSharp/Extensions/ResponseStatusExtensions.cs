@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using static System.Net.WebExceptionStatus;
 
 namespace RestSharp.Extensions
 {
@@ -14,16 +15,10 @@ namespace RestSharp.Extensions
         public static WebException ToWebException(this ResponseStatus responseStatus)
             => responseStatus switch
             {
-                ResponseStatus.None => new WebException(
-                    "The request could not be processed.",
-                    WebExceptionStatus.ServerProtocolViolation
-                ),
-                ResponseStatus.Error => new WebException(
-                    "An error occurred while processing the request.",
-                    WebExceptionStatus.ServerProtocolViolation
-                ),
-                ResponseStatus.TimedOut => new WebException("The request timed-out.", WebExceptionStatus.Timeout),
-                ResponseStatus.Aborted  => new WebException("The request was aborted.", WebExceptionStatus.Timeout),
+                ResponseStatus.None     => new WebException("The request could not be processed.", ServerProtocolViolation),
+                ResponseStatus.Error    => new WebException("An error occurred while processing the request.", ServerProtocolViolation),
+                ResponseStatus.TimedOut => new WebException("The request timed-out.", Timeout),
+                ResponseStatus.Aborted  => new WebException("The request was aborted.", Timeout),
                 _                       => throw new ArgumentOutOfRangeException(nameof(responseStatus))
             };
     }

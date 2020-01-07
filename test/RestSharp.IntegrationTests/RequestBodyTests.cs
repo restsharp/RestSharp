@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using NUnit.Framework;
-using RestSharp.IntegrationTests.Helpers;
+﻿using NUnit.Framework;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests
 {
@@ -11,49 +8,6 @@ namespace RestSharp.IntegrationTests
     {
         SimpleServer _server;
         const string NewLine = "\r\n";
-
-        static void AssertHasNoRequestBody()
-        {
-            Assert.Null(RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual(false, RequestBodyCapturer.CapturedHasEntityBody);
-            Assert.AreEqual(string.Empty, RequestBodyCapturer.CapturedEntityBody);
-        }
-
-        static void AssertHasRequestBody(string contentType, string bodyData)
-        {
-            Assert.AreEqual(contentType, RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual(true, RequestBodyCapturer.CapturedHasEntityBody);
-            Assert.AreEqual(bodyData, RequestBodyCapturer.CapturedEntityBody);
-        }
-
-        class RequestBodyCapturer
-        {
-            public const string RESOURCE = "Capture";
-
-            public static string CapturedContentType { get; set; }
-
-            public static bool CapturedHasEntityBody { get; set; }
-
-            public static string CapturedEntityBody { get; set; }
-
-            public static Uri CapturedUrl { get; set; }
-
-            public static void Capture(HttpListenerContext context)
-            {
-                var request = context.Request;
-
-                CapturedContentType   = request.ContentType;
-                CapturedHasEntityBody = request.HasEntityBody;
-                CapturedEntityBody    = StreamToString(request.InputStream);
-                CapturedUrl           = request.Url;
-            }
-
-            static string StreamToString(Stream stream)
-            {
-                var streamReader = new StreamReader(stream);
-                return streamReader.ReadToEnd();
-            }
-        }
 
         [OneTimeSetUp]
         public void Setup() => _server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
@@ -67,7 +21,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.COPY;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -85,7 +39,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.DELETE;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -103,7 +57,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.OPTIONS;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -121,7 +75,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.PATCH;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -139,7 +93,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.POST;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -157,7 +111,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.PUT;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -175,7 +129,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.POST;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             client.Execute(request);
 
@@ -188,7 +142,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.GET;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -206,7 +160,7 @@ namespace RestSharp.IntegrationTests
             const Method httpMethod = Method.HEAD;
 
             var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod);
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
@@ -221,11 +175,11 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void MultipartFormData_Without_File_Creates_A_Valid_RequestBody()
         {
-            var expectedFormBoundary = "-------------------------------28947758029299";
+            const string expectedFormBoundary = "-------------------------------28947758029299";
 
             var client = new RestClient(_server.Url);
 
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, Method.POST)
+            var request = new RestRequest(RequestBodyCapturer.Resource, Method.POST)
             {
                 AlwaysMultipartFormData = true
             };
@@ -263,7 +217,7 @@ namespace RestSharp.IntegrationTests
 
             var client = new RestClient(_server.Url);
 
-            var request = new RestRequest(RequestBodyCapturer.RESOURCE, httpMethod)
+            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod)
                 .AddJsonBody(new {displayName = "Display Name"})
                 .AddQueryParameter("key", "value");
 
@@ -272,6 +226,20 @@ namespace RestSharp.IntegrationTests
             Assert.AreEqual($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
             Assert.AreEqual("application/json", RequestBodyCapturer.CapturedContentType);
             Assert.AreEqual("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
+        }
+
+        static void AssertHasNoRequestBody()
+        {
+            Assert.Null(RequestBodyCapturer.CapturedContentType);
+            Assert.AreEqual(false, RequestBodyCapturer.CapturedHasEntityBody);
+            Assert.AreEqual(string.Empty, RequestBodyCapturer.CapturedEntityBody);
+        }
+
+        static void AssertHasRequestBody(string contentType, string bodyData)
+        {
+            Assert.AreEqual(contentType, RequestBodyCapturer.CapturedContentType);
+            Assert.AreEqual(true, RequestBodyCapturer.CapturedHasEntityBody);
+            Assert.AreEqual(bodyData, RequestBodyCapturer.CapturedEntityBody);
         }
     }
 }

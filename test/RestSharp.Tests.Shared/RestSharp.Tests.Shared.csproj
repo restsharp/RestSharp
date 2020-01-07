@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <SignAssembly>true</SignAssembly>
+        <LangVersion>8</LangVersion>
+        <AssemblyOriginatorKeyFile>..\..\RestSharp.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NUnit" Version="3.12.0" />
+    </ItemGroup>
+</Project>

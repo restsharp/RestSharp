@@ -1,6 +1,6 @@
 ﻿#region License
 
-//   Copyright 2010 John Sheehan
+//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -343,24 +343,18 @@ namespace RestSharp
 
         static void ExecuteCallback(HttpResponse response, Action<HttpResponse> callback)
         {
-            PopulateErrorForIncompleteResponse(response);
+            if (response.ResponseStatus != ResponseStatus.Completed && response.ErrorException == null)
+            {
+                response.ErrorException = response.ResponseStatus.ToWebException();
+                response.ErrorMessage   = response.ErrorException.Message;
+            }
+
             callback(response);
-        }
-
-        static void PopulateErrorForIncompleteResponse(IHttpResponse response)
-        {
-            if (response.ResponseStatus == ResponseStatus.Completed || response.ErrorException != null) return;
-
-            response.ErrorException = response.ResponseStatus.ToWebException();
-            response.ErrorMessage   = response.ErrorException.Message;
         }
 
         HttpResponse CreateErrorResponse(Exception ex)
         {
-            var response = new HttpResponse();
-
-            response.ErrorMessage   = ex.Message;
-            response.ErrorException = ex;
+            var response = new HttpResponse {ErrorMessage = ex.Message, ErrorException = ex};
 
             if (ex is WebException webException)
             {

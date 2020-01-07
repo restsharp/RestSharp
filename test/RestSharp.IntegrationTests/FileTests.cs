@@ -4,8 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using NUnit.Framework;
-using RestSharp.IntegrationTests.Fixtures;
-using RestSharp.IntegrationTests.Helpers;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests
 {

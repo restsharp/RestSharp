@@ -1,6 +1,6 @@
 ﻿#region Licensed
 
-//   Copyright 2010 John Sheehan
+//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.

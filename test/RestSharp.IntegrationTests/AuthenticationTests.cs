@@ -5,7 +5,8 @@ using System.Text;
 using System.Web;
 using NUnit.Framework;
 using RestSharp.Authenticators;
-using RestSharp.IntegrationTests.Helpers;
+using RestSharp.Tests.Shared.Extensions;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests
 {

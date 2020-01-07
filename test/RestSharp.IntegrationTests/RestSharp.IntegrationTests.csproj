@@ -26,6 +26,7 @@
     
     <ItemGroup>
         <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
     
     <ItemGroup>
@@ -39,5 +40,9 @@
       <None Update="Assets\TestFile.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Helpers" />
     </ItemGroup>
 </Project>

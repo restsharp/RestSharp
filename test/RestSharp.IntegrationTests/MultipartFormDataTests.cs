@@ -4,7 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using RestSharp.IntegrationTests.Helpers;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests
 {

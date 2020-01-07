@@ -1,7 +1,7 @@
 using NUnit.Framework;
-using RestSharp.IntegrationTests.Helpers;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
+using RestSharp.Tests.Shared.Fixtures;
 using Shouldly;
 
 namespace RestSharp.IntegrationTests
