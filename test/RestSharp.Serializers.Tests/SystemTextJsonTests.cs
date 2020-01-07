@@ -3,9 +3,7 @@ using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using RestSharp.Serializers.NewtonsoftJson;
 using RestSharp.Serializers.SystemTextJson;
-using RestSharp.Serializers.Utf8Json;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
