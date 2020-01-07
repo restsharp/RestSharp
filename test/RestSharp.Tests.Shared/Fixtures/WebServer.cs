@@ -9,7 +9,6 @@ namespace RestSharp.Tests.Shared.Fixtures
         readonly HttpListener       _listener = new HttpListener();
         CancellationTokenSource     _cts;
         Action<HttpListenerContext> _responderMethod;
-        bool                        _canClose = false;
 
         public WebServer(string prefix, Action<HttpListenerContext> method, AuthenticationSchemes authenticationSchemes)
         {
@@ -53,8 +52,6 @@ namespace RestSharp.Tests.Shared.Fixtures
                                 }, _listener.IsListening ? _listener.GetContext() : null
                             );
                         }
-
-                        _canClose = true;
                     }
                     catch (Exception e)
                     {
@@ -68,8 +65,7 @@ namespace RestSharp.Tests.Shared.Fixtures
         {
             _cts.Cancel();
             
-            while (!_canClose)
-                Thread.Sleep(10);
+            Thread.Sleep(10);
                 
             _listener.Stop();
             _listener.Close();
