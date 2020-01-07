@@ -18,6 +18,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.100'
 
       - name: Run tests netcoreapp3.1
         run: dotnet test -c Release -f netcoreapp3.1
@@ -31,14 +34,14 @@ jobs:
     - name: Run tests netcoreapp3.1
       run: dotnet test -c Release -f netcoreapp3.1
       
-  test-net452:
+  test-net461:
     runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v1
 
-      - name: Run tests net452
-        run: dotnet test -c Release -f net452
+      - name: Run tests net461
+        run: dotnet test -c Release -f net461
     
   nuget:
     runs-on: windows-latest

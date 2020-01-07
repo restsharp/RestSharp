@@ -8,12 +8,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-
+          
       - name: Run tests netcoreapp3.1
         run: dotnet test -c Release -f netcoreapp3.1
 
-      - name: Run tests net452
-        run: dotnet test -c Release -f net452
+      - name: Run tests net461
+        run: dotnet test -c Release -f net461
         
   docs:
     runs-on: ubuntu-latest
