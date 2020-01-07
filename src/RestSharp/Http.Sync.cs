@@ -87,7 +87,10 @@ namespace RestSharp
             => ExecuteRequest(
                 method, r =>
                 {
-                    if (!HasBody || !CanGetWithBody()) return;
+                    if (!HasBody) return;
+                    
+                    if (!CanGetWithBody())
+                        throw new NotSupportedException($"Http verb {method} does not support body");
 
                     r.ContentType = RequestContentType;
                     WriteRequestBody(r);
