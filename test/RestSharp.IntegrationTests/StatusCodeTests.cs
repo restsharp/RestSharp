@@ -97,18 +97,6 @@ namespace RestSharp.IntegrationTests
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Test]
-        public void Handles_GET_Request_404_Error_With_Body()
-        {
-            var request = new RestRequest("404");
-
-            request.AddBody("This is the body");
-
-            var response = _client.Execute(request);
-
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
-        }
-
         [Test, Ignore("Not sure why this hangs")]
         public void Reports_1xx_Status_Code_Success_Accurately()
         {
