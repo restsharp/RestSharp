@@ -9,6 +9,7 @@ namespace RestSharp.Tests.Shared.Fixtures
         readonly HttpListener       _listener = new HttpListener();
         CancellationTokenSource     _cts;
         Action<HttpListenerContext> _responderMethod;
+        bool                        _canClose = false;
 
         public WebServer(string prefix, Action<HttpListenerContext> method, AuthenticationSchemes authenticationSchemes)
         {
@@ -34,6 +35,7 @@ namespace RestSharp.Tests.Shared.Fixtures
                     try
                     {
                         while (!token.IsCancellationRequested && _listener.IsListening)
+                        {
                             ThreadPool.QueueUserWorkItem(
                                 c =>
                                 {
@@ -50,6 +52,9 @@ namespace RestSharp.Tests.Shared.Fixtures
                                     }
                                 }, _listener.IsListening ? _listener.GetContext() : null
                             );
+                        }
+
+                        _canClose = true;
                     }
                     catch (Exception e)
                     {
@@ -62,6 +67,10 @@ namespace RestSharp.Tests.Shared.Fixtures
         public void Stop()
         {
             _cts.Cancel();
+            
+            while (!_canClose)
+                Thread.Sleep(10);
+                
             _listener.Stop();
             _listener.Close();
             _cts.Dispose();
