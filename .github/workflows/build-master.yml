@@ -45,7 +45,7 @@ jobs:
     
   nuget:
     runs-on: windows-latest
-    needs: [test-netcore-win,test-netcore-linux,test-net452]
+    needs: [test-netcore-win,test-netcore-linux,test-net461]
 
     steps:
     - uses: actions/checkout@v1
