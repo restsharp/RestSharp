@@ -37,10 +37,17 @@ namespace RestSharp.Tests.Shared.Fixtures
                             ThreadPool.QueueUserWorkItem(
                                 c =>
                                 {
-                                    if (!(c is HttpListenerContext ctx)) return;
+                                    try
+                                    {
+                                        if (!(c is HttpListenerContext ctx)) return;
 
-                                    _responderMethod?.Invoke(ctx);
-                                    ctx.Response.OutputStream?.Close();
+                                        _responderMethod?.Invoke(ctx);
+                                        ctx.Response.OutputStream?.Close();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e);
+                                    }
                                 }, _listener.IsListening ? _listener.GetContext() : null
                             );
                     }
