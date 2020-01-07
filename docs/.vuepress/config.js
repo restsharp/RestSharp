@@ -25,6 +25,9 @@ module.exports = {
                 collapsable: false,
                 children: [
                     "/usage/serialization",
+                    "/usage/files",
+                    "/usage/authenticators",
+                    "/usage/parameters"
                 ]
             },
             {
