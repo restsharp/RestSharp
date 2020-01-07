@@ -29,15 +29,6 @@ namespace RestSharp.IntegrationTests
             
             Assert.False(response.IsSuccessful);
             Assert.IsInstanceOf<WebException>(response.ErrorException);
-
-#if NETCORE
-            Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
-#else
-                Assert.AreEqual(
-                    WebExceptionStatus.ProxyNameResolutionFailure,
-                    ((WebException) response.ErrorException).Status
-                );
-#endif
         }
 
         [Test]
