@@ -1,12 +1,12 @@
 default:
   close:
     delay: "3 days"
-    comment: "⚠️ This issue has been marked $LABEL and will be closed in $DELAY".
+    comment: "⚠️ This issue has been marked $LABEL and will be closed in $DELAY"
 
   duplicate:
     action: close
     delay: 15s
-    comment: "Duplicate issue created! Closing in $DELAY . . ."
+    comment: "Duplicate issue created! Closing in $DELAY..."
   invalid: close
   stale:
     action: close
