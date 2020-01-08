@@ -8,11 +8,6 @@ namespace RestSharp.IntegrationTests
     [TestFixture]
     public class ProxyTests
     {
-        class RequestBodyCapturer
-        {
-            public const string RESOURCE = "Capture";
-        }
-
         [Test]
         public void Set_Invalid_Proxy_Fails()
         {
@@ -21,10 +16,6 @@ namespace RestSharp.IntegrationTests
             var client = new RestClient(server.Url) {Proxy = new WebProxy("non_existent_proxy", false)};
             var request = new RestRequest();
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
-
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
             var response = client.Get(request);
             
             Assert.False(response.IsSuccessful);
