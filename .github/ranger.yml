@@ -1,0 +1,38 @@
+default:
+  close:
+    delay: "3 days"
+    comment: "⚠️ This issue has been marked $LABEL and will be closed in $DELAY".
+
+  duplicate:
+    action: close
+    delay: 15s
+    comment: "Duplicate issue created! Closing in $DELAY . . ."
+  invalid: close
+  stale:
+    action: close
+    delay: 14 days
+    comment: false
+  'merge when passing': merge
+  approved:
+    action: merge
+  'new contributor':
+    action: comment
+    delay: 5s
+    message: "Thanks for making your first contribution! :slightly_smiling_face:"
+
+merges:
+  - action: delete_branch
+
+comments:
+  - action: label
+    pattern: /duplicate of/i
+    labels:
+      - duplicate
+  - action: delete_comment
+    pattern: "+1"
+
+commits:
+  - action: label
+    pattern: /merge when passing/i
+    labels:
+      - merge when passing
