@@ -469,11 +469,7 @@ namespace RestSharp
         {
             var p = Parameters.FirstOrDefault(x => x.Name == parameter.Name);
 
-            if (p != null)
-            {
-                p.Value = parameter.Value;
-                return this;
-            }
+            if (p != null) Parameters.Remove(p);
 
             Parameters.Add(parameter);
             return this;

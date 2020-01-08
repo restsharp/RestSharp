@@ -42,14 +42,14 @@ namespace RestSharp
 
         static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
 
-        readonly IDictionary<string, Action<HttpWebRequest, string>> restrictedHeaderActions;
+        readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
 
         /// <summary>
         ///     Default constructor
         /// </summary>
         public Http()
         {
-            restrictedHeaderActions =
+            _restrictedHeaderActions =
                 new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
 
             AddSharedHeaderActions();
@@ -57,32 +57,32 @@ namespace RestSharp
 
             void AddSyncHeaderActions()
             {
-                restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
-                restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
-                restrictedHeaderActions.Add("Expect", (r, v) => r.Expect                = v);
+                _restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
+                _restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+                _restrictedHeaderActions.Add("Expect", (r, v) => r.Expect                = v);
 
-                restrictedHeaderActions.Add(
+                _restrictedHeaderActions.Add(
                     "If-Modified-Since",
                     (r, v) => r.IfModifiedSince = Convert.ToDateTime(v, CultureInfo.InvariantCulture)
                 );
-                restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
+                _restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
 
-                restrictedHeaderActions.Add(
+                _restrictedHeaderActions.Add(
                     "Transfer-Encoding", (r, v) =>
                     {
                         r.TransferEncoding = v;
                         r.SendChunked      = true;
                     }
                 );
-                restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
+                _restrictedHeaderActions.Add("User-Agent", (r, v) => r.UserAgent = v);
             }
 
             void AddSharedHeaderActions()
             {
-                restrictedHeaderActions.Add("Accept", (r, v) => r.Accept            = v);
-                restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
+                _restrictedHeaderActions.Add("Accept", (r, v) => r.Accept            = v);
+                _restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 
-                restrictedHeaderActions.Add(
+                _restrictedHeaderActions.Add(
                     "Date", (r, v) =>
                     {
                         if (DateTime.TryParse(v, out var parsed))
@@ -90,9 +90,9 @@ namespace RestSharp
                     }
                 );
 
-                restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
+                _restrictedHeaderActions.Add("Host", (r, v) => r.Host = v);
 
-                restrictedHeaderActions.Add("Range", AddRange);
+                _restrictedHeaderActions.Add("Range", AddRange);
 
                 static void AddRange(HttpWebRequest r, string range)
                 {

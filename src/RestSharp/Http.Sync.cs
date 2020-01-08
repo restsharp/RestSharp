@@ -222,7 +222,7 @@ namespace RestSharp
             if (ClientCertificates != null)
                 webRequest.ClientCertificates.AddRange(ClientCertificates);
 
-            AllowedDecompressionMethods.ForEach(x => { webRequest.AutomaticDecompression |= x; });
+            AllowedDecompressionMethods.ForEach(x => webRequest.AutomaticDecompression |= x);
 
             if (AutomaticDecompression)
                 webRequest.AutomaticDecompression =
@@ -257,7 +257,7 @@ namespace RestSharp
             void AppendHeaders()
             {
                 foreach (var header in Headers)
-                    if (restrictedHeaderActions.TryGetValue(header.Name, out var restrictedHeaderAction))
+                    if (_restrictedHeaderActions.TryGetValue(header.Name, out var restrictedHeaderAction))
                         restrictedHeaderAction.Invoke(webRequest, header.Value);
                     else
                         webRequest.Headers.Add(header.Name, header.Value);

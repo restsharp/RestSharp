@@ -10,6 +10,7 @@ using NUnit.Framework;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.IntegrationTests.Models;
+using Shouldly;
 
 namespace RestSharp.IntegrationTests
 {
@@ -385,14 +386,14 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Properly_Encodes_Parameter_Names()
         {
-            var postData = new WebParameterCollection
+            var postData = new WebPairCollection
             {
                 {"name[first]", "Chuck"},
                 {"name[last]", "Testa"}
             };
             var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
-
-            Assert.AreEqual("name%5Bfirst%5D", sortedParams[0].Name);
+            
+            sortedParams.First().ShouldBe("name%5Bfirst%5D=Chuck");
         }
 
         [Test]

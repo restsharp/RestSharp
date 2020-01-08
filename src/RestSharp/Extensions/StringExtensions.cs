@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -65,6 +66,7 @@ namespace RestSharp.Extensions
             while (index < input.Length)
             {
                 var length = Math.Min(input.Length - index, maxLength);
+
                 while (CharUnicodeInfo.GetUnicodeCategory(input[index + length - 1]) == UnicodeCategory.Surrogate)
                 {
                     length--;
@@ -369,5 +371,10 @@ namespace RestSharp.Extensions
             // try name with spaces with lower case
             yield return name.AddSpaces().ToLower(culture);
         }
+
+        internal static string JoinToString<T>(this IEnumerable<T> collection, string separator, Func<T, string> getString)
+            => JoinToString(collection.Select(x => getString(x)), separator);
+
+        internal static string JoinToString(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
     }
 }

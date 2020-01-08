@@ -8,63 +8,52 @@ namespace RestSharp.Authenticators.OAuth
     /// <summary>
     ///     A class to encapsulate OAuth authentication flow.
     /// </summary>
-    internal class OAuthWorkflow
+    internal sealed class OAuthWorkflow
     {
-        public virtual string Version { get; set; }
+        public string Version { get; set; }
 
-        public virtual string ConsumerKey { get; set; }
+        public string ConsumerKey { get; set; }
 
-        public virtual string ConsumerSecret { get; set; }
+        public string ConsumerSecret { get; set; }
 
-        public virtual string Token { get; set; }
+        public string Token { get; set; }
 
-        public virtual string TokenSecret { get; set; }
+        public string TokenSecret { get; set; }
 
-        public virtual string CallbackUrl { get; set; }
+        public string CallbackUrl { get; set; }
 
-        public virtual string Verifier { get; set; }
+        public string Verifier { get; set; }
 
-        public virtual string SessionHandle { get; set; }
+        public string SessionHandle { get; set; }
 
-        public virtual OAuthSignatureMethod SignatureMethod { get; set; }
+        public OAuthSignatureMethod SignatureMethod { get; set; }
 
-        public virtual OAuthSignatureTreatment SignatureTreatment { get; set; }
+        public OAuthSignatureTreatment SignatureTreatment { get; set; }
 
-        public virtual OAuthParameterHandling ParameterHandling { get; set; }
+        public OAuthParameterHandling ParameterHandling { get; set; }
 
-        public virtual string ClientUsername { get; set; }
+        public string ClientUsername { get; set; }
 
-        public virtual string ClientPassword { get; set; }
+        public string ClientPassword { get; set; }
 
-        public virtual string RequestTokenUrl { get; set; }
+        public string RequestTokenUrl { get; set; }
 
-        public virtual string AccessTokenUrl { get; set; }
-
-        public virtual string AuthorizationUrl { get; set; }
+        public string AccessTokenUrl { get; set; }
 
         /// <summary>
-        ///     Generates a <see cref="OAuthWebQueryInfo" /> instance to pass to an
-        ///     <see cref="IAuthenticator" /> for the purpose of requesting an
-        ///     unauthorized request token.
-        /// </summary>
-        /// <param name="method">The HTTP method for the intended request</param>
-        /// <returns></returns>
-        public OAuthWebQueryInfo BuildRequestTokenInfo(string method) => BuildRequestTokenInfo(method, null);
-
-        /// <summary>
-        ///     Generates a <see cref="OAuthWebQueryInfo" /> instance to pass to an
+        ///     Generates an OAuth signature to pass to an
         ///     <see cref="IAuthenticator" /> for the purpose of requesting an
         ///     unauthorized request token.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
         /// <returns></returns>
-        public virtual OAuthWebQueryInfo BuildRequestTokenInfo(string method, WebParameterCollection parameters)
+        public string BuildRequestTokenInfo(string method, WebPairCollection parameters)
         {
             ValidateTokenRequestState();
 
             if (parameters == null)
-                parameters = new WebParameterCollection();
+                parameters = new WebPairCollection();
 
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
@@ -72,48 +61,22 @@ namespace RestSharp.Authenticators.OAuth
             AddAuthParameters(parameters, timestamp, nonce);
 
             var signatureBase = OAuthTools.ConcatenateRequestElements(method, RequestTokenUrl, parameters);
-            var signature     = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret);
-
-            var info = new OAuthWebQueryInfo
-            {
-                WebMethod          = method,
-                ParameterHandling  = ParameterHandling,
-                ConsumerKey        = ConsumerKey,
-                SignatureMethod    = SignatureMethod.ToRequestValue(),
-                SignatureTreatment = SignatureTreatment,
-                Signature          = signature,
-                Timestamp          = timestamp,
-                Nonce              = nonce,
-                Version            = Version ?? "1.0",
-                Callback           = OAuthTools.UrlEncodeRelaxed(CallbackUrl ?? ""),
-                TokenSecret        = TokenSecret,
-                ConsumerSecret     = ConsumerSecret
-            };
-
-            return info;
+            return OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret);
         }
 
         /// <summary>
-        ///     Generates a <see cref="OAuthWebQueryInfo" /> instance to pass to an
-        ///     <see cref="IAuthenticator" /> for the purpose of exchanging a request token
-        ///     for an access token authorized by the user at the Service Provider site.
-        /// </summary>
-        /// <param name="method">The HTTP method for the intended request</param>
-        public virtual OAuthWebQueryInfo BuildAccessTokenInfo(string method) => BuildAccessTokenInfo(method, null);
-
-        /// <summary>
-        ///     Generates a <see cref="OAuthWebQueryInfo" /> instance to pass to an
+        ///     Generates an OAuth signature to pass to the
         ///     <see cref="IAuthenticator" /> for the purpose of exchanging a request token
         ///     for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
-        public virtual OAuthWebQueryInfo BuildAccessTokenInfo(string method, WebParameterCollection parameters)
+        public string BuildAccessTokenSignature(string method, WebPairCollection parameters)
         {
             ValidateAccessRequestState();
 
             if (parameters == null)
-                parameters = new WebParameterCollection();
+                parameters = new WebPairCollection();
 
             var uri       = new Uri(AccessTokenUrl);
             var timestamp = OAuthTools.GetTimestamp();
@@ -123,48 +86,25 @@ namespace RestSharp.Authenticators.OAuth
 
             var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), parameters);
 
-            var signature = OAuthTools.GetSignature(
+            return OAuthTools.GetSignature(
                 SignatureMethod, SignatureTreatment, signatureBase,
                 ConsumerSecret, TokenSecret
             );
-
-            var info = new OAuthWebQueryInfo
-            {
-                WebMethod          = method,
-                ParameterHandling  = ParameterHandling,
-                ConsumerKey        = ConsumerKey,
-                Token              = Token,
-                SignatureMethod    = SignatureMethod.ToRequestValue(),
-                SignatureTreatment = SignatureTreatment,
-                Signature          = signature,
-                Timestamp          = timestamp,
-                Nonce              = nonce,
-                Version            = Version ?? "1.0",
-                Verifier           = Verifier,
-                Callback           = CallbackUrl,
-                TokenSecret        = TokenSecret,
-                ConsumerSecret     = ConsumerSecret
-            };
-
-            return info;
         }
 
         /// <summary>
-        ///     Generates a <see cref="OAuthWebQueryInfo" /> instance to pass to an
+        ///     Generates an OAuth signature to pass to an
         ///     <see cref="IAuthenticator" /> for the purpose of exchanging user credentials
         ///     for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
-        public virtual OAuthWebQueryInfo BuildClientAuthAccessTokenInfo(
-            string method,
-            WebParameterCollection parameters
-        )
+        public string BuildClientAuthAccessTokenSignature(string method, WebPairCollection parameters)
         {
             ValidateClientAuthAccessRequestState();
 
             if (parameters == null)
-                parameters = new WebParameterCollection();
+                parameters = new WebPairCollection();
 
             var uri       = new Uri(AccessTokenUrl);
             var timestamp = OAuthTools.GetTimestamp();
@@ -174,58 +114,25 @@ namespace RestSharp.Authenticators.OAuth
 
             var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), parameters);
 
-            var signature = OAuthTools.GetSignature(
+            return OAuthTools.GetSignature(
                 SignatureMethod, SignatureTreatment, signatureBase,
                 ConsumerSecret
             );
-
-            var info = new OAuthWebQueryInfo
-            {
-                WebMethod          = method,
-                ParameterHandling  = ParameterHandling,
-                ClientMode         = "client_auth",
-                ClientUsername     = ClientUsername,
-                ClientPassword     = ClientPassword,
-                ConsumerKey        = ConsumerKey,
-                SignatureMethod    = SignatureMethod.ToRequestValue(),
-                SignatureTreatment = SignatureTreatment,
-                Signature          = signature,
-                Timestamp          = timestamp,
-                Nonce              = nonce,
-                Version            = Version ?? "1.0",
-                TokenSecret        = TokenSecret,
-                ConsumerSecret     = ConsumerSecret
-            };
-
-            return info;
         }
 
-        public virtual OAuthWebQueryInfo BuildProtectedResourceInfo(
-            string method,
-            WebParameterCollection parameters,
-            string url
-        )
+        public string BuildProtectedResourceSignature(string method, WebPairCollection parameters, string url)
         {
             ValidateProtectedResourceState();
 
             if (parameters == null)
-                parameters = new WebParameterCollection();
+                parameters = new WebPairCollection();
 
             // Include url parameters in query pool
             var uri           = new Uri(url);
             var urlParameters = HttpUtility.ParseQueryString(uri.Query);
 
             foreach (var parameter in urlParameters.AllKeys)
-                switch (method.ToUpperInvariant())
-                {
-                    case "POST":
-                        parameters.Add(new HttpPostParameter(parameter, urlParameters[parameter]));
-                        break;
-
-                    default:
-                        parameters.Add(parameter, urlParameters[parameter]);
-                        break;
-                }
+                parameters.Add(parameter, urlParameters[parameter]);
 
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
@@ -234,29 +141,10 @@ namespace RestSharp.Authenticators.OAuth
 
             var signatureBase = OAuthTools.ConcatenateRequestElements(method, url, parameters);
 
-            var signature = OAuthTools.GetSignature(
+            return OAuthTools.GetSignature(
                 SignatureMethod, SignatureTreatment, signatureBase,
                 ConsumerSecret, TokenSecret
             );
-
-            var info = new OAuthWebQueryInfo
-            {
-                WebMethod          = method,
-                ParameterHandling  = ParameterHandling,
-                ConsumerKey        = ConsumerKey,
-                Token              = Token,
-                SignatureMethod    = SignatureMethod.ToRequestValue(),
-                SignatureTreatment = SignatureTreatment,
-                Signature          = signature,
-                Timestamp          = timestamp,
-                Nonce              = nonce,
-                Version            = Version ?? "1.0",
-                Callback           = CallbackUrl,
-                ConsumerSecret     = ConsumerSecret,
-                TokenSecret        = TokenSecret
-            };
-
-            return info;
         }
 
         void ValidateTokenRequestState()
@@ -312,7 +200,7 @@ namespace RestSharp.Authenticators.OAuth
 
         void AddAuthParameters(ICollection<WebPair> parameters, string timestamp, string nonce)
         {
-            var authParameters = new WebParameterCollection
+            var authParameters = new WebPairCollection
             {
                 new WebPair("oauth_consumer_key", ConsumerKey),
                 new WebPair("oauth_nonce", nonce),
@@ -339,7 +227,7 @@ namespace RestSharp.Authenticators.OAuth
 
         void AddXAuthParameters(ICollection<WebPair> parameters, string timestamp, string nonce)
         {
-            var authParameters = new WebParameterCollection
+            var authParameters = new WebPairCollection
             {
                 new WebPair("x_auth_username", ClientUsername),
                 new WebPair("x_auth_password", ClientPassword),

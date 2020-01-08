@@ -34,7 +34,7 @@ namespace RestSharp.Validation
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static void IsBetween(int value, int min, int max)
         {
-            if (value < min || value > max) throw new ArgumentException(string.Format("Value ({0}) is not between {1} and {2}.", value, min, max));
+            if (value < min || value > max) throw new ArgumentException($"Value ({value}) is not between {min} and {max}.");
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace RestSharp.Validation
         {
             if (value == null) return;
 
-            if (value.Length > maxSize) throw new ArgumentException(string.Format("String is longer than max allowed size ({0}).", maxSize));
+            if (value.Length > maxSize) throw new ArgumentException($"String is longer than max allowed size ({maxSize}).");
         }
     }
 }

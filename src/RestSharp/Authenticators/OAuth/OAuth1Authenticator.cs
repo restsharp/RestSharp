@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -14,8 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +19,8 @@ using System.Text;
 using System.Web;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
+
+// ReSharper disable CheckNamespace
 
 namespace RestSharp.Authenticators
 {
@@ -230,14 +228,15 @@ namespace RestSharp.Authenticators
 
             var method = request.Method.ToString().ToUpperInvariant();
 
-            var parameters = new WebParameterCollection();
+            var parameters = new WebPairCollection();
 
             // include all GET and POST parameters before generating the signature
             // according to the RFC 5849 - The OAuth 1.0 Protocol
             // http://tools.ietf.org/html/rfc5849#section-3.4.1
             // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
             // or implement a separate class for each OAuth version
-            static bool BaseQuery(Parameter x) => x.Type == ParameterType.GetOrPost || x.Type == ParameterType.QueryString || x.Type == ParameterType.QueryStringWithoutEncode;
+            static bool BaseQuery(Parameter x)
+                => x.Type == ParameterType.GetOrPost || x.Type == ParameterType.QueryString || x.Type == ParameterType.QueryStringWithoutEncode;
 
             var query =
                 request.AlwaysMultipartFormData || request.Files.Count > 0
@@ -255,77 +254,49 @@ namespace RestSharp.Authenticators
             var oauth = Type switch
             {
                 OAuthType.RequestToken         => workflow.BuildRequestTokenInfo(method, parameters),
-                OAuthType.AccessToken          => workflow.BuildAccessTokenInfo(method, parameters),
-                OAuthType.ClientAuthentication => workflow.BuildClientAuthAccessTokenInfo(method, parameters),
-                OAuthType.ProtectedResource    => workflow.BuildProtectedResourceInfo(method, parameters, url),
+                OAuthType.AccessToken          => workflow.BuildAccessTokenSignature(method, parameters),
+                OAuthType.ClientAuthentication => workflow.BuildClientAuthAccessTokenSignature(method, parameters),
+                OAuthType.ProtectedResource    => workflow.BuildProtectedResourceSignature(method, parameters, url),
                 _                              => throw new ArgumentOutOfRangeException()
             };
 
-            switch (ParameterHandling)
+            parameters.Add("oauth_signature", oauth);
+
+            var oauthParameters = ParameterHandling switch
             {
-                case OAuthParameterHandling.HttpAuthorizationHeader:
-                    parameters.Add("oauth_signature", oauth.Signature);
+                OAuthParameterHandling.HttpAuthorizationHeader => CreateHeaderParameters(),
+                OAuthParameterHandling.UrlOrPostParameters     => CreateUrlParameters(),
+                _ =>
+                throw new ArgumentOutOfRangeException()
+            };
 
-                    request.AddOrUpdateParameter(
-                        "Authorization", GetAuthorizationHeader(parameters),
-                        ParameterType.HttpHeader
-                    );
-                    break;
+            request.AddOrUpdateParameters(oauthParameters);
 
-                case OAuthParameterHandling.UrlOrPostParameters:
-                    parameters.Add("oauth_signature", oauth.Signature);
+            IEnumerable<Parameter> CreateHeaderParameters()
+                => new[] {new Parameter("Authorization", GetAuthorizationHeader(parameters), ParameterType.HttpHeader)};
 
-                    var headers =
-                        parameters.Where(
-                                p => !p.Name.IsNullOrBlank() &&
-                                    (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
-                            )
-                            .Select(
-                                p =>
-                                    new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost)
-                            );
-
-                    request.AddOrUpdateParameters(headers);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            IEnumerable<Parameter> CreateUrlParameters()
+                => parameters.Where(p => !p.Name.IsNullOrBlank() && (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
+                    .Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
         }
 
         string GetAuthorizationHeader(WebPairCollection parameters)
         {
-            var sb = new StringBuilder("OAuth ");
-
-            if (!Realm.IsNullOrBlank())
-                sb.Append("realm=\"{0}\",".FormatWith(OAuthTools.UrlEncodeRelaxed(Realm)));
-
-            parameters.Sort((l, r) => string.Compare(l.Name, r.Name, StringComparison.Ordinal));
-
-            var parameterCount = 0;
-
             var oathParameters =
-                parameters.Where(
-                        p => !p.Name.IsNullOrBlank() &&
-                            !p.Value.IsNullOrBlank() &&
+                parameters
+                    .OrderBy(x => x, WebPair.Comparer)
+                    .Where(
+                        p =>
+                            !p.Name.IsNullOrBlank() && !p.Value.IsNullOrBlank() &&
                             (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
                     )
+                    .Select(x => $"{x.Name}={x.Value}")
                     .ToList();
 
-            foreach (var parameter in oathParameters)
-            {
-                parameterCount++;
+            if (!Realm.IsNullOrBlank())
+                oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
 
-                var format = parameterCount < oathParameters.Count
-                    ? "{0}=\"{1}\","
-                    : "{0}=\"{1}\"";
-
-                sb.Append(format.FormatWith(parameter.Name, parameter.Value));
-            }
-
-            var authorization = sb.ToString();
-
-            return authorization;
+            return "OAuth " + string.Join(",", oathParameters);
         }
     }
 

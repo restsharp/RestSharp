@@ -1,15 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
+using RestSharp.Validation;
 using static RestSharp.Authenticators.OAuth.OAuthSignatureMethod;
 
 namespace RestSharp.Authenticators.OAuth
 {
-    [DataContract]
     internal static class OAuthTools
     {
         const string AlphaNumeric = Upper + Lower + Digit;
@@ -78,12 +79,7 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="dateTime">A specified point in time.</param>
         /// <returns></returns>
-        public static string GetTimestamp(DateTime dateTime)
-        {
-            var timestamp = dateTime.ToUnixTime();
-
-            return timestamp.ToString();
-        }
+        static string GetTimestamp(DateTime dateTime) => dateTime.ToUnixTime().ToString();
 
         /// <summary>
         ///     URL encodes a string based on section 5.1 of the OAuth spec.
@@ -123,28 +119,14 @@ namespace RestSharp.Authenticators.OAuth
         ///     upper-casing hexadecimal characters, and UTF-8 encoding for text value pairs.
         /// </summary>
         /// <param name="value"></param>
+        // From oauth spec above: -
+        // Characters not in the unreserved character set ([RFC3986]
+        // (Berners-Lee, T., "Uniform Resource Identifiers (URI):
+        // Generic Syntax," .) section 2.3) MUST be encoded.
+        // ...
+        // unreserved = ALPHA, DIGIT, '-', '.', '_', '~'
         public static string UrlEncodeStrict(string value)
-        {
-            // From oauth spec above: -
-            // Characters not in the unreserved character set ([RFC3986]
-            // (Berners-Lee, T., "Uniform Resource Identifiers (URI):
-            // Generic Syntax," .) section 2.3) MUST be encoded.
-            // ...
-            // unreserved = ALPHA, DIGIT, '-', '.', '_', '~'
-            var result = "";
-
-            value.ForEach(
-                c =>
-                {
-                    result += Unreserved.Contains(c)
-                        ? c.ToString()
-                        : c.ToString()
-                            .PercentEncode();
-                }
-            );
-
-            return result;
-        }
+            => string.Join("", value.Select(x => Unreserved.Contains(x) ? x.ToString() : $"%{(byte) x:X2}"));
 
         /// <summary>
         ///     Sorts a collection of key-value pairs by name, and then value if equal,
@@ -153,47 +135,20 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public static string NormalizeRequestParameters(WebParameterCollection parameters)
-        {
-            var copy         = SortParametersExcludingSignature(parameters);
-            var concatenated = copy.Concatenate("=", "&");
-
-            return concatenated;
-        }
+        static string NormalizeRequestParameters(WebPairCollection parameters)
+            => string.Join("&", SortParametersExcludingSignature(parameters));
 
         /// <summary>
-        ///     Sorts a <see cref="WebParameterCollection" /> by name, and then value if equal.
+        ///     Sorts a <see cref="WebPairCollection" /> by name, and then value if equal.
         /// </summary>
         /// <param name="parameters">A collection of parameters to sort</param>
         /// <returns>A sorted parameter collection</returns>
-        public static WebParameterCollection SortParametersExcludingSignature(WebParameterCollection parameters)
-        {
-            var copy       = new WebParameterCollection(parameters);
-            var exclusions = copy.Where(n => n.Name.EqualsIgnoreCase("oauth_signature"));
-
-            copy.RemoveAll(exclusions);
-
-            copy.ForEach(
-                p =>
-                {
-                    p.Name  = UrlEncodeStrict(p.Name);
-                    p.Value = UrlEncodeStrict(p.Value);
-                }
-            );
-
-            copy.Sort(
-                (x, y) =>
-                {
-                    var compareName = string.CompareOrdinal(x.Name, y.Name);
-
-                    return compareName != 0
-                        ? compareName
-                        : string.CompareOrdinal(x.Value, y.Value);
-                }
-            );
-
-            return copy;
-        }
+        public static IEnumerable<string> SortParametersExcludingSignature(WebPairCollection parameters)
+            => parameters
+                .Where(x => !x.Name.EqualsIgnoreCase("oauth_signature"))
+                .Select(x => new WebPair(UrlEncodeStrict(x.Name), UrlEncodeStrict(x.Value)))
+                .OrderBy(x => x, WebPair.Comparer)
+                .Select(x => $"{x.Name}={x.Value}");
 
         /// <summary>
         ///     Creates a request URL suitable for making OAuth requests.
@@ -202,27 +157,15 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="url">The original request URL</param>
         /// <returns></returns>
-        public static string ConstructRequestUrl(Uri url)
+        static string ConstructRequestUrl(Uri url)
         {
-            if (url == null)
-                throw new ArgumentNullException(nameof(url));
+            Ensure.NotNull(url, nameof(url));
 
-            var sb         = new StringBuilder();
-            var requestUrl = "{0}://{1}".FormatWith(url.Scheme, url.Host);
-            var qualified  = ":{0}".FormatWith(url.Port);
-            var basic      = url.Scheme == "http"  && url.Port == 80;
-            var secure     = url.Scheme == "https" && url.Port == 443;
+            var basic  = url.Scheme == "http"  && url.Port == 80;
+            var secure = url.Scheme == "https" && url.Port == 443;
+            var port   = basic || secure ? "" : $":{url.Port}";
 
-            sb.Append(requestUrl);
-
-            sb.Append(
-                !basic && !secure
-                    ? qualified
-                    : ""
-            );
-            sb.Append(url.AbsolutePath);
-
-            return sb.ToString(); //.ToLower();
+            return $"{url.Scheme}://{url.Host}{port}{url.AbsolutePath}";
         }
 
         /// <summary>
@@ -233,20 +176,14 @@ namespace RestSharp.Authenticators.OAuth
         /// <param name="url">The request URL</param>
         /// <param name="parameters">The request parameters</param>
         /// <returns>A signature base string</returns>
-        public static string ConcatenateRequestElements(string method, string url, WebParameterCollection parameters)
+        public static string ConcatenateRequestElements(string method, string url, WebPairCollection parameters)
         {
-            var sb = new StringBuilder();
-
             // Separating &'s are not URL encoded
             var requestMethod     = method.ToUpper().Then("&");
             var requestUrl        = UrlEncodeRelaxed(ConstructRequestUrl(url.AsUri())).Then("&");
             var requestParameters = UrlEncodeRelaxed(NormalizeRequestParameters(parameters));
 
-            sb.Append(requestMethod);
-            sb.Append(requestUrl);
-            sb.Append(requestParameters);
-
-            return sb.ToString();
+            return $"{requestMethod}{requestUrl}{requestParameters}";
         }
 
         /// <summary>
@@ -280,22 +217,6 @@ namespace RestSharp.Authenticators.OAuth
             string consumerSecret
         )
             => GetSignature(signatureMethod, signatureTreatment, signatureBase, consumerSecret, null);
-
-        /// <summary>
-        ///     Creates a signature value given a signature base and the consumer secret and a known token secret.
-        /// </summary>
-        /// <param name="signatureMethod">The hashing method</param>
-        /// <param name="signatureBase">The signature base</param>
-        /// <param name="consumerSecret">The consumer secret</param>
-        /// <param name="tokenSecret">The token secret</param>
-        /// <returns></returns>
-        public static string GetSignature(
-            OAuthSignatureMethod signatureMethod,
-            string signatureBase,
-            string consumerSecret,
-            string tokenSecret
-        )
-            => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, consumerSecret, tokenSecret);
 
         /// <summary>
         ///     Creates a signature value given a signature base and the consumer secret and a known token secret.

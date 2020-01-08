@@ -27,6 +27,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Authenticators;
+using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 using RestSharp.Serialization;
@@ -260,10 +261,9 @@ namespace RestSharp
                 AcceptTypes.Add(contentType);
 
             // add Accept header based on registered deserializers
-            var accepts = Join(", ", AcceptTypes.ToArray());
+            var accepts = AcceptTypes.JoinToString(", ");
 
-            this.RemoveDefaultParameter("Accept");
-            this.AddDefaultParameter("Accept", accepts, ParameterType.HttpHeader);
+            this.AddOrUpdateDefaultParameter(new Parameter("Accept", accepts, ParameterType.HttpHeader));
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace RestSharp
 
             if (nullValuedParams.Any())
             {
-                var names = Join(", ", nullValuedParams.Select(name => $"'{name}'").ToArray());
+                var names = nullValuedParams.JoinToString(", ", name => $"'{name}'");
 
                 throw new ArgumentException(
                     $"Cannot build uri when url segment parameter(s) {names} value is null.",
@@ -544,7 +544,7 @@ namespace RestSharp
                 var parameterExists =
                     request.Parameters.Any(
                         p =>
-                            p.Name != null 
+                            p.Name != null
                             && p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
                             && p.Type == defaultParameter.Type
                     );
@@ -560,10 +560,10 @@ namespace RestSharp
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
             if (requestParameters.All(
-                p => !string.Equals(p.Name, "accept", StringComparison.InvariantCultureIgnoreCase)
+                p => !p.Name.EqualsIgnoreCase("accept")
             ))
             {
-                var accepts = Join(", ", AcceptTypes.ToArray());
+                var accepts = Join(", ", AcceptTypes);
 
                 requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
             }
@@ -696,7 +696,7 @@ namespace RestSharp
             catch (Exception ex)
             {
                 if (ThrowOnAnyError) throw;
-                
+
                 if (FailOnDeserializationError || ThrowOnDeserializationError)
                     response.ResponseStatus = ResponseStatus.Error;
 

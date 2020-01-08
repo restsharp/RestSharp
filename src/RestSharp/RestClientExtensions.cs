@@ -332,10 +332,9 @@ namespace RestSharp
         /// <returns></returns>
         public static IRestClient AddOrUpdateDefaultParameter(this IRestClient restClient, Parameter p)
         {
-            var existing = restClient.DefaultParameters.FirstOrDefault(x => x.Equals(p));
+            var existing = restClient.DefaultParameters.FirstOrDefault(x => x.Name == p.Name);
 
-            if (existing != null)
-                restClient.DefaultParameters.Remove(existing);
+            if (existing != null) restClient.DefaultParameters.Remove(existing);
 
             restClient.DefaultParameters.Add(p);
 
@@ -451,6 +450,11 @@ namespace RestSharp
                 throw exception;
         }
 
+        /// <summary>
+        ///     Sets the <see cref="RestClient"/> to only use JSON
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         public static RestClient UseJson(this RestClient client)
         {
             foreach (var contentType in ContentType.XmlAccept)
@@ -461,6 +465,11 @@ namespace RestSharp
             return client;
         }
 
+        /// <summary>
+        ///     Sets the <see cref="RestClient"/> to only use XML
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         public static RestClient UseXml(this RestClient client)
         {
             foreach (var contentType in ContentType.JsonAccept)

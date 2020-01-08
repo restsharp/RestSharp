@@ -29,34 +29,19 @@ namespace RestSharp.Authenticators
     /// Encoding can be specified depending on what your server expect (see https://stackoverflow.com/a/7243567).
     /// UTF-8 is used by default but some servers might expect ISO-8859-1 encoding.
     /// </remarks>
-    public class HttpBasicAuthenticator : IAuthenticator
+    public class HttpBasicAuthenticator : AuthenticatorBase
     {
-        readonly string _authHeader;
-
         public HttpBasicAuthenticator(string username, string password)
-            : this(username, password, Encoding.UTF8)
-        {
-        }
+            : this(username, password, Encoding.UTF8) { }
 
         public HttpBasicAuthenticator(string username, string password, Encoding encoding)
-        {
-            var token = Convert.ToBase64String(encoding.GetBytes($"{username}:{password}"));
-            
-            _authHeader = $"Basic {token}";
-        }
+            : base(GetHeader(username, password, encoding)) { }
 
-        public void Authenticate(IRestClient client, IRestRequest request)
-        {
-            // NetworkCredentials always makes two trips, even if with PreAuthenticate,
-            // it is also unsafe for many partial trust scenarios
-            // request.Credentials = Credentials;
-            // thanks TweetSharp!
+        static string GetHeader(string username, string password, Encoding encoding)
+            => Convert.ToBase64String(encoding.GetBytes($"{username}:{password}"));
 
-            // request.Credentials = new NetworkCredential(_username, _password);
-
-            // only add the Authorization parameter if it hasn't been added by a previous Execute
-            if (!request.Parameters.Any(p => "Authorization".Equals(p.Name, StringComparison.OrdinalIgnoreCase)))
-                request.AddParameter("Authorization", _authHeader, ParameterType.HttpHeader);
-        }
+        // return ;
+        protected override Parameter GetAuthenticationParameter(string accessToken)
+            => new Parameter("Authorization", $"Basic {accessToken}", ParameterType.HttpHeader);
     }
 }

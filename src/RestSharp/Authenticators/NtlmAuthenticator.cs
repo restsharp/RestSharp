@@ -26,13 +26,12 @@ namespace RestSharp.Authenticators
     /// </summary>
     public class NtlmAuthenticator : IAuthenticator
     {
-        readonly ICredentials credentials;
+        readonly ICredentials _credentials;
 
         /// <summary>
         ///     Authenticate with the credentials of the currently logged in user
         /// </summary>
-        public NtlmAuthenticator()
-            : this(CredentialCache.DefaultCredentials) { }
+        public NtlmAuthenticator() : this(CredentialCache.DefaultCredentials) { }
 
         /// <summary>
         ///     Authenticate by impersonation
@@ -46,8 +45,8 @@ namespace RestSharp.Authenticators
         ///     Authenticate by impersonation, using an existing <c>ICredentials</c> instance
         /// </summary>
         /// <param name="credentials"></param>
-        public NtlmAuthenticator(ICredentials credentials) => this.credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
+        public NtlmAuthenticator(ICredentials credentials) => this._credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
 
-        public void Authenticate(IRestClient client, IRestRequest request) => request.Credentials = credentials;
+        public void Authenticate(IRestClient client, IRestRequest request) => request.Credentials = _credentials;
     }
 }
