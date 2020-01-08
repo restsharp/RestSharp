@@ -1,5 +1,24 @@
 # RestSharp Release Notes
 
+# 106.10
+
+* Added a new package `RestSharp.Serializers.NewtonsoftJson`
+* Added a new package `RestSharp.Serializers.Utf8Json`
+* Added a new package `RestSharp.Serializers.SystemTextJson`
+* New documentation website
+* Added `ThrowOnAnyError` property that will tell RestSharp to throw instead of creating an error response
+* Fixed the error response propagation for async calls
+
+# 106.9
+
+* Fixed the relative URI issue (thanks @maratoss)
+* Added `AddDefaultHeaders` extension method to `RestClient` that accepts multiple headers (thanks @Kerl1310)
+* Added `AddHeaders` method to `RestRequest` that accepts multiple headers (thanks @abailey7)
+* Fixed the crash on `null` body parameter names (thanks to @ofirZelig, @mitcht and @kd5ziy)
+* Fixed the exception when `Encoding` is set to null. Wasn't a bug but the exception was popping up in the debugger
+* `IList` properties marked with `[SerializeAs(Content = true)]` attribute can be serialized as parent's XML tag content (thanks @partyz0ne)
+* Better handling for the case a unicode character gets between chunks (thanks @stukalin)
+
 # 106.6
 
 * Fixed some new platform unsupported exceptions
