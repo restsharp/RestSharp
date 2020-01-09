@@ -53,6 +53,33 @@ If you have `GetOrPost` parameters as well, they will overwrite the `RequestBody
 
 It is recommended to use `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
 
+### AddJsonBody
+
+When you call `AddJsonBody`, it does the following for you:
+
+ - Instructs the RestClient to serialize the object parameter as JSON when making a request
+ - Sets the content type to `application/json`
+ - Sets the internal data type of the request body to `DataType.Json`
+
+Do not set content type headers or send JSON string or some sort of `JObject` instance to `AddJsonBody`, it won't work!
+
+Here is the example:
+
+```csharp
+var param = new MyClass { IntData = 1, StringData = "test123" };
+request.AddJsonBody(param);
+```
+
+### AddXmlBody
+
+When you call `AddXmlBody`, it does the following for you:
+
+ - Instructs the RestClient to serialize the object parameter as XML when making a request
+ - Sets the content type to `application/xml`
+ - Sets the internal data type of the request body to `DataType.Xml`
+
+Do not set content type headers or send XML string to `AddXmlBody`, it won't work!
+
 ## Query String
 
 This works like `GetOrPost`, except that it always appends the parameters to the url in the form `url?name1=value1&name2=value2`, regardless of the request method. 
