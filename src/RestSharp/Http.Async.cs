@@ -31,31 +31,7 @@ namespace RestSharp
     /// </summary>
     public partial class Http
     {
-        TimeOutState timeoutState;
-
-        [Obsolete]
-        public HttpWebRequest DeleteAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("DELETE", action);
-
-        [Obsolete]
-        public HttpWebRequest GetAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("GET", action);
-
-        [Obsolete]
-        public HttpWebRequest HeadAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("HEAD", action);
-
-        [Obsolete]
-        public HttpWebRequest OptionsAsync(Action<HttpResponse> action) => GetStyleMethodInternalAsync("OPTIONS", action);
-
-        [Obsolete]
-        public HttpWebRequest PostAsync(Action<HttpResponse> action) => PutPostInternalAsync("POST", action);
-
-        [Obsolete]
-        public HttpWebRequest PutAsync(Action<HttpResponse> action) => PutPostInternalAsync("PUT", action);
-
-        [Obsolete]
-        public HttpWebRequest PatchAsync(Action<HttpResponse> action) => PutPostInternalAsync("PATCH", action);
-
-        [Obsolete]
-        public HttpWebRequest MergeAsync(Action<HttpResponse> action) => PutPostInternalAsync("MERGE", action);
+        TimeOutState _timeoutState;
 
         /// <summary>
         ///     Execute an async POST-style request with the specified HTTP Method.
@@ -92,7 +68,7 @@ namespace RestSharp
                 {
                     // webRequest.GetResponseAsync();
 
-                    timeoutState = new TimeOutState {Request = webRequest};
+                    _timeoutState = new TimeOutState {Request = webRequest};
 
                     var asyncResult = webRequest.BeginGetResponse(
                         result => ResponseCallback(result, callback), webRequest
@@ -180,7 +156,7 @@ namespace RestSharp
         void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
         {
             IAsyncResult asyncResult;
-            timeoutState = new TimeOutState {Request = webRequest};
+            _timeoutState = new TimeOutState {Request = webRequest};
 
             if (HasBody || HasFiles || AlwaysMultipartFormData)
             {
@@ -199,7 +175,7 @@ namespace RestSharp
 
             void RequestStreamCallback(IAsyncResult result)
             {
-                if (timeoutState.TimedOut)
+                if (_timeoutState.TimedOut)
                 {
                     var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
 
@@ -265,7 +241,7 @@ namespace RestSharp
             if (Timeout != 0)
                 ThreadPool.RegisterWaitForSingleObject(
                     asyncResult.AsyncWaitHandle,
-                    TimeoutCallback, timeoutState, Timeout, true
+                    TimeoutCallback, _timeoutState, Timeout, true
                 );
 
             static void TimeoutCallback(object state, bool timedOut)
@@ -318,7 +294,7 @@ namespace RestSharp
         {
             try
             {
-                if (timeoutState.TimedOut)
+                if (_timeoutState.TimedOut)
                 {
                     var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
                     ExecuteCallback(response, callback);
@@ -360,7 +336,7 @@ namespace RestSharp
             {
                 response.ResponseStatus = webException.Status switch
                 {
-                    WebExceptionStatus.RequestCanceled => timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted,
+                    WebExceptionStatus.RequestCanceled => _timeoutState.TimedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted,
                     WebExceptionStatus.Timeout         => ResponseStatus.TimedOut,
                     _                                  => ResponseStatus.Error
                 };
@@ -370,10 +346,7 @@ namespace RestSharp
 
             return response;
         }
-
-        [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
-        protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url) => ConfigureWebRequest(method, url);
-
+        
         class TimeOutState
         {
             public bool TimedOut { get; set; }

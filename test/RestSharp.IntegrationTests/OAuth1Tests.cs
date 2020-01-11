@@ -213,31 +213,21 @@ namespace RestSharp.IntegrationTests
         [Ignore("Provide your own consumer key/secret before running")]
         public void Can_Authenticate_Twitter()
         {
-            // To pass this test, place a file config.json in the RestSharp.IntegrationTests folder
-            // with the following content:
-            //
-            // {
-            //     "ConsumerKey": "",
-            //     "ConsumerSecret": "",
-            //     "AccessToken": "",
-            //     "AccessSecret": ""
-            // }
-            //
-            // The tokens can be found on the "Keys and Access Tokens" tab on the application
-            // management page for your app: https://apps.twitter.com/
-
-            Assert.True(File.Exists(@"..\..\config.json"));
-
-            if (!(SimpleJson.DeserializeObject(File.ReadAllText(@"..\..\config.json")) is JsonObject config)
-            ) return;
+            var config = new
+            {
+                ConsumerKey    = "",
+                ConsumerSecret = "",
+                AccessToken    = "",
+                AccessSecret   = ""
+            };
 
             var client = new RestClient("https://api.twitter.com/1.1")
             {
                 Authenticator = OAuth1Authenticator.ForProtectedResource(
-                    (string) config["ConsumerKey"],
-                    (string) config["ConsumerSecret"],
-                    (string) config["AccessToken"],
-                    (string) config["AccessSecret"]
+                    config.ConsumerKey,
+                    config.ConsumerSecret,
+                    config.AccessToken,
+                    config.AccessSecret
                 )
             };
 
@@ -280,12 +270,11 @@ namespace RestSharp.IntegrationTests
             request = new RestRequest("oauth/authorize");
             request.AddParameter("oauth_token", oauthToken);
 
-            var url = client.BuildUri(request)
-                .ToString();
+            var url = client.BuildUri(request).ToString();
 
-            Process.Start(url);
-
-            const string verifier = "123456"; // <-- Breakpoint here (set verifier in debugger)
+            // Breakpoint here, open the URL from the url var in the browser
+            // then set verifier in debugger to the value in the URL where you get redirected
+            var verifier = "123456";
 
             request = new RestRequest("oauth/access_token", Method.POST);
 
@@ -305,7 +294,7 @@ namespace RestSharp.IntegrationTests
             Assert.NotNull(oauthToken);
             Assert.NotNull(oauthTokenSecret);
 
-            request = new RestRequest("account/verify_credentials.xml");
+            request = new RestRequest("/1.1/account/verify_credentials.json");
 
             client.Authenticator = OAuth1Authenticator.ForProtectedResource(
                 consumerKey, consumerSecret, oauthToken,
@@ -392,7 +381,7 @@ namespace RestSharp.IntegrationTests
                 {"name[last]", "Testa"}
             };
             var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
-            
+
             sortedParams.First().ShouldBe("name%5Bfirst%5D=Chuck");
         }
 

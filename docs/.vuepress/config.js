@@ -33,7 +33,10 @@ module.exports = {
             {
                 title: "Got stuck?",
                 path: "/get-help/",
-                collapsable: false
+                collapsable: false,
+                children: [
+                    "/get-help/faq"
+                ]
             }
         ],
         searchPlaceholder: "Search...",

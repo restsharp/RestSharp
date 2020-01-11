@@ -28,7 +28,7 @@ namespace RestSharp
     /// </summary>
     public class HttpResponse : IHttpResponse
     {
-        string content;
+        string _content;
 
         /// <summary>
         ///     Default constructor
@@ -58,7 +58,7 @@ namespace RestSharp
         /// <summary>
         ///     Lazy-loaded string representation of response content
         /// </summary>
-        public string Content => content ?? (content = RawBytes.AsString(ContentEncoding));
+        public string Content => _content ??= RawBytes.AsString(ContentEncoding);
 
         /// <summary>
         ///     HTTP response status code

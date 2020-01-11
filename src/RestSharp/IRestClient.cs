@@ -31,13 +31,10 @@ using RestSharp.Serialization;
 
 namespace RestSharp
 {
-    public interface IRestClient
+    public partial interface IRestClient
     {
-        [Obsolete("Use the overload that accepts the delegate factory")]
-        IRestClient UseSerializer(IRestSerializer serializer);
-
         IRestClient UseSerializer(Func<IRestSerializer> serializerFactory);
-        
+
         IRestClient UseSerializer<T>() where T : IRestSerializer, new();
 
         CookieContainer CookieContainer { get; set; }
@@ -63,7 +60,7 @@ namespace RestSharp
         bool ThrowOnDeserializationError { get; set; }
 
         bool FailOnDeserializationError { get; set; }
-        
+
         bool ThrowOnAnyError { get; set; }
 
         string ConnectionGroupName { get; set; }
@@ -96,32 +93,6 @@ namespace RestSharp
         ///     overriding certificate errors in the scope of a request.
         /// </summary>
         RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsync(
-            IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback
-        );
-
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsync<T>(
-            IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback
-        );
-
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsync(
-            IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback,
-            Method httpMethod
-        );
-
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsync<T>(
-            IRestRequest request,
-            Action<IRestResponse<T>, RestRequestAsyncHandle> callback,
-            Method httpMethod
-        );
 
         IRestResponse<T> Deserialize<T>(IRestResponse response);
 
@@ -158,76 +129,10 @@ namespace RestSharp
         string BuildUriWithoutQueryParameters(IRestRequest request);
 
         /// <summary>
-        ///     Executes a GET-style request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
-        /// <param name="httpMethod">The HTTP method to execute</param>
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsyncGet(
-            IRestRequest request,
-            Action<IRestResponse,
-                RestRequestAsyncHandle> callback,
-            string httpMethod
-        );
-
-        /// <summary>
-        ///     Executes a POST-style request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
-        /// <param name="httpMethod">The HTTP method to execute</param>
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsyncPost(
-            IRestRequest request,
-            Action<IRestResponse,
-                RestRequestAsyncHandle> callback,
-            string httpMethod
-        );
-
-        /// <summary>
-        ///     Executes a GET-style request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="callback">Callback function to be executed upon completion</param>
-        /// <param name="httpMethod">The HTTP method to execute</param>
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsyncGet<T>(
-            IRestRequest request,
-            Action<IRestResponse<T>,
-                RestRequestAsyncHandle> callback,
-            string httpMethod
-        );
-
-        /// <summary>
-        ///     Executes a GET-style request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="callback">Callback function to be executed upon completion</param>
-        /// <param name="httpMethod">The HTTP method to execute</param>
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
-        RestRequestAsyncHandle ExecuteAsyncPost<T>(
-            IRestRequest request,
-            Action<IRestResponse<T>,
-                RestRequestAsyncHandle> callback,
-            string httpMethod
-        );
-
-        /// <summary>
         ///     Add a delegate to apply custom configuration to HttpWebRequest before making a call
         /// </summary>
         /// <param name="configurator">Configuration delegate for HttpWebRequest</param>
         void ConfigureWebRequest(Action<HttpWebRequest> configurator);
-
-        /// <summary>
-        ///     Adds or replaces a deserializer for the specified content type
-        /// </summary>
-        /// <param name="contentType">Content type for which the deserializer will be replaced</param>
-        /// <param name="deserializer">Custom deserializer</param>
-        [Obsolete("Use the overload that accepts a factory delegate")]
-        void AddHandler(string contentType, IDeserializer deserializer);
 
         /// <summary>
         ///     Adds or replaces a deserializer for the specified content type
@@ -256,13 +161,12 @@ namespace RestSharp
         IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod);
 
         /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
+        ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        [Obsolete("This method will be renamed to ExecuteAsync soon")]
-        Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token);
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes the request asynchronously, authenticating if needed
@@ -270,103 +174,45 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="httpMethod">Override the request method</param>
-        [Obsolete("This method will be renamed to ExecuteAsync soon")]
-        Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod);
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes the request asynchronously, authenticating if needed
         /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        [Obsolete("This method will be renamed to ExecuteAsync soon")]
-        Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request);
-
-        /// <summary>
-        ///     Executes a GET-style request asynchronously, authenticating if needed
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to be executed</param>
-        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
-        Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request);
-
-        /// <summary>
-        ///     Executes a GET-style request asynchronously, authenticating if needed
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
-        Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token);
-
-        /// <summary>
-        ///     Executes a POST-style request asynchronously, authenticating if needed
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to be executed</param>
-        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
-        Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request);
-
-        /// <summary>
-        ///     Executes a POST-style request asynchronously, authenticating if needed
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
-        Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token);
-
-        /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        [Obsolete("This method will be renamed to ExecuteAsync soon")]
-        Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token);
-
-        /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
         /// <param name="httpMethod">Override the request method</param>
-        [Obsolete("This method will be renamed to ExecuteAsync soon")]
-        Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token, Method httpMethod);
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse> ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        ///     Executes a GET-style request asynchronously, authenticating if needed
+        /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse<T>> ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken = default);
 
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        ///     Executes a POST-style request asynchronously, authenticating if needed
         /// </summary>
+        /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
-        [Obsolete("This method will be renamed to ExecuteAsync soon")]
-        Task<IRestResponse> ExecuteTaskAsync(IRestRequest request);
+        /// <param name="cancellationToken">The cancellation token</param>
+        Task<IRestResponse<T>> ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
-        Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request);
-
-        /// <summary>
-        ///     Executes a GET-style asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
-        Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token);
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse> ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
-        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
-        Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request);
-
-        /// <summary>
-        ///     Executes a POST-style asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
-        [Obsolete("This method will be renamed to ExecutePostAsync soon")]
-        Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token);
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse> ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken = default);
     }
 }

@@ -240,8 +240,8 @@ namespace RestSharp.Authenticators
 
             var query =
                 request.AlwaysMultipartFormData || request.Files.Count > 0
-                    ? (Func<Parameter, bool>) BaseQuery
-                    : x => BaseQuery(x) && x.Name.StartsWith("oauth_");
+                    ? x => BaseQuery(x) && x.Name.StartsWith("oauth_")
+                    : (Func<Parameter, bool>) BaseQuery;
 
             parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
             parameters.AddRange(request.Parameters.Where(query).ToWebParameters());
