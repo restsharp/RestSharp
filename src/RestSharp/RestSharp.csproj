@@ -34,7 +34,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="MinVer" Version="2.0.0" PrivateAssets="All" />
-    <PackageReference Include="Vsxmd" Version="1.4.2" PrivateAssets="All" />
   </ItemGroup>
 
   <PropertyGroup>
