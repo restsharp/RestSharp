@@ -53,8 +53,6 @@ namespace RestSharp.Serializers.NewtonsoftJson
         {
             using var reader = new JsonTextReader(new StringReader(response.Content)) {CloseInput = true};
 
-            _serializer.Deserialize(reader);
-            
             return _serializer.Deserialize<T>(reader);
         }
 

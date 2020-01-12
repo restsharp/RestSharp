@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using NUnit.Framework;
 using RestSharp.Extensions;
 
-namespace RestSharp.Tests.Extensions
+namespace RestSharp.Tests
 {
     [TestFixture]
     public class RSACryptoServiceProviderExtensionsTests
