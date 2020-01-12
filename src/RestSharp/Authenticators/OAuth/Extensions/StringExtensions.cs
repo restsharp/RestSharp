@@ -16,6 +16,6 @@ namespace RestSharp.Authenticators.OAuth.Extensions
 
         public static byte[] GetBytes(this string input) => Encoding.UTF8.GetBytes(input);
 
-        public static string PercentEncode(this string s) => string.Join("", s.GetBytes().Select(x => $"{x:X2}"));
+        public static string PercentEncode(this string s) => string.Join("", s.GetBytes().Select(x => $"%{x:X2}"));
     }
 }

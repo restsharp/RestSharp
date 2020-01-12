@@ -70,9 +70,9 @@ namespace RestSharp.Tests
             var client  = new RestClient();
             var request = new RestRequest();
 
-            request.AddHeader("Authorization", _expectedAuthHeaderContent);
+            request.AddHeader("Authorization", "second_header_auth_token");
 
-            client.Authenticator = new JwtAuthenticator("second_header_auth_token");
+            client.Authenticator = new JwtAuthenticator(_testJwt);
 
             //In real case client.Execute(...) will invoke Authenticate method
             client.Authenticator.Authenticate(client, request);

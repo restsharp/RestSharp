@@ -467,7 +467,8 @@ namespace RestSharp
         /// <returns></returns>
         public IRestRequest AddOrUpdateParameter(Parameter parameter)
         {
-            var p = Parameters.FirstOrDefault(x => x.Name == parameter.Name);
+            var p = Parameters
+                .FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
 
             if (p != null) Parameters.Remove(p);
 

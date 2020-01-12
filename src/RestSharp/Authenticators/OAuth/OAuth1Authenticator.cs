@@ -290,7 +290,7 @@ namespace RestSharp.Authenticators
                             !p.Name.IsNullOrBlank() && !p.Value.IsNullOrBlank() &&
                             (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
                     )
-                    .Select(x => $"{x.Name}={x.Value}")
+                    .Select(x => $"{x.Name}=\"{x.Value}\"")
                     .ToList();
 
             if (!Realm.IsNullOrBlank())
