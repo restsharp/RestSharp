@@ -27,7 +27,29 @@ You have access to the headers, content, HTTP status and more.
 
 It is recommended that you use the generic overloads like `Get<T>` to automatically deserialize the response into .NET classes. 
 
-## Note about error handling
+## Asynchronous Calls
+
+All synchronous methods have their asynchronous siblings, suffixed with `Async`.
+
+So, instead of `Get<T>` that returns `T` or `Execute<T>`, which returns `IRestResponse<T>`,
+you can use `GetAsync<T>` and `ExecuteAsync<T>`. The arguments set is usually identical.
+You can optionally supply the cancellation token, which by default is set to `CancellationToken.None`.
+
+For example:
+
+```csharp
+using RestSharp;
+using RestSharp.Authenticators;
+
+var client = new RestClient("https://api.twitter.com/1.1");
+client.Authenticator = new HttpBasicAuthenticator("username", "password");
+
+var request = new RestRequest("statuses/home_timeline.json", DataFormat.Json);
+
+var timeline = await client.Get<HomeTimeline>(request, cancellationToken);
+```
+
+## Note About Error Handling
 
 Normally, RestSharp doesn't throw an exception if the request fails.
 
