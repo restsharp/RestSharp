@@ -46,7 +46,7 @@ client.Authenticator = new HttpBasicAuthenticator("username", "password");
 
 var request = new RestRequest("statuses/home_timeline.json", DataFormat.Json);
 
-var timeline = await client.Get<HomeTimeline>(request, cancellationToken);
+var timeline = await client.GetAsync<HomeTimeline>(request, cancellationToken);
 ```
 
 ## Note About Error Handling
