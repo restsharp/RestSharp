@@ -72,7 +72,7 @@ However, it is possible to configure RestSharp to throw in different situations,
 in favour of giving you the error as a property.
 
 | Property        | Behavior           |
-| ------------- |:-------------:|
+| ------------- |-------------|
 | FailOnDeserialization      | Changes the default behavior when failed deserialization results in a successful response with an empty `Data` property of the response. Setting this property to `true` will tell RestSharp to consider failed deserialization as an error and set the `ResponseStatus` to `Error` accordingly. |
 | ThrowOnDeserialization      | Changes the default behavior when failed deserialization results in empty `Data` property of the response. Setting this property to `true` will tell RestSharp to throw when deserialization fails. |
 | ThrowOnAnyError      | Setting this property to `true` changes the default behavior and forces RestSharp to throw if any errors occurs when making a request or during deserialization.     |
