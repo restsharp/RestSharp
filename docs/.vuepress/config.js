@@ -27,7 +27,8 @@ module.exports = {
                     "/usage/serialization",
                     "/usage/files",
                     "/usage/authenticators",
-                    "/usage/parameters"
+                    "/usage/parameters",
+                    "/usage/exceptions"
                 ]
             },
             {

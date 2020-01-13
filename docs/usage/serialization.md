@@ -3,6 +3,11 @@
 RestSharp has JSON and XML serializers built in without any additional packages
 or configuration. There are also a few JSON serializers provided as additional packages.
 
+:::tip
+The default behavior of RestSharp is to swallow deserialization errors and return `null` in the `Data`
+property of the response. Read more about it in the [Error Handling](exceptions.md).
+:::
+
 ## Default Serializers
 
 The default JSON serializer uses the forked version of `SimpleJson`. It is very simplistic and
