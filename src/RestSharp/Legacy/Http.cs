@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 
+// ReSharper disable CheckNamespace
+
 namespace RestSharp
 {
     public partial class Http
@@ -31,6 +33,5 @@ namespace RestSharp
 
         [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
         protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url) => ConfigureWebRequest(method, url);
-
     }
 }

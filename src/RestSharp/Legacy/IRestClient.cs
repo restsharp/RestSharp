@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using RestSharp.Deserializers;
 using RestSharp.Serialization;
 
+// ReSharper disable CheckNamespace
+
 namespace RestSharp
 {
     public partial interface IRestClient
