@@ -407,9 +407,9 @@ namespace RestSharp
         {
             var exception = response.ResponseStatus switch
             {
-                ResponseStatus.Aborted   => new WebException("Request aborted"),
+                ResponseStatus.Aborted   => new WebException("Request aborted", response.ErrorException),
                 ResponseStatus.Error     => response.ErrorException,
-                ResponseStatus.TimedOut  => new TimeoutException("Request timed out"),
+                ResponseStatus.TimedOut  => new TimeoutException("Request timed out", response.ErrorException),
                 ResponseStatus.None      => null,
                 ResponseStatus.Completed => null,
                 _                        => throw response.ErrorException ?? new ArgumentOutOfRangeException()
