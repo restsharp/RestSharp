@@ -92,6 +92,11 @@ namespace RestSharp
                     .Select(
                         x =>
                         {
+                            if (x == string.Empty)
+                                throw new ArgumentException(
+                                    "resource contains an invalid query."
+                                );
+                            
                             var position = x.IndexOf('=');
 
                             return position > 0
