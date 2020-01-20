@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MessagePack" Version="2.0.335" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
+  </ItemGroup>
+
+</Project>
