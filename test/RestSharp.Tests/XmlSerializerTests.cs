@@ -19,6 +19,36 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_serialize_a_list_of_items_with_interface_type()
+        {
+            var items = new NamedItems
+            {
+                Items = new List<INamed>
+                {
+                    new Person
+                    {
+                        Name      = "Foo",
+                        Age       = 50,
+                        Price     = 19.95m,
+                        StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+                        Items = new List<Item>
+                        {
+                            new Item {Name = "One", Value = 1},
+                        }
+                    },
+                    new Item {Name = "Two", Value   = 2},
+                    new Item {Name = "Three", Value = 3}
+                }
+            };
+
+            var xml = new XmlSerializer();
+            var doc = xml.Serialize(items);
+            var expected = GetNamedItemsXDoc(CultureInfo.InvariantCulture);
+
+            Assert.AreEqual(expected.ToString(), doc);
+        }
+
+        [Test]
         public void Can_serialize_a_list_which_is_the_content_of_root_element()
         {
             var contacts = new Contacts
@@ -289,7 +319,12 @@ namespace RestSharp.Tests
             Assert.AreEqual(expected.ToString(), doc);
         }
 
-        class Person
+        interface INamed
+        {
+            string Name { get; set; }
+        }
+
+        class Person : INamed
         {
             public string Name { get; set; }
 
@@ -304,7 +339,7 @@ namespace RestSharp.Tests
             public bool? IsCool { get; set; }
         }
 
-        class Item
+        class Item : INamed
         {
             public string Name { get; set; }
 
@@ -334,6 +369,12 @@ namespace RestSharp.Tests
 
             [SerializeAs(Name = "contact-data")]
             public ContactData ContactData { get; set; }
+        }
+
+        class NamedItems
+        {
+            [SerializeAs(Content = true)]
+            public List<INamed> Items { get; set; }
         }
 
         [SerializeAs(Name = "People")]
@@ -521,6 +562,32 @@ namespace RestSharp.Tests
             root.Add(new XElement("StartDate", new DateTime(2010, 1, 1).ToString(CultureInfo.InvariantCulture)));
             root.Add(new XElement("Name", "Name"));
             root.Add(new XElement("Age", 99));
+
+            doc.Add(root);
+
+            return doc;
+        }
+
+        static XDocument GetNamedItemsXDoc(IFormatProvider culture)
+        {
+            var doc     = new XDocument();
+            var root    = new XElement("NamedItems");
+            var element = new XElement("Person");
+            var items   = new XElement("Items");
+
+            items.Add(new XElement("Item", new XElement("Name", "One"), new XElement("Value", 1)));
+
+            element.Add(
+                new XElement("Name", "Foo"),
+                new XElement("Age", 50),
+                new XElement("Price", 19.95m.ToString(culture)),
+                new XElement("StartDate", new DateTime(2009, 12, 18, 10, 2, 23).ToString(culture))
+            );
+
+            element.Add(items);
+            root.Add(element);
+            root.Add(new XElement("Item", new XElement("Name", "Two"), new XElement("Value", 2)));
+            root.Add(new XElement("Item", new XElement("Name", "Three"), new XElement("Value", 3)));
 
             doc.Add(root);
 
