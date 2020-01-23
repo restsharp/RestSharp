@@ -52,8 +52,3 @@ jobs:
 
     - name: Create NuGet package
       run: dotnet pack -c Release -o nuget -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
-
-    - name: Push NuGet package
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-      
-  
