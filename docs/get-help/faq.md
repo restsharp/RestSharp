@@ -50,7 +50,7 @@ code back and some content, but the typed `Data` property is empty.
 
 In that case, you probably got deserialization issues. By default, RestSharp will just return an empty (`null`) result in the `Data` property.
 Deserialization errors can be also populated to the error response. To do that,
-set the `client.FailOnDeserialization` property to `true`.
+set the `client.FailOnDeserializationError` property to `true`.
 
 It is also possible to force RestSharp to throw an exception.
 
