@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\RestSharp.Serializers.Compression\RestSharp.Serializers.Compression.csproj" />
       <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
       <ProjectReference Include="..\..\src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj" />
       <ProjectReference Include="..\..\src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj" />

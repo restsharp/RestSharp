@@ -13,6 +13,8 @@ namespace RestSharp.Serialization.Json
 {
     public class JsonSerializer : IRestSerializer, IWithRootElement
     {
+        public bool UseBytes { get; } = false;
+
         public string DateFormat { get; set; }
 
         public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
@@ -28,6 +30,10 @@ namespace RestSharp.Serialization.Json
                 ? serializedString
                 : SimpleJson.SerializeObject(obj);
 
+
+        public byte[] SerializeToBytes(object obj)
+            => throw new NotSupportedException("Serializing JSon to byte[] array is not supported!");
+
         /// <summary>
         ///     Content type for serialized content
         /// </summary>
@@ -41,10 +47,20 @@ namespace RestSharp.Serialization.Json
 
         public T Deserialize<T>(IRestResponse response)
         {
-            var json = FindRoot(response.Content);
-
-            return (T) ConvertValue(typeof(T).GetTypeInfo(), json);
+            return this.Deserialize<T>(response.Content);
         }
+
+        public T Deserialize<T>(string payload)
+        {
+            var json = FindRoot(payload);
+
+            return (T)ConvertValue(typeof(T).GetTypeInfo(), json);
+        }
+
+
+        public T DeserializeFromBytes<T>(byte[] payload)
+            => throw new NotSupportedException("Deserializing JSon from byte[] array is not supported!");
+
 
         public string RootElement { get; set; }
 

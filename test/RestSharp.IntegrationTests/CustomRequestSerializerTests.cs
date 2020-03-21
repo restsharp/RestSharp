@@ -58,9 +58,16 @@ namespace RestSharp.IntegrationTests
 
         class CustomXmlSerializer : IXmlSerializer
         {
+            public bool UseBytes { get; } = false;
+
             public string BodyString { get; private set; }
 
             public string Serialize(object obj) => BodyString = obj?.ToString();
+
+            public byte[] SerializeToBytes(object obj)
+            {
+                throw new System.NotImplementedException();
+            }
 
             public string ContentType { get; set; } = Serialization.ContentType.Xml;
             public string RootElement { get; set; }
@@ -70,9 +77,17 @@ namespace RestSharp.IntegrationTests
 
         class CustomJsonSerializer : ISerializer
         {
+            public bool UseBytes { get; } = false;
+
+
             public string BodyString { get; private set; }
 
             public string Serialize(object obj) => BodyString = obj?.ToString();
+
+            public byte[] SerializeToBytes(object obj)
+            {
+                throw new System.NotImplementedException();
+            }
 
             public string ContentType { get; set; } = Serialization.ContentType.Json;
         }

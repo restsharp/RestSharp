@@ -10,5 +10,7 @@ namespace RestSharp.Serialization
         DataFormat DataFormat { get; }
 
         string Serialize(Parameter parameter);
+
+        bool UseBytes { get; }
     }
 }

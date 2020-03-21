@@ -731,6 +731,7 @@ namespace RestSharp
             return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
         }
 
+
         class UrlSegmentParamsValues
         {
             public UrlSegmentParamsValues(Uri builderUri, string assembled)

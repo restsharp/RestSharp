@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using RestSharp.Serialization;
 
@@ -5,6 +6,9 @@ namespace RestSharp.Serializers.SystemTextJson
 {
     public class SystemTextJsonSerializer : IRestSerializer
     {
+        public bool UseBytes { get; } = false;
+
+
         readonly JsonSerializerOptions _options;
 
         /// <summary>
@@ -18,11 +22,25 @@ namespace RestSharp.Serializers.SystemTextJson
         /// <param name="options">Json serializer settings</param>
         public SystemTextJsonSerializer(JsonSerializerOptions options) => _options = options;
 
+
         public string Serialize(object obj) => JsonSerializer.Serialize(obj, _options);
 
         public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
 
+        public byte[] SerializeToBytes(object obj) => throw new NotSupportedException("SerializeToBytes from SystemTextJson is not supported!");
+
+
         public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.Content, _options);
+
+        public T Deserialize<T>(string payload)
+        {
+            throw new NotSupportedException("Deserialize SystemTextJson to obj is not supported!");
+        }
+
+        public T DeserializeFromBytes<T>(byte[] payload)
+        {
+            throw new NotSupportedException("Deserialize SystemTextJson to obj is not supported!");
+        }
 
         public string[] SupportedContentTypes { get; } =
         {

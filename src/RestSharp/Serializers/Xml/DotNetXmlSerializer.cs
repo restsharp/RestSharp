@@ -10,6 +10,8 @@ namespace RestSharp.Serializers
     /// </summary>
     public class DotNetXmlSerializer : IXmlSerializer
     {
+        public bool UseBytes { get; } = false;
+
         /// <summary>
         ///     Default constructor, does not specify namespace
         /// </summary>
@@ -51,6 +53,9 @@ namespace RestSharp.Serializers
 
             return writer.ToString();
         }
+
+        public byte[] SerializeToBytes(object obj)
+             => throw new System.NotSupportedException("Serializing DotNetXml to byte[] array is not supported!");
 
         /// <summary>
         ///     Name of the root element to use when serializing

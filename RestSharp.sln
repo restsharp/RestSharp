@@ -1,27 +1,29 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "src\RestSharp\RestSharp.csproj", "{43A1D5D2-650D-40DD-A6C0-14F92689C70B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp", "src\RestSharp\RestSharp.csproj", "{43A1D5D2-650D-40DD-A6C0-14F92689C70B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9051DDA0-E563-45D5-9504-085EBAACF469}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "test\RestSharp.Tests\RestSharp.Tests.csproj", "{B1C55C9B-3287-4EB2-8ADD-795DBC77013D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Tests", "test\RestSharp.Tests\RestSharp.Tests.csproj", "{B1C55C9B-3287-4EB2-8ADD-795DBC77013D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.IntegrationTests", "test\RestSharp.IntegrationTests\RestSharp.IntegrationTests.csproj", "{AC3B3DDC-F011-4E19-8C9B-F748B19ED3C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.IntegrationTests", "test\RestSharp.IntegrationTests\RestSharp.IntegrationTests.csproj", "{AC3B3DDC-F011-4E19-8C9B-F748B19ED3C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.NewtonsoftJson", "src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj", "{4205A187-9732-4DA8-B0BE-77A2C6B8C6A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Serializers.NewtonsoftJson", "src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj", "{4205A187-9732-4DA8-B0BE-77A2C6B8C6A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serializers", "Serializers", "{8C7B43EB-2F93-483C-B433-E28F9386AD67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests.Shared", "test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj", "{73896669-F05C-41AC-9F6F-A11F549EDEDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Tests.Shared", "test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj", "{73896669-F05C-41AC-9F6F-A11F549EDEDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.Tests", "test\RestSharp.Serializers.Tests\RestSharp.Serializers.Tests.csproj", "{8BF81225-2F85-4412-AD18-6579CBA1879B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Serializers.Tests", "test\RestSharp.Serializers.Tests\RestSharp.Serializers.Tests.csproj", "{8BF81225-2F85-4412-AD18-6579CBA1879B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.Utf8Json", "src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj", "{D5DCF088-1126-4E6A-A175-CF8B6D5089A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Serializers.Utf8Json", "src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj", "{D5DCF088-1126-4E6A-A175-CF8B6D5089A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.SystemTextJson", "src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj", "{6914F0EF-F6D2-4BE6-8477-553EBBFF3BEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Serializers.SystemTextJson", "src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj", "{6914F0EF-F6D2-4BE6-8477-553EBBFF3BEE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Serializers.Compression", "src\RestSharp.Serializers.Compression\RestSharp.Serializers.Compression.csproj", "{AB73258A-C298-435D-9C71-DE6B75DA47EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,12 +284,39 @@ Global
 		{6914F0EF-F6D2-4BE6-8477-553EBBFF3BEE}.Release|x64.Build.0 = Release|Any CPU
 		{6914F0EF-F6D2-4BE6-8477-553EBBFF3BEE}.Release|x86.ActiveCfg = Release|Any CPU
 		{6914F0EF-F6D2-4BE6-8477-553EBBFF3BEE}.Release|x86.Build.0 = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|Any CPU.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|ARM.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|ARM.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|x64.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|x64.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|x86.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug.Appveyor|x86.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|ARM.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|ARM.ActiveCfg = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|ARM.Build.0 = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|x64.Build.0 = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {77FF357B-03FA-4FA5-A68F-BFBE5800FEBA}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B1C55C9B-3287-4EB2-8ADD-795DBC77013D} = {9051DDA0-E563-45D5-9504-085EBAACF469}
@@ -297,5 +326,9 @@ Global
 		{8BF81225-2F85-4412-AD18-6579CBA1879B} = {9051DDA0-E563-45D5-9504-085EBAACF469}
 		{D5DCF088-1126-4E6A-A175-CF8B6D5089A3} = {8C7B43EB-2F93-483C-B433-E28F9386AD67}
 		{6914F0EF-F6D2-4BE6-8477-553EBBFF3BEE} = {8C7B43EB-2F93-483C-B433-E28F9386AD67}
+		{AB73258A-C298-435D-9C71-DE6B75DA47EB} = {8C7B43EB-2F93-483C-B433-E28F9386AD67}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77FF357B-03FA-4FA5-A68F-BFBE5800FEBA}
 	EndGlobalSection
 EndGlobal

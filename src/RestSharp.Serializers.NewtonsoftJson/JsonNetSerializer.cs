@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -10,6 +11,8 @@ namespace RestSharp.Serializers.NewtonsoftJson
 {
     public class JsonNetSerializer : IRestSerializer
     {
+        public bool UseBytes { get; } = false;
+
         public static readonly JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
         {
             ContractResolver     = new CamelCasePropertyNamesContractResolver(),
@@ -49,12 +52,23 @@ namespace RestSharp.Serializers.NewtonsoftJson
 
         public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
 
+        public byte[] SerializeToBytes(object obj)
+            => throw new NotSupportedException("Serialize obj to JsonNet byte[] array is not supported!");
+
+
         public T Deserialize<T>(IRestResponse response)
+            => this.Deserialize<T>(response.Content);
+
+        public T Deserialize<T>(string payload)
         {
-            using var reader = new JsonTextReader(new StringReader(response.Content)) {CloseInput = true};
+            using var reader = new JsonTextReader(new StringReader(payload)) {CloseInput = true};
 
             return _serializer.Deserialize<T>(reader);
         }
+
+        public T DeserializeFromBytes<T>(byte[] payload)
+            => throw new NotSupportedException("Deserialize JsonNet from byte[] array is not supported!");
+
 
         public string[] SupportedContentTypes { get; } =
         {

@@ -32,6 +32,8 @@ namespace RestSharp.Deserializers
 {
     public class XmlDeserializer : IXmlDeserializer
     {
+        public bool UseBytes { get; } = false;
+
         public XmlDeserializer() => Culture = CultureInfo.InvariantCulture;
 
         public CultureInfo Culture { get; set; }
@@ -43,11 +45,14 @@ namespace RestSharp.Deserializers
         public string DateFormat { get; set; }
 
         public virtual T Deserialize<T>(IRestResponse response)
+            => this.Deserialize<T>(response.Content);
+
+        public virtual T Deserialize<T>(string payload)
         {
-            if (string.IsNullOrEmpty(response.Content))
+            if (string.IsNullOrEmpty(payload))
                 return default;
 
-            var doc  = XDocument.Parse(response.Content);
+            var doc  = XDocument.Parse(payload);
             var root = doc.Root;
 
             if (RootElement.HasValue() && doc.Root != null)
@@ -67,6 +72,12 @@ namespace RestSharp.Deserializers
 
             return x;
         }
+
+
+        public virtual T DeserializeFromBytes<T>(byte[] payload)
+            => throw new NotSupportedException("Deserialize Xml from byte[] array is not supported!");
+
+
 
         static void RemoveNamespace(XDocument xdoc)
         {

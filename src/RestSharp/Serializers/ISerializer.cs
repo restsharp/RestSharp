@@ -22,5 +22,8 @@ namespace RestSharp.Serializers
     {
         string ContentType { get; set; }
         string Serialize(object obj);
+
+
+        byte[] SerializeToBytes(object obj);
     }
 }

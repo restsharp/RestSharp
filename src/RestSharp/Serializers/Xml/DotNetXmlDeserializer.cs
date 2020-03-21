@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using RestSharp.Serialization.Xml;
@@ -10,6 +11,9 @@ namespace RestSharp.Deserializers
     /// </summary>
     public class DotNetXmlDeserializer : IXmlDeserializer
     {
+        public bool UseBytes { get; } = false;
+
+
         /// <summary>
         ///     Encoding for serialized content
         /// </summary>
@@ -27,15 +31,21 @@ namespace RestSharp.Deserializers
         public string DateFormat { get; set; }
 
         public T Deserialize<T>(IRestResponse response)
-        {
-            if (string.IsNullOrEmpty(response.Content)) return default;
+            => this.Deserialize<T>(response.Content);
 
-            using (var stream = new MemoryStream(Encoding.GetBytes(response.Content)))
+        public T Deserialize<T>(string payload)
+        {
+            if (string.IsNullOrEmpty(payload)) return default;
+
+            using (var stream = new MemoryStream(Encoding.GetBytes(payload)))
             {
                 var serializer = new XmlSerializer(typeof(T));
 
-                return (T) serializer.Deserialize(stream);
+                return (T)serializer.Deserialize(stream);
             }
         }
+
+        public T DeserializeFromBytes<T>(byte[] payload)
+            => throw new NotSupportedException("Deserialize DotNetXml from byte[] array is not supported!");
     }
 }

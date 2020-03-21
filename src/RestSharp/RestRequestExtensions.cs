@@ -40,7 +40,14 @@ namespace RestSharp
                     $"Can't find serializer for content type {body.DataFormat}"
                 );
 
-            request.Body = new RequestBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(body));
+            if (serializer.UseBytes)
+            {
+                request.Body = new RequestBody(serializer.ContentType, serializer.ContentType, serializer.SerializeToBytes(body.Value));
+            }
+            else
+            {
+                request.Body = new RequestBody(serializer.ContentType, serializer.ContentType, serializer.Serialize(body));
+            }
         }
 
         internal static void AddBody(this IHttp http, RequestBody requestBody)

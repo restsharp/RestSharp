@@ -8,6 +8,9 @@ namespace RestSharp.Serialization.Xml
 {
     public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer
     {
+        public bool UseBytes { get; } = false;
+
+
         XmlSerilizationOptions _options         = XmlSerilizationOptions.Default;
         IXmlDeserializer       _xmlDeserializer = new XmlDeserializer();
         IXmlSerializer         _xmlSerializer   = new XmlSerializer();
@@ -17,9 +20,17 @@ namespace RestSharp.Serialization.Xml
 
         public string ContentType { get; set; } = Serialization.ContentType.Xml;
 
-        public string Serialize(object obj) => _xmlSerializer.Serialize(obj);
 
         public T Deserialize<T>(IRestResponse response) => _xmlDeserializer.Deserialize<T>(response);
+
+        public T Deserialize<T>(string payload) => _xmlDeserializer.Deserialize<T>(payload);
+
+
+        public T DeserializeFromBytes<T>(byte[] payload)
+            => throw new NotSupportedException("Deserializing XmlRest from byte[] array is not supported!");
+
+
+        public string Serialize(object obj) => _xmlSerializer.Serialize(obj);
 
         public string Serialize(Parameter parameter)
         {
@@ -35,6 +46,13 @@ namespace RestSharp.Serialization.Xml
 
             return result;
         }
+
+
+        public byte[] SerializeToBytes(object obj)
+             => throw new System.NotSupportedException("Serializing XmlRest to byte[] array is not supported!");
+
+
+
 
         public string RootElement
         {
