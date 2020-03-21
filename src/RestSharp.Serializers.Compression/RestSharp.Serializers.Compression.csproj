@@ -24,6 +24,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Brotli.NET" Version="2.0.4.2" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Include="MinVer" Version="2.0.0" PrivateAssets="All" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -31,10 +32,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="DEFLATE\" />
     </ItemGroup>
 
     <PropertyGroup>
