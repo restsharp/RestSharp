@@ -119,5 +119,11 @@ namespace RestSharp
             DataFormat  = DataFormat.Json;
             ContentType = Serialization.ContentType.Json;
         }
+
+        public JsonParameter(string name, object value, string contentType) : base(name, value, ParameterType.RequestBody)
+        {
+            DataFormat  = DataFormat.Json;
+            ContentType = contentType ?? Serialization.ContentType.Json;
+        }
     }
 }

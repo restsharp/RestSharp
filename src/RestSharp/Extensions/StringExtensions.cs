@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -13,8 +11,6 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -81,17 +77,11 @@ namespace RestSharp.Extensions
             return sb.ToString();
         }
 
-        public static string HtmlDecode(this string input) => HttpUtility.HtmlDecode(input);
-
-        public static string HtmlEncode(this string input) => HttpUtility.HtmlEncode(input);
-
         public static string UrlEncode(this string input, Encoding encoding)
         {
             var encoded = HttpUtility.UrlEncode(input, encoding);
             return encoded?.Replace("+", "%20");
         }
-
-        public static string HtmlAttributeEncode(this string input) => HttpUtility.HtmlAttributeEncode(input);
 
         /// <summary>
         ///     Check that a string is not null or empty
@@ -142,12 +132,7 @@ namespace RestSharp.Extensions
             return ParseFormattedDate(input, culture);
         }
 
-        /// <summary>
-        ///     Remove leading and trailing " from a string
-        /// </summary>
-        /// <param name="input">String to parse</param>
-        /// <returns>String</returns>
-        public static string RemoveSurroundingQuotes(this string input)
+        static string RemoveSurroundingQuotes(this string input)
         {
             if (input.StartsWith("\"") && input.EndsWith("\""))
                 input = input.Substring(1, input.Length - 2);
@@ -227,30 +212,21 @@ namespace RestSharp.Extensions
 
             text = text.Replace('_', ' ');
 
-            var joinString = removeUnderscores
-                ? string.Empty
-                : "_";
+            var joinString = removeUnderscores ? string.Empty : "_";
             var words = text.Split(' ');
 
-            if (words.Length <= 1 && !words[0].IsUpperCase())
-                return string.Concat(words[0].Substring(0, 1).ToUpper(culture), words[0].Substring(1));
+            return words
+                .Where(x => x.Length > 0)
+                .Select(CaseWord)
+                .JoinToString(joinString);
 
-            for (var i = 0; i < words.Length; i++)
+            string CaseWord(string word)
             {
-                if (words[i].Length <= 0) continue;
-
-                var word       = words[i];
-                var restOfWord = word.Substring(1);
-
-                if (restOfWord.IsUpperCase())
-                    restOfWord = restOfWord.ToLower(culture);
-
+                var restOfWord = word.Substring(1).ToLower(culture);
                 var firstChar = char.ToUpper(word[0], culture);
 
-                words[i] = string.Concat(firstChar, restOfWord);
+                return string.Concat(firstChar, restOfWord);
             }
-
-            return string.Join(joinString, words);
         }
 
         /// <summary>
@@ -268,13 +244,6 @@ namespace RestSharp.Extensions
         /// <param name="word">String to convert</param>
         /// <returns>string</returns>
         public static string MakeInitialLowerCase(this string word) => string.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
-
-        /// <summary>
-        ///     Checks to see if a string is all uppper case
-        /// </summary>
-        /// <param name="inputString">String to check</param>
-        /// <returns>bool</returns>
-        public static bool IsUpperCase(this string inputString) => IsUpperCaseRegex.IsMatch(inputString);
 
         /// <summary>
         ///     Add underscores to a pascal-cased string
@@ -326,6 +295,7 @@ namespace RestSharp.Extensions
             );
 
         internal static bool IsEmpty(this string value) => string.IsNullOrWhiteSpace(value);
+        
         internal static bool IsNotEmpty(this string value) => !string.IsNullOrWhiteSpace(value);
 
         /// <summary>
@@ -373,7 +343,7 @@ namespace RestSharp.Extensions
         }
 
         internal static string JoinToString<T>(this IEnumerable<T> collection, string separator, Func<T, string> getString)
-            => JoinToString(collection.Select(x => getString(x)), separator);
+            => JoinToString(collection.Select(getString), separator);
 
         internal static string JoinToString(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
     }

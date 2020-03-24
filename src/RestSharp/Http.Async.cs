@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -14,14 +12,10 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-#endregion
-
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using RestSharp.Extensions;
 
 namespace RestSharp
@@ -101,56 +95,6 @@ namespace RestSharp
             }
 
             return webRequest;
-        }
-
-        async Task<HttpResponse> AsyncTest(WebRequest webRequest, CancellationToken cancellationToken)
-        {
-            var ct = Timeout > 0 ? GetTimeoutToken() : cancellationToken;
-
-            using var requestStream = await webRequest.GetRequestStreamAsync(ct);
-
-            if (HasFiles || AlwaysMultipartFormData)
-                await WriteMultipartFormDataAsync(requestStream, ct);
-            else if (RequestBodyBytes != null)
-                await requestStream.WriteAsync(RequestBodyBytes, 0, RequestBodyBytes.Length, ct);
-            else if (RequestBody != null)
-                await requestStream.WriteStringAsync(RequestBody, Encoding, ct);
-
-            try
-            {
-                using var webResponse = await webRequest.GetResponseAsync(ct);
-
-                return ExtractResponseData((HttpWebResponse) webResponse);
-            }
-            catch (Exception e)
-            {
-                return CreateErrorResponse(e);
-            }
-
-            CancellationToken GetTimeoutToken()
-            {
-                var timeoutTokenSource = new CancellationTokenSource(Timeout);
-                var timeoutToken       = timeoutTokenSource.Token;
-                return CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutToken).Token;
-            }
-        }
-
-        async Task WriteMultipartFormDataAsync(Stream requestStream, CancellationToken cancellationToken)
-        {
-            foreach (var param in Parameters)
-                await requestStream.WriteStringAsync(GetMultipartFormData(param), Encoding, cancellationToken);
-
-            foreach (var file in Files)
-            {
-                // Add just the first part of this param, since we will write the file data directly to the Stream
-                await requestStream.WriteStringAsync(GetMultipartFileHeader(file), Encoding, cancellationToken);
-
-                // Write the file data directly to the Stream, rather than serializing it to a string.
-                file.Writer(requestStream);
-                await requestStream.WriteStringAsync(LineBreak, Encoding, cancellationToken);
-            }
-
-            await requestStream.WriteStringAsync(GetMultipartFooter(), Encoding, cancellationToken);
         }
 
         void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)

@@ -13,6 +13,7 @@
 //   limitations under the License. 
 
 // ReSharper disable CheckNamespace
+
 using System;
 
 namespace RestSharp.Authenticators

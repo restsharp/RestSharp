@@ -13,6 +13,7 @@
 //   limitations under the License. 
 
 // ReSharper disable CheckNamespace
+
 namespace RestSharp.Authenticators
 {
     /// <summary>
@@ -32,7 +33,7 @@ namespace RestSharp.Authenticators
         public OAuth2UriQueryParameterAuthenticator(string accessToken)
             : base(accessToken) { }
 
-        protected override Parameter GetAuthenticationParameter(string accessToken) 
+        protected override Parameter GetAuthenticationParameter(string accessToken)
             => new Parameter("oauth_token", accessToken, ParameterType.GetOrPost);
     }
 }

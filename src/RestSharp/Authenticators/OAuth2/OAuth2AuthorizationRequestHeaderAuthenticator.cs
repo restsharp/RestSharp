@@ -13,6 +13,7 @@
 //   limitations under the License. 
 
 // ReSharper disable CheckNamespace
+
 namespace RestSharp.Authenticators
 {
     /// <summary>
@@ -47,7 +48,7 @@ namespace RestSharp.Authenticators
             : base(accessToken)
             => _tokenType = tokenType;
 
-        protected override Parameter GetAuthenticationParameter(string accessToken) 
+        protected override Parameter GetAuthenticationParameter(string accessToken)
             => new Parameter("Authorization", $"{_tokenType} {accessToken}", ParameterType.HttpHeader);
     }
 }

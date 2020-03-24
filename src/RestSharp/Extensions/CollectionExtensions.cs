@@ -12,19 +12,16 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp
-{
-    public class RequestBody
-    {
-        public string ContentType { get; }
-        public string Name { get; }
-        public object Value { get; }
+using System;
+using System.Collections.Generic;
 
-        public RequestBody(string contentType, string name, object value)
+namespace RestSharp.Extensions
+{
+    internal static class CollectionExtensions
+    {
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
         {
-            ContentType = contentType;
-            Name        = name;
-            Value       = value;
+            foreach (var item in items) action(item);
         }
     }
 }

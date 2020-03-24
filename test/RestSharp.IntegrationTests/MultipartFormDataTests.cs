@@ -125,7 +125,7 @@ namespace RestSharp.IntegrationTests
 
             request.AddParameter("title", "test", ParameterType.RequestBody);
 
-            var response = await _client.ExecuteTaskAsync(request);
+            var response = await _client.ExecuteAsync(request);
             Assert.Null(response.ErrorException);
         }
 
@@ -210,7 +210,7 @@ namespace RestSharp.IntegrationTests
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-            var response = await _client.ExecuteTaskAsync(request);
+            var response = await _client.ExecuteAsync(request);
             Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
         }
 

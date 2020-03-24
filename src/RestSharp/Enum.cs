@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -14,8 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-#endregion
-
 namespace RestSharp
 {
     /// <summary>
@@ -23,7 +19,11 @@ namespace RestSharp
     /// </summary>
     public enum ParameterType
     {
-        Cookie, GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString,
+        /// <summary>
+        /// Cookie parameter
+        /// </summary>
+        Cookie, 
+        GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString,
         QueryStringWithoutEncode
     }
 

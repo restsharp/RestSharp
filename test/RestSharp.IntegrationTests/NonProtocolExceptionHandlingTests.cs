@@ -99,7 +99,7 @@ namespace RestSharp.IntegrationTests
         {
             var client   = new RestClient(_server.Url);
             var request  = new RestRequest("404") {Timeout = 500};
-            var response = await client.ExecuteTaskAsync(request);
+            var response = await client.ExecuteAsync(request);
 
             Assert.NotNull(response);
             Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
@@ -140,7 +140,7 @@ namespace RestSharp.IntegrationTests
                 RequestFormat = DataFormat.Json,
                 Method        = Method.GET
             };
-            var response = await client.ExecuteTaskAsync<StupidClass>(request);
+            var response = await client.ExecuteAsync<StupidClass>(request);
 
             Assert.IsInstanceOf<WebException>(response.ErrorException);
             Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException) response.ErrorException).Status);

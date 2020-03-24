@@ -38,6 +38,14 @@ module.exports = {
                 children: [
                     "/get-help/faq"
                 ]
+            },
+            {
+                title: "Reference",
+                path: "/api/",
+                collapsable: true,
+                children: [
+                    "/api/RestSharp.md"
+                ]
             }
         ],
         searchPlaceholder: "Search...",

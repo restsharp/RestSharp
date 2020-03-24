@@ -86,72 +86,71 @@ namespace RestSharp
         string Resource { get; set; }
 
         /// <summary>
-        ///     Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
-        ///     By default XmlSerializer is used.
+        /// Serializer to use when writing request bodies.
         /// </summary>
+        [Obsolete("Use AddJsonBody or AddXmlBody to tell RestSharp how to serialize the request body")]
         DataFormat RequestFormat { get; set; }
 
         /// <summary>
-        ///     Used by the default deserializers to determine where to start deserializing from.
-        ///     Can be used to skip container or root elements that do not have corresponding deserialzation targets.
+        /// Used by the default deserializers to determine where to start deserializing from.
+        /// Can be used to skip container or root elements that do not have corresponding deserialzation targets.
         /// </summary>
         string RootElement { get; set; }
 
         /// <summary>
-        ///     Used by the default deserializers to explicitly set which date format string to use when parsing dates.
+        /// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
         /// </summary>
         string DateFormat { get; set; }
 
         /// <summary>
-        ///     Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from
-        ///     element names.
+        /// Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from
+        /// element names.
         /// </summary>
         string XmlNamespace { get; set; }
 
         /// <summary>
-        ///     In general you would not need to set this directly. Used by the NtlmAuthenticator.
+        /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
         /// </summary>
+        [Obsolete("Use one of authenticators provided")]
         ICredentials Credentials { get; set; }
 
         /// <summary>
-        ///     Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
+        /// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
         /// </summary>
         int Timeout { get; set; }
 
         /// <summary>
-        ///     The number of milliseconds before the writing or reading times out.  This timeout value overrides a timeout set on
-        ///     the RestClient.
+        /// The number of milliseconds before the writing or reading times out. This timeout value overrides a timeout set on
+        /// the RestClient.
         /// </summary>
         int ReadWriteTimeout { get; set; }
 
         /// <summary>
-        ///     How many attempts were made to send this Request?
+        /// How many attempts were made to send this Request?
         /// </summary>
         /// <remarks>
-        ///     This Number is incremented each time the RestClient sends the request.
-        ///     Useful when using Asynchronous Execution with Callbacks
+        /// This number is incremented each time the RestClient sends the request.
         /// </remarks>
         int Attempts { get; }
 
         /// <summary>
-        ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
-        ///     running)
-        ///     will be sent along to the server. The default is false.
+        /// Determine whether or not the "default credentials" (e.g. the user account under which the current process is
+        /// running) will be sent along to the server. The default is false.
         /// </summary>
         bool UseDefaultCredentials { get; set; }
 
         /// <summary>
-        ///     List of Allowed Decompression Methods
+        /// List of allowed decompression methods
         /// </summary>
         IList<DecompressionMethods> AllowedDecompressionMethods { get; }
 
         /// <summary>
-        ///     When supplied, the function will be called before calling the deserializer
+        /// When supplied, the function will be called before calling the deserializer
         /// </summary>
         Action<IRestResponse> OnBeforeDeserialization { get; set; }
         
         /// <summary>
-        ///     When supplied, the function will be called before making a request
+        /// When supplied, the function will be called before making a request
         /// </summary>
         Action<IHttp> OnBeforeRequest { get; set; }
         
@@ -161,8 +160,8 @@ namespace RestSharp
         RequestBody Body { get; set; }
 
         /// <summary>
-        ///     Adds a file to the Files collection to be included with a POST or PUT request
-        ///     (other methods do not support file uploads).
+        /// Adds a file to the Files collection to be included with a POST or PUT request
+        /// (other methods do not support file uploads).
         /// </summary>
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="path">Full path to file to upload</param>
@@ -171,7 +170,7 @@ namespace RestSharp
         IRestRequest AddFile(string name, string path, string contentType = null);
 
         /// <summary>
-        ///     Adds the bytes to the Files collection with the specified file name and content type
+        /// Adds the bytes to the Files collection with the specified file name and content type
         /// </summary>
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="bytes">The file data</param>
@@ -181,7 +180,7 @@ namespace RestSharp
         IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null);
 
         /// <summary>
-        ///     Adds the bytes to the Files collection with the specified file name and content type
+        /// Adds the bytes to the Files collection with the specified file name and content type
         /// </summary>
         /// <param name="name">The parameter name to use in the request</param>
         /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
@@ -192,7 +191,7 @@ namespace RestSharp
         IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
 
         /// <summary>
-        ///     Add bytes to the Files collection as if it was a file of specific type
+        /// Add bytes to the Files collection as if it was a file of specific type
         /// </summary>
         /// <param name="name">A form parameter name</param>
         /// <param name="bytes">The file data</param>
@@ -202,39 +201,51 @@ namespace RestSharp
         IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip");
 
         /// <summary>
-        ///     Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
-        ///     The default format is XML. Change RequestFormat if you wish to use a different serialization format.
+        /// Serializes obj to format specified by RequestFormat, but passes XmlNamespace if using the default XmlSerializer
+        /// The default format is XML. Change RequestFormat if you wish to use a different serialization format.
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <param name="xmlNamespace">The XML namespace to use when serializing</param>
         /// <returns>This request</returns>
+        [Obsolete("Use AddJsonBody or AddXmlBody instead")]
         IRestRequest AddBody(object obj, string xmlNamespace);
 
         /// <summary>
-        ///     Serializes obj to data format specified by RequestFormat and adds it to the request body.
-        ///     The default format is XML. Change RequestFormat if you wish to use a different serialization format.
+        /// Serializes obj to data format specified by RequestFormat and adds it to the request body.
+        /// The default format is XML. Change RequestFormat if you wish to use a different serialization format.
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
+        [Obsolete("Use AddJsonBody or AddXmlBody instead")]
         IRestRequest AddBody(object obj);
 
         /// <summary>
-        ///     Serializes obj to JSON format and adds it to the request body.
+        /// Instructs RestSharp to send a given object in the request body, serialized as JSON.
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
         IRestRequest AddJsonBody(object obj);
 
         /// <summary>
-        ///     Serializes obj to XML format and adds it to the request body.
+        /// Instructs RestSharp to send a given object in the request body, serialized as JSON.
+        /// Allows specifying a custom content type. Usually, this method is used to support PATCH
+        /// requests that require application/json-patch+json content type.
+        /// </summary>
+        /// <param name="obj">The object to serialize</param>
+        /// <param name="contentType">Custom content type to override the default application/json</param>
+        /// <returns>This request</returns>
+        IRestRequest AddJsonBody(object obj, string contentType);
+
+        /// <summary>
+        /// Instructs RestSharp to send a given object in the request body, serialized as XML.
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
         IRestRequest AddXmlBody(object obj);
 
         /// <summary>
-        ///     Serializes obj to format specified by RequestFormat, but passes xmlNamespace if using the default XmlSerializer
-        ///     Serializes obj to XML format and passes xmlNamespace then adds it to the request body.
+        /// Instructs RestSharp to send a given object in the request body, serialized as XML
+        /// but passes XmlNamespace if using the default XmlSerializer.
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <param name="xmlNamespace">The XML namespace to use when serializing</param>
@@ -242,10 +253,10 @@ namespace RestSharp
         IRestRequest AddXmlBody(object obj, string xmlNamespace);
 
         /// <summary>
-        ///     Calls AddParameter() for all public, readable properties specified in the includedProperties list
+        /// Calls AddParameter() for all public, readable properties specified in the includedProperties list
         /// </summary>
         /// <example>
-        ///     request.AddObject(product, "ProductId", "Price", ...);
+        /// request.AddObject(product, "ProductId", "Price", ...);
         /// </example>
         /// <param name="obj">The object with properties to add as parameters</param>
         /// <param name="includedProperties">The names of the properties to include</param>
@@ -253,21 +264,21 @@ namespace RestSharp
         IRestRequest AddObject(object obj, params string[] includedProperties);
 
         /// <summary>
-        ///     Calls AddParameter() for all public, readable properties of obj
+        /// Calls AddParameter() for all public, readable properties of obj
         /// </summary>
         /// <param name="obj">The object with properties to add as parameters</param>
         /// <returns>This request</returns>
         IRestRequest AddObject(object obj);
 
         /// <summary>
-        ///     Add the parameter to the request
+        /// Add the parameter to the request
         /// </summary>
         /// <param name="p">Parameter to add</param>
         /// <returns></returns>
         IRestRequest AddParameter(Parameter p);
 
         /// <summary>
-        ///     Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -275,12 +286,12 @@ namespace RestSharp
         IRestRequest AddParameter(string name, object value);
 
         /// <summary>
-        ///     Adds a parameter to the request. There are five types of parameters:
-        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
-        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        ///     - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
-        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Adds a parameter to the request. There are five types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -289,12 +300,12 @@ namespace RestSharp
         IRestRequest AddParameter(string name, object value, ParameterType type);
 
         /// <summary>
-        ///     Adds a parameter to the request. There are five types of parameters:
-        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
-        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        ///     - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
-        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Adds a parameter to the request. There are five types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -304,22 +315,22 @@ namespace RestSharp
         IRestRequest AddParameter(string name, object value, string contentType, ParameterType type);
 
         /// <summary>
-        ///     Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
-        ///     request
+        /// Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
+        /// request.
         /// </summary>
         /// <param name="parameter">Parameter to add</param>
         /// <returns></returns>
         IRestRequest AddOrUpdateParameter(Parameter parameter);
         
         /// <summary>
-        ///      Add or update parameters to the request
+        /// Add or update parameters to the request
         /// </summary>
         /// <param name="parameters">Collection of parameters to add</param>
         /// <returns></returns>
         IRestRequest AddOrUpdateParameters(IEnumerable<Parameter> parameters);
 
         /// <summary>
-        ///     Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -327,12 +338,12 @@ namespace RestSharp
         IRestRequest AddOrUpdateParameter(string name, object value);
 
         /// <summary>
-        ///     Adds a parameter to the request. There are five types of parameters:
-        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
-        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        ///     - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
-        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Adds a parameter to the request. There are five types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - Cookie: Adds the name/value pair to the HTTP request Cookies collection
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -341,12 +352,12 @@ namespace RestSharp
         IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type);
 
         /// <summary>
-        ///     Adds a parameter to the request. There are five types of parameters:
-        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
-        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        ///     - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
-        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Adds a parameter to the request. There are five types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - Cookie: Adds the name/value pair to the HTTP request Cookies collection
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
@@ -356,7 +367,7 @@ namespace RestSharp
         IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type);
 
         /// <summary>
-        ///     Shortcut to AddParameter(name, value, HttpHeader) overload
+        /// Shortcut to AddParameter(name, value, HttpHeader) overload
         /// </summary>
         /// <param name="name">Name of the header to add</param>
         /// <param name="value">Value of the header to add</param>
@@ -372,7 +383,7 @@ namespace RestSharp
         IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers);
 
         /// <summary>
-        ///     Shortcut to AddParameter(name, value, Cookie) overload
+        /// Shortcut to AddParameter(name, value, Cookie) overload
         /// </summary>
         /// <param name="name">Name of the cookie to add</param>
         /// <param name="value">Value of the cookie to add</param>
@@ -380,7 +391,7 @@ namespace RestSharp
         IRestRequest AddCookie(string name, string value);
 
         /// <summary>
-        ///     Shortcut to AddParameter(name, value, UrlSegment) overload
+        /// Shortcut to AddParameter(name, value, UrlSegment) overload
         /// </summary>
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
@@ -388,7 +399,7 @@ namespace RestSharp
         IRestRequest AddUrlSegment(string name, string value);
 
         /// <summary>
-        ///     Shortcut to AddParameter(name, value, UrlSegment) overload
+        /// Shortcut to AddParameter(name, value, UrlSegment) overload
         /// </summary>
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
@@ -396,7 +407,7 @@ namespace RestSharp
         IRestRequest AddUrlSegment(string name, object value);
 
         /// <summary>
-        ///     Shortcut to AddParameter(name, value, QueryString) overload
+        /// Shortcut to AddParameter(name, value, QueryString) overload
         /// </summary>
         /// <param name="name">Name of the parameter to add</param>
         /// <param name="value">Value of the parameter to add</param>
@@ -404,7 +415,7 @@ namespace RestSharp
         IRestRequest AddQueryParameter(string name, string value);
 
         /// <summary>
-        ///     Shortcut to AddParameter(name, value, QueryString) overload
+        /// Shortcut to AddParameter(name, value, QueryString) overload
         /// </summary>
         /// <param name="name">Name of the parameter to add</param>
         /// <param name="value">Value of the parameter to add</param>

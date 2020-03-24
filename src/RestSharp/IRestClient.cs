@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -13,8 +11,6 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -33,8 +29,17 @@ namespace RestSharp
 {
     public partial interface IRestClient
     {
+        /// <summary>
+        /// The UseSerializer method.
+        /// </summary>
+        /// <param name="serializerFactory">The serializer factory</param>
         IRestClient UseSerializer(Func<IRestSerializer> serializerFactory);
 
+        /// <summary>
+        ///     Replace the default serializer with a custom one
+        /// </summary>
+        /// <typeparam name="T">The type that implements IRestSerializer</typeparam>
+        /// <returns></returns>
         IRestClient UseSerializer<T>() where T : IRestSerializer, new();
 
         CookieContainer CookieContainer { get; set; }
@@ -57,22 +62,54 @@ namespace RestSharp
 
         Encoding Encoding { get; set; }
 
+        /// <summary>
+        /// Modifies the default behavior of RestSharp to swallow exceptions.
+        /// When set to <code>true</code>, a <see cref="DeserializationException"/> will be thrown
+        /// in case RestSharp fails to deserialize the response.
+        /// </summary>
         bool ThrowOnDeserializationError { get; set; }
 
+        /// <summary>
+        /// Modifies the default behavior of RestSharp to swallow exceptions.
+        /// When set to <code>true</code>, RestSharp will consider the request as unsuccessful
+        /// in case it fails to deserialize the response.
+        /// </summary>
         bool FailOnDeserializationError { get; set; }
 
+        /// <summary>
+        /// Modifies the default behavior of RestSharp to swallow exceptions.
+        /// When set to <code>true</code>, exceptions will be re-thrown.
+        /// </summary>
         bool ThrowOnAnyError { get; set; }
 
         string ConnectionGroupName { get; set; }
 
+        /// <summary>
+        /// Flag to send authorisation header with the HttpWebRequest
+        /// </summary>
         bool PreAuthenticate { get; set; }
 
+        /// <summary>
+        ///     Flag to reuse same connection in the HttpWebRequest
+        /// </summary>
         bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
+        /// <summary>
+        /// A list of parameters that will be set for all requests made
+        /// by the RestClient instance.
+        /// </summary>
         IList<Parameter> DefaultParameters { get; }
 
+        /// <summary>
+        ///     Explicit Host header value to use in requests independent from the request URI.
+        ///     If null, default host value extracted from URI is used.
+        /// </summary>
         string BaseHost { get; set; }
 
+        /// <summary>
+        /// By default, RestSharp doesn't allow multiple parameters to have the same name.
+        /// This properly allows to override the default behavior.
+        /// </summary>
         bool AllowMultipleDefaultParametersWithSameName { get; set; }
 
         /// <summary>
@@ -112,16 +149,50 @@ namespace RestSharp
         /// <returns></returns>
         IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder);
 
+        /// <summary>
+        /// Executes the given request and returns an untyped response.
+        /// </summary>
+        /// <param name="request">Pre-configured request instance.</param>
+        /// <returns>Untyped response.</returns>
         IRestResponse Execute(IRestRequest request);
 
+        /// <summary>
+        /// Executes the given request and returns an untyped response.
+        /// Allows to specify the HTTP method (GET, POST, etc) so you won't need to set it on the request.
+        /// </summary>
+        /// <param name="request">Pre-configured request instance.</param>
+        /// <param name="httpMethod">The HTTP method (GET, POST, etc) to be used when making the request.</param>
+        /// <returns>Untyped response.</returns>
         IRestResponse Execute(IRestRequest request, Method httpMethod);
 
+        /// <summary>
+        /// Executes the given request and returns a typed response.
+        /// RestSharp will deserialize the response and it will be available in the <code>Data</code>
+        /// property of the response instance.
+        /// </summary>
+        /// <param name="request">Pre-configured request instance.</param>
+        /// <returns>Typed response.</returns>
         IRestResponse<T> Execute<T>(IRestRequest request);
 
+        /// <summary>
+        /// Executes the given request and returns a typed response.
+        /// RestSharp will deserialize the response and it will be available in the <code>Data</code>
+        /// property of the response instance.
+        /// Allows to specify the HTTP method (GET, POST, etc) so you won't need to set it on the request.
+        /// </summary>
+        /// <param name="request">Pre-configured request instance.</param>
+        /// <param name="httpMethod">The HTTP method (GET, POST, etc) to be used when making the request.</param>
+        /// <returns>Typed response.</returns>
         IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod);
 
+        /// <summary>
+        /// A specialized method to download files.
+        /// </summary>
+        /// <param name="request">Pre-configured request instance.</param>
+        /// <returns>The downloaded file.</returns>
         byte[] DownloadData(IRestRequest request);
 
+        [Obsolete("Use ThrowOnAnyError property to instruct RestSharp to rethrow exceptions")]
         byte[] DownloadData(IRestRequest request, bool throwOnError);
 
         Uri BuildUri(IRestRequest request);
@@ -133,7 +204,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="configurator">Configuration delegate for HttpWebRequest</param>
         void ConfigureWebRequest(Action<HttpWebRequest> configurator);
-
+        
         /// <summary>
         ///     Adds or replaces a deserializer for the specified content type
         /// </summary>
@@ -184,6 +255,13 @@ namespace RestSharp
         /// <param name="httpMethod">Override the request method</param>
         /// <param name="cancellationToken">Cancellation token</param>
         Task<IRestResponse> ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        ///     Executes the request asynchronously, authenticating if needed
+        /// </summary>
+        /// <param name="request">Request to be executed</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken cancellationToken = default);
         
         /// <summary>
         ///     Executes a GET-style request asynchronously, authenticating if needed

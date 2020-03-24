@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -13,8 +11,6 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -42,7 +38,6 @@ namespace RestSharp
     /// </summary>
     public partial class RestClient : IRestClient
     {
-        // silverlight friendly way to get current version      
         static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;
 
         static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
@@ -98,159 +93,92 @@ namespace RestSharp
         IList<string> AcceptTypes { get; }
         Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 
-        /// <summary>
-        ///     Replace the default serializer with a custom one
-        /// </summary>
-        /// <param name="serializer">The custom serializer instance</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         [Obsolete("Use the overload that accepts the delegate factory")]
         public IRestClient UseSerializer(IRestSerializer serializer) => this.With(x => x.UseSerializer(() => serializer));
 
-        /// <summary>
-        ///     Allows to use a custom way to encode parameters
-        /// </summary>
-        /// <param name="encoder">A delegate to encode parameters</param>
-        /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IRestClient UseUrlEncoder(Func<string, string> encoder) => this.With(x => x.Encode = encoder);
 
+        /// <inheritdoc />
         public IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) => this.With(x => x.EncodeQuery = queryEncoder);
 
-        /// <summary>
-        ///     Enable or disable automatic gzip/deflate decompression
-        /// </summary>
+        /// <inheritdoc />
         public bool AutomaticDecompression { get; set; }
 
-        /// <summary>
-        ///     Maximum number of redirects to follow if FollowRedirects is true
-        /// </summary>
+        /// <inheritdoc />
         public int? MaxRedirects { get; set; }
 
-        /// <summary>
-        ///     X509CertificateCollection to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public X509CertificateCollection ClientCertificates { get; set; }
 
-        /// <summary>
-        ///     Proxy to use for requests made by this client instance.
-        ///     Passed on to underlying WebRequest if set.
-        /// </summary>
+        /// <inheritdoc />
         public IWebProxy Proxy { get; set; }
 
-        /// <summary>
-        ///     The cache policy to use for requests initiated by this client instance.
-        /// </summary>
+        /// <inheritdoc />
         public RequestCachePolicy CachePolicy { get; set; }
 
+        /// <inheritdoc />
         public bool Pipelined { get; set; }
 
-        /// <summary>
-        ///     Default is true. Determine whether or not requests that result in
-        ///     HTTP status codes of 3xx should follow returned redirect
-        /// </summary>
+        /// <inheritdoc />
         public bool FollowRedirects { get; set; }
 
-        /// <summary>
-        ///     The CookieContainer used for requests made by this client instance
-        /// </summary>
+        /// <inheritdoc />
         public CookieContainer CookieContainer { get; set; }
 
-        /// <summary>
-        ///     UserAgent to use for requests made by this client instance
-        /// </summary>
+        /// <inheritdoc />
         public string UserAgent { get; set; }
 
-        /// <summary>
-        ///     Timeout in milliseconds to use for requests made by this client instance.
-        ///     If not set, the default timeout for HttpWebRequest is used.
-        /// </summary>
+        /// <inheritdoc />
         public int Timeout { get; set; }
 
-        /// <summary>
-        ///     The number of milliseconds before the writing or reading times out.
-        /// </summary>
+        /// <inheritdoc />
         public int ReadWriteTimeout { get; set; }
 
-        /// <summary>
-        ///     Whether to invoke async callbacks using the SynchronizationContext.Current captured when invoked
-        /// </summary>
+        /// <inheritdoc />
         public bool UseSynchronizationContext { get; set; }
 
-        /// <summary>
-        ///     Authenticator to use for requests made by this client instance
-        /// </summary>
+        /// <inheritdoc />
         public IAuthenticator Authenticator { get; set; }
 
-        /// <summary>
-        ///     Combined with Request.Resource to construct URL for request
-        ///     Should include scheme and domain without trailing slash.
-        /// </summary>
-        /// <example>
-        ///     client.BaseUrl = new Uri("http://example.com");
-        /// </example>
+        /// <inheritdoc />
         public virtual Uri BaseUrl { get; set; }
 
+        /// <inheritdoc />
         public Encoding Encoding { get; set; }
 
+        /// <inheritdoc />
         public bool PreAuthenticate { get; set; }
 
-        /// <summary>
-        ///     Set to true if you want to get an exception when deserialization fails.
-        ///     Default is false.
-        /// </summary>
+        /// <inheritdoc />
         public bool ThrowOnDeserializationError { get; set; } = false;
 
-        /// <summary>
-        ///     Set to false if you want to get ResponseStatus.Completed when deserialization fails.
-        ///     Default is true.
-        /// </summary>
+        /// <inheritdoc />
         public bool FailOnDeserializationError { get; set; } = true;
 
-        /// <summary>
-        /// Changes the default behaviour when RestSharp swallows server errors in favour
-        /// of setting error properties on the response object. Default is false.
-        /// </summary>
+        /// <inheritdoc />
         public bool ThrowOnAnyError { get; set; } = false;
 
-        /// <summary>
-        ///     Allow high-speed NTLM-authenticated connection sharing
-        /// </summary>
+        /// <inheritdoc />
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
-        /// <summary>
-        ///     The ConnectionGroupName property enables you to associate a request with a connection group.
-        /// </summary>
+        /// <inheritdoc />
         public string ConnectionGroupName { get; set; }
 
-        /// <summary>
-        ///     Callback function for handling the validation of remote certificates. Useful for certificate pinning and
-        ///     overriding certificate errors in the scope of a request.
-        /// </summary>
+        /// <inheritdoc />
         public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 
-        /// <summary>
-        ///     Parameters included with every request made with this instance of RestClient
-        ///     If specified in both client and request, the request wins
-        /// </summary>
+        /// <inheritdoc />
         public IList<Parameter> DefaultParameters { get; }
 
-        /// <summary>
-        ///     Explicit Host header value to use in requests independent from the request URI.
-        ///     If null, default host value extracted from URI is used.
-        /// </summary>
+        /// <inheritdoc />>
         public string BaseHost { get; set; }
 
-        /// <summary>
-        ///     Set to true if you need to add multiple default parameters with the same name.
-        ///     Only query and form parameters are supported.
-        /// </summary>
+        /// <inheritdoc />>
         public bool AllowMultipleDefaultParametersWithSameName { get; set; } = false;
 
-        /// <summary>
-        ///     Registers a content handler to process response content
-        /// </summary>
-        /// <param name="contentType">MIME content type of the response content</param>
-        /// <param name="deserializerFactory">Deserializer to use to process content</param>
+        /// <inheritdoc />>
         public void AddHandler(string contentType, Func<IDeserializer> deserializerFactory)
         {
             ContentHandlers[contentType] = deserializerFactory;
@@ -266,18 +194,11 @@ namespace RestSharp
             this.AddOrUpdateDefaultParameter(new Parameter("Accept", accepts, ParameterType.HttpHeader));
         }
 
-        /// <summary>
-        ///     Registers a content handler to process response content
-        /// </summary>
-        /// <param name="contentType">MIME content type of the response content</param>
-        /// <param name="deserializer">Deserializer to use to process content</param>
+        /// <inheritdoc />>
         [Obsolete("Use the overload that accepts a factory delegate")]
         public void AddHandler(string contentType, IDeserializer deserializer) => AddHandler(contentType, () => deserializer);
 
-        /// <summary>
-        ///     Remove a content handler for the specified MIME content type
-        /// </summary>
-        /// <param name="contentType">MIME content type to remove</param>
+        /// <inheritdoc />
         public void RemoveHandler(string contentType)
         {
             ContentHandlers.Remove(contentType);
@@ -285,9 +206,7 @@ namespace RestSharp
             this.RemoveDefaultParameter("Accept");
         }
 
-        /// <summary>
-        ///     Remove all content handlers
-        /// </summary>
+        /// <inheritdoc />
         public void ClearHandlers()
         {
             ContentHandlers.Clear();
@@ -295,15 +214,13 @@ namespace RestSharp
             this.RemoveDefaultParameter("Accept");
         }
 
+        /// <inheritdoc />
         public IRestResponse<T> Deserialize<T>(IRestResponse response) => Deserialize<T>(response.Request, response);
 
+        /// <inheritdoc />
         public void ConfigureWebRequest(Action<HttpWebRequest> configurator) => WebRequestConfigurator = configurator;
 
-        /// <summary>
-        ///     Assembles URL to call based on parameters, method and resource
-        /// </summary>
-        /// <param name="request">RestRequest to execute</param>
-        /// <returns>Assembled System.Uri</returns>
+        /// <inheritdoc />
         public Uri BuildUri(IRestRequest request)
         {
             DoBuildUriValidations(request);
@@ -326,11 +243,7 @@ namespace RestSharp
             return MergeBaseUrlAndResource(applied.Uri, applied.Resource);
         }
 
-        /// <summary>
-        ///     Replace the default serializer with a custom one
-        /// </summary>
-        /// <param name="serializerFactory">A function that creates a custom serializer instance</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IRestClient UseSerializer(Func<IRestSerializer> serializerFactory)
         {
             var instance = serializerFactory();
@@ -341,34 +254,13 @@ namespace RestSharp
             return this;
         }
 
-        /// <summary>
-        ///     Replace the default serializer with a custom one
-        /// </summary>
-        /// <typeparam name="T">The type that implements IRestSerializer</typeparam>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IRestClient UseSerializer<T>() where T : IRestSerializer, new() => UseSerializer(() => new T());
 
-        /// <summary>
-        ///     Registers a content handler to process response content
-        /// </summary>
-        /// <param name="contentTypes">A list of MIME content types of the response content</param>
-        /// <param name="deserializerFactory">Deserializer factory to use to process content</param>
-        public void AddHandler(Func<IDeserializer> deserializerFactory, params string[] contentTypes)
+        void AddHandler(Func<IDeserializer> deserializerFactory, params string[] contentTypes)
         {
             foreach (var contentType in contentTypes)
                 AddHandler(contentType, deserializerFactory);
-        }
-
-        /// <summary>
-        ///     Registers a content handler to process response content
-        /// </summary>
-        /// <param name="contentTypes">A list of MIME content types of the response content</param>
-        /// <param name="deserializer">Deserializer to use to process content</param>
-        [Obsolete("Use the overload that accepts a factory delegate")]
-        public void AddHandler(IDeserializer deserializer, params string[] contentTypes)
-        {
-            foreach (var contentType in contentTypes)
-                AddHandler(contentType, deserializer);
         }
 
         void DoBuildUriValidations(IRestRequest request)

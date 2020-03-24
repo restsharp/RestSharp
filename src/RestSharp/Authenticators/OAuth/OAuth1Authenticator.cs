@@ -24,7 +24,8 @@ using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp.Authenticators
 {
-    /// <seealso href="http://tools.ietf.org/html/rfc5849" />
+    /// <seealso href="http://tools.ietf.org/html/rfc5849">RFC: The OAuth 1.0 Protocol</seealso>
+    /// <see cref="StringBuilder"/>
     public class OAuth1Authenticator : IAuthenticator
     {
         public virtual string Realm { get; set; }
@@ -141,6 +142,15 @@ namespace RestSharp.Authenticators
             return authenticator;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="consumerKey"></param>
+        /// <param name="consumerSecret"></param>
+        /// <param name="token"></param>
+        /// <param name="tokenSecret"></param>
+        /// <param name="sessionHandle"></param>
+        /// <returns></returns>
         public static OAuth1Authenticator ForAccessTokenRefresh(
             string consumerKey,
             string consumerSecret,
@@ -156,6 +166,16 @@ namespace RestSharp.Authenticators
             return authenticator;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="consumerKey"></param>
+        /// <param name="consumerSecret"></param>
+        /// <param name="token"></param>
+        /// <param name="tokenSecret"></param>
+        /// <param name="verifier"></param>
+        /// <param name="sessionHandle"></param>
+        /// <returns></returns>
         public static OAuth1Authenticator ForAccessTokenRefresh(
             string consumerKey,
             string consumerSecret,
@@ -173,6 +193,15 @@ namespace RestSharp.Authenticators
             return authenticator;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="consumerKey"></param>
+        /// <param name="consumerSecret"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="signatureMethod"></param>
+        /// <returns></returns>
         public static OAuth1Authenticator ForClientAuthentication(
             string consumerKey,
             string consumerSecret,
@@ -192,6 +221,15 @@ namespace RestSharp.Authenticators
                 Type               = OAuthType.ClientAuthentication
             };
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="consumerKey"></param>
+        /// <param name="consumerSecret"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="accessTokenSecret"></param>
+        /// <param name="signatureMethod"></param>
+        /// <returns></returns>
         public static OAuth1Authenticator ForProtectedResource(
             string consumerKey,
             string consumerSecret,
@@ -273,30 +311,30 @@ namespace RestSharp.Authenticators
             request.AddOrUpdateParameters(oauthParameters);
 
             IEnumerable<Parameter> CreateHeaderParameters()
-                => new[] {new Parameter("Authorization", GetAuthorizationHeader(parameters), ParameterType.HttpHeader)};
+                => new[] {new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader)};
 
             IEnumerable<Parameter> CreateUrlParameters()
                 => parameters.Where(p => !p.Name.IsNullOrBlank() && (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
                     .Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
-        }
 
-        string GetAuthorizationHeader(WebPairCollection parameters)
-        {
-            var oathParameters =
-                parameters
-                    .OrderBy(x => x, WebPair.Comparer)
-                    .Where(
-                        p =>
-                            !p.Name.IsNullOrBlank() && !p.Value.IsNullOrBlank() &&
-                            (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
-                    )
-                    .Select(x => $"{x.Name}=\"{x.Value}\"")
-                    .ToList();
+            string GetAuthorizationHeader()
+            {
+                var oathParameters =
+                    parameters
+                        .OrderBy(x => x, WebPair.Comparer)
+                        .Where(
+                            p =>
+                                !p.Name.IsNullOrBlank() && !p.Value.IsNullOrBlank() &&
+                                (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
+                        )
+                        .Select(x => $"{x.Name}=\"{x.Value}\"")
+                        .ToList();
 
-            if (!Realm.IsNullOrBlank())
-                oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
+                if (!Realm.IsNullOrBlank())
+                    oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
 
-            return "OAuth " + string.Join(",", oathParameters);
+                return "OAuth " + string.Join(",", oathParameters);
+            }
         }
     }
 

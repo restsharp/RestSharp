@@ -59,7 +59,7 @@ namespace RestSharp.IntegrationTests
             var client                  = new RestClient(server.Url);
             var request                 = new RestRequest("timeout");
             var cancellationTokenSource = new CancellationTokenSource();
-            var task                    = client.ExecuteTaskAsync<Response>(request, cancellationTokenSource.Token);
+            var task                    = client.ExecuteAsync<Response>(request, cancellationTokenSource.Token);
 
             cancellationTokenSource.Cancel();
 
@@ -78,7 +78,7 @@ namespace RestSharp.IntegrationTests
 
             request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
 
-            var response = await client.ExecuteTaskAsync<Response>(request);
+            var response = await client.ExecuteAsync<Response>(request);
 
             Assert.AreEqual(exceptionMessage, response.ErrorMessage);
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
@@ -91,7 +91,7 @@ namespace RestSharp.IntegrationTests
 
             var client   = new RestClient(server.Url);
             var request  = new RestRequest("success");
-            var response = await client.ExecuteTaskAsync<Response>(request);
+            var response = await client.ExecuteAsync<Response>(request);
 
             Assert.AreEqual("Works!", response.Data.Message);
         }
@@ -153,7 +153,7 @@ namespace RestSharp.IntegrationTests
 
             var client  = new RestClient(server.Url);
             var request = new RestRequest("");
-            var result  = await client.ExecuteTaskAsync(request);
+            var result  = await client.ExecuteAsync(request);
 
             Assert.NotNull(result.Content);
             Assert.AreEqual(val, result.Content);
@@ -166,7 +166,7 @@ namespace RestSharp.IntegrationTests
 
             var client   = new RestClient(server.Url);
             var request  = new RestRequest("success");
-            var response = await client.GetTaskAsync<Response>(request);
+            var response = await client.GetAsync<Response>(request);
 
             Assert.AreEqual("Works!", response.Message);
         }
@@ -182,7 +182,7 @@ namespace RestSharp.IntegrationTests
             // Half the value of ResponseHandler.Timeout
             request.Timeout = 500;
 
-            var response = await client.ExecuteTaskAsync(request);
+            var response = await client.ExecuteAsync(request);
 
             Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
         }
@@ -198,7 +198,7 @@ namespace RestSharp.IntegrationTests
             // Half the value of ResponseHandler.Timeout
             request.Timeout = 500;
 
-            var response = await client.ExecuteTaskAsync(request);
+            var response = await client.ExecuteAsync(request);
 
             Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
         }
@@ -210,7 +210,7 @@ namespace RestSharp.IntegrationTests
 
             var client   = new RestClient(server.Url);
             var request  = new RestRequest("404");
-            var response = await client.ExecuteTaskAsync(request);
+            var response = await client.ExecuteAsync(request);
 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -222,7 +222,7 @@ namespace RestSharp.IntegrationTests
 
             var client   = new RestClient(server.Url);
             var request  = new RestRequest("404");
-            var response = await client.ExecuteTaskAsync<Response>(request);
+            var response = await client.ExecuteAsync<Response>(request);
 
             Assert.Null(response.Data);
         }
