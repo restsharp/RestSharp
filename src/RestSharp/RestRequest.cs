@@ -88,7 +88,7 @@ namespace RestSharp
             }
 
             static IEnumerable<NameValuePair> ParseQuery(string query)
-                => query.Split('&')
+                => query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(
                         x =>
                         {
