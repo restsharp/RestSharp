@@ -29,7 +29,7 @@ namespace RestSharp.IntegrationTests
             "bar"                                                         + LineBreak +
             "-------------------------------28947758029299"               + LineBreak +
             "Content-Disposition: form-data; name=\"a name with spaces\"" + LineBreak + LineBreak +
-            "somedata"                                                    + LineBreak +
+            "somedata"                                                    + LineBreak + LineBreak +
             "-------------------------------28947758029299--"             + LineBreak;
 
         readonly string _expectedFileAndBodyRequestContent =
@@ -40,7 +40,7 @@ namespace RestSharp.IntegrationTests
             "-------------------------------28947758029299"                                + LineBreak +
             "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" + LineBreak +
             "Content-Type: application/octet-stream"                                       + LineBreak + LineBreak +
-            "This is a test file for RestSharp."                                           + LineBreak +
+            "This is a test file for RestSharp."                                           + LineBreak + LineBreak +
             "-------------------------------28947758029299--"                              + LineBreak;
 
         readonly string _expectedDefaultMultipartContentType =

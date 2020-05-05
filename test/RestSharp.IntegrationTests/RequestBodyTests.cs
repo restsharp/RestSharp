@@ -202,6 +202,7 @@ namespace RestSharp.IntegrationTests
                 + NewLine
                 + bodyData
                 + NewLine
+                + NewLine
                 + expectedFormBoundary + "--"
                 + NewLine;
 
