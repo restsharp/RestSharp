@@ -314,7 +314,7 @@ namespace RestSharp
             return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
         }
 
-        static string GetMultipartFooter() => $"--{FormBoundary}--{LineBreak}";
+        static string GetMultipartFooter() => $"{LineBreak}--{FormBoundary}--{LineBreak}";
 
         void PreparePostBody(WebRequest webRequest)
         {
