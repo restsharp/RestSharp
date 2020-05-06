@@ -9,26 +9,23 @@ module.exports = {
             {text: "Gitter", link: "https://gitter.im/RestSharp/RestSharp"},
             {text: "NuGet", link: "https://nuget.org/packages/RestSharp"}
         ],
-        sidebarDepth: 1,
+        sidebarDepth: 2,
         sidebar: [
             {
                 title: "Getting Started",
                 path: "/getting-started/",
                 collapsable: false,
-                // children: [
-                //   '/getting-started/upgrade-v6'
-                // ]
             },
             {
                 title: "Using RestSharp",
                 path: "/usage/",
                 collapsable: false,
                 children: [
-                    "serialization",
-                    "files",
-                    "authenticators",
-                    "parameters",
-                    "exceptions"
+                    "/usage/serialization",
+                    "/usage/files",
+                    "/usage/authenticators",
+                    "/usage/parameters",
+                    "/usage/exceptions"
                 ]
             },
             {

@@ -1,23 +1,25 @@
-# Namespace: RestSharp
-## Class `DeserializationException`
+---
+title: RestSharp
+---
 
-### Inheritance
+# Assembly: RestSharp
+## Namespace: RestSharp
+### Class `DeserializationException`
+
+#### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `System.Exception`
-### Syntax
+#### Syntax
 ```csharp
 public class DeserializationException : Exception, ISerializable
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `DeserializationException(IRestResponse, Exception)`
+#### Constructor `DeserializationException(IRestResponse, Exception)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public DeserializationException(IRestResponse response, Exception innerException)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `response` | `RestSharp.IRestResponse` | 
@@ -25,24 +27,24 @@ Name | Type | Description
 
 
 
-### Property `Response`
+#### Property `Response`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestResponse Response { get; }
 ```
 
 
-## Enum `ParameterType`
+### Enum `ParameterType`
 
 Types of parameters that can be added to requests
 
-### Syntax
+#### Syntax
 ```csharp
 public enum ParameterType
 ```
 
-### Fields
+#### Fields
 Name | Description
 --- | ---
 Cookie | Cookie parameter
@@ -52,31 +54,31 @@ HttpHeader |
 RequestBody | 
 QueryString | 
 QueryStringWithoutEncode | 
-## Enum `DataFormat`
+### Enum `DataFormat`
 
 Data formats
 
-### Syntax
+#### Syntax
 ```csharp
 public enum DataFormat
 ```
 
-### Fields
+#### Fields
 Name | Description
 --- | ---
 Json | 
 Xml | 
 None | 
-## Enum `Method`
+### Enum `Method`
 
 HTTP method to use when making requests
 
-### Syntax
+#### Syntax
 ```csharp
 public enum Method
 ```
 
-### Fields
+#### Fields
 Name | Description
 --- | ---
 GET | 
@@ -88,48 +90,45 @@ OPTIONS |
 PATCH | 
 MERGE | 
 COPY | 
-## Struct `DateFormat`
+### Struct `DateFormat`
 
 Format strings for commonly-used date formats
 
-### Syntax
+#### Syntax
 ```csharp
 public struct DateFormat
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Field `ISO_8601`
+#### Field `ISO_8601`
 
 .NET format string for ISO 8601 date format
 
-#### Syntax
+##### Syntax
 ```csharp
 public static string ISO_8601 = "s"
 ```
 
 
-### Field `ROUND_TRIP`
+#### Field `ROUND_TRIP`
 
 .NET format string for roundtrip date format
 
-#### Syntax
+##### Syntax
 ```csharp
 public static string ROUND_TRIP = "u"
 ```
 
 
-## Enum `ResponseStatus`
+### Enum `ResponseStatus`
 
 Status for responses (surprised?)
 
-### Syntax
+#### Syntax
 ```csharp
 public enum ResponseStatus
 ```
 
-### Fields
+#### Fields
 Name | Description
 --- | ---
 None | 
@@ -137,77 +136,74 @@ Completed |
 Error | 
 TimedOut | 
 Aborted | 
-## Class `FileParameter`
+### Class `FileParameter`
 
 Container for files to be uploaded with requests
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class FileParameter
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `ContentLength`
+#### Property `ContentLength`
 
 The length of data to be sent
 
-#### Syntax
+##### Syntax
 ```csharp
 public long ContentLength { get; set; }
 ```
 
 
-### Property `Writer`
+#### Property `Writer`
 
 Provides raw data for file
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<Stream> Writer { get; set; }
 ```
 
 
-### Property `FileName`
+#### Property `FileName`
 
 Name of the file to use when uploading
 
-#### Syntax
+##### Syntax
 ```csharp
 public string FileName { get; set; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
 MIME content type of file
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-### Property `Name`
+#### Property `Name`
 
 Name of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-### Method `Create(String, Byte[], String, String)`
+#### Method `Create(String, Byte[], String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static FileParameter Create(string name, byte[] data, string filename, string contentType)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -215,40 +211,40 @@ Name | Type | Description
 `filename` | `string` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.FileParameter` | 
 
 
 
-### Method `Create(String, Byte[], String)`
+#### Method `Create(String, Byte[], String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static FileParameter Create(string name, byte[] data, string filename)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `data` | `byte[]` | 
 `filename` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.FileParameter` | 
 
 
 
-### Method `Create(String, Action<Stream>, Int64, String, String)`
+#### Method `Create(String, Action<Stream>, Int64, String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static FileParameter Create(string name, Action<Stream> writer, long contentLength, string fileName, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -257,999 +253,987 @@ Name | Type | Description
 `fileName` | `string` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.FileParameter` | 
 
 
 
-## Class `Http`
+### Class `Http`
 
 HttpWebRequest wrapper (async methods)
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class Http : IHttp
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Method `AsPostAsync(Action<HttpResponse>, String)`
+#### Method `AsPostAsync(Action<HttpResponse>, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `AsGetAsync(Action<HttpResponse>, String)`
+#### Method `AsGetAsync(Action<HttpResponse>, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Constructor `Http()`
+#### Constructor `Http()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Http()
 ```
 
 
-### Property `HasParameters`
+#### Property `HasParameters`
 
 True if this HTTP request has any HTTP parameters
 
-#### Syntax
+##### Syntax
 ```csharp
 protected bool HasParameters { get; }
 ```
 
 
-### Property `HasCookies`
+#### Property `HasCookies`
 
 True if this HTTP request has any HTTP cookies
 
-#### Syntax
+##### Syntax
 ```csharp
 protected bool HasCookies { get; }
 ```
 
 
-### Property `HasBody`
+#### Property `HasBody`
 
 True if a request body has been specified
 
-#### Syntax
+##### Syntax
 ```csharp
 protected bool HasBody { get; }
 ```
 
 
-### Property `HasFiles`
+#### Property `HasFiles`
 
 True if files have been set to be uploaded
 
-#### Syntax
+##### Syntax
 ```csharp
 protected bool HasFiles { get; }
 ```
 
 
-### Property `AutomaticDecompression`
+#### Property `AutomaticDecompression`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool AutomaticDecompression { get; set; }
 ```
 
 
-### Property `AlwaysMultipartFormData`
+#### Property `AlwaysMultipartFormData`
 
 Always send a multipart/form-data request - even when no Files are present.
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool AlwaysMultipartFormData { get; set; }
 ```
 
 
-### Property `UserAgent`
+#### Property `UserAgent`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string UserAgent { get; set; }
 ```
 
 
-### Property `Timeout`
+#### Property `Timeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int Timeout { get; set; }
 ```
 
 
-### Property `ReadWriteTimeout`
+#### Property `ReadWriteTimeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int ReadWriteTimeout { get; set; }
 ```
 
 
-### Property `Credentials`
+#### Property `Credentials`
 
-#### Syntax
+##### Syntax
 ```csharp
 public ICredentials Credentials { get; set; }
 ```
 
 
-### Property `CookieContainer`
+#### Property `CookieContainer`
 
-#### Syntax
+##### Syntax
 ```csharp
 public CookieContainer CookieContainer { get; set; }
 ```
 
 
-### Property `AdvancedResponseWriter`
+#### Property `AdvancedResponseWriter`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
 
 
-### Property `ResponseWriter`
+#### Property `ResponseWriter`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<Stream> ResponseWriter { get; set; }
 ```
 
 
-### Property `Files`
+#### Property `Files`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<HttpFile> Files { get; }
 ```
 
 
-### Property `FollowRedirects`
+#### Property `FollowRedirects`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool FollowRedirects { get; set; }
 ```
 
 
-### Property `Pipelined`
+#### Property `Pipelined`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Pipelined { get; set; }
 ```
 
 
-### Property `ClientCertificates`
+#### Property `ClientCertificates`
 
-#### Syntax
+##### Syntax
 ```csharp
 public X509CertificateCollection ClientCertificates { get; set; }
 ```
 
 
-### Property `MaxRedirects`
+#### Property `MaxRedirects`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int? MaxRedirects { get; set; }
 ```
 
 
-### Property `UseDefaultCredentials`
+#### Property `UseDefaultCredentials`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool UseDefaultCredentials { get; set; }
 ```
 
 
-### Property `ConnectionGroupName`
+#### Property `ConnectionGroupName`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ConnectionGroupName { get; set; }
 ```
 
 
-### Property `Encoding`
+#### Property `Encoding`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Encoding Encoding { get; set; }
 ```
 
 
-### Property `Headers`
+#### Property `Headers`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<HttpHeader> Headers { get; }
 ```
 
 
-### Property `Parameters`
+#### Property `Parameters`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<HttpParameter> Parameters { get; }
 ```
 
 
-### Property `Cookies`
+#### Property `Cookies`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<HttpCookie> Cookies { get; }
 ```
 
 
-### Property `RequestBody`
+#### Property `RequestBody`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string RequestBody { get; set; }
 ```
 
 
-### Property `RequestContentType`
+#### Property `RequestContentType`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string RequestContentType { get; set; }
 ```
 
 
-### Property `RequestBodyBytes`
+#### Property `RequestBodyBytes`
 
-#### Syntax
+##### Syntax
 ```csharp
 public byte[] RequestBodyBytes { get; set; }
 ```
 
 
-### Property `Url`
+#### Property `Url`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Uri Url { get; set; }
 ```
 
 
-### Property `Host`
+#### Property `Host`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Host { get; set; }
 ```
 
 
-### Property `AllowedDecompressionMethods`
+#### Property `AllowedDecompressionMethods`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
 ```
 
 
-### Property `PreAuthenticate`
+#### Property `PreAuthenticate`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool PreAuthenticate { get; set; }
 ```
 
 
-### Property `UnsafeAuthenticatedConnectionSharing`
+#### Property `UnsafeAuthenticatedConnectionSharing`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
 
 
-### Property `Proxy`
+#### Property `Proxy`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IWebProxy Proxy { get; set; }
 ```
 
 
-### Property `CachePolicy`
+#### Property `CachePolicy`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RequestCachePolicy CachePolicy { get; set; }
 ```
 
 
-### Property `RemoteCertificateValidationCallback`
+#### Property `RemoteCertificateValidationCallback`
 
 Callback function for handling the validation of remote certificates.
 
-#### Syntax
+##### Syntax
 ```csharp
 public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
 
 
-### Property `WebRequestConfigurator`
+#### Property `WebRequestConfigurator`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 ```
 
 
-### Method `Create()`
+#### Method `Create()`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public static IHttp Create()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IHttp` | 
 
 
 
-### Method `CreateWebRequest(Uri)`
+#### Method `CreateWebRequest(Uri)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Overriding this method won't be possible in future version")]
 protected virtual HttpWebRequest CreateWebRequest(Uri url)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `url` | `Uri` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `Post()`
+#### Method `Post()`
 
 Execute a POST request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Post()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Put()`
+#### Method `Put()`
 
 Execute a PUT request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Put()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Get()`
+#### Method `Get()`
 
 Execute a GET request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Get()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Head()`
+#### Method `Head()`
 
 Execute a HEAD request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Head()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Options()`
+#### Method `Options()`
 
 Execute an OPTIONS request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Options()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Delete()`
+#### Method `Delete()`
 
 Execute a DELETE request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Delete()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Patch()`
+#### Method `Patch()`
 
 Execute a PATCH request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Patch()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Merge()`
+#### Method `Merge()`
 
 Execute a MERGE request
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse Merge()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `AsGet(String)`
+#### Method `AsGet(String)`
 
 Execute a GET-style request with the specified HTTP Method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse AsGet(string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `httpMethod` | `string` | The HTTP method to execute.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `AsPost(String)`
+#### Method `AsPost(String)`
 
 Execute a POST-style request with the specified HTTP Method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse AsPost(string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `httpMethod` | `string` | The HTTP method to execute.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `ConfigureWebRequest(String, Uri)`
+#### Method `ConfigureWebRequest(String, Uri)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
 protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `method` | `string` | 
 `url` | `Uri` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `DeleteAsync(Action<HttpResponse>)`
+#### Method `DeleteAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `GetAsync(Action<HttpResponse>)`
+#### Method `GetAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest GetAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `HeadAsync(Action<HttpResponse>)`
+#### Method `HeadAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest HeadAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `OptionsAsync(Action<HttpResponse>)`
+#### Method `OptionsAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest OptionsAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `PostAsync(Action<HttpResponse>)`
+#### Method `PostAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest PostAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `PutAsync(Action<HttpResponse>)`
+#### Method `PutAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest PutAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `PatchAsync(Action<HttpResponse>)`
+#### Method `PatchAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest PatchAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `MergeAsync(Action<HttpResponse>)`
+#### Method `MergeAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 public HttpWebRequest MergeAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `ConfigureAsyncWebRequest(String, Uri)`
+#### Method `ConfigureAsyncWebRequest(String, Uri)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
 protected virtual HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `method` | `string` | 
 `url` | `Uri` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-## Class `HttpCookie`
+### Class `HttpCookie`
 
 Representation of an HTTP cookie
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class HttpCookie
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `Comment`
+#### Property `Comment`
 
 Comment of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Comment { get; set; }
 ```
 
 
-### Property `CommentUri`
+#### Property `CommentUri`
 
 Comment of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public Uri CommentUri { get; set; }
 ```
 
 
-### Property `Discard`
+#### Property `Discard`
 
 Indicates whether the cookie should be discarded at the end of the session
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Discard { get; set; }
 ```
 
 
-### Property `Domain`
+#### Property `Domain`
 
 Domain of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Domain { get; set; }
 ```
 
 
-### Property `Expired`
+#### Property `Expired`
 
 Indicates whether the cookie is expired
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Expired { get; set; }
 ```
 
 
-### Property `Expires`
+#### Property `Expires`
 
 Date and time that the cookie expires
 
-#### Syntax
+##### Syntax
 ```csharp
 public DateTime Expires { get; set; }
 ```
 
 
-### Property `HttpOnly`
+#### Property `HttpOnly`
 
 Indicates that this cookie should only be accessed by the server
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool HttpOnly { get; set; }
 ```
 
 
-### Property `Name`
+#### Property `Name`
 
 Name of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-### Property `Path`
+#### Property `Path`
 
 Path of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Path { get; set; }
 ```
 
 
-### Property `Port`
+#### Property `Port`
 
 Port of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Port { get; set; }
 ```
 
 
-### Property `Secure`
+#### Property `Secure`
 
 Indicates that the cookie should only be sent over secure channels
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Secure { get; set; }
 ```
 
 
-### Property `TimeStamp`
+#### Property `TimeStamp`
 
 Date and time the cookie was created
 
-#### Syntax
+##### Syntax
 ```csharp
 public DateTime TimeStamp { get; set; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
 Value of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Value { get; set; }
 ```
 
 
-### Property `Version`
+#### Property `Version`
 
 Version of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public int Version { get; set; }
 ```
 
 
-## Class `HttpFile`
+### Class `HttpFile`
 
 Container for HTTP file
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class HttpFile
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `ContentLength`
+#### Property `ContentLength`
 
 The length of data to be sent
 
-#### Syntax
+##### Syntax
 ```csharp
 public long ContentLength { get; set; }
 ```
 
 
-### Property `Writer`
+#### Property `Writer`
 
 Provides raw data for file
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<Stream> Writer { get; set; }
 ```
 
 
-### Property `FileName`
+#### Property `FileName`
 
 Name of the file to use when uploading
 
-#### Syntax
+##### Syntax
 ```csharp
 public string FileName { get; set; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
 MIME content type of file
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-### Property `Name`
+#### Property `Name`
 
 Name of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-## Class `HttpHeader`
+### Class `HttpHeader`
 
 Representation of an HTTP header
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class HttpHeader
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `HttpHeader(String, String)`
+#### Constructor `HttpHeader(String, String)`
 
 Creates a new instance of HttpHeader
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpHeader(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Header name
@@ -1257,1055 +1241,1043 @@ Name | Type | Description
 
 
 
-### Constructor `HttpHeader()`
+#### Constructor `HttpHeader()`
 
 Creates a new instance of HttpHeader. Remember to assign properties!
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpHeader()
 ```
 
 
-### Property `Name`
+#### Property `Name`
 
 Name of the header
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
 Value of the header
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Value { get; set; }
 ```
 
 
-## Class `HttpParameter`
+### Class `HttpParameter`
 
 Representation of an HTTP parameter (QueryString or Form value)
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class HttpParameter
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `Name`
+#### Property `Name`
 
 Name of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
 Value of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Value { get; set; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
 Content-Type of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-## Class `HttpResponse`
+### Class `HttpResponse`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class HttpResponse : IHttpResponse
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `HttpResponse()`
+#### Constructor `HttpResponse()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpResponse()
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-### Property `ContentLength`
+#### Property `ContentLength`
 
-#### Syntax
+##### Syntax
 ```csharp
 public long ContentLength { get; set; }
 ```
 
 
-### Property `ContentEncoding`
+#### Property `ContentEncoding`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentEncoding { get; set; }
 ```
 
 
-### Property `Content`
+#### Property `Content`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Content { get; }
 ```
 
 
-### Property `StatusCode`
+#### Property `StatusCode`
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpStatusCode StatusCode { get; set; }
 ```
 
 
-### Property `StatusDescription`
+#### Property `StatusDescription`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string StatusDescription { get; set; }
 ```
 
 
-### Property `RawBytes`
+#### Property `RawBytes`
 
-#### Syntax
+##### Syntax
 ```csharp
 public byte[] RawBytes { get; set; }
 ```
 
 
-### Property `ResponseUri`
+#### Property `ResponseUri`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Uri ResponseUri { get; set; }
 ```
 
 
-### Property `Server`
+#### Property `Server`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Server { get; set; }
 ```
 
 
-### Property `Headers`
+#### Property `Headers`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<HttpHeader> Headers { get; }
 ```
 
 
-### Property `Cookies`
+#### Property `Cookies`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<HttpCookie> Cookies { get; }
 ```
 
 
-### Property `ResponseStatus`
+#### Property `ResponseStatus`
 
-#### Syntax
+##### Syntax
 ```csharp
 public ResponseStatus ResponseStatus { get; set; }
 ```
 
 
-### Property `ErrorMessage`
+#### Property `ErrorMessage`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ErrorMessage { get; set; }
 ```
 
 
-### Property `ErrorException`
+#### Property `ErrorException`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Exception ErrorException { get; set; }
 ```
 
 
-### Property `ProtocolVersion`
+#### Property `ProtocolVersion`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Version ProtocolVersion { get; set; }
 ```
 
 
-## Interface `IHttp`
+### Interface `IHttp`
 
-### Syntax
+#### Syntax
 ```csharp
 public interface IHttp
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `ResponseWriter`
+#### Property `ResponseWriter`
 
 The delegate to use to write the response instead of reading into RawBytes
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<Stream> ResponseWriter { get; set; }
 ```
 
 
-### Property `AdvancedResponseWriter`
+#### Property `AdvancedResponseWriter`
 
 The delegate to use to write the response instead of reading into RawBytes
 Here you can also check the request details
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
 
 
-### Property `CookieContainer`
+#### Property `CookieContainer`
 
 The <see cref="!:System.Net.CookieContainer"></see> to be used for the request
 
-#### Syntax
+##### Syntax
 ```csharp
 CookieContainer CookieContainer { get; set; }
 ```
 
 
-### Property `Credentials`
+#### Property `Credentials`
 
 <see cref="!:System.Net.ICredentials"></see> to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 ICredentials Credentials { get; set; }
 ```
 
 
-### Property `AutomaticDecompression`
+#### Property `AutomaticDecompression`
 
 Enable or disable automatic gzip/deflate decompression
 
-#### Syntax
+##### Syntax
 ```csharp
 bool AutomaticDecompression { get; set; }
 ```
 
 
-### Property `AlwaysMultipartFormData`
+#### Property `AlwaysMultipartFormData`
 
 Always send a multipart/form-data request - even when no Files are present.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool AlwaysMultipartFormData { get; set; }
 ```
 
 
-### Property `UserAgent`
+#### Property `UserAgent`
 
 
-#### Syntax
+##### Syntax
 ```csharp
 string UserAgent { get; set; }
 ```
 
 
-### Property `Timeout`
+#### Property `Timeout`
 
 Timeout in milliseconds to be used for the request
 
-#### Syntax
+##### Syntax
 ```csharp
 int Timeout { get; set; }
 ```
 
 
-### Property `ReadWriteTimeout`
+#### Property `ReadWriteTimeout`
 
 The number of milliseconds before the writing or reading times out.
 
-#### Syntax
+##### Syntax
 ```csharp
 int ReadWriteTimeout { get; set; }
 ```
 
 
-### Property `FollowRedirects`
+#### Property `FollowRedirects`
 
 Whether or not HTTP 3xx response redirects should be automatically followed
 
-#### Syntax
+##### Syntax
 ```csharp
 bool FollowRedirects { get; set; }
 ```
 
 
-### Property `Pipelined`
+#### Property `Pipelined`
 
 Whether or not to use pipelined connections
 
-#### Syntax
+##### Syntax
 ```csharp
 bool Pipelined { get; set; }
 ```
 
 
-### Property `ClientCertificates`
+#### Property `ClientCertificates`
 
 X509CertificateCollection to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 X509CertificateCollection ClientCertificates { get; set; }
 ```
 
 
-### Property `MaxRedirects`
+#### Property `MaxRedirects`
 
 Maximum number of automatic redirects to follow if FollowRedirects is true
 
-#### Syntax
+##### Syntax
 ```csharp
 int? MaxRedirects { get; set; }
 ```
 
 
-### Property `UseDefaultCredentials`
+#### Property `UseDefaultCredentials`
 
 Determine whether or not the &quot;default credentials&quot; (e.g. the user account under which the
 current process is running) will be sent along to the server.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool UseDefaultCredentials { get; set; }
 ```
 
 
-### Property `Encoding`
+#### Property `Encoding`
 
 Encoding for the request, UTF8 is the default
 
-#### Syntax
+##### Syntax
 ```csharp
 Encoding Encoding { get; set; }
 ```
 
 
-### Property `Headers`
+#### Property `Headers`
 
 HTTP headers to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<HttpHeader> Headers { get; }
 ```
 
 
-### Property `Parameters`
+#### Property `Parameters`
 
 HTTP parameters (QueryString or Form values) to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<HttpParameter> Parameters { get; }
 ```
 
 
-### Property `Files`
+#### Property `Files`
 
 Collection of files to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<HttpFile> Files { get; }
 ```
 
 
-### Property `Cookies`
+#### Property `Cookies`
 
 HTTP cookies to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<HttpCookie> Cookies { get; }
 ```
 
 
-### Property `RequestBody`
+#### Property `RequestBody`
 
 Request body to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 string RequestBody { get; set; }
 ```
 
 
-### Property `RequestContentType`
+#### Property `RequestContentType`
 
 Content type of the request body.
 
-#### Syntax
+##### Syntax
 ```csharp
 string RequestContentType { get; set; }
 ```
 
 
-### Property `PreAuthenticate`
+#### Property `PreAuthenticate`
 
 Flag to send authorisation header with the HttpWebRequest
 
-#### Syntax
+##### Syntax
 ```csharp
 bool PreAuthenticate { get; set; }
 ```
 
 
-### Property `UnsafeAuthenticatedConnectionSharing`
+#### Property `UnsafeAuthenticatedConnectionSharing`
 
 Flag to reuse same connection in the HttpWebRequest
 
-#### Syntax
+##### Syntax
 ```csharp
 bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
 
 
-### Property `CachePolicy`
+#### Property `CachePolicy`
 
 Caching policy for requests created with this wrapper.
 
-#### Syntax
+##### Syntax
 ```csharp
 RequestCachePolicy CachePolicy { get; set; }
 ```
 
 
-### Property `ConnectionGroupName`
+#### Property `ConnectionGroupName`
 
 The ConnectionGroupName property enables you to associate a request with a connection group.
 
-#### Syntax
+##### Syntax
 ```csharp
 string ConnectionGroupName { get; set; }
 ```
 
 
-### Property `RequestBodyBytes`
+#### Property `RequestBodyBytes`
 
 An alternative to RequestBody, for when the caller already has the byte array.
 
-#### Syntax
+##### Syntax
 ```csharp
 byte[] RequestBodyBytes { get; set; }
 ```
 
 
-### Property `Url`
+#### Property `Url`
 
 URL to call for this request
 
-#### Syntax
+##### Syntax
 ```csharp
 Uri Url { get; set; }
 ```
 
 
-### Property `Host`
+#### Property `Host`
 
 Explicit Host header value to use in requests independent from the request URI.
 If null, default host value extracted from URI is used.
 
-#### Syntax
+##### Syntax
 ```csharp
 string Host { get; set; }
 ```
 
 
-### Property `AllowedDecompressionMethods`
+#### Property `AllowedDecompressionMethods`
 
 List of allowed decompression methods
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
 ```
 
 
-### Property `Proxy`
+#### Property `Proxy`
 
 Proxy info to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 IWebProxy Proxy { get; set; }
 ```
 
 
-### Property `RemoteCertificateValidationCallback`
+#### Property `RemoteCertificateValidationCallback`
 
-#### Syntax
+##### Syntax
 ```csharp
 RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
 
 
-### Property `WebRequestConfigurator`
+#### Property `WebRequestConfigurator`
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 ```
 
 
-### Method `DeleteAsync(Action<HttpResponse>)`
+#### Method `DeleteAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest DeleteAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `GetAsync(Action<HttpResponse>)`
+#### Method `GetAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest GetAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `HeadAsync(Action<HttpResponse>)`
+#### Method `HeadAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest HeadAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `OptionsAsync(Action<HttpResponse>)`
+#### Method `OptionsAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest OptionsAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `PostAsync(Action<HttpResponse>)`
+#### Method `PostAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest PostAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `PutAsync(Action<HttpResponse>)`
+#### Method `PutAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest PutAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `PatchAsync(Action<HttpResponse>)`
+#### Method `PatchAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest PatchAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `MergeAsync(Action<HttpResponse>)`
+#### Method `MergeAsync(Action<HttpResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete]
 HttpWebRequest MergeAsync(Action<HttpResponse> action)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `AsPostAsync(Action<HttpResponse>, String)`
+#### Method `AsPostAsync(Action<HttpResponse>, String)`
 
 Execute an async POST-style request with the specified HTTP Method.
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 `httpMethod` | `string` | The HTTP method to execute.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `AsGetAsync(Action<HttpResponse>, String)`
+#### Method `AsGetAsync(Action<HttpResponse>, String)`
 
 Execute an async GET-style request with the specified HTTP Method.
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
 `httpMethod` | `string` | The HTTP method to execute.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `HttpWebRequest` | 
 
 
 
-### Method `Delete()`
+#### Method `Delete()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Delete()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Get()`
+#### Method `Get()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Get()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Head()`
+#### Method `Head()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Head()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Options()`
+#### Method `Options()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Options()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Post()`
+#### Method `Post()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Post()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Put()`
+#### Method `Put()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Put()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Patch()`
+#### Method `Patch()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Patch()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `Merge()`
+#### Method `Merge()`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse Merge()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `AsPost(String)`
+#### Method `AsPost(String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse AsPost(string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-### Method `AsGet(String)`
+#### Method `AsGet(String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpResponse AsGet(string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.HttpResponse` | 
 
 
 
-## Interface `IHttpResponse`
+### Interface `IHttpResponse`
 
 HTTP response data
 
-### Syntax
+#### Syntax
 ```csharp
 public interface IHttpResponse
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `ContentType`
+#### Property `ContentType`
 
 MIME content type of response
 
-#### Syntax
+##### Syntax
 ```csharp
 string ContentType { get; set; }
 ```
 
 
-### Property `ContentLength`
+#### Property `ContentLength`
 
 Length in bytes of the response content
 
-#### Syntax
+##### Syntax
 ```csharp
 long ContentLength { get; set; }
 ```
 
 
-### Property `ContentEncoding`
+#### Property `ContentEncoding`
 
 Encoding of the response content
 
-#### Syntax
+##### Syntax
 ```csharp
 string ContentEncoding { get; set; }
 ```
 
 
-### Property `Content`
+#### Property `Content`
 
 String representation of response content
 
-#### Syntax
+##### Syntax
 ```csharp
 string Content { get; }
 ```
 
 
-### Property `StatusCode`
+#### Property `StatusCode`
 
 HTTP response status code
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpStatusCode StatusCode { get; set; }
 ```
 
 
-### Property `StatusDescription`
+#### Property `StatusDescription`
 
 Description of HTTP status returned
 
-#### Syntax
+##### Syntax
 ```csharp
 string StatusDescription { get; set; }
 ```
 
 
-### Property `RawBytes`
+#### Property `RawBytes`
 
 Response content
 
-#### Syntax
+##### Syntax
 ```csharp
 byte[] RawBytes { get; set; }
 ```
 
 
-### Property `ResponseUri`
+#### Property `ResponseUri`
 
 The URL that actually responded to the content (different from request if redirected)
 
-#### Syntax
+##### Syntax
 ```csharp
 Uri ResponseUri { get; set; }
 ```
 
 
-### Property `Server`
+#### Property `Server`
 
 HttpWebResponse.Server
 
-#### Syntax
+##### Syntax
 ```csharp
 string Server { get; set; }
 ```
 
 
-### Property `Headers`
+#### Property `Headers`
 
 Headers returned by server with the response
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<HttpHeader> Headers { get; }
 ```
 
 
-### Property `Cookies`
+#### Property `Cookies`
 
 Cookies returned by server with the response
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<HttpCookie> Cookies { get; }
 ```
 
 
-### Property `ResponseStatus`
+#### Property `ResponseStatus`
 
 Status of the request. Will return Error for transport errors.
 HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 
-#### Syntax
+##### Syntax
 ```csharp
 ResponseStatus ResponseStatus { get; set; }
 ```
 
 
-### Property `ErrorMessage`
+#### Property `ErrorMessage`
 
 Transport or other non-HTTP error generated while attempting request
 
-#### Syntax
+##### Syntax
 ```csharp
 string ErrorMessage { get; set; }
 ```
 
 
-### Property `ErrorException`
+#### Property `ErrorException`
 
 Exception thrown when error is encountered.
 
-#### Syntax
+##### Syntax
 ```csharp
 Exception ErrorException { get; set; }
 ```
 
 
-### Property `ProtocolVersion`
+#### Property `ProtocolVersion`
 
 The HTTP protocol version (1.0, 1.1, etc)
 
-#### Remarks
+##### Remarks
 Only set when underlying framework supports it.
-#### Syntax
+##### Syntax
 ```csharp
 Version ProtocolVersion { get; set; }
 ```
 
 
-## Interface `IRestClient`
+### Interface `IRestClient`
 
-### Syntax
+#### Syntax
 ```csharp
 public interface IRestClient
 ```
 
-### Extension methods
+#### Extension methods
 -  `RestSharp.RestClientExtensions.ExecuteAsync(RestSharp.IRestClient, RestSharp.IRestRequest, System.Action<RestSharp.IRestResponse>)`
 -  `RestSharp.RestClientExtensions.ExecuteAsync<T>(RestSharp.IRestClient, RestSharp.IRestRequest, System.Action<RestSharp.IRestResponse<T>>)`
 -  `RestSharp.RestClientExtensions.GetAsync<T>(RestSharp.IRestClient, RestSharp.IRestRequest, System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>)`
@@ -2367,546 +2339,544 @@ public interface IRestClient
 -  `RestSharp.RestClientJsonRequest.Options<TRequest, TResponse>(RestSharp.IRestClient, RestSharp.JsonRequest<TRequest, TResponse>)`
 -  `RestSharp.RestClientJsonRequest.Patch<TRequest, TResponse>(RestSharp.IRestClient, RestSharp.JsonRequest<TRequest, TResponse>)`
 -  `RestSharp.RestClientJsonRequest.Delete<TRequest, TResponse>(RestSharp.IRestClient, RestSharp.JsonRequest<TRequest, TResponse>)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
 -  `RestSharp.Serialization.Xml.DotNetXmlSerializerClientExtensions.UseDotNetXmlSerializer(RestSharp.IRestClient, string, System.Text.Encoding)`
-### Method `UseSerializer(Func<IRestSerializer>)`
+#### Method `UseSerializer(Func<IRestSerializer>)`
 
 The UseSerializer method.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestClient UseSerializer(Func<IRestSerializer> serializerFactory)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `serializerFactory` | `System.Func<RestSharp.Serialization.IRestSerializer>` | The serializer factory
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `UseSerializer<T>()`
+#### Method `UseSerializer<T>()`
 
 Replace the default serializer with a custom one
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestClient UseSerializer<T>()
     where T : IRestSerializer, new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | The type that implements IRestSerializer
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Property `CookieContainer`
+#### Property `CookieContainer`
 
-#### Syntax
+##### Syntax
 ```csharp
 CookieContainer CookieContainer { get; set; }
 ```
 
 
-### Property `AutomaticDecompression`
+#### Property `AutomaticDecompression`
 
-#### Syntax
+##### Syntax
 ```csharp
 bool AutomaticDecompression { get; set; }
 ```
 
 
-### Property `MaxRedirects`
+#### Property `MaxRedirects`
 
-#### Syntax
+##### Syntax
 ```csharp
 int? MaxRedirects { get; set; }
 ```
 
 
-### Property `UserAgent`
+#### Property `UserAgent`
 
-#### Syntax
+##### Syntax
 ```csharp
 string UserAgent { get; set; }
 ```
 
 
-### Property `Timeout`
+#### Property `Timeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 int Timeout { get; set; }
 ```
 
 
-### Property `ReadWriteTimeout`
+#### Property `ReadWriteTimeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 int ReadWriteTimeout { get; set; }
 ```
 
 
-### Property `UseSynchronizationContext`
+#### Property `UseSynchronizationContext`
 
-#### Syntax
+##### Syntax
 ```csharp
 bool UseSynchronizationContext { get; set; }
 ```
 
 
-### Property `Authenticator`
+#### Property `Authenticator`
 
-#### Syntax
+##### Syntax
 ```csharp
 IAuthenticator Authenticator { get; set; }
 ```
 
 
-### Property `BaseUrl`
+#### Property `BaseUrl`
 
-#### Syntax
+##### Syntax
 ```csharp
 Uri BaseUrl { get; set; }
 ```
 
 
-### Property `Encoding`
+#### Property `Encoding`
 
-#### Syntax
+##### Syntax
 ```csharp
 Encoding Encoding { get; set; }
 ```
 
 
-### Property `ThrowOnDeserializationError`
+#### Property `ThrowOnDeserializationError`
 
-#### Syntax
+##### Syntax
 ```csharp
 bool ThrowOnDeserializationError { get; set; }
 ```
 
 
-### Property `FailOnDeserializationError`
+#### Property `FailOnDeserializationError`
 
 Modifies the default behavior of RestSharp to swallow exceptions.
 When set to <pre><code>true</code></pre>, RestSharp will consider the request as unsuccessful
 in case it fails to deserialize the response.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool FailOnDeserializationError { get; set; }
 ```
 
 
-### Property `ThrowOnAnyError`
+#### Property `ThrowOnAnyError`
 
 Modifies the default behavior of RestSharp to swallow exceptions.
 When set to <pre><code>true</code></pre>, exceptions will be re-thrown.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool ThrowOnAnyError { get; set; }
 ```
 
 
-### Property `ConnectionGroupName`
+#### Property `ConnectionGroupName`
 
-#### Syntax
+##### Syntax
 ```csharp
 string ConnectionGroupName { get; set; }
 ```
 
 
-### Property `PreAuthenticate`
+#### Property `PreAuthenticate`
 
 Flag to send authorisation header with the HttpWebRequest
 
-#### Syntax
+##### Syntax
 ```csharp
 bool PreAuthenticate { get; set; }
 ```
 
 
-### Property `UnsafeAuthenticatedConnectionSharing`
+#### Property `UnsafeAuthenticatedConnectionSharing`
 
 Flag to reuse same connection in the HttpWebRequest
 
-#### Syntax
+##### Syntax
 ```csharp
 bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
 
 
-### Property `DefaultParameters`
+#### Property `DefaultParameters`
 
 A list of parameters that will be set for all requests made
 by the RestClient instance.
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<Parameter> DefaultParameters { get; }
 ```
 
 
-### Property `BaseHost`
+#### Property `BaseHost`
 
 Explicit Host header value to use in requests independent from the request URI.
 If null, default host value extracted from URI is used.
 
-#### Syntax
+##### Syntax
 ```csharp
 string BaseHost { get; set; }
 ```
 
 
-### Property `AllowMultipleDefaultParametersWithSameName`
+#### Property `AllowMultipleDefaultParametersWithSameName`
 
 By default, RestSharp doesn&apos;t allow multiple parameters to have the same name.
 This properly allows to override the default behavior.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool AllowMultipleDefaultParametersWithSameName { get; set; }
 ```
 
 
-### Property `ClientCertificates`
+#### Property `ClientCertificates`
 
 X509CertificateCollection to be sent with request
 
-#### Syntax
+##### Syntax
 ```csharp
 X509CertificateCollection ClientCertificates { get; set; }
 ```
 
 
-### Property `Proxy`
+#### Property `Proxy`
 
-#### Syntax
+##### Syntax
 ```csharp
 IWebProxy Proxy { get; set; }
 ```
 
 
-### Property `CachePolicy`
+#### Property `CachePolicy`
 
-#### Syntax
+##### Syntax
 ```csharp
 RequestCachePolicy CachePolicy { get; set; }
 ```
 
 
-### Property `Pipelined`
+#### Property `Pipelined`
 
-#### Syntax
+##### Syntax
 ```csharp
 bool Pipelined { get; set; }
 ```
 
 
-### Property `FollowRedirects`
+#### Property `FollowRedirects`
 
-#### Syntax
+##### Syntax
 ```csharp
 bool FollowRedirects { get; set; }
 ```
 
 
-### Property `RemoteCertificateValidationCallback`
+#### Property `RemoteCertificateValidationCallback`
 
 Callback function for handling the validation of remote certificates. Useful for certificate pinning and
 overriding certificate errors in the scope of a request.
 
-#### Syntax
+##### Syntax
 ```csharp
 RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
 
 
-### Method `Deserialize<T>(IRestResponse)`
+#### Method `Deserialize<T>(IRestResponse)`
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse<T> Deserialize<T>(IRestResponse response)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `response` | `RestSharp.IRestResponse` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `UseUrlEncoder(Func<String, String>)`
+#### Method `UseUrlEncoder(Func<String, String>)`
 
 Allows to use a custom way to encode URL parameters
 
-#### Examples
+##### Examples
 ```csharp
 client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));
 ```
-#### Syntax
+##### Syntax
 ```csharp
 IRestClient UseUrlEncoder(Func<string, string> encoder)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `encoder` | `System.Func<string, string>` | A delegate to encode URL parameters
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `UseQueryEncoder(Func<String, Encoding, String>)`
+#### Method `UseQueryEncoder(Func<String, Encoding, String>)`
 
 Allows to use a custom way to encode query parameters
 
-#### Examples
+##### Examples
 ```csharp
 client.UseUrlEncoder((s, encoding) => HttpUtility.UrlEncode(s, encoding));
 ```
-#### Syntax
+##### Syntax
 ```csharp
 IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `queryEncoder` | `System.Func<string, System.Text.Encoding, string>` | A delegate to encode query parameters
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `Execute(IRestRequest)`
+#### Method `Execute(IRestRequest)`
 
 Executes the given request and returns an untyped response.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse Execute(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Pre-configured request instance.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | Untyped response.
 
 
 
-### Method `Execute(IRestRequest, Method)`
+#### Method `Execute(IRestRequest, Method)`
 
 Executes the given request and returns an untyped response.
 Allows to specify the HTTP method (GET, POST, etc) so you won&apos;t need to set it on the request.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse Execute(IRestRequest request, Method httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Pre-configured request instance.
 `httpMethod` | `RestSharp.Method` | The HTTP method (GET, POST, etc) to be used when making the request.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | Untyped response.
 
 
 
-### Method `Execute<T>(IRestRequest)`
+#### Method `Execute<T>(IRestRequest)`
 
 Executes the given request and returns a typed response.
 RestSharp will deserialize the response and it will be available in the <pre><code>Data</code></pre>
 property of the response instance.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse<T> Execute<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Pre-configured request instance.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | Typed response.
 
 
 
-### Method `Execute<T>(IRestRequest, Method)`
+#### Method `Execute<T>(IRestRequest, Method)`
 
 Executes the given request and returns a typed response.
 RestSharp will deserialize the response and it will be available in the <pre><code>Data</code></pre>
 property of the response instance.
 Allows to specify the HTTP method (GET, POST, etc) so you won&apos;t need to set it on the request.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Pre-configured request instance.
 `httpMethod` | `RestSharp.Method` | The HTTP method (GET, POST, etc) to be used when making the request.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | Typed response.
 
 
 
-### Method `DownloadData(IRestRequest)`
+#### Method `DownloadData(IRestRequest)`
 
 A specialized method to download files.
 
-#### Syntax
+##### Syntax
 ```csharp
 byte[] DownloadData(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Pre-configured request instance.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `byte[]` | The downloaded file.
 
 
 
-### Method `DownloadData(IRestRequest, Boolean)`
+#### Method `DownloadData(IRestRequest, Boolean)`
 
 Executes the specified request and downloads the response data
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ThrowOnAnyError property to instruct RestSharp to rethrow exceptions")]
 byte[] DownloadData(IRestRequest request, bool throwOnError)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to execute
 `throwOnError` | `bool` | Throw an exception if download fails.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `byte[]` | Response data
 
 
 
-### Method `BuildUri(IRestRequest)`
+#### Method `BuildUri(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 Uri BuildUri(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `Uri` | 
 
 
 
-### Method `BuildUriWithoutQueryParameters(IRestRequest)`
+#### Method `BuildUriWithoutQueryParameters(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 string BuildUriWithoutQueryParameters(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `string` | 
 
 
 
-### Method `ConfigureWebRequest(Action<HttpWebRequest>)`
+#### Method `ConfigureWebRequest(Action<HttpWebRequest>)`
 
 Add a delegate to apply custom configuration to HttpWebRequest before making a call
 
-#### Syntax
+##### Syntax
 ```csharp
 void ConfigureWebRequest(Action<HttpWebRequest> configurator)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `configurator` | `System.Action<HttpWebRequest>` | Configuration delegate for HttpWebRequest
 
 
 
-### Method `AddHandler(String, Func<IDeserializer>)`
+#### Method `AddHandler(String, Func<IDeserializer>)`
 
 Adds or replaces a deserializer for the specified content type
 
-#### Syntax
+##### Syntax
 ```csharp
 void AddHandler(string contentType, Func<IDeserializer> deserializerFactory)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | Content type for which the deserializer will be replaced
@@ -2914,868 +2884,868 @@ Name | Type | Description
 
 
 
-### Method `RemoveHandler(String)`
+#### Method `RemoveHandler(String)`
 
 Removes custom deserialzier for the specified content type
 
-#### Syntax
+##### Syntax
 ```csharp
 void RemoveHandler(string contentType)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | Content type for which deserializer needs to be removed
 
 
 
-### Method `ClearHandlers()`
+#### Method `ClearHandlers()`
 
 Remove deserializers for all content types
 
-#### Syntax
+##### Syntax
 ```csharp
 void ClearHandlers()
 ```
 
 
-### Method `ExecuteAsGet(IRestRequest, String)`
+#### Method `ExecuteAsGet(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `ExecuteAsPost(IRestRequest, String)`
+#### Method `ExecuteAsPost(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `ExecuteAsGet<T>(IRestRequest, String)`
+#### Method `ExecuteAsGet<T>(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `ExecuteAsPost<T>(IRestRequest, String)`
+#### Method `ExecuteAsPost<T>(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteAsync<T>(IRestRequest, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, Method, CancellationToken)`
+#### Method `ExecuteAsync<T>(IRestRequest, Method, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `httpMethod` | `RestSharp.Method` | Override the request method
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, Method, CancellationToken)`
+#### Method `ExecuteAsync(IRestRequest, Method, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse> ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `httpMethod` | `RestSharp.Method` | Override the request method
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteAsync(IRestRequest, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteGetAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a GET-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse<T>> ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecutePostAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a POST-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse<T>> ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteGetAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetAsync(IRestRequest, CancellationToken)`
 
 Executes a GET-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse> ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecutePostAsync(IRestRequest, CancellationToken)`
+#### Method `ExecutePostAsync(IRestRequest, CancellationToken)`
 
 Executes a POST-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 Task<IRestResponse> ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `UseSerializer(IRestSerializer)`
+#### Method `UseSerializer(IRestSerializer)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use the overload that accepts the delegate factory")]
 IRestClient UseSerializer(IRestSerializer serializer)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `serializer` | `RestSharp.Serialization.IRestSerializer` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, Method)`
+#### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, Method)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 `httpMethod` | `RestSharp.Method` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, Method)`
+#### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, Method)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 `httpMethod` | `RestSharp.Method` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncGet(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncGet(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
 
 Executes a GET-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion providing access to the async handle.
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncPost(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncPost(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
 
 Executes a POST-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion providing access to the async handle.
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncGet<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncGet<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
 
 Executes a GET-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncPost<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncPost<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
 
 Executes a GET-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be renamed to ExecuteAsync soon")]
 Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest, CancellationToken)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("UseExecuteAsync instead")]
 Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest, Method)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest, Method)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `httpMethod` | `RestSharp.Method` | Override the request method
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteGetTaskAsync<T>(IRestRequest)`
+#### Method `ExecuteGetTaskAsync<T>(IRestRequest)`
 
 Executes a GET-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteGetTaskAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetTaskAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a GET-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostTaskAsync<T>(IRestRequest)`
+#### Method `ExecutePostTaskAsync<T>(IRestRequest)`
 
 Executes a POST-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostTaskAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecutePostTaskAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a POST-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteTaskAsync(IRestRequest, CancellationToken)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteTaskAsync(IRestRequest, CancellationToken, Method)`
+#### Method `ExecuteTaskAsync(IRestRequest, CancellationToken, Method)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token, Method httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 `httpMethod` | `RestSharp.Method` | Override the request method
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteTaskAsync(IRestRequest)`
+#### Method `ExecuteTaskAsync(IRestRequest)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteGetTaskAsync(IRestRequest)`
+#### Method `ExecuteGetTaskAsync(IRestRequest)`
 
 Executes a GET-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteGetTaskAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetTaskAsync(IRestRequest, CancellationToken)`
 
 Executes a GET-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecutePostTaskAsync(IRestRequest)`
+#### Method `ExecutePostTaskAsync(IRestRequest)`
 
 Executes a POST-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecutePostTaskAsync(IRestRequest, CancellationToken)`
+#### Method `ExecutePostTaskAsync(IRestRequest, CancellationToken)`
 
 Executes a POST-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `AddHandler(String, IDeserializer)`
+#### Method `AddHandler(String, IDeserializer)`
 
 Adds or replaces a deserializer for the specified content type
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use the overload that accepts a factory delegate")]
 void AddHandler(string contentType, IDeserializer deserializer)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | Content type for which the deserializer will be replaced
@@ -3783,101 +3753,98 @@ Name | Type | Description
 
 
 
-## Interface `IRestRequest`
+### Interface `IRestRequest`
 
-### Syntax
+#### Syntax
 ```csharp
 public interface IRestRequest
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `AlwaysMultipartFormData`
+#### Property `AlwaysMultipartFormData`
 
 Always send a multipart/form-data request - even when no Files are present.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool AlwaysMultipartFormData { get; set; }
 ```
 
 
-### Property `JsonSerializer`
+#### Property `JsonSerializer`
 
 Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.
 By default the included JsonSerializer is used (currently using SimpleJson default serialization).
 
-#### Syntax
+##### Syntax
 ```csharp
 ISerializer JsonSerializer { get; set; }
 ```
 
 
-### Property `XmlSerializer`
+#### Property `XmlSerializer`
 
 Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
 By default the included XmlSerializer is used.
 
-#### Syntax
+##### Syntax
 ```csharp
 IXmlSerializer XmlSerializer { get; set; }
 ```
 
 
-### Property `AdvancedResponseWriter`
+#### Property `AdvancedResponseWriter`
 
 Set this to handle the response stream yourself, based on the response details
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
 
 
-### Property `ResponseWriter`
+#### Property `ResponseWriter`
 
 Set this to write response to Stream rather than reading into memory.
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<Stream> ResponseWriter { get; set; }
 ```
 
 
-### Property `Parameters`
+#### Property `Parameters`
 
 Container of all HTTP parameters to be passed with the request.
 See AddParameter() for explanation of the types of parameters that can be passed
 
-#### Syntax
+##### Syntax
 ```csharp
 List<Parameter> Parameters { get; }
 ```
 
 
-### Property `Files`
+#### Property `Files`
 
 Container of all the files to be uploaded with the request.
 
-#### Syntax
+##### Syntax
 ```csharp
 List<FileParameter> Files { get; }
 ```
 
 
-### Property `Method`
+#### Property `Method`
 
 Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
 Default is GET
 
-#### Syntax
+##### Syntax
 ```csharp
 Method Method { get; set; }
 ```
 
 
-### Property `Resource`
+#### Property `Resource`
 
 The Resource URL to make the request against.
 Tokens are substituted with UrlSegment parameters and match by name.
@@ -3885,7 +3852,7 @@ Should not include the scheme or domain. Do not include leading slash.
 Combined with RestClient.BaseUrl to assemble final URL:
 {BaseUrl}/{Resource} (BaseUrl is scheme + domain, e.g. http://example.com)
 
-#### Examples
+##### Examples
 ```csharp
 
 // example for url token replacement
@@ -3893,184 +3860,184 @@ request.Resource = &quot;Products/{ProductId}&quot;;
 request.AddParameter(&quot;ProductId&quot;, 123, ParameterType.UrlSegment);
 
 ```
-#### Syntax
+##### Syntax
 ```csharp
 string Resource { get; set; }
 ```
 
 
-### Property `RequestFormat`
+#### Property `RequestFormat`
 
 Serializer to use when writing request bodies.
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use AddJsonBody or AddXmlBody to tell RestSharp how to serialize the request body")]
 DataFormat RequestFormat { get; set; }
 ```
 
 
-### Property `RootElement`
+#### Property `RootElement`
 
 Used by the default deserializers to determine where to start deserializing from.
 Can be used to skip container or root elements that do not have corresponding deserialzation targets.
 
-#### Syntax
+##### Syntax
 ```csharp
 string RootElement { get; set; }
 ```
 
 
-### Property `DateFormat`
+#### Property `DateFormat`
 
 Used by the default deserializers to explicitly set which date format string to use when parsing dates.
 
-#### Syntax
+##### Syntax
 ```csharp
 string DateFormat { get; set; }
 ```
 
 
-### Property `XmlNamespace`
+#### Property `XmlNamespace`
 
 Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from
 element names.
 
-#### Syntax
+##### Syntax
 ```csharp
 string XmlNamespace { get; set; }
 ```
 
 
-### Property `Credentials`
+#### Property `Credentials`
 
 In general you would not need to set this directly. Used by the NtlmAuthenticator.
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use one of authenticators provided")]
 ICredentials Credentials { get; set; }
 ```
 
 
-### Property `Timeout`
+#### Property `Timeout`
 
 Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 
-#### Syntax
+##### Syntax
 ```csharp
 int Timeout { get; set; }
 ```
 
 
-### Property `ReadWriteTimeout`
+#### Property `ReadWriteTimeout`
 
 The number of milliseconds before the writing or reading times out. This timeout value overrides a timeout set on
 the RestClient.
 
-#### Syntax
+##### Syntax
 ```csharp
 int ReadWriteTimeout { get; set; }
 ```
 
 
-### Property `Attempts`
+#### Property `Attempts`
 
 How many attempts were made to send this Request?
 
-#### Remarks
+##### Remarks
 
 This number is incremented each time the RestClient sends the request.
 
-#### Syntax
+##### Syntax
 ```csharp
 int Attempts { get; }
 ```
 
 
-### Property `UseDefaultCredentials`
+#### Property `UseDefaultCredentials`
 
 Determine whether or not the &quot;default credentials&quot; (e.g. the user account under which the current process is
 running) will be sent along to the server. The default is false.
 
-#### Syntax
+##### Syntax
 ```csharp
 bool UseDefaultCredentials { get; set; }
 ```
 
 
-### Property `AllowedDecompressionMethods`
+#### Property `AllowedDecompressionMethods`
 
 List of allowed decompression methods
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<DecompressionMethods> AllowedDecompressionMethods { get; }
 ```
 
 
-### Property `OnBeforeDeserialization`
+#### Property `OnBeforeDeserialization`
 
 When supplied, the function will be called before calling the deserializer
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<IRestResponse> OnBeforeDeserialization { get; set; }
 ```
 
 
-### Property `OnBeforeRequest`
+#### Property `OnBeforeRequest`
 
 When supplied, the function will be called before making a request
 
-#### Syntax
+##### Syntax
 ```csharp
 Action<IHttp> OnBeforeRequest { get; set; }
 ```
 
 
-### Property `Body`
+#### Property `Body`
 
 Serialized request body to be accessed in authenticators
 
-#### Syntax
+##### Syntax
 ```csharp
 RequestBody Body { get; set; }
 ```
 
 
-### Method `AddFile(String, String, String)`
+#### Method `AddFile(String, String, String)`
 
 Adds a file to the Files collection to be included with a POST or PUT request
 (other methods do not support file uploads).
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddFile(string name, string path, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | The parameter name to use in the request
 `path` | `string` | Full path to file to upload
 `contentType` | `string` | The MIME type of the file to upload
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddFile(String, Byte[], String, String)`
+#### Method `AddFile(String, Byte[], String, String)`
 
 Adds the bytes to the Files collection with the specified file name and content type
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | The parameter name to use in the request
@@ -4078,22 +4045,22 @@ Name | Type | Description
 `fileName` | `string` | The file name to use for the uploaded file
 `contentType` | `string` | The MIME type of the file to upload
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddFile(String, Action<Stream>, String, Int64, String)`
+#### Method `AddFile(String, Action<Stream>, String, Int64, String)`
 
 Adds the bytes to the Files collection with the specified file name and content type
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | The parameter name to use in the request
@@ -4102,22 +4069,22 @@ Name | Type | Description
 `contentLength` | `long` | The length (in bytes) of the file content.
 `contentType` | `string` | The MIME type of the file to upload
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddFileBytes(String, Byte[], String, String)`
+#### Method `AddFileBytes(String, Byte[], String, String)`
 
 Add bytes to the Files collection as if it was a file of specific type
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip")
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | A form parameter name
@@ -4125,232 +4092,232 @@ Name | Type | Description
 `filename` | `string` | The file name to use for the uploaded file
 `contentType` | `string` | Specific content type. Es: application/x-gzip 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddBody(Object, String)`
+#### Method `AddBody(Object, String)`
 
 Serializes obj to format specified by RequestFormat, but passes XmlNamespace if using the default XmlSerializer
 The default format is XML. Change RequestFormat if you wish to use a different serialization format.
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use AddJsonBody or AddXmlBody instead")]
 IRestRequest AddBody(object obj, string xmlNamespace)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object to serialize
 `xmlNamespace` | `string` | The XML namespace to use when serializing
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddBody(Object)`
+#### Method `AddBody(Object)`
 
 Serializes obj to data format specified by RequestFormat and adds it to the request body.
 The default format is XML. Change RequestFormat if you wish to use a different serialization format.
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use AddJsonBody or AddXmlBody instead")]
 IRestRequest AddBody(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object to serialize
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddJsonBody(Object)`
+#### Method `AddJsonBody(Object)`
 
 Instructs RestSharp to send a given object in the request body, serialized as JSON.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddJsonBody(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object to serialize
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddJsonBody(Object, String)`
+#### Method `AddJsonBody(Object, String)`
 
 Instructs RestSharp to send a given object in the request body, serialized as JSON.
 Allows specifying a custom content type. Usually, this method is used to support PATCH
 requests that require application/json-patch+json content type.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddJsonBody(object obj, string contentType)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object to serialize
 `contentType` | `string` | Custom content type to override the default application/json
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddXmlBody(Object)`
+#### Method `AddXmlBody(Object)`
 
 Instructs RestSharp to send a given object in the request body, serialized as XML.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddXmlBody(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object to serialize
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddXmlBody(Object, String)`
+#### Method `AddXmlBody(Object, String)`
 
 Instructs RestSharp to send a given object in the request body, serialized as XML
 but passes XmlNamespace if using the default XmlSerializer.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddXmlBody(object obj, string xmlNamespace)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object to serialize
 `xmlNamespace` | `string` | The XML namespace to use when serializing
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddObject(Object, String[])`
+#### Method `AddObject(Object, String[])`
 
 Calls AddParameter() for all public, readable properties specified in the includedProperties list
 
-#### Examples
+##### Examples
 ```csharp
 
 request.AddObject(product, &quot;ProductId&quot;, &quot;Price&quot;, ...);
 
 ```
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddObject(object obj, params string[] includedProperties)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object with properties to add as parameters
 `includedProperties` | `string[]` | The names of the properties to include
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddObject(Object)`
+#### Method `AddObject(Object)`
 
 Calls AddParameter() for all public, readable properties of obj
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddObject(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | The object with properties to add as parameters
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddParameter(Parameter)`
+#### Method `AddParameter(Parameter)`
 
 Add the parameter to the request
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddParameter(Parameter p)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `p` | `RestSharp.Parameter` | Parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddParameter(String, Object)`
+#### Method `AddParameter(String, Object)`
 
 Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddParameter(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter
 `value` | `object` | Value of the parameter
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddParameter(String, Object, ParameterType)`
+#### Method `AddParameter(String, Object, ParameterType)`
 
 Adds a parameter to the request. There are five types of parameters:
 - GetOrPost: Either a QueryString value or encoded form value based on method
@@ -4359,25 +4326,25 @@ Adds a parameter to the request. There are five types of parameters:
 - Cookie: Adds the name/value pair to the HTTP request&apos;s Cookies collection
 - RequestBody: Used by AddBody() (not recommended to use directly)
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddParameter(string name, object value, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter
 `value` | `object` | Value of the parameter
 `type` | `RestSharp.ParameterType` | The type of parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddParameter(String, Object, String, ParameterType)`
+#### Method `AddParameter(String, Object, String, ParameterType)`
 
 Adds a parameter to the request. There are five types of parameters:
 - GetOrPost: Either a QueryString value or encoded form value based on method
@@ -4386,11 +4353,11 @@ Adds a parameter to the request. There are five types of parameters:
 - Cookie: Adds the name/value pair to the HTTP request&apos;s Cookies collection
 - RequestBody: Used by AddBody() (not recommended to use directly)
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddParameter(string name, object value, string contentType, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter
@@ -4398,76 +4365,76 @@ Name | Type | Description
 `contentType` | `string` | Content-Type of the parameter
 `type` | `RestSharp.ParameterType` | The type of parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddOrUpdateParameter(Parameter)`
+#### Method `AddOrUpdateParameter(Parameter)`
 
 Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
 request.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddOrUpdateParameter(Parameter parameter)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `parameter` | `RestSharp.Parameter` | Parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameters(IEnumerable<Parameter>)`
+#### Method `AddOrUpdateParameters(IEnumerable<Parameter>)`
 
 Add or update parameters to the request
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddOrUpdateParameters(IEnumerable<Parameter> parameters)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `parameters` | `System.Collections.Generic.IEnumerable<RestSharp.Parameter>` | Collection of parameters to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameter(String, Object)`
+#### Method `AddOrUpdateParameter(String, Object)`
 
 Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddOrUpdateParameter(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter
 `value` | `object` | Value of the parameter
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddOrUpdateParameter(String, Object, ParameterType)`
+#### Method `AddOrUpdateParameter(String, Object, ParameterType)`
 
 Adds a parameter to the request. There are five types of parameters:
 - GetOrPost: Either a QueryString value or encoded form value based on method
@@ -4476,25 +4443,25 @@ Adds a parameter to the request. There are five types of parameters:
 - Cookie: Adds the name/value pair to the HTTP request Cookies collection
 - RequestBody: Used by AddBody() (not recommended to use directly)
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter
 `value` | `object` | Value of the parameter
 `type` | `RestSharp.ParameterType` | The type of parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddOrUpdateParameter(String, Object, String, ParameterType)`
+#### Method `AddOrUpdateParameter(String, Object, String, ParameterType)`
 
 Adds a parameter to the request. There are five types of parameters:
 - GetOrPost: Either a QueryString value or encoded form value based on method
@@ -4503,11 +4470,11 @@ Adds a parameter to the request. There are five types of parameters:
 - Cookie: Adds the name/value pair to the HTTP request Cookies collection
 - RequestBody: Used by AddBody() (not recommended to use directly)
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter
@@ -4515,435 +4482,428 @@ Name | Type | Description
 `contentType` | `string` | Content-Type of the parameter
 `type` | `RestSharp.ParameterType` | The type of parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddHeader(String, String)`
+#### Method `AddHeader(String, String)`
 
 Shortcut to AddParameter(name, value, HttpHeader) overload
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddHeader(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the header to add
 `value` | `string` | Value of the header to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddHeaders(ICollection<KeyValuePair<String, String>>)`
+#### Method `AddHeaders(ICollection<KeyValuePair<String, String>>)`
 
 Uses AddHeader(name, value) in a convenient way to pass
 in multiple headers at once.
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `headers` | `System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, string>>` | Key/Value pairs containing the name: value of the headers
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | This request
 
 
 
-### Method `AddCookie(String, String)`
+#### Method `AddCookie(String, String)`
 
 Shortcut to AddParameter(name, value, Cookie) overload
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddCookie(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the cookie to add
 `value` | `string` | Value of the cookie to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddUrlSegment(String, String)`
+#### Method `AddUrlSegment(String, String)`
 
 Shortcut to AddParameter(name, value, UrlSegment) overload
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddUrlSegment(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the segment to add
 `value` | `string` | Value of the segment to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddUrlSegment(String, Object)`
+#### Method `AddUrlSegment(String, Object)`
 
 Shortcut to AddParameter(name, value, UrlSegment) overload
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddUrlSegment(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the segment to add
 `value` | `object` | Value of the segment to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddQueryParameter(String, String)`
+#### Method `AddQueryParameter(String, String)`
 
 Shortcut to AddParameter(name, value, QueryString) overload
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddQueryParameter(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter to add
 `value` | `string` | Value of the parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddQueryParameter(String, String, Boolean)`
+#### Method `AddQueryParameter(String, String, Boolean)`
 
 Shortcut to AddParameter(name, value, QueryString) overload
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddQueryParameter(string name, string value, bool encode)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | Name of the parameter to add
 `value` | `string` | Value of the parameter to add
 `encode` | `bool` | Whether parameter should be encoded or not
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddDecompressionMethod(DecompressionMethods)`
+#### Method `AddDecompressionMethod(DecompressionMethods)`
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `decompressionMethod` | `DecompressionMethods` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `IncreaseNumAttempts()`
+#### Method `IncreaseNumAttempts()`
 
-#### Syntax
+##### Syntax
 ```csharp
 void IncreaseNumAttempts()
 ```
 
 
-## Interface `IRestResponse`
+### Interface `IRestResponse`
 
 Container for data sent back from API
 
-### Syntax
+#### Syntax
 ```csharp
 public interface IRestResponse
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+#### Extension methods
 -  `RestSharp.Extensions.ResponseExtensions.ToAsyncResponse<T>(RestSharp.IRestResponse)`
-### Property `Request`
+#### Property `Request`
 
 The RestRequest that was made to get this RestResponse
 
-#### Remarks
+##### Remarks
 
 Mainly for debugging if ResponseStatus is not OK
 
-#### Syntax
+##### Syntax
 ```csharp
 IRestRequest Request { get; set; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
 MIME content type of response
 
-#### Syntax
+##### Syntax
 ```csharp
 string ContentType { get; set; }
 ```
 
 
-### Property `ContentLength`
+#### Property `ContentLength`
 
 Length in bytes of the response content
 
-#### Syntax
+##### Syntax
 ```csharp
 long ContentLength { get; set; }
 ```
 
 
-### Property `ContentEncoding`
+#### Property `ContentEncoding`
 
 Encoding of the response content
 
-#### Syntax
+##### Syntax
 ```csharp
 string ContentEncoding { get; set; }
 ```
 
 
-### Property `Content`
+#### Property `Content`
 
 String representation of response content
 
-#### Syntax
+##### Syntax
 ```csharp
 string Content { get; set; }
 ```
 
 
-### Property `StatusCode`
+#### Property `StatusCode`
 
 HTTP response status code
 
-#### Syntax
+##### Syntax
 ```csharp
 HttpStatusCode StatusCode { get; set; }
 ```
 
 
-### Property `IsSuccessful`
+#### Property `IsSuccessful`
 
 Whether or not the response status code indicates success
 
-#### Syntax
+##### Syntax
 ```csharp
 bool IsSuccessful { get; }
 ```
 
 
-### Property `StatusDescription`
+#### Property `StatusDescription`
 
 Description of HTTP status returned
 
-#### Syntax
+##### Syntax
 ```csharp
 string StatusDescription { get; set; }
 ```
 
 
-### Property `RawBytes`
+#### Property `RawBytes`
 
 Response content
 
-#### Syntax
+##### Syntax
 ```csharp
 byte[] RawBytes { get; set; }
 ```
 
 
-### Property `ResponseUri`
+#### Property `ResponseUri`
 
 The URL that actually responded to the content (different from request if redirected)
 
-#### Syntax
+##### Syntax
 ```csharp
 Uri ResponseUri { get; set; }
 ```
 
 
-### Property `Server`
+#### Property `Server`
 
 HttpWebResponse.Server
 
-#### Syntax
+##### Syntax
 ```csharp
 string Server { get; set; }
 ```
 
 
-### Property `Cookies`
+#### Property `Cookies`
 
 Cookies returned by server with the response
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<RestResponseCookie> Cookies { get; }
 ```
 
 
-### Property `Headers`
+#### Property `Headers`
 
 Headers returned by server with the response
 
-#### Syntax
+##### Syntax
 ```csharp
 IList<Parameter> Headers { get; }
 ```
 
 
-### Property `ResponseStatus`
+#### Property `ResponseStatus`
 
 Status of the request. Will return Error for transport errors.
 HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 
-#### Syntax
+##### Syntax
 ```csharp
 ResponseStatus ResponseStatus { get; set; }
 ```
 
 
-### Property `ErrorMessage`
+#### Property `ErrorMessage`
 
 Transport or other non-HTTP error generated while attempting request
 
-#### Syntax
+##### Syntax
 ```csharp
 string ErrorMessage { get; set; }
 ```
 
 
-### Property `ErrorException`
+#### Property `ErrorException`
 
 Exceptions thrown during the request, if any.
 
-#### Remarks
+##### Remarks
 
 Will contain only network transport or framework exceptions thrown during the request.
 HTTP protocol errors are handled by RestSharp and will not appear here.
 
-#### Syntax
+##### Syntax
 ```csharp
 Exception ErrorException { get; set; }
 ```
 
 
-### Property `ProtocolVersion`
+#### Property `ProtocolVersion`
 
 The HTTP protocol version (1.0, 1.1, etc)
 
-#### Remarks
+##### Remarks
 Only set when underlying framework supports it.
-#### Syntax
+##### Syntax
 ```csharp
 Version ProtocolVersion { get; set; }
 ```
 
 
-## Interface `IRestResponse<T>`
+### Interface `IRestResponse<T>`
 
 Container for data sent back from API including deserialized data
 
-### Syntax
+#### Syntax
 ```csharp
 public interface IRestResponse<T> : IRestResponse
 ```
-### Generic parameters
+#### Generic parameters
 Name | Description
 --- | ---
 `T` | Type of data to deserialize to
 
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+#### Extension methods
 -  `RestSharp.Extensions.ResponseExtensions.ToAsyncResponse<T>(RestSharp.IRestResponse)`
-### Property `Data`
+#### Property `Data`
 
 Deserialized entity data
 
-#### Syntax
+##### Syntax
 ```csharp
 T Data { get; set; }
 ```
 
 
-## Class `JsonRequest<TRequest, TResponse>`
+### Class `JsonRequest<TRequest, TResponse>`
 
-### Inheritance
+#### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.RestRequest`
-### Syntax
+#### Syntax
 ```csharp
 public class JsonRequest<TRequest, TResponse> : RestRequest, IRestRequest
 ```
-### Generic parameters
+#### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `JsonRequest(String, TRequest)`
+#### Constructor `JsonRequest(String, TRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public JsonRequest(string resource, TRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `string` | 
@@ -4951,74 +4911,74 @@ Name | Type | Description
 
 
 
-### Method `ResponseForStatusCode(HttpStatusCode, TResponse)`
+#### Method `ResponseForStatusCode(HttpStatusCode, TResponse)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public JsonRequest<TRequest, TResponse> ResponseForStatusCode(HttpStatusCode statusCode, TResponse response)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `statusCode` | `HttpStatusCode` | 
 `response` | `TResponse` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
 
 
-### Method `ResponseForStatusCode(HttpStatusCode, Func<TResponse>)`
+#### Method `ResponseForStatusCode(HttpStatusCode, Func<TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public JsonRequest<TRequest, TResponse> ResponseForStatusCode(HttpStatusCode statusCode, Func<TResponse> getResponse)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `statusCode` | `HttpStatusCode` | 
 `getResponse` | `System.Func<TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
 
 
-### Method `ChangeResponse(Action<IRestResponse<TResponse>>)`
+#### Method `ChangeResponse(Action<IRestResponse<TResponse>>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public JsonRequest<TRequest, TResponse> ChangeResponse(Action<IRestResponse<TResponse>> change)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `change` | `System.Action<RestSharp.IRestResponse<TResponse>>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
 
 
-## Class `RestClient`
+### Class `RestClient`
 
 Client to translate RestRequests into Http requests and process response result
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class RestClient : IRestClient
 ```
 
-### Extension methods
+#### Extension methods
 -  `RestSharp.RestClientExtensions.ExecuteAsync(RestSharp.IRestClient, RestSharp.IRestRequest, System.Action<RestSharp.IRestResponse>)`
 -  `RestSharp.RestClientExtensions.ExecuteAsync<T>(RestSharp.IRestClient, RestSharp.IRestRequest, System.Action<RestSharp.IRestResponse<T>>)`
 -  `RestSharp.RestClientExtensions.GetAsync<T>(RestSharp.IRestClient, RestSharp.IRestRequest, System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>)`
@@ -5082,1067 +5042,1065 @@ public class RestClient : IRestClient
 -  `RestSharp.RestClientJsonRequest.Options<TRequest, TResponse>(RestSharp.IRestClient, RestSharp.JsonRequest<TRequest, TResponse>)`
 -  `RestSharp.RestClientJsonRequest.Patch<TRequest, TResponse>(RestSharp.IRestClient, RestSharp.JsonRequest<TRequest, TResponse>)`
 -  `RestSharp.RestClientJsonRequest.Delete<TRequest, TResponse>(RestSharp.IRestClient, RestSharp.JsonRequest<TRequest, TResponse>)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
 -  `RestSharp.Serialization.Xml.DotNetXmlSerializerClientExtensions.UseDotNetXmlSerializer(RestSharp.IRestClient, string, System.Text.Encoding)`
-### Method `ExecuteTaskAsync(IRestRequest, CancellationToken, Method)`
+#### Method `ExecuteTaskAsync(IRestRequest, CancellationToken, Method)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token, Method httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 `httpMethod` | `RestSharp.Method` | Override the request method
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, Method)`
+#### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, Method)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, Method httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion providing access to the async handle.
 `httpMethod` | `RestSharp.Method` | HTTP call method (GET, PUT, etc)
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `ExecuteAsync(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion providing access to the async handle.
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncGet(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncGet(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
 
 Executes a GET-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion providing access to the async handle.
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncPost(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncPost(IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>, String)`
 
 Executes a POST-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion providing access to the async handle.
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, Method)`
+#### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, Method)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion
 `httpMethod` | `RestSharp.Method` | Override the request http method
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `ExecuteAsync<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncGet<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncGet<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
 
 Executes a GET-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsyncPost<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
+#### Method `ExecuteAsyncPost<T>(IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>, String)`
 
 Executes a POST-style request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be removed soon in favour of the proper async call")]
 public virtual RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | Callback function to be executed upon completion
 `httpMethod` | `string` | The HTTP method to execute
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteGetTaskAsync<T>(IRestRequest)`
+#### Method `ExecuteGetTaskAsync<T>(IRestRequest)`
 
 Executes a GET-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be renamed to ExecuteGetAsync soon")]
 public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteTaskAsync(IRestRequest, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest, CancellationToken, Method)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest, CancellationToken, Method)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 `httpMethod` | `RestSharp.Method` | Override the request method
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteGetTaskAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetTaskAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a GET-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 public virtual Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostTaskAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecutePostTaskAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a POST-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostTaskAsync<T>(IRestRequest)`
+#### Method `ExecutePostTaskAsync<T>(IRestRequest)`
 
 Executes a POST-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 public virtual Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest, Method)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest, Method)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Please use ExecuteAsync instead")]
 public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `httpMethod` | `RestSharp.Method` | Override the request method
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Please use ExecuteAsync instead")]
 public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteTaskAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteTaskAsync<T>(IRestRequest, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Please use ExecuteAsync instead")]
 public virtual Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostTaskAsync(IRestRequest, CancellationToken)`
+#### Method `ExecutePostTaskAsync(IRestRequest, CancellationToken)`
 
 Executes a POST-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("This method will be renamed to ExecutePostAsync soon")]
 public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecutePostTaskAsync(IRestRequest)`
+#### Method `ExecutePostTaskAsync(IRestRequest)`
 
 Executes a POST-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecutePostAsync instead")]
 public virtual Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteTaskAsync(IRestRequest)`
+#### Method `ExecuteTaskAsync(IRestRequest)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync instead")]
 public virtual Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteGetTaskAsync(IRestRequest)`
+#### Method `ExecuteGetTaskAsync(IRestRequest)`
 
 Executes a GET-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteGetTaskAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetTaskAsync(IRestRequest, CancellationToken)`
 
 Executes a GET-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteGetAsync instead")]
 public virtual Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `token` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteGetAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a GET-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse<T>> ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecutePostAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecutePostAsync<T>(IRestRequest, CancellationToken)`
 
 Executes a POST-style request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse<T>> ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | The cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteGetAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteGetAsync(IRestRequest, CancellationToken)`
 
 Executes a GET-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse> ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecutePostAsync(IRestRequest, CancellationToken)`
+#### Method `ExecutePostAsync(IRestRequest, CancellationToken)`
 
 Executes a POST-style asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse> ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, CancellationToken)`
+#### Method `ExecuteAsync<T>(IRestRequest, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, Method, CancellationToken)`
+#### Method `ExecuteAsync(IRestRequest, Method, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse> ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `httpMethod` | `RestSharp.Method` | Override the request method
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestRequest, Method, CancellationToken)`
+#### Method `ExecuteAsync<T>(IRestRequest, Method, CancellationToken)`
 
 Executes the request asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `httpMethod` | `RestSharp.Method` | Override the request method
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse<T>>` | 
 
 
 
-### Method `ExecuteAsync(IRestRequest, CancellationToken)`
+#### Method `ExecuteAsync(IRestRequest, CancellationToken)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token = default(CancellationToken))
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `token` | `System.Threading.CancellationToken` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<RestSharp.IRestResponse>` | 
 
 
 
-### Constructor `RestClient()`
+#### Constructor `RestClient()`
 
 Default constructor that registers default content handlers
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestClient()
 ```
 
 
-### Constructor `RestClient(Uri)`
+#### Constructor `RestClient(Uri)`
 
 Sets the BaseUrl property for requests made by this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestClient(Uri baseUrl)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `baseUrl` | `Uri` | 
 
 
 
-### Constructor `RestClient(String)`
+#### Constructor `RestClient(String)`
 
 Sets the BaseUrl property for requests made by this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestClient(string baseUrl)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `baseUrl` | `string` | 
 
 
 
-### Method `UseSerializer(IRestSerializer)`
+#### Method `UseSerializer(IRestSerializer)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use the overload that accepts the delegate factory")]
 public IRestClient UseSerializer(IRestSerializer serializer)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `serializer` | `RestSharp.Serialization.IRestSerializer` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `UseUrlEncoder(Func<String, String>)`
+#### Method `UseUrlEncoder(Func<String, String>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestClient UseUrlEncoder(Func<string, string> encoder)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `encoder` | `System.Func<string, string>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `UseQueryEncoder(Func<String, Encoding, String>)`
+#### Method `UseQueryEncoder(Func<String, Encoding, String>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `queryEncoder` | `System.Func<string, System.Text.Encoding, string>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Property `AutomaticDecompression`
+#### Property `AutomaticDecompression`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool AutomaticDecompression { get; set; }
 ```
 
 
-### Property `MaxRedirects`
+#### Property `MaxRedirects`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int? MaxRedirects { get; set; }
 ```
 
 
-### Property `ClientCertificates`
+#### Property `ClientCertificates`
 
-#### Syntax
+##### Syntax
 ```csharp
 public X509CertificateCollection ClientCertificates { get; set; }
 ```
 
 
-### Property `Proxy`
+#### Property `Proxy`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IWebProxy Proxy { get; set; }
 ```
 
 
-### Property `CachePolicy`
+#### Property `CachePolicy`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RequestCachePolicy CachePolicy { get; set; }
 ```
 
 
-### Property `Pipelined`
+#### Property `Pipelined`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Pipelined { get; set; }
 ```
 
 
-### Property `FollowRedirects`
+#### Property `FollowRedirects`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool FollowRedirects { get; set; }
 ```
 
 
-### Property `CookieContainer`
+#### Property `CookieContainer`
 
-#### Syntax
+##### Syntax
 ```csharp
 public CookieContainer CookieContainer { get; set; }
 ```
 
 
-### Property `UserAgent`
+#### Property `UserAgent`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string UserAgent { get; set; }
 ```
 
 
-### Property `Timeout`
+#### Property `Timeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int Timeout { get; set; }
 ```
 
 
-### Property `ReadWriteTimeout`
+#### Property `ReadWriteTimeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int ReadWriteTimeout { get; set; }
 ```
 
 
-### Property `UseSynchronizationContext`
+#### Property `UseSynchronizationContext`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool UseSynchronizationContext { get; set; }
 ```
 
 
-### Property `Authenticator`
+#### Property `Authenticator`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IAuthenticator Authenticator { get; set; }
 ```
 
 
-### Property `BaseUrl`
+#### Property `BaseUrl`
 
-#### Syntax
+##### Syntax
 ```csharp
 public virtual Uri BaseUrl { get; set; }
 ```
 
 
-### Property `Encoding`
+#### Property `Encoding`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Encoding Encoding { get; set; }
 ```
 
 
-### Property `PreAuthenticate`
+#### Property `PreAuthenticate`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool PreAuthenticate { get; set; }
 ```
 
 
-### Property `ThrowOnDeserializationError`
+#### Property `ThrowOnDeserializationError`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool ThrowOnDeserializationError { get; set; }
 ```
 
 
-### Property `FailOnDeserializationError`
+#### Property `FailOnDeserializationError`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool FailOnDeserializationError { get; set; }
 ```
 
 
-### Property `ThrowOnAnyError`
+#### Property `ThrowOnAnyError`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool ThrowOnAnyError { get; set; }
 ```
 
 
-### Property `UnsafeAuthenticatedConnectionSharing`
+#### Property `UnsafeAuthenticatedConnectionSharing`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
 
 
-### Property `ConnectionGroupName`
+#### Property `ConnectionGroupName`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ConnectionGroupName { get; set; }
 ```
 
 
-### Property `RemoteCertificateValidationCallback`
+#### Property `RemoteCertificateValidationCallback`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
 
 
-### Property `DefaultParameters`
+#### Property `DefaultParameters`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<Parameter> DefaultParameters { get; }
 ```
 
 
-### Property `BaseHost`
+#### Property `BaseHost`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string BaseHost { get; set; }
 ```
 
 
-### Property `AllowMultipleDefaultParametersWithSameName`
+#### Property `AllowMultipleDefaultParametersWithSameName`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool AllowMultipleDefaultParametersWithSameName { get; set; }
 ```
 
 
-### Method `AddHandler(String, Func<IDeserializer>)`
+#### Method `AddHandler(String, Func<IDeserializer>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public void AddHandler(string contentType, Func<IDeserializer> deserializerFactory)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | 
@@ -6150,14 +6108,14 @@ Name | Type | Description
 
 
 
-### Method `AddHandler(String, IDeserializer)`
+#### Method `AddHandler(String, IDeserializer)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use the overload that accepts a factory delegate")]
 public void AddHandler(string contentType, IDeserializer deserializer)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | 
@@ -6165,1555 +6123,1555 @@ Name | Type | Description
 
 
 
-### Method `RemoveHandler(String)`
+#### Method `RemoveHandler(String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public void RemoveHandler(string contentType)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | 
 
 
 
-### Method `ClearHandlers()`
+#### Method `ClearHandlers()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public void ClearHandlers()
 ```
 
 
-### Method `Deserialize<T>(IRestResponse)`
+#### Method `Deserialize<T>(IRestResponse)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestResponse<T> Deserialize<T>(IRestResponse response)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `response` | `RestSharp.IRestResponse` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `ConfigureWebRequest(Action<HttpWebRequest>)`
+#### Method `ConfigureWebRequest(Action<HttpWebRequest>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public void ConfigureWebRequest(Action<HttpWebRequest> configurator)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `configurator` | `System.Action<HttpWebRequest>` | 
 
 
 
-### Method `BuildUri(IRestRequest)`
+#### Method `BuildUri(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Uri BuildUri(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `Uri` | 
 
 
 
-### Method `IRestClient.BuildUriWithoutQueryParameters(IRestRequest)`
+#### Method `IRestClient.BuildUriWithoutQueryParameters(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 string IRestClient.BuildUriWithoutQueryParameters(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `string` | 
 
 
 
-### Method `UseSerializer(Func<IRestSerializer>)`
+#### Method `UseSerializer(Func<IRestSerializer>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestClient UseSerializer(Func<IRestSerializer> serializerFactory)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `serializerFactory` | `System.Func<RestSharp.Serialization.IRestSerializer>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `UseSerializer<T>()`
+#### Method `UseSerializer<T>()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestClient UseSerializer<T>()
     where T : IRestSerializer, new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `DownloadData(IRestRequest)`
+#### Method `DownloadData(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public byte[] DownloadData(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `byte[]` | 
 
 
 
-### Method `DownloadData(IRestRequest, Boolean)`
+#### Method `DownloadData(IRestRequest, Boolean)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public byte[] DownloadData(IRestRequest request, bool throwOnError)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `throwOnError` | `bool` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `byte[]` | 
 
 
 
-### Method `Execute(IRestRequest, Method)`
+#### Method `Execute(IRestRequest, Method)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public virtual IRestResponse Execute(IRestRequest request, Method httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `RestSharp.Method` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Execute(IRestRequest)`
+#### Method `Execute(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public virtual IRestResponse Execute(IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `ExecuteAsGet(IRestRequest, String)`
+#### Method `ExecuteAsGet(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `ExecuteAsPost(IRestRequest, String)`
+#### Method `ExecuteAsPost(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Execute<T>(IRestRequest, Method)`
+#### Method `Execute<T>(IRestRequest, Method)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public virtual IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `RestSharp.Method` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Execute<T>(IRestRequest)`
+#### Method `Execute<T>(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public virtual IRestResponse<T> Execute<T>(IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `ExecuteAsGet<T>(IRestRequest, String)`
+#### Method `ExecuteAsGet<T>(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `ExecuteAsPost<T>(IRestRequest, String)`
+#### Method `ExecuteAsPost<T>(IRestRequest, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `RestSharp.IRestRequest` | 
 `httpMethod` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-## Class `RestClientExtensions`
+### Class `RestClientExtensions`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public static class RestClientExtensions
 ```
 
-### Method `ExecuteAsync(IRestClient, IRestRequest, Action<IRestResponse>)`
+#### Method `ExecuteAsync(IRestClient, IRestRequest, Action<IRestResponse>)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync that returns Task")]
 public static RestRequestAsyncHandle ExecuteAsync(this IRestClient client, IRestRequest request, Action<IRestResponse> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | The IRestClient this method extends
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse>` | Callback function to be executed upon completion
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `ExecuteAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>>)`
+#### Method `ExecuteAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>>)`
 
 Executes the request and callback asynchronously, authenticating if needed
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use ExecuteAsync that returns Task")]
 public static RestRequestAsyncHandle ExecuteAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Target deserialization type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | The IRestClient this method extends
 `request` | `RestSharp.IRestRequest` | Request to be executed
 `callback` | `System.Action<RestSharp.IRestResponse<T>>` | Callback function to be executed upon completion providing access to the async handle
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `GetAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `GetAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use GetAsync that returns Task")]
 public static RestRequestAsyncHandle GetAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `PostAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `PostAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PostAsync that returns Task")]
 public static RestRequestAsyncHandle PostAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `PutAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `PutAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PutAsync that returns Task")]
 public static RestRequestAsyncHandle PutAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `HeadAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `HeadAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use HeadAsync that returns Task")]
 public static RestRequestAsyncHandle HeadAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `OptionsAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `OptionsAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use OptionsAsync that returns Task")]
 public static RestRequestAsyncHandle OptionsAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `PatchAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `PatchAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PatchAsync that returns Task")]
 public static RestRequestAsyncHandle PatchAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `DeleteAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
+#### Method `DeleteAsync<T>(IRestClient, IRestRequest, Action<IRestResponse<T>, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use DeleteAsync that returns Task")]
 public static RestRequestAsyncHandle DeleteAsync<T>(this IRestClient client, IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
     where T : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse<T>, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `GetAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `GetAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use GetAsync that returns Task")]
 public static RestRequestAsyncHandle GetAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `PostAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `PostAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PostAsync that returns Task")]
 public static RestRequestAsyncHandle PostAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `PutAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `PutAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PutAsync that returns Task")]
 public static RestRequestAsyncHandle PutAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `HeadAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `HeadAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use HeadAsync that returns Task")]
 public static RestRequestAsyncHandle HeadAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `OptionsAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `OptionsAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use OptionsAsync that returns Task")]
 public static RestRequestAsyncHandle OptionsAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `PatchAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `PatchAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PatchAsync that returns Task")]
 public static RestRequestAsyncHandle PatchAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `DeleteAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
+#### Method `DeleteAsync(IRestClient, IRestRequest, Action<IRestResponse, RestRequestAsyncHandle>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use DeleteAsync that returns Task")]
 public static RestRequestAsyncHandle DeleteAsync(this IRestClient client, IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 `callback` | `System.Action<RestSharp.IRestResponse, RestSharp.RestRequestAsyncHandle>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestRequestAsyncHandle` | 
 
 
 
-### Method `GetTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `GetTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use GetAsync")]
 public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `PostTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `PostTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PostAsync")]
 public static Task<T> PostTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `PutTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `PutTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PutAsync")]
 public static Task<T> PutTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `HeadTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `HeadTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use HeadAsync")]
 public static Task<T> HeadTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `OptionsTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `OptionsTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use OptionsAsync")]
 public static Task<T> OptionsTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `PatchTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `PatchTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use PatchAsync")]
 public static Task<T> PatchTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `DeleteTaskAsync<T>(IRestClient, IRestRequest)`
+#### Method `DeleteTaskAsync<T>(IRestClient, IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use DeleteAsync")]
 public static Task<T> DeleteTaskAsync<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `ExecuteDynamic(IRestClient, IRestRequest)`
+#### Method `ExecuteDynamic(IRestClient, IRestRequest)`
 
 Execute the request and returns a response with the dynamic object as Data
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<dynamic> ExecuteDynamic(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<dynamic>` | 
 
 
 
-### Method `GetAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `GetAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> GetAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `PostAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `PostAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> PostAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `PutAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `PutAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> PutAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `HeadAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `HeadAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> HeadAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `OptionsAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `OptionsAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> OptionsAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `PatchAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `PatchAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> PatchAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `DeleteAsync<T>(IRestClient, IRestRequest, CancellationToken)`
+#### Method `DeleteAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static Task<T> DeleteAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default(CancellationToken))
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `System.Threading.Tasks.Task<T>` | 
 
 
 
-### Method `Get<T>(IRestClient, IRestRequest)`
+#### Method `Get<T>(IRestClient, IRestRequest)`
 
 Execute the request using GET HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Post<T>(IRestClient, IRestRequest)`
+#### Method `Post<T>(IRestClient, IRestRequest)`
 
 Execute the request using POST HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Post<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Put<T>(IRestClient, IRestRequest)`
+#### Method `Put<T>(IRestClient, IRestRequest)`
 
 Execute the request using PUT HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Put<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Head<T>(IRestClient, IRestRequest)`
+#### Method `Head<T>(IRestClient, IRestRequest)`
 
 Execute the request using HEAD HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Head<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Options<T>(IRestClient, IRestRequest)`
+#### Method `Options<T>(IRestClient, IRestRequest)`
 
 Execute the request using OPTIONS HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Options<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Patch<T>(IRestClient, IRestRequest)`
+#### Method `Patch<T>(IRestClient, IRestRequest)`
 
 Execute the request using PATCH HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Patch<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Delete<T>(IRestClient, IRestRequest)`
+#### Method `Delete<T>(IRestClient, IRestRequest)`
 
 Execute the request using DELETE HTTP method.
 The response data is deserialzied to the Data property of the returned response object.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | Expected result type
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<T>` | 
 
 
 
-### Method `Get(IRestClient, IRestRequest)`
+#### Method `Get(IRestClient, IRestRequest)`
 
 Execute the request using GET HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Get(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Post(IRestClient, IRestRequest)`
+#### Method `Post(IRestClient, IRestRequest)`
 
 Execute the request using POST HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Post(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Put(IRestClient, IRestRequest)`
+#### Method `Put(IRestClient, IRestRequest)`
 
 Execute the request using PUT HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Put(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Head(IRestClient, IRestRequest)`
+#### Method `Head(IRestClient, IRestRequest)`
 
 Execute the request using HEAD HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Head(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Options(IRestClient, IRestRequest)`
+#### Method `Options(IRestClient, IRestRequest)`
 
 Execute the request using OPTIONS HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Options(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Patch(IRestClient, IRestRequest)`
+#### Method `Patch(IRestClient, IRestRequest)`
 
 Execute the request using PATCH HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Patch(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `Delete(IRestClient, IRestRequest)`
+#### Method `Delete(IRestClient, IRestRequest)`
 
 Execute the request using DELETE HTTP method.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse Delete(this IRestClient client, IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | RestClient instance
 `request` | `RestSharp.IRestRequest` | The request
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse` | 
 
 
 
-### Method `AddDefaultParameter(IRestClient, Parameter)`
+#### Method `AddDefaultParameter(IRestClient, Parameter)`
 
 Add a parameter to use on every request made with this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultParameter(this IRestClient restClient, Parameter p)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `p` | `RestSharp.Parameter` | Parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `AddOrUpdateDefaultParameter(IRestClient, Parameter)`
+#### Method `AddOrUpdateDefaultParameter(IRestClient, Parameter)`
 
 Add a new or update an existing parameter to use on every request made with this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddOrUpdateDefaultParameter(this IRestClient restClient, Parameter p)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | 
 `p` | `RestSharp.Parameter` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `RemoveDefaultParameter(IRestClient, String)`
+#### Method `RemoveDefaultParameter(IRestClient, String)`
 
 Removes a parameter from the default parameters that are used on every request made with this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient RemoveDefaultParameter(this IRestClient restClient, string name)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `name` | `string` | The name of the parameter that needs to be removed
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `AddDefaultParameter(IRestClient, String, Object)`
+#### Method `AddDefaultParameter(IRestClient, String, Object)`
 
 Adds a default HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
 Used on every request made by this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultParameter(this IRestClient restClient, string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `name` | `string` | Name of the parameter
 `value` | `object` | Value of the parameter
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | This request
 
 
 
-### Method `AddDefaultParameter(IRestClient, String, Object, ParameterType)`
+#### Method `AddDefaultParameter(IRestClient, String, Object, ParameterType)`
 
 Adds a default parameter to the request. There are four types of parameters:
 - GetOrPost: Either a QueryString value or encoded form value based on method
@@ -7722,11 +7680,11 @@ Adds a default parameter to the request. There are four types of parameters:
 - RequestBody: Used by AddBody() (not recommended to use directly)
 Used on every request made by this client instance
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultParameter(this IRestClient restClient, string name, object value, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
@@ -7734,163 +7692,160 @@ Name | Type | Description
 `value` | `object` | Value of the parameter
 `type` | `RestSharp.ParameterType` | The type of parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | This request
 
 
 
-### Method `AddDefaultHeader(IRestClient, String, String)`
+#### Method `AddDefaultHeader(IRestClient, String, String)`
 
 Adds a default header to the RestClient. Used on every request made by this client instance.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `name` | `string` | Name of the header to add
 `value` | `string` | Value of the header to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `AddDefaultHeaders(IRestClient, Dictionary<String, String>)`
+#### Method `AddDefaultHeaders(IRestClient, Dictionary<String, String>)`
 
 Adds default headers to the RestClient. Used on every request made by this client instance.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultHeaders(this IRestClient restClient, Dictionary<string, string> headers)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `headers` | `System.Collections.Generic.Dictionary<string, string>` | Dictionary containing the Names and Values of the headers to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `AddDefaultUrlSegment(IRestClient, String, String)`
+#### Method `AddDefaultUrlSegment(IRestClient, String, String)`
 
 Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultUrlSegment(this IRestClient restClient, string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `name` | `string` | Name of the segment to add
 `value` | `string` | Value of the segment to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `AddDefaultQueryParameter(IRestClient, String, String)`
+#### Method `AddDefaultQueryParameter(IRestClient, String, String)`
 
 Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient AddDefaultQueryParameter(this IRestClient restClient, string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `restClient` | `RestSharp.IRestClient` | The IRestClient instance
 `name` | `string` | Name of the query parameter to add
 `value` | `string` | Value of the query parameter to add
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestClient` | 
 
 
 
-### Method `UseJson(RestClient)`
+#### Method `UseJson(RestClient)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static RestClient UseJson(this RestClient client)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.RestClient` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestClient` | 
 
 
 
-### Method `UseXml(RestClient)`
+#### Method `UseXml(RestClient)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static RestClient UseXml(this RestClient client)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.RestClient` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.RestClient` | 
 
 
 
-## Class `NameValuePair`
+### Class `NameValuePair`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class NameValuePair
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Field `Empty`
+#### Field `Empty`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static NameValuePair Empty
 ```
 
 
-### Constructor `NameValuePair(String, String)`
+#### Constructor `NameValuePair(String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public NameValuePair(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -7898,51 +7853,48 @@ Name | Type | Description
 
 
 
-### Property `Name`
+#### Property `Name`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Value { get; }
 ```
 
 
-### Property `IsEmpty`
+#### Property `IsEmpty`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool IsEmpty { get; }
 ```
 
 
-## Class `Parameter`
+### Class `Parameter`
 
 Parameter container for REST requests
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class Parameter : IEquatable<Parameter>
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `Parameter(String, Object, ParameterType)`
+#### Constructor `Parameter(String, Object, ParameterType)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Parameter(string name, object value, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -7951,13 +7903,13 @@ Name | Type | Description
 
 
 
-### Constructor `Parameter(String, Object, String, ParameterType)`
+#### Constructor `Parameter(String, Object, String, ParameterType)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Parameter(string name, object value, string contentType, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -7967,139 +7919,136 @@ Name | Type | Description
 
 
 
-### Property `Name`
+#### Property `Name`
 
 Name of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
 Value of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public object Value { get; set; }
 ```
 
 
-### Property `Type`
+#### Property `Type`
 
 Type of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public ParameterType Type { get; set; }
 ```
 
 
-### Property `DataFormat`
+#### Property `DataFormat`
 
 Body parameter data type
 
-#### Syntax
+##### Syntax
 ```csharp
 public DataFormat DataFormat { get; set; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
 MIME content type of the parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-### Method `ToString()`
+#### Method `ToString()`
 
 Return a human-readable representation of this parameter
 
-#### Syntax
+##### Syntax
 ```csharp
 public override string ToString()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `string` | String
 
 
 
-### Method `Equals(Parameter)`
+#### Method `Equals(Parameter)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Equals(Parameter other)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `other` | `RestSharp.Parameter` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `bool` | 
 
 
 
-### Method `Equals(Object)`
+#### Method `Equals(Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public override bool Equals(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `bool` | 
 
 
 
-### Method `GetHashCode()`
+#### Method `GetHashCode()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public override int GetHashCode()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `int` | 
 
 
 
-## Class `XmlParameter`
+### Class `XmlParameter`
 
-### Inheritance
+#### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Parameter`
-### Syntax
+#### Syntax
 ```csharp
 public class XmlParameter : Parameter, IEquatable<Parameter>
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `XmlParameter(String, Object, String)`
+#### Constructor `XmlParameter(String, Object, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public XmlParameter(string name, object value, string xmlNamespace = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8108,36 +8057,33 @@ Name | Type | Description
 
 
 
-### Property `XmlNamespace`
+#### Property `XmlNamespace`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string XmlNamespace { get; }
 ```
 
 
-## Class `JsonParameter`
+### Class `JsonParameter`
 
-### Inheritance
+#### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Parameter`
 
-### Inherited members
+#### Inherited members
 -  `RestSharp.Parameter.Name`
-### Syntax
+#### Syntax
 ```csharp
 public class JsonParameter : Parameter, IEquatable<Parameter>
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `JsonParameter(String, Object)`
+#### Constructor `JsonParameter(String, Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public JsonParameter(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8145,13 +8091,13 @@ Name | Type | Description
 
 
 
-### Constructor `JsonParameter(String, Object, String)`
+#### Constructor `JsonParameter(String, Object, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public JsonParameter(string name, object value, string contentType)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8160,49 +8106,46 @@ Name | Type | Description
 
 
 
-## Class `RequestBody`
+### Class `RequestBody`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class RequestBody
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `ContentType`
+#### Property `ContentType`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; }
 ```
 
 
-### Property `Name`
+#### Property `Name`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
-#### Syntax
+##### Syntax
 ```csharp
 public object Value { get; }
 ```
 
 
-### Constructor `RequestBody(String, String, Object)`
+#### Constructor `RequestBody(String, String, Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RequestBody(string contentType, string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `contentType` | `string` | 
@@ -8211,243 +8154,240 @@ Name | Type | Description
 
 
 
-## Class `RestClientJsonRequest`
+### Class `RestClientJsonRequest`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public static class RestClientJsonRequest
 ```
 
-### Method `Get<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Get<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Get<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-### Method `Post<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Post<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Post<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-### Method `Put<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Put<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Put<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-### Method `Head<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Head<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Head<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-### Method `Options<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Options<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Options<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-### Method `Patch<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Patch<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Patch<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-### Method `Delete<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
+#### Method `Delete<TRequest, TResponse>(IRestClient, JsonRequest<TRequest, TResponse>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestResponse<TResponse> Delete<TRequest, TResponse>(this IRestClient client, JsonRequest<TRequest, TResponse> request)
     where TResponse : new()
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `TRequest` | 
 `TResponse` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `RestSharp.IRestClient` | 
 `request` | `RestSharp.JsonRequest<TRequest, TResponse>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestResponse<TResponse>` | 
 
 
 
-## Class `RestRequest`
+### Class `RestRequest`
 
 Container for data used to make requests
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class RestRequest : IRestRequest
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `RestRequest()`
+#### Constructor `RestRequest()`
 
 Default constructor
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest()
 ```
 
 
-### Constructor `RestRequest(Method)`
+#### Constructor `RestRequest(Method)`
 
 Sets Method property to value of method
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(Method method)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `method` | `RestSharp.Method` | Method to use for this request
 
 
 
-### Constructor `RestRequest(String, Method)`
+#### Constructor `RestRequest(String, Method)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(string resource, Method method)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `string` | 
@@ -8455,13 +8395,13 @@ Name | Type | Description
 
 
 
-### Constructor `RestRequest(String, DataFormat)`
+#### Constructor `RestRequest(String, DataFormat)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(string resource, DataFormat dataFormat)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `string` | 
@@ -8469,26 +8409,26 @@ Name | Type | Description
 
 
 
-### Constructor `RestRequest(String)`
+#### Constructor `RestRequest(String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(string resource)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `string` | 
 
 
 
-### Constructor `RestRequest(String, Method, DataFormat)`
+#### Constructor `RestRequest(String, Method, DataFormat)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(string resource, Method method, DataFormat dataFormat)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `string` | 
@@ -8497,13 +8437,13 @@ Name | Type | Description
 
 
 
-### Constructor `RestRequest(Uri, Method, DataFormat)`
+#### Constructor `RestRequest(Uri, Method, DataFormat)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(Uri resource, Method method, DataFormat dataFormat)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `Uri` | 
@@ -8512,13 +8452,13 @@ Name | Type | Description
 
 
 
-### Constructor `RestRequest(Uri, Method)`
+#### Constructor `RestRequest(Uri, Method)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(Uri resource, Method method)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `Uri` | 
@@ -8526,110 +8466,110 @@ Name | Type | Description
 
 
 
-### Constructor `RestRequest(Uri)`
+#### Constructor `RestRequest(Uri)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RestRequest(Uri resource)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `resource` | `Uri` | 
 
 
 
-### Property `AllowedDecompressionMethods`
+#### Property `AllowedDecompressionMethods`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<DecompressionMethods> AllowedDecompressionMethods { get; }
 ```
 
 
-### Property `AlwaysMultipartFormData`
+#### Property `AlwaysMultipartFormData`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool AlwaysMultipartFormData { get; set; }
 ```
 
 
-### Property `JsonSerializer`
+#### Property `JsonSerializer`
 
-#### Syntax
+##### Syntax
 ```csharp
 public ISerializer JsonSerializer { get; set; }
 ```
 
 
-### Property `XmlSerializer`
+#### Property `XmlSerializer`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IXmlSerializer XmlSerializer { get; set; }
 ```
 
 
-### Property `Body`
+#### Property `Body`
 
-#### Syntax
+##### Syntax
 ```csharp
 public RequestBody Body { get; set; }
 ```
 
 
-### Property `ResponseWriter`
+#### Property `ResponseWriter`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<Stream> ResponseWriter { get; set; }
 ```
 
 
-### Property `AdvancedResponseWriter`
+#### Property `AdvancedResponseWriter`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
 
 
-### Property `UseDefaultCredentials`
+#### Property `UseDefaultCredentials`
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool UseDefaultCredentials { get; set; }
 ```
 
 
-### Method `AddFile(String, String, String)`
+#### Method `AddFile(String, String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddFile(string name, string path, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `path` | `string` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddFile(String, Byte[], String, String)`
+#### Method `AddFile(String, Byte[], String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8637,20 +8577,20 @@ Name | Type | Description
 `fileName` | `string` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddFile(String, Action<Stream>, String, Int64, String)`
+#### Method `AddFile(String, Action<Stream>, String, Int64, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8659,20 +8599,20 @@ Name | Type | Description
 `contentLength` | `long` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddFileBytes(String, Byte[], String, String)`
+#### Method `AddFileBytes(String, Byte[], String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddFileBytes(string name, byte[] bytes, string filename, string contentType = "application/x-gzip")
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8680,227 +8620,227 @@ Name | Type | Description
 `filename` | `string` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddBody(Object, String)`
+#### Method `AddBody(Object, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use AddXmlBody")]
 public IRestRequest AddBody(object obj, string xmlNamespace)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 `xmlNamespace` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddBody(Object)`
+#### Method `AddBody(Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Use AddXmlBody or AddJsonBody")]
 public IRestRequest AddBody(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddJsonBody(Object)`
+#### Method `AddJsonBody(Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddJsonBody(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddJsonBody(Object, String)`
+#### Method `AddJsonBody(Object, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddJsonBody(object obj, string contentType)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 `contentType` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddXmlBody(Object)`
+#### Method `AddXmlBody(Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddXmlBody(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddXmlBody(Object, String)`
+#### Method `AddXmlBody(Object, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddXmlBody(object obj, string xmlNamespace)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 `xmlNamespace` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddObject(Object, String[])`
+#### Method `AddObject(Object, String[])`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddObject(object obj, params string[] includedProperties)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 `includedProperties` | `string[]` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddObject(Object)`
+#### Method `AddObject(Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddObject(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddParameter(Parameter)`
+#### Method `AddParameter(Parameter)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddParameter(Parameter p)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `p` | `RestSharp.Parameter` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddParameter(String, Object)`
+#### Method `AddParameter(String, Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddParameter(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddParameter(String, Object, ParameterType)`
+#### Method `AddParameter(String, Object, ParameterType)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddParameter(string name, object value, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `object` | 
 `type` | `RestSharp.ParameterType` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddParameter(String, Object, String, ParameterType)`
+#### Method `AddParameter(String, Object, String, ParameterType)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -8908,95 +8848,95 @@ Name | Type | Description
 `contentType` | `string` | 
 `type` | `RestSharp.ParameterType` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameter(Parameter)`
+#### Method `AddOrUpdateParameter(Parameter)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddOrUpdateParameter(Parameter parameter)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `parameter` | `RestSharp.Parameter` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameters(IEnumerable<Parameter>)`
+#### Method `AddOrUpdateParameters(IEnumerable<Parameter>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddOrUpdateParameters(IEnumerable<Parameter> parameters)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `parameters` | `System.Collections.Generic.IEnumerable<RestSharp.Parameter>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameter(String, Object)`
+#### Method `AddOrUpdateParameter(String, Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddOrUpdateParameter(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameter(String, Object, ParameterType)`
+#### Method `AddOrUpdateParameter(String, Object, ParameterType)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `object` | 
 `type` | `RestSharp.ParameterType` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddOrUpdateParameter(String, Object, String, ParameterType)`
+#### Method `AddOrUpdateParameter(String, Object, String, ParameterType)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
@@ -9004,558 +8944,550 @@ Name | Type | Description
 `contentType` | `string` | 
 `type` | `RestSharp.ParameterType` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddHeader(String, String)`
+#### Method `AddHeader(String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddHeader(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddHeaders(ICollection<KeyValuePair<String, String>>)`
+#### Method `AddHeaders(ICollection<KeyValuePair<String, String>>)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `headers` | `System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, string>>` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddCookie(String, String)`
+#### Method `AddCookie(String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddCookie(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddUrlSegment(String, String)`
+#### Method `AddUrlSegment(String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddUrlSegment(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddQueryParameter(String, String)`
+#### Method `AddQueryParameter(String, String)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddQueryParameter(string name, string value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `string` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddQueryParameter(String, String, Boolean)`
+#### Method `AddQueryParameter(String, String, Boolean)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddQueryParameter(string name, string value, bool encode)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `string` | 
 `encode` | `bool` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Method `AddDecompressionMethod(DecompressionMethods)`
+#### Method `AddDecompressionMethod(DecompressionMethods)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `decompressionMethod` | `DecompressionMethods` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-### Property `Parameters`
+#### Property `Parameters`
 
-#### Syntax
+##### Syntax
 ```csharp
 public List<Parameter> Parameters { get; }
 ```
 
 
-### Property `Files`
+#### Property `Files`
 
-#### Syntax
+##### Syntax
 ```csharp
 public List<FileParameter> Files { get; }
 ```
 
 
-### Property `Method`
+#### Property `Method`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Method Method { get; set; }
 ```
 
 
-### Property `Resource`
+#### Property `Resource`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Resource { get; set; }
 ```
 
 
-### Property `RequestFormat`
+#### Property `RequestFormat`
 
-#### Syntax
+##### Syntax
 ```csharp
 public DataFormat RequestFormat { get; set; }
 ```
 
 
-### Property `RootElement`
+#### Property `RootElement`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Add custom content handler instead. This property will be removed.")]
 public string RootElement { get; set; }
 ```
 
 
-### Property `OnBeforeDeserialization`
+#### Property `OnBeforeDeserialization`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<IRestResponse> OnBeforeDeserialization { get; set; }
 ```
 
 
-### Property `OnBeforeRequest`
+#### Property `OnBeforeRequest`
 
-#### Syntax
+##### Syntax
 ```csharp
 public Action<IHttp> OnBeforeRequest { get; set; }
 ```
 
 
-### Property `DateFormat`
+#### Property `DateFormat`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Add custom content handler instead. This property will be removed.")]
 public string DateFormat { get; set; }
 ```
 
 
-### Property `XmlNamespace`
+#### Property `XmlNamespace`
 
-#### Syntax
+##### Syntax
 ```csharp
 [Obsolete("Add custom content handler instead. This property will be removed.")]
 public string XmlNamespace { get; set; }
 ```
 
 
-### Property `Credentials`
+#### Property `Credentials`
 
-#### Syntax
+##### Syntax
 ```csharp
 public ICredentials Credentials { get; set; }
 ```
 
 
-### Property `Timeout`
+#### Property `Timeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int Timeout { get; set; }
 ```
 
 
-### Property `ReadWriteTimeout`
+#### Property `ReadWriteTimeout`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int ReadWriteTimeout { get; set; }
 ```
 
 
-### Method `IncreaseNumAttempts()`
+#### Method `IncreaseNumAttempts()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public void IncreaseNumAttempts()
 ```
 
 
-### Property `Attempts`
+#### Property `Attempts`
 
-#### Syntax
+##### Syntax
 ```csharp
 public int Attempts { get; }
 ```
 
 
-### Method `AddUrlSegment(String, Object)`
+#### Method `AddUrlSegment(String, Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest AddUrlSegment(string name, object value)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `name` | `string` | 
 `value` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `RestSharp.IRestRequest` | 
 
 
 
-## Class `RestRequestAsyncHandle`
+### Class `RestRequestAsyncHandle`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public class RestRequestAsyncHandle
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Field `WebRequest`
+#### Field `WebRequest`
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpWebRequest WebRequest
 ```
 
 
-### Method `Abort()`
+#### Method `Abort()`
 
-#### Syntax
+##### Syntax
 ```csharp
 public void Abort()
 ```
 
 
-## Class `RestResponseBase`
+### Class `RestResponseBase`
 
 Base class for common properties shared by RestResponse and RestResponse[[T]]
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 [DebuggerDisplay("{DebuggerDisplay()}")]
 public abstract class RestResponseBase
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `RestResponseBase()`
+#### Constructor `RestResponseBase()`
 
 Default constructor
 
-#### Syntax
+##### Syntax
 ```csharp
 protected RestResponseBase()
 ```
 
 
-### Property `Request`
+#### Property `Request`
 
 The RestRequest that was made to get this RestResponse
 
-#### Remarks
+##### Remarks
 
 Mainly for debugging if ResponseStatus is not OK
 
-#### Syntax
+##### Syntax
 ```csharp
 public IRestRequest Request { get; set; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
 MIME content type of response
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-### Property `ContentLength`
+#### Property `ContentLength`
 
 Length in bytes of the response content
 
-#### Syntax
+##### Syntax
 ```csharp
 public long ContentLength { get; set; }
 ```
 
 
-### Property `ContentEncoding`
+#### Property `ContentEncoding`
 
 Encoding of the response content
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentEncoding { get; set; }
 ```
 
 
-### Property `Content`
+#### Property `Content`
 
 String representation of response content
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Content { get; set; }
 ```
 
 
-### Property `StatusCode`
+#### Property `StatusCode`
 
 HTTP response status code
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpStatusCode StatusCode { get; set; }
 ```
 
 
-### Property `IsSuccessful`
+#### Property `IsSuccessful`
 
 Whether or not the response status code indicates success
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool IsSuccessful { get; }
 ```
 
 
-### Property `StatusDescription`
+#### Property `StatusDescription`
 
 Description of HTTP status returned
 
-#### Syntax
+##### Syntax
 ```csharp
 public string StatusDescription { get; set; }
 ```
 
 
-### Property `RawBytes`
+#### Property `RawBytes`
 
 Response content
 
-#### Syntax
+##### Syntax
 ```csharp
 public byte[] RawBytes { get; set; }
 ```
 
 
-### Property `ResponseUri`
+#### Property `ResponseUri`
 
 The URL that actually responded to the content (different from request if redirected)
 
-#### Syntax
+##### Syntax
 ```csharp
 public Uri ResponseUri { get; set; }
 ```
 
 
-### Property `Server`
+#### Property `Server`
 
 HttpWebResponse.Server
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Server { get; set; }
 ```
 
 
-### Property `Cookies`
+#### Property `Cookies`
 
 Cookies returned by server with the response
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<RestResponseCookie> Cookies { get; protected set; }
 ```
 
 
-### Property `Headers`
+#### Property `Headers`
 
 Headers returned by server with the response
 
-#### Syntax
+##### Syntax
 ```csharp
 public IList<Parameter> Headers { get; protected set; }
 ```
 
 
-### Property `ResponseStatus`
+#### Property `ResponseStatus`
 
 Status of the request. Will return Error for transport errors.
 HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 
-#### Syntax
+##### Syntax
 ```csharp
 public ResponseStatus ResponseStatus { get; set; }
 ```
 
 
-### Property `ErrorMessage`
+#### Property `ErrorMessage`
 
 Transport or other non-HTTP error generated while attempting request
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ErrorMessage { get; set; }
 ```
 
 
-### Property `ErrorException`
+#### Property `ErrorException`
 
 The exception thrown during the request, if any
 
-#### Syntax
+##### Syntax
 ```csharp
 public Exception ErrorException { get; set; }
 ```
 
 
-### Property `ProtocolVersion`
+#### Property `ProtocolVersion`
 
 The HTTP protocol version (1.0, 1.1, etc)
 
-#### Remarks
+##### Remarks
 Only set when underlying framework supports it.
-#### Syntax
+##### Syntax
 ```csharp
 public Version ProtocolVersion { get; set; }
 ```
 
 
-### Method `DebuggerDisplay()`
+#### Method `DebuggerDisplay()`
 
 Assists with debugging responses by displaying in the debugger output
 
-#### Syntax
+##### Syntax
 ```csharp
 protected string DebuggerDisplay()
 ```
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `string` | 
 
 
 
-## Class `RestResponse<T>`
+### Class `RestResponse<T>`
 
 Container for data sent back from API including deserialized data
 
-### Inheritance
+#### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.RestResponseBase`
-### Syntax
+#### Syntax
 ```csharp
 [DebuggerDisplay("{DebuggerDisplay()}")]
 public class RestResponse<T> : RestResponseBase, IRestResponse<T>, IRestResponse
 ```
-### Generic parameters
+#### Generic parameters
 Name | Description
 --- | ---
 `T` | Type of data to deserialize to
 
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+#### Extension methods
 -  `RestSharp.Extensions.ResponseExtensions.ToAsyncResponse<T>(RestSharp.IRestResponse)`
-### Property `Data`
+#### Property `Data`
 
 Deserialized entity data
 
-#### Syntax
+##### Syntax
 ```csharp
 public T Data { get; set; }
 ```
@@ -9563,183 +9495,3059 @@ public T Data { get; set; }
 
 Operator: RestSharp.RestResponse`1.op_Explicit(RestSharp.RestResponse)~RestSharp.RestResponse{`0}
 
-## Class `RestResponse`
+### Class `RestResponse`
 
 Container for data sent back from API
 
-### Inheritance
+#### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.RestResponseBase`
 
-### Inherited members
+#### Inherited members
 -  `RestSharp.RestResponseBase.Request`
-### Syntax
+#### Syntax
 ```csharp
 [DebuggerDisplay("{DebuggerDisplay()}")]
 public class RestResponse : RestResponseBase, IRestResponse
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+#### Extension methods
 -  `RestSharp.Extensions.ResponseExtensions.ToAsyncResponse<T>(RestSharp.IRestResponse)`
 
-## Class `RestResponseCookie`
+### Class `RestResponseCookie`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 [Obsolete("We will use HttpCookie in the response as well in the next major version")]
 public class RestResponseCookie
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Property `Comment`
+#### Property `Comment`
 
 Comment of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Comment { get; set; }
 ```
 
 
-### Property `CommentUri`
+#### Property `CommentUri`
 
 Comment of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public Uri CommentUri { get; set; }
 ```
 
 
-### Property `Discard`
+#### Property `Discard`
 
 Indicates whether the cookie should be discarded at the end of the session
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Discard { get; set; }
 ```
 
 
-### Property `Domain`
+#### Property `Domain`
 
 Domain of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Domain { get; set; }
 ```
 
 
-### Property `Expired`
+#### Property `Expired`
 
 Indicates whether the cookie is expired
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Expired { get; set; }
 ```
 
 
-### Property `Expires`
+#### Property `Expires`
 
 Date and time that the cookie expires
 
-#### Syntax
+##### Syntax
 ```csharp
 public DateTime Expires { get; set; }
 ```
 
 
-### Property `HttpOnly`
+#### Property `HttpOnly`
 
 Indicates that this cookie should only be accessed by the server
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool HttpOnly { get; set; }
 ```
 
 
-### Property `Name`
+#### Property `Name`
 
 Name of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Name { get; set; }
 ```
 
 
-### Property `Path`
+#### Property `Path`
 
 Path of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Path { get; set; }
 ```
 
 
-### Property `Port`
+#### Property `Port`
 
 Port of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Port { get; set; }
 ```
 
 
-### Property `Secure`
+#### Property `Secure`
 
 Indicates that the cookie should only be sent over secure channels
 
-#### Syntax
+##### Syntax
 ```csharp
 public bool Secure { get; set; }
 ```
 
 
-### Property `TimeStamp`
+#### Property `TimeStamp`
 
 Date and time the cookie was created
 
-#### Syntax
+##### Syntax
 ```csharp
 public DateTime TimeStamp { get; set; }
 ```
 
 
-### Property `Value`
+#### Property `Value`
 
 Value of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Value { get; set; }
 ```
 
 
-### Property `Version`
+#### Property `Version`
 
 Version of the cookie
 
-#### Syntax
+##### Syntax
 ```csharp
 public int Version { get; set; }
 ```
 
 
-### Property `HttpCookie`
+#### Property `HttpCookie`
 
-#### Syntax
+##### Syntax
 ```csharp
 public HttpCookie HttpCookie { get; }
 ```
+
+
+## Namespace: RestSharp.Authenticators
+### Class `AuthenticatorBase`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public abstract class AuthenticatorBase : IAuthenticator
+```
+
+#### Constructor `AuthenticatorBase(String)`
+
+##### Syntax
+```csharp
+protected AuthenticatorBase(string token)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`token` | `string` | 
+
+
+
+#### Property `Token`
+
+##### Syntax
+```csharp
+protected string Token { get; }
+```
+
+
+#### Method `GetAuthenticationParameter(String)`
+
+##### Syntax
+```csharp
+protected abstract Parameter GetAuthenticationParameter(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Parameter` | 
+
+
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+public void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+### Class `HttpBasicAuthenticator`
+
+Allows &quot;basic access authentication&quot; for HTTP requests.
+
+#### Remarks
+
+Encoding can be specified depending on what your server expect (see https://stackoverflow.com/a/7243567).
+UTF-8 is used by default but some servers might expect ISO-8859-1 encoding.
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Authenticators.AuthenticatorBase`
+#### Syntax
+```csharp
+public class HttpBasicAuthenticator : AuthenticatorBase, IAuthenticator
+```
+
+#### Constructor `HttpBasicAuthenticator(String, String)`
+
+##### Syntax
+```csharp
+public HttpBasicAuthenticator(string username, string password)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`username` | `string` | 
+`password` | `string` | 
+
+
+
+#### Constructor `HttpBasicAuthenticator(String, String, Encoding)`
+
+##### Syntax
+```csharp
+public HttpBasicAuthenticator(string username, string password, Encoding encoding)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`username` | `string` | 
+`password` | `string` | 
+`encoding` | `System.Text.Encoding` | 
+
+
+
+#### Method `GetAuthenticationParameter(String)`
+
+##### Syntax
+```csharp
+protected override Parameter GetAuthenticationParameter(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Parameter` | 
+
+
+
+### Interface `IAuthenticator`
+
+#### Syntax
+```csharp
+public interface IAuthenticator
+```
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+### Class `JwtAuthenticator`
+
+JSON WEB TOKEN (JWT) Authenticator class.
+<remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class JwtAuthenticator : IAuthenticator
+```
+
+#### Constructor `JwtAuthenticator(String)`
+
+##### Syntax
+```csharp
+public JwtAuthenticator(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+
+
+#### Method `SetBearerToken(String)`
+
+Set the new bearer token so the request gets the new header value
+
+##### Syntax
+```csharp
+public void SetBearerToken(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+public void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+### Class `NtlmAuthenticator`
+
+Tries to Authenticate with the credentials of the currently logged in user, or impersonate a user
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class NtlmAuthenticator : IAuthenticator
+```
+
+#### Constructor `NtlmAuthenticator()`
+
+Authenticate with the credentials of the currently logged in user
+
+##### Syntax
+```csharp
+public NtlmAuthenticator()
+```
+
+
+#### Constructor `NtlmAuthenticator(String, String)`
+
+Authenticate by impersonation
+
+##### Syntax
+```csharp
+public NtlmAuthenticator(string username, string password)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`username` | `string` | 
+`password` | `string` | 
+
+
+
+#### Constructor `NtlmAuthenticator(ICredentials)`
+
+Authenticate by impersonation, using an existing <code>ICredentials</code> instance
+
+##### Syntax
+```csharp
+public NtlmAuthenticator(ICredentials credentials)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`credentials` | `ICredentials` | 
+
+
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+public void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+### Class `OAuth1Authenticator`
+
+#### See also
+[RFC: The OAuth 1.0 Protocol](http://tools.ietf.org/html/rfc5849)
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class OAuth1Authenticator : IAuthenticator
+```
+
+#### Property `Realm`
+
+##### Syntax
+```csharp
+public virtual string Realm { get; set; }
+```
+
+
+#### Property `ParameterHandling`
+
+##### Syntax
+```csharp
+public virtual OAuthParameterHandling ParameterHandling { get; set; }
+```
+
+
+#### Property `SignatureMethod`
+
+##### Syntax
+```csharp
+public virtual OAuthSignatureMethod SignatureMethod { get; set; }
+```
+
+
+#### Property `SignatureTreatment`
+
+##### Syntax
+```csharp
+public virtual OAuthSignatureTreatment SignatureTreatment { get; set; }
+```
+
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+public void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+#### Method `ForRequestToken(String, String, OAuthSignatureMethod)`
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`signatureMethod` | `RestSharp.Authenticators.OAuth.OAuthSignatureMethod` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForRequestToken(String, String, String)`
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret, string callbackUrl)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`callbackUrl` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForAccessToken(String, String, String, String, OAuthSignatureMethod)`
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token, string tokenSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`token` | `string` | 
+`tokenSecret` | `string` | 
+`signatureMethod` | `RestSharp.Authenticators.OAuth.OAuthSignatureMethod` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForAccessToken(String, String, String, String, String)`
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForAccessToken(string consumerKey, string consumerSecret, string token, string tokenSecret, string verifier)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`token` | `string` | 
+`tokenSecret` | `string` | 
+`verifier` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForAccessTokenRefresh(String, String, String, String, String)`
+
+
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForAccessTokenRefresh(string consumerKey, string consumerSecret, string token, string tokenSecret, string sessionHandle)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`token` | `string` | 
+`tokenSecret` | `string` | 
+`sessionHandle` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForAccessTokenRefresh(String, String, String, String, String, String)`
+
+
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForAccessTokenRefresh(string consumerKey, string consumerSecret, string token, string tokenSecret, string verifier, string sessionHandle)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`token` | `string` | 
+`tokenSecret` | `string` | 
+`verifier` | `string` | 
+`sessionHandle` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForClientAuthentication(String, String, String, String, OAuthSignatureMethod)`
+
+
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForClientAuthentication(string consumerKey, string consumerSecret, string username, string password, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`username` | `string` | 
+`password` | `string` | 
+`signatureMethod` | `RestSharp.Authenticators.OAuth.OAuthSignatureMethod` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+#### Method `ForProtectedResource(String, String, String, String, OAuthSignatureMethod)`
+
+
+
+##### Syntax
+```csharp
+public static OAuth1Authenticator ForProtectedResource(string consumerKey, string consumerSecret, string accessToken, string accessTokenSecret, OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`consumerKey` | `string` | 
+`consumerSecret` | `string` | 
+`accessToken` | `string` | 
+`accessTokenSecret` | `string` | 
+`signatureMethod` | `RestSharp.Authenticators.OAuth.OAuthSignatureMethod` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Authenticators.OAuth1Authenticator` | 
+
+
+
+### Class `OAuth2Authenticator`
+
+Base class for OAuth 2 Authenticators.
+
+#### Remarks
+
+Since there are many ways to authenticate in OAuth2,
+this is used as a base class to differentiate between
+other authenticators.
+Any other OAuth2 authenticators must derive from this
+abstract class.
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+[Obsolete("Check the OAuth2 authenticators implementation on how to use the AuthenticatorBase instead")]
+public abstract class OAuth2Authenticator : IAuthenticator
+```
+
+#### Constructor `OAuth2Authenticator(String)`
+
+##### Syntax
+```csharp
+protected OAuth2Authenticator(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+
+
+#### Property `AccessToken`
+
+Gets the access token.
+
+##### Syntax
+```csharp
+public string AccessToken { get; }
+```
+
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+public void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+#### Method `GetAuthenticationParameter(String)`
+
+##### Syntax
+```csharp
+protected abstract Parameter GetAuthenticationParameter(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Parameter` | 
+
+
+
+### Class `OAuth2AuthorizationRequestHeaderAuthenticator`
+
+The OAuth 2 authenticator using the authorization request header field.
+
+#### Remarks
+
+Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.1
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Authenticators.AuthenticatorBase`
+#### Syntax
+```csharp
+public class OAuth2AuthorizationRequestHeaderAuthenticator : AuthenticatorBase, IAuthenticator
+```
+
+#### Constructor `OAuth2AuthorizationRequestHeaderAuthenticator(String)`
+
+##### Syntax
+```csharp
+public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+
+
+#### Constructor `OAuth2AuthorizationRequestHeaderAuthenticator(String, String)`
+
+##### Syntax
+```csharp
+public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken, string tokenType)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+`tokenType` | `string` | 
+
+
+
+#### Method `GetAuthenticationParameter(String)`
+
+##### Syntax
+```csharp
+protected override Parameter GetAuthenticationParameter(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Parameter` | 
+
+
+
+### Class `OAuth2UriQueryParameterAuthenticator`
+
+The OAuth 2 authenticator using URI query parameter.
+
+#### Remarks
+
+Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.2
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Authenticators.AuthenticatorBase`
+#### Syntax
+```csharp
+public class OAuth2UriQueryParameterAuthenticator : AuthenticatorBase, IAuthenticator
+```
+
+#### Constructor `OAuth2UriQueryParameterAuthenticator(String)`
+
+##### Syntax
+```csharp
+public OAuth2UriQueryParameterAuthenticator(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+
+
+#### Method `GetAuthenticationParameter(String)`
+
+##### Syntax
+```csharp
+protected override Parameter GetAuthenticationParameter(string accessToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`accessToken` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Parameter` | 
+
+
+
+### Class `SimpleAuthenticator`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class SimpleAuthenticator : IAuthenticator
+```
+
+#### Constructor `SimpleAuthenticator(String, String, String, String)`
+
+##### Syntax
+```csharp
+public SimpleAuthenticator(string usernameKey, string username, string passwordKey, string password)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`usernameKey` | `string` | 
+`username` | `string` | 
+`passwordKey` | `string` | 
+`password` | `string` | 
+
+
+
+#### Method `Authenticate(IRestClient, IRestRequest)`
+
+##### Syntax
+```csharp
+public void Authenticate(IRestClient client, IRestRequest request)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`client` | `RestSharp.IRestClient` | 
+`request` | `RestSharp.IRestRequest` | 
+
+
+
+## Namespace: RestSharp.Authenticators.OAuth
+### Enum `OAuthSignatureMethod`
+
+#### Syntax
+```csharp
+public enum OAuthSignatureMethod
+```
+
+#### Fields
+Name | Description
+--- | ---
+HmacSha1 | 
+HmacSha256 | 
+PlainText | 
+RsaSha1 | 
+### Enum `OAuthSignatureTreatment`
+
+#### Syntax
+```csharp
+public enum OAuthSignatureTreatment
+```
+
+#### Fields
+Name | Description
+--- | ---
+Escaped | 
+Unescaped | 
+### Enum `OAuthParameterHandling`
+
+#### Syntax
+```csharp
+public enum OAuthParameterHandling
+```
+
+#### Fields
+Name | Description
+--- | ---
+HttpAuthorizationHeader | 
+UrlOrPostParameters | 
+### Enum `OAuthType`
+
+#### Syntax
+```csharp
+public enum OAuthType
+```
+
+#### Fields
+Name | Description
+--- | ---
+RequestToken | 
+AccessToken | 
+ProtectedResource | 
+ClientAuthentication | 
+## Namespace: RestSharp.Extensions
+### Class `MiscExtensions`
+
+Extension method overload!
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class MiscExtensions
+```
+
+#### Method `SaveAs(Byte[], String)`
+
+Save a byte array to a file
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static void SaveAs(this byte[] input, string path)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `byte[]` | Bytes to save
+`path` | `string` | Full path to save file to
+
+
+
+#### Method `ReadAsBytes(Stream)`
+
+Read a stream into a byte array
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static byte[] ReadAsBytes(this Stream input)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `System.IO.Stream` | Stream to read
+
+##### Returns
+Type | Description
+--- | ---
+`byte[]` | byte[]
+
+
+
+#### Method `CopyTo(Stream, Stream)`
+
+Copies bytes from one stream to another
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static void CopyTo(this Stream input, Stream output)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `System.IO.Stream` | The input stream.
+`output` | `System.IO.Stream` | The output stream.
+
+
+
+#### Method `AsString(Byte[], String)`
+
+Converts a byte array to a string, using its byte order mark to convert it to the right encoding.
+http://www.shrinkrays.net/code-snippets/csharp/an-extension-method-for-converting-a-byte-array-to-a-string.aspx
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static string AsString(this byte[] buffer, string encoding)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`buffer` | `byte[]` | An array of bytes to convert
+`encoding` | `string` | Content encoding. Will fallback to UTF8 if not a valid encoding.
+
+##### Returns
+Type | Description
+--- | ---
+`string` | The byte as a string.
+
+
+
+#### Method `AsString(Byte[])`
+
+Converts a byte array to a string, using its byte order mark to convert it to the right encoding.
+http://www.shrinkrays.net/code-snippets/csharp/an-extension-method-for-converting-a-byte-array-to-a-string.aspx
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static string AsString(this byte[] buffer)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`buffer` | `byte[]` | An array of bytes to convert
+
+##### Returns
+Type | Description
+--- | ---
+`string` | The byte as a string using UTF8.
+
+
+
+### Class `ReflectionExtensions`
+
+Reflection extensions
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class ReflectionExtensions
+```
+
+#### Method `GetAttribute<T>(MemberInfo)`
+
+Retrieve an attribute from a member (property)
+
+##### Syntax
+```csharp
+public static T GetAttribute<T>(this MemberInfo prop)
+    where T : Attribute
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | Type of attribute to retrieve
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`prop` | `System.Reflection.MemberInfo` | Member to retrieve attribute from
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+#### Method `GetAttribute<T>(Type)`
+
+Retrieve an attribute from a type
+
+##### Syntax
+```csharp
+public static T GetAttribute<T>(this Type type)
+    where T : Attribute
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | Type of attribute to retrieve
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`type` | `System.Type` | Type to retrieve attribute from
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+#### Method `IsSubclassOfRawGeneric(Type, Type)`
+
+Checks a type to see if it derives from a raw generic (e.g. List[[]])
+
+##### Syntax
+```csharp
+public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`toCheck` | `System.Type` | 
+`generic` | `System.Type` | 
+
+##### Returns
+Type | Description
+--- | ---
+`bool` | 
+
+
+
+#### Method `FindEnumValue(Type, String, CultureInfo)`
+
+Find a value from a System.Enum by trying several possible variants
+of the string value of the enum.
+
+##### Syntax
+```csharp
+public static object FindEnumValue(this Type type, string value, CultureInfo culture)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`type` | `System.Type` | Type of enum
+`value` | `string` | Value for which to search
+`culture` | `System.Globalization.CultureInfo` | The culture used to calculate the name variants
+
+##### Returns
+Type | Description
+--- | ---
+`object` | 
+
+
+
+### Class `ResponseExtensions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class ResponseExtensions
+```
+
+#### Method `ToAsyncResponse<T>(IRestResponse)`
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static IRestResponse<T> ToAsyncResponse<T>(this IRestResponse response)
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`response` | `RestSharp.IRestResponse` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.IRestResponse<T>` | 
+
+
+
+### Class `ResponseStatusExtensions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class ResponseStatusExtensions
+```
+
+#### Method `ToWebException(ResponseStatus)`
+
+##### Syntax
+```csharp
+public static WebException ToWebException(this ResponseStatus responseStatus)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`responseStatus` | `RestSharp.ResponseStatus` | 
+
+##### Returns
+Type | Description
+--- | ---
+`WebException` | 
+
+
+
+### Class `RSACryptoServiceProviderExtensions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class RSACryptoServiceProviderExtensions
+```
+
+#### Method `FromXmlString2(RSACryptoServiceProvider, String)`
+
+Imports the specified XML String into the crypto service provider
+
+##### Remarks
+
+.NET Core 2.0 doesn&apos;t provide an implementation of RSACryptoServiceProvider.FromXmlString/ToXmlString, so we have
+to do it ourselves.
+Source: https://gist.github.com/Jargon64/5b172c452827e15b21882f1d76a94be4/
+
+##### Syntax
+```csharp
+public static void FromXmlString2(this RSACryptoServiceProvider rsa, string xmlString)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`rsa` | `RSACryptoServiceProvider` | 
+`xmlString` | `string` | 
+
+
+
+### Class `StringExtensions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class StringExtensions
+```
+
+#### Method `UrlDecode(String)`
+
+##### Syntax
+```csharp
+public static string UrlDecode(this string input)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `UrlEncode(String)`
+
+Uses Uri.EscapeDataString() based on recommendations on MSDN
+http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+
+##### Syntax
+```csharp
+public static string UrlEncode(this string input)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `UrlEncode(String, Encoding)`
+
+##### Syntax
+```csharp
+public static string UrlEncode(this string input, Encoding encoding)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | 
+`encoding` | `System.Text.Encoding` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `HasValue(String)`
+
+Check that a string is not null or empty
+
+##### Syntax
+```csharp
+public static bool HasValue(this string input)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | String to check
+
+##### Returns
+Type | Description
+--- | ---
+`bool` | bool
+
+
+
+#### Method `RemoveUnderscoresAndDashes(String)`
+
+Remove underscores from a string
+
+##### Syntax
+```csharp
+public static string RemoveUnderscoresAndDashes(this string input)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | String to process
+
+##### Returns
+Type | Description
+--- | ---
+`string` | string
+
+
+
+#### Method `ParseJsonDate(String, CultureInfo)`
+
+Parses most common JSON date formats
+
+##### Syntax
+```csharp
+public static DateTime ParseJsonDate(this string input, CultureInfo culture)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | JSON value to parse
+`culture` | `System.Globalization.CultureInfo` | 
+
+##### Returns
+Type | Description
+--- | ---
+`System.DateTime` | DateTime
+
+
+
+#### Method `ToPascalCase(String, CultureInfo)`
+
+Converts a string to pascal case
+
+##### Syntax
+```csharp
+public static string ToPascalCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`lowercaseAndUnderscoredWord` | `string` | String to convert
+`culture` | `System.Globalization.CultureInfo` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | string
+
+
+
+#### Method `ToPascalCase(String, Boolean, CultureInfo)`
+
+Converts a string to pascal case with the option to remove underscores
+
+##### Syntax
+```csharp
+public static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`text` | `string` | String to convert
+`removeUnderscores` | `bool` | Option to remove underscores
+`culture` | `System.Globalization.CultureInfo` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `ToCamelCase(String, CultureInfo)`
+
+Converts a string to camel case
+
+##### Syntax
+```csharp
+public static string ToCamelCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`lowercaseAndUnderscoredWord` | `string` | String to convert
+`culture` | `System.Globalization.CultureInfo` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | String
+
+
+
+#### Method `MakeInitialLowerCase(String)`
+
+Convert the first letter of a string to lower case
+
+##### Syntax
+```csharp
+public static string MakeInitialLowerCase(this string word)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`word` | `string` | String to convert
+
+##### Returns
+Type | Description
+--- | ---
+`string` | string
+
+
+
+#### Method `AddUnderscores(String)`
+
+Add underscores to a pascal-cased string
+
+##### Syntax
+```csharp
+public static string AddUnderscores(this string pascalCasedWord)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`pascalCasedWord` | `string` | String to convert
+
+##### Returns
+Type | Description
+--- | ---
+`string` | string
+
+
+
+#### Method `AddDashes(String)`
+
+Add dashes to a pascal-cased string
+
+##### Syntax
+```csharp
+public static string AddDashes(this string pascalCasedWord)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`pascalCasedWord` | `string` | String to convert
+
+##### Returns
+Type | Description
+--- | ---
+`string` | string
+
+
+
+#### Method `AddUnderscorePrefix(String)`
+
+Add an underscore prefix to a pascal-cased string
+
+##### Syntax
+```csharp
+public static string AddUnderscorePrefix(this string pascalCasedWord)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`pascalCasedWord` | `string` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `AddSpaces(String)`
+
+Add spaces to a pascal-cased string
+
+##### Syntax
+```csharp
+public static string AddSpaces(this string pascalCasedWord)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`pascalCasedWord` | `string` | String to convert
+
+##### Returns
+Type | Description
+--- | ---
+`string` | string
+
+
+
+#### Method `GetNameVariants(String, CultureInfo)`
+
+Return possible variants of a name for name matching.
+
+##### Syntax
+```csharp
+public static IEnumerable<string> GetNameVariants(this string name, CultureInfo culture)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`name` | `string` | String to convert
+`culture` | `System.Globalization.CultureInfo` | The culture to use for conversion
+
+##### Returns
+Type | Description
+--- | ---
+`System.Collections.Generic.IEnumerable<string>` | IEnumerable&lt;string>
+
+
+
+### Class `WebRequestExtensions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class WebRequestExtensions
+```
+
+#### Method `GetRequestStreamAsync(WebRequest, CancellationToken)`
+
+##### Syntax
+```csharp
+public static Task<Stream> GetRequestStreamAsync(this WebRequest webRequest, CancellationToken cancellationToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`webRequest` | `WebRequest` | 
+`cancellationToken` | `System.Threading.CancellationToken` | 
+
+##### Returns
+Type | Description
+--- | ---
+`System.Threading.Tasks.Task<System.IO.Stream>` | 
+
+
+
+#### Method `GetResponseAsync(WebRequest, CancellationToken)`
+
+##### Syntax
+```csharp
+public static Task<WebResponse> GetResponseAsync(this WebRequest webRequest, CancellationToken cancellationToken)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`webRequest` | `WebRequest` | 
+`cancellationToken` | `System.Threading.CancellationToken` | 
+
+##### Returns
+Type | Description
+--- | ---
+`System.Threading.Tasks.Task<WebResponse>` | 
+
+
+
+### Class `XmlExtensions`
+
+XML Extension Methods
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class XmlExtensions
+```
+
+#### Method `AsNamespaced(String, String)`
+
+Returns the name of an element with the namespace if specified
+
+##### Syntax
+```csharp
+public static XName AsNamespaced(this string name, string namespace)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`name` | `string` | Element name
+`namespace` | `string` | XML Namespace
+
+##### Returns
+Type | Description
+--- | ---
+`XName` | 
+
+
+
+## Namespace: RestSharp.Serialization
+### Class `ContentType`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class ContentType
+```
+
+#### Field `Json`
+
+##### Syntax
+```csharp
+public static string Json = "application/json"
+```
+
+
+#### Field `Xml`
+
+##### Syntax
+```csharp
+public static string Xml = "application/xml"
+```
+
+
+#### Field `FromDataFormat`
+
+##### Syntax
+```csharp
+public static Dictionary<DataFormat, string> FromDataFormat
+```
+
+
+#### Field `JsonAccept`
+
+##### Syntax
+```csharp
+public static string[] JsonAccept
+```
+
+
+#### Field `XmlAccept`
+
+##### Syntax
+```csharp
+public static string[] XmlAccept
+```
+
+
+### Interface `IRestSerializer`
+
+#### Syntax
+```csharp
+public interface IRestSerializer : ISerializer, IDeserializer
+```
+
+#### Property `SupportedContentTypes`
+
+##### Syntax
+```csharp
+string[] SupportedContentTypes { get; }
+```
+
+
+#### Property `DataFormat`
+
+##### Syntax
+```csharp
+DataFormat DataFormat { get; }
+```
+
+
+#### Method `Serialize(Parameter)`
+
+##### Syntax
+```csharp
+string Serialize(Parameter parameter)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`parameter` | `RestSharp.Parameter` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+### Interface `IWithRootElement`
+
+#### Syntax
+```csharp
+public interface IWithRootElement
+```
+
+#### Property `RootElement`
+
+##### Syntax
+```csharp
+string RootElement { get; set; }
+```
+
+
+## Namespace: RestSharp.Serialization.Json
+### Class `JsonSerializer`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class JsonSerializer : IRestSerializer, ISerializer, IDeserializer, IWithRootElement
+```
+
+#### Property `DateFormat`
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Property `Culture`
+
+##### Syntax
+```csharp
+public CultureInfo Culture { get; set; }
+```
+
+
+#### Method `Serialize(Object)`
+
+Serialize the object as JSON
+If the object is already a serialized string returns it&apos;s value
+
+##### Syntax
+```csharp
+public string Serialize(object obj)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`obj` | `object` | Object to serialize
+
+##### Returns
+Type | Description
+--- | ---
+`string` | JSON as String
+
+
+
+#### Property `ContentType`
+
+Content type for serialized content
+
+##### Syntax
+```csharp
+public string ContentType { get; set; }
+```
+
+
+#### Property `SupportedContentTypes`
+
+##### Syntax
+```csharp
+public string[] SupportedContentTypes { get; }
+```
+
+
+#### Property `DataFormat`
+
+##### Syntax
+```csharp
+public DataFormat DataFormat { get; }
+```
+
+
+#### Method `Serialize(Parameter)`
+
+##### Syntax
+```csharp
+public string Serialize(Parameter parameter)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`parameter` | `RestSharp.Parameter` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `Deserialize<T>(IRestResponse)`
+
+##### Syntax
+```csharp
+public T Deserialize<T>(IRestResponse response)
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`response` | `RestSharp.IRestResponse` | 
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+#### Property `RootElement`
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+### Class `JsonDeserializer`
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Serialization.Json.JsonSerializer`
+
+#### Inherited members
+-  `RestSharp.Serialization.Json.JsonSerializer.DateFormat`
+#### Syntax
+```csharp
+public class JsonDeserializer : JsonSerializer, IRestSerializer, ISerializer, IDeserializer, IWithRootElement
+```
+
+
+## Namespace: RestSharp.Serialization.Xml
+### Class `DotNetXmlSerializerClientExtensions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class DotNetXmlSerializerClientExtensions
+```
+
+#### Method `UseDotNetXmlSerializer(IRestClient, String, Encoding)`
+
+##### Syntax
+```csharp
+public static IRestClient UseDotNetXmlSerializer(this IRestClient restClient, string xmlNamespace = null, Encoding encoding = null)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`restClient` | `RestSharp.IRestClient` | 
+`xmlNamespace` | `string` | 
+`encoding` | `System.Text.Encoding` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.IRestClient` | 
+
+
+
+### Interface `IXmlDeserializer`
+
+#### Syntax
+```csharp
+public interface IXmlDeserializer : IDeserializer, IWithRootElement
+```
+
+#### Property `Namespace`
+
+##### Syntax
+```csharp
+string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+##### Syntax
+```csharp
+string DateFormat { get; set; }
+```
+
+
+### Interface `IXmlSerializer`
+
+#### Syntax
+```csharp
+public interface IXmlSerializer : ISerializer, IWithRootElement
+```
+
+#### Property `Namespace`
+
+##### Syntax
+```csharp
+string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+##### Syntax
+```csharp
+string DateFormat { get; set; }
+```
+
+
+### Class `XmlAttributeDeserializer`
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Deserializers.XmlDeserializer`
+#### Syntax
+```csharp
+public class XmlAttributeDeserializer : XmlDeserializer, IXmlDeserializer, IDeserializer, IWithRootElement
+```
+
+#### Method `GetValueFromXml(XElement, XName, PropertyInfo, Boolean)`
+
+##### Syntax
+```csharp
+protected override object GetValueFromXml(XElement root, XName name, PropertyInfo prop, bool useExactName)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`root` | `XElement` | 
+`name` | `XName` | 
+`prop` | `System.Reflection.PropertyInfo` | 
+`useExactName` | `bool` | 
+
+##### Returns
+Type | Description
+--- | ---
+`object` | 
+
+
+
+### Class `XmlRestSerializer`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class XmlRestSerializer : IRestSerializer, IXmlSerializer, ISerializer, IXmlDeserializer, IDeserializer, IWithRootElement
+```
+
+#### Property `SupportedContentTypes`
+
+##### Syntax
+```csharp
+public string[] SupportedContentTypes { get; }
+```
+
+
+#### Property `DataFormat`
+
+##### Syntax
+```csharp
+public DataFormat DataFormat { get; }
+```
+
+
+#### Property `ContentType`
+
+##### Syntax
+```csharp
+public string ContentType { get; set; }
+```
+
+
+#### Method `Serialize(Object)`
+
+##### Syntax
+```csharp
+public string Serialize(object obj)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`obj` | `object` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Method `Deserialize<T>(IRestResponse)`
+
+##### Syntax
+```csharp
+public T Deserialize<T>(IRestResponse response)
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`response` | `RestSharp.IRestResponse` | 
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+#### Method `Serialize(Parameter)`
+
+##### Syntax
+```csharp
+public string Serialize(Parameter parameter)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`parameter` | `RestSharp.Parameter` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+#### Property `RootElement`
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+#### Property `Namespace`
+
+##### Syntax
+```csharp
+public string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Method `WithOptions(XmlSerilizationOptions)`
+
+##### Syntax
+```csharp
+public XmlRestSerializer WithOptions(XmlSerilizationOptions options)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`options` | `RestSharp.Serialization.Xml.XmlSerilizationOptions` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Serialization.Xml.XmlRestSerializer` | 
+
+
+
+#### Method `WithXmlSerializer<T>(XmlSerilizationOptions)`
+
+##### Syntax
+```csharp
+public XmlRestSerializer WithXmlSerializer<T>(XmlSerilizationOptions options = null)
+    where T : IXmlSerializer, new()
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`options` | `RestSharp.Serialization.Xml.XmlSerilizationOptions` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Serialization.Xml.XmlRestSerializer` | 
+
+
+
+#### Method `WithXmlSerializer(IXmlSerializer)`
+
+##### Syntax
+```csharp
+public XmlRestSerializer WithXmlSerializer(IXmlSerializer xmlSerializer)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`xmlSerializer` | `RestSharp.Serialization.Xml.IXmlSerializer` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Serialization.Xml.XmlRestSerializer` | 
+
+
+
+#### Method `WithXmlDeserialzier<T>(XmlSerilizationOptions)`
+
+##### Syntax
+```csharp
+public XmlRestSerializer WithXmlDeserialzier<T>(XmlSerilizationOptions options = null)
+    where T : IXmlDeserializer, new()
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`options` | `RestSharp.Serialization.Xml.XmlSerilizationOptions` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Serialization.Xml.XmlRestSerializer` | 
+
+
+
+#### Method `WithXmlDeserializer(IXmlDeserializer)`
+
+##### Syntax
+```csharp
+public XmlRestSerializer WithXmlDeserializer(IXmlDeserializer xmlDeserializer)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`xmlDeserializer` | `RestSharp.Serialization.Xml.IXmlDeserializer` | 
+
+##### Returns
+Type | Description
+--- | ---
+`RestSharp.Serialization.Xml.XmlRestSerializer` | 
+
+
+
+### Class `XmlSerilizationOptions`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class XmlSerilizationOptions
+```
+
+#### Property `RootElement`
+
+Name of the root element to use when serializing
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+#### Property `Namespace`
+
+XML namespace to use when serializing
+
+##### Syntax
+```csharp
+public string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+Format string to use when serializing dates
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Property `Culture`
+
+##### Syntax
+```csharp
+public CultureInfo Culture { get; set; }
+```
+
+
+#### Property `Default`
+
+##### Syntax
+```csharp
+public static XmlSerilizationOptions Default { get; }
+```
+
+
+## Namespace: RestSharp.Deserializers
+### Class `DeserializeAsAttribute`
+
+Allows control how class and property names and values are deserialized by XmlAttributeDeserializer
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `System.Attribute`
+#### Syntax
+```csharp
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, Inherited = false)]
+public sealed class DeserializeAsAttribute : Attribute
+```
+
+#### Property `Name`
+
+The name to use for the serialized element
+
+##### Syntax
+```csharp
+public string Name { get; set; }
+```
+
+
+#### Property `Attribute`
+
+Sets if the property to Deserialize is an Attribute or Element (Default: false)
+
+##### Syntax
+```csharp
+public bool Attribute { get; set; }
+```
+
+
+#### Property `Content`
+
+Sets if the property to Deserialize is a content of current Element (Default: false)
+
+##### Syntax
+```csharp
+public bool Content { get; set; }
+```
+
+
+### Interface `IDeserializer`
+
+#### Syntax
+```csharp
+public interface IDeserializer
+```
+
+#### Method `Deserialize<T>(IRestResponse)`
+
+##### Syntax
+```csharp
+T Deserialize<T>(IRestResponse response)
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`response` | `RestSharp.IRestResponse` | 
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+### Class `DotNetXmlDeserializer`
+
+Wrapper for System.Xml.Serialization.XmlSerializer.
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class DotNetXmlDeserializer : IXmlDeserializer, IDeserializer, IWithRootElement
+```
+
+#### Property `Encoding`
+
+Encoding for serialized content
+
+##### Syntax
+```csharp
+public Encoding Encoding { get; set; }
+```
+
+
+#### Property `RootElement`
+
+Name of the root element to use when serializing
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+#### Property `Namespace`
+
+XML namespace to use when serializing
+
+##### Syntax
+```csharp
+public string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Method `Deserialize<T>(IRestResponse)`
+
+##### Syntax
+```csharp
+public T Deserialize<T>(IRestResponse response)
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`response` | `RestSharp.IRestResponse` | 
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+### Class `XmlDeserializer`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class XmlDeserializer : IXmlDeserializer, IDeserializer, IWithRootElement
+```
+
+#### Constructor `XmlDeserializer()`
+
+##### Syntax
+```csharp
+public XmlDeserializer()
+```
+
+
+#### Property `Culture`
+
+##### Syntax
+```csharp
+public CultureInfo Culture { get; set; }
+```
+
+
+#### Property `RootElement`
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+#### Property `Namespace`
+
+##### Syntax
+```csharp
+public string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Method `Deserialize<T>(IRestResponse)`
+
+##### Syntax
+```csharp
+public virtual T Deserialize<T>(IRestResponse response)
+```
+##### Generic parameters
+Name | Description
+--- | ---
+`T` | 
+
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`response` | `RestSharp.IRestResponse` | 
+
+##### Returns
+Type | Description
+--- | ---
+`T` | 
+
+
+
+#### Method `Map(Object, XElement)`
+
+##### Syntax
+```csharp
+protected virtual object Map(object x, XElement root)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`x` | `object` | 
+`root` | `XElement` | 
+
+##### Returns
+Type | Description
+--- | ---
+`object` | 
+
+
+
+#### Method `CreateAndMap(Type, XElement)`
+
+##### Syntax
+```csharp
+protected virtual object CreateAndMap(Type t, XElement element)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`t` | `System.Type` | 
+`element` | `XElement` | 
+
+##### Returns
+Type | Description
+--- | ---
+`object` | 
+
+
+
+#### Method `GetValueFromXml(XElement, XName, PropertyInfo, Boolean)`
+
+##### Syntax
+```csharp
+protected virtual object GetValueFromXml(XElement root, XName name, PropertyInfo prop, bool useExactName)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`root` | `XElement` | 
+`name` | `XName` | 
+`prop` | `System.Reflection.PropertyInfo` | 
+`useExactName` | `bool` | 
+
+##### Returns
+Type | Description
+--- | ---
+`object` | 
+
+
+
+#### Method `GetElementByName(XElement, XName)`
+
+##### Syntax
+```csharp
+protected virtual XElement GetElementByName(XElement root, XName name)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`root` | `XElement` | 
+`name` | `XName` | 
+
+##### Returns
+Type | Description
+--- | ---
+`XElement` | 
+
+
+
+#### Method `GetAttributeByName(XElement, XName, Boolean)`
+
+##### Syntax
+```csharp
+protected virtual XAttribute GetAttributeByName(XElement root, XName name, bool useExactName)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`root` | `XElement` | 
+`name` | `XName` | 
+`useExactName` | `bool` | 
+
+##### Returns
+Type | Description
+--- | ---
+`XAttribute` | 
+
+
+
+## Namespace: RestSharp.Serializers
+### Interface `ISerializer`
+
+#### Syntax
+```csharp
+public interface ISerializer
+```
+
+#### Property `ContentType`
+
+##### Syntax
+```csharp
+string ContentType { get; set; }
+```
+
+
+#### Method `Serialize(Object)`
+
+##### Syntax
+```csharp
+string Serialize(object obj)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`obj` | `object` | 
+
+##### Returns
+Type | Description
+--- | ---
+`string` | 
+
+
+
+### Class `SerializeAsAttribute`
+
+Allows control how class and property names and values are serialized by XmlSerializer
+Currently not supported with the JsonSerializer
+When specified at the property level the class-level specification is overridden
+
+#### Inheritance
+↳ `object`<br>&nbsp;&nbsp;↳ `System.Attribute`
+#### Syntax
+```csharp
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, Inherited = false)]
+public sealed class SerializeAsAttribute : Attribute
+```
+
+#### Constructor `SerializeAsAttribute()`
+
+##### Syntax
+```csharp
+public SerializeAsAttribute()
+```
+
+
+#### Property `Name`
+
+The name to use for the serialized element
+
+##### Syntax
+```csharp
+public string Name { get; set; }
+```
+
+
+#### Property `Attribute`
+
+Sets the value to be serialized as an Attribute instead of an Element
+
+##### Syntax
+```csharp
+public bool Attribute { get; set; }
+```
+
+
+#### Property `Content`
+
+Sets the value to be serialized as text content of current Element instead of an new Element
+
+##### Syntax
+```csharp
+public bool Content { get; set; }
+```
+
+
+#### Property `Culture`
+
+The culture to use when serializing
+
+##### Syntax
+```csharp
+public CultureInfo Culture { get; set; }
+```
+
+
+#### Property `NameStyle`
+
+Transforms the casing of the name based on the selected value.
+
+##### Syntax
+```csharp
+public NameStyle NameStyle { get; set; }
+```
+
+
+#### Property `Index`
+
+The order to serialize the element. Default is int.MaxValue.
+
+##### Syntax
+```csharp
+public int Index { get; set; }
+```
+
+
+#### Method `TransformName(String)`
+
+Called by the attribute when NameStyle is speficied
+
+##### Syntax
+```csharp
+public string TransformName(string input)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`input` | `string` | The string to transform
+
+##### Returns
+Type | Description
+--- | ---
+`string` | String
+
+
+
+### Enum `NameStyle`
+
+Options for transforming casing of element names
+
+#### Syntax
+```csharp
+public enum NameStyle
+```
+
+#### Fields
+Name | Description
+--- | ---
+AsIs | 
+CamelCase | 
+LowerCase | 
+PascalCase | 
+### Class `DotNetXmlSerializer`
+
+Wrapper for System.Xml.Serialization.XmlSerializer.
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class DotNetXmlSerializer : IXmlSerializer, ISerializer, IWithRootElement
+```
+
+#### Constructor `DotNetXmlSerializer()`
+
+Default constructor, does not specify namespace
+
+##### Syntax
+```csharp
+public DotNetXmlSerializer()
+```
+
+
+#### Constructor `DotNetXmlSerializer(String)`
+
+Specify the namespaced to be used when serializing
+
+##### Syntax
+```csharp
+public DotNetXmlSerializer(string namespace)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`namespace` | `string` | XML namespace
+
+
+
+#### Property `Encoding`
+
+Encoding for serialized content
+
+##### Syntax
+```csharp
+public Encoding Encoding { get; set; }
+```
+
+
+#### Method `Serialize(Object)`
+
+Serialize the object as XML
+
+##### Syntax
+```csharp
+public string Serialize(object obj)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`obj` | `object` | Object to serialize
+
+##### Returns
+Type | Description
+--- | ---
+`string` | XML as string
+
+
+
+#### Property `RootElement`
+
+Name of the root element to use when serializing
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+#### Property `Namespace`
+
+XML namespace to use when serializing
+
+##### Syntax
+```csharp
+public string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+Format string to use when serializing dates
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Property `ContentType`
+
+Content type for serialized content
+
+##### Syntax
+```csharp
+public string ContentType { get; set; }
+```
+
+
+### Class `XmlSerializer`
+
+Default XML Serializer
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class XmlSerializer : IXmlSerializer, ISerializer, IWithRootElement
+```
+
+#### Constructor `XmlSerializer()`
+
+Default constructor, does not specify namespace
+
+##### Syntax
+```csharp
+public XmlSerializer()
+```
+
+
+#### Constructor `XmlSerializer(String)`
+
+Specify the namespaced to be used when serializing
+
+##### Syntax
+```csharp
+public XmlSerializer(string namespace)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`namespace` | `string` | XML namespace
+
+
+
+#### Method `Serialize(Object)`
+
+Serialize the object as XML
+
+##### Syntax
+```csharp
+public string Serialize(object obj)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`obj` | `object` | Object to serialize
+
+##### Returns
+Type | Description
+--- | ---
+`string` | XML as string
+
+
+
+#### Property `RootElement`
+
+Name of the root element to use when serializing
+
+##### Syntax
+```csharp
+public string RootElement { get; set; }
+```
+
+
+#### Property `Namespace`
+
+XML namespace to use when serializing
+
+##### Syntax
+```csharp
+public string Namespace { get; set; }
+```
+
+
+#### Property `DateFormat`
+
+Format string to use when serializing dates
+
+##### Syntax
+```csharp
+public string DateFormat { get; set; }
+```
+
+
+#### Property `ContentType`
+
+Content type for serialized content
+
+##### Syntax
+```csharp
+public string ContentType { get; set; }
+```
+
+
+## Namespace: RestSharp.Validation
+### Class `Ensure`
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public static class Ensure
+```
+
+#### Method `NotNull(Object, String)`
+
+##### Syntax
+```csharp
+public static void NotNull(object parameter, string name)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`parameter` | `object` | 
+`name` | `string` | 
+
+
+
+#### Method `NotEmpty(String, String)`
+
+##### Syntax
+```csharp
+public static void NotEmpty(string parameter, string name)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`parameter` | `string` | 
+`name` | `string` | 
+
+
+
+### Class `Require`
+
+Helper methods for validating required values
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class Require
+```
+
+#### Method `Argument(String, Object)`
+
+Require a parameter to not be null
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static void Argument(string argumentName, object argumentValue)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`argumentName` | `string` | Name of the parameter
+`argumentValue` | `object` | Value of the parameter
+
+
+
+### Class `Validate`
+
+Helper methods for validating values
+
+#### Inheritance
+↳ `object`
+#### Syntax
+```csharp
+public class Validate
+```
+
+#### Method `IsBetween(Int32, Int32, Int32)`
+
+Validate an integer value is between the specified values (exclusive of min/max)
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static void IsBetween(int value, int min, int max)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`value` | `int` | Value to validate
+`min` | `int` | Exclusive minimum value
+`max` | `int` | Exclusive maximum value
+
+
+
+#### Method `IsValidLength(String, Int32)`
+
+Validate a string length
+
+##### Syntax
+```csharp
+[Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
+public static void IsValidLength(string value, int maxSize)
+```
+##### Parameters
+Name | Type | Description
+--- | --- | ---
+`value` | `string` | String to be validated
+`maxSize` | `int` | Maximum length of the string
+
 

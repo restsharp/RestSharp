@@ -62,10 +62,7 @@ namespace RestSharp.Extensions
             return false;
         }
 
-        [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
-        public static object ChangeType(this object source, TypeInfo newType) => Convert.ChangeType(source, newType.AsType());
-
-        public static object ChangeType(this object source, Type newType, CultureInfo culture) => Convert.ChangeType(source, newType);
+        internal static object ChangeType(this object source, Type newType) => Convert.ChangeType(source, newType);
 
         /// <summary>
         ///     Find a value from a System.Enum by trying several possible variants

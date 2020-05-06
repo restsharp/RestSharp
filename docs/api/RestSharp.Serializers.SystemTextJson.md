@@ -1,215 +1,217 @@
-# Namespace: RestSharp.Serializers.SystemTextJson
-## Class `RestClientExtensions`
+---
+title: RestSharp.Serializers.SystemTextJson
+---
 
-### Inheritance
+# Assembly: RestSharp.Serializers.SystemTextJson
+## Namespace: RestSharp.Serializers.SystemTextJson
+### Class `RestClientExtensions`
+
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public static class RestClientExtensions
 ```
 
-### Method `UseSystemTextJson(IRestClient)`
+#### Method `UseSystemTextJson(IRestClient)`
 
 Use System.Text.Json serializer with default settings
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient UseSystemTextJson(this IRestClient client)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `IRestClient` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `IRestClient` | 
 
 
 
-### Method `UseSystemTextJson(IRestClient, JsonSerializerOptions)`
+#### Method `UseSystemTextJson(IRestClient, JsonSerializerOptions)`
 
 Use System.Text.Json serializer with custom settings
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestClient UseSystemTextJson(this IRestClient client, JsonSerializerOptions options)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `client` | `IRestClient` | 
 `options` | `JsonSerializerOptions` | System.Text.Json serializer options
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `IRestClient` | 
 
 
 
-## Class `RestRequestExtensions`
+### Class `RestRequestExtensions`
 
-### Inheritance
+#### Inheritance
 ↳ `object`
-### Syntax
+#### Syntax
 ```csharp
 public static class RestRequestExtensions
 ```
 
-### Method `UseSystemTextJson(IRestRequest)`
+#### Method `UseSystemTextJson(IRestRequest)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestRequest UseSystemTextJson(this IRestRequest request)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `IRestRequest` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `IRestRequest` | 
 
 
 
-### Method `UseSystemTextJson(IRestRequest, JsonSerializerOptions)`
+#### Method `UseSystemTextJson(IRestRequest, JsonSerializerOptions)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public static IRestRequest UseSystemTextJson(this IRestRequest request, JsonSerializerOptions options)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `request` | `IRestRequest` | 
 `options` | `JsonSerializerOptions` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `IRestRequest` | 
 
 
 
-## Class `SystemTextJsonSerializer`
+### Class `SystemTextJsonSerializer`
 
-### Inheritance
+#### Inheritance
 ↳ `IRestSerializer`<br>&nbsp;&nbsp;↳ `System.Object`
-### Syntax
+#### Syntax
 ```csharp
 public class SystemTextJsonSerializer : IRestSerializer
 ```
 
-### Extension methods
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
--  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-### Constructor `SystemTextJsonSerializer()`
+#### Constructor `SystemTextJsonSerializer()`
 
 Create the new serializer that uses System.Text.Json.JsonSerializer with default settings
 
-#### Syntax
+##### Syntax
 ```csharp
 public SystemTextJsonSerializer()
 ```
 
 
-### Constructor `SystemTextJsonSerializer(JsonSerializerOptions)`
+#### Constructor `SystemTextJsonSerializer(JsonSerializerOptions)`
 
 Create the new serializer that uses System.Text.Json.JsonSerializer with custom settings
 
-#### Syntax
+##### Syntax
 ```csharp
 public SystemTextJsonSerializer(JsonSerializerOptions options)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `options` | `JsonSerializerOptions` | Json serializer settings
 
 
 
-### Method `Serialize(Object)`
+#### Method `Serialize(Object)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Serialize(object obj)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `obj` | `object` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `string` | 
 
 
 
-### Method `Serialize(Parameter)`
+#### Method `Serialize(Parameter)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string Serialize(Parameter bodyParameter)
 ```
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `bodyParameter` | `Parameter` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `string` | 
 
 
 
-### Method `Deserialize<T>(IRestResponse)`
+#### Method `Deserialize<T>(IRestResponse)`
 
-#### Syntax
+##### Syntax
 ```csharp
 public T Deserialize<T>(IRestResponse response)
 ```
-#### Generic parameters
+##### Generic parameters
 Name | Description
 --- | ---
 `T` | 
 
-#### Parameters
+##### Parameters
 Name | Type | Description
 --- | --- | ---
 `response` | `IRestResponse` | 
 
-#### Returns
+##### Returns
 Type | Description
 --- | ---
 `T` | 
 
 
 
-### Property `SupportedContentTypes`
+#### Property `SupportedContentTypes`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string[] SupportedContentTypes { get; }
 ```
 
 
-### Property `ContentType`
+#### Property `ContentType`
 
-#### Syntax
+##### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
 
 
-### Property `DataFormat`
+#### Property `DataFormat`
 
-#### Syntax
+##### Syntax
 ```csharp
 public DataFormat DataFormat { get; }
 ```
