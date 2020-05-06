@@ -21,24 +21,26 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Serialization;
 
 namespace RestSharp
 {
+    [PublicAPI]
     public partial interface IRestClient
     {
         /// <summary>
-        /// The UseSerializer method.
+        /// Replace the default serializer with a custom one
         /// </summary>
-        /// <param name="serializerFactory">The serializer factory</param>
+        /// <param name="serializerFactory">Function that returns the serializer instance</param>
         IRestClient UseSerializer(Func<IRestSerializer> serializerFactory);
 
         /// <summary>
-        ///     Replace the default serializer with a custom one
+        /// Replace the default serializer with a custom one
         /// </summary>
-        /// <typeparam name="T">The type that implements IRestSerializer</typeparam>
+        /// <typeparam name="T">The type that implements <see cref="IRestSerializer"/></typeparam>
         /// <returns></returns>
         IRestClient UseSerializer<T>() where T : IRestSerializer, new();
 
