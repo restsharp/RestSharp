@@ -124,9 +124,8 @@ namespace RestSharp.Serialization.Json
 
                     for (var i = 0; i < parts.Length; ++i)
                     {
-                        var actualName = parts[i]
-                            .GetNameVariants(Culture)
-                            .FirstOrDefault(currentData.ContainsKey);
+                        var variants = parts[i].GetNameVariants(Culture).Distinct();
+                        var actualName = variants.FirstOrDefault(currentData.ContainsKey);
 
                         if (actualName == null) break;
 
@@ -322,9 +321,7 @@ namespace RestSharp.Serialization.Json
         {
             var instance = Activator.CreateInstance(type);
 
-            Map(instance, (IDictionary<string, object>) element);
-
-            return instance;
+            return Map(instance, (IDictionary<string, object>) element);
         }
     }
 

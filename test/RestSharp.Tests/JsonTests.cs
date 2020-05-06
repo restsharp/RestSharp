@@ -31,7 +31,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_4sq_Json_With_Root_Element_Specified()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "4sq.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "4sq.json"));
             var serializer = new JsonSerializer {RootElement = "response"};
             var output     = serializer.Deserialize<VenuesResponse>(new RestResponse {Content = doc});
 
@@ -78,7 +78,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_DateTime()
         {
-            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
+            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.json");
 
             Assert.AreEqual(
                 new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
@@ -108,7 +108,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_DateTimeOffset()
         {
-            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
+            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.json");
 
             Assert.AreEqual(
                 new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc).ToString("yyyy-MM-dd HH:mm:ss.fff"),
@@ -130,7 +130,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Dictionary_of_Lists()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary.json"));
             var serializer = new JsonSerializer {RootElement = "response"};
             var output     = serializer.Deserialize<EmployeeTracker>(new RestResponse {Content = doc});
 
@@ -142,7 +142,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Dictionary_with_Null()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary_null.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary_null.json"));
             var serializer = new JsonSerializer {RootElement = "response"};
 
             IDictionary<string, object> output =
@@ -156,7 +156,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Dot_Field()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "bearertoken.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "bearertoken.json"));
             var response   = new RestResponse {Content = data};
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<BearerToken>(response);
@@ -227,7 +227,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_From_Root_Element()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "sojson.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "sojson.json"));
             var serializer = new JsonSerializer {RootElement = "User"};
             var output     = serializer.Deserialize<SoUser>(new RestResponse {Content = doc});
 
@@ -253,7 +253,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Generic_Members()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "GenericWithList.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "GenericWithList.json"));
             var serializer = new JsonSerializer();
 
             var output =
@@ -334,7 +334,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Iso8601DateTimeLocal()
         {
-            var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
+            var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.json");
 
             Assert.AreEqual(
                 new DateTime(2012, 7, 19, 10, 23, 25, DateTimeKind.Utc),
@@ -345,7 +345,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Iso8601DateTimeWithOffset()
         {
-            var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
+            var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.json");
 
             Assert.AreEqual(
                 new DateTime(2012, 7, 19, 10, 23, 25, 544, DateTimeKind.Utc),
@@ -356,7 +356,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Iso8601DateTimeZulu()
         {
-            var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.txt");
+            var payload = GetPayLoad<Iso8601DateTimeTestStructure>("iso8601datetimes.json");
 
             Assert.AreEqual(
                 new DateTime(2012, 7, 19, 10, 23, 25, 544, DateTimeKind.Utc),
@@ -379,7 +379,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_JsonNet_Dates()
         {
-            var person = GetPayLoad<PersonForJson>("person.json.txt");
+            var person = GetPayLoad<PersonForJson>("person.json");
 
             Assert.AreEqual(
                 new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
@@ -406,7 +406,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Lists_of_Simple_Types()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonlists.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonlists.json"));
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<JsonLists>(new RestResponse {Content = doc});
 
@@ -449,7 +449,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Names_With_Underscore_Prefix()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "underscore_prefix.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "underscore_prefix.json"));
             var response   = new RestResponse {Content       = data};
             var serializer = new JsonSerializer {RootElement = "User"};
             var output     = serializer.Deserialize<SoUser>(response);
@@ -506,7 +506,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Nullable_DateTime_With_Null()
         {
-            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
+            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.json");
 
             Assert.Null(payload.NullableDateTimeWithNull);
         }
@@ -514,7 +514,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Nullable_DateTime_With_Value()
         {
-            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
+            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.json");
 
             Assert.NotNull(payload.NullableDateTimeWithValue);
 
@@ -527,7 +527,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Nullable_DateTimeOffset_With_Null()
         {
-            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
+            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.json");
 
             Assert.Null(payload.NullableDateTimeOffsetWithNull);
         }
@@ -535,7 +535,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Nullable_DateTimeOffset_With_Value()
         {
-            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.txt");
+            var payload = GetPayLoad<DateTimeTestStructure>("datetimes.json");
 
             Assert.NotNull(payload.NullableDateTimeOffsetWithValue);
 
@@ -548,7 +548,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Object_Type_Property_With_Primitive_Vale()
         {
-            var payload = GetPayLoad<ObjectProperties>("objectproperty.txt");
+            var payload = GetPayLoad<ObjectProperties>("objectproperty.json");
 
             Assert.AreEqual(42L, payload.ObjectProperty);
         }
@@ -579,7 +579,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Root_Json_Array_To_Inherited_List()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonarray.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonarray.json"));
             var response   = new RestResponse {Content = data};
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<StatusList>(response);
@@ -590,7 +590,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Root_Json_Array_To_List()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonarray.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonarray.json"));
             var response   = new RestResponse {Content = data};
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<List<status>>(response);
@@ -601,7 +601,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Select_Tokens()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonarray.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonarray.json"));
             var response   = new RestResponse {Content = data};
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<StatusComplexList>(response);
@@ -654,7 +654,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_TimeSpan()
         {
-            var payload = GetPayLoad<TimeSpanTestStructure>("timespans.txt");
+            var payload = GetPayLoad<TimeSpanTestStructure>("timespans.json");
 
             Assert.AreEqual(new TimeSpan(468006), payload.Tick);
             Assert.AreEqual(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
@@ -677,7 +677,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_To_Dictionary_Int_Object()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary_KeysType.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary_KeysType.json"));
             var serializer = new JsonSerializer();
 
             var output =
@@ -693,7 +693,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_To_Dictionary_String_Object()
         {
-            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary.txt"));
+            var doc        = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsondictionary.json"));
             var serializer = new JsonSerializer();
 
             var output =
@@ -755,7 +755,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Various_Enum_Types()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonenumtypes.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonenumtypes.json"));
             var response   = new RestResponse {Content = data};
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<JsonEnumTypesTestStructure>(response);
@@ -773,7 +773,7 @@ namespace RestSharp.Tests
         [Test]
         public void Can_Deserialize_Various_Enum_Values()
         {
-            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonenums.txt"));
+            var data       = File.ReadAllText(Path.Combine(CurrentPath, "SampleData", "jsonenums.json"));
             var response   = new RestResponse {Content = data};
             var serializer = new JsonSerializer();
             var output     = serializer.Deserialize<JsonEnumsTestStructure>(response);

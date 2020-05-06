@@ -25,10 +25,10 @@
     <None Update="SampleData\header_and_rows.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\4sq.txt">
+    <None Update="SampleData\4sq.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\bearertoken.txt">
+    <None Update="SampleData\bearertoken.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleData\boolean_from_number.xml">
@@ -37,7 +37,7 @@
     <None Update="SampleData\boolean_from_string.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\datetimes.txt">
+    <None Update="SampleData\datetimes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleData\deserialize_as_list.xml">
@@ -49,7 +49,7 @@
     <None Update="SampleData\eventful.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\GenericWithList.txt">
+    <None Update="SampleData\GenericWithList.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleData\Goodreads.xml">
@@ -61,28 +61,28 @@
     <None Update="SampleData\InlineListSample.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\iso8601datetimes.txt">
+    <None Update="SampleData\iso8601datetimes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsonarray.txt">
+    <None Update="SampleData\jsonarray.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsondictionary.txt">
+    <None Update="SampleData\jsondictionary.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsondictionary_KeysType.txt">
+    <None Update="SampleData\jsondictionary_KeysType.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsondictionary_null.txt">
+    <None Update="SampleData\jsondictionary_null.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsonenums.txt">
+    <None Update="SampleData\jsonenums.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsonenumtypes.txt">
+    <None Update="SampleData\jsonenumtypes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\jsonlists.txt">
+    <None Update="SampleData\jsonlists.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleData\Lastfm.xml">
@@ -94,22 +94,22 @@
     <None Update="SampleData\NestedListSample.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\objectproperty.txt">
+    <None Update="SampleData\objectproperty.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\person.json.txt">
+    <None Update="SampleData\person.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleData\restsharp.nuspec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\sojson.txt">
+    <None Update="SampleData\sojson.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\timespans.txt">
+    <None Update="SampleData\timespans.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SampleData\underscore_prefix.txt">
+    <None Update="SampleData\underscore_prefix.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleData\xmllists.xml">

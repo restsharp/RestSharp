@@ -274,11 +274,11 @@ namespace RestSharp.Extensions
             );
 
         /// <summary>
-        ///     Add an undescore prefix to a pascasl-cased string
+        ///     Add an underscore prefix to a pascal-cased string
         /// </summary>
         /// <param name="pascalCasedWord"></param>
         /// <returns></returns>
-        public static string AddUnderscorePrefix(this string pascalCasedWord) => string.Format("_{0}", pascalCasedWord);
+        public static string AddUnderscorePrefix(this string pascalCasedWord) => $"_{pascalCasedWord}";
 
         /// <summary>
         ///     Add spaces to a pascal-cased string
@@ -332,8 +332,14 @@ namespace RestSharp.Extensions
             // try name with underscore prefix
             yield return name.AddUnderscorePrefix();
 
-            // try name with underscore prefix, using camel case
+            // try name with proper camel case
+            yield return name.AddUnderscores().ToCamelCase(culture);
+
+            // try name with underscore prefix, using proper camel case
             yield return name.ToCamelCase(culture).AddUnderscorePrefix();
+
+            // try name with underscore prefix, using camel case
+            yield return name.AddUnderscores().ToCamelCase(culture).AddUnderscorePrefix();
 
             // try name with spaces
             yield return name.AddSpaces();
