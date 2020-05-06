@@ -15,20 +15,17 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using JetBrains.Annotations;
 using RestSharp.Extensions;
 
 namespace RestSharp
 {
-    /// <summary>
-    ///     HTTP response data
-    /// </summary>
+    /// <inheritdoc />
+    [PublicAPI]
     public class HttpResponse : IHttpResponse
     {
         string _content;
 
-        /// <summary>
-        ///     Default constructor
-        /// </summary>
         public HttpResponse()
         {
             ResponseStatus = ResponseStatus.None;
@@ -36,81 +33,49 @@ namespace RestSharp
             Cookies        = new List<HttpCookie>();
         }
 
-        /// <summary>
-        ///     MIME content type of response
-        /// </summary>
+        /// <inheritdoc />
         public string ContentType { get; set; }
 
-        /// <summary>
-        ///     Length in bytes of the response content
-        /// </summary>
+        /// <inheritdoc />
         public long ContentLength { get; set; }
 
-        /// <summary>
-        ///     Encoding of the response content
-        /// </summary>
+        /// <inheritdoc />
         public string ContentEncoding { get; set; }
 
-        /// <summary>
-        ///     Lazy-loaded string representation of response content
-        /// </summary>
+        /// <inheritdoc />
         public string Content => _content ??= RawBytes.AsString(ContentEncoding);
 
-        /// <summary>
-        ///     HTTP response status code
-        /// </summary>
+        /// <inheritdoc />
         public HttpStatusCode StatusCode { get; set; }
 
-        /// <summary>
-        ///     Description of HTTP status returned
-        /// </summary>
+        /// <inheritdoc />
         public string StatusDescription { get; set; }
 
-        /// <summary>
-        ///     Response content
-        /// </summary>
+        /// <inheritdoc />
         public byte[] RawBytes { get; set; }
 
-        /// <summary>
-        ///     The URL that actually responded to the content (different from request if redirected)
-        /// </summary>
+        /// <inheritdoc />
         public Uri ResponseUri { get; set; }
 
-        /// <summary>
-        ///     HttpWebResponse.Server
-        /// </summary>
+        /// <inheritdoc />
         public string Server { get; set; }
 
-        /// <summary>
-        ///     Headers returned by server with the response
-        /// </summary>
-        public IList<HttpHeader> Headers { get; }
+        /// <inheritdoc />
+        public IList<HttpHeader> Headers { get; internal set; }
 
-        /// <summary>
-        ///     Cookies returned by server with the response
-        /// </summary>
+        /// <inheritdoc />
         public IList<HttpCookie> Cookies { get; }
 
-        /// <summary>
-        ///     Status of the request. Will return Error for transport errors.
-        ///     HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
-        /// </summary>
+        /// <inheritdoc />
         public ResponseStatus ResponseStatus { get; set; }
 
-        /// <summary>
-        ///     Transport or other non-HTTP error generated while attempting request
-        /// </summary>
+        /// <inheritdoc />
         public string ErrorMessage { get; set; }
 
-        /// <summary>
-        ///     Exception thrown when error is encountered.
-        /// </summary>
+        /// <inheritdoc />
         public Exception ErrorException { get; set; }
 
-        /// <summary>
-        ///     The HTTP protocol version (1.0, 1.1, etc)
-        /// </summary>
-        /// <remarks>Only set when underlying framework supports it.</remarks>
+        /// <inheritdoc />
         public Version ProtocolVersion { get; set; }
     }
 }

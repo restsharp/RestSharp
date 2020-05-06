@@ -5,9 +5,6 @@ Extension method overload!
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class MiscExtensions
@@ -119,9 +116,6 @@ Reflection extensions
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class ReflectionExtensions
@@ -267,9 +261,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class ResponseExtensions
@@ -303,9 +294,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class ResponseStatusExtensions
@@ -333,9 +321,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class RSACryptoServiceProviderExtensions
@@ -367,9 +352,6 @@ Name | Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class StringExtensions
@@ -683,9 +665,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class WebRequestExtensions
@@ -735,9 +714,6 @@ XML Extension Methods
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class XmlExtensions

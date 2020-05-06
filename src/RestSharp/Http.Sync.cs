@@ -253,10 +253,12 @@ namespace RestSharp
             void AppendHeaders()
             {
                 foreach (var header in Headers)
+                {
                     if (_restrictedHeaderActions.TryGetValue(header.Name, out var restrictedHeaderAction))
                         restrictedHeaderAction.Invoke(webRequest, header.Value);
                     else
                         webRequest.Headers.Add(header.Name, header.Value);
+                }
             }
 
             void AppendCookies()

@@ -19,21 +19,10 @@ namespace RestSharp
 {
     public partial class RestClient
     {
-        /// <summary>
-        ///     Executes the specified request and downloads the response data
-        /// </summary>
-        /// <param name="request">Request to execute</param>
-        /// <returns>Response data</returns>
-        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Global
+        /// <inheritdoc />
         public byte[] DownloadData(IRestRequest request) => DownloadData(request, false);
 
-        /// <summary>
-        ///     Executes the specified request and downloads the response data
-        /// </summary>
-        /// <param name="request">Request to execute</param>
-        /// <param name="throwOnError">Throw an exception if download fails.</param>
-        /// <returns>Response data</returns>
-        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Global
+        /// <inheritdoc />
         public byte[] DownloadData(IRestRequest request, bool throwOnError)
         {
             var response = Execute(request);
@@ -43,12 +32,7 @@ namespace RestSharp
                 : response.RawBytes;
         }
 
-        /// <summary>
-        ///     Executes the request and returns a response, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="httpMethod">Override the http method in the request</param>
-        /// <returns>RestResponse</returns>
+        /// <inheritdoc />
         public virtual IRestResponse Execute(IRestRequest request, Method httpMethod)
         {
             if (request == null)
@@ -58,11 +42,7 @@ namespace RestSharp
             return Execute(request);
         }
 
-        /// <summary>
-        ///     Executes the request and returns a response, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <returns>RestResponse</returns>
+        /// <inheritdoc />
         public virtual IRestResponse Execute(IRestRequest request)
         {
             var method = Enum.GetName(typeof(Method), request.Method);
@@ -78,8 +58,10 @@ namespace RestSharp
             };
         }
 
+        /// <inheritdoc />
         public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod) => Execute(request, httpMethod, DoExecuteAsGet);
 
+        /// <inheritdoc />
         public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
         {
             request.Method = Method.POST; // Required by RestClient.BuildUri... 
@@ -87,6 +69,7 @@ namespace RestSharp
             return Execute(request, httpMethod, DoExecuteAsPost);
         }
 
+        /// <inheritdoc />
         public virtual IRestResponse<T> Execute<T>(IRestRequest request, Method httpMethod)
         {
             Ensure.NotNull(request, nameof(request));
@@ -95,18 +78,15 @@ namespace RestSharp
             return Execute<T>(request);
         }
 
-        /// <summary>
-        ///     Executes the specified request and deserializes the response content using the appropriate content handler
-        /// </summary>
-        /// <typeparam name="T">Target deserialization type</typeparam>
-        /// <param name="request">Request to execute</param>
-        /// <returns>RestResponse[[T]] with deserialized data in Data property</returns>
+        /// <inheritdoc />
         public virtual IRestResponse<T> Execute<T>(IRestRequest request)
             => Deserialize<T>(request, Execute(request));
 
+        /// <inheritdoc />
         public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod)
             => Deserialize<T>(request, ExecuteAsGet(request, httpMethod));
 
+        /// <inheritdoc />
         public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod)
             => Deserialize<T>(request, ExecuteAsPost(request, httpMethod));
 

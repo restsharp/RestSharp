@@ -5,9 +5,6 @@ Allows control how class and property names and values are deserialized by XmlAt
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `System.Attribute`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, Inherited = false)]
@@ -25,11 +22,6 @@ The name to use for the serialized element
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Attribute`
@@ -40,11 +32,6 @@ Sets if the property to Deserialize is an Attribute or Element (Default: false)
 ```csharp
 public bool Attribute { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Content`
@@ -55,17 +42,9 @@ Sets if the property to Deserialize is a content of current Element (Default: fa
 ```csharp
 public bool Content { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ## Interface `IDeserializer`
-
-
-### Inherited members
 
 ### Syntax
 ```csharp
@@ -104,9 +83,6 @@ Wrapper for System.Xml.Serialization.XmlSerializer.
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class DotNetXmlDeserializer : IXmlDeserializer, IDeserializer, IWithRootElement
@@ -123,11 +99,6 @@ Encoding for serialized content
 ```csharp
 public Encoding Encoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Text.Encoding` | 
-
 
 
 ### Property `RootElement`
@@ -138,11 +109,6 @@ Name of the root element to use when serializing
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Namespace`
@@ -153,11 +119,6 @@ XML namespace to use when serializing
 ```csharp
 public string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -166,11 +127,6 @@ Type | Description
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `Deserialize<T>(IRestResponse)`
@@ -200,9 +156,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class XmlDeserializer : IXmlDeserializer, IDeserializer, IWithRootElement
@@ -225,11 +178,6 @@ public XmlDeserializer()
 ```csharp
 public CultureInfo Culture { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Globalization.CultureInfo` | 
-
 
 
 ### Property `RootElement`
@@ -238,11 +186,6 @@ Type | Description
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Namespace`
@@ -251,11 +194,6 @@ Type | Description
 ```csharp
 public string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -264,11 +202,6 @@ Type | Description
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `Deserialize<T>(IRestResponse)`

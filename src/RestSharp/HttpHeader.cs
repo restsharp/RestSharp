@@ -12,13 +12,32 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
+using JetBrains.Annotations;
+
 namespace RestSharp
 {
     /// <summary>
     ///     Representation of an HTTP header
     /// </summary>
+    [PublicAPI]
     public class HttpHeader
     {
+        /// <summary>
+        /// Creates a new instance of HttpHeader
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        public HttpHeader(string name, string value)
+        {
+            Name  = name;
+            Value = value;
+        }
+
+        /// <summary>
+        /// Creates a new instance of HttpHeader. Remember to assign properties!
+        /// </summary>
+        public HttpHeader() { }
+
         /// <summary>
         ///     Name of the header
         /// </summary>

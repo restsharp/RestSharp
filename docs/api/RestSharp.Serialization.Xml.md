@@ -3,9 +3,6 @@
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class DotNetXmlSerializerClientExtensions
@@ -33,9 +30,6 @@ Type | Description
 
 ## Interface `IXmlDeserializer`
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface IXmlDeserializer : IDeserializer, IWithRootElement
@@ -50,11 +44,6 @@ public interface IXmlDeserializer : IDeserializer, IWithRootElement
 ```csharp
 string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -63,17 +52,9 @@ Type | Description
 ```csharp
 string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Interface `IXmlSerializer`
-
-
-### Inherited members
 
 ### Syntax
 ```csharp
@@ -89,11 +70,6 @@ public interface IXmlSerializer : ISerializer, IWithRootElement
 ```csharp
 string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -102,20 +78,12 @@ Type | Description
 ```csharp
 string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `XmlAttributeDeserializer`
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Deserializers.XmlDeserializer`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class XmlAttributeDeserializer : XmlDeserializer, IXmlDeserializer, IDeserializer, IWithRootElement
@@ -149,9 +117,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class XmlRestSerializer : IRestSerializer, IXmlSerializer, ISerializer, IXmlDeserializer, IDeserializer, IWithRootElement
@@ -166,11 +131,6 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, ISerializer, I
 ```csharp
 public string[] SupportedContentTypes { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string[]` | 
-
 
 
 ### Property `DataFormat`
@@ -179,11 +139,6 @@ Type | Description
 ```csharp
 public DataFormat DataFormat { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.DataFormat` | 
-
 
 
 ### Property `ContentType`
@@ -192,11 +147,6 @@ Type | Description
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `Serialize(Object)`
@@ -264,11 +214,6 @@ Type | Description
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Namespace`
@@ -277,11 +222,6 @@ Type | Description
 ```csharp
 public string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -290,11 +230,6 @@ Type | Description
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `WithOptions(XmlSerilizationOptions)`
@@ -403,9 +338,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class XmlSerilizationOptions
@@ -422,11 +354,6 @@ Name of the root element to use when serializing
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Namespace`
@@ -437,11 +364,6 @@ XML namespace to use when serializing
 ```csharp
 public string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -452,11 +374,6 @@ Format string to use when serializing dates
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Culture`
@@ -465,11 +382,6 @@ Type | Description
 ```csharp
 public CultureInfo Culture { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Globalization.CultureInfo` | 
-
 
 
 ### Property `Default`
@@ -478,9 +390,4 @@ Type | Description
 ```csharp
 public static XmlSerilizationOptions Default { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Serialization.Xml.XmlSerilizationOptions` | 
-
 

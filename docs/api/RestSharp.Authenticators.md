@@ -3,9 +3,6 @@
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public abstract class AuthenticatorBase : IAuthenticator
@@ -33,11 +30,6 @@ Name | Type | Description
 ```csharp
 protected string Token { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `GetAuthenticationParameter(String)`
@@ -83,9 +75,6 @@ UTF-8 is used by default but some servers might expect ISO-8859-1 encoding.
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Authenticators.AuthenticatorBase`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class HttpBasicAuthenticator : AuthenticatorBase, IAuthenticator
@@ -143,9 +132,6 @@ Type | Description
 
 ## Interface `IAuthenticator`
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface IAuthenticator
@@ -175,9 +161,6 @@ JSON WEB TOKEN (JWT) Authenticator class.
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class JwtAuthenticator : IAuthenticator
@@ -234,9 +217,6 @@ Tries to Authenticate with the credentials of the currently logged in user, or i
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class NtlmAuthenticator : IAuthenticator
@@ -306,9 +286,6 @@ Name | Type | Description
 [RFC: The OAuth 1.0 Protocol](http://tools.ietf.org/html/rfc5849)
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class OAuth1Authenticator : IAuthenticator
@@ -323,11 +300,6 @@ public class OAuth1Authenticator : IAuthenticator
 ```csharp
 public virtual string Realm { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ParameterHandling`
@@ -336,11 +308,6 @@ Type | Description
 ```csharp
 public virtual OAuthParameterHandling ParameterHandling { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Authenticators.OAuth.OAuthParameterHandling` | 
-
 
 
 ### Property `SignatureMethod`
@@ -349,11 +316,6 @@ Type | Description
 ```csharp
 public virtual OAuthSignatureMethod SignatureMethod { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Authenticators.OAuth.OAuthSignatureMethod` | 
-
 
 
 ### Property `SignatureTreatment`
@@ -362,11 +324,6 @@ Type | Description
 ```csharp
 public virtual OAuthSignatureTreatment SignatureTreatment { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Authenticators.OAuth.OAuthSignatureTreatment` | 
-
 
 
 ### Method `Authenticate(IRestClient, IRestRequest)`
@@ -578,9 +535,6 @@ abstract class.
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 [Obsolete("Check the OAuth2 authenticators implementation on how to use the AuthenticatorBase instead")]
@@ -611,11 +565,6 @@ Gets the access token.
 ```csharp
 public string AccessToken { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `Authenticate(IRestClient, IRestRequest)`
@@ -660,9 +609,6 @@ Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.1
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Authenticators.AuthenticatorBase`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class OAuth2AuthorizationRequestHeaderAuthenticator : AuthenticatorBase, IAuthenticator
@@ -726,9 +672,6 @@ Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.2
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Authenticators.AuthenticatorBase`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class OAuth2UriQueryParameterAuthenticator : AuthenticatorBase, IAuthenticator
@@ -772,9 +715,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class SimpleAuthenticator : IAuthenticator

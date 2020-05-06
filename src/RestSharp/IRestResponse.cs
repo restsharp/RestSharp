@@ -15,12 +15,14 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using JetBrains.Annotations;
 
 namespace RestSharp
 {
     /// <summary>
     ///     Container for data sent back from API
     /// </summary>
+    [PublicAPI]
     public interface IRestResponse
     {
         /// <summary>

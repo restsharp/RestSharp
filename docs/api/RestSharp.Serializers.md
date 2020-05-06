@@ -1,9 +1,6 @@
 # Namespace: RestSharp.Serializers
 ## Interface `ISerializer`
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface ISerializer
@@ -18,11 +15,6 @@ public interface ISerializer
 ```csharp
 string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `Serialize(Object)`
@@ -51,9 +43,6 @@ When specified at the property level the class-level specification is overridden
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `System.Attribute`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, Inherited = false)]
@@ -79,11 +68,6 @@ The name to use for the serialized element
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Attribute`
@@ -94,11 +78,6 @@ Sets the value to be serialized as an Attribute instead of an Element
 ```csharp
 public bool Attribute { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Content`
@@ -109,11 +88,6 @@ Sets the value to be serialized as text content of current Element instead of an
 ```csharp
 public bool Content { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Culture`
@@ -124,11 +98,6 @@ The culture to use when serializing
 ```csharp
 public CultureInfo Culture { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Globalization.CultureInfo` | 
-
 
 
 ### Property `NameStyle`
@@ -139,11 +108,6 @@ Transforms the casing of the name based on the selected value.
 ```csharp
 public NameStyle NameStyle { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Serializers.NameStyle` | 
-
 
 
 ### Property `Index`
@@ -154,11 +118,6 @@ The order to serialize the element. Default is int.MaxValue.
 ```csharp
 public int Index { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Method `TransformName(String)`
@@ -203,9 +162,6 @@ Wrapper for System.Xml.Serialization.XmlSerializer.
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class DotNetXmlSerializer : IXmlSerializer, ISerializer, IWithRootElement
@@ -247,11 +203,6 @@ Encoding for serialized content
 ```csharp
 public Encoding Encoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Text.Encoding` | 
-
 
 
 ### Method `Serialize(Object)`
@@ -282,11 +233,6 @@ Name of the root element to use when serializing
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Namespace`
@@ -297,11 +243,6 @@ XML namespace to use when serializing
 ```csharp
 public string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -312,11 +253,6 @@ Format string to use when serializing dates
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentType`
@@ -327,11 +263,6 @@ Content type for serialized content
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `XmlSerializer`
@@ -340,9 +271,6 @@ Default XML Serializer
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class XmlSerializer : IXmlSerializer, ISerializer, IWithRootElement
@@ -404,11 +332,6 @@ Name of the root element to use when serializing
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Namespace`
@@ -419,11 +342,6 @@ XML namespace to use when serializing
 ```csharp
 public string Namespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -434,11 +352,6 @@ Format string to use when serializing dates
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentType`
@@ -449,9 +362,4 @@ Content type for serialized content
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 

@@ -27,21 +27,11 @@ namespace RestSharp
     {
         TimeOutState _timeoutState;
 
-        /// <summary>
-        ///     Execute an async POST-style request with the specified HTTP Method.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="httpMethod">The HTTP method to execute.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
             => PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
 
-        /// <summary>
-        ///     Execute an async GET-style request with the specified HTTP Method.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="httpMethod">The HTTP method to execute.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
             => GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
 

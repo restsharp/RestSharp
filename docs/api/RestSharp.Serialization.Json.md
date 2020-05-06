@@ -3,9 +3,6 @@
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class JsonSerializer : IRestSerializer, ISerializer, IDeserializer, IWithRootElement
@@ -20,11 +17,6 @@ public class JsonSerializer : IRestSerializer, ISerializer, IDeserializer, IWith
 ```csharp
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Culture`
@@ -33,11 +25,6 @@ Type | Description
 ```csharp
 public CultureInfo Culture { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Globalization.CultureInfo` | 
-
 
 
 ### Method `Serialize(Object)`
@@ -69,11 +56,6 @@ Content type for serialized content
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `SupportedContentTypes`
@@ -82,11 +64,6 @@ Type | Description
 ```csharp
 public string[] SupportedContentTypes { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string[]` | 
-
 
 
 ### Property `DataFormat`
@@ -95,11 +72,6 @@ Type | Description
 ```csharp
 public DataFormat DataFormat { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.DataFormat` | 
-
 
 
 ### Method `Serialize(Parameter)`
@@ -149,11 +121,6 @@ Type | Description
 ```csharp
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `JsonDeserializer`

@@ -2,7 +2,7 @@
     <PropertyGroup>
         <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
         <PackageIcon>restsharp.png</PackageIcon>
-        <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
         <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
@@ -23,10 +23,11 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Include="MinVer" Version="2.2.0" PrivateAssets="All" />
+        <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     </ItemGroup>
     
     <ItemGroup>
-        <None Include="..\restsharp.png" Pack="true" PackagePath="\"/>
+        <None Include="..\..\restsharp.png" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <PropertyGroup>

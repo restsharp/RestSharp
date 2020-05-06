@@ -140,11 +140,7 @@ namespace RestSharp
             return ExecuteAsync<T>(request, cancellationToken);
         }
 
-        /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
-        /// </summary>
-        /// <param name="request">Request to be executed</param>
-        /// <param name="token">The cancellation token</param>
+        /// <inheritdoc />
         public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token = default)
         {
             Ensure.NotNull(request, nameof(request));

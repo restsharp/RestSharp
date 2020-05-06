@@ -192,6 +192,12 @@ namespace RestSharp
         /// <returns>The downloaded file.</returns>
         byte[] DownloadData(IRestRequest request);
 
+        /// <summary>
+        ///     Executes the specified request and downloads the response data
+        /// </summary>
+        /// <param name="request">Request to execute</param>
+        /// <param name="throwOnError">Throw an exception if download fails.</param>
+        /// <returns>Response data</returns>
         [Obsolete("Use ThrowOnAnyError property to instruct RestSharp to rethrow exceptions")]
         byte[] DownloadData(IRestRequest request, bool throwOnError);
 

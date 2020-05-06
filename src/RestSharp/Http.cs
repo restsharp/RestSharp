@@ -40,9 +40,6 @@ namespace RestSharp
 
         readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
 
-        /// <summary>
-        ///     Default constructor
-        /// </summary>
         public Http()
         {
             _restrictedHeaderActions =
@@ -64,7 +61,8 @@ namespace RestSharp
                 _restrictedHeaderActions.Add("Referer", (r, v) => r.Referer = v);
 
                 _restrictedHeaderActions.Add(
-                    "Transfer-Encoding", (r, v) =>
+                    "Transfer-Encoding",
+                    (r, v) =>
                     {
                         r.TransferEncoding = v;
                         r.SendChunked      = true;
@@ -79,10 +77,10 @@ namespace RestSharp
                 _restrictedHeaderActions.Add("Content-Type", (r, v) => r.ContentType = v);
 
                 _restrictedHeaderActions.Add(
-                    "Date", (r, v) =>
+                    "Date",
+                    (r, v) =>
                     {
-                        if (DateTime.TryParse(v, out var parsed))
-                            r.Date = parsed;
+                        if (DateTime.TryParse(v, out var parsed)) r.Date = parsed;
                     }
                 );
 
@@ -94,8 +92,7 @@ namespace RestSharp
                 {
                     var m = AddRangeRegex.Match(range);
 
-                    if (!m.Success)
-                        return;
+                    if (!m.Success) return;
 
                     var rangeSpecifier = m.Groups[1].Value;
                     var from           = Convert.ToInt64(m.Groups[2].Value);
@@ -128,9 +125,7 @@ namespace RestSharp
 
         internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
-        /// <summary>
-        ///     Enable or disable automatic gzip/deflate decompression
-        /// </summary>
+        /// <inheritdoc />
         public bool AutomaticDecompression { get; set; }
 
         /// <summary>
@@ -138,160 +133,99 @@ namespace RestSharp
         /// </summary>
         public bool AlwaysMultipartFormData { get; set; }
 
-        /// <summary>
-        ///     UserAgent to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public string UserAgent { get; set; }
 
-        /// <summary>
-        ///     Timeout in milliseconds to be used for the request
-        /// </summary>
+        /// <inheritdoc />
         public int Timeout { get; set; }
 
-        /// <summary>
-        ///     The number of milliseconds before the writing or reading times out.
-        /// </summary>
+        /// <inheritdoc />
         public int ReadWriteTimeout { get; set; }
 
-        /// <summary>
-        ///     System.Net.ICredentials to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public ICredentials Credentials { get; set; }
 
-        /// <summary>
-        ///     The System.Net.CookieContainer to be used for the request
-        /// </summary>
+        /// <inheritdoc />
         public CookieContainer CookieContainer { get; set; }
 
-        /// <summary>
-        ///     The delegate to use to write the response instead of reading into RawBytes
-        ///     Here you can also check the request details
-        /// </summary>
+        /// <inheritdoc />
         public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 
-        /// <summary>
-        ///     The delegate to use to write the response instead of reading into RawBytes
-        /// </summary>
+        /// <inheritdoc />
         public Action<Stream> ResponseWriter { get; set; }
 
-        /// <summary>
-        ///     Collection of files to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public IList<HttpFile> Files { get; internal set; }
 
-        /// <summary>
-        ///     Whether or not HTTP 3xx response redirects should be automatically followed
-        /// </summary>
+        /// <inheritdoc />
         public bool FollowRedirects { get; set; }
 
-        /// <summary>
-        ///     Whether or not to use pipelined connections
-        /// </summary>
+        /// <inheritdoc />
         public bool Pipelined { get; set; }
 
-        /// <summary>
-        ///     X509CertificateCollection to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public X509CertificateCollection ClientCertificates { get; set; }
 
-        /// <summary>
-        ///     Maximum number of automatic redirects to follow if FollowRedirects is true
-        /// </summary>
+        /// <inheritdoc />
         public int? MaxRedirects { get; set; }
 
-        /// <summary>
-        ///     Determine whether or not the "default credentials" (e.g. the user account under which the current process is
-        ///     running) ///     will be sent along to the server.
-        /// </summary>
+        /// <inheritdoc />
         public bool UseDefaultCredentials { get; set; }
 
-        /// <summary>
-        ///     The ConnectionGroupName property enables you to associate a request with a connection group.
-        /// </summary>
+        /// <inheritdoc />
         public string ConnectionGroupName { get; set; }
 
-        /// <summary>
-        ///     Encoding for the request, UTF8 is the default
-        /// </summary>
+        /// <inheritdoc />
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-        /// <summary>
-        ///     HTTP headers to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public IList<HttpHeader> Headers { get; internal set; }
 
-        /// <summary>
-        ///     HTTP parameters (QueryString or Form values) to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public IList<HttpParameter> Parameters { get; internal set; }
 
-        /// <summary>
-        ///     HTTP cookies to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public IList<HttpCookie> Cookies { get; internal set; }
 
-        /// <summary>
-        ///     Request body to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public string RequestBody { get; set; }
 
-        /// <summary>
-        ///     Content type of the request body.
-        /// </summary>
+        /// <inheritdoc />
         public string RequestContentType { get; set; }
 
-        /// <summary>
-        ///     An alternative to RequestBody, for when the caller already has the byte array.
-        /// </summary>
+        /// <inheritdoc />
         public byte[] RequestBodyBytes { get; set; }
 
-        /// <summary>
-        ///     URL to call for this request
-        /// </summary>
+        /// <inheritdoc />
         public Uri Url { get; set; }
 
-        /// <summary>
-        ///     Explicit Host header value to use in requests independent from the request URI.
-        ///     If null, default host value extracted from URI is used.
-        /// </summary>
+        /// <inheritdoc />
         public string Host { get; set; }
 
-        /// <summary>
-        ///     List of Allowed Decompression Methods
-        /// </summary>
+        /// <inheritdoc />
         public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
 
-        /// <summary>
-        ///     Flag to send authorisation header with the HttpWebRequest
-        /// </summary>
+        /// <inheritdoc />
         public bool PreAuthenticate { get; set; }
 
-        /// <summary>
-        ///     Flag to reuse same connection in the HttpWebRequest
-        /// </summary>
+        /// <inheritdoc />
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
-        /// <summary>
-        ///     Proxy info to be sent with request
-        /// </summary>
+        /// <inheritdoc />
         public IWebProxy Proxy { get; set; }
 
-        /// <summary>
-        ///     Caching policy for requests created with this wrapper.
-        /// </summary>
+        /// <inheritdoc />
         public RequestCachePolicy CachePolicy { get; set; }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Callback function for handling the validation of remote certificates.
         /// </summary>
         public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 
+        /// <inheritdoc />
         public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 
-        /// <summary>
-        ///     Creates an IHttp
-        /// </summary>
-        /// <returns></returns>
         [Obsolete]
         public static IHttp Create() => new Http();
 
@@ -323,19 +257,16 @@ namespace RestSharp
             if (HasFiles || AlwaysMultipartFormData)
             {
                 if (needsContentType)
-                    webRequest.ContentType = GetMultipartFormContentType();
-                else if (!webRequest.ContentType.Contains("boundary"))
-                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary;
+                    webRequest.ContentType                                                    = GetMultipartFormContentType();
+                else if (!webRequest.ContentType.Contains("boundary")) webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary;
             }
             else if (HasBody)
             {
-                if (needsContentType)
-                    webRequest.ContentType = RequestContentType;
+                if (needsContentType) webRequest.ContentType = RequestContentType;
             }
             else if (HasParameters)
             {
-                if (needsContentType)
-                    webRequest.ContentType = "application/x-www-form-urlencoded";
+                if (needsContentType) webRequest.ContentType = "application/x-www-form-urlencoded";
                 RequestBody = EncodeParameters();
             }
 
@@ -346,8 +277,7 @@ namespace RestSharp
 
         void WriteMultipartFormData(Stream requestStream)
         {
-            foreach (var param in Parameters)
-                requestStream.WriteString(GetMultipartFormData(param), Encoding);
+            foreach (var param in Parameters) requestStream.WriteString(GetMultipartFormData(param), Encoding);
 
             foreach (var file in Files)
             {
@@ -399,18 +329,8 @@ namespace RestSharp
                         }
                     );
 
-            foreach (var headerName in webResponse.Headers.AllKeys)
-            {
-                var headerValue = webResponse.Headers[headerName];
-
-                response.Headers.Add(
-                    new HttpHeader
-                    {
-                        Name  = headerName,
-                        Value = headerValue
-                    }
-                );
-            }
+            response.Headers = webResponse.Headers.AllKeys
+                .Select(x => new HttpHeader(x, webResponse.Headers[x])).ToList();
 
             var webResponseStream = webResponse.GetResponseStream();
             ProcessResponseStream();

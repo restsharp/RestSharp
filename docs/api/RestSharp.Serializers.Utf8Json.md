@@ -1,241 +1,204 @@
 # Namespace: RestSharp.Serializers.Utf8Json
-## Class RestClientExtensions
+## Class `RestClientExtensions`
 
 ### Inheritance
-↳ object
-
-### Inherited members
-object.GetType()
-object.MemberwiseClone()
-object.ToString()
-object.Equals(object?)
-object.Equals(object?, object?)
-object.ReferenceEquals(object?, object?)
-object.GetHashCode()
-## Syntax
+↳ `object`
+### Syntax
 ```csharp
 public static class RestClientExtensions
 ```
 
-### Method UseUtf8Json(IRestClient)
+### Method `UseUtf8Json(IRestClient)`
 
 Use Utf8Json serializer with default formatter resolver
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestClient UseUtf8Json(this IRestClient client)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-client | IRestClient | 
+`client` | `IRestClient` | 
 
 #### Returns
 Type | Description
 --- | ---
-IRestClient | 
+`IRestClient` | 
 
 
 
-### Method UseUtf8Json(IRestClient, IJsonFormatterResolver)
+### Method `UseUtf8Json(IRestClient, IJsonFormatterResolver)`
 
 Use Utf8Json serializer with custom formatter resolver
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestClient UseUtf8Json(this IRestClient client, IJsonFormatterResolver resolver)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-client | IRestClient | 
-resolver | IJsonFormatterResolver | Utf8Json deserialization formatter resolver
+`client` | `IRestClient` | 
+`resolver` | `IJsonFormatterResolver` | Utf8Json deserialization formatter resolver
 
 #### Returns
 Type | Description
 --- | ---
-IRestClient | 
+`IRestClient` | 
 
 
 
-## Class RestRequestExtensions
+## Class `RestRequestExtensions`
 
 ### Inheritance
-↳ object
-
-### Inherited members
-object.GetType()
-object.MemberwiseClone()
-object.ToString()
-object.Equals(object?)
-object.Equals(object?, object?)
-object.ReferenceEquals(object?, object?)
-object.GetHashCode()
-## Syntax
+↳ `object`
+### Syntax
 ```csharp
 public static class RestRequestExtensions
 ```
 
-### Method UseUtf8Json(IRestRequest)
+### Method `UseUtf8Json(IRestRequest)`
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestRequest UseUtf8Json(this IRestRequest request)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-request | IRestRequest | 
+`request` | `IRestRequest` | 
 
 #### Returns
 Type | Description
 --- | ---
-IRestRequest | 
+`IRestRequest` | 
 
 
 
-### Method UseNewtonsoftJson(IRestRequest, IJsonFormatterResolver)
+### Method `UseNewtonsoftJson(IRestRequest, IJsonFormatterResolver)`
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestRequest UseNewtonsoftJson(this IRestRequest request, IJsonFormatterResolver resolver)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-request | IRestRequest | 
-resolver | IJsonFormatterResolver | 
+`request` | `IRestRequest` | 
+`resolver` | `IJsonFormatterResolver` | 
 
 #### Returns
 Type | Description
 --- | ---
-IRestRequest | 
+`IRestRequest` | 
 
 
 
-## Class Utf8JsonSerializer
+## Class `Utf8JsonSerializer`
 
 ### Inheritance
-↳ IRestSerializer
- ↳ System.Object
-
-### Inherited members
-
-## Syntax
+↳ `IRestSerializer`<br>&nbsp;&nbsp;↳ `System.Object`
+### Syntax
 ```csharp
 public class Utf8JsonSerializer : IRestSerializer
 ```
 
 ### Extension methods
-object.ChangeType(System.Reflection.TypeInfo)
-object.ChangeType(System.Type, System.Globalization.CultureInfo)
-### Constructor Utf8JsonSerializer(IJsonFormatterResolver)
+-  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
+-  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+### Constructor `Utf8JsonSerializer(IJsonFormatterResolver)`
 
-### Syntax
+#### Syntax
 ```csharp
 public Utf8JsonSerializer(IJsonFormatterResolver resolver = null)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-resolver | IJsonFormatterResolver | 
+`resolver` | `IJsonFormatterResolver` | 
 
 
 
-### Method Serialize(Object)
+### Method `Serialize(Object)`
 
-### Syntax
+#### Syntax
 ```csharp
 public string Serialize(object obj)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-obj | object | 
+`obj` | `object` | 
 
 #### Returns
 Type | Description
 --- | ---
-string | 
+`string` | 
 
 
 
-### Method Serialize(Parameter)
+### Method `Serialize(Parameter)`
 
-### Syntax
+#### Syntax
 ```csharp
 public string Serialize(Parameter parameter)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-parameter | Parameter | 
+`parameter` | `Parameter` | 
 
 #### Returns
 Type | Description
 --- | ---
-string | 
+`string` | 
 
 
 
-### Method Deserialize&lt;T&rt;(IRestResponse)
+### Method `Deserialize<T>(IRestResponse)`
 
-### Syntax
+#### Syntax
 ```csharp
-public T Deserialize&lt;T&rt;(IRestResponse response)
+public T Deserialize<T>(IRestResponse response)
 ```
 #### Generic parameters
 Name | Description
 --- | ---
-T | 
+`T` | 
 
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-response | IRestResponse | 
+`response` | `IRestResponse` | 
 
 #### Returns
 Type | Description
 --- | ---
-T | 
+`T` | 
 
 
 
-### Property SupportedContentTypes
+### Property `SupportedContentTypes`
 
-### Syntax
+#### Syntax
 ```csharp
 public string[] SupportedContentTypes { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-string[] | 
 
 
+### Property `ContentType`
 
-### Property ContentType
-
-### Syntax
+#### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-string | 
 
 
+### Property `DataFormat`
 
-### Property DataFormat
-
-### Syntax
+#### Syntax
 ```csharp
 public DataFormat DataFormat { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-DataFormat | 
-
 

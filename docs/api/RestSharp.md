@@ -3,9 +3,6 @@
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `System.Exception`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class DeserializationException : Exception, ISerializable
@@ -34,11 +31,6 @@ Name | Type | Description
 ```csharp
 public IRestResponse Response { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.IRestResponse` | 
-
 
 
 ## Enum `ParameterType`
@@ -96,9 +88,38 @@ OPTIONS |
 PATCH | 
 MERGE | 
 COPY | 
-Struct: RestSharp.DateFormat
-ISO_8601 | .NET format string for ISO 8601 date format
-ROUND_TRIP | .NET format string for roundtrip date format
+## Struct `DateFormat`
+
+Format strings for commonly-used date formats
+
+### Syntax
+```csharp
+public struct DateFormat
+```
+
+### Extension methods
+-  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
+-  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+### Field `ISO_8601`
+
+.NET format string for ISO 8601 date format
+
+#### Syntax
+```csharp
+public static string ISO_8601 = "s"
+```
+
+
+### Field `ROUND_TRIP`
+
+.NET format string for roundtrip date format
+
+#### Syntax
+```csharp
+public static string ROUND_TRIP = "u"
+```
+
+
 ## Enum `ResponseStatus`
 
 Status for responses (surprised?)
@@ -122,9 +143,6 @@ Container for files to be uploaded with requests
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class FileParameter
@@ -141,11 +159,6 @@ The length of data to be sent
 ```csharp
 public long ContentLength { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`long` | 
-
 
 
 ### Property `Writer`
@@ -156,11 +169,6 @@ Provides raw data for file
 ```csharp
 public Action<Stream> Writer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream>` | 
-
 
 
 ### Property `FileName`
@@ -171,11 +179,6 @@ Name of the file to use when uploading
 ```csharp
 public string FileName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentType`
@@ -186,11 +189,6 @@ MIME content type of file
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Name`
@@ -201,11 +199,6 @@ Name of the parameter
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `Create(String, Byte[], String, String)`
@@ -277,9 +270,6 @@ HttpWebRequest wrapper (async methods)
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class Http : IHttp
@@ -290,8 +280,6 @@ public class Http : IHttp
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
 ### Method `AsPostAsync(Action<HttpResponse>, String)`
 
-Execute an async POST-style request with the specified HTTP Method.
-
 #### Syntax
 ```csharp
 public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
@@ -300,7 +288,7 @@ public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
-`httpMethod` | `string` | The HTTP method to execute.
+`httpMethod` | `string` | 
 
 #### Returns
 Type | Description
@@ -311,8 +299,6 @@ Type | Description
 
 ### Method `AsGetAsync(Action<HttpResponse>, String)`
 
-Execute an async GET-style request with the specified HTTP Method.
-
 #### Syntax
 ```csharp
 public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
@@ -321,7 +307,7 @@ public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
-`httpMethod` | `string` | The HTTP method to execute.
+`httpMethod` | `string` | 
 
 #### Returns
 Type | Description
@@ -331,8 +317,6 @@ Type | Description
 
 
 ### Constructor `Http()`
-
-Default constructor
 
 #### Syntax
 ```csharp
@@ -348,11 +332,6 @@ True if this HTTP request has any HTTP parameters
 ```csharp
 protected bool HasParameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `HasCookies`
@@ -363,11 +342,6 @@ True if this HTTP request has any HTTP cookies
 ```csharp
 protected bool HasCookies { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `HasBody`
@@ -378,11 +352,6 @@ True if a request body has been specified
 ```csharp
 protected bool HasBody { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `HasFiles`
@@ -393,26 +362,14 @@ True if files have been set to be uploaded
 ```csharp
 protected bool HasFiles { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `AutomaticDecompression`
-
-Enable or disable automatic gzip/deflate decompression
 
 #### Syntax
 ```csharp
 public bool AutomaticDecompression { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `AlwaysMultipartFormData`
@@ -423,434 +380,230 @@ Always send a multipart/form-data request - even when no Files are present.
 ```csharp
 public bool AlwaysMultipartFormData { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `UserAgent`
-
-UserAgent to be sent with request
 
 #### Syntax
 ```csharp
 public string UserAgent { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Timeout`
-
-Timeout in milliseconds to be used for the request
 
 #### Syntax
 ```csharp
 public int Timeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `ReadWriteTimeout`
-
-The number of milliseconds before the writing or reading times out.
 
 #### Syntax
 ```csharp
 public int ReadWriteTimeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `Credentials`
-
-System.Net.ICredentials to be sent with request
 
 #### Syntax
 ```csharp
 public ICredentials Credentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`ICredentials` | 
-
 
 
 ### Property `CookieContainer`
-
-The System.Net.CookieContainer to be used for the request
 
 #### Syntax
 ```csharp
 public CookieContainer CookieContainer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`CookieContainer` | 
-
 
 
 ### Property `AdvancedResponseWriter`
-
-The delegate to use to write the response instead of reading into RawBytes
-Here you can also check the request details
 
 #### Syntax
 ```csharp
 public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream, RestSharp.IHttpResponse>` | 
-
 
 
 ### Property `ResponseWriter`
-
-The delegate to use to write the response instead of reading into RawBytes
 
 #### Syntax
 ```csharp
 public Action<Stream> ResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream>` | 
-
 
 
 ### Property `Files`
-
-Collection of files to be sent with request
 
 #### Syntax
 ```csharp
 public IList<HttpFile> Files { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpFile>` | 
-
 
 
 ### Property `FollowRedirects`
-
-Whether or not HTTP 3xx response redirects should be automatically followed
 
 #### Syntax
 ```csharp
 public bool FollowRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Pipelined`
-
-Whether or not to use pipelined connections
 
 #### Syntax
 ```csharp
 public bool Pipelined { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ClientCertificates`
-
-X509CertificateCollection to be sent with request
 
 #### Syntax
 ```csharp
 public X509CertificateCollection ClientCertificates { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`X509CertificateCollection` | 
-
 
 
 ### Property `MaxRedirects`
-
-Maximum number of automatic redirects to follow if FollowRedirects is true
 
 #### Syntax
 ```csharp
 public int? MaxRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int?` | 
-
 
 
 ### Property `UseDefaultCredentials`
-
-Determine whether or not the &quot;default credentials&quot; (e.g. the user account under which the current process is
-running) ///     will be sent along to the server.
 
 #### Syntax
 ```csharp
 public bool UseDefaultCredentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ConnectionGroupName`
-
-The ConnectionGroupName property enables you to associate a request with a connection group.
 
 #### Syntax
 ```csharp
 public string ConnectionGroupName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Encoding`
-
-Encoding for the request, UTF8 is the default
 
 #### Syntax
 ```csharp
 public Encoding Encoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Text.Encoding` | 
-
 
 
 ### Property `Headers`
-
-HTTP headers to be sent with request
 
 #### Syntax
 ```csharp
 public IList<HttpHeader> Headers { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpHeader>` | 
-
 
 
 ### Property `Parameters`
-
-HTTP parameters (QueryString or Form values) to be sent with request
 
 #### Syntax
 ```csharp
 public IList<HttpParameter> Parameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpParameter>` | 
-
 
 
 ### Property `Cookies`
-
-HTTP cookies to be sent with request
 
 #### Syntax
 ```csharp
 public IList<HttpCookie> Cookies { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpCookie>` | 
-
 
 
 ### Property `RequestBody`
-
-Request body to be sent with request
 
 #### Syntax
 ```csharp
 public string RequestBody { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RequestContentType`
-
-Content type of the request body.
 
 #### Syntax
 ```csharp
 public string RequestContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RequestBodyBytes`
-
-An alternative to RequestBody, for when the caller already has the byte array.
 
 #### Syntax
 ```csharp
 public byte[] RequestBodyBytes { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`byte[]` | 
-
 
 
 ### Property `Url`
-
-URL to call for this request
 
 #### Syntax
 ```csharp
 public Uri Url { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Host`
-
-Explicit Host header value to use in requests independent from the request URI.
-If null, default host value extracted from URI is used.
 
 #### Syntax
 ```csharp
 public string Host { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `AllowedDecompressionMethods`
-
-List of Allowed Decompression Methods
 
 #### Syntax
 ```csharp
 public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<DecompressionMethods>` | 
-
 
 
 ### Property `PreAuthenticate`
-
-Flag to send authorisation header with the HttpWebRequest
 
 #### Syntax
 ```csharp
 public bool PreAuthenticate { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `UnsafeAuthenticatedConnectionSharing`
-
-Flag to reuse same connection in the HttpWebRequest
 
 #### Syntax
 ```csharp
 public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Proxy`
-
-Proxy info to be sent with request
 
 #### Syntax
 ```csharp
 public IWebProxy Proxy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`IWebProxy` | 
-
 
 
 ### Property `CachePolicy`
-
-Caching policy for requests created with this wrapper.
 
 #### Syntax
 ```csharp
 public RequestCachePolicy CachePolicy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RequestCachePolicy` | 
-
 
 
 ### Property `RemoteCertificateValidationCallback`
@@ -861,11 +614,6 @@ Callback function for handling the validation of remote certificates.
 ```csharp
 public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RemoteCertificateValidationCallback` | 
-
 
 
 ### Property `WebRequestConfigurator`
@@ -874,16 +622,9 @@ Type | Description
 ```csharp
 public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<HttpWebRequest>` | 
-
 
 
 ### Method `Create()`
-
-Creates an IHttp
 
 #### Syntax
 ```csharp
@@ -1274,9 +1015,6 @@ Representation of an HTTP cookie
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class HttpCookie
@@ -1293,11 +1031,6 @@ Comment of the cookie
 ```csharp
 public string Comment { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `CommentUri`
@@ -1308,11 +1041,6 @@ Comment of the cookie
 ```csharp
 public Uri CommentUri { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Discard`
@@ -1323,11 +1051,6 @@ Indicates whether the cookie should be discarded at the end of the session
 ```csharp
 public bool Discard { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Domain`
@@ -1338,11 +1061,6 @@ Domain of the cookie
 ```csharp
 public string Domain { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Expired`
@@ -1353,11 +1071,6 @@ Indicates whether the cookie is expired
 ```csharp
 public bool Expired { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Expires`
@@ -1368,11 +1081,6 @@ Date and time that the cookie expires
 ```csharp
 public DateTime Expires { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.DateTime` | 
-
 
 
 ### Property `HttpOnly`
@@ -1383,11 +1091,6 @@ Indicates that this cookie should only be accessed by the server
 ```csharp
 public bool HttpOnly { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Name`
@@ -1398,11 +1101,6 @@ Name of the cookie
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Path`
@@ -1413,11 +1111,6 @@ Path of the cookie
 ```csharp
 public string Path { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Port`
@@ -1428,11 +1121,6 @@ Port of the cookie
 ```csharp
 public string Port { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Secure`
@@ -1443,11 +1131,6 @@ Indicates that the cookie should only be sent over secure channels
 ```csharp
 public bool Secure { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `TimeStamp`
@@ -1458,11 +1141,6 @@ Date and time the cookie was created
 ```csharp
 public DateTime TimeStamp { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.DateTime` | 
-
 
 
 ### Property `Value`
@@ -1473,11 +1151,6 @@ Value of the cookie
 ```csharp
 public string Value { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Version`
@@ -1488,11 +1161,6 @@ Version of the cookie
 ```csharp
 public int Version { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ## Class `HttpFile`
@@ -1501,9 +1169,6 @@ Container for HTTP file
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class HttpFile
@@ -1520,11 +1185,6 @@ The length of data to be sent
 ```csharp
 public long ContentLength { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`long` | 
-
 
 
 ### Property `Writer`
@@ -1535,11 +1195,6 @@ Provides raw data for file
 ```csharp
 public Action<Stream> Writer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream>` | 
-
 
 
 ### Property `FileName`
@@ -1550,11 +1205,6 @@ Name of the file to use when uploading
 ```csharp
 public string FileName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentType`
@@ -1565,11 +1215,6 @@ MIME content type of file
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Name`
@@ -1580,11 +1225,6 @@ Name of the parameter
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `HttpHeader`
@@ -1593,9 +1233,6 @@ Representation of an HTTP header
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class HttpHeader
@@ -1604,6 +1241,32 @@ public class HttpHeader
 ### Extension methods
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+### Constructor `HttpHeader(String, String)`
+
+Creates a new instance of HttpHeader
+
+#### Syntax
+```csharp
+public HttpHeader(string name, string value)
+```
+#### Parameters
+Name | Type | Description
+--- | --- | ---
+`name` | `string` | Header name
+`value` | `string` | Header value
+
+
+
+### Constructor `HttpHeader()`
+
+Creates a new instance of HttpHeader. Remember to assign properties!
+
+#### Syntax
+```csharp
+public HttpHeader()
+```
+
+
 ### Property `Name`
 
 Name of the header
@@ -1612,11 +1275,6 @@ Name of the header
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Value`
@@ -1627,11 +1285,6 @@ Value of the header
 ```csharp
 public string Value { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `HttpParameter`
@@ -1640,9 +1293,6 @@ Representation of an HTTP parameter (QueryString or Form value)
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class HttpParameter
@@ -1659,11 +1309,6 @@ Name of the parameter
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Value`
@@ -1674,11 +1319,6 @@ Value of the parameter
 ```csharp
 public string Value { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentType`
@@ -1689,22 +1329,12 @@ Content-Type of the parameter
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `HttpResponse`
 
-HTTP response data
-
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class HttpResponse : IHttpResponse
@@ -1715,8 +1345,6 @@ public class HttpResponse : IHttpResponse
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
 ### Constructor `HttpResponse()`
 
-Default constructor
-
 #### Syntax
 ```csharp
 public HttpResponse()
@@ -1725,236 +1353,125 @@ public HttpResponse()
 
 ### Property `ContentType`
 
-MIME content type of response
-
 #### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentLength`
-
-Length in bytes of the response content
 
 #### Syntax
 ```csharp
 public long ContentLength { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`long` | 
-
 
 
 ### Property `ContentEncoding`
-
-Encoding of the response content
 
 #### Syntax
 ```csharp
 public string ContentEncoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Content`
-
-Lazy-loaded string representation of response content
 
 #### Syntax
 ```csharp
 public string Content { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `StatusCode`
-
-HTTP response status code
 
 #### Syntax
 ```csharp
 public HttpStatusCode StatusCode { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`HttpStatusCode` | 
-
 
 
 ### Property `StatusDescription`
-
-Description of HTTP status returned
 
 #### Syntax
 ```csharp
 public string StatusDescription { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RawBytes`
-
-Response content
 
 #### Syntax
 ```csharp
 public byte[] RawBytes { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`byte[]` | 
-
 
 
 ### Property `ResponseUri`
-
-The URL that actually responded to the content (different from request if redirected)
 
 #### Syntax
 ```csharp
 public Uri ResponseUri { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Server`
-
-HttpWebResponse.Server
 
 #### Syntax
 ```csharp
 public string Server { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Headers`
-
-Headers returned by server with the response
 
 #### Syntax
 ```csharp
 public IList<HttpHeader> Headers { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpHeader>` | 
-
 
 
 ### Property `Cookies`
-
-Cookies returned by server with the response
 
 #### Syntax
 ```csharp
 public IList<HttpCookie> Cookies { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpCookie>` | 
-
 
 
 ### Property `ResponseStatus`
-
-Status of the request. Will return Error for transport errors.
-HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 
 #### Syntax
 ```csharp
 public ResponseStatus ResponseStatus { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.ResponseStatus` | 
-
 
 
 ### Property `ErrorMessage`
-
-Transport or other non-HTTP error generated while attempting request
 
 #### Syntax
 ```csharp
 public string ErrorMessage { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ErrorException`
-
-Exception thrown when error is encountered.
 
 #### Syntax
 ```csharp
 public Exception ErrorException { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Exception` | 
-
 
 
 ### Property `ProtocolVersion`
 
-The HTTP protocol version (1.0, 1.1, etc)
-
-#### Remarks
-Only set when underlying framework supports it.
 #### Syntax
 ```csharp
 public Version ProtocolVersion { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Version` | 
-
 
 
 ## Interface `IHttp`
-
-
-### Inherited members
 
 ### Syntax
 ```csharp
@@ -1966,54 +1483,43 @@ public interface IHttp
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
 ### Property `ResponseWriter`
 
+The delegate to use to write the response instead of reading into RawBytes
+
 #### Syntax
 ```csharp
 Action<Stream> ResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream>` | 
-
 
 
 ### Property `AdvancedResponseWriter`
+
+The delegate to use to write the response instead of reading into RawBytes
+Here you can also check the request details
 
 #### Syntax
 ```csharp
 Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream, RestSharp.IHttpResponse>` | 
-
 
 
 ### Property `CookieContainer`
+
+The <see cref="!:System.Net.CookieContainer"></see> to be used for the request
 
 #### Syntax
 ```csharp
 CookieContainer CookieContainer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`CookieContainer` | 
-
 
 
 ### Property `Credentials`
+
+<see cref="!:System.Net.ICredentials"></see> to be sent with request
 
 #### Syntax
 ```csharp
 ICredentials Credentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`ICredentials` | 
-
 
 
 ### Property `AutomaticDecompression`
@@ -2024,11 +1530,6 @@ Enable or disable automatic gzip/deflate decompression
 ```csharp
 bool AutomaticDecompression { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `AlwaysMultipartFormData`
@@ -2039,258 +1540,196 @@ Always send a multipart/form-data request - even when no Files are present.
 ```csharp
 bool AlwaysMultipartFormData { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `UserAgent`
+
 
 #### Syntax
 ```csharp
 string UserAgent { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Timeout`
+
+Timeout in milliseconds to be used for the request
 
 #### Syntax
 ```csharp
 int Timeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `ReadWriteTimeout`
+
+The number of milliseconds before the writing or reading times out.
 
 #### Syntax
 ```csharp
 int ReadWriteTimeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `FollowRedirects`
+
+Whether or not HTTP 3xx response redirects should be automatically followed
 
 #### Syntax
 ```csharp
 bool FollowRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Pipelined`
+
+Whether or not to use pipelined connections
 
 #### Syntax
 ```csharp
 bool Pipelined { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ClientCertificates`
+
+X509CertificateCollection to be sent with request
 
 #### Syntax
 ```csharp
 X509CertificateCollection ClientCertificates { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`X509CertificateCollection` | 
-
 
 
 ### Property `MaxRedirects`
+
+Maximum number of automatic redirects to follow if FollowRedirects is true
 
 #### Syntax
 ```csharp
 int? MaxRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int?` | 
-
 
 
 ### Property `UseDefaultCredentials`
+
+Determine whether or not the &quot;default credentials&quot; (e.g. the user account under which the
+current process is running) will be sent along to the server.
 
 #### Syntax
 ```csharp
 bool UseDefaultCredentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Encoding`
+
+Encoding for the request, UTF8 is the default
 
 #### Syntax
 ```csharp
 Encoding Encoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Text.Encoding` | 
-
 
 
 ### Property `Headers`
+
+HTTP headers to be sent with request
 
 #### Syntax
 ```csharp
 IList<HttpHeader> Headers { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpHeader>` | 
-
 
 
 ### Property `Parameters`
+
+HTTP parameters (QueryString or Form values) to be sent with request
 
 #### Syntax
 ```csharp
 IList<HttpParameter> Parameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpParameter>` | 
-
 
 
 ### Property `Files`
+
+Collection of files to be sent with request
 
 #### Syntax
 ```csharp
 IList<HttpFile> Files { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpFile>` | 
-
 
 
 ### Property `Cookies`
+
+HTTP cookies to be sent with request
 
 #### Syntax
 ```csharp
 IList<HttpCookie> Cookies { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpCookie>` | 
-
 
 
 ### Property `RequestBody`
+
+Request body to be sent with request
 
 #### Syntax
 ```csharp
 string RequestBody { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RequestContentType`
+
+Content type of the request body.
 
 #### Syntax
 ```csharp
 string RequestContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `PreAuthenticate`
+
+Flag to send authorisation header with the HttpWebRequest
 
 #### Syntax
 ```csharp
 bool PreAuthenticate { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `UnsafeAuthenticatedConnectionSharing`
+
+Flag to reuse same connection in the HttpWebRequest
 
 #### Syntax
 ```csharp
 bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `CachePolicy`
+
+Caching policy for requests created with this wrapper.
 
 #### Syntax
 ```csharp
 RequestCachePolicy CachePolicy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RequestCachePolicy` | 
-
 
 
 ### Property `ConnectionGroupName`
+
+The ConnectionGroupName property enables you to associate a request with a connection group.
 
 #### Syntax
 ```csharp
 string ConnectionGroupName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RequestBodyBytes`
@@ -2301,63 +1740,47 @@ An alternative to RequestBody, for when the caller already has the byte array.
 ```csharp
 byte[] RequestBodyBytes { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`byte[]` | 
-
 
 
 ### Property `Url`
+
+URL to call for this request
 
 #### Syntax
 ```csharp
 Uri Url { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Host`
+
+Explicit Host header value to use in requests independent from the request URI.
+If null, default host value extracted from URI is used.
 
 #### Syntax
 ```csharp
 string Host { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `AllowedDecompressionMethods`
+
+List of allowed decompression methods
 
 #### Syntax
 ```csharp
 IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<DecompressionMethods>` | 
-
 
 
 ### Property `Proxy`
+
+Proxy info to be sent with request
 
 #### Syntax
 ```csharp
 IWebProxy Proxy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`IWebProxy` | 
-
 
 
 ### Property `RemoteCertificateValidationCallback`
@@ -2366,11 +1789,6 @@ Type | Description
 ```csharp
 RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RemoteCertificateValidationCallback` | 
-
 
 
 ### Property `WebRequestConfigurator`
@@ -2379,11 +1797,6 @@ Type | Description
 ```csharp
 Action<HttpWebRequest> WebRequestConfigurator { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<HttpWebRequest>` | 
-
 
 
 ### Method `DeleteAsync(Action<HttpResponse>)`
@@ -2540,6 +1953,8 @@ Type | Description
 
 ### Method `AsPostAsync(Action<HttpResponse>, String)`
 
+Execute an async POST-style request with the specified HTTP Method.
+
 #### Syntax
 ```csharp
 HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
@@ -2548,7 +1963,7 @@ HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
-`httpMethod` | `string` | 
+`httpMethod` | `string` | The HTTP method to execute.
 
 #### Returns
 Type | Description
@@ -2559,6 +1974,8 @@ Type | Description
 
 ### Method `AsGetAsync(Action<HttpResponse>, String)`
 
+Execute an async GET-style request with the specified HTTP Method.
+
 #### Syntax
 ```csharp
 HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
@@ -2567,7 +1984,7 @@ HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
 Name | Type | Description
 --- | --- | ---
 `action` | `System.Action<RestSharp.HttpResponse>` | 
-`httpMethod` | `string` | 
+`httpMethod` | `string` | The HTTP method to execute.
 
 #### Returns
 Type | Description
@@ -2720,9 +2137,6 @@ Type | Description
 
 HTTP response data
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface IHttpResponse
@@ -2739,11 +2153,6 @@ MIME content type of response
 ```csharp
 string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentLength`
@@ -2754,11 +2163,6 @@ Length in bytes of the response content
 ```csharp
 long ContentLength { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`long` | 
-
 
 
 ### Property `ContentEncoding`
@@ -2769,11 +2173,6 @@ Encoding of the response content
 ```csharp
 string ContentEncoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Content`
@@ -2784,11 +2183,6 @@ String representation of response content
 ```csharp
 string Content { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `StatusCode`
@@ -2799,11 +2193,6 @@ HTTP response status code
 ```csharp
 HttpStatusCode StatusCode { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`HttpStatusCode` | 
-
 
 
 ### Property `StatusDescription`
@@ -2814,11 +2203,6 @@ Description of HTTP status returned
 ```csharp
 string StatusDescription { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RawBytes`
@@ -2829,11 +2213,6 @@ Response content
 ```csharp
 byte[] RawBytes { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`byte[]` | 
-
 
 
 ### Property `ResponseUri`
@@ -2844,11 +2223,6 @@ The URL that actually responded to the content (different from request if redire
 ```csharp
 Uri ResponseUri { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Server`
@@ -2859,11 +2233,6 @@ HttpWebResponse.Server
 ```csharp
 string Server { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Headers`
@@ -2874,11 +2243,6 @@ Headers returned by server with the response
 ```csharp
 IList<HttpHeader> Headers { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpHeader>` | 
-
 
 
 ### Property `Cookies`
@@ -2889,11 +2253,6 @@ Cookies returned by server with the response
 ```csharp
 IList<HttpCookie> Cookies { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.HttpCookie>` | 
-
 
 
 ### Property `ResponseStatus`
@@ -2905,11 +2264,6 @@ HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 ```csharp
 ResponseStatus ResponseStatus { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.ResponseStatus` | 
-
 
 
 ### Property `ErrorMessage`
@@ -2920,11 +2274,6 @@ Transport or other non-HTTP error generated while attempting request
 ```csharp
 string ErrorMessage { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ErrorException`
@@ -2935,11 +2284,6 @@ Exception thrown when error is encountered.
 ```csharp
 Exception ErrorException { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Exception` | 
-
 
 
 ### Property `ProtocolVersion`
@@ -2952,17 +2296,9 @@ Only set when underlying framework supports it.
 ```csharp
 Version ProtocolVersion { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Version` | 
-
 
 
 ## Interface `IRestClient`
-
-
-### Inherited members
 
 ### Syntax
 ```csharp
@@ -3081,11 +2417,6 @@ Type | Description
 ```csharp
 CookieContainer CookieContainer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`CookieContainer` | 
-
 
 
 ### Property `AutomaticDecompression`
@@ -3094,11 +2425,6 @@ Type | Description
 ```csharp
 bool AutomaticDecompression { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `MaxRedirects`
@@ -3107,11 +2433,6 @@ Type | Description
 ```csharp
 int? MaxRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int?` | 
-
 
 
 ### Property `UserAgent`
@@ -3120,11 +2441,6 @@ Type | Description
 ```csharp
 string UserAgent { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Timeout`
@@ -3133,11 +2449,6 @@ Type | Description
 ```csharp
 int Timeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `ReadWriteTimeout`
@@ -3146,11 +2457,6 @@ Type | Description
 ```csharp
 int ReadWriteTimeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `UseSynchronizationContext`
@@ -3159,11 +2465,6 @@ Type | Description
 ```csharp
 bool UseSynchronizationContext { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Authenticator`
@@ -3172,11 +2473,6 @@ Type | Description
 ```csharp
 IAuthenticator Authenticator { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Authenticators.IAuthenticator` | 
-
 
 
 ### Property `BaseUrl`
@@ -3185,11 +2481,6 @@ Type | Description
 ```csharp
 Uri BaseUrl { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Encoding`
@@ -3198,11 +2489,6 @@ Type | Description
 ```csharp
 Encoding Encoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Text.Encoding` | 
-
 
 
 ### Property `ThrowOnDeserializationError`
@@ -3211,11 +2497,6 @@ Type | Description
 ```csharp
 bool ThrowOnDeserializationError { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `FailOnDeserializationError`
@@ -3228,11 +2509,6 @@ in case it fails to deserialize the response.
 ```csharp
 bool FailOnDeserializationError { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ThrowOnAnyError`
@@ -3244,11 +2520,6 @@ When set to <pre><code>true</code></pre>, exceptions will be re-thrown.
 ```csharp
 bool ThrowOnAnyError { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ConnectionGroupName`
@@ -3257,11 +2528,6 @@ Type | Description
 ```csharp
 string ConnectionGroupName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `PreAuthenticate`
@@ -3272,11 +2538,6 @@ Flag to send authorisation header with the HttpWebRequest
 ```csharp
 bool PreAuthenticate { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `UnsafeAuthenticatedConnectionSharing`
@@ -3287,11 +2548,6 @@ Flag to reuse same connection in the HttpWebRequest
 ```csharp
 bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `DefaultParameters`
@@ -3303,11 +2559,6 @@ by the RestClient instance.
 ```csharp
 IList<Parameter> DefaultParameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.Parameter>` | 
-
 
 
 ### Property `BaseHost`
@@ -3319,11 +2570,6 @@ If null, default host value extracted from URI is used.
 ```csharp
 string BaseHost { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `AllowMultipleDefaultParametersWithSameName`
@@ -3335,11 +2581,6 @@ This properly allows to override the default behavior.
 ```csharp
 bool AllowMultipleDefaultParametersWithSameName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ClientCertificates`
@@ -3350,11 +2591,6 @@ X509CertificateCollection to be sent with request
 ```csharp
 X509CertificateCollection ClientCertificates { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`X509CertificateCollection` | 
-
 
 
 ### Property `Proxy`
@@ -3363,11 +2599,6 @@ Type | Description
 ```csharp
 IWebProxy Proxy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`IWebProxy` | 
-
 
 
 ### Property `CachePolicy`
@@ -3376,11 +2607,6 @@ Type | Description
 ```csharp
 RequestCachePolicy CachePolicy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RequestCachePolicy` | 
-
 
 
 ### Property `Pipelined`
@@ -3389,11 +2615,6 @@ Type | Description
 ```csharp
 bool Pipelined { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `FollowRedirects`
@@ -3402,11 +2623,6 @@ Type | Description
 ```csharp
 bool FollowRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `RemoteCertificateValidationCallback`
@@ -3418,11 +2634,6 @@ overriding certificate errors in the scope of a request.
 ```csharp
 RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RemoteCertificateValidationCallback` | 
-
 
 
 ### Method `Deserialize<T>(IRestResponse)`
@@ -3616,6 +2827,8 @@ Type | Description
 
 ### Method `DownloadData(IRestRequest, Boolean)`
 
+Executes the specified request and downloads the response data
+
 #### Syntax
 ```csharp
 [Obsolete("Use ThrowOnAnyError property to instruct RestSharp to rethrow exceptions")]
@@ -3624,13 +2837,13 @@ byte[] DownloadData(IRestRequest request, bool throwOnError)
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | 
-`throwOnError` | `bool` | 
+`request` | `RestSharp.IRestRequest` | Request to execute
+`throwOnError` | `bool` | Throw an exception if download fails.
 
 #### Returns
 Type | Description
 --- | ---
-`byte[]` | 
+`byte[]` | Response data
 
 
 
@@ -4572,9 +3785,6 @@ Name | Type | Description
 
 ## Interface `IRestRequest`
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface IRestRequest
@@ -4591,11 +3801,6 @@ Always send a multipart/form-data request - even when no Files are present.
 ```csharp
 bool AlwaysMultipartFormData { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `JsonSerializer`
@@ -4607,11 +3812,6 @@ By default the included JsonSerializer is used (currently using SimpleJson defau
 ```csharp
 ISerializer JsonSerializer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Serializers.ISerializer` | 
-
 
 
 ### Property `XmlSerializer`
@@ -4623,11 +3823,6 @@ By default the included XmlSerializer is used.
 ```csharp
 IXmlSerializer XmlSerializer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Serialization.Xml.IXmlSerializer` | 
-
 
 
 ### Property `AdvancedResponseWriter`
@@ -4638,11 +3833,6 @@ Set this to handle the response stream yourself, based on the response details
 ```csharp
 Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream, RestSharp.IHttpResponse>` | 
-
 
 
 ### Property `ResponseWriter`
@@ -4653,11 +3843,6 @@ Set this to write response to Stream rather than reading into memory.
 ```csharp
 Action<Stream> ResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream>` | 
-
 
 
 ### Property `Parameters`
@@ -4669,11 +3854,6 @@ See AddParameter() for explanation of the types of parameters that can be passed
 ```csharp
 List<Parameter> Parameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.List<RestSharp.Parameter>` | 
-
 
 
 ### Property `Files`
@@ -4684,11 +3864,6 @@ Container of all the files to be uploaded with the request.
 ```csharp
 List<FileParameter> Files { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.List<RestSharp.FileParameter>` | 
-
 
 
 ### Property `Method`
@@ -4700,11 +3875,6 @@ Default is GET
 ```csharp
 Method Method { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Method` | 
-
 
 
 ### Property `Resource`
@@ -4727,11 +3897,6 @@ request.AddParameter(&quot;ProductId&quot;, 123, ParameterType.UrlSegment);
 ```csharp
 string Resource { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RequestFormat`
@@ -4743,11 +3908,6 @@ Serializer to use when writing request bodies.
 [Obsolete("Use AddJsonBody or AddXmlBody to tell RestSharp how to serialize the request body")]
 DataFormat RequestFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.DataFormat` | 
-
 
 
 ### Property `RootElement`
@@ -4759,11 +3919,6 @@ Can be used to skip container or root elements that do not have corresponding de
 ```csharp
 string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `DateFormat`
@@ -4774,11 +3929,6 @@ Used by the default deserializers to explicitly set which date format string to 
 ```csharp
 string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `XmlNamespace`
@@ -4790,11 +3940,6 @@ element names.
 ```csharp
 string XmlNamespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Credentials`
@@ -4806,11 +3951,6 @@ In general you would not need to set this directly. Used by the NtlmAuthenticato
 [Obsolete("Use one of authenticators provided")]
 ICredentials Credentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`ICredentials` | 
-
 
 
 ### Property `Timeout`
@@ -4821,11 +3961,6 @@ Timeout in milliseconds to be used for the request. This timeout value overrides
 ```csharp
 int Timeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `ReadWriteTimeout`
@@ -4837,11 +3972,6 @@ the RestClient.
 ```csharp
 int ReadWriteTimeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `Attempts`
@@ -4856,11 +3986,6 @@ This number is incremented each time the RestClient sends the request.
 ```csharp
 int Attempts { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `UseDefaultCredentials`
@@ -4872,11 +3997,6 @@ running) will be sent along to the server. The default is false.
 ```csharp
 bool UseDefaultCredentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `AllowedDecompressionMethods`
@@ -4887,11 +4007,6 @@ List of allowed decompression methods
 ```csharp
 IList<DecompressionMethods> AllowedDecompressionMethods { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<DecompressionMethods>` | 
-
 
 
 ### Property `OnBeforeDeserialization`
@@ -4902,11 +4017,6 @@ When supplied, the function will be called before calling the deserializer
 ```csharp
 Action<IRestResponse> OnBeforeDeserialization { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<RestSharp.IRestResponse>` | 
-
 
 
 ### Property `OnBeforeRequest`
@@ -4917,11 +4027,6 @@ When supplied, the function will be called before making a request
 ```csharp
 Action<IHttp> OnBeforeRequest { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<RestSharp.IHttp>` | 
-
 
 
 ### Property `Body`
@@ -4932,11 +4037,6 @@ Serialized request body to be accessed in authenticators
 ```csharp
 RequestBody Body { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.RequestBody` | 
-
 
 
 ### Method `AddFile(String, String, String)`
@@ -5600,9 +4700,6 @@ void IncreaseNumAttempts()
 
 Container for data sent back from API
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface IRestResponse
@@ -5624,11 +4721,6 @@ Mainly for debugging if ResponseStatus is not OK
 ```csharp
 IRestRequest Request { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.IRestRequest` | 
-
 
 
 ### Property `ContentType`
@@ -5639,11 +4731,6 @@ MIME content type of response
 ```csharp
 string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentLength`
@@ -5654,11 +4741,6 @@ Length in bytes of the response content
 ```csharp
 long ContentLength { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`long` | 
-
 
 
 ### Property `ContentEncoding`
@@ -5669,11 +4751,6 @@ Encoding of the response content
 ```csharp
 string ContentEncoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Content`
@@ -5684,11 +4761,6 @@ String representation of response content
 ```csharp
 string Content { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `StatusCode`
@@ -5699,11 +4771,6 @@ HTTP response status code
 ```csharp
 HttpStatusCode StatusCode { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`HttpStatusCode` | 
-
 
 
 ### Property `IsSuccessful`
@@ -5714,11 +4781,6 @@ Whether or not the response status code indicates success
 ```csharp
 bool IsSuccessful { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `StatusDescription`
@@ -5729,11 +4791,6 @@ Description of HTTP status returned
 ```csharp
 string StatusDescription { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RawBytes`
@@ -5744,11 +4801,6 @@ Response content
 ```csharp
 byte[] RawBytes { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`byte[]` | 
-
 
 
 ### Property `ResponseUri`
@@ -5759,11 +4811,6 @@ The URL that actually responded to the content (different from request if redire
 ```csharp
 Uri ResponseUri { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Server`
@@ -5774,11 +4821,6 @@ HttpWebResponse.Server
 ```csharp
 string Server { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Cookies`
@@ -5789,11 +4831,6 @@ Cookies returned by server with the response
 ```csharp
 IList<RestResponseCookie> Cookies { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.RestResponseCookie>` | 
-
 
 
 ### Property `Headers`
@@ -5804,11 +4841,6 @@ Headers returned by server with the response
 ```csharp
 IList<Parameter> Headers { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.Parameter>` | 
-
 
 
 ### Property `ResponseStatus`
@@ -5820,11 +4852,6 @@ HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 ```csharp
 ResponseStatus ResponseStatus { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.ResponseStatus` | 
-
 
 
 ### Property `ErrorMessage`
@@ -5835,11 +4862,6 @@ Transport or other non-HTTP error generated while attempting request
 ```csharp
 string ErrorMessage { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ErrorException`
@@ -5855,11 +4877,6 @@ HTTP protocol errors are handled by RestSharp and will not appear here.
 ```csharp
 Exception ErrorException { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Exception` | 
-
 
 
 ### Property `ProtocolVersion`
@@ -5872,23 +4889,15 @@ Only set when underlying framework supports it.
 ```csharp
 Version ProtocolVersion { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Version` | 
-
 
 
 ## Interface `IRestResponse<T>`
 
 Container for data sent back from API including deserialized data
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
-public interface IRestResponse : IRestResponse
+public interface IRestResponse<T> : IRestResponse
 ```
 ### Generic parameters
 Name | Description
@@ -5908,23 +4917,15 @@ Deserialized entity data
 ```csharp
 T Data { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`T` | 
-
 
 
 ## Class `JsonRequest<TRequest, TResponse>`
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.RestRequest`
-
-### Inherited members
-
 ### Syntax
 ```csharp
-public class JsonRequest : RestRequest, IRestRequest
+public class JsonRequest<TRequest, TResponse> : RestRequest, IRestRequest
 ```
 ### Generic parameters
 Name | Description
@@ -6012,9 +5013,6 @@ Client to translate RestRequests into Http requests and process response result
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class RestClient : IRestClient
@@ -6826,8 +5824,6 @@ Type | Description
 
 ### Method `ExecuteAsync(IRestRequest, CancellationToken)`
 
-Executes the request asynchronously, authenticating if needed
-
 #### Syntax
 ```csharp
 public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token = default(CancellationToken))
@@ -6835,8 +5831,8 @@ public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken 
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | Request to be executed
-`token` | `System.Threading.CancellationToken` | The cancellation token
+`request` | `RestSharp.IRestRequest` | 
+`token` | `System.Threading.CancellationToken` | 
 
 #### Returns
 Type | Description
@@ -6946,11 +5942,6 @@ Type | Description
 ```csharp
 public bool AutomaticDecompression { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `MaxRedirects`
@@ -6959,11 +5950,6 @@ Type | Description
 ```csharp
 public int? MaxRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int?` | 
-
 
 
 ### Property `ClientCertificates`
@@ -6972,11 +5958,6 @@ Type | Description
 ```csharp
 public X509CertificateCollection ClientCertificates { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`X509CertificateCollection` | 
-
 
 
 ### Property `Proxy`
@@ -6985,11 +5966,6 @@ Type | Description
 ```csharp
 public IWebProxy Proxy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`IWebProxy` | 
-
 
 
 ### Property `CachePolicy`
@@ -6998,11 +5974,6 @@ Type | Description
 ```csharp
 public RequestCachePolicy CachePolicy { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RequestCachePolicy` | 
-
 
 
 ### Property `Pipelined`
@@ -7011,11 +5982,6 @@ Type | Description
 ```csharp
 public bool Pipelined { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `FollowRedirects`
@@ -7024,11 +5990,6 @@ Type | Description
 ```csharp
 public bool FollowRedirects { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `CookieContainer`
@@ -7037,11 +5998,6 @@ Type | Description
 ```csharp
 public CookieContainer CookieContainer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`CookieContainer` | 
-
 
 
 ### Property `UserAgent`
@@ -7050,11 +6006,6 @@ Type | Description
 ```csharp
 public string UserAgent { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Timeout`
@@ -7063,11 +6014,6 @@ Type | Description
 ```csharp
 public int Timeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `ReadWriteTimeout`
@@ -7076,11 +6022,6 @@ Type | Description
 ```csharp
 public int ReadWriteTimeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `UseSynchronizationContext`
@@ -7089,11 +6030,6 @@ Type | Description
 ```csharp
 public bool UseSynchronizationContext { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Authenticator`
@@ -7102,11 +6038,6 @@ Type | Description
 ```csharp
 public IAuthenticator Authenticator { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Authenticators.IAuthenticator` | 
-
 
 
 ### Property `BaseUrl`
@@ -7115,11 +6046,6 @@ Type | Description
 ```csharp
 public virtual Uri BaseUrl { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Encoding`
@@ -7128,11 +6054,6 @@ Type | Description
 ```csharp
 public Encoding Encoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Text.Encoding` | 
-
 
 
 ### Property `PreAuthenticate`
@@ -7141,11 +6062,6 @@ Type | Description
 ```csharp
 public bool PreAuthenticate { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ThrowOnDeserializationError`
@@ -7154,11 +6070,6 @@ Type | Description
 ```csharp
 public bool ThrowOnDeserializationError { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `FailOnDeserializationError`
@@ -7167,11 +6078,6 @@ Type | Description
 ```csharp
 public bool FailOnDeserializationError { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ThrowOnAnyError`
@@ -7180,11 +6086,6 @@ Type | Description
 ```csharp
 public bool ThrowOnAnyError { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `UnsafeAuthenticatedConnectionSharing`
@@ -7193,11 +6094,6 @@ Type | Description
 ```csharp
 public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `ConnectionGroupName`
@@ -7206,11 +6102,6 @@ Type | Description
 ```csharp
 public string ConnectionGroupName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RemoteCertificateValidationCallback`
@@ -7219,11 +6110,6 @@ Type | Description
 ```csharp
 public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RemoteCertificateValidationCallback` | 
-
 
 
 ### Property `DefaultParameters`
@@ -7232,11 +6118,6 @@ Type | Description
 ```csharp
 public IList<Parameter> DefaultParameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.Parameter>` | 
-
 
 
 ### Property `BaseHost`
@@ -7245,11 +6126,6 @@ Type | Description
 ```csharp
 public string BaseHost { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `AllowMultipleDefaultParametersWithSameName`
@@ -7258,11 +6134,6 @@ Type | Description
 ```csharp
 public bool AllowMultipleDefaultParametersWithSameName { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Method `AddHandler(String, Func<IDeserializer>)`
@@ -7426,8 +6297,6 @@ Type | Description
 
 ### Method `DownloadData(IRestRequest)`
 
-Executes the specified request and downloads the response data
-
 #### Syntax
 ```csharp
 public byte[] DownloadData(IRestRequest request)
@@ -7435,18 +6304,16 @@ public byte[] DownloadData(IRestRequest request)
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | Request to execute
+`request` | `RestSharp.IRestRequest` | 
 
 #### Returns
 Type | Description
 --- | ---
-`byte[]` | Response data
+`byte[]` | 
 
 
 
 ### Method `DownloadData(IRestRequest, Boolean)`
-
-Executes the specified request and downloads the response data
 
 #### Syntax
 ```csharp
@@ -7455,19 +6322,17 @@ public byte[] DownloadData(IRestRequest request, bool throwOnError)
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | Request to execute
-`throwOnError` | `bool` | Throw an exception if download fails.
+`request` | `RestSharp.IRestRequest` | 
+`throwOnError` | `bool` | 
 
 #### Returns
 Type | Description
 --- | ---
-`byte[]` | Response data
+`byte[]` | 
 
 
 
 ### Method `Execute(IRestRequest, Method)`
-
-Executes the request and returns a response, authenticating if needed
 
 #### Syntax
 ```csharp
@@ -7476,19 +6341,17 @@ public virtual IRestResponse Execute(IRestRequest request, Method httpMethod)
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | Request to be executed
-`httpMethod` | `RestSharp.Method` | Override the http method in the request
+`request` | `RestSharp.IRestRequest` | 
+`httpMethod` | `RestSharp.Method` | 
 
 #### Returns
 Type | Description
 --- | ---
-`RestSharp.IRestResponse` | RestResponse
+`RestSharp.IRestResponse` | 
 
 
 
 ### Method `Execute(IRestRequest)`
-
-Executes the request and returns a response, authenticating if needed
 
 #### Syntax
 ```csharp
@@ -7497,12 +6360,12 @@ public virtual IRestResponse Execute(IRestRequest request)
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | Request to be executed
+`request` | `RestSharp.IRestRequest` | 
 
 #### Returns
 Type | Description
 --- | ---
-`RestSharp.IRestResponse` | RestResponse
+`RestSharp.IRestResponse` | 
 
 
 
@@ -7570,8 +6433,6 @@ Type | Description
 
 ### Method `Execute<T>(IRestRequest)`
 
-Executes the specified request and deserializes the response content using the appropriate content handler
-
 #### Syntax
 ```csharp
 public virtual IRestResponse<T> Execute<T>(IRestRequest request)
@@ -7579,17 +6440,17 @@ public virtual IRestResponse<T> Execute<T>(IRestRequest request)
 #### Generic parameters
 Name | Description
 --- | ---
-`T` | Target deserialization type
+`T` | 
 
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-`request` | `RestSharp.IRestRequest` | Request to execute
+`request` | `RestSharp.IRestRequest` | 
 
 #### Returns
 Type | Description
 --- | ---
-`RestSharp.IRestResponse<T>` | RestResponse[[T]] with deserialized data in Data property
+`RestSharp.IRestResponse<T>` | 
 
 
 
@@ -7645,9 +6506,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class RestClientExtensions
@@ -9010,9 +7868,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class NameValuePair
@@ -9021,7 +7876,14 @@ public class NameValuePair
 ### Extension methods
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-Empty | 
+### Field `Empty`
+
+#### Syntax
+```csharp
+public static NameValuePair Empty
+```
+
+
 ### Constructor `NameValuePair(String, String)`
 
 #### Syntax
@@ -9042,11 +7904,6 @@ Name | Type | Description
 ```csharp
 public string Name { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Value`
@@ -9055,11 +7912,6 @@ Type | Description
 ```csharp
 public string Value { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `IsEmpty`
@@ -9068,11 +7920,6 @@ Type | Description
 ```csharp
 public bool IsEmpty { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ## Class `Parameter`
@@ -9081,9 +7928,6 @@ Parameter container for REST requests
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class Parameter : IEquatable<Parameter>
@@ -9131,11 +7975,6 @@ Name of the parameter
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Value`
@@ -9146,11 +7985,6 @@ Value of the parameter
 ```csharp
 public object Value { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`object` | 
-
 
 
 ### Property `Type`
@@ -9161,11 +7995,6 @@ Type of the parameter
 ```csharp
 public ParameterType Type { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.ParameterType` | 
-
 
 
 ### Property `DataFormat`
@@ -9176,11 +8005,6 @@ Body parameter data type
 ```csharp
 public DataFormat DataFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.DataFormat` | 
-
 
 
 ### Property `ContentType`
@@ -9191,11 +8015,6 @@ MIME content type of the parameter
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Method `ToString()`
@@ -9266,9 +8085,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.Parameter`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class XmlParameter : Parameter, IEquatable<Parameter>
@@ -9298,11 +8114,6 @@ Name | Type | Description
 ```csharp
 public string XmlNamespace { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ## Class `JsonParameter`
@@ -9353,9 +8164,6 @@ Name | Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class RequestBody
@@ -9370,11 +8178,6 @@ public class RequestBody
 ```csharp
 public string ContentType { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Name`
@@ -9383,11 +8186,6 @@ Type | Description
 ```csharp
 public string Name { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Value`
@@ -9396,11 +8194,6 @@ Type | Description
 ```csharp
 public object Value { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`object` | 
-
 
 
 ### Constructor `RequestBody(String, String, Object)`
@@ -9422,9 +8215,6 @@ Name | Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class RestClientJsonRequest
@@ -9618,9 +8408,6 @@ Container for data used to make requests
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class RestRequest : IRestRequest
@@ -9758,11 +8545,6 @@ Name | Type | Description
 ```csharp
 public IList<DecompressionMethods> AllowedDecompressionMethods { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<DecompressionMethods>` | 
-
 
 
 ### Property `AlwaysMultipartFormData`
@@ -9771,11 +8553,6 @@ Type | Description
 ```csharp
 public bool AlwaysMultipartFormData { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `JsonSerializer`
@@ -9784,11 +8561,6 @@ Type | Description
 ```csharp
 public ISerializer JsonSerializer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Serializers.ISerializer` | 
-
 
 
 ### Property `XmlSerializer`
@@ -9797,11 +8569,6 @@ Type | Description
 ```csharp
 public IXmlSerializer XmlSerializer { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Serialization.Xml.IXmlSerializer` | 
-
 
 
 ### Property `Body`
@@ -9810,11 +8577,6 @@ Type | Description
 ```csharp
 public RequestBody Body { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.RequestBody` | 
-
 
 
 ### Property `ResponseWriter`
@@ -9823,11 +8585,6 @@ Type | Description
 ```csharp
 public Action<Stream> ResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream>` | 
-
 
 
 ### Property `AdvancedResponseWriter`
@@ -9836,11 +8593,6 @@ Type | Description
 ```csharp
 public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<System.IO.Stream, RestSharp.IHttpResponse>` | 
-
 
 
 ### Property `UseDefaultCredentials`
@@ -9849,11 +8601,6 @@ Type | Description
 ```csharp
 public bool UseDefaultCredentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Method `AddFile(String, String, String)`
@@ -10402,11 +9149,6 @@ Type | Description
 ```csharp
 public List<Parameter> Parameters { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.List<RestSharp.Parameter>` | 
-
 
 
 ### Property `Files`
@@ -10415,11 +9157,6 @@ Type | Description
 ```csharp
 public List<FileParameter> Files { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.List<RestSharp.FileParameter>` | 
-
 
 
 ### Property `Method`
@@ -10428,11 +9165,6 @@ Type | Description
 ```csharp
 public Method Method { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.Method` | 
-
 
 
 ### Property `Resource`
@@ -10441,11 +9173,6 @@ Type | Description
 ```csharp
 public string Resource { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RequestFormat`
@@ -10454,11 +9181,6 @@ Type | Description
 ```csharp
 public DataFormat RequestFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.DataFormat` | 
-
 
 
 ### Property `RootElement`
@@ -10468,11 +9190,6 @@ Type | Description
 [Obsolete("Add custom content handler instead. This property will be removed.")]
 public string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `OnBeforeDeserialization`
@@ -10481,11 +9198,6 @@ Type | Description
 ```csharp
 public Action<IRestResponse> OnBeforeDeserialization { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<RestSharp.IRestResponse>` | 
-
 
 
 ### Property `OnBeforeRequest`
@@ -10494,11 +9206,6 @@ Type | Description
 ```csharp
 public Action<IHttp> OnBeforeRequest { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Action<RestSharp.IHttp>` | 
-
 
 
 ### Property `DateFormat`
@@ -10508,11 +9215,6 @@ Type | Description
 [Obsolete("Add custom content handler instead. This property will be removed.")]
 public string DateFormat { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `XmlNamespace`
@@ -10522,11 +9224,6 @@ Type | Description
 [Obsolete("Add custom content handler instead. This property will be removed.")]
 public string XmlNamespace { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Credentials`
@@ -10535,11 +9232,6 @@ Type | Description
 ```csharp
 public ICredentials Credentials { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`ICredentials` | 
-
 
 
 ### Property `Timeout`
@@ -10548,11 +9240,6 @@ Type | Description
 ```csharp
 public int Timeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `ReadWriteTimeout`
@@ -10561,11 +9248,6 @@ Type | Description
 ```csharp
 public int ReadWriteTimeout { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Method `IncreaseNumAttempts()`
@@ -10582,11 +9264,6 @@ public void IncreaseNumAttempts()
 ```csharp
 public int Attempts { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Method `AddUrlSegment(String, Object)`
@@ -10612,9 +9289,6 @@ Type | Description
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public class RestRequestAsyncHandle
@@ -10623,7 +9297,14 @@ public class RestRequestAsyncHandle
 ### Extension methods
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
 -  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
-WebRequest | 
+### Field `WebRequest`
+
+#### Syntax
+```csharp
+public HttpWebRequest WebRequest
+```
+
+
 ### Method `Abort()`
 
 #### Syntax
@@ -10638,9 +9319,6 @@ Base class for common properties shared by RestResponse and RestResponse[[T]]
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 [DebuggerDisplay("{DebuggerDisplay()}")]
@@ -10672,11 +9350,6 @@ Mainly for debugging if ResponseStatus is not OK
 ```csharp
 public IRestRequest Request { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.IRestRequest` | 
-
 
 
 ### Property `ContentType`
@@ -10687,11 +9360,6 @@ MIME content type of response
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ContentLength`
@@ -10702,11 +9370,6 @@ Length in bytes of the response content
 ```csharp
 public long ContentLength { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`long` | 
-
 
 
 ### Property `ContentEncoding`
@@ -10717,11 +9380,6 @@ Encoding of the response content
 ```csharp
 public string ContentEncoding { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Content`
@@ -10732,11 +9390,6 @@ String representation of response content
 ```csharp
 public string Content { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `StatusCode`
@@ -10747,11 +9400,6 @@ HTTP response status code
 ```csharp
 public HttpStatusCode StatusCode { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`HttpStatusCode` | 
-
 
 
 ### Property `IsSuccessful`
@@ -10762,11 +9410,6 @@ Whether or not the response status code indicates success
 ```csharp
 public bool IsSuccessful { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `StatusDescription`
@@ -10777,11 +9420,6 @@ Description of HTTP status returned
 ```csharp
 public string StatusDescription { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `RawBytes`
@@ -10792,11 +9430,6 @@ Response content
 ```csharp
 public byte[] RawBytes { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`byte[]` | 
-
 
 
 ### Property `ResponseUri`
@@ -10807,11 +9440,6 @@ The URL that actually responded to the content (different from request if redire
 ```csharp
 public Uri ResponseUri { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Server`
@@ -10822,11 +9450,6 @@ HttpWebResponse.Server
 ```csharp
 public string Server { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Cookies`
@@ -10837,11 +9460,6 @@ Cookies returned by server with the response
 ```csharp
 public IList<RestResponseCookie> Cookies { get; protected set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.RestResponseCookie>` | 
-
 
 
 ### Property `Headers`
@@ -10852,11 +9470,6 @@ Headers returned by server with the response
 ```csharp
 public IList<Parameter> Headers { get; protected set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Collections.Generic.IList<RestSharp.Parameter>` | 
-
 
 
 ### Property `ResponseStatus`
@@ -10868,11 +9481,6 @@ HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
 ```csharp
 public ResponseStatus ResponseStatus { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.ResponseStatus` | 
-
 
 
 ### Property `ErrorMessage`
@@ -10883,11 +9491,6 @@ Transport or other non-HTTP error generated while attempting request
 ```csharp
 public string ErrorMessage { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `ErrorException`
@@ -10898,11 +9501,6 @@ The exception thrown during the request, if any
 ```csharp
 public Exception ErrorException { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Exception` | 
-
 
 
 ### Property `ProtocolVersion`
@@ -10915,11 +9513,6 @@ Only set when underlying framework supports it.
 ```csharp
 public Version ProtocolVersion { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.Version` | 
-
 
 
 ### Method `DebuggerDisplay()`
@@ -10943,13 +9536,10 @@ Container for data sent back from API including deserialized data
 
 ### Inheritance
 ↳ `object`<br>&nbsp;&nbsp;↳ `RestSharp.RestResponseBase`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 [DebuggerDisplay("{DebuggerDisplay()}")]
-public class RestResponse : RestResponseBase, IRestResponse<T>, IRestResponse
+public class RestResponse<T> : RestResponseBase, IRestResponse<T>, IRestResponse
 ```
 ### Generic parameters
 Name | Description
@@ -10969,11 +9559,6 @@ Deserialized entity data
 ```csharp
 public T Data { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`T` | 
-
 
 
 Operator: RestSharp.RestResponse`1.op_Explicit(RestSharp.RestResponse)~RestSharp.RestResponse{`0}
@@ -11002,9 +9587,6 @@ public class RestResponse : RestResponseBase, IRestResponse
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 [Obsolete("We will use HttpCookie in the response as well in the next major version")]
@@ -11022,11 +9604,6 @@ Comment of the cookie
 ```csharp
 public string Comment { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `CommentUri`
@@ -11037,11 +9614,6 @@ Comment of the cookie
 ```csharp
 public Uri CommentUri { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`Uri` | 
-
 
 
 ### Property `Discard`
@@ -11052,11 +9624,6 @@ Indicates whether the cookie should be discarded at the end of the session
 ```csharp
 public bool Discard { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Domain`
@@ -11067,11 +9634,6 @@ Domain of the cookie
 ```csharp
 public string Domain { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Expired`
@@ -11082,11 +9644,6 @@ Indicates whether the cookie is expired
 ```csharp
 public bool Expired { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Expires`
@@ -11097,11 +9654,6 @@ Date and time that the cookie expires
 ```csharp
 public DateTime Expires { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.DateTime` | 
-
 
 
 ### Property `HttpOnly`
@@ -11112,11 +9664,6 @@ Indicates that this cookie should only be accessed by the server
 ```csharp
 public bool HttpOnly { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `Name`
@@ -11127,11 +9674,6 @@ Name of the cookie
 ```csharp
 public string Name { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Path`
@@ -11142,11 +9684,6 @@ Path of the cookie
 ```csharp
 public string Path { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Port`
@@ -11157,11 +9694,6 @@ Port of the cookie
 ```csharp
 public string Port { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Secure`
@@ -11172,11 +9704,6 @@ Indicates that the cookie should only be sent over secure channels
 ```csharp
 public bool Secure { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`bool` | 
-
 
 
 ### Property `TimeStamp`
@@ -11187,11 +9714,6 @@ Date and time the cookie was created
 ```csharp
 public DateTime TimeStamp { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`System.DateTime` | 
-
 
 
 ### Property `Value`
@@ -11202,11 +9724,6 @@ Value of the cookie
 ```csharp
 public string Value { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 
 
 ### Property `Version`
@@ -11217,11 +9734,6 @@ Version of the cookie
 ```csharp
 public int Version { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`int` | 
-
 
 
 ### Property `HttpCookie`
@@ -11230,9 +9742,4 @@ Type | Description
 ```csharp
 public HttpCookie HttpCookie { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.HttpCookie` | 
-
 

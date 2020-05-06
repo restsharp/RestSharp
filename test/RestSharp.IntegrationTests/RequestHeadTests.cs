@@ -2,32 +2,14 @@
 using System.Linq;
 using System.Net;
 using NUnit.Framework;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests
 {
     [TestFixture]
-    public class RequestHeadTests
+    public class RequestHeadTests : CaptureFixture
     {
-        [SetUp]
-        public void SetupRequestHeadTests() => RequestHeadCapturer.Initialize();
-
-        class RequestHeadCapturer
-        {
-            public const string Resource = "Capture";
-
-            public static NameValueCollection CapturedHeaders { get; set; }
-
-            public static void Initialize() => CapturedHeaders = null;
-
-            public static void Capture(HttpListenerContext context)
-            {
-                var request = context.Request;
-
-                CapturedHeaders = request.Headers;
-            }
-        }
-
         [Test]
         public void Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate()
         {

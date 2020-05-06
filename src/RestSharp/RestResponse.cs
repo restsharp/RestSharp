@@ -27,7 +27,7 @@ namespace RestSharp
     [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
     public abstract class RestResponseBase
     {
-        string content;
+        string _content;
 
         /// <summary>
         ///     Default constructor
@@ -67,8 +67,8 @@ namespace RestSharp
         /// </summary>
         public string Content
         {
-            get => content ??= RawBytes.AsString(ContentEncoding);
-            set => content = value;
+            get => _content ??= RawBytes.AsString(ContentEncoding);
+            set => _content = value;
         }
 
         /// <summary>

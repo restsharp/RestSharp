@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using RestSharp.Extensions;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
@@ -33,6 +34,7 @@ namespace RestSharp
     /// <summary>
     ///     Container for data used to make requests
     /// </summary>
+    [PublicAPI]
     public class RestRequest : IRestRequest
     {
         static readonly Regex PortSplitRegex = new Regex(@":\d+");
@@ -88,7 +90,7 @@ namespace RestSharp
             }
 
             static IEnumerable<NameValuePair> ParseQuery(string query)
-                => query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
+                => query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(
                         x =>
                         {

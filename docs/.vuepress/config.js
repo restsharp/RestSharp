@@ -24,11 +24,11 @@ module.exports = {
                 path: "/usage/",
                 collapsable: false,
                 children: [
-                    "/usage/serialization",
-                    "/usage/files",
-                    "/usage/authenticators",
-                    "/usage/parameters",
-                    "/usage/exceptions"
+                    "serialization",
+                    "files",
+                    "authenticators",
+                    "parameters",
+                    "exceptions"
                 ]
             },
             {
@@ -44,7 +44,10 @@ module.exports = {
                 path: "/api/",
                 collapsable: true,
                 children: [
-                    "/api/RestSharp.md"
+                    "/api/RestSharp",
+                    "/api/RestSharp.Serializers.NewtonsoftJson",
+                    "/api/RestSharp.Serializers.SystemTextJson",
+                    "/api/RestSharp.Serializers.Utf8Json",
                 ]
             }
         ],

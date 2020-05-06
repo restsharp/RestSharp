@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Deserializers;
@@ -36,6 +37,7 @@ namespace RestSharp
     /// <summary>
     ///     Client to translate RestRequests into Http requests and process response result
     /// </summary>
+    [PublicAPI]
     public partial class RestClient : IRestClient
     {
         static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;

@@ -20,11 +20,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using JetBrains.Annotations;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 
 namespace RestSharp
 {
+    [PublicAPI]
     public interface IRestRequest
     {
         /// <summary>

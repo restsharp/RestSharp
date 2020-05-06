@@ -3,23 +3,52 @@
 
 ### Inheritance
 ↳ `object`
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public static class ContentType
 ```
 
-Json | 
-Xml | 
-FromDataFormat | 
-JsonAccept | 
-XmlAccept | 
+### Field `Json`
+
+#### Syntax
+```csharp
+public static string Json = "application/json"
+```
+
+
+### Field `Xml`
+
+#### Syntax
+```csharp
+public static string Xml = "application/xml"
+```
+
+
+### Field `FromDataFormat`
+
+#### Syntax
+```csharp
+public static Dictionary<DataFormat, string> FromDataFormat
+```
+
+
+### Field `JsonAccept`
+
+#### Syntax
+```csharp
+public static string[] JsonAccept
+```
+
+
+### Field `XmlAccept`
+
+#### Syntax
+```csharp
+public static string[] XmlAccept
+```
+
+
 ## Interface `IRestSerializer`
-
-
-### Inherited members
 
 ### Syntax
 ```csharp
@@ -35,11 +64,6 @@ public interface IRestSerializer : ISerializer, IDeserializer
 ```csharp
 string[] SupportedContentTypes { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string[]` | 
-
 
 
 ### Property `DataFormat`
@@ -48,11 +72,6 @@ Type | Description
 ```csharp
 DataFormat DataFormat { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-`RestSharp.DataFormat` | 
-
 
 
 ### Method `Serialize(Parameter)`
@@ -75,9 +94,6 @@ Type | Description
 
 ## Interface `IWithRootElement`
 
-
-### Inherited members
-
 ### Syntax
 ```csharp
 public interface IWithRootElement
@@ -92,9 +108,4 @@ public interface IWithRootElement
 ```csharp
 string RootElement { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-`string` | 
-
 

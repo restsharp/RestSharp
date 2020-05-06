@@ -1,254 +1,224 @@
 # Namespace: RestSharp.Serializers.NewtonsoftJson
-## Class JsonNetSerializer
+## Class `JsonNetSerializer`
 
 ### Inheritance
-↳ IRestSerializer
- ↳ System.Object
-
-### Inherited members
-
-## Syntax
+↳ `IRestSerializer`<br>&nbsp;&nbsp;↳ `System.Object`
+### Syntax
 ```csharp
 public class JsonNetSerializer : IRestSerializer
 ```
 
 ### Extension methods
-object.ChangeType(System.Reflection.TypeInfo)
-object.ChangeType(System.Type, System.Globalization.CultureInfo)
-DefaultSettings | 
-### Constructor JsonNetSerializer()
+-  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Reflection.TypeInfo)`
+-  `RestSharp.Extensions.ReflectionExtensions.ChangeType(object, System.Type, System.Globalization.CultureInfo)`
+### Field `DefaultSettings`
+
+#### Syntax
+```csharp
+public static JsonSerializerSettings DefaultSettings
+```
+
+
+### Constructor `JsonNetSerializer()`
 
 Create the new serializer that uses Json.Net with default settings
 
-### Syntax
+#### Syntax
 ```csharp
 public JsonNetSerializer()
 ```
 
 
-### Constructor JsonNetSerializer(JsonSerializerSettings)
+### Constructor `JsonNetSerializer(JsonSerializerSettings)`
 
 Create the new serializer that uses Json.Net with custom settings
 
-### Syntax
+#### Syntax
 ```csharp
 public JsonNetSerializer(JsonSerializerSettings settings)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-settings | JsonSerializerSettings | Json.Net serializer settings
+`settings` | `JsonSerializerSettings` | Json.Net serializer settings
 
 
 
-### Method Serialize(Object)
+### Method `Serialize(Object)`
 
-### Syntax
+#### Syntax
 ```csharp
 public string Serialize(object obj)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-obj | object | 
+`obj` | `object` | 
 
 #### Returns
 Type | Description
 --- | ---
-string | 
+`string` | 
 
 
 
-### Method Serialize(Parameter)
+### Method `Serialize(Parameter)`
 
-### Syntax
+#### Syntax
 ```csharp
 public string Serialize(Parameter bodyParameter)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-bodyParameter | Parameter | 
+`bodyParameter` | `Parameter` | 
 
 #### Returns
 Type | Description
 --- | ---
-string | 
+`string` | 
 
 
 
-### Method Deserialize&lt;T&rt;(IRestResponse)
+### Method `Deserialize<T>(IRestResponse)`
 
-### Syntax
+#### Syntax
 ```csharp
-public T Deserialize&lt;T&rt;(IRestResponse response)
+public T Deserialize<T>(IRestResponse response)
 ```
 #### Generic parameters
 Name | Description
 --- | ---
-T | 
+`T` | 
 
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-response | IRestResponse | 
+`response` | `IRestResponse` | 
 
 #### Returns
 Type | Description
 --- | ---
-T | 
+`T` | 
 
 
 
-### Property SupportedContentTypes
+### Property `SupportedContentTypes`
 
-### Syntax
+#### Syntax
 ```csharp
 public string[] SupportedContentTypes { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-string[] | 
 
 
+### Property `ContentType`
 
-### Property ContentType
-
-### Syntax
+#### Syntax
 ```csharp
 public string ContentType { get; set; }
 ```
-#### Property value
-Type | Description
---- | ---
-string | 
 
 
+### Property `DataFormat`
 
-### Property DataFormat
-
-### Syntax
+#### Syntax
 ```csharp
 public DataFormat DataFormat { get; }
 ```
-#### Property value
-Type | Description
---- | ---
-DataFormat | 
 
 
-
-## Class RestClientExtensions
+## Class `RestClientExtensions`
 
 ### Inheritance
-↳ object
-
-### Inherited members
-object.GetType()
-object.MemberwiseClone()
-object.ToString()
-object.Equals(object?)
-object.Equals(object?, object?)
-object.ReferenceEquals(object?, object?)
-object.GetHashCode()
-## Syntax
+↳ `object`
+### Syntax
 ```csharp
 public static class RestClientExtensions
 ```
 
-### Method UseNewtonsoftJson(IRestClient)
+### Method `UseNewtonsoftJson(IRestClient)`
 
 Use Json.Net serializer with default settings
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestClient UseNewtonsoftJson(this IRestClient client)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-client | IRestClient | 
+`client` | `IRestClient` | 
 
 #### Returns
 Type | Description
 --- | ---
-IRestClient | 
+`IRestClient` | 
 
 
 
-### Method UseNewtonsoftJson(IRestClient, JsonSerializerSettings)
+### Method `UseNewtonsoftJson(IRestClient, JsonSerializerSettings)`
 
 Use Json.Net serializer with custom settings
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestClient UseNewtonsoftJson(this IRestClient client, JsonSerializerSettings settings)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-client | IRestClient | 
-settings | JsonSerializerSettings | Json.Net serializer settings
+`client` | `IRestClient` | 
+`settings` | `JsonSerializerSettings` | Json.Net serializer settings
 
 #### Returns
 Type | Description
 --- | ---
-IRestClient | 
+`IRestClient` | 
 
 
 
-## Class RestRequestExtensions
+## Class `RestRequestExtensions`
 
 ### Inheritance
-↳ object
-
-### Inherited members
-object.GetType()
-object.MemberwiseClone()
-object.ToString()
-object.Equals(object?)
-object.Equals(object?, object?)
-object.ReferenceEquals(object?, object?)
-object.GetHashCode()
-## Syntax
+↳ `object`
+### Syntax
 ```csharp
 public static class RestRequestExtensions
 ```
 
-### Method UseNewtonsoftJson(IRestRequest)
+### Method `UseNewtonsoftJson(IRestRequest)`
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestRequest UseNewtonsoftJson(this IRestRequest request)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-request | IRestRequest | 
+`request` | `IRestRequest` | 
 
 #### Returns
 Type | Description
 --- | ---
-IRestRequest | 
+`IRestRequest` | 
 
 
 
-### Method UseNewtonsoftJson(IRestRequest, JsonSerializerSettings)
+### Method `UseNewtonsoftJson(IRestRequest, JsonSerializerSettings)`
 
-### Syntax
+#### Syntax
 ```csharp
 public static IRestRequest UseNewtonsoftJson(this IRestRequest request, JsonSerializerSettings settings)
 ```
 #### Parameters
 Name | Type | Description
 --- | --- | ---
-request | IRestRequest | 
-settings | JsonSerializerSettings | 
+`request` | `IRestRequest` | 
+`settings` | `JsonSerializerSettings` | 
 
 #### Returns
 Type | Description
 --- | ---
-IRestRequest | 
+`IRestRequest` | 
 
 
