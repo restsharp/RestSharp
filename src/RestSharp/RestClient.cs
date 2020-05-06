@@ -565,7 +565,8 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    var handler = GetHandler(raw.ContentType)();
+                    var func = GetHandler(raw.ContentType);
+                    var handler = func?.Invoke();
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
