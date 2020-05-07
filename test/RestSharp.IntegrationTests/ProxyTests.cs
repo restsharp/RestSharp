@@ -9,6 +9,7 @@ namespace RestSharp.IntegrationTests
     public class ProxyTests
     {
         [Test]
+        [Ignore("Behaves strangely on Windows")]
         public void Set_Invalid_Proxy_Fails()
         {
             using var server = HttpServerFixture.StartServer((_, __) => { });
@@ -23,6 +24,7 @@ namespace RestSharp.IntegrationTests
         }
 
         [Test]
+        [Ignore("Behaves strangely on Windows")]
         public void Set_Invalid_Proxy_Fails_RAW()
         {
             using var server = HttpServerFixture.StartServer((_, __) => { });
