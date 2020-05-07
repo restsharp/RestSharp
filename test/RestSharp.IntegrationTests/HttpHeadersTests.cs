@@ -35,8 +35,10 @@ namespace RestSharp.IntegrationTests
             // Prepare
             var client = new RestClient(server.Url);
 
-            var request = new RestRequest(RequestHeadCapturer.Resource);
-            request.OnBeforeRequest = http => http.Headers.Add(new HttpHeader {Name = headerName, Value = headerValue});
+            var request = new RestRequest(RequestHeadCapturer.Resource)
+            {
+                OnBeforeRequest = http => http.Headers.Add(new HttpHeader(headerName, headerValue))
+            };
 
             // Run
             client.Execute(request);

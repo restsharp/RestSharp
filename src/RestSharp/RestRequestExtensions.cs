@@ -33,8 +33,8 @@ namespace RestSharp
 
             if (body.DataFormat == DataFormat.None)
             {
-                 request.Body = new RequestBody(body.ContentType, body.Name, body.Value);
-                 return;
+                request.Body = new RequestBody(body.ContentType, body.Name, body.Value);
+                return;
             }
 
             var contentType       = body.ContentType ?? ContentType.FromDataFormat[body.DataFormat];
@@ -43,7 +43,8 @@ namespace RestSharp
             if (requestSerializer != null)
             {
                 request.Body = new RequestBody(
-                    requestSerializer.ContentType, requestSerializer.ContentType,
+                    requestSerializer.ContentType,
+                    requestSerializer.ContentType,
                     requestSerializer.Serialize(body.Value)
                 );
                 return;
@@ -78,14 +79,7 @@ namespace RestSharp
             }
             else
             {
-                http.Parameters.Add(
-                    new HttpParameter
-                    {
-                        Name        = requestBody.Name,
-                        Value       = requestBody.Value.ToString(),
-                        ContentType = requestBody.ContentType
-                    }
-                );
+                http.Parameters.Add(new HttpParameter(requestBody.Name, requestBody.Value, requestBody.ContentType));
             }
         }
     }

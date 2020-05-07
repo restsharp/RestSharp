@@ -12,6 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
+using System;
 using JetBrains.Annotations;
 
 namespace RestSharp
@@ -30,12 +31,20 @@ namespace RestSharp
         public HttpHeader(string name, string value)
         {
             Name  = name;
-            Value = value;
+            Value = value ?? "";
         }
+
+        /// <summary>
+        /// Creates a new instance of HttpHeader with value conversion
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value, which has to implement ToString() properly</param>
+        public HttpHeader(string name, object value) : this(name, value?.ToString()) { }
 
         /// <summary>
         /// Creates a new instance of HttpHeader. Remember to assign properties!
         /// </summary>
+        [Obsolete("Use parameterized constructor")]
         public HttpHeader() { }
 
         /// <summary>

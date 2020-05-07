@@ -504,17 +504,17 @@ namespace RestSharp
 
             http.Headers = requestParameters
                 .Where(p => p.Type == ParameterType.HttpHeader)
-                .Select(p => new HttpHeader {Name = p.Name, Value = Convert.ToString(p.Value)})
+                .Select(p => new HttpHeader(p.Name, p.Value))
                 .ToList();
 
             http.Cookies = requestParameters
                 .Where(p => p.Type == ParameterType.Cookie)
-                .Select(p => new HttpCookie {Name = p.Name, Value = Convert.ToString(p.Value)})
+                .Select(p => new HttpCookie {Name = p.Name, Value = p.Value?.ToString() ?? ""})
                 .ToList();
 
             http.Parameters = requestParameters
-                .Where(p => p.Type == ParameterType.GetOrPost && p.Value != null)
-                .Select(p => new HttpParameter {Name = p.Name, Value = Convert.ToString(p.Value)})
+                .Where(p => p.Type == ParameterType.GetOrPost)
+                .Select(p => new HttpParameter(p.Name, p.Value))
                 .ToList();
 
             http.Files = request.Files.Select(
