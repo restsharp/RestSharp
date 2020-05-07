@@ -14,5 +14,6 @@
     <PackageReference Include="AutoFixture" Version="4.11.0"/>
     <PackageReference Include="FluentAssertions" Version="5.10.0"/>
     <PackageReference Include="coverlet.collector" Version="1.0.1"/>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 </Project>
