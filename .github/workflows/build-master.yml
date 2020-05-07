@@ -20,32 +20,23 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.1.100'
+          dotnet-version: '3.1.201'
 
       - name: Run tests netcoreapp3.1
         run: dotnet test -c Release -f netcoreapp3.1
 
-  test-netcore-win:
+  test-win:
     runs-on: windows-latest
     
     steps:
     - uses: actions/checkout@v1
 
-    - name: Run tests netcoreapp3.1
-      run: dotnet test -c Release -f netcoreapp3.1
-      
-  test-net461:
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Run tests net461
-        run: dotnet test -c Release -f net461
+    - name: Run tests on Windows for all targets
+      run: dotnet test -c Release 
     
   nuget:
     runs-on: windows-latest
-    needs: [test-netcore-win,test-netcore-linux,test-net461]
+    needs: [test-win,test-netcore-linux]
 
     steps:
     - uses: actions/checkout@v1
