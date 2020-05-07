@@ -7,15 +7,12 @@
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'"/>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RestSharp.Serializers.SimpleJson\RestSharp.Serializers.SimpleJson.csproj"/>
+    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
 
   <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
     <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
     </ItemGroup>
   </Target>
 </Project>
