@@ -1,28 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="../../netfx.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
-        <IsPackable>false</IsPackable>
-        <SignAssembly>true</SignAssembly>
-        <LangVersion>8</LangVersion>
-        <AssemblyOriginatorKeyFile>..\..\RestSharp.snk</AssemblyOriginatorKeyFile>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="AutoFixture" Version="4.11.0" />
-        <PackageReference Include="FluentAssertions" Version="5.10.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-        <PackageReference Include="NUnit3TestAdapter" Version="3.16.0" />
-        <PackageReference Include="coverlet.collector" Version="1.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
-      <ProjectReference Include="..\..\src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj" />
-      <ProjectReference Include="..\..\src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj" />
-      <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
-      <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj"/>
+    <ProjectReference Include="..\..\src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj"/>
+    <ProjectReference Include="..\..\src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj"/>
+    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj"/>
+    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
+  </ItemGroup>
 
 </Project>

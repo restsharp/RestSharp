@@ -1,6 +1,6 @@
 using System;
+using FluentAssertions;
 using NUnit.Framework;
-using Shouldly;
 
 namespace RestSharp.Tests
 {
@@ -24,7 +24,7 @@ namespace RestSharp.Tests
 
             client.Execute(req, overrideMethod);
 
-            req.Method.ShouldBe(overrideMethod);
+            req.Method.Should().Be(overrideMethod);
         }
 
         [Test]
@@ -33,8 +33,8 @@ namespace RestSharp.Tests
             var req    = new RestRequest();
             var client = new RestClient(BaseUrl) {Proxy = null};
 
-            Should.NotThrow(() => client.Execute(req));
-            client.Proxy.ShouldBeNull();
+            Assert.DoesNotThrow(() => client.Execute(req));
+            client.Proxy.Should().BeNull();
         }
         
         [Test]
@@ -50,7 +50,7 @@ namespace RestSharp.Tests
             var builtUri = client.BuildUri(req);
             
             // assert
-            absoluteUri.ShouldBe(builtUri);
+            absoluteUri.Should().Be(builtUri);
         }
         
         [Test]
@@ -66,7 +66,7 @@ namespace RestSharp.Tests
             var builtUri = client.BuildUri(req);
             
             // assert
-            new Uri(baseUrl, relative).ShouldBe(builtUri);
+            new Uri(baseUrl, relative).Should().Be(builtUri);
         }
     }
 }

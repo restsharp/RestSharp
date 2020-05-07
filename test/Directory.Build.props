@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <AssemblyOriginatorKeyFile>..\..\RestSharp.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0"/>
+    <PackageReference Include="NUnit" Version="3.12.0"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1"/>
+    <PackageReference Include="AutoFixture" Version="4.11.0"/>
+    <PackageReference Include="FluentAssertions" Version="5.10.0"/>
+    <PackageReference Include="coverlet.collector" Version="1.0.1"/>
+  </ItemGroup>
+</Project>

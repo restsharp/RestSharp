@@ -1,8 +1,8 @@
+using FluentAssertions;
 using NUnit.Framework;
 using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
 using RestSharp.Tests.Shared.Fixtures;
-using Shouldly;
 
 namespace RestSharp.IntegrationTests
 {
@@ -21,7 +21,7 @@ namespace RestSharp.IntegrationTests
             request.AddXmlBody(body);
             client.Execute(request);
 
-            serializer.BodyString.ShouldBe(body.ToString());
+            serializer.BodyString.Should().Be(body.ToString());
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace RestSharp.IntegrationTests
             request.AddBody(body);
             client.Execute(request);
 
-            serializer.BodyString.ShouldBe(body.ToString());
+            serializer.BodyString.Should().Be(body.ToString());
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace RestSharp.IntegrationTests
             request.AddJsonBody(body);
             client.Execute(request);
 
-            serializer.BodyString.ShouldBe(body.ToString());
+            serializer.BodyString.Should().Be(body.ToString());
         }
 
         class CustomXmlSerializer : IXmlSerializer

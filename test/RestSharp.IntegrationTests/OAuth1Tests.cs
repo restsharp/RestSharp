@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Xml.Serialization;
+using FluentAssertions;
 using NUnit.Framework;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.IntegrationTests.Models;
-using Shouldly;
 
 namespace RestSharp.IntegrationTests
 {
@@ -382,7 +381,7 @@ namespace RestSharp.IntegrationTests
             };
             var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
 
-            sortedParams.First().ShouldBe("name%5Bfirst%5D=Chuck");
+            sortedParams.First().Should().Be("name%5Bfirst%5D=Chuck");
         }
 
         [Test]

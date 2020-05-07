@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../netfx.props" />
-
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
-    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
+    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RestSharp.Serializers.SimpleJson\RestSharp.Serializers.SimpleJson.csproj"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\RestSharp.Serializers.SimpleJson\RestSharp.Serializers.SimpleJson.csproj" />
-  </ItemGroup>
-
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+    </ItemGroup>
+  </Target>
 </Project>

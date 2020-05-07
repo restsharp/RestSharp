@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
-        <IsPackable>false</IsPackable>
-        <RootNamespace>RestSharp</RootNamespace>
-    </PropertyGroup>
-
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>RestSharp</RootNamespace>
+  </PropertyGroup>
 </Project>

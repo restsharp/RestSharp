@@ -1,8 +1,8 @@
 using System;
 using System.Net;
+using FluentAssertions;
 using NUnit.Framework;
 using RestSharp.Tests.Shared.Fixtures;
-using Shouldly;
 
 namespace RestSharp.IntegrationTests
 {
@@ -26,7 +26,7 @@ namespace RestSharp.IntegrationTests
             client.Get(request);
 
             var query = RequestHandler.Url.Query;
-            query.ShouldBe(parameters);
+            query.Should().Be(parameters);
         }
 
         static class RequestHandler

@@ -23,7 +23,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
     <PackageReference Include="MinVer" Version="2.2.0" PrivateAssets="All"/>
-    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0"/>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

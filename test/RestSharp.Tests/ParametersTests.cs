@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
-using Shouldly;
 namespace RestSharp.Tests
 {
     [TestFixture]
@@ -24,7 +24,7 @@ namespace RestSharp.Tests
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeaders(headers);
             
-            expected.ShouldBeSubsetOf(client.DefaultParameters);
+            expected.Should().BeSubsetOf(client.DefaultParameters);
         }
     }
 }

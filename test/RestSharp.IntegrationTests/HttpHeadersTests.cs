@@ -14,10 +14,10 @@
 // 
 
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
-using Shouldly;
 
 namespace RestSharp.IntegrationTests
 {
@@ -44,8 +44,7 @@ namespace RestSharp.IntegrationTests
             client.Execute(request);
 
             // Assert
-            var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
-            RequestHeadCapturer.CapturedHeaders[headerName].ShouldBe(headerValue);
+            RequestHeadCapturer.CapturedHeaders[headerName].Should().Be(headerValue);
         }
     }
 }

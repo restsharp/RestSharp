@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
+using FluentAssertions;
 using NUnit.Framework;
-using Shouldly;
 
 namespace RestSharp.Tests
 {
@@ -385,7 +385,7 @@ namespace RestSharp.Tests
             var req       = new RestRequest(requestUrl, Method.POST);
             var resultUrl = client.BuildUri(req).ToString();
 
-            resultUrl.ShouldBe($"{baseUrl}/{requestUrl}");
+            resultUrl.Should().Be($"{baseUrl}/{requestUrl}");
         }
 
         [Test]

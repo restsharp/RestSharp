@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Moq;
+using FluentAssertions;
 using NUnit.Framework;
 using RestSharp.Authenticators;
-using Shouldly;
 
 namespace RestSharp.Tests
 {
@@ -42,7 +40,7 @@ namespace RestSharp.Tests
             _authenticator.Authenticate(client, request);
 
             // Assert
-            request.Parameters.Single(x => x.Name == "Authorization").Value.ShouldBe(expectedToken);
+            request.Parameters.Single(x => x.Name == "Authorization").Value.Should().Be(expectedToken);
         }
     }
 }
