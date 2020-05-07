@@ -63,6 +63,7 @@ using System.Text;
 // ReSharper disable ArrangeTypeMemberModifiers
 // ReSharper disable RemoveRedundantBraces
 // ReSharper disable BuiltInTypeReferenceStyle
+// ReSharper disable once CheckNamespace
 
 namespace RestSharp
 {
