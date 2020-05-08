@@ -10,10 +10,26 @@ property of the response. Read more about it in the [Error Handling](exceptions.
 
 ## Default Serializers
 
+RestSharp core package includes a few default serializers for both JSON and XML formats.
+
+### JSON
+
 The default JSON serializer uses the forked version of `SimpleJson`. It is very simplistic and
 doesn't handle advanced scenarios in many cases. We do not plan to fix or add new features
 to the default JSON serializer, since it handles a lot of cases already and when you need
 to handle more complex objects, please consider using alternative JSON serializers mentioned below.
+
+There's a [known issue](https://github.com/restsharp/RestSharp/issues/1433) that SimpleJson doesn't use the UTC time zone when the regular .NET date format
+is used (`yyyy-MM-ddTHH:mm:ssZ`). As suggested in the issue, it can be solved by setting the
+date format explicitly for SimpleJson:
+
+```csharp
+client.UseSerializer(
+    () => new JsonSerializer { DateFormat = "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ" }
+);
+```
+
+### XML
 
 You can use either the default XML serializer or the `DotNetXmlSerializer`, which uses `System.Xml.Serialization` library
 from .NET. To use the `DotNetXmlSerializer` you need to configure the REST client instance:
