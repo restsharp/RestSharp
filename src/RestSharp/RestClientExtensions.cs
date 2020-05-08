@@ -431,9 +431,9 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Sets the <see cref="RestClient"/> to only use JSON
+        /// Sets the <see cref="RestClient"/> to only use JSON
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="client">The client instance</param>
         /// <returns></returns>
         public static RestClient UseJson(this RestClient client)
         {

@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using JetBrains.Annotations;
 using RestSharp.Validation;
 
 namespace RestSharp
@@ -32,7 +33,7 @@ namespace RestSharp
                 Ensure.NotEmpty(name, nameof(name));
 
             Name  = name;
-            Value = value;
+            Value = type != ParameterType.UrlSegment ? value : value.ToString().Replace("%2F", "/").Replace("%2f", "/");
             Type  = type;
         }
 
@@ -41,12 +42,12 @@ namespace RestSharp
         /// <summary>
         ///     Name of the parameter
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         ///     Value of the parameter
         /// </summary>
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
         /// <summary>
         ///     Type of the parameter
@@ -61,7 +62,7 @@ namespace RestSharp
         /// <summary>
         ///     MIME content type of the parameter
         /// </summary>
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
         /// <summary>
         ///     Return a human-readable representation of this parameter
@@ -85,6 +86,7 @@ namespace RestSharp
             => !ReferenceEquals(null, obj)
                 && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && Equals((Parameter) obj));
 
+        // ReSharper disable NonReadonlyMemberInGetHashCode
         public override int GetHashCode()
         {
             unchecked
@@ -98,18 +100,19 @@ namespace RestSharp
                 return hashCode;
             }
         }
+        // ReSharper enable NonReadonlyMemberInGetHashCode
     }
 
     public class XmlParameter : Parameter
     {
-        public XmlParameter(string name, object value, string xmlNamespace = null) : base(name, value, ParameterType.RequestBody)
+        public XmlParameter(string name, object value, string? xmlNamespace = null) : base(name, value, ParameterType.RequestBody)
         {
             XmlNamespace = xmlNamespace;
             DataFormat   = DataFormat.Xml;
             ContentType  = Serialization.ContentType.Xml;
         }
 
-        public string XmlNamespace { get; }
+        public string? XmlNamespace { get; }
     }
 
     public class JsonParameter : Parameter
