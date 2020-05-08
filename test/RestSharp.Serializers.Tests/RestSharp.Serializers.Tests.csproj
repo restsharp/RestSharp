@@ -4,11 +4,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj"/>
-    <ProjectReference Include="..\..\src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj"/>
-    <ProjectReference Include="..\..\src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj"/>
-    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj"/>
-    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
+    <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\..\src\RestSharp.Serializers.SystemTextJson\RestSharp.Serializers.SystemTextJson.csproj" />
+    <ProjectReference Include="..\..\src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj" />
+    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>
