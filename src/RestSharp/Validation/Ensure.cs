@@ -30,5 +30,12 @@ namespace RestSharp.Validation
             if (string.IsNullOrWhiteSpace(parameter))
                 throw new ArgumentNullException(name);
         }
+        
+        public static void NotEmptyString(object parameter, string name)
+        {
+            var s = parameter as string;
+            if (string.IsNullOrWhiteSpace(s))
+                throw new ArgumentNullException(name);
+        }
     }
 }
