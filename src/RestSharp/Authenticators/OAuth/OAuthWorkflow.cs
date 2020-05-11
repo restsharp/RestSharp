@@ -16,13 +16,15 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 using RestSharp.Authenticators.OAuth.Extensions;
+using RestSharp.Extensions;
+using RestSharp.Validation;
 
 namespace RestSharp.Authenticators.OAuth
 {
     /// <summary>
     ///     A class to encapsulate OAuth authentication flow.
     /// </summary>
-    internal sealed class OAuthWorkflow
+    sealed class OAuthWorkflow
     {
         public string Version { get; set; }
 
@@ -66,8 +68,7 @@ namespace RestSharp.Authenticators.OAuth
         {
             ValidateTokenRequestState();
 
-            if (parameters == null)
-                parameters = new WebPairCollection();
+            parameters ??= new WebPairCollection();
 
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
@@ -89,8 +90,7 @@ namespace RestSharp.Authenticators.OAuth
         {
             ValidateAccessRequestState();
 
-            if (parameters == null)
-                parameters = new WebPairCollection();
+            parameters ??= new WebPairCollection();
 
             var uri       = new Uri(AccessTokenUrl);
             var timestamp = OAuthTools.GetTimestamp();
@@ -138,8 +138,7 @@ namespace RestSharp.Authenticators.OAuth
         {
             ValidateProtectedResourceState();
 
-            if (parameters == null)
-                parameters = new WebPairCollection();
+            parameters ??= new WebPairCollection();
 
             // Include url parameters in query pool
             var uri           = new Uri(url);
@@ -163,53 +162,31 @@ namespace RestSharp.Authenticators.OAuth
 
         void ValidateTokenRequestState()
         {
-            if (RequestTokenUrl.IsNullOrBlank())
-                throw new ArgumentException("You must specify a request token URL");
-
-            if (ConsumerKey.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer key");
-
-            if (ConsumerSecret.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer secret");
+            Ensure.NotEmpty(RequestTokenUrl, nameof(RequestTokenUrl));
+            Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
         }
 
         void ValidateAccessRequestState()
         {
-            if (AccessTokenUrl.IsNullOrBlank())
-                throw new ArgumentException("You must specify an access token URL");
-
-            if (ConsumerKey.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer key");
-
-            if (ConsumerSecret.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer secret");
-
-            if (Token.IsNullOrBlank())
-                throw new ArgumentException("You must specify a token");
+            Ensure.NotEmpty(AccessTokenUrl, nameof(AccessTokenUrl));
+            Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
+            Ensure.NotEmpty(Token, nameof(Token));
         }
 
         void ValidateClientAuthAccessRequestState()
         {
-            if (AccessTokenUrl.IsNullOrBlank())
-                throw new ArgumentException("You must specify an access token URL");
-
-            if (ConsumerKey.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer key");
-
-            if (ConsumerSecret.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer secret");
-
-            if (ClientUsername.IsNullOrBlank() || ClientPassword.IsNullOrBlank())
-                throw new ArgumentException("You must specify user credentials");
+            Ensure.NotEmpty(AccessTokenUrl, nameof(AccessTokenUrl));
+            Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
+            Ensure.NotEmpty(ClientUsername, nameof(ClientUsername));
         }
 
         void ValidateProtectedResourceState()
         {
-            if (ConsumerKey.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer key");
-
-            if (ConsumerSecret.IsNullOrBlank())
-                throw new ArgumentException("You must specify a consumer secret");
+            Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
         }
 
         void AddAuthParameters(ICollection<WebPair> parameters, string timestamp, string nonce)
@@ -223,16 +200,16 @@ namespace RestSharp.Authenticators.OAuth
                 new WebPair("oauth_version", Version ?? "1.0")
             };
 
-            if (!Token.IsNullOrBlank())
+            if (!Token.IsEmpty())
                 authParameters.Add(new WebPair("oauth_token", Token));
 
-            if (!CallbackUrl.IsNullOrBlank())
+            if (!CallbackUrl.IsEmpty())
                 authParameters.Add(new WebPair("oauth_callback", CallbackUrl));
 
-            if (!Verifier.IsNullOrBlank())
+            if (!Verifier.IsEmpty())
                 authParameters.Add(new WebPair("oauth_verifier", Verifier));
 
-            if (!SessionHandle.IsNullOrBlank())
+            if (!SessionHandle.IsEmpty())
                 authParameters.Add(new WebPair("oauth_session_handle", SessionHandle));
 
             foreach (var authParameter in authParameters)

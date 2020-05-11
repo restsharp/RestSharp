@@ -249,7 +249,7 @@ namespace RestSharp.Authenticators.OAuth
             string tokenSecret
         )
         {
-            if (tokenSecret.IsNullOrBlank())
+            if (tokenSecret.IsEmpty())
                 tokenSecret = string.Empty;
 
             var unencodedConsumerSecret = consumerSecret;

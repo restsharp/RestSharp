@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using FluentAssertions;
 using NUnit.Framework;
 using RestSharp.Extensions;
 
@@ -13,9 +14,7 @@ namespace RestSharp.Tests
         {
             const string nullString = null;
 
-            Assert.Throws<ArgumentNullException>(
-                delegate { nullString.UrlEncode(); }
-            );
+            Assert.Throws<ArgumentNullException>(() => nullString.UrlEncode());
         }
 
         [Test]
@@ -65,6 +64,26 @@ namespace RestSharp.Tests
             var result = start.ToPascalCase(removeUnderscores, CultureInfo.InvariantCulture);
 
             Assert.AreEqual(finish, result);
+        }
+
+        [Test]
+        public void Does_not_throw_on_invalid_encoding()
+        {
+            const string value = "SomeValue";
+            var bytes = Encoding.UTF8.GetBytes(value);
+
+            var decoded = bytes.AsString("blah");
+            decoded.Should().Be(value);
+        }
+        
+        [Test]
+        public void Does_not_throw_on_missing_encoding()
+        {
+            const string value = "SomeValue";
+            var bytes = Encoding.UTF8.GetBytes(value);
+
+            var decoded = bytes.AsString(null);
+            decoded.Should().Be(value);
         }
     }
 }

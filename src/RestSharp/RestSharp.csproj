@@ -10,6 +10,9 @@
   <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="RestSharp.csproj.DotSettings" />
+  </ItemGroup>
 
   <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
     <ItemGroup>

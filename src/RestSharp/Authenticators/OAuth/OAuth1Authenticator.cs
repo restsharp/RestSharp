@@ -19,6 +19,7 @@ using System.Text;
 using System.Web;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
+using RestSharp.Extensions;
 
 // ReSharper disable CheckNamespace
 
@@ -314,7 +315,7 @@ namespace RestSharp.Authenticators
                 => new[] {new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader)};
 
             IEnumerable<Parameter> CreateUrlParameters()
-                => parameters.Where(p => !p.Name.IsNullOrBlank() && (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
+                => parameters.Where(p => !p.Name.IsEmpty() && (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
                     .Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
 
             string GetAuthorizationHeader()
@@ -324,13 +325,13 @@ namespace RestSharp.Authenticators
                         .OrderBy(x => x, WebPair.Comparer)
                         .Where(
                             p =>
-                                !p.Name.IsNullOrBlank() && !p.Value.IsNullOrBlank() &&
+                                !p.Name.IsEmpty() && !p.Value.IsEmpty() &&
                                 (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
                         )
                         .Select(x => $"{x.Name}=\"{x.Value}\"")
                         .ToList();
 
-                if (!Realm.IsNullOrBlank())
+                if (!Realm.IsEmpty())
                     oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
 
                 return "OAuth " + string.Join(",", oathParameters);

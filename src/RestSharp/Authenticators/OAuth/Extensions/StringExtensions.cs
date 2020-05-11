@@ -18,10 +18,8 @@ using System.Text;
 
 namespace RestSharp.Authenticators.OAuth.Extensions
 {
-    internal static class StringExtensions
+    static class StringExtensions
     {
-        public static bool IsNullOrBlank(this string value) => string.IsNullOrWhiteSpace(value);
-
         public static bool EqualsIgnoreCase(this string left, string right) => string.Equals(left, right, StringComparison.InvariantCultureIgnoreCase);
 
         public static string Then(this string input, string value) => string.Concat(input, value);
