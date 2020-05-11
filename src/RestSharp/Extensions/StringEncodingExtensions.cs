@@ -21,18 +21,6 @@ namespace RestSharp.Extensions
 {
     public static class StringEncodingExtensions
     {
-        static readonly Dictionary<string, Encoding> Encodings = new Dictionary<string, Encoding>();
-
-        static StringEncodingExtensions()
-        {
-            var encodings = Encoding.GetEncodings();
-
-            foreach (var encoding in encodings)
-            {
-                Encodings[encoding.Name] = encoding.GetEncoding();
-            }
-        }
-        
         /// <summary>
         ///     Converts a byte array to a string, using its byte order mark to convert it to the right encoding.
         ///     http://www.shrinkrays.net/code-snippets/csharp/an-extension-method-for-converting-a-byte-array-to-a-string.aspx
@@ -43,7 +31,7 @@ namespace RestSharp.Extensions
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static string AsString(this byte[] buffer, string? encoding)
         {
-            var enc = encoding.IsEmpty() ? Encoding.UTF8 : Encodings.TryGetValue(encoding!, out var e) ? e : Encoding.UTF8;
+            var enc = encoding.IsEmpty() ? Encoding.UTF8 : Encoding.GetEncoding(encoding) ?? Encoding.UTF8;
 
             return AsString(buffer, enc);
         }
