@@ -3,12 +3,15 @@
     <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.13.1"/>
+    <PackageReference Include="Moq" Version="4.13.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj"/>
+    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="SampleData\GoodreadsFormatError.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SampleData\header_and_rows.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

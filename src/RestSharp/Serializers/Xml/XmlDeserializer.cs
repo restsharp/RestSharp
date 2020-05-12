@@ -188,7 +188,14 @@ namespace RestSharp.Deserializers
                 }
                 else if (type.IsPrimitive)
                 {
-                    prop.SetValue(x, value.ChangeType(asType), null);
+                    try
+                    {
+                        prop.SetValue(x, value.ChangeType(asType), null);
+                    }
+                    catch (FormatException)
+                    {
+                        throw new FormatException("Format exception while Deserializing Property Name - " + prop.Name);
+                    }
                 }
                 else if (type.IsEnum)
                 {
