@@ -31,9 +31,21 @@ namespace RestSharp.Extensions
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static string AsString(this byte[] buffer, string? encoding)
         {
-            var enc = encoding.IsEmpty() ? Encoding.UTF8 : Encoding.GetEncoding(encoding) ?? Encoding.UTF8;
+            var enc = encoding.IsEmpty() ? Encoding.UTF8 : TryParseEncoding();
 
             return AsString(buffer, enc);
+
+            Encoding TryParseEncoding()
+            {
+                try
+                {
+                    return Encoding.GetEncoding(encoding) ?? Encoding.UTF8;
+                }
+                catch (ArgumentException)
+                {
+                    return Encoding.UTF8;
+                }
+            }
         }
 
         /// <summary>
