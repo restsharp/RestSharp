@@ -696,6 +696,22 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_throw_format_exception_xml()
+        {
+            var xmlpath = PathFor("GoodreadsFormatError.xml");
+            var doc = XDocument.Load(xmlpath);
+            var response = new RestResponse { Content = doc.ToString() };
+            var d = new XmlDeserializer();
+            Assert.Throws(
+                typeof(FormatException), () =>
+                {
+                    var note = d.Deserialize<GoodReadsReviewCollection>(response);
+                    var message = note;
+                }
+            );
+        }
+
+        [Test]
         public void Can_Deserialize_Google_Weather_Xml()
         {
             var xmlpath  = PathFor("GoogleWeather.xml");
