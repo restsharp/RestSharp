@@ -175,7 +175,7 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void MultipartFormData_Without_File_Creates_A_Valid_RequestBody()
         {
-            const string expectedFormBoundary = "-------------------------------28947758029299";
+            string expectedFormBoundary = null;
 
             var client = new RestClient(_server.Url);
 
@@ -183,6 +183,7 @@ namespace RestSharp.IntegrationTests
             {
                 AlwaysMultipartFormData = true
             };
+            request.OnBeforeRequest += http => expectedFormBoundary = http.FormBoundary;
 
             const string contentType   = "text/plain";
             const string bodyData      = "abc123 foo bar baz BING!";
@@ -192,7 +193,7 @@ namespace RestSharp.IntegrationTests
 
             client.Execute(request);
 
-            var expectedBody = expectedFormBoundary +
+            var expectedBody = "--" + expectedFormBoundary +
                 NewLine
                 + "Content-Type: " +
                 contentType
@@ -202,7 +203,7 @@ namespace RestSharp.IntegrationTests
                 + NewLine
                 + bodyData
                 + NewLine
-                + expectedFormBoundary + "--"
+                + "--" + expectedFormBoundary + "--"
                 + NewLine;
 
             Assert.AreEqual(
