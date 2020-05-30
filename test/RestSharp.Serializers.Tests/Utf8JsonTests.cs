@@ -31,7 +31,7 @@ namespace RestSharp.Serializers.Tests
 
             var expected = testData;
 
-            client.Post(request);
+           var a=  client.Post(request);
 
             var actual = serializer.Deserialize<TestClass>(new RestResponse {Content = _body});
 

@@ -3,9 +3,9 @@
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Utf8Json" Version="1.3.7"/>
+    <PackageReference Include="Utf8Json" Version="1.3.7" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RestSharp\RestSharp.csproj"/>
+    <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
   </ItemGroup>
 </Project>
