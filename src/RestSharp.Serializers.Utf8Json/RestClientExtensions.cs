@@ -11,7 +11,6 @@ namespace RestSharp.Serializers.Utf8Json
         /// <param name="client"></param>
         /// <returns></returns>
         public static IRestClient UseUtf8Json(this IRestClient client) => client.UseSerializer(() => new Utf8JsonSerializer());
-        public static IRestClient UseUtf8JsonOptimized(this IRestClient client) => client.UseSerializer(() => new Utf8JsonSerializerOptimized());
 
         /// <summary>
         /// Use Utf8Json serializer with custom formatter resolver

@@ -13,36 +13,34 @@
 // limitations under the License.
 // 
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using AutoFixture;
 using BenchmarkDotNet.Attributes;
-using RestSharp.Serializers.Utf8Json;
+using RestSharp.Serializers.NewtonsoftJson;
 using Utf8Json;
 
 namespace RestSharp.Benchmarks.Serializers
 {
     [MemoryDiagnoser]
-    public class Utf8JsonDeserializeBenchmarks
+    public class JsonNetDeserializeBenchmarks
     {
         [Params(1, 10, 20)]
         public int N { get; set; }
-        private readonly Utf8JsonSerializer _utf8JsonSerializer = new Utf8JsonSerializer();
+        private readonly JsonNetSerializer _serializer = new JsonNetSerializer();
         private RestResponse _fakeResponse;
 
         [GlobalSetup]
         public void GlobalSetup()
         {
-            var dummyData = new Fixture().CreateMany<TestClass>(N).ToList();
-            _fakeResponse = new RestResponse();
-            _fakeResponse.RawBytes = JsonSerializer.Serialize(dummyData);
-            _fakeResponse.Content = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
+            var fakeData = new Fixture().CreateMany<TestClass>(N).ToList();
+            _fakeResponse          = new RestResponse();
+            _fakeResponse.RawBytes = JsonSerializer.Serialize(fakeData);
+            _fakeResponse.Content  = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
         }
 
         [Benchmark(Baseline = true)]
-        public List<TestClass> Deserialize() => _utf8JsonSerializer.Deserialize<List<TestClass>>(_fakeResponse);
+        public List<TestClass> Deserialize() => _serializer.Deserialize<List<TestClass>>(_fakeResponse);
     }
 }

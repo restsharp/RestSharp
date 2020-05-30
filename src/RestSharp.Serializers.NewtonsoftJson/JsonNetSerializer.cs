@@ -1,8 +1,6 @@
-using System.Globalization;
+using System;
 using System.IO;
-using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using RestSharp.Serialization;
 
@@ -20,31 +18,29 @@ namespace RestSharp.Serializers.NewtonsoftJson
             ConstructorHandling  = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        readonly JsonSerializer _serializer;
+
+        [ThreadStatic] private static WriterBuffer t_writerBuffer;
         
+        private readonly JsonSerializer _serializer;
+
         /// <summary>
-        /// Create the new serializer that uses Json.Net with default settings
+        ///     Create the new serializer that uses Json.Net with default settings
         /// </summary>
         public JsonNetSerializer() => _serializer = JsonSerializer.Create(DefaultSettings);
 
         /// <summary>
-        /// Create the new serializer that uses Json.Net with custom settings
+        ///     Create the new serializer that uses Json.Net with custom settings
         /// </summary>
         /// <param name="settings">Json.Net serializer settings</param>
         public JsonNetSerializer(JsonSerializerSettings settings) => _serializer = JsonSerializer.Create(settings);
 
         public string Serialize(object obj)
         {
-            using var stringWriter = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture);
-
-            using var jsonTextWriter = new JsonTextWriter(stringWriter)
-            {
-                Formatting = _serializer.Formatting, CloseOutput = true
-            };
-
-            _serializer.Serialize(jsonTextWriter, obj, obj.GetType());
+            using var writerBuffer = t_writerBuffer ??= new WriterBuffer(_serializer);
             
-            return stringWriter.ToString();
+            _serializer.Serialize(writerBuffer.GetJsonTextWriter(), obj, obj.GetType());
+            
+            return writerBuffer.GetStringWriter().ToString();
         }
 
         public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);

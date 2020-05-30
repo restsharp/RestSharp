@@ -18,5 +18,7 @@ namespace RestSharp.Tests.Shared.Extensions
             
             return streamReader.ReadToEnd();
         }
+        
+        public static byte[] StreamToBytes(this Stream stream) => Encoding.UTF8.GetBytes(stream.StreamToString());
     }
 }
