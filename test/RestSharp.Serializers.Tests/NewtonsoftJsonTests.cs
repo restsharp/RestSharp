@@ -31,7 +31,7 @@ namespace RestSharp.Serializers.Tests
         private void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToString();
 
         [Test]
-        public void Serialize_multiple_objects_same_thread()
+        public void Serialize_multiple_objects_within_one_thread()
         {
             var serializer = new JsonNetSerializer();
             var dummy1 = Fixture.Create<TestClass>();
@@ -51,7 +51,7 @@ namespace RestSharp.Serializers.Tests
         }
 
         [Test]
-        public void Serialize_multiple_threads()
+        public void Serialize_within_multiple_threads()
         {
             var serializer = new JsonNetSerializer();
 

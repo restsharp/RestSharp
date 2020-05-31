@@ -13,10 +13,8 @@
 // limitations under the License.
 // 
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using AutoFixture;
 using BenchmarkDotNet.Attributes;
@@ -28,18 +26,18 @@ namespace RestSharp.Benchmarks.Serializers
     [MemoryDiagnoser]
     public class Utf8JsonDeserializeBenchmarks
     {
-        [Params(1, 10, 20)]
-        public int N { get; set; }
         private readonly Utf8JsonSerializer _utf8JsonSerializer = new Utf8JsonSerializer();
         private RestResponse _fakeResponse;
+        [Params(1, 10, 20)]
+        public int N { get; set; }
 
         [GlobalSetup]
         public void GlobalSetup()
         {
-            var dummyData = new Fixture().CreateMany<TestClass>(N).ToList();
-            _fakeResponse = new RestResponse();
-            _fakeResponse.RawBytes = JsonSerializer.Serialize(dummyData);
-            _fakeResponse.Content = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
+            var fakeData = new Fixture().CreateMany<TestClass>(N).ToList();
+            _fakeResponse          = new RestResponse();
+            _fakeResponse.RawBytes = JsonSerializer.Serialize(fakeData);
+            _fakeResponse.Content  = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
         }
 
         [Benchmark(Baseline = true)]
