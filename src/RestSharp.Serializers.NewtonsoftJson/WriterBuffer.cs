@@ -38,8 +38,8 @@ namespace RestSharp.Serializers.NewtonsoftJson
 {
     public sealed class WriterBuffer : IDisposable
     {
-        private static StringWriter _stringWriter;
-        private static JsonTextWriter _jsonTextWriter;
+        private readonly StringWriter _stringWriter;
+        private readonly JsonTextWriter _jsonTextWriter;
 
         public WriterBuffer(JsonSerializer jsonSerializer)
         {

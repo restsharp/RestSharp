@@ -1,7 +1,10 @@
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
 using RestSharp.Serializers.NewtonsoftJson;
 using RestSharp.Tests.Shared.Extensions;
@@ -12,9 +15,56 @@ namespace RestSharp.Serializers.Tests
     [TestFixture]
     public class NewtonsoftJsonTests
     {
-        static readonly Fixture Fixture = new Fixture();
+        private static readonly Fixture Fixture = new Fixture();
 
-        string _body;
+        private string _body;
+
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            },
+            Formatting = Formatting.None
+        };
+
+        private void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToString();
+
+        [Test]
+        public void Serialize_multiple_objects_same_thread()
+        {
+            var serializer = new JsonNetSerializer();
+            var dummy1 = Fixture.Create<TestClass>();
+            var dummy2 = Fixture.Create<TestClass>();
+            var dummy3 = Fixture.Create<TestClass>();
+            var expectedSerialization1 = JsonConvert.SerializeObject(dummy1, _jsonSerializerSettings);
+            var expectedSerialization2 = JsonConvert.SerializeObject(dummy2, _jsonSerializerSettings);
+            var expectedSerialization3 = JsonConvert.SerializeObject(dummy3, _jsonSerializerSettings);
+
+            var actualSerialization1 = serializer.Serialize(dummy1);
+            var actualSerialization2 = serializer.Serialize(dummy2);
+            var actualSerialization3 = serializer.Serialize(dummy3);
+
+            Assert.AreEqual(expectedSerialization1, actualSerialization1);
+            Assert.AreEqual(expectedSerialization2, actualSerialization2);
+            Assert.AreEqual(expectedSerialization3, actualSerialization3);
+        }
+
+        [Test]
+        public void Serialize_multiple_threads()
+        {
+            var serializer = new JsonNetSerializer();
+
+            Parallel.For(0, 100, n =>
+                {
+                    var dummy = Fixture.Create<TestClass>();
+                    var expectedSerialization = JsonConvert.SerializeObject(dummy, _jsonSerializerSettings);
+                    var actualSerialization = serializer.Serialize(dummy);
+
+                    Assert.AreEqual(expectedSerialization, actualSerialization);
+                }
+            );
+        }
 
         [Test]
         public void Use_JsonNet_For_Requests()
@@ -25,7 +75,7 @@ namespace RestSharp.Serializers.Tests
 
             var testData = Fixture.Create<TestClass>();
 
-            var client  = new RestClient(server.Url).UseNewtonsoftJson();
+            var client = new RestClient(server.Url).UseNewtonsoftJson();
             var request = new RestRequest().AddJsonBody(testData);
 
             var expected = testData;
@@ -59,7 +109,5 @@ namespace RestSharp.Serializers.Tests
 
             actual.Should().BeEquivalentTo(expected);
         }
-
-        void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToString();
     }
 }

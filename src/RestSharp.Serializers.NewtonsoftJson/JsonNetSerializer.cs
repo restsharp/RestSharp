@@ -19,7 +19,8 @@ namespace RestSharp.Serializers.NewtonsoftJson
         };
 
 
-        [ThreadStatic] private static WriterBuffer t_writerBuffer;
+        [ThreadStatic] 
+        private static WriterBuffer t_writerBuffer;
         
         private readonly JsonSerializer _serializer;
 
