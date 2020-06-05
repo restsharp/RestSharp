@@ -15,10 +15,10 @@ namespace RestSharp.Serializers.Tests
     {
         static readonly Fixture Fixture = new Fixture();
 
-        string _body;
+        byte[] _body;
 
         [Test]
-        public void Use_JsonNet_For_Requests()
+        public void Use_Utf8Json_For_Requests()
         {
             using var server = HttpServerFixture.StartServer(CaptureBody);
             _body = null;
@@ -31,15 +31,15 @@ namespace RestSharp.Serializers.Tests
 
             var expected = testData;
 
-            client.Post(request);
+           var a=  client.Post(request);
 
-            var actual = serializer.Deserialize<TestClass>(new RestResponse {Content = _body});
+            var actual = serializer.Deserialize<TestClass>(new RestResponse {RawBytes = _body});
 
             actual.Should().BeEquivalentTo(expected);
         }
 
         [Test]
-        public void Use_JsonNet_For_Response()
+        public void Use_Utf8Json_For_Response()
         {
             var expected = Fixture.Create<TestClass>();
 
@@ -61,6 +61,6 @@ namespace RestSharp.Serializers.Tests
             actual.Should().BeEquivalentTo(expected);
         }
 
-        void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToString();
+        void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToBytes();
     }
 }

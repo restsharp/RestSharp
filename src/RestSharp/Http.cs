@@ -34,7 +34,7 @@ namespace RestSharp
     {
         const string LineBreak = "\r\n";
 
-        const string FormBoundary = "-----------------------------28947758029299";
+        public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpper();
 
         static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
 
@@ -234,7 +234,7 @@ namespace RestSharp
 
         static HttpWebRequest CreateRequest(Uri uri) => (HttpWebRequest) WebRequest.Create(uri);
 
-        static string GetMultipartFileHeader(HttpFile file)
+        string GetMultipartFileHeader(HttpFile file)
             => $"--{FormBoundary}{LineBreak}Content-Disposition: form-data; name=\"{file.Name}\";" +
                 $" filename=\"{file.FileName}\"{LineBreak}"                                        +
                 $"Content-Type: {file.ContentType ?? "application/octet-stream"}{LineBreak}{LineBreak}";
@@ -248,7 +248,7 @@ namespace RestSharp
             return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
         }
 
-        static string GetMultipartFooter() => $"--{FormBoundary}--{LineBreak}";
+        string GetMultipartFooter() => $"--{FormBoundary}--{LineBreak}";
 
         void PreparePostBody(WebRequest webRequest)
         {
@@ -272,7 +272,7 @@ namespace RestSharp
 
             string EncodeParameters() => string.Join("&", Parameters.Select(p => $"{Encode(p.Name)}={Encode(p.Value)}"));
 
-            static string GetMultipartFormContentType() => $"multipart/form-data; boundary={FormBoundary}";
+            string GetMultipartFormContentType() => $"multipart/form-data; boundary={FormBoundary}";
         }
 
         void WriteMultipartFormData(Stream requestStream)

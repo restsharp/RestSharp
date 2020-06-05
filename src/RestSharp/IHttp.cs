@@ -170,6 +170,11 @@ namespace RestSharp
         string Host { get; set; }
 
         /// <summary>
+        /// Boundary that will be used for multipart/form-data requests
+        /// </summary>
+        string FormBoundary { get; }
+
+        /// <summary>
         /// List of allowed decompression methods
         /// </summary>
         IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }

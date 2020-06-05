@@ -28,31 +28,31 @@
 // limitations under the License.
 // 
 
-using RestSharp.Serialization;
-using Utf8Json;
-using Utf8Json.Resolvers;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using Newtonsoft.Json;
 
-namespace RestSharp.Serializers.Utf8Json
+namespace RestSharp.Serializers.NewtonsoftJson
 {
-    public class Utf8JsonSerializer : IRestSerializer
+    public sealed class WriterBuffer : IDisposable
     {
-        public Utf8JsonSerializer(IJsonFormatterResolver resolver = null) => Resolver = resolver ?? StandardResolver.AllowPrivateExcludeNullCamelCase;
+        private readonly StringWriter _stringWriter;
+        private readonly JsonTextWriter _jsonTextWriter;
 
-        IJsonFormatterResolver Resolver { get; }
-
-        public string Serialize(object obj) => JsonSerializer.NonGeneric.ToJsonString(obj, Resolver);
-
-        public string Serialize(Parameter parameter) => Serialize(parameter.Value);
-
-        public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.RawBytes, Resolver);
-
-        public string[] SupportedContentTypes { get; } =
+        public WriterBuffer(JsonSerializer jsonSerializer)
         {
-            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
-        };
+            _stringWriter = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture);
 
-        public string ContentType { get; set; } = "application/json";
+            _jsonTextWriter = new JsonTextWriter(_stringWriter)
+            {
+                Formatting = jsonSerializer.Formatting, CloseOutput = false
+            };
+        }
 
-        public DataFormat DataFormat { get; } = DataFormat.Json;
+        public JsonTextWriter GetJsonTextWriter() => _jsonTextWriter;
+        public StringWriter GetStringWriter() => _stringWriter;
+        public void Dispose() => _stringWriter.GetStringBuilder().Clear();
     }
 }

@@ -24,30 +24,30 @@ namespace RestSharp.IntegrationTests
         const string LineBreak = "\r\n";
 
         readonly string _expected =
-            "-------------------------------28947758029299"               + LineBreak +
+            "--{0}"                                                       + LineBreak +
             "Content-Disposition: form-data; name=\"foo\""                + LineBreak + LineBreak +
             "bar"                                                         + LineBreak +
-            "-------------------------------28947758029299"               + LineBreak +
+            "--{0}"                                                       + LineBreak +
             "Content-Disposition: form-data; name=\"a name with spaces\"" + LineBreak + LineBreak +
             "somedata"                                                    + LineBreak +
-            "-------------------------------28947758029299--"             + LineBreak;
+            "--{0}--"                                                     + LineBreak;
 
         readonly string _expectedFileAndBodyRequestContent =
-            "-------------------------------28947758029299"                                + LineBreak +
+            "--{0}"                                                                        + LineBreak +
             "Content-Type: application/json"                                               + LineBreak +
             "Content-Disposition: form-data; name=\"controlName\""                         + LineBreak + LineBreak +
             "test"                                                                         + LineBreak +
-            "-------------------------------28947758029299"                                + LineBreak +
+            "--{0}"                                                                        + LineBreak +
             "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" + LineBreak +
             "Content-Type: application/octet-stream"                                       + LineBreak + LineBreak +
             "This is a test file for RestSharp."                                           + LineBreak +
-            "-------------------------------28947758029299--"                              + LineBreak;
+            "--{0}--"                                                                      + LineBreak;
 
         readonly string _expectedDefaultMultipartContentType =
-            "multipart/form-data; boundary=-----------------------------28947758029299";
+            "multipart/form-data; boundary={0}";
 
         readonly string _expectedCustomMultipartContentType =
-            "multipart/vnd.resteasy+form-data; boundary=-----------------------------28947758029299";
+            "multipart/vnd.resteasy+form-data; boundary={0}";
 
         SimpleServer _server;
         RestClient   _client;
@@ -139,9 +139,14 @@ namespace RestSharp.IntegrationTests
 
             AddParameters(request);
 
+            string boundary = null;
+            request.OnBeforeRequest += http => boundary = http.FormBoundary;
+
             var response = _client.Execute(request);
 
-            Assert.AreEqual(_expected, response.Content);
+            var expected = string.Format(_expected, boundary);
+
+            Assert.AreEqual(expected, response.Content);
         }
 
         [Test]
@@ -154,10 +159,16 @@ namespace RestSharp.IntegrationTests
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
+            string boundary = null;
+            request.OnBeforeRequest += http => boundary = http.FormBoundary;
+
             var response = _client.Execute(request);
 
-            Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
-            Assert.AreEqual(_expectedDefaultMultipartContentType, RequestHandler.CapturedContentType);
+            var expectedFileAndBodyRequestContent = string.Format(_expectedFileAndBodyRequestContent, boundary);
+            var expectedDefaultMultipartContentType= string.Format(_expectedDefaultMultipartContentType, boundary);
+
+            Assert.AreEqual(expectedFileAndBodyRequestContent, response.Content);
+            Assert.AreEqual(expectedDefaultMultipartContentType, RequestHandler.CapturedContentType);
         }
 
         [Test]
@@ -173,10 +184,16 @@ namespace RestSharp.IntegrationTests
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
+            string boundary = null;
+            request.OnBeforeRequest += http => boundary = http.FormBoundary;
+
             var response = _client.Execute(request);
 
-            Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
-            Assert.AreEqual(_expectedCustomMultipartContentType, RequestHandler.CapturedContentType);
+            var expectedFileAndBodyRequestContent = string.Format(_expectedFileAndBodyRequestContent, boundary);
+            var expectedCustomMultipartContentType= string.Format(_expectedCustomMultipartContentType, boundary);
+
+            Assert.AreEqual(expectedFileAndBodyRequestContent, response.Content);
+            Assert.AreEqual(expectedCustomMultipartContentType, RequestHandler.CapturedContentType);
         }
 
         [Test]
@@ -192,9 +209,14 @@ namespace RestSharp.IntegrationTests
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
+            string boundary = null;
+            request.OnBeforeRequest += http => boundary = http.FormBoundary;
+
             var response = _client.Execute(request);
 
-            Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
+            var expectedFileAndBodyRequestContent = string.Format(_expectedFileAndBodyRequestContent, boundary);
+
+            Assert.AreEqual(expectedFileAndBodyRequestContent, response.Content);
         }
 
         [Test]
@@ -210,8 +232,14 @@ namespace RestSharp.IntegrationTests
 
             request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
+            string boundary = null;
+            request.OnBeforeRequest += http => boundary = http.FormBoundary;
+
             var response = await _client.ExecuteAsync(request);
-            Assert.AreEqual(_expectedFileAndBodyRequestContent, response.Content);
+
+            var expectedFileAndBodyRequestContent = string.Format(_expectedFileAndBodyRequestContent, boundary);
+
+            Assert.AreEqual(expectedFileAndBodyRequestContent, response.Content);
         }
 
         [Test]
@@ -224,11 +252,17 @@ namespace RestSharp.IntegrationTests
 
             AddParameters(request);
 
+            string boundary = null;
+
+            var expected = string.Format(_expected, boundary);
+
+            request.OnBeforeRequest += http => boundary = http.FormBoundary;
+
             _client.ExecuteAsync(
                 request, (restResponse, handle) =>
                 {
                     Console.WriteLine(restResponse.Content);
-                    Assert.AreEqual(_expected, restResponse.Content);
+                    Assert.AreEqual(expected, restResponse.Content);
                 }
             );
         }
