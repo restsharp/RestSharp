@@ -179,7 +179,7 @@ namespace RestSharp
 		/// </summary>
 		/// <param name="key">The key.</param>
 		/// <returns>
-		///     <c>true</c> if the specified key contains key; otherwise, <c>false</c>.
+		/// <c>true</c> if the specified key contains key; otherwise, <c>false</c>.
 		/// </returns>
 		public bool ContainsKey(string key)
 		{

@@ -22,7 +22,7 @@ using RestSharp.Validation;
 namespace RestSharp.Authenticators.OAuth
 {
     /// <summary>
-    ///     A class to encapsulate OAuth authentication flow.
+    /// A class to encapsulate OAuth authentication flow.
     /// </summary>
     sealed class OAuthWorkflow
     {
@@ -57,9 +57,9 @@ namespace RestSharp.Authenticators.OAuth
         public string AccessTokenUrl { get; set; }
 
         /// <summary>
-        ///     Generates an OAuth signature to pass to an
-        ///     <see cref="IAuthenticator" /> for the purpose of requesting an
-        ///     unauthorized request token.
+        /// Generates an OAuth signature to pass to an
+        /// <see cref="IAuthenticator" /> for the purpose of requesting an
+        /// unauthorized request token.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
@@ -80,9 +80,9 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     Generates an OAuth signature to pass to the
-        ///     <see cref="IAuthenticator" /> for the purpose of exchanging a request token
-        ///     for an access token authorized by the user at the Service Provider site.
+        /// Generates an OAuth signature to pass to the
+        /// <see cref="IAuthenticator" /> for the purpose of exchanging a request token
+        /// for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
@@ -107,9 +107,9 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     Generates an OAuth signature to pass to an
-        ///     <see cref="IAuthenticator" /> for the purpose of exchanging user credentials
-        ///     for an access token authorized by the user at the Service Provider site.
+        /// Generates an OAuth signature to pass to an
+        /// <see cref="IAuthenticator" /> for the purpose of exchanging user credentials
+        /// for an access token authorized by the user at the Service Provider site.
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>

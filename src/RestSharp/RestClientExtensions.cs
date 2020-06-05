@@ -25,7 +25,7 @@ namespace RestSharp
     public static partial class RestClientExtensions
     {
         /// <summary>
-        ///     Execute the request and returns a response with the dynamic object as Data
+        /// Execute the request and returns a response with the dynamic object as Data
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -42,8 +42,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -58,8 +58,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -74,8 +74,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -90,8 +90,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -106,8 +106,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -122,8 +122,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -138,8 +138,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -154,8 +154,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Execute the request using GET HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using GET HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -165,8 +165,8 @@ namespace RestSharp
             => client.Execute<T>(request, Method.GET);
 
         /// <summary>
-        ///     Execute the request using POST HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using POST HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -176,8 +176,8 @@ namespace RestSharp
             => client.Execute<T>(request, Method.POST);
 
         /// <summary>
-        ///     Execute the request using PUT HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using PUT HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -187,8 +187,8 @@ namespace RestSharp
             => client.Execute<T>(request, Method.PUT);
 
         /// <summary>
-        ///     Execute the request using HEAD HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using HEAD HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -198,8 +198,8 @@ namespace RestSharp
             => client.Execute<T>(request, Method.HEAD);
 
         /// <summary>
-        ///     Execute the request using OPTIONS HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using OPTIONS HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -209,8 +209,8 @@ namespace RestSharp
             => client.Execute<T>(request, Method.OPTIONS);
 
         /// <summary>
-        ///     Execute the request using PATCH HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using PATCH HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -220,8 +220,8 @@ namespace RestSharp
             => client.Execute<T>(request, Method.PATCH);
 
         /// <summary>
-        ///     Execute the request using DELETE HTTP method.
-        ///     The response data is deserialzied to the Data property of the returned response object.
+        /// Execute the request using DELETE HTTP method.
+        /// The response data is deserialzied to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -231,7 +231,7 @@ namespace RestSharp
             => client.Execute<T>(request, Method.DELETE);
 
         /// <summary>
-        ///     Execute the request using GET HTTP method.
+        /// Execute the request using GET HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -239,7 +239,7 @@ namespace RestSharp
         public static IRestResponse Get(this IRestClient client, IRestRequest request) => client.Execute(request, Method.GET);
 
         /// <summary>
-        ///     Execute the request using POST HTTP method.
+        /// Execute the request using POST HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -247,7 +247,7 @@ namespace RestSharp
         public static IRestResponse Post(this IRestClient client, IRestRequest request) => client.Execute(request, Method.POST);
 
         /// <summary>
-        ///     Execute the request using PUT HTTP method.
+        /// Execute the request using PUT HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -255,7 +255,7 @@ namespace RestSharp
         public static IRestResponse Put(this IRestClient client, IRestRequest request) => client.Execute(request, Method.PUT);
 
         /// <summary>
-        ///     Execute the request using HEAD HTTP method.
+        /// Execute the request using HEAD HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -263,7 +263,7 @@ namespace RestSharp
         public static IRestResponse Head(this IRestClient client, IRestRequest request) => client.Execute(request, Method.HEAD);
 
         /// <summary>
-        ///     Execute the request using OPTIONS HTTP method.
+        /// Execute the request using OPTIONS HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -271,7 +271,7 @@ namespace RestSharp
         public static IRestResponse Options(this IRestClient client, IRestRequest request) => client.Execute(request, Method.OPTIONS);
 
         /// <summary>
-        ///     Execute the request using PATCH HTTP method.
+        /// Execute the request using PATCH HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -279,7 +279,7 @@ namespace RestSharp
         public static IRestResponse Patch(this IRestClient client, IRestRequest request) => client.Execute(request, Method.PATCH);
 
         /// <summary>
-        ///     Execute the request using DELETE HTTP method.
+        /// Execute the request using DELETE HTTP method.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -287,7 +287,7 @@ namespace RestSharp
         public static IRestResponse Delete(this IRestClient client, IRestRequest request) => client.Execute(request, Method.DELETE);
 
         /// <summary>
-        ///     Add a parameter to use on every request made with this client instance
+        /// Add a parameter to use on every request made with this client instance
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="p">Parameter to add</param>
@@ -305,7 +305,7 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Add a new or update an existing parameter to use on every request made with this client instance
+        /// Add a new or update an existing parameter to use on every request made with this client instance
         /// </summary>
         /// <param name="restClient"></param>
         /// <param name="p"></param>
@@ -322,7 +322,7 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Removes a parameter from the default parameters that are used on every request made with this client instance
+        /// Removes a parameter from the default parameters that are used on every request made with this client instance
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="name">The name of the parameter that needs to be removed</param>
@@ -339,8 +339,8 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Adds a default HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
-        ///     Used on every request made by this client instance
+        /// Adds a default HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        /// Used on every request made by this client instance
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="name">Name of the parameter</param>
@@ -350,12 +350,12 @@ namespace RestSharp
             => restClient.AddDefaultParameter(new Parameter(name, value, ParameterType.GetOrPost));
 
         /// <summary>
-        ///     Adds a default parameter to the request. There are four types of parameters:
-        ///     - GetOrPost: Either a QueryString value or encoded form value based on method
-        ///     - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        ///     - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        ///     - RequestBody: Used by AddBody() (not recommended to use directly)
-        ///     Used on every request made by this client instance
+        /// Adds a default parameter to the request. There are four types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Used on every request made by this client instance
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="name">Name of the parameter</param>
@@ -371,7 +371,7 @@ namespace RestSharp
             => restClient.AddDefaultParameter(new Parameter(name, value, type));
 
         /// <summary>
-        ///     Adds a default header to the RestClient. Used on every request made by this client instance.
+        /// Adds a default header to the RestClient. Used on every request made by this client instance.
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="name">Name of the header to add</param>
@@ -395,7 +395,7 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
+        /// Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="name">Name of the segment to add</param>
@@ -405,7 +405,7 @@ namespace RestSharp
             => restClient.AddDefaultParameter(name, value, ParameterType.UrlSegment);
 
         /// <summary>
-        ///     Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
+        /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
         /// </summary>
         /// <param name="restClient">The IRestClient instance</param>
         /// <param name="name">Name of the query parameter to add</param>
@@ -446,7 +446,7 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Sets the <see cref="RestClient"/> to only use XML
+        /// Sets the <see cref="RestClient"/> to only use XML
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>

@@ -20,12 +20,12 @@ using System.Reflection;
 namespace RestSharp.Extensions
 {
     /// <summary>
-    ///     Reflection extensions
+    /// Reflection extensions
     /// </summary>
     public static class ReflectionExtensions
     {
         /// <summary>
-        ///     Retrieve an attribute from a member (property)
+        /// Retrieve an attribute from a member (property)
         /// </summary>
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="prop">Member to retrieve attribute from</param>
@@ -33,7 +33,7 @@ namespace RestSharp.Extensions
         public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute => Attribute.GetCustomAttribute(prop, typeof(T)) as T;
 
         /// <summary>
-        ///     Retrieve an attribute from a type
+        /// Retrieve an attribute from a type
         /// </summary>
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="type">Type to retrieve attribute from</param>
@@ -41,7 +41,7 @@ namespace RestSharp.Extensions
         public static T GetAttribute<T>(this Type type) where T : Attribute => Attribute.GetCustomAttribute(type, typeof(T)) as T;
 
         /// <summary>
-        ///     Checks a type to see if it derives from a raw generic (e.g. List[[]])
+        /// Checks a type to see if it derives from a raw generic (e.g. List[[]])
         /// </summary>
         /// <param name="toCheck"></param>
         /// <param name="generic"></param>
@@ -65,8 +65,8 @@ namespace RestSharp.Extensions
         internal static object ChangeType(this object source, Type newType) => Convert.ChangeType(source, newType);
 
         /// <summary>
-        ///     Find a value from a System.Enum by trying several possible variants
-        ///     of the string value of the enum.
+        /// Find a value from a System.Enum by trying several possible variants
+        /// of the string value of the enum.
         /// </summary>
         /// <param name="type">Type of enum</param>
         /// <param name="value">Value for which to search</param>

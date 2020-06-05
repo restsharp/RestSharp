@@ -17,12 +17,12 @@ using System;
 namespace RestSharp.Validation
 {
     /// <summary>
-    ///     Helper methods for validating required values
+    /// Helper methods for validating required values
     /// </summary>
     public class Require
     {
         /// <summary>
-        ///     Require a parameter to not be null
+        /// Require a parameter to not be null
         /// </summary>
         /// <param name="argumentName">Name of the parameter</param>
         /// <param name="argumentValue">Value of the parameter</param>

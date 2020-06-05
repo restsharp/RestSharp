@@ -24,23 +24,23 @@ using RestSharp.Serialization.Xml;
 namespace RestSharp.Serializers
 {
     /// <summary>
-    ///     Default XML Serializer
+    /// Default XML Serializer
     /// </summary>
     public class XmlSerializer : IXmlSerializer
     {
         /// <summary>
-        ///     Default constructor, does not specify namespace
+        /// Default constructor, does not specify namespace
         /// </summary>
         public XmlSerializer() => ContentType = Serialization.ContentType.Xml;
 
         /// <summary>
-        ///     Specify the namespaced to be used when serializing
+        /// Specify the namespaced to be used when serializing
         /// </summary>
         /// <param name="namespace">XML namespace</param>
         public XmlSerializer(string @namespace) : this() => Namespace = @namespace;
 
         /// <summary>
-        ///     Serialize the object as XML
+        /// Serialize the object as XML
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>XML as string</returns>
@@ -96,22 +96,22 @@ namespace RestSharp.Serializers
         }
 
         /// <summary>
-        ///     Name of the root element to use when serializing
+        /// Name of the root element to use when serializing
         /// </summary>
         public string RootElement { get; set; }
 
         /// <summary>
-        ///     XML namespace to use when serializing
+        /// XML namespace to use when serializing
         /// </summary>
         public string Namespace { get; set; }
 
         /// <summary>
-        ///     Format string to use when serializing dates
+        /// Format string to use when serializing dates
         /// </summary>
         public string DateFormat { get; set; }
 
         /// <summary>
-        ///     Content type for serialized content
+        /// Content type for serialized content
         /// </summary>
         public string ContentType { get; set; }
 
@@ -265,8 +265,8 @@ namespace RestSharp.Serializers
         }
 
         /// <summary>
-        ///     Determines if a given object is numeric in any way
-        ///     (can be integer, double, null, etc).
+        /// Determines if a given object is numeric in any way
+        /// (can be integer, double, null, etc).
         /// </summary>
         static bool IsNumeric(object value)
         {

@@ -18,37 +18,37 @@ using System.IO;
 namespace RestSharp
 {
     /// <summary>
-    ///     Container for files to be uploaded with requests
+    /// Container for files to be uploaded with requests
     /// </summary>
     public class FileParameter
     {
         /// <summary>
-        ///     The length of data to be sent
+        /// The length of data to be sent
         /// </summary>
         public long ContentLength { get; set; }
 
         /// <summary>
-        ///     Provides raw data for file
+        /// Provides raw data for file
         /// </summary>
         public Action<Stream> Writer { get; set; }
 
         /// <summary>
-        ///     Name of the file to use when uploading
+        /// Name of the file to use when uploading
         /// </summary>
         public string FileName { get; set; }
 
         /// <summary>
-        ///     MIME content type of file
+        /// MIME content type of file
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        ///     Name of the parameter
+        /// Name of the parameter
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        ///     Creates a file parameter from an array of bytes.
+        /// Creates a file parameter from an array of bytes.
         /// </summary>
         /// <param name="name">The parameter name to use in the request.</param>
         /// <param name="data">The data to use as the file's contents.</param>
@@ -66,7 +66,7 @@ namespace RestSharp
             };
 
         /// <summary>
-        ///     Creates a file parameter from an array of bytes.
+        /// Creates a file parameter from an array of bytes.
         /// </summary>
         /// <param name="name">The parameter name to use in the request.</param>
         /// <param name="data">The data to use as the file's contents.</param>
@@ -75,7 +75,7 @@ namespace RestSharp
         public static FileParameter Create(string name, byte[] data, string filename) => Create(name, data, filename, null);
 
         /// <summary>
-        ///     Creates a file parameter from an array of bytes.
+        /// Creates a file parameter from an array of bytes.
         /// </summary>
         /// <param name="name">The parameter name to use in the request.</param>
         /// <param name="writer">Delegate that will be called with the request stream so you can write to it..</param>

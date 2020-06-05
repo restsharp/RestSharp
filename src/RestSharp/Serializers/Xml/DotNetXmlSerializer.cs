@@ -20,12 +20,12 @@ using RestSharp.Serialization.Xml;
 namespace RestSharp.Serializers
 {
     /// <summary>
-    ///     Wrapper for System.Xml.Serialization.XmlSerializer.
+    /// Wrapper for System.Xml.Serialization.XmlSerializer.
     /// </summary>
     public class DotNetXmlSerializer : IXmlSerializer
     {
         /// <summary>
-        ///     Default constructor, does not specify namespace
+        /// Default constructor, does not specify namespace
         /// </summary>
         public DotNetXmlSerializer()
         {
@@ -35,7 +35,7 @@ namespace RestSharp.Serializers
 
         /// <inheritdoc />
         /// <summary>
-        ///     Specify the namespaced to be used when serializing
+        /// Specify the namespaced to be used when serializing
         /// </summary>
         /// <param name="namespace">XML namespace</param>
         public DotNetXmlSerializer(string @namespace)
@@ -43,12 +43,12 @@ namespace RestSharp.Serializers
             => Namespace = @namespace;
 
         /// <summary>
-        ///     Encoding for serialized content
+        /// Encoding for serialized content
         /// </summary>
         public Encoding Encoding { get; set; }
 
         /// <summary>
-        ///     Serialize the object as XML
+        /// Serialize the object as XML
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>XML as string</returns>
@@ -67,22 +67,22 @@ namespace RestSharp.Serializers
         }
 
         /// <summary>
-        ///     Name of the root element to use when serializing
+        /// Name of the root element to use when serializing
         /// </summary>
         public string RootElement { get; set; }
 
         /// <summary>
-        ///     XML namespace to use when serializing
+        /// XML namespace to use when serializing
         /// </summary>
         public string Namespace { get; set; }
 
         /// <summary>
-        ///     Format string to use when serializing dates
+        /// Format string to use when serializing dates
         /// </summary>
         public string DateFormat { get; set; }
 
         /// <summary>
-        ///     Content type for serialized content
+        /// Content type for serialized content
         /// </summary>
         public string ContentType { get; set; }
 

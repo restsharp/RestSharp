@@ -12,8 +12,11 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
+using System;
+
 namespace RestSharp
 {
+    [Obsolete("The RestBody class will be internal in future versions")]
     public class RequestBody
     {
         public string ContentType { get; }

@@ -20,21 +20,21 @@ using RestSharp.Serialization.Xml;
 namespace RestSharp.Deserializers
 {
     /// <summary>
-    ///     Wrapper for System.Xml.Serialization.XmlSerializer.
+    /// Wrapper for System.Xml.Serialization.XmlSerializer.
     /// </summary>
     public class DotNetXmlDeserializer : IXmlDeserializer
     {
         /// <summary>
-        ///     Encoding for serialized content
+        /// Encoding for serialized content
         /// </summary>
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         /// <summary>
-        ///     Name of the root element to use when serializing
+        /// Name of the root element to use when serializing
         /// </summary>
         public string RootElement { get; set; }
 
         /// <summary>
-        ///     XML namespace to use when serializing
+        /// XML namespace to use when serializing
         /// </summary>
         public string Namespace { get; set; }
 

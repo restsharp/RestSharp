@@ -15,7 +15,7 @@
 namespace RestSharp
 {
     /// <summary>
-    ///     Types of parameters that can be added to requests
+    /// Types of parameters that can be added to requests
     /// </summary>
     public enum ParameterType
     {
@@ -28,12 +28,12 @@ namespace RestSharp
     }
 
     /// <summary>
-    ///     Data formats
+    /// Data formats
     /// </summary>
     public enum DataFormat { Json, Xml, None }
 
     /// <summary>
-    ///     HTTP method to use when making requests
+    /// HTTP method to use when making requests
     /// </summary>
     public enum Method
     {
@@ -42,23 +42,23 @@ namespace RestSharp
     }
 
     /// <summary>
-    ///     Format strings for commonly-used date formats
+    /// Format strings for commonly-used date formats
     /// </summary>
     public struct DateFormat
     {
         /// <summary>
-        ///     .NET format string for ISO 8601 date format
+        /// .NET format string for ISO 8601 date format
         /// </summary>
         public const string ISO_8601 = "s";
 
         /// <summary>
-        ///     .NET format string for roundtrip date format
+        /// .NET format string for roundtrip date format
         /// </summary>
         public const string ROUND_TRIP = "u";
     }
 
     /// <summary>
-    ///     Status for responses (surprised?)
+    /// Status for responses (surprised?)
     /// </summary>
     public enum ResponseStatus { None, Completed, Error, TimedOut, Aborted }
 }

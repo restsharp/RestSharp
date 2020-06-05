@@ -21,7 +21,7 @@ using RestSharp.Extensions;
 namespace RestSharp
 {
     /// <summary>
-    ///     HttpWebRequest wrapper (async methods)
+    /// HttpWebRequest wrapper (async methods)
     /// </summary>
     public partial class Http
     {

@@ -32,7 +32,7 @@ using RestSharp.Serializers;
 namespace RestSharp
 {
     /// <summary>
-    ///     Container for data used to make requests
+    /// Container for data used to make requests
     /// </summary>
     [PublicAPI]
     public class RestRequest : IRestRequest
@@ -46,7 +46,7 @@ namespace RestSharp
         Action<Stream> _responseWriter;
 
         /// <summary>
-        ///     Default constructor
+        /// Default constructor
         /// </summary>
         public RestRequest()
         {
@@ -61,7 +61,7 @@ namespace RestSharp
 	   }
 
         /// <summary>
-        ///     Sets Method property to value of method
+        /// Sets Method property to value of method
         /// </summary>
         /// <param name="method">Method to use for this request</param>
         public RestRequest(Method method) : this() => Method = method;

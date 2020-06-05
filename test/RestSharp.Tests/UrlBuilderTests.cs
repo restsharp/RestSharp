@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace RestSharp.Tests
 {
     /// <summary>
-    ///     Note: These tests do not handle QueryString building, which is handled in Http, not RestClient
+    /// Note: These tests do not handle QueryString building, which is handled in Http, not RestClient
     /// </summary>
     [TestFixture]
     public class UrlBuilderTests

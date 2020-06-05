@@ -21,12 +21,12 @@ namespace RestSharp.Extensions
     public static class RSACryptoServiceProviderExtensions
     {
         /// <summary>
-        ///     Imports the specified XML String into the crypto service provider
+        /// Imports the specified XML String into the crypto service provider
         /// </summary>
         /// <remarks>
-        ///     .NET Core 2.0 doesn't provide an implementation of RSACryptoServiceProvider.FromXmlString/ToXmlString, so we have
-        ///     to do it ourselves.
-        ///     Source: https://gist.github.com/Jargon64/5b172c452827e15b21882f1d76a94be4/
+        /// .NET Core 2.0 doesn't provide an implementation of RSACryptoServiceProvider.FromXmlString/ToXmlString, so we have
+        /// to do it ourselves.
+        /// Source: https://gist.github.com/Jargon64/5b172c452827e15b21882f1d76a94be4/
         /// </remarks>
         public static void FromXmlString2(this RSACryptoServiceProvider rsa, string xmlString)
         {

@@ -19,28 +19,28 @@ using System;
 namespace RestSharp.Authenticators
 {
     /// <summary>
-    ///     Base class for OAuth 2 Authenticators.
+    /// Base class for OAuth 2 Authenticators.
     /// </summary>
     /// <remarks>
-    ///     Since there are many ways to authenticate in OAuth2,
-    ///     this is used as a base class to differentiate between
-    ///     other authenticators.
-    ///     Any other OAuth2 authenticators must derive from this
-    ///     abstract class.
+    /// Since there are many ways to authenticate in OAuth2,
+    /// this is used as a base class to differentiate between
+    /// other authenticators.
+    /// Any other OAuth2 authenticators must derive from this
+    /// abstract class.
     /// </remarks>
     [Obsolete("Check the OAuth2 authenticators implementation on how to use the AuthenticatorBase instead")]
     public abstract class OAuth2Authenticator : IAuthenticator
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="OAuth2Authenticator" /> class.
+        /// Initializes a new instance of the <see cref="OAuth2Authenticator" /> class.
         /// </summary>
         /// <param name="accessToken">
-        ///     The access token.
+        /// The access token.
         /// </param>
         protected OAuth2Authenticator(string accessToken) => this.AccessToken = accessToken;
 
         /// <summary>
-        ///     Gets the access token.
+        /// Gets the access token.
         /// </summary>
         public string AccessToken { get; }
 

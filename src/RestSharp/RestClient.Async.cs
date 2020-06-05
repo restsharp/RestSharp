@@ -23,7 +23,7 @@ namespace RestSharp
     public partial class RestClient
     {
         /// <summary>
-        ///     Executes a GET-style request asynchronously, authenticating if needed
+        /// Executes a GET-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -32,7 +32,7 @@ namespace RestSharp
             => ExecuteAsync<T>(request, Method.GET, cancellationToken);
 
         /// <summary>
-        ///     Executes a POST-style request asynchronously, authenticating if needed
+        /// Executes a POST-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -41,7 +41,7 @@ namespace RestSharp
             => ExecuteAsync<T>(request, Method.POST, cancellationToken);
 
         /// <summary>
-        ///     Executes a GET-style asynchronously, authenticating if needed
+        /// Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -49,7 +49,7 @@ namespace RestSharp
             => ExecuteAsync(request, Method.GET, cancellationToken);
 
         /// <summary>
-        ///     Executes a POST-style asynchronously, authenticating if needed
+        /// Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -57,7 +57,7 @@ namespace RestSharp
             => ExecuteAsync(request, Method.POST, cancellationToken);
         
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -104,7 +104,7 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="httpMethod">Override the request method</param>
@@ -122,7 +122,7 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>

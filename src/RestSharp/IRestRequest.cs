@@ -30,60 +30,60 @@ namespace RestSharp
     public interface IRestRequest
     {
         /// <summary>
-        ///     Always send a multipart/form-data request - even when no Files are present.
+        /// Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         bool AlwaysMultipartFormData { get; set; }
 
         /// <summary>
-        ///     Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.
-        ///     By default the included JsonSerializer is used (currently using SimpleJson default serialization).
+        /// Serializer to use when writing JSON request bodies. Used if RequestFormat is Json.
+        /// By default the included JsonSerializer is used (currently using SimpleJson default serialization).
         /// </summary>
         ISerializer JsonSerializer { get; set; }
 
         /// <summary>
-        ///     Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
-        ///     By default the included XmlSerializer is used.
+        /// Serializer to use when writing XML request bodies. Used if RequestFormat is Xml.
+        /// By default the included XmlSerializer is used.
         /// </summary>
         IXmlSerializer XmlSerializer { get; set; }
 
         /// <summary>
-        ///     Set this to handle the response stream yourself, based on the response details
+        /// Set this to handle the response stream yourself, based on the response details
         /// </summary>
         Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
 
         /// <summary>
-        ///     Set this to write response to Stream rather than reading into memory.
+        /// Set this to write response to Stream rather than reading into memory.
         /// </summary>
         Action<Stream> ResponseWriter { get; set; }
 
         /// <summary>
-        ///     Container of all HTTP parameters to be passed with the request.
-        ///     See AddParameter() for explanation of the types of parameters that can be passed
+        /// Container of all HTTP parameters to be passed with the request.
+        /// See AddParameter() for explanation of the types of parameters that can be passed
         /// </summary>
         List<Parameter> Parameters { get; }
 
         /// <summary>
-        ///     Container of all the files to be uploaded with the request.
+        /// Container of all the files to be uploaded with the request.
         /// </summary>
         List<FileParameter> Files { get; }
 
         /// <summary>
-        ///     Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
-        ///     Default is GET
+        /// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
+        /// Default is GET
         /// </summary>
         Method Method { get; set; }
 
         /// <summary>
-        ///     The Resource URL to make the request against.
-        ///     Tokens are substituted with UrlSegment parameters and match by name.
-        ///     Should not include the scheme or domain. Do not include leading slash.
-        ///     Combined with RestClient.BaseUrl to assemble final URL:
-        ///     {BaseUrl}/{Resource} (BaseUrl is scheme + domain, e.g. http://example.com)
+        /// The Resource URL to make the request against.
+        /// Tokens are substituted with UrlSegment parameters and match by name.
+        /// Should not include the scheme or domain. Do not include leading slash.
+        /// Combined with RestClient.BaseUrl to assemble final URL:
+        /// {BaseUrl}/{Resource} (BaseUrl is scheme + domain, e.g. http://example.com)
         /// </summary>
         /// <example>
-        ///     // example for url token replacement
-        ///     request.Resource = "Products/{ProductId}";
-        ///     request.AddParameter("ProductId", 123, ParameterType.UrlSegment);
+        /// // example for url token replacement
+        /// request.Resource = "Products/{ProductId}";
+        /// request.AddParameter("ProductId", 123, ParameterType.UrlSegment);
         /// </example>
         string Resource { get; set; }
 
@@ -157,7 +157,7 @@ namespace RestSharp
         Action<IHttp> OnBeforeRequest { get; set; }
         
         /// <summary>
-        ///     Serialized request body to be accessed in authenticators
+        /// Serialized request body to be accessed in authenticators
         /// </summary>
         RequestBody Body { get; set; }
 

@@ -44,12 +44,12 @@ namespace RestSharp.Authenticators.OAuth
         static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
 
         /// <summary>
-        ///     All text parameters are UTF-8 encoded (per section 5.1).
+        /// All text parameters are UTF-8 encoded (per section 5.1).
         /// </summary>
         static readonly Encoding Encoding = Encoding.UTF8;
 
         /// <summary>
-        ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
+        /// The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
         /// </summary>
         static readonly string[] UriRfc3986CharsToEscape = {"!", "*", "'", "(", ")"};
 
@@ -64,7 +64,7 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     Generates a random 16-byte lowercase alphanumeric string.
+        /// Generates a random 16-byte lowercase alphanumeric string.
         /// </summary>
         /// <returns></returns>
         public static string GetNonce()
@@ -83,30 +83,30 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     Generates a timestamp based on the current elapsed seconds since '01/01/1970 0000 GMT"
+        /// Generates a timestamp based on the current elapsed seconds since '01/01/1970 0000 GMT"
         /// </summary>
         /// <returns></returns>
         public static string GetTimestamp() => GetTimestamp(DateTime.UtcNow);
 
         /// <summary>
-        ///     Generates a timestamp based on the elapsed seconds of a given time since '01/01/1970 0000 GMT"
+        /// Generates a timestamp based on the elapsed seconds of a given time since '01/01/1970 0000 GMT"
         /// </summary>
         /// <param name="dateTime">A specified point in time.</param>
         /// <returns></returns>
         static string GetTimestamp(DateTime dateTime) => dateTime.ToUnixTime().ToString();
 
         /// <summary>
-        ///     URL encodes a string based on section 5.1 of the OAuth spec.
-        ///     Namely, percent encoding with [RFC3986], avoiding unreserved characters,
-        ///     upper-casing hexadecimal characters, and UTF-8 encoding for text value pairs.
+        /// URL encodes a string based on section 5.1 of the OAuth spec.
+        /// Namely, percent encoding with [RFC3986], avoiding unreserved characters,
+        /// upper-casing hexadecimal characters, and UTF-8 encoding for text value pairs.
         /// </summary>
         /// <param name="value">The value to escape.</param>
         /// <returns>The escaped value.</returns>
         /// <remarks>
-        ///     The <see cref="Uri.EscapeDataString" /> method is <i>supposed</i> to take on
-        ///     RFC 3986 behavior if certain elements are present in a .config file.  Even if this
-        ///     actually worked (which in my experiments it <i>doesn't</i>), we can't rely on every
-        ///     host actually having this configuration element present.
+        /// The <see cref="Uri.EscapeDataString" /> method is <i>supposed</i> to take on
+        /// RFC 3986 behavior if certain elements are present in a .config file.  Even if this
+        /// actually worked (which in my experiments it <i>doesn't</i>), we can't rely on every
+        /// host actually having this configuration element present.
         /// </remarks>
         public static string UrlEncodeRelaxed(string value)
         {
@@ -128,9 +128,9 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     URL encodes a string based on section 5.1 of the OAuth spec.
-        ///     Namely, percent encoding with [RFC3986], avoiding unreserved characters,
-        ///     upper-casing hexadecimal characters, and UTF-8 encoding for text value pairs.
+        /// URL encodes a string based on section 5.1 of the OAuth spec.
+        /// Namely, percent encoding with [RFC3986], avoiding unreserved characters,
+        /// upper-casing hexadecimal characters, and UTF-8 encoding for text value pairs.
         /// </summary>
         /// <param name="value"></param>
         // From oauth spec above: -
@@ -143,9 +143,9 @@ namespace RestSharp.Authenticators.OAuth
             => string.Join("", value.Select(x => Unreserved.Contains(x) ? x.ToString() : $"%{(byte) x:X2}"));
 
         /// <summary>
-        ///     Sorts a collection of key-value pairs by name, and then value if equal,
-        ///     concatenating them into a single string. This string should be encoded
-        ///     prior to, or after normalization is run.
+        /// Sorts a collection of key-value pairs by name, and then value if equal,
+        /// concatenating them into a single string. This string should be encoded
+        /// prior to, or after normalization is run.
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
@@ -153,7 +153,7 @@ namespace RestSharp.Authenticators.OAuth
             => string.Join("&", SortParametersExcludingSignature(parameters));
 
         /// <summary>
-        ///     Sorts a <see cref="WebPairCollection" /> by name, and then value if equal.
+        /// Sorts a <see cref="WebPairCollection" /> by name, and then value if equal.
         /// </summary>
         /// <param name="parameters">A collection of parameters to sort</param>
         /// <returns>A sorted parameter collection</returns>
@@ -165,9 +165,9 @@ namespace RestSharp.Authenticators.OAuth
                 .Select(x => $"{x.Name}={x.Value}");
 
         /// <summary>
-        ///     Creates a request URL suitable for making OAuth requests.
-        ///     Resulting URLs must exclude port 80 or port 443 when accompanied by HTTP and HTTPS, respectively.
-        ///     Resulting URLs must be lower case.
+        /// Creates a request URL suitable for making OAuth requests.
+        /// Resulting URLs must exclude port 80 or port 443 when accompanied by HTTP and HTTPS, respectively.
+        /// Resulting URLs must be lower case.
         /// </summary>
         /// <param name="url">The original request URL</param>
         /// <returns></returns>
@@ -183,8 +183,8 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     Creates a request elements concatenation value to send with a request.
-        ///     This is also known as the signature base.
+        /// Creates a request elements concatenation value to send with a request.
+        /// This is also known as the signature base.
         /// </summary>
         /// <param name="method">The request HTTP method type</param>
         /// <param name="url">The request URL</param>
@@ -201,8 +201,8 @@ namespace RestSharp.Authenticators.OAuth
         }
 
         /// <summary>
-        ///     Creates a signature value given a signature base and the consumer secret.
-        ///     This method is used when the token secret is currently unknown.
+        /// Creates a signature value given a signature base and the consumer secret.
+        /// This method is used when the token secret is currently unknown.
         /// </summary>
         /// <param name="signatureMethod">The hashing method</param>
         /// <param name="signatureBase">The signature base</param>
@@ -216,8 +216,8 @@ namespace RestSharp.Authenticators.OAuth
             => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, signatureBase, consumerSecret, null);
 
         /// <summary>
-        ///     Creates a signature value given a signature base and the consumer secret.
-        ///     This method is used when the token secret is currently unknown.
+        /// Creates a signature value given a signature base and the consumer secret.
+        /// This method is used when the token secret is currently unknown.
         /// </summary>
         /// <param name="signatureMethod">The hashing method</param>
         /// <param name="signatureTreatment">The treatment to use on a signature value</param>
@@ -233,7 +233,7 @@ namespace RestSharp.Authenticators.OAuth
             => GetSignature(signatureMethod, signatureTreatment, signatureBase, consumerSecret, null);
 
         /// <summary>
-        ///     Creates a signature value given a signature base and the consumer secret and a known token secret.
+        /// Creates a signature value given a signature base and the consumer secret and a known token secret.
         /// </summary>
         /// <param name="signatureMethod">The hashing method</param>
         /// <param name="signatureTreatment">The treatment to use on a signature value</param>

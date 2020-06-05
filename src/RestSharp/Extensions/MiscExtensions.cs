@@ -21,12 +21,12 @@ using RestSharp.Authenticators.OAuth.Extensions;
 namespace RestSharp.Extensions
 {
     /// <summary>
-    ///     Extension method overload!
+    /// Extension method overload!
     /// </summary>
     public static class MiscExtensions
     {
         /// <summary>
-        ///     Save a byte array to a file
+        /// Save a byte array to a file
         /// </summary>
         /// <param name="input">Bytes to save</param>
         /// <param name="path">Full path to save file to</param>
@@ -34,7 +34,7 @@ namespace RestSharp.Extensions
         public static void SaveAs(this byte[] input, string path) => File.WriteAllBytes(path, input);
 
         /// <summary>
-        ///     Read a stream into a byte array
+        /// Read a stream into a byte array
         /// </summary>
         /// <param name="input">Stream to read</param>
         /// <returns>byte[]</returns>
@@ -54,7 +54,7 @@ namespace RestSharp.Extensions
         }
 
         /// <summary>
-        ///     Copies bytes from one stream to another
+        /// Copies bytes from one stream to another
         /// </summary>
         /// <param name="input">The input stream.</param>
         /// <param name="output">The output stream.</param>

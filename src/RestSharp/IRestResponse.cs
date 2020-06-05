@@ -20,114 +20,114 @@ using JetBrains.Annotations;
 namespace RestSharp
 {
     /// <summary>
-    ///     Container for data sent back from API
+    /// Container for data sent back from API
     /// </summary>
     [PublicAPI]
     public interface IRestResponse
     {
         /// <summary>
-        ///     The RestRequest that was made to get this RestResponse
+        /// The RestRequest that was made to get this RestResponse
         /// </summary>
         /// <remarks>
-        ///     Mainly for debugging if ResponseStatus is not OK
+        /// Mainly for debugging if ResponseStatus is not OK
         /// </remarks>
         IRestRequest Request { get; set; }
 
         /// <summary>
-        ///     MIME content type of response
+        /// MIME content type of response
         /// </summary>
         string ContentType { get; set; }
 
         /// <summary>
-        ///     Length in bytes of the response content
+        /// Length in bytes of the response content
         /// </summary>
         long ContentLength { get; set; }
 
         /// <summary>
-        ///     Encoding of the response content
+        /// Encoding of the response content
         /// </summary>
         string ContentEncoding { get; set; }
 
         /// <summary>
-        ///     String representation of response content
+        /// String representation of response content
         /// </summary>
         string Content { get; set; }
 
         /// <summary>
-        ///     HTTP response status code
+        /// HTTP response status code
         /// </summary>
         HttpStatusCode StatusCode { get; set; }
 
         /// <summary>
-        ///     Whether or not the response status code indicates success
+        /// Whether or not the response status code indicates success
         /// </summary>
         bool IsSuccessful { get; }
 
         /// <summary>
-        ///     Description of HTTP status returned
+        /// Description of HTTP status returned
         /// </summary>
         string StatusDescription { get; set; }
 
         /// <summary>
-        ///     Response content
+        /// Response content
         /// </summary>
         byte[] RawBytes { get; set; }
 
         /// <summary>
-        ///     The URL that actually responded to the content (different from request if redirected)
+        /// The URL that actually responded to the content (different from request if redirected)
         /// </summary>
         Uri ResponseUri { get; set; }
 
         /// <summary>
-        ///     HttpWebResponse.Server
+        /// HttpWebResponse.Server
         /// </summary>
         string Server { get; set; }
 
         /// <summary>
-        ///     Cookies returned by server with the response
+        /// Cookies returned by server with the response
         /// </summary>
         IList<RestResponseCookie> Cookies { get; }
 
         /// <summary>
-        ///     Headers returned by server with the response
+        /// Headers returned by server with the response
         /// </summary>
         IList<Parameter> Headers { get; }
 
         /// <summary>
-        ///     Status of the request. Will return Error for transport errors.
-        ///     HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
+        /// Status of the request. Will return Error for transport errors.
+        /// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
         /// </summary>
         ResponseStatus ResponseStatus { get; set; }
 
         /// <summary>
-        ///     Transport or other non-HTTP error generated while attempting request
+        /// Transport or other non-HTTP error generated while attempting request
         /// </summary>
         string ErrorMessage { get; set; }
 
         /// <summary>
-        ///     Exceptions thrown during the request, if any.
+        /// Exceptions thrown during the request, if any.
         /// </summary>
         /// <remarks>
-        ///     Will contain only network transport or framework exceptions thrown during the request.
-        ///     HTTP protocol errors are handled by RestSharp and will not appear here.
+        /// Will contain only network transport or framework exceptions thrown during the request.
+        /// HTTP protocol errors are handled by RestSharp and will not appear here.
         /// </remarks>
         Exception ErrorException { get; set; }
 
         /// <summary>
-        ///     The HTTP protocol version (1.0, 1.1, etc)
+        /// The HTTP protocol version (1.0, 1.1, etc)
         /// </summary>
         /// <remarks>Only set when underlying framework supports it.</remarks>
         Version ProtocolVersion { get; set; }
     }
 
     /// <summary>
-    ///     Container for data sent back from API including deserialized data
+    /// Container for data sent back from API including deserialized data
     /// </summary>
     /// <typeparam name="T">Type of data to deserialize to</typeparam>
     public interface IRestResponse<T> : IRestResponse
     {
         /// <summary>
-        ///     Deserialized entity data
+        /// Deserialized entity data
         /// </summary>
         T Data { get; set; }
     }

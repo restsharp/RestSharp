@@ -213,7 +213,7 @@ namespace RestSharp
         HttpWebRequest MergeAsync(Action<HttpResponse> action);
 
         /// <summary>
-        ///     Execute an async POST-style request with the specified HTTP Method.
+        /// Execute an async POST-style request with the specified HTTP Method.
         /// </summary>
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
@@ -221,7 +221,7 @@ namespace RestSharp
         HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
 
         /// <summary>
-        ///     Execute an async GET-style request with the specified HTTP Method.
+        /// Execute an async GET-style request with the specified HTTP Method.
         /// </summary>
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>

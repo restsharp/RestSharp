@@ -17,8 +17,8 @@ using RestSharp.Validation;
 namespace RestSharp.Authenticators
 {
     /// <summary>
-    ///     JSON WEB TOKEN (JWT) Authenticator class.
-    ///     <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
+    /// JSON WEB TOKEN (JWT) Authenticator class.
+    /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
     /// </summary>
     public class JwtAuthenticator : IAuthenticator
     {

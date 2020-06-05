@@ -28,7 +28,7 @@ using RestSharp.Extensions;
 namespace RestSharp
 {
     /// <summary>
-    ///     HttpWebRequest wrapper
+    /// HttpWebRequest wrapper
     /// </summary>
     public partial class Http : IHttp
     {
@@ -104,22 +104,22 @@ namespace RestSharp
         }
 
         /// <summary>
-        ///     True if this HTTP request has any HTTP parameters
+        /// True if this HTTP request has any HTTP parameters
         /// </summary>
         protected bool HasParameters => Parameters.Any();
 
         /// <summary>
-        ///     True if this HTTP request has any HTTP cookies
+        /// True if this HTTP request has any HTTP cookies
         /// </summary>
         protected bool HasCookies => Cookies.Any();
 
         /// <summary>
-        ///     True if a request body has been specified
+        /// True if a request body has been specified
         /// </summary>
         protected bool HasBody => RequestBodyBytes != null || !string.IsNullOrEmpty(RequestBody);
 
         /// <summary>
-        ///     True if files have been set to be uploaded
+        /// True if files have been set to be uploaded
         /// </summary>
         protected bool HasFiles => Files.Any();
 
@@ -129,7 +129,7 @@ namespace RestSharp
         public bool AutomaticDecompression { get; set; }
 
         /// <summary>
-        ///     Always send a multipart/form-data request - even when no Files are present.
+        /// Always send a multipart/form-data request - even when no Files are present.
         /// </summary>
         public bool AlwaysMultipartFormData { get; set; }
 
@@ -219,7 +219,7 @@ namespace RestSharp
 
         /// <inheritdoc />
         /// <summary>
-        ///     Callback function for handling the validation of remote certificates.
+        /// Callback function for handling the validation of remote certificates.
         /// </summary>
         public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
 

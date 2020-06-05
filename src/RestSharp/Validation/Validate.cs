@@ -17,12 +17,12 @@ using System;
 namespace RestSharp.Validation
 {
     /// <summary>
-    ///     Helper methods for validating values
+    /// Helper methods for validating values
     /// </summary>
     public class Validate
     {
         /// <summary>
-        ///     Validate an integer value is between the specified values (exclusive of min/max)
+        /// Validate an integer value is between the specified values (exclusive of min/max)
         /// </summary>
         /// <param name="value">Value to validate</param>
         /// <param name="min">Exclusive minimum value</param>
@@ -34,7 +34,7 @@ namespace RestSharp.Validation
         }
 
         /// <summary>
-        ///     Validate a string length
+        /// Validate a string length
         /// </summary>
         /// <param name="value">String to be validated</param>
         /// <param name="maxSize">Maximum length of the string</param>

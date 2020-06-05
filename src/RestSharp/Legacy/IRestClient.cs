@@ -54,7 +54,7 @@ namespace RestSharp
         );
 
         /// <summary>
-        ///     Executes a GET-style request and callback asynchronously, authenticating if needed
+        /// Executes a GET-style request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
@@ -68,7 +68,7 @@ namespace RestSharp
         );
 
         /// <summary>
-        ///     Executes a POST-style request and callback asynchronously, authenticating if needed
+        /// Executes a POST-style request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion providing access to the async handle.</param>
@@ -82,7 +82,7 @@ namespace RestSharp
         );
 
         /// <summary>
-        ///     Executes a GET-style request and callback asynchronously, authenticating if needed
+        /// Executes a GET-style request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -97,7 +97,7 @@ namespace RestSharp
         );
 
         /// <summary>
-        ///     Executes a GET-style request and callback asynchronously, authenticating if needed
+        /// Executes a GET-style request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -112,7 +112,7 @@ namespace RestSharp
         );
 
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -120,7 +120,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request);
 
         /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -129,7 +129,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token);
 
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -138,7 +138,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, Method httpMethod);
 
         /// <summary>
-        ///     Executes a GET-style request asynchronously, authenticating if needed
+        /// Executes a GET-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -146,7 +146,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request);
 
         /// <summary>
-        ///     Executes a GET-style request asynchronously, authenticating if needed
+        /// Executes a GET-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -155,7 +155,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token);
 
         /// <summary>
-        ///     Executes a POST-style request asynchronously, authenticating if needed
+        /// Executes a POST-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -163,7 +163,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request);
 
         /// <summary>
-        ///     Executes a POST-style request asynchronously, authenticating if needed
+        /// Executes a POST-style request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
@@ -172,7 +172,7 @@ namespace RestSharp
         Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token);
 
         /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
@@ -180,7 +180,7 @@ namespace RestSharp
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token);
 
         /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
@@ -189,21 +189,21 @@ namespace RestSharp
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token, Method httpMethod);
 
         /// <summary>
-        ///     Executes the request asynchronously, authenticating if needed
+        /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         [Obsolete("Use ExecuteAsync instead")]
         Task<IRestResponse> ExecuteTaskAsync(IRestRequest request);
 
         /// <summary>
-        ///     Executes a GET-style asynchronously, authenticating if needed
+        /// Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         [Obsolete("Use ExecuteGetAsync instead")]
         Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request);
 
         /// <summary>
-        ///     Executes a GET-style asynchronously, authenticating if needed
+        /// Executes a GET-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
@@ -211,14 +211,14 @@ namespace RestSharp
         Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token);
 
         /// <summary>
-        ///     Executes a POST-style asynchronously, authenticating if needed
+        /// Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         [Obsolete("Use ExecutePostAsync instead")]
         Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request);
 
         /// <summary>
-        ///     Executes a POST-style asynchronously, authenticating if needed
+        /// Executes a POST-style asynchronously, authenticating if needed
         /// </summary>
         /// <param name="request">Request to be executed</param>
         /// <param name="token">The cancellation token</param>
@@ -226,7 +226,7 @@ namespace RestSharp
         Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token);
 
         /// <summary>
-        ///     Adds or replaces a deserializer for the specified content type
+        /// Adds or replaces a deserializer for the specified content type
         /// </summary>
         /// <param name="contentType">Content type for which the deserializer will be replaced</param>
         /// <param name="deserializer">Custom deserializer</param>

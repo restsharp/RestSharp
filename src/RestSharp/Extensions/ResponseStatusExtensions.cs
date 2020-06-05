@@ -21,7 +21,7 @@ namespace RestSharp.Extensions
     public static class ResponseStatusExtensions
     {
         /// <summary>
-        ///     Convert a <see cref="ResponseStatus" /> to a <see cref="WebException" /> instance.
+        /// Convert a <see cref="ResponseStatus" /> to a <see cref="WebException" /> instance.
         /// </summary>
         /// <param name="responseStatus">The response status.</param>
         /// <returns></returns>

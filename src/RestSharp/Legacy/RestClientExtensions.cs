@@ -22,7 +22,7 @@ namespace RestSharp
     public partial class RestClientExtensions
     {
         /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="client">The IRestClient this method extends</param>
         /// <param name="request">Request to be executed</param>
@@ -36,7 +36,7 @@ namespace RestSharp
             => client.ExecuteAsync(request, (response, handle) => callback(response));
 
         /// <summary>
-        ///     Executes the request and callback asynchronously, authenticating if needed
+        /// Executes the request and callback asynchronously, authenticating if needed
         /// </summary>
         /// <param name="client">The IRestClient this method extends</param>
         /// <typeparam name="T">Target deserialization type</typeparam>

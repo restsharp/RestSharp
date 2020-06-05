@@ -23,8 +23,9 @@ using RestSharp.Validation;
 namespace RestSharp
 {
     /// <summary>
-    ///     Parameter container for REST requests
+    /// Parameter container for REST requests
     /// </summary>
+    [Obsolete("Use AddXXXParameter methods of IRestRequest instead of instantiating the Parameter class.")]
     public class Parameter : IEquatable<Parameter>
     {
         public Parameter(string name, object value, ParameterType type)
@@ -40,32 +41,32 @@ namespace RestSharp
         public Parameter(string name, object value, string contentType, ParameterType type) : this(name, value, type) => ContentType = contentType;
 
         /// <summary>
-        ///     Name of the parameter
+        /// Name of the parameter
         /// </summary>
         public string? Name { get; set; }
 
         /// <summary>
-        ///     Value of the parameter
+        /// Value of the parameter
         /// </summary>
         public object? Value { get; set; }
 
         /// <summary>
-        ///     Type of the parameter
+        /// Type of the parameter
         /// </summary>
         public ParameterType Type { get; set; }
 
         /// <summary>
-        ///     Body parameter data type
+        /// Body parameter data type
         /// </summary>
         public DataFormat DataFormat { get; set; } = DataFormat.None;
 
         /// <summary>
-        ///     MIME content type of the parameter
+        /// MIME content type of the parameter
         /// </summary>
         public string? ContentType { get; set; }
 
         /// <summary>
-        ///     Return a human-readable representation of this parameter
+        /// Return a human-readable representation of this parameter
         /// </summary>
         /// <returns>String</returns>
         public override string ToString() => $"{Name}={Value}";

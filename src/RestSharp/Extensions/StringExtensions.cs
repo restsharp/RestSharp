@@ -43,8 +43,8 @@ namespace RestSharp.Extensions
         public static string UrlDecode(this string input) => HttpUtility.UrlDecode(input);
 
         /// <summary>
-        ///     Uses Uri.EscapeDataString() based on recommendations on MSDN
-        ///     http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+        /// Uses Uri.EscapeDataString() based on recommendations on MSDN
+        /// http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
         /// </summary>
         public static string UrlEncode(this string input)
         {
@@ -84,21 +84,21 @@ namespace RestSharp.Extensions
         }
 
         /// <summary>
-        ///     Check that a string is not null or empty
+        /// Check that a string is not null or empty
         /// </summary>
         /// <param name="input">String to check</param>
         /// <returns>bool</returns>
         public static bool HasValue(this string input) => !string.IsNullOrEmpty(input);
 
         /// <summary>
-        ///     Remove underscores from a string
+        /// Remove underscores from a string
         /// </summary>
         /// <param name="input">String to process</param>
         /// <returns>string</returns>
         public static string RemoveUnderscoresAndDashes(this string input) => input.Replace("_", "").Replace("-", "");
 
         /// <summary>
-        ///     Parses most common JSON date formats
+        /// Parses most common JSON date formats
         /// </summary>
         /// <param name="input">JSON value to parse</param>
         /// <param name="culture"></param>
@@ -190,7 +190,7 @@ namespace RestSharp.Extensions
         }
 
         /// <summary>
-        ///     Converts a string to pascal case
+        /// Converts a string to pascal case
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
         /// <param name="culture"></param>
@@ -199,7 +199,7 @@ namespace RestSharp.Extensions
             => ToPascalCase(lowercaseAndUnderscoredWord, true, culture);
 
         /// <summary>
-        ///     Converts a string to pascal case with the option to remove underscores
+        /// Converts a string to pascal case with the option to remove underscores
         /// </summary>
         /// <param name="text">String to convert</param>
         /// <param name="removeUnderscores">Option to remove underscores</param>
@@ -230,7 +230,7 @@ namespace RestSharp.Extensions
         }
 
         /// <summary>
-        ///     Converts a string to camel case
+        /// Converts a string to camel case
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
         /// <param name="culture"></param>
@@ -239,14 +239,14 @@ namespace RestSharp.Extensions
             => MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord, culture));
 
         /// <summary>
-        ///     Convert the first letter of a string to lower case
+        /// Convert the first letter of a string to lower case
         /// </summary>
         /// <param name="word">String to convert</param>
         /// <returns>string</returns>
         public static string MakeInitialLowerCase(this string word) => string.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
 
         /// <summary>
-        ///     Add underscores to a pascal-cased string
+        /// Add underscores to a pascal-cased string
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>string</returns>
@@ -260,7 +260,7 @@ namespace RestSharp.Extensions
             );
 
         /// <summary>
-        ///     Add dashes to a pascal-cased string
+        /// Add dashes to a pascal-cased string
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>string</returns>
@@ -274,14 +274,14 @@ namespace RestSharp.Extensions
             );
 
         /// <summary>
-        ///     Add an underscore prefix to a pascal-cased string
+        /// Add an underscore prefix to a pascal-cased string
         /// </summary>
         /// <param name="pascalCasedWord"></param>
         /// <returns></returns>
         public static string AddUnderscorePrefix(this string pascalCasedWord) => $"_{pascalCasedWord}";
 
         /// <summary>
-        ///     Add spaces to a pascal-cased string
+        /// Add spaces to a pascal-cased string
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>string</returns>
@@ -299,7 +299,7 @@ namespace RestSharp.Extensions
         internal static bool IsNotEmpty(this string value) => !string.IsNullOrWhiteSpace(value);
 
         /// <summary>
-        ///     Return possible variants of a name for name matching.
+        /// Return possible variants of a name for name matching.
         /// </summary>
         /// <param name="name">String to convert</param>
         /// <param name="culture">The culture to use for conversion</param>

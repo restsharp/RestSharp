@@ -32,8 +32,8 @@ namespace RestSharp.Serialization.Json
         public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
         /// <summary>
-        ///     Serialize the object as JSON
-        ///     If the object is already a serialized string returns it's value
+        /// Serialize the object as JSON
+        /// If the object is already a serialized string returns it's value
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
@@ -43,7 +43,7 @@ namespace RestSharp.Serialization.Json
                 : SimpleJson.SerializeObject(obj);
 
         /// <summary>
-        ///     Content type for serialized content
+        /// Content type for serialized content
         /// </summary>
         public string ContentType { get; set; } = Serialization.ContentType.Json;
 
@@ -63,7 +63,7 @@ namespace RestSharp.Serialization.Json
         public string RootElement { get; set; }
 
         /// <summary>
-        ///     Determines if the object is already a serialized string.
+        /// Determines if the object is already a serialized string.
         /// </summary>
         static bool IsSerializedString(object obj, out string serializedString)
         {

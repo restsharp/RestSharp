@@ -21,59 +21,59 @@ using RestSharp.Extensions;
 namespace RestSharp
 {
     /// <summary>
-    ///     HttpWebRequest wrapper (sync methods)
+    /// HttpWebRequest wrapper (sync methods)
     /// </summary>
     public partial class Http
     {
         /// <summary>
-        ///     Execute a POST request
+        /// Execute a POST request
         /// </summary>
         public HttpResponse Post() => PostPutInternal("POST");
 
         /// <summary>
-        ///     Execute a PUT request
+        /// Execute a PUT request
         /// </summary>
         public HttpResponse Put() => PostPutInternal("PUT");
 
         /// <summary>
-        ///     Execute a GET request
+        /// Execute a GET request
         /// </summary>
         public HttpResponse Get() => GetStyleMethodInternal("GET");
 
         /// <summary>
-        ///     Execute a HEAD request
+        /// Execute a HEAD request
         /// </summary>
         public HttpResponse Head() => GetStyleMethodInternal("HEAD");
 
         /// <summary>
-        ///     Execute an OPTIONS request
+        /// Execute an OPTIONS request
         /// </summary>
         public HttpResponse Options() => GetStyleMethodInternal("OPTIONS");
 
         /// <summary>
-        ///     Execute a DELETE request
+        /// Execute a DELETE request
         /// </summary>
         public HttpResponse Delete() => GetStyleMethodInternal("DELETE");
 
         /// <summary>
-        ///     Execute a PATCH request
+        /// Execute a PATCH request
         /// </summary>
         public HttpResponse Patch() => PostPutInternal("PATCH");
 
         /// <summary>
-        ///     Execute a MERGE request
+        /// Execute a MERGE request
         /// </summary>
         public HttpResponse Merge() => PostPutInternal("MERGE");
 
         /// <summary>
-        ///     Execute a GET-style request with the specified HTTP Method.
+        /// Execute a GET-style request with the specified HTTP Method.
         /// </summary>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
         public HttpResponse AsGet(string httpMethod) => GetStyleMethodInternal(httpMethod.ToUpperInvariant());
 
         /// <summary>
-        ///     Execute a POST-style request with the specified HTTP Method.
+        /// Execute a POST-style request with the specified HTTP Method.
         /// </summary>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>

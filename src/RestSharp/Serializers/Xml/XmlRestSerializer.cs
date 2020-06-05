@@ -135,17 +135,17 @@ namespace RestSharp.Serialization.Xml
     public class XmlSerilizationOptions
     {
         /// <summary>
-        ///     Name of the root element to use when serializing
+        /// Name of the root element to use when serializing
         /// </summary>
         public string RootElement { get; set; }
 
         /// <summary>
-        ///     XML namespace to use when serializing
+        /// XML namespace to use when serializing
         /// </summary>
         public string Namespace { get; set; }
 
         /// <summary>
-        ///     Format string to use when serializing dates
+        /// Format string to use when serializing dates
         /// </summary>
         public string DateFormat { get; set; }
 

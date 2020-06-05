@@ -35,7 +35,7 @@ using static System.String;
 namespace RestSharp
 {
     /// <summary>
-    ///     Client to translate RestRequests into Http requests and process response result
+    /// Client to translate RestRequests into Http requests and process response result
     /// </summary>
     [PublicAPI]
     public partial class RestClient : IRestClient
@@ -50,7 +50,7 @@ namespace RestSharp
             {ParameterType.QueryString, ParameterType.GetOrPost};
 
         /// <summary>
-        ///     Default constructor that registers default content handlers
+        /// Default constructor that registers default content handlers
         /// </summary>
         public RestClient()
         {
@@ -70,14 +70,14 @@ namespace RestSharp
 
         /// <inheritdoc />
         /// <summary>
-        ///     Sets the BaseUrl property for requests made by this client instance
+        /// Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
         public RestClient(Uri baseUrl) : this() => BaseUrl = baseUrl;
 
         /// <inheritdoc />
         /// <summary>
-        ///     Sets the BaseUrl property for requests made by this client instance
+        /// Sets the BaseUrl property for requests made by this client instance
         /// </summary>
         /// <param name="baseUrl"></param>
         public RestClient(string baseUrl) : this()

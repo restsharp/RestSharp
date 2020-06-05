@@ -16,7 +16,7 @@ namespace RestSharp.IntegrationTests
         }
 
         /// <summary>
-        ///     Simulates a long server process that should result in a client timeout
+        /// Simulates a long server process that should result in a client timeout
         /// </summary>
         /// <param name="context"></param>
         static void TimeoutHandler(HttpListenerContext context) => Thread.Sleep(101000);
@@ -30,8 +30,8 @@ namespace RestSharp.IntegrationTests
         SimpleServer _server;
 
         /// <summary>
-        ///     Success of this test is based largely on the behavior of your current DNS.
-        ///     For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
+        /// Success of this test is based largely on the behavior of your current DNS.
+        /// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
         /// </summary>
         [Test]
         public void Handles_Non_Existent_Domain()
@@ -44,9 +44,9 @@ namespace RestSharp.IntegrationTests
         }
 
         /// <summary>
-        ///     Tests that RestSharp properly handles a non-protocol error.
-        ///     Simulates a server timeout, then verifies that the ErrorException
-        ///     property is correctly populated.
+        /// Tests that RestSharp properly handles a non-protocol error.
+        /// Simulates a server timeout, then verifies that the ErrorException
+        /// property is correctly populated.
         /// </summary>
         [Test]
         public void Handles_Server_Timeout_Error()
@@ -110,9 +110,9 @@ namespace RestSharp.IntegrationTests
         }
 
         /// <summary>
-        ///     Tests that RestSharp properly handles a non-protocol error.
-        ///     Simulates a server timeout, then verifies that the ErrorException
-        ///     property is correctly populated.
+        /// Tests that RestSharp properly handles a non-protocol error.
+        /// Simulates a server timeout, then verifies that the ErrorException
+        /// property is correctly populated.
         /// </summary>
         [Test]
         public void Handles_Server_Timeout_Error_With_Deserializer()
