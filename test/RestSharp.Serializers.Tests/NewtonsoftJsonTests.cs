@@ -15,11 +15,11 @@ namespace RestSharp.Serializers.Tests
     [TestFixture]
     public class NewtonsoftJsonTests
     {
-        private static readonly Fixture Fixture = new Fixture();
+        static readonly Fixture Fixture = new Fixture();
 
-        private string _body;
+        string _body;
 
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             ContractResolver = new DefaultContractResolver
             {
@@ -28,7 +28,7 @@ namespace RestSharp.Serializers.Tests
             Formatting = Formatting.None
         };
 
-        private void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToString();
+        void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToString();
 
         [Test]
         public void Serialize_multiple_objects_within_one_thread()

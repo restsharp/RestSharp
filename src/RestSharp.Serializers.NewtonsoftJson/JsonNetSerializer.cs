@@ -8,6 +8,14 @@ namespace RestSharp.Serializers.NewtonsoftJson
 {
     public class JsonNetSerializer : IRestSerializer
     {
+        /// <summary>
+        /// Default serialization settings:
+        /// - Camel-case contract resolver
+        /// - Type name handling set to none
+        /// - Null values ignored
+        /// - Non-indented formatting
+        /// - Allow using non-public constructors
+        /// </summary>
         public static readonly JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
         {
             ContractResolver     = new CamelCasePropertyNamesContractResolver(),
@@ -18,29 +26,27 @@ namespace RestSharp.Serializers.NewtonsoftJson
             ConstructorHandling  = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
+        [ThreadStatic] static WriterBuffer tWriterBuffer;
 
-        [ThreadStatic] 
-        private static WriterBuffer t_writerBuffer;
-        
-        private readonly JsonSerializer _serializer;
+        readonly JsonSerializer _serializer;
 
         /// <summary>
-        ///     Create the new serializer that uses Json.Net with default settings
+        /// Create the new serializer that uses Json.Net with default settings
         /// </summary>
         public JsonNetSerializer() => _serializer = JsonSerializer.Create(DefaultSettings);
 
         /// <summary>
-        ///     Create the new serializer that uses Json.Net with custom settings
+        /// Create the new serializer that uses Json.Net with custom settings
         /// </summary>
         /// <param name="settings">Json.Net serializer settings</param>
         public JsonNetSerializer(JsonSerializerSettings settings) => _serializer = JsonSerializer.Create(settings);
 
         public string Serialize(object obj)
         {
-            using var writerBuffer = t_writerBuffer ??= new WriterBuffer(_serializer);
-            
+            using var writerBuffer = tWriterBuffer ??= new WriterBuffer(_serializer);
+
             _serializer.Serialize(writerBuffer.GetJsonTextWriter(), obj, obj.GetType());
-            
+
             return writerBuffer.GetStringWriter().ToString();
         }
 

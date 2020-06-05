@@ -24,10 +24,12 @@ namespace RestSharp.Benchmarks.Serializers
     [MemoryDiagnoser]
     public class JsonNetSerializeBenchmarks
     {
+        readonly JsonNetSerializer _serializer = new JsonNetSerializer();
+
+        List<TestClass> _fakeData;
+        
         [Params(1, 10, 20)]
         public int N { get; set; }
-        private readonly JsonNetSerializer _serializer = new JsonNetSerializer();
-        private List<TestClass> _fakeData;
 
         [GlobalSetup]
         public void GlobalSetup() => _fakeData = new Fixture().CreateMany<TestClass>(N).ToList();

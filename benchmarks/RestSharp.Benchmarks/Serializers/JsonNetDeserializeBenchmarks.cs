@@ -26,18 +26,19 @@ namespace RestSharp.Benchmarks.Serializers
     [MemoryDiagnoser]
     public class JsonNetDeserializeBenchmarks
     {
+        readonly JsonNetSerializer _serializer = new JsonNetSerializer();
+
+        RestResponse _fakeResponse;
+
         [Params(1, 10, 20)]
         public int N { get; set; }
-        private readonly JsonNetSerializer _serializer = new JsonNetSerializer();
-        private RestResponse _fakeResponse;
 
         [GlobalSetup]
         public void GlobalSetup()
         {
             var fakeData = new Fixture().CreateMany<TestClass>(N).ToList();
-            _fakeResponse          = new RestResponse();
-            _fakeResponse.RawBytes = JsonSerializer.Serialize(fakeData);
-            _fakeResponse.Content  = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
+            _fakeResponse         = new RestResponse {RawBytes = JsonSerializer.Serialize(fakeData)};
+            _fakeResponse.Content = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
         }
 
         [Benchmark(Baseline = true)]

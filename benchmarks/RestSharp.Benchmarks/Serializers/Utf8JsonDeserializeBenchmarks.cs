@@ -26,8 +26,10 @@ namespace RestSharp.Benchmarks.Serializers
     [MemoryDiagnoser]
     public class Utf8JsonDeserializeBenchmarks
     {
-        private readonly Utf8JsonSerializer _utf8JsonSerializer = new Utf8JsonSerializer();
-        private RestResponse _fakeResponse;
+        readonly Utf8JsonSerializer _utf8JsonSerializer = new Utf8JsonSerializer();
+
+        RestResponse _fakeResponse;
+
         [Params(1, 10, 20)]
         public int N { get; set; }
 
@@ -35,9 +37,8 @@ namespace RestSharp.Benchmarks.Serializers
         public void GlobalSetup()
         {
             var fakeData = new Fixture().CreateMany<TestClass>(N).ToList();
-            _fakeResponse          = new RestResponse();
-            _fakeResponse.RawBytes = JsonSerializer.Serialize(fakeData);
-            _fakeResponse.Content  = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
+            _fakeResponse         = new RestResponse {RawBytes = JsonSerializer.Serialize(fakeData)};
+            _fakeResponse.Content = Encoding.UTF8.GetString(_fakeResponse.RawBytes);
         }
 
         [Benchmark(Baseline = true)]
