@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
@@ -93,7 +94,7 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="dateTime">A specified point in time.</param>
         /// <returns></returns>
-        static string GetTimestamp(DateTime dateTime) => dateTime.ToUnixTime().ToString();
+        static string GetTimestamp(DateTime dateTime) => dateTime.ToUnixTime().ToString(NumberFormatInfo.InvariantInfo);
 
         /// <summary>
         /// URL encodes a string based on section 5.1 of the OAuth spec.
@@ -193,7 +194,7 @@ namespace RestSharp.Authenticators.OAuth
         public static string ConcatenateRequestElements(string method, string url, WebPairCollection parameters)
         {
             // Separating &'s are not URL encoded
-            var requestMethod     = method.ToUpper().Then("&");
+            var requestMethod     = method.ToUpperInvariant().Then("&");
             var requestUrl        = UrlEncodeRelaxed(ConstructRequestUrl(url.AsUri())).Then("&");
             var requestParameters = UrlEncodeRelaxed(NormalizeRequestParameters(parameters));
 
@@ -277,10 +278,11 @@ namespace RestSharp.Authenticators.OAuth
 
                 provider.FromXmlString2(unencodedConsumerSecret);
 
-                var hasher = new SHA1Managed();
-                var hash   = hasher.ComputeHash(Encoding.GetBytes(signatureBase));
-
-                return Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
+                using (var hasher = new SHA1Managed())
+                {
+                    var hash = hasher.ComputeHash(Encoding.GetBytes(signatureBase));
+                    return Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
+                }
             }
         }
 

@@ -182,7 +182,7 @@ namespace RestSharp.Deserializers
                 if (asType == typeof(bool))
                 {
                     var toConvert = value.ToString()
-                        .ToLower();
+                        .ToLower(Culture);
 
                     prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
                 }
@@ -190,7 +190,7 @@ namespace RestSharp.Deserializers
                 {
                     try
                     {
-                        prop.SetValue(x, value.ChangeType(asType), null);
+                        prop.SetValue(x, value.ChangeType(asType, Culture), null);
                     }
                     catch (FormatException ex)
                     {
@@ -245,7 +245,7 @@ namespace RestSharp.Deserializers
                         else
                         {
                             //fallback to parse
-                            deserialisedValue = DateTimeOffset.Parse(toConvert);
+                            deserialisedValue = DateTimeOffset.Parse(toConvert, Culture);
                             prop.SetValue(x, deserialisedValue, null);
                         }
                     }
@@ -366,7 +366,7 @@ namespace RestSharp.Deserializers
 
             if (!elements.Any())
             {
-                var lowerName = name.ToLower().AsNamespaced(Namespace);
+                var lowerName = name.ToLower(Culture).AsNamespaced(Namespace);
 
                 elements = root.Descendants(lowerName).ToList();
             }
@@ -385,7 +385,7 @@ namespace RestSharp.Deserializers
 
             if (!elements.Any())
             {
-                var lowerName = name.ToLower().AsNamespaced(Namespace);
+                var lowerName = name.ToLower(Culture).AsNamespaced(Namespace);
 
                 elements = root.Descendants()
                     .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
@@ -412,7 +412,7 @@ namespace RestSharp.Deserializers
             }
             else if (t.GetTypeInfo().IsPrimitive)
             {
-                item = element.Value.ChangeType(t);
+                item = element.Value.ChangeType(t, Culture);
             }
             else
             {
@@ -448,7 +448,7 @@ namespace RestSharp.Deserializers
 
         protected virtual XElement GetElementByName(XElement root, XName name)
         {
-            var lowerName = name.LocalName.ToLower().AsNamespaced(name.NamespaceName);
+            var lowerName = name.LocalName.ToLower(Culture).AsNamespaced(name.NamespaceName);
             var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
             if (root.Element(name) != null)
@@ -487,7 +487,7 @@ namespace RestSharp.Deserializers
                 : new List<XName>
                 {
                     name.LocalName,
-                    name.LocalName.ToLower()
+                    name.LocalName.ToLower(Culture)
                         .AsNamespaced(name.NamespaceName),
                     name.LocalName.ToCamelCase(Culture)
                         .AsNamespaced(name.NamespaceName)

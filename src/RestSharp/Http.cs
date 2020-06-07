@@ -1,4 +1,4 @@
-﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace RestSharp
     {
         const string LineBreak = "\r\n";
 
-        public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpper();
+        public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpperInvariant();
 
         static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
 
@@ -50,8 +50,8 @@ namespace RestSharp
 
             void AddSyncHeaderActions()
             {
-                _restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
-                _restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
+                _restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLowerInvariant().Contains("keep-alive"); });
+                _restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v, NumberFormatInfo.InvariantInfo));
                 _restrictedHeaderActions.Add("Expect", (r, v) => r.Expect                = v);
 
                 _restrictedHeaderActions.Add(
@@ -95,8 +95,8 @@ namespace RestSharp
                     if (!m.Success) return;
 
                     var rangeSpecifier = m.Groups[1].Value;
-                    var from           = Convert.ToInt64(m.Groups[2].Value);
-                    var to             = Convert.ToInt64(m.Groups[3].Value);
+                    var from           = Convert.ToInt64(m.Groups[2].Value, NumberFormatInfo.InvariantInfo);
+                    var to             = Convert.ToInt64(m.Groups[3].Value, NumberFormatInfo.InvariantInfo);
 
                     r.AddRange(rangeSpecifier, from, to);
                 }
@@ -245,7 +245,7 @@ namespace RestSharp
                 ? "--{0}{3}Content-Type: {4}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
-            return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
+            return string.Format(CultureInfo.InvariantCulture, format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
         }
 
         string GetMultipartFooter() => $"--{FormBoundary}--{LineBreak}";

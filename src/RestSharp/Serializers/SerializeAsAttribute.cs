@@ -1,4 +1,4 @@
-﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ namespace RestSharp.Serializers
             {
                 NameStyle.CamelCase  => name.ToCamelCase(Culture),
                 NameStyle.PascalCase => name.ToPascalCase(Culture),
-                NameStyle.LowerCase  => name.ToLower(),
+                NameStyle.LowerCase  => name.ToLower(Culture),
                 _                    => input
             };
         }

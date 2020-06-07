@@ -267,7 +267,7 @@ namespace RestSharp
 
         void DoBuildUriValidations(IRestRequest request)
         {
-            if (BaseUrl == null && !request.Resource.ToLower().StartsWith("http"))
+            if (BaseUrl == null && !request.Resource.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentOutOfRangeException(
                     nameof(request),
                     "Request resource doesn't contain a valid scheme for an empty client base URL"

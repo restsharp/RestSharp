@@ -62,7 +62,7 @@ namespace RestSharp.Extensions
             return false;
         }
 
-        internal static object ChangeType(this object source, Type newType) => Convert.ChangeType(source, newType);
+        internal static object ChangeType(this object source, Type newType, CultureInfo culture) => Convert.ChangeType(source, newType, culture);
 
         /// <summary>
         /// Find a value from a System.Enum by trying several possible variants
