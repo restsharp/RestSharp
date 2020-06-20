@@ -15,17 +15,21 @@ module.exports = {
                 title: "Getting Started",
                 path: "/getting-started/",
                 collapsable: false,
+                children: [
+                    "",
+                    "getting-started"
+                ]
             },
             {
                 title: "Using RestSharp",
                 path: "/usage/",
                 collapsable: false,
                 children: [
-                    "/usage/serialization",
-                    "/usage/files",
-                    "/usage/authenticators",
-                    "/usage/parameters",
-                    "/usage/exceptions"
+                    "serialization",
+                    "files",
+                    "authenticators",
+                    "parameters",
+                    "exceptions"
                 ]
             },
             {
@@ -33,7 +37,7 @@ module.exports = {
                 path: "/get-help/",
                 collapsable: false,
                 children: [
-                    "/get-help/faq"
+                    "faq"
                 ]
             },
             {
@@ -41,10 +45,10 @@ module.exports = {
                 path: "/api/",
                 collapsable: true,
                 children: [
-                    "/api/RestSharp",
-                    "/api/RestSharp.Serializers.NewtonsoftJson",
-                    "/api/RestSharp.Serializers.SystemTextJson",
-                    "/api/RestSharp.Serializers.Utf8Json",
+                    "RestSharp",
+                    "RestSharp.Serializers.NewtonsoftJson",
+                    "RestSharp.Serializers.SystemTextJson",
+                    "RestSharp.Serializers.Utf8Json",
                 ]
             }
         ],
