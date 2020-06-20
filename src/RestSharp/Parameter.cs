@@ -25,7 +25,7 @@ namespace RestSharp
     /// <summary>
     /// Parameter container for REST requests
     /// </summary>
-    [Obsolete("Use AddXXXParameter methods of IRestRequest instead of instantiating the Parameter class.")]
+    [Obsolete("Use Add[XXX]Parameter methods of IRestRequest instead of instantiating the Parameter class.")]
     public class Parameter : IEquatable<Parameter>
     {
         public Parameter(string name, object value, ParameterType type)

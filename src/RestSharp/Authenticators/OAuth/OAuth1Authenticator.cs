@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using JetBrains.Annotations;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
@@ -26,7 +27,7 @@ using RestSharp.Extensions;
 namespace RestSharp.Authenticators
 {
     /// <seealso href="http://tools.ietf.org/html/rfc5849">RFC: The OAuth 1.0 Protocol</seealso>
-    /// <see cref="StringBuilder"/>
+    [PublicAPI]
     public class OAuth1Authenticator : IAuthenticator
     {
         public virtual string Realm { get; set; }
@@ -299,7 +300,7 @@ namespace RestSharp.Authenticators
                 _                              => throw new ArgumentOutOfRangeException()
             };
 
-            parameters.Add("oauth_signature", oauth);
+            oauth.Parameters.Add("oauth_signature", oauth.Signature);
 
             var oauthParameters = ParameterHandling switch
             {
@@ -315,19 +316,13 @@ namespace RestSharp.Authenticators
                 => new[] {new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader)};
 
             IEnumerable<Parameter> CreateUrlParameters()
-                => parameters.Where(p => !p.Name.IsEmpty() && (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_")))
-                    .Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
+                => oauth.Parameters.Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
 
             string GetAuthorizationHeader()
             {
                 var oathParameters =
-                    parameters
+                    oauth.Parameters
                         .OrderBy(x => x, WebPair.Comparer)
-                        .Where(
-                            p =>
-                                !p.Name.IsEmpty() && !p.Value.IsEmpty() &&
-                                (p.Name.StartsWith("oauth_") || p.Name.StartsWith("x_auth_"))
-                        )
                         .Select(x => $"{x.Name}=\"{x.Value}\"")
                         .ToList();
 
@@ -339,7 +334,7 @@ namespace RestSharp.Authenticators
         }
     }
 
-    internal static class ParametersExtensions
+    static class ParametersExtensions
     {
         internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString()));
     }

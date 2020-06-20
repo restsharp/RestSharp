@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
@@ -64,19 +65,26 @@ namespace RestSharp.Authenticators.OAuth
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
         /// <returns></returns>
-        public string BuildRequestTokenInfo(string method, WebPairCollection parameters)
+        public OAuthParameters BuildRequestTokenInfo(string method, WebPairCollection parameters)
         {
             ValidateTokenRequestState();
 
-            parameters ??= new WebPairCollection();
+            var allParameters = new WebPairCollection();
+            allParameters.AddRange(parameters);
 
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
 
-            AddAuthParameters(parameters, timestamp, nonce);
+            var authParameters = GenerateAuthParameters(timestamp, nonce);
+            allParameters.AddRange(authParameters);
 
-            var signatureBase = OAuthTools.ConcatenateRequestElements(method, RequestTokenUrl, parameters);
-            return OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret);
+            var signatureBase = OAuthTools.ConcatenateRequestElements(method, RequestTokenUrl, allParameters);
+
+            return new OAuthParameters
+            {
+                Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret),
+                Parameters = authParameters
+            };
         }
 
         /// <summary>
@@ -86,24 +94,27 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
-        public string BuildAccessTokenSignature(string method, WebPairCollection parameters)
+        public OAuthParameters BuildAccessTokenSignature(string method, WebPairCollection parameters)
         {
             ValidateAccessRequestState();
 
-            parameters ??= new WebPairCollection();
+            var allParameters = new WebPairCollection();
+            allParameters.AddRange(parameters);
 
             var uri       = new Uri(AccessTokenUrl);
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
 
-            AddAuthParameters(parameters, timestamp, nonce);
+            var authParameters = GenerateAuthParameters(timestamp, nonce);
+            allParameters.AddRange(authParameters);
 
-            var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), parameters);
+            var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
-            return OAuthTools.GetSignature(
-                SignatureMethod, SignatureTreatment, signatureBase,
-                ConsumerSecret, TokenSecret
-            );
+            return new OAuthParameters
+            {
+                Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret, TokenSecret),
+                Parameters = authParameters
+            };
         }
 
         /// <summary>
@@ -113,51 +124,55 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="method">The HTTP method for the intended request</param>
         /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
-        public string BuildClientAuthAccessTokenSignature(string method, WebPairCollection parameters)
+        public OAuthParameters BuildClientAuthAccessTokenSignature(string method, WebPairCollection parameters)
         {
             ValidateClientAuthAccessRequestState();
 
-            if (parameters == null)
-                parameters = new WebPairCollection();
+            var allParameters = new WebPairCollection();
+            allParameters.AddRange(parameters);
 
             var uri       = new Uri(AccessTokenUrl);
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
 
-            AddXAuthParameters(parameters, timestamp, nonce);
+            var authParameters = GenerateXAuthParameters(timestamp, nonce);
+            allParameters.AddRange(authParameters);
 
-            var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), parameters);
+            var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
-            return OAuthTools.GetSignature(
-                SignatureMethod, SignatureTreatment, signatureBase,
-                ConsumerSecret
-            );
+            return new OAuthParameters
+            {
+                Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret),
+                Parameters = authParameters
+            };
         }
 
-        public string BuildProtectedResourceSignature(string method, WebPairCollection parameters, string url)
+        public OAuthParameters BuildProtectedResourceSignature(string method, WebPairCollection parameters, string url)
         {
             ValidateProtectedResourceState();
 
-            parameters ??= new WebPairCollection();
+            var allParameters = new WebPairCollection();
+            allParameters.AddRange(parameters);
 
             // Include url parameters in query pool
             var uri           = new Uri(url);
             var urlParameters = HttpUtility.ParseQueryString(uri.Query);
 
-            foreach (var parameter in urlParameters.AllKeys)
-                parameters.Add(parameter, urlParameters[parameter]);
+            allParameters.AddRange(urlParameters.AllKeys.Select(x => new WebPair(x, urlParameters[x])));
 
             var timestamp = OAuthTools.GetTimestamp();
             var nonce     = OAuthTools.GetNonce();
 
-            AddAuthParameters(parameters, timestamp, nonce);
+            var authParameters = GenerateAuthParameters(timestamp, nonce);
+            allParameters.AddRange(authParameters);
 
-            var signatureBase = OAuthTools.ConcatenateRequestElements(method, url, parameters);
+            var signatureBase = OAuthTools.ConcatenateRequestElements(method, url, allParameters);
 
-            return OAuthTools.GetSignature(
-                SignatureMethod, SignatureTreatment, signatureBase,
-                ConsumerSecret, TokenSecret
-            );
+            return new OAuthParameters
+            {
+                Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret, TokenSecret),
+                Parameters = authParameters
+            };
         }
 
         void ValidateTokenRequestState()
@@ -189,7 +204,7 @@ namespace RestSharp.Authenticators.OAuth
             Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
         }
 
-        void AddAuthParameters(ICollection<WebPair> parameters, string timestamp, string nonce)
+        WebPairCollection GenerateAuthParameters(string timestamp, string nonce)
         {
             var authParameters = new WebPairCollection
             {
@@ -200,25 +215,19 @@ namespace RestSharp.Authenticators.OAuth
                 new WebPair("oauth_version", Version ?? "1.0")
             };
 
-            if (!Token.IsEmpty())
-                authParameters.Add(new WebPair("oauth_token", Token));
+            if (!Token.IsEmpty()) authParameters.Add(new WebPair("oauth_token", Token));
 
-            if (!CallbackUrl.IsEmpty())
-                authParameters.Add(new WebPair("oauth_callback", CallbackUrl));
+            if (!CallbackUrl.IsEmpty()) authParameters.Add(new WebPair("oauth_callback", CallbackUrl));
 
-            if (!Verifier.IsEmpty())
-                authParameters.Add(new WebPair("oauth_verifier", Verifier));
+            if (!Verifier.IsEmpty()) authParameters.Add(new WebPair("oauth_verifier", Verifier));
 
-            if (!SessionHandle.IsEmpty())
-                authParameters.Add(new WebPair("oauth_session_handle", SessionHandle));
+            if (!SessionHandle.IsEmpty()) authParameters.Add(new WebPair("oauth_session_handle", SessionHandle));
 
-            foreach (var authParameter in authParameters)
-                parameters.Add(authParameter);
+            return authParameters;
         }
 
-        void AddXAuthParameters(ICollection<WebPair> parameters, string timestamp, string nonce)
-        {
-            var authParameters = new WebPairCollection
+        WebPairCollection GenerateXAuthParameters(string timestamp, string nonce)
+            => new WebPairCollection
             {
                 new WebPair("x_auth_username", ClientUsername),
                 new WebPair("x_auth_password", ClientPassword),
@@ -230,8 +239,10 @@ namespace RestSharp.Authenticators.OAuth
                 new WebPair("oauth_version", Version ?? "1.0")
             };
 
-            foreach (var authParameter in authParameters)
-                parameters.Add(authParameter);
+        internal class OAuthParameters
+        {
+            public WebPairCollection Parameters { get; set; }
+            public string Signature { get; set; }
         }
     }
 }
