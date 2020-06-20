@@ -16,7 +16,7 @@ module.exports = {
                 path: "/getting-started/",
                 collapsable: false,
                 children: [
-                    "",
+                    "/getting-started/",
                     "/getting-started/getting-started"
                 ]
             },
