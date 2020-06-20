@@ -17,7 +17,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                     "",
-                    "getting-started"
+                    "/getting-started/getting-started"
                 ]
             },
             {
@@ -25,11 +25,11 @@ module.exports = {
                 path: "/usage/",
                 collapsable: false,
                 children: [
-                    "serialization",
-                    "files",
-                    "authenticators",
-                    "parameters",
-                    "exceptions"
+                    "/usage/serialization",
+                    "/usage/files",
+                    "/usage/authenticators",
+                    "/usage/parameters",
+                    "/usage/exceptions"
                 ]
             },
             {
@@ -37,7 +37,7 @@ module.exports = {
                 path: "/get-help/",
                 collapsable: false,
                 children: [
-                    "faq"
+                    "/get-help/faq"
                 ]
             },
             {
@@ -45,10 +45,10 @@ module.exports = {
                 path: "/api/",
                 collapsable: true,
                 children: [
-                    "RestSharp",
-                    "RestSharp.Serializers.NewtonsoftJson",
-                    "RestSharp.Serializers.SystemTextJson",
-                    "RestSharp.Serializers.Utf8Json",
+                    "/api/RestSharp",
+                    "/api/RestSharp.Serializers.NewtonsoftJson",
+                    "/api/RestSharp.Serializers.SystemTextJson",
+                    "/api/RestSharp.Serializers.Utf8Json",
                 ]
             }
         ],
