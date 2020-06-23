@@ -18,7 +18,7 @@ namespace RestSharp.Serializers.NewtonsoftJson
         /// </summary>
         public static readonly JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
         {
-            ContractResolver     = new CamelCasePropertyNamesContractResolver(),
+            ContractResolver     = new DefaultContractResolver(),
             DefaultValueHandling = DefaultValueHandling.Include,
             TypeNameHandling     = TypeNameHandling.None,
             NullValueHandling    = NullValueHandling.Ignore,
