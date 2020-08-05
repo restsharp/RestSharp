@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace RestSharp.Authenticators.OAuth
 {
-    internal class WebPair
+    class WebPair
     {
         public WebPair(string name, string value)
         {
@@ -34,9 +34,9 @@ namespace RestSharp.Authenticators.OAuth
         {
             public int Compare(WebPair x, WebPair y)
             {
-                var compareName = string.CompareOrdinal(x?.Name, y?.Name);
+                var compareName = string.CompareOrdinal(x.Name, y.Name);
 
-                return compareName != 0 ? compareName : string.CompareOrdinal(x?.Value, y?.Value);
+                return compareName != 0 ? compareName : string.CompareOrdinal(x.Value, y.Value);
             }
         }
     }

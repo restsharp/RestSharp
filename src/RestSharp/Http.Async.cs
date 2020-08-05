@@ -28,16 +28,16 @@ namespace RestSharp
         TimeOutState _timeoutState;
 
         /// <inheritdoc />
-        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
+        public HttpWebRequest? AsPostAsync(Action<HttpResponse> action, string httpMethod)
             => PutPostInternalAsync(httpMethod.ToUpperInvariant(), action);
 
         /// <inheritdoc />
-        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
+        public HttpWebRequest? AsGetAsync(Action<HttpResponse> action, string httpMethod)
             => GetStyleMethodInternalAsync(httpMethod.ToUpperInvariant(), action);
 
-        HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+        HttpWebRequest? GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
         {
-            HttpWebRequest webRequest = null;
+            HttpWebRequest? webRequest = null;
 
             try
             {
@@ -69,9 +69,9 @@ namespace RestSharp
             return webRequest;
         }
 
-        HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
+        HttpWebRequest? PutPostInternalAsync(string method, Action<HttpResponse> callback)
         {
-            HttpWebRequest webRequest = null;
+            HttpWebRequest? webRequest = null;
 
             try
             {
@@ -192,9 +192,9 @@ namespace RestSharp
             }
         }
 
-        static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+        static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse?> callback)
         {
-            HttpWebResponse raw;
+            HttpWebResponse? raw;
 
             try
             {
@@ -240,7 +240,7 @@ namespace RestSharp
                     result, webResponse =>
                     {
                         var response = ExtractResponseData(webResponse);
-                        webResponse.Dispose();
+                        webResponse?.Dispose();
                         ExecuteCallback(response, callback);
                     }
                 );
@@ -285,7 +285,7 @@ namespace RestSharp
         {
             public bool TimedOut { get; set; }
 
-            public HttpWebRequest Request { get; set; }
+            public HttpWebRequest? Request { get; set; }
         }
     }
 }

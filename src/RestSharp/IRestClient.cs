@@ -25,6 +25,7 @@ using JetBrains.Annotations;
 using RestSharp.Authenticators;
 using RestSharp.Deserializers;
 using RestSharp.Serialization;
+#pragma warning disable 618
 
 namespace RestSharp
 {
@@ -44,7 +45,7 @@ namespace RestSharp
         /// <returns></returns>
         IRestClient UseSerializer<T>() where T : IRestSerializer, new();
 
-        CookieContainer CookieContainer { get; set; }
+        CookieContainer? CookieContainer { get; set; }
 
         bool AutomaticDecompression { get; set; }
 
@@ -58,9 +59,9 @@ namespace RestSharp
 
         bool UseSynchronizationContext { get; set; }
 
-        IAuthenticator Authenticator { get; set; }
+        IAuthenticator? Authenticator { get; set; }
 
-        Uri BaseUrl { get; set; }
+        Uri? BaseUrl { get; set; }
 
         Encoding Encoding { get; set; }
 
@@ -84,7 +85,7 @@ namespace RestSharp
         /// </summary>
         bool ThrowOnAnyError { get; set; }
 
-        string ConnectionGroupName { get; set; }
+        string? ConnectionGroupName { get; set; }
 
         /// <summary>
         /// Flag to send authorisation header with the HttpWebRequest
@@ -106,7 +107,7 @@ namespace RestSharp
         /// Explicit Host header value to use in requests independent from the request URI.
         /// If null, default host value extracted from URI is used.
         /// </summary>
-        string BaseHost { get; set; }
+        string? BaseHost { get; set; }
 
         /// <summary>
         /// By default, RestSharp doesn't allow multiple parameters to have the same name.
@@ -117,11 +118,11 @@ namespace RestSharp
         /// <summary>
         /// X509CertificateCollection to be sent with request
         /// </summary>
-        X509CertificateCollection ClientCertificates { get; set; }
+        X509CertificateCollection? ClientCertificates { get; set; }
 
-        IWebProxy Proxy { get; set; }
+        IWebProxy? Proxy { get; set; }
 
-        RequestCachePolicy CachePolicy { get; set; }
+        RequestCachePolicy? CachePolicy { get; set; }
 
         bool Pipelined { get; set; }
 
@@ -131,7 +132,7 @@ namespace RestSharp
         /// Callback function for handling the validation of remote certificates. Useful for certificate pinning and
         /// overriding certificate errors in the scope of a request.
         /// </summary>
-        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+        RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
         IRestResponse<T> Deserialize<T>(IRestResponse response);
 

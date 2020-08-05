@@ -29,7 +29,7 @@ namespace RestSharp
         /// <param name="name">Header name</param>
         /// <param name="value">Header value</param>
         /// <param name="contentType">Parameter content type</param>
-        public HttpParameter(string name, string value, string contentType = null)
+        public HttpParameter(string name, string? value, string? contentType = null)
         {
             Name        = name;
             ContentType = contentType;
@@ -42,7 +42,7 @@ namespace RestSharp
         /// <param name="name">Header name</param>
         /// <param name="value">Header value, which has to implement ToString() properly</param>
         /// <param name="contentType">Parameter content type</param>
-        public HttpParameter(string name, object value, string contentType = null) : this(name, value?.ToString(), contentType) { }
+        public HttpParameter(string name, object? value, string? contentType = null) : this(name, value?.ToString(), contentType) { }
 
         [Obsolete("Use parameterized constructor")]
         public HttpParameter() { }
@@ -60,6 +60,6 @@ namespace RestSharp
         /// <summary>
         /// Content-Type of the parameter
         /// </summary>
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
     }
 }

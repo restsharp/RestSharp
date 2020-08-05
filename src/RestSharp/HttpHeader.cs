@@ -28,7 +28,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">Header name</param>
         /// <param name="value">Header value</param>
-        public HttpHeader(string name, string value)
+        public HttpHeader(string name, string? value)
         {
             Name  = name;
             Value = value ?? "";
@@ -39,7 +39,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">Header name</param>
         /// <param name="value">Header value, which has to implement ToString() properly</param>
-        public HttpHeader(string name, object value) : this(name, value?.ToString()) { }
+        public HttpHeader(string name, object? value) : this(name, value?.ToString()) { }
 
         /// <summary>
         /// Creates a new instance of HttpHeader. Remember to assign properties!

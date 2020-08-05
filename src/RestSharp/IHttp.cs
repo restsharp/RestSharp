@@ -41,12 +41,12 @@ namespace RestSharp
         /// <summary>
         /// The <see cref="System.Net.CookieContainer"/> to be used for the request
         /// </summary>
-        CookieContainer CookieContainer { get; set; }
+        CookieContainer? CookieContainer { get; set; }
 
         /// <summary>
         /// <see cref="System.Net.ICredentials"/> to be sent with request
         /// </summary>
-        ICredentials Credentials { get; set; }
+        ICredentials? Credentials { get; set; }
 
         /// <summary>
         /// Enable or disable automatic gzip/deflate decompression
@@ -85,7 +85,7 @@ namespace RestSharp
         /// <summary>
         /// X509CertificateCollection to be sent with request
         /// </summary>
-        X509CertificateCollection ClientCertificates { get; set; }
+        X509CertificateCollection? ClientCertificates { get; set; }
 
         /// <summary>
         /// Maximum number of automatic redirects to follow if FollowRedirects is true
@@ -146,7 +146,7 @@ namespace RestSharp
         /// <summary>
         /// Caching policy for requests created with this wrapper.
         /// </summary>
-        RequestCachePolicy CachePolicy { get; set; }
+        RequestCachePolicy? CachePolicy { get; set; }
 
         /// <summary>
         /// The ConnectionGroupName property enables you to associate a request with a connection group.
@@ -167,7 +167,7 @@ namespace RestSharp
         /// Explicit Host header value to use in requests independent from the request URI.
         /// If null, default host value extracted from URI is used.
         /// </summary>
-        string Host { get; set; }
+        string? Host { get; set; }
 
         /// <summary>
         /// Boundary that will be used for multipart/form-data requests
@@ -182,11 +182,11 @@ namespace RestSharp
         /// <summary>
         /// Proxy info to be sent with request
         /// </summary>
-        IWebProxy Proxy { get; set; }
+        IWebProxy? Proxy { get; set; }
 
-        RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+        RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
-        Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+        Action<HttpWebRequest>? WebRequestConfigurator { get; set; }
 
         [Obsolete]
         HttpWebRequest DeleteAsync(Action<HttpResponse> action);
@@ -218,7 +218,7 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
+        HttpWebRequest? AsPostAsync(Action<HttpResponse> action, string httpMethod);
 
         /// <summary>
         /// Execute an async GET-style request with the specified HTTP Method.
@@ -226,7 +226,7 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
+        HttpWebRequest? AsGetAsync(Action<HttpResponse> action, string httpMethod);
 
         HttpResponse Delete();
 

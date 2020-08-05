@@ -152,7 +152,7 @@ namespace RestSharp
         /// <summary>
         /// Deserialized entity data
         /// </summary>
-        public T Data { get; set; }
+        public T Data { get; set; } = default!;
 
         public static explicit operator RestResponse<T>(RestResponse response)
             => new RestResponse<T>

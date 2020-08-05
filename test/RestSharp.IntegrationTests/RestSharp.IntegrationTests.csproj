@@ -9,11 +9,11 @@
     <DefineConstants>NETCORE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj"/>
-    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
+    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'"/>
+    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\Koala.jpg">

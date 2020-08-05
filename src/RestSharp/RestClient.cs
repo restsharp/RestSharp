@@ -31,6 +31,8 @@ using RestSharp.Serialization;
 using RestSharp.Serialization.Json;
 using RestSharp.Serialization.Xml;
 using static System.String;
+// ReSharper disable VirtualMemberCallInConstructor
+#pragma warning disable 618
 
 namespace RestSharp
 {
@@ -41,6 +43,8 @@ namespace RestSharp
     public partial class RestClient : IRestClient
     {
         static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;
+
+        static readonly string DefaultUserAgent = $"RestSharp/{Version}";
 
         static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
 
@@ -82,8 +86,7 @@ namespace RestSharp
         /// <param name="baseUrl"></param>
         public RestClient(string baseUrl) : this()
         {
-            if (baseUrl.IsEmpty())
-                throw new ArgumentNullException(nameof(baseUrl));
+            if (baseUrl.IsEmpty()) throw new ArgumentNullException(nameof(baseUrl));
 
             BaseUrl = new Uri(baseUrl);
         }
@@ -93,7 +96,7 @@ namespace RestSharp
         Func<string, string> Encode { get; set; } = s => s.UrlEncode();
         Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
         IList<string> AcceptTypes { get; }
-        Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+        Action<HttpWebRequest>? WebRequestConfigurator { get; set; }
 
         /// <inheritdoc />
         [Obsolete("Use the overload that accepts the delegate factory")]
@@ -112,13 +115,13 @@ namespace RestSharp
         public int? MaxRedirects { get; set; }
 
         /// <inheritdoc />
-        public X509CertificateCollection ClientCertificates { get; set; }
+        public X509CertificateCollection? ClientCertificates { get; set; }
 
         /// <inheritdoc />
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy? Proxy { get; set; }
 
         /// <inheritdoc />
-        public RequestCachePolicy CachePolicy { get; set; }
+        public RequestCachePolicy? CachePolicy { get; set; }
 
         /// <inheritdoc />
         public bool Pipelined { get; set; }
@@ -127,10 +130,10 @@ namespace RestSharp
         public bool FollowRedirects { get; set; }
 
         /// <inheritdoc />
-        public CookieContainer CookieContainer { get; set; }
+        public CookieContainer? CookieContainer { get; set; }
 
         /// <inheritdoc />
-        public string UserAgent { get; set; }
+        public string UserAgent { get; set; } = DefaultUserAgent;
 
         /// <inheritdoc />
         public int Timeout { get; set; }
@@ -142,10 +145,10 @@ namespace RestSharp
         public bool UseSynchronizationContext { get; set; }
 
         /// <inheritdoc />
-        public IAuthenticator Authenticator { get; set; }
+        public IAuthenticator? Authenticator { get; set; }
 
         /// <inheritdoc />
-        public virtual Uri BaseUrl { get; set; }
+        public virtual Uri? BaseUrl { get; set; }
 
         /// <inheritdoc />
         public Encoding Encoding { get; set; }
@@ -154,31 +157,31 @@ namespace RestSharp
         public bool PreAuthenticate { get; set; }
 
         /// <inheritdoc />
-        public bool ThrowOnDeserializationError { get; set; } = false;
+        public bool ThrowOnDeserializationError { get; set; }
 
         /// <inheritdoc />
         public bool FailOnDeserializationError { get; set; } = true;
 
         /// <inheritdoc />
-        public bool ThrowOnAnyError { get; set; } = false;
+        public bool ThrowOnAnyError { get; set; }
 
         /// <inheritdoc />
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
         /// <inheritdoc />
-        public string ConnectionGroupName { get; set; }
+        public string? ConnectionGroupName { get; set; }
 
         /// <inheritdoc />
-        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+        public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
         /// <inheritdoc />
         public IList<Parameter> DefaultParameters { get; }
 
         /// <inheritdoc />>
-        public string BaseHost { get; set; }
+        public string? BaseHost { get; set; }
 
         /// <inheritdoc />>
-        public bool AllowMultipleDefaultParametersWithSameName { get; set; } = false;
+        public bool AllowMultipleDefaultParametersWithSameName { get; set; }
 
         /// <inheritdoc />>
         public void AddHandler(string contentType, Func<IDeserializer> deserializerFactory)
@@ -187,8 +190,7 @@ namespace RestSharp
 
             if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
 
-            if (!AcceptTypes.Contains(contentType))
-                AcceptTypes.Add(contentType);
+            if (!AcceptTypes.Contains(contentType)) AcceptTypes.Add(contentType);
 
             // add Accept header based on registered deserializers
             var accepts = AcceptTypes.JoinToString(", ");
@@ -261,8 +263,7 @@ namespace RestSharp
 
         void AddHandler(Func<IDeserializer> deserializerFactory, params string[] contentTypes)
         {
-            foreach (var contentType in contentTypes)
-                AddHandler(contentType, deserializerFactory);
+            foreach (var contentType in contentTypes) AddHandler(contentType, deserializerFactory);
         }
 
         void DoBuildUriValidations(IRestRequest request)
@@ -295,17 +296,16 @@ namespace RestSharp
             var baseUrl   = BaseUrl ?? new Uri(request.Resource);
 
             var hasResource = !assembled.IsEmpty();
-            var parameters  = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
+            var parameters  = request.Parameters.Where(p => p.Type  == ParameterType.UrlSegment).ToList();
             parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
             var builder = new UriBuilder(baseUrl);
 
             foreach (var parameter in parameters)
             {
                 var paramPlaceHolder = $"{{{parameter.Name}}}";
-                var paramValue       = Encode(parameter.Value.ToString());
+                var paramValue       = Encode(parameter.Value!.ToString());
 
-                if (hasResource)
-                    assembled = assembled.Replace(paramPlaceHolder, paramValue);
+                if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
 
                 builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
             }
@@ -321,8 +321,7 @@ namespace RestSharp
 
             if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled;
 
-            var usingBaseUri                                                                  = baseUrl;
-            if (!baseUrl.AbsoluteUri.EndsWith("/") && !IsNullOrEmpty(assembled)) usingBaseUri = new Uri(baseUrl.AbsoluteUri + "/");
+            var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || IsNullOrEmpty(assembled) ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
 
             return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
         }
@@ -367,21 +366,17 @@ namespace RestSharp
                             p.Type  == ParameterType.QueryStringWithoutEncode
                     );
 
-        Func<IDeserializer> GetHandler(string contentType)
+        Func<IDeserializer>? GetHandler(string contentType)
         {
-            if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*"))
-                return ContentHandlers["*"];
+            if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*")) return ContentHandlers["*"];
 
-            if (contentType.IsEmpty())
-                return ContentHandlers.First().Value;
+            if (contentType.IsEmpty()) return ContentHandlers.First().Value;
 
             var semicolonIndex = contentType.IndexOf(';');
 
-            if (semicolonIndex > -1)
-                contentType = contentType.Substring(0, semicolonIndex);
+            if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
 
-            if (ContentHandlers.TryGetValue(contentType, out var contentHandler))
-                return contentHandler;
+            if (ContentHandlers.TryGetValue(contentType, out var contentHandler)) return contentHandler;
 
             // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
             if (contentType.IndexOf('+') >= 0)
@@ -409,9 +404,9 @@ namespace RestSharp
             return
                 parameter.Type == ParameterType.QueryStringWithoutEncode
                     ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
-                    : $"{EncodeQuery(parameter.Name, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
+                    : $"{EncodeQuery(parameter.Name!, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
 
-            static string StringOrEmpty(object value) => value == null ? "" : value.ToString();
+            static string StringOrEmpty(object? value) => value == null ? "" : value.ToString();
         }
 
         IHttp ConfigureHttp(IRestRequest request)
@@ -439,8 +434,8 @@ namespace RestSharp
                     request.Parameters.Any(
                         p =>
                             p.Name != null
-                            && p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
-                            && p.Type == defaultParameter.Type
+                         && p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
+                         && p.Type == defaultParameter.Type
                     );
 
                 if (AllowMultipleDefaultParametersWithSameName)
@@ -454,7 +449,7 @@ namespace RestSharp
 
             // Add Accept header based on registered deserializers if none has been set by the caller.
             if (requestParameters.All(
-                p => !p.Name.EqualsIgnoreCase("accept")
+                p => !p.Name!.EqualsIgnoreCase("accept")
             ))
             {
                 var accepts = Join(", ", AcceptTypes);
@@ -466,55 +461,45 @@ namespace RestSharp
             http.Host                                 = BaseHost;
             http.PreAuthenticate                      = PreAuthenticate;
             http.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
-
-            var userAgent = UserAgent ?? http.UserAgent;
-
-            http.UserAgent = userAgent.HasValue()
-                ? userAgent
-                : "RestSharp/" + Version;
+            http.UserAgent                            = UserAgent ?? http.UserAgent;
 
             var timeout = request.Timeout != 0
                 ? request.Timeout
                 : Timeout;
 
-            if (timeout != 0)
-                http.Timeout = timeout;
+            if (timeout != 0) http.Timeout = timeout;
 
             var readWriteTimeout = request.ReadWriteTimeout != 0
                 ? request.ReadWriteTimeout
                 : ReadWriteTimeout;
 
-            if (readWriteTimeout != 0)
-                http.ReadWriteTimeout = readWriteTimeout;
+            if (readWriteTimeout != 0) http.ReadWriteTimeout = readWriteTimeout;
 
             http.FollowRedirects = FollowRedirects;
 
-            if (ClientCertificates != null)
-                http.ClientCertificates = ClientCertificates;
+            if (ClientCertificates != null) http.ClientCertificates = ClientCertificates;
 
             http.MaxRedirects = MaxRedirects;
             http.CachePolicy  = CachePolicy;
             http.Pipelined    = Pipelined;
 
-            if (request.Credentials != null)
-                http.Credentials = request.Credentials;
+            if (request.Credentials != null) http.Credentials = request.Credentials;
 
-            if (!IsNullOrEmpty(ConnectionGroupName))
-                http.ConnectionGroupName = ConnectionGroupName;
+            if (!IsNullOrEmpty(ConnectionGroupName)) http.ConnectionGroupName = ConnectionGroupName!;
 
             http.Headers = requestParameters
                 .Where(p => p.Type == ParameterType.HttpHeader)
-                .Select(p => new HttpHeader(p.Name, p.Value))
+                .Select(p => new HttpHeader(p.Name!, p.Value))
                 .ToList();
 
             http.Cookies = requestParameters
                 .Where(p => p.Type == ParameterType.Cookie)
-                .Select(p => new HttpCookie {Name = p.Name, Value = p.Value?.ToString() ?? ""})
+                .Select(p => new HttpCookie {Name = p.Name!, Value = p.Value?.ToString() ?? ""})
                 .ToList();
 
             http.Parameters = requestParameters
                 .Where(p => p.Type == ParameterType.GetOrPost)
-                .Select(p => new HttpParameter(p.Name, p.Value))
+                .Select(p => new HttpParameter(p.Name!, p.Value))
                 .ToList();
 
             http.Files = request.Files.Select(
@@ -529,8 +514,7 @@ namespace RestSharp
                 )
                 .ToList();
 
-            if (request.Body != null)
-                http.AddBody(request.Body);
+            if (request.Body != null) http.AddBody(request.Body);
 
             http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 
@@ -567,39 +551,33 @@ namespace RestSharp
                 // be deserialized 
                 if (response.ErrorException == null)
                 {
-                    var func = GetHandler(raw.ContentType);
+                    var func    = GetHandler(raw.ContentType);
                     var handler = func?.Invoke();
 
                     // Only continue if there is a handler defined else there is no way to deserialize the data.
                     // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
                     if (handler is IXmlDeserializer xml)
                     {
-                        if (request.DateFormat.IsNotEmpty())
-                            xml.DateFormat = request.DateFormat;
+                        if (request.DateFormat.IsNotEmpty()) xml.DateFormat = request.DateFormat;
 
-                        if (request.XmlNamespace.IsNotEmpty())
-                            xml.Namespace = request.XmlNamespace;
+                        if (request.XmlNamespace.IsNotEmpty()) xml.Namespace = request.XmlNamespace;
                     }
 
-                    if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty())
-                        deserializer.RootElement = request.RootElement;
+                    if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty()) deserializer.RootElement = request.RootElement;
 
-                    if (handler != null)
-                        response.Data = handler.Deserialize<T>(raw);
+                    if (handler != null) response.Data = handler.Deserialize<T>(raw);
                 }
             }
             catch (Exception ex)
             {
                 if (ThrowOnAnyError) throw;
 
-                if (FailOnDeserializationError || ThrowOnDeserializationError)
-                    response.ResponseStatus = ResponseStatus.Error;
+                if (FailOnDeserializationError || ThrowOnDeserializationError) response.ResponseStatus = ResponseStatus.Error;
 
                 response.ErrorMessage   = ex.Message;
                 response.ErrorException = ex;
 
-                if (ThrowOnDeserializationError)
-                    throw new DeserializationException(response, ex);
+                if (ThrowOnDeserializationError) throw new DeserializationException(response, ex);
             }
 
             response.Request = request;
@@ -612,15 +590,12 @@ namespace RestSharp
             var i = 0;
 
             // Avoid most unnecessary uses of RegEx by checking for necessary characters explicitly first
-            if (contentType[i++] != '*')
-                return false;
+            if (contentType[i++] != '*') return false;
 
-            if (contentType[i++] != '+')
-                return false;
+            if (contentType[i++] != '+') return false;
 
             // If no more characters to check, exit now
-            if (i == contentType.Length)
-                return false;
+            if (i == contentType.Length) return false;
 
             // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
             return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);

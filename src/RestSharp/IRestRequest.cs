@@ -114,7 +114,7 @@ namespace RestSharp
         /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
         /// </summary>
         [Obsolete("Use one of authenticators provided")]
-        ICredentials Credentials { get; set; }
+        ICredentials? Credentials { get; set; }
 
         /// <summary>
         /// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
@@ -149,12 +149,12 @@ namespace RestSharp
         /// <summary>
         /// When supplied, the function will be called before calling the deserializer
         /// </summary>
-        Action<IRestResponse> OnBeforeDeserialization { get; set; }
+        Action<IRestResponse>? OnBeforeDeserialization { get; set; }
         
         /// <summary>
         /// When supplied, the function will be called before making a request
         /// </summary>
-        Action<IHttp> OnBeforeRequest { get; set; }
+        Action<IHttp>? OnBeforeRequest { get; set; }
         
         /// <summary>
         /// Serialized request body to be accessed in authenticators

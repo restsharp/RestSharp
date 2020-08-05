@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Remove="NUnit" Version="3.12.0" />
+    <PackageReference Remove="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Remove="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
+  </ItemGroup>
+</Project>

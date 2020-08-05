@@ -246,7 +246,7 @@ namespace RestSharp.Authenticators.OAuth
             OAuthSignatureTreatment signatureTreatment,
             string signatureBase,
             string consumerSecret,
-            string tokenSecret
+            string? tokenSecret
         )
         {
             if (tokenSecret.IsEmpty())
@@ -254,7 +254,7 @@ namespace RestSharp.Authenticators.OAuth
 
             var unencodedConsumerSecret = consumerSecret;
             consumerSecret = Uri.EscapeDataString(consumerSecret);
-            tokenSecret    = Uri.EscapeDataString(tokenSecret);
+            tokenSecret    = Uri.EscapeDataString(tokenSecret!);
 
             var signature = signatureMethod switch
             {

@@ -25,6 +25,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 
+#pragma warning disable 618
+
 namespace RestSharp
 {
     /// <summary>
@@ -36,6 +38,7 @@ namespace RestSharp
 
         public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpper();
 
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
 
         readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions;
@@ -143,10 +146,10 @@ namespace RestSharp
         public int ReadWriteTimeout { get; set; }
 
         /// <inheritdoc />
-        public ICredentials Credentials { get; set; }
+        public ICredentials? Credentials { get; set; }
 
         /// <inheritdoc />
-        public CookieContainer CookieContainer { get; set; }
+        public CookieContainer? CookieContainer { get; set; }
 
         /// <inheritdoc />
         public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; }
@@ -164,7 +167,7 @@ namespace RestSharp
         public bool Pipelined { get; set; }
 
         /// <inheritdoc />
-        public X509CertificateCollection ClientCertificates { get; set; }
+        public X509CertificateCollection? ClientCertificates { get; set; }
 
         /// <inheritdoc />
         public int? MaxRedirects { get; set; }
@@ -200,7 +203,7 @@ namespace RestSharp
         public Uri Url { get; set; }
 
         /// <inheritdoc />
-        public string Host { get; set; }
+        public string? Host { get; set; }
 
         /// <inheritdoc />
         public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; }
@@ -212,25 +215,25 @@ namespace RestSharp
         public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
         /// <inheritdoc />
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy? Proxy { get; set; }
 
         /// <inheritdoc />
-        public RequestCachePolicy CachePolicy { get; set; }
+        public RequestCachePolicy? CachePolicy { get; set; }
 
         /// <inheritdoc />
         /// <summary>
         /// Callback function for handling the validation of remote certificates.
         /// </summary>
-        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+        public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
         /// <inheritdoc />
-        public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+        public Action<HttpWebRequest>? WebRequestConfigurator { get; set; }
 
         [Obsolete]
         public static IHttp Create() => new Http();
 
         [Obsolete("Overriding this method won't be possible in future version")]
-        protected virtual HttpWebRequest CreateWebRequest(Uri url) => null;
+        protected virtual HttpWebRequest? CreateWebRequest(Uri url) => null;
 
         static HttpWebRequest CreateRequest(Uri uri) => (HttpWebRequest) WebRequest.Create(uri);
 
@@ -245,7 +248,7 @@ namespace RestSharp
                 ? "--{0}{3}Content-Type: {4}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}"
                 : "--{0}{3}Content-Disposition: form-data; name=\"{1}\"{3}{3}{2}{3}";
 
-            return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType);
+            return string.Format(format, FormBoundary, param.Name, param.Value, LineBreak, param.ContentType!);
         }
 
         string GetMultipartFooter() => $"--{FormBoundary}--{LineBreak}";
@@ -257,8 +260,13 @@ namespace RestSharp
             if (HasFiles || AlwaysMultipartFormData)
             {
                 if (needsContentType)
-                    webRequest.ContentType                                                    = GetMultipartFormContentType();
-                else if (!webRequest.ContentType.Contains("boundary")) webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary;
+                {
+                    webRequest.ContentType = GetMultipartFormContentType();
+                }
+                else if (!webRequest.ContentType.Contains("boundary"))
+                {
+                    webRequest.ContentType = webRequest.ContentType + "; boundary=" + FormBoundary;
+                }
             }
             else if (HasBody)
             {
@@ -309,6 +317,7 @@ namespace RestSharp
 
             if (webResponse.Cookies != null)
                 foreach (Cookie cookie in webResponse.Cookies)
+                {
                     response.Cookies.Add(
                         new HttpCookie
                         {
@@ -328,12 +337,15 @@ namespace RestSharp
                             Version    = cookie.Version
                         }
                     );
+                }
 
             response.Headers = webResponse.Headers.AllKeys
-                .Select(x => new HttpHeader(x, webResponse.Headers[x])).ToList();
+                .Select(x => new HttpHeader(x, webResponse.Headers[x]))
+                .ToList();
 
             var webResponseStream = webResponse.GetResponseStream();
-            ProcessResponseStream();
+            if (webResponseStream != null)
+                ProcessResponseStream();
 
             webResponse.Close();
             return response;
