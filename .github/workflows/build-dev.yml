@@ -7,7 +7,7 @@ on:
       - 'yarn.lock'
       - 'package.json'
     branches:
-      - master
+      - dev
     tags:
       - '*'
 
