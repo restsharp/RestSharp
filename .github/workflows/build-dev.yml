@@ -12,17 +12,17 @@ on:
       - '*'
 
 jobs:
-  test-netcore-linux:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.201'
-
-      - name: Run tests netcoreapp3.1
-        run: dotnet test -c Release -f netcoreapp3.1
+#  test-netcore-linux:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions/setup-dotnet@v1
+#        with:
+#          dotnet-version: '3.1.201'
+#
+#      - name: Run tests netcoreapp3.1
+#        run: dotnet test -c Release -f netcoreapp3.1
 
   test-win:
     runs-on: windows-latest
