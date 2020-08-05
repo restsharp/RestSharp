@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <SignAssembly>true</SignAssembly>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+</Project>
