@@ -217,7 +217,7 @@ namespace RestSharp.Authenticators.OAuth
 
             if (!Token.IsEmpty()) authParameters.Add(new WebPair("oauth_token", Token));
 
-            if (!CallbackUrl.IsEmpty()) authParameters.Add(new WebPair("oauth_callback", CallbackUrl));
+            if (!CallbackUrl.IsEmpty()) authParameters.Add(new WebPair("oauth_callback", CallbackUrl, true));
 
             if (!Verifier.IsEmpty()) authParameters.Add(new WebPair("oauth_verifier", Verifier));
 

@@ -101,7 +101,7 @@ namespace RestSharp.InteractiveTests
                 Authenticator = OAuth1Authenticator.ForRequestToken(
                     twitterKeys.ConsumerKey,
                     twitterKeys.ConsumerSecret,
-                    "http://localhost:3003/twitter/callback"
+                    "https://restsharp.dev"
                 )
             };
             var request  = new RestRequest("oauth/request_token");

@@ -323,7 +323,7 @@ namespace RestSharp.Authenticators
                 var oathParameters =
                     oauth.Parameters
                         .OrderBy(x => x, WebPair.Comparer)
-                        .Select(x => $"{x.Name}=\"{x.Value}\"")
+                        .Select(x => $"{x.Name}=\"{x.WebValue}\"")
                         .ToList();
 
                 if (!Realm.IsEmpty())
@@ -336,6 +336,6 @@ namespace RestSharp.Authenticators
 
     static class ParametersExtensions
     {
-        internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString()));
+        internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString(), false));
     }
 }

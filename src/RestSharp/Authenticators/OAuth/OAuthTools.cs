@@ -75,8 +75,7 @@ namespace RestSharp.Authenticators.OAuth
 
             lock (RandomLock)
             {
-                for (var i = 0; i < nonce.Length; i++)
-                    nonce[i] = chars[Random.Next(0, chars.Length)];
+                for (var i = 0; i < nonce.Length; i++) nonce[i] = chars[Random.Next(0, chars.Length)];
             }
 
             return new string(nonce);
@@ -149,8 +148,7 @@ namespace RestSharp.Authenticators.OAuth
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        static string NormalizeRequestParameters(WebPairCollection parameters)
-            => string.Join("&", SortParametersExcludingSignature(parameters));
+        static string NormalizeRequestParameters(WebPairCollection parameters) => string.Join("&", SortParametersExcludingSignature(parameters));
 
         /// <summary>
         /// Sorts a <see cref="WebPairCollection" /> by name, and then value if equal.
@@ -160,7 +158,7 @@ namespace RestSharp.Authenticators.OAuth
         public static IEnumerable<string> SortParametersExcludingSignature(WebPairCollection parameters)
             => parameters
                 .Where(x => !x.Name.EqualsIgnoreCase("oauth_signature"))
-                .Select(x => new WebPair(UrlEncodeStrict(x.Name), UrlEncodeStrict(x.Value)))
+                .Select(x => new WebPair(UrlEncodeStrict(x.Name), UrlEncodeStrict(x.Value), x.Encode))
                 .OrderBy(x => x, WebPair.Comparer)
                 .Select(x => $"{x.Name}={x.Value}");
 
@@ -249,8 +247,7 @@ namespace RestSharp.Authenticators.OAuth
             string? tokenSecret
         )
         {
-            if (tokenSecret.IsEmpty())
-                tokenSecret = string.Empty;
+            if (tokenSecret.IsEmpty()) tokenSecret = string.Empty;
 
             var unencodedConsumerSecret = consumerSecret;
             consumerSecret = Uri.EscapeDataString(consumerSecret);

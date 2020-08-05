@@ -13,7 +13,7 @@ namespace RestSharp.InteractiveTests
                 ConsumerSecret = Prompt("Consumer secret"),
             };
             
-           // AuthenticationTests.Can_Authenticate_With_OAuth(keys);
+           AuthenticationTests.Can_Authenticate_With_OAuth(keys);
            await AuthenticationTests.Can_Authenticate_With_OAuth_Async_With_Callback(keys);
         }
 
