@@ -69,7 +69,7 @@ For example, only you'd only need these lines to make a request with JSON body:
 ```csharp
 var request = new RestRequest("address/update")
     .AddJsonBody(updatedAddress);
-var respose = await client.PostAsync<AddressUpdateResponse>(request);
+var response = await client.PostAsync<AddressUpdateResponse>(request);
 ```
 
 ## Response
