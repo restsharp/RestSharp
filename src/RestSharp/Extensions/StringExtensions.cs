@@ -236,14 +236,15 @@ namespace RestSharp.Extensions
         /// <param name="culture"></param>
         /// <returns>String</returns>
         public static string ToCamelCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
-            => MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord, culture));
+            => MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord, culture), culture);
 
         /// <summary>
         /// Convert the first letter of a string to lower case
         /// </summary>
         /// <param name="word">String to convert</param>
+        /// <param name="culture"></param>
         /// <returns>string</returns>
-        public static string MakeInitialLowerCase(this string word) => string.Concat(word.Substring(0, 1).ToLower(), word.Substring(1));
+        public static string MakeInitialLowerCase(this string word, CultureInfo culture) => string.Concat(word.Substring(0, 1).ToLower(culture), word.Substring(1));
 
         /// <summary>
         /// Add underscores to a pascal-cased string
