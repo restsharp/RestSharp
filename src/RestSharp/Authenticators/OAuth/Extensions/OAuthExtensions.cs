@@ -22,7 +22,7 @@ namespace RestSharp.Authenticators.OAuth.Extensions
     {
         public static string ToRequestValue(this OAuthSignatureMethod signatureMethod)
         {
-            var value    = signatureMethod.ToString().ToUpper();
+            var value    = signatureMethod.ToString().ToUpperInvariant();
             var shaIndex = value.IndexOf("SHA", StringComparison.Ordinal);
 
             return shaIndex > -1 ? value.Insert(shaIndex, "-") : value;
