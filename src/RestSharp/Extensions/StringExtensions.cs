@@ -242,6 +242,7 @@ namespace RestSharp.Extensions
         /// Convert the first letter of a string to lower case
         /// </summary>
         /// <param name="word">String to convert</param>
+        /// <param name="culture"></param>
         /// <returns>string</returns>
         public static string MakeInitialLowerCase(this string word, CultureInfo culture) => string.Concat(word.Substring(0, 1).ToLower(culture), word.Substring(1));
 
