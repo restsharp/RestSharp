@@ -191,7 +191,7 @@ namespace RestSharp.Authenticators.OAuth
         public static string ConcatenateRequestElements(string method, string url, WebPairCollection parameters)
         {
             // Separating &'s are not URL encoded
-            var requestMethod     = method.ToUpper().Then("&");
+            var requestMethod     = method.ToUpperInvariant().Then("&");
             var requestUrl        = UrlEncodeRelaxed(ConstructRequestUrl(url.AsUri())).Then("&");
             var requestParameters = UrlEncodeRelaxed(NormalizeRequestParameters(parameters));
 

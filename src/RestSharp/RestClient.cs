@@ -268,7 +268,7 @@ namespace RestSharp
 
         void DoBuildUriValidations(IRestRequest request)
         {
-            if (BaseUrl == null && !request.Resource.ToLower().StartsWith("http"))
+            if (BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
                 throw new ArgumentOutOfRangeException(
                     nameof(request),
                     "Request resource doesn't contain a valid scheme for an empty client base URL"
@@ -547,8 +547,8 @@ namespace RestSharp
                 response = raw.ToAsyncResponse<T>();
 
                 // Only attempt to deserialize if the request has not errored due
-                // to a transport or framework exception.  HTTP errors should attempt to 
-                // be deserialized 
+                // to a transport or framework exception.  HTTP errors should attempt to
+                // be deserialized
                 if (response.ErrorException == null)
                 {
                     var func    = GetHandler(raw.ContentType);
