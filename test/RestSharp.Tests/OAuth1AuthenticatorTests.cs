@@ -140,5 +140,31 @@ namespace RestSharp.Tests
                 )
             );
         }
+
+        [Test]
+        [TestCase(OAuthType.AccessToken, "Token", "Token")]
+        [TestCase(OAuthType.ProtectedResource, "Token", "Token")]
+        [TestCase(OAuthType.AccessToken, "SVyDD+RsFzSoZChk=", "SVyDD%2BRsFzSoZChk%3D")]
+        [TestCase(OAuthType.ProtectedResource, "SVyDD+RsFzSoZChk=", "SVyDD%2BRsFzSoZChk%3D")]
+        public void Authenticate_ShouldEncodeOAuthTokenParameter(OAuthType type,string value, string expected)
+        {
+            // Arrange
+            const string url = "https://no-query.string";
+
+            var client  = new RestClient(url);
+            var request = new RestRequest();
+            _authenticator.Type  = type;
+            _authenticator.Token = value;
+
+            // Act
+            _authenticator.Authenticate(client, request);
+
+            // Assert
+            var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+            var authHeader         = (string) authParameter.Value;
+
+            Assert.IsNotNull(authHeader);
+            Assert.IsTrue(authHeader.Contains($"oauth_token=\"{expected}\""));
+        }
     }
 }
