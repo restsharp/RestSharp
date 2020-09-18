@@ -277,7 +277,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="p">Parameter to add</param>
         /// <returns></returns>
-        [Obsolete("Use AddOrUpdateParameter methods of IRestRequest instead of instantiating the Parameter class.")]
+        [Obsolete("Use the other AddParameter methods of IRestRequest instead of instantiating the Parameter class.")]
         IRestRequest AddParameter(Parameter p);
 
         /// <summary>
@@ -323,7 +323,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="parameter">Parameter to add</param>
         /// <returns></returns>
-        [Obsolete("Use AddOrUpdateParameter methods of IRestRequest instead of instantiating the Parameter class.")]
+        [Obsolete("Use the other AddOrUpdateParameter methods of IRestRequest instead of instantiating the Parameter class.")]
         IRestRequest AddOrUpdateParameter(Parameter parameter);
 
         /// <summary>
