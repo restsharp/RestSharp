@@ -31,7 +31,7 @@ namespace RestSharp.Tests
             var client  = new RestClient();
             var request = new RestRequest();
 
-            request.AddParameter(new Parameter("NotMatching", null, default));
+            request.AddParameter(new GetOrPostParameter("NotMatching", null));
 
             var expectedToken =
                 $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_username}:{_password}"))}";

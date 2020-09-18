@@ -263,7 +263,7 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            return AddParameter(new JsonParameter("", obj));
+            return AddParameter(new JsonBodyParameter("", obj));
         }
 
         /// <inheritdoc />
@@ -271,7 +271,7 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            return AddParameter(new JsonParameter(contentType, obj, contentType));
+            return AddParameter(new JsonBodyParameter(contentType, obj, contentType));
         }
 
         /// <inheritdoc />
@@ -287,7 +287,7 @@ namespace RestSharp
             else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
                 xmlNamespace = XmlSerializer.Namespace;
 
-            AddParameter(new XmlParameter("", obj, xmlNamespace));
+            AddParameter(new XmlBodyParameter("", obj, xmlNamespace));
 
             return this;
         }
@@ -343,14 +343,10 @@ namespace RestSharp
         public IRestRequest AddParameter(Parameter p) => this.With(x => x._parameters.Add(p));
 
         /// <inheritdoc />
-        public IRestRequest AddParameter(string name, object value) => AddParameter(new Parameter(name, value, ParameterType.GetOrPost));
+        public IRestRequest AddParameter(string name, object value) => AddParameter(new GetOrPostParameter(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddParameter(string name, object value, ParameterType type) => AddParameter(new Parameter(name, value, type));
-
-        /// <inheritdoc />
-        public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type)
-            => AddParameter(new Parameter(name, value, contentType, type));
+        public IRestRequest AddBodyParameter(string name, object value, string? contentType = null) => AddParameter(new BodyParameter(name, value, contentType));
 
         /// <inheritdoc />
         public IRestRequest AddOrUpdateParameter(Parameter parameter)
@@ -374,18 +370,6 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        public IRestRequest AddOrUpdateParameter(string name, object value)
-            => AddOrUpdateParameter(new Parameter(name, value, ParameterType.GetOrPost));
-
-        /// <inheritdoc />
-        public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type)
-            => AddOrUpdateParameter(new Parameter(name, value, type));
-
-        /// <inheritdoc />
-        public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type)
-            => AddOrUpdateParameter(new Parameter(name, value, contentType, type));
-
-        /// <inheritdoc />
         public IRestRequest AddHeader(string name, string value)
         {
             static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
@@ -393,7 +377,7 @@ namespace RestSharp
             if (name == "Host" && InvalidHost(value))
                 throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
 
-            return AddParameter(name, value, ParameterType.HttpHeader);
+            return AddParameter(new HttpHeaderParameter(name, value));
         }
 
         /// <inheritdoc />
@@ -417,17 +401,16 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        public IRestRequest AddCookie(string name, string value) => AddParameter(name, value, ParameterType.Cookie);
+        public IRestRequest AddCookie(string name, string value) => AddParameter(new CookieParameter(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddUrlSegment(string name, string value) => AddParameter(name, value, ParameterType.UrlSegment);
+        public IRestRequest AddUrlSegment(string name, string value) => AddParameter(new UrlSegmentParameter(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddQueryParameter(string name, string value) => AddParameter(name, value, ParameterType.QueryString);
+        public IRestRequest AddQueryParameter(string name, string value) => AddParameter(new QueryStringParameter(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddQueryParameter(string name, string value, bool encode)
-            => AddParameter(name, value, encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode);
+        public IRestRequest AddQueryParameter(string name, string value, bool encode) => AddParameter(new QueryStringParameter(name, value, encode));
 
         /// <inheritdoc />
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
@@ -487,7 +470,7 @@ namespace RestSharp
         public int Attempts { get; private set; }
 
         /// <inheritdoc />
-        public IRestRequest AddUrlSegment(string name, object value) => AddParameter(name, value, ParameterType.UrlSegment);
+        public IRestRequest AddUrlSegment(string name, object value) => AddParameter(new UrlSegmentParameter(name, value));
 
         IRestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
     }

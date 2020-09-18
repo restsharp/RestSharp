@@ -48,7 +48,7 @@ namespace RestSharp.Tests
             var request = new RestRequest();
 
             // Paranoid server needs "two-factor authentication": jwt header and query param key for example
-            request.AddParameter("Authorization", "manualAuth", ParameterType.QueryString);
+            request.AddQueryParameter("Authorization", "manualAuth");
 
             // In real case client.Execute(request) will invoke Authenticate method
             client.Authenticator.Authenticate(client, request);

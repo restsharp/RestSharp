@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -145,7 +145,7 @@ namespace RestSharp.Authenticators
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="consumerKey"></param>
         /// <param name="consumerSecret"></param>
@@ -169,7 +169,7 @@ namespace RestSharp.Authenticators
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="consumerKey"></param>
         /// <param name="consumerSecret"></param>
@@ -196,7 +196,7 @@ namespace RestSharp.Authenticators
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="consumerKey"></param>
         /// <param name="consumerSecret"></param>
@@ -224,7 +224,7 @@ namespace RestSharp.Authenticators
             };
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="consumerKey"></param>
         /// <param name="consumerSecret"></param>
@@ -313,10 +313,10 @@ namespace RestSharp.Authenticators
             request.AddOrUpdateParameters(oauthParameters);
 
             IEnumerable<Parameter> CreateHeaderParameters()
-                => new[] {new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader)};
+                => new[] {new HttpHeaderParameter("Authorization", GetAuthorizationHeader())};
 
             IEnumerable<Parameter> CreateUrlParameters()
-                => oauth.Parameters.Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
+                => oauth.Parameters.Select(p => new GetOrPostParameter(p.Name, HttpUtility.UrlDecode(p.Value)));
 
             string GetAuthorizationHeader()
             {

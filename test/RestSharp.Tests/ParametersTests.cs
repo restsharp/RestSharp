@@ -8,7 +8,7 @@ namespace RestSharp.Tests
     public class ParametersTests
     {
         const string BaseUrl = "http://localhost:8888/";
-        
+
         [Test]
         public void AddDefaultHeadersUsingDictionary()
         {
@@ -19,11 +19,11 @@ namespace RestSharp.Tests
                 {"Content-Encoding", "gzip, deflate"}
             };
 
-            var expected = headers.Select(x => new Parameter(x.Key, x.Value, ParameterType.HttpHeader));
+            var expected = headers.Select(x => new HttpHeaderParameter(x.Key, x.Value));
 
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeaders(headers);
-            
+
             expected.Should().BeSubsetOf(client.DefaultParameters);
         }
     }

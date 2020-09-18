@@ -26,7 +26,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -44,7 +44,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -62,7 +62,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -80,7 +80,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -98,7 +98,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -116,7 +116,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -147,7 +147,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -165,7 +165,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+            request.AddBodyParameter(contentType, bodyData);
 
             client.Execute(request);
 
@@ -189,7 +189,7 @@ namespace RestSharp.IntegrationTests
             const string bodyData      = "abc123 foo bar baz BING!";
             const string multipartName = "mybody";
 
-            request.AddParameter(multipartName, bodyData, contentType, ParameterType.RequestBody);
+            request.AddBodyParameter(multipartName, bodyData, contentType);
 
             client.Execute(request);
 

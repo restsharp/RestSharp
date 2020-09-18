@@ -232,7 +232,7 @@ namespace RestSharp.IntegrationTests
 
             var request = new RestRequest("account/verify_credentials.json");
 
-            request.AddParameter("include_entities", "true", ParameterType.QueryString);
+            request.AddQueryParameter("include_entities", "true");
 
             var response = client.Execute(request);
 

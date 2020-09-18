@@ -277,7 +277,6 @@ namespace RestSharp
         /// </summary>
         /// <param name="p">Parameter to add</param>
         /// <returns></returns>
-        [Obsolete("Use the other AddParameter methods of IRestRequest instead of instantiating the Parameter class.")]
         IRestRequest AddParameter(Parameter p);
 
         /// <summary>
@@ -289,33 +288,12 @@ namespace RestSharp
         IRestRequest AddParameter(string name, object value);
 
         /// <summary>
-        /// Adds a parameter to the request. There are five types of parameters:
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Serializes obj to data format specified by RequestFormat and adds it to the request body.
+        /// The default format is XML. Change RequestFormat if you wish to use a different serialization format.
         /// </summary>
-        /// <param name="name">Name of the parameter</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <param name="type">The type of parameter to add</param>
+        /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
-        IRestRequest AddParameter(string name, object value, ParameterType type);
-
-        /// <summary>
-        /// Adds a parameter to the request. There are five types of parameters:
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - Cookie: Adds the name/value pair to the HTTP request's Cookies collection
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
-        /// </summary>
-        /// <param name="name">Name of the parameter</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <param name="contentType">Content-Type of the parameter</param>
-        /// <param name="type">The type of parameter to add</param>
-        /// <returns>This request</returns>
-        IRestRequest AddParameter(string name, object value, string contentType, ParameterType type);
+        IRestRequest AddBodyParameter(string name, object value, string? contentType = null);
 
         /// <summary>
         /// Adds a parameter to the request or updates it with the given argument, if the parameter already exists in the
@@ -323,7 +301,6 @@ namespace RestSharp
         /// </summary>
         /// <param name="parameter">Parameter to add</param>
         /// <returns></returns>
-        [Obsolete("Use the other AddOrUpdateParameter methods of IRestRequest instead of instantiating the Parameter class.")]
         IRestRequest AddOrUpdateParameter(Parameter parameter);
 
         /// <summary>
@@ -332,43 +309,6 @@ namespace RestSharp
         /// <param name="parameters">Collection of parameters to add</param>
         /// <returns></returns>
         IRestRequest AddOrUpdateParameters(IEnumerable<Parameter> parameters);
-
-        /// <summary>
-        /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
-        /// </summary>
-        /// <param name="name">Name of the parameter</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <returns>This request</returns>
-        IRestRequest AddOrUpdateParameter(string name, object value);
-
-        /// <summary>
-        /// Adds a parameter to the request. There are five types of parameters:
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - Cookie: Adds the name/value pair to the HTTP request Cookies collection
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
-        /// </summary>
-        /// <param name="name">Name of the parameter</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <param name="type">The type of parameter to add</param>
-        /// <returns>This request</returns>
-        IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type);
-
-        /// <summary>
-        /// Adds a parameter to the request. There are five types of parameters:
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - Cookie: Adds the name/value pair to the HTTP request Cookies collection
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
-        /// </summary>
-        /// <param name="name">Name of the parameter</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <param name="contentType">Content-Type of the parameter</param>
-        /// <param name="type">The type of parameter to add</param>
-        /// <returns>This request</returns>
-        IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type);
 
         /// <summary>
         /// Shortcut to AddParameter(name, value, HttpHeader) overload

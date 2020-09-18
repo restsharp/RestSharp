@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -347,28 +347,7 @@ namespace RestSharp
         /// <param name="value">Value of the parameter</param>
         /// <returns>This request</returns>
         public static IRestClient AddDefaultParameter(this IRestClient restClient, string name, object value)
-            => restClient.AddDefaultParameter(new Parameter(name, value, ParameterType.GetOrPost));
-
-        /// <summary>
-        /// Adds a default parameter to the request. There are four types of parameters:
-        /// - GetOrPost: Either a QueryString value or encoded form value based on method
-        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
-        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
-        /// - RequestBody: Used by AddBody() (not recommended to use directly)
-        /// Used on every request made by this client instance
-        /// </summary>
-        /// <param name="restClient">The IRestClient instance</param>
-        /// <param name="name">Name of the parameter</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <param name="type">The type of parameter to add</param>
-        /// <returns>This request</returns>
-        public static IRestClient AddDefaultParameter(
-            this IRestClient restClient,
-            string name,
-            object value,
-            ParameterType type
-        )
-            => restClient.AddDefaultParameter(new Parameter(name, value, type));
+            => restClient.AddDefaultParameter(new GetOrPostParameter(name, value));
 
         /// <summary>
         /// Adds a default header to the RestClient. Used on every request made by this client instance.
@@ -378,7 +357,7 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(name, value, ParameterType.HttpHeader);
+            => restClient.AddDefaultParameter(new HttpHeaderParameter(name, value));
 
         /// <summary>
         /// Adds default headers to the RestClient. Used on every request made by this client instance.
@@ -389,7 +368,7 @@ namespace RestSharp
         public static IRestClient AddDefaultHeaders(this IRestClient restClient, Dictionary<string, string> headers)
         {
             foreach (var header in headers)
-                restClient.AddOrUpdateDefaultParameter(new Parameter(header.Key, header.Value, ParameterType.HttpHeader));
+                restClient.AddOrUpdateDefaultParameter(new HttpHeaderParameter(header.Key, header.Value));
 
             return restClient;
         }
@@ -402,7 +381,7 @@ namespace RestSharp
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultUrlSegment(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(name, value, ParameterType.UrlSegment);
+            => restClient.AddDefaultParameter(new UrlSegmentParameter(name, value));
 
         /// <summary>
         /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
@@ -412,7 +391,7 @@ namespace RestSharp
         /// <param name="value">Value of the query parameter to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultQueryParameter(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(name, value, ParameterType.QueryString);
+            => restClient.AddDefaultParameter(new QueryStringParameter(name, value));
 
         static void ThrowIfError(IRestResponse response)
         {

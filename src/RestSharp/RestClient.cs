@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -195,7 +195,7 @@ namespace RestSharp
             // add Accept header based on registered deserializers
             var accepts = AcceptTypes.JoinToString(", ");
 
-            this.AddOrUpdateDefaultParameter(new Parameter("Accept", accepts, ParameterType.HttpHeader));
+            this.AddOrUpdateDefaultParameter(new HttpHeaderParameter("Accept", accepts));
         }
 
         /// <inheritdoc />>
@@ -275,7 +275,8 @@ namespace RestSharp
                 );
 
             var nullValuedParams = request.Parameters
-                .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
+                .OfType<UrlSegmentParameter>()
+                .Where(p => p.Value == null)
                 .Select(p => p.Name)
                 .ToArray();
 
@@ -296,8 +297,8 @@ namespace RestSharp
             var baseUrl   = BaseUrl ?? new Uri(request.Resource);
 
             var hasResource = !assembled.IsEmpty();
-            var parameters  = request.Parameters.Where(p => p.Type  == ParameterType.UrlSegment).ToList();
-            parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
+            var parameters = request.Parameters.OfType<UrlSegmentParameter>().ToList();
+            parameters.AddRange(DefaultParameters.OfType<UrlSegmentParameter>());
             var builder = new UriBuilder(baseUrl);
 
             foreach (var parameter in parameters)
@@ -453,8 +454,7 @@ namespace RestSharp
             ))
             {
                 var accepts = Join(", ", AcceptTypes);
-
-                requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
+                requestParameters.Add(new HttpHeaderParameter("Accept", accepts));
             }
 
             http.Url                                  = BuildUri(request);
@@ -488,17 +488,17 @@ namespace RestSharp
             if (!IsNullOrEmpty(ConnectionGroupName)) http.ConnectionGroupName = ConnectionGroupName!;
 
             http.Headers = requestParameters
-                .Where(p => p.Type == ParameterType.HttpHeader)
+                .OfType<HttpHeaderParameter>()
                 .Select(p => new HttpHeader(p.Name!, p.Value))
                 .ToList();
 
             http.Cookies = requestParameters
-                .Where(p => p.Type == ParameterType.Cookie)
+                .OfType<CookieParameter>()
                 .Select(p => new HttpCookie {Name = p.Name!, Value = p.Value?.ToString() ?? ""})
                 .ToList();
 
             http.Parameters = requestParameters
-                .Where(p => p.Type == ParameterType.GetOrPost)
+                .OfType<GetOrPostParameter>()
                 .Select(p => new HttpParameter(p.Name!, p.Value))
                 .ToList();
 

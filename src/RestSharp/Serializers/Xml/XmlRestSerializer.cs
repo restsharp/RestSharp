@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System;
 using System.Globalization;
@@ -37,7 +37,7 @@ namespace RestSharp.Serialization.Xml
 
         public string Serialize(Parameter parameter)
         {
-            if (!(parameter is XmlParameter xmlParameter))
+            if (!(parameter is XmlBodyParameter xmlParameter))
                 throw new InvalidOperationException("Supplied parameter is not an XML parameter");
 
             var savedNamespace = _xmlSerializer.Namespace;

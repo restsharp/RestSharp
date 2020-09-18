@@ -24,20 +24,8 @@ namespace RestSharp
     /// <summary>
     /// Parameter container for REST requests
     /// </summary>
-    public class Parameter : IEquatable<Parameter>
+    public abstract class Parameter : IEquatable<Parameter>
     {
-        public Parameter(string name, object value, ParameterType type)
-        {
-            if (type != ParameterType.RequestBody)
-                Ensure.NotEmpty(name, nameof(name));
-
-            Name  = name;
-            Value = type != ParameterType.UrlSegment ? value : value?.ToString().Replace("%2F", "/").Replace("%2f", "/");
-            Type  = type;
-        }
-
-        public Parameter(string name, object value, string contentType, ParameterType type) : this(name, value, type) => ContentType = contentType;
-
         /// <summary>
         /// Name of the parameter
         /// </summary>
@@ -51,17 +39,13 @@ namespace RestSharp
         /// <summary>
         /// Type of the parameter
         /// </summary>
-        public ParameterType Type { get; set; }
+        public abstract ParameterType Type { get;}
 
-        /// <summary>
-        /// Body parameter data type
-        /// </summary>
-        public DataFormat DataFormat { get; set; } = DataFormat.None;
-
-        /// <summary>
-        /// MIME content type of the parameter
-        /// </summary>
-        public string? ContentType { get; set; }
+        public Parameter(string name, object value)
+        {
+            Name  = name;
+            Value = value;
+        }
 
         /// <summary>
         /// Return a human-readable representation of this parameter
@@ -75,10 +59,8 @@ namespace RestSharp
             if (ReferenceEquals(this, other)) return true;
 
             return Name == other.Name
-                && Equals(Value, other.Value)
-                && Type        == other.Type
-                && DataFormat  == other.DataFormat
-                && ContentType == other.ContentType;
+                   && Equals(Value, other.Value)
+                   && Type == other.Type;
         }
 
         public override bool Equals(object obj)
@@ -94,38 +76,82 @@ namespace RestSharp
 
                 hashCode = (hashCode * 397) ^ (Value != null ? Value.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (int) Type;
-                hashCode = (hashCode * 397) ^ (int) DataFormat;
-                hashCode = (hashCode * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
                 return hashCode;
             }
         }
         // ReSharper enable NonReadonlyMemberInGetHashCode
     }
 
-    public class XmlParameter : Parameter
+    public class CookieParameter : Parameter
     {
-        public XmlParameter(string name, object value, string? xmlNamespace = null) : base(name, value, ParameterType.RequestBody)
-        {
-            XmlNamespace = xmlNamespace;
-            DataFormat   = DataFormat.Xml;
-            ContentType  = Serialization.ContentType.Xml;
-        }
-
-        public string? XmlNamespace { get; }
+        public CookieParameter(string name, string value) : base(name, value) => Ensure.NotEmpty(name, nameof(name));
+        public override ParameterType Type { get; } = ParameterType.Cookie;
     }
 
-    public class JsonParameter : Parameter
+    public class GetOrPostParameter : Parameter
     {
-        public JsonParameter(string name, object value) : base(name, value, ParameterType.RequestBody)
-        {
-            DataFormat  = DataFormat.Json;
-            ContentType = Serialization.ContentType.Json;
-        }
+        public override ParameterType Type { get; } = ParameterType.GetOrPost;
+        public GetOrPostParameter(string name, object value) : base(name, value) => Ensure.NotEmpty(name, nameof(name));
+    }
 
-        public JsonParameter(string name, object value, string contentType) : base(name, value, ParameterType.RequestBody)
+    public class HttpHeaderParameter : Parameter
+    {
+        public override ParameterType Type { get; } = ParameterType.HttpHeader;
+        public HttpHeaderParameter(string name, object value) : base(name, value) => Ensure.NotEmpty(name, nameof(name));
+    }
+
+    public class QueryStringParameter : Parameter
+    {
+        public override ParameterType Type { get; } = ParameterType.QueryString;
+
+        public QueryStringParameter(string name, object value) : base(name, value)
         {
-            DataFormat  = DataFormat.Json;
-            ContentType = contentType ?? Serialization.ContentType.Json;
+            Ensure.NotEmpty(name, nameof(name));
+            Type = ParameterType.QueryString;
+
         }
+        public QueryStringParameter(string name, object value, bool encode) : this(name, value)
+        {
+            if (!encode) Type = ParameterType.QueryStringWithoutEncode;
+        }
+    }
+
+    public class UrlSegmentParameter : Parameter
+    {
+        public override ParameterType Type { get; } = ParameterType.UrlSegment;
+        public UrlSegmentParameter(string name, object value) : base(name, value)
+        {
+            Ensure.NotEmpty(name, nameof(name));
+            Value = value?.ToString().Replace("%2F", "/").Replace("%2f", "/");
+        }
+    }
+
+    public class BodyParameter : Parameter
+    {
+        public virtual string? ContentType { get; }
+        public virtual DataFormat DataFormat { get; } = DataFormat.None;
+        public override ParameterType Type { get; } = ParameterType.RequestBody;
+
+        protected BodyParameter(string name, object value) : base(name, value) {}
+        public BodyParameter(string name, object value, string? contentType) : this(name, value) => ContentType = contentType;
+    }
+
+    public class XmlBodyParameter : BodyParameter
+    {
+        public override DataFormat DataFormat { get; } = DataFormat.Xml;
+        public override string ContentType { get; } = Serialization.ContentType.Xml;
+        public string? XmlNamespace { get; }
+
+        public XmlBodyParameter(string name, object value, string? xmlNamespace = null) : base(name, value) => XmlNamespace = xmlNamespace;
+    }
+
+
+    public class JsonBodyParameter : BodyParameter
+    {
+        public override DataFormat DataFormat { get; } = DataFormat.Json;
+        public override string ContentType { get; } = Serialization.ContentType.Json;
+
+        public JsonBodyParameter(string name, object value) : base(name, value) {}
+        public JsonBodyParameter(string name, object value, string contentType) : base(name, value) => ContentType = contentType ?? Serialization.ContentType.Json;
     }
 }

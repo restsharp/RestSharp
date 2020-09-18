@@ -268,7 +268,7 @@ namespace RestSharp.Tests
         {
             var request = new RestRequest("resource", Method.POST);
 
-            request.AddParameter("foo", "bar", ParameterType.QueryString);
+            request.AddParameter(new QueryStringParameter("foo", "bar"));
 
             var client   = new RestClient("http://example.com");
             var expected = new Uri("http://example.com/resource?foo=bar");
@@ -307,8 +307,8 @@ namespace RestSharp.Tests
         {
             var request = new RestRequest();
 
-            request.AddOrUpdateParameter("param2", "value2");
-            request.AddOrUpdateParameter("param3", "value3");
+            request.AddOrUpdateParameter(new GetOrPostParameter("param2", "value2"));
+            request.AddOrUpdateParameter(new GetOrPostParameter("param3", "value3"));
 
             var client   = new RestClient("http://example.com/resource?param1=value1");
             var expected = new Uri("http://example.com/resource?param1=value1&param2=value2&param3=value3");
@@ -323,7 +323,7 @@ namespace RestSharp.Tests
             var request = new RestRequest();
             // adding parameter with o-slash character which is encoded differently between
             // utf-8 and iso-8859-1
-            request.AddOrUpdateParameter("town", "Hillerød");
+            request.AddOrUpdateParameter(new GetOrPostParameter("town", "Hillerød"));
 
             var client = new RestClient("http://example.com/resource");
 
@@ -353,7 +353,7 @@ namespace RestSharp.Tests
             var request = new RestRequest();
             // adding parameter with o-slash character which is encoded differently between
             // utf-8 and iso-8859-1
-            request.AddOrUpdateParameter("parameter", "some:value");
+            request.AddOrUpdateParameter(new GetOrPostParameter("parameter", "some:value"));
 
             var client = new RestClient("http://example.com/resource");
 
@@ -393,8 +393,8 @@ namespace RestSharp.Tests
         {
             var request = new RestRequest();
 
-            request.AddOrUpdateParameter("param2", "value2");
-            request.AddOrUpdateParameter("param2", "value2-1");
+            request.AddOrUpdateParameter(new GetOrPostParameter("param2", "value2"));
+            request.AddOrUpdateParameter(new GetOrPostParameter("param2", "value2-1"));
 
             var client   = new RestClient("http://example.com/resource?param1=value1");
             var expected = new Uri("http://example.com/resource?param1=value1&param2=value2-1");

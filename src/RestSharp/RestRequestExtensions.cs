@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace RestSharp
             params ISerializer[] serializers
         )
         {
-            var body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
+            var body = request.Parameters.OfType<BodyParameter>().FirstOrDefault();
             if (body == null) return;
 
             if (body.DataFormat == DataFormat.None)

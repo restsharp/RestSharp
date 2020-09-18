@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -35,7 +35,7 @@ namespace RestSharp
         protected RestResponseBase()
         {
             ResponseStatus = ResponseStatus.None;
-            Headers        = new List<Parameter>();
+            Headers        = new List<HttpHeaderParameter>();
             Cookies        = new List<RestResponseCookie>();
         }
 
@@ -111,7 +111,7 @@ namespace RestSharp
         /// <summary>
         /// Headers returned by server with the response
         /// </summary>
-        public IList<Parameter> Headers { get; protected internal set; }
+        public IList<HttpHeaderParameter> Headers { get; protected internal set; }
 
         /// <summary>
         /// Status of the request. Will return Error for transport errors.
@@ -183,7 +183,7 @@ namespace RestSharp
     {
         RestResponse SetHeaders(IEnumerable<HttpHeader> headers)
             => this.With(
-                x => x.Headers = headers.Select(p => new Parameter(p.Name, p.Value, ParameterType.HttpHeader)).ToList()
+                x => x.Headers = headers.Select(p => new HttpHeaderParameter(p.Name, p.Value)).ToList()
             );
 
         RestResponse SetCookies(IEnumerable<HttpCookie> cookies)

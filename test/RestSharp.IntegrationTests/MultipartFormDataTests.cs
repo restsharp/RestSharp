@@ -78,7 +78,7 @@ namespace RestSharp.IntegrationTests
                 Method                  = Method.POST
             };
 
-            request.AddParameter("title", "test", ParameterType.RequestBody);
+            request.AddBodyParameter("title", "test");
 
             var response = _client.Execute(request);
 
@@ -94,7 +94,7 @@ namespace RestSharp.IntegrationTests
                 Method                  = Method.POST
             };
 
-            request.AddParameter("title", "test", ParameterType.RequestBody);
+            request.AddBodyParameter("title", "test");
 
             IRestResponse syncResponse = null;
 
@@ -123,7 +123,7 @@ namespace RestSharp.IntegrationTests
                 Method                  = Method.POST
             };
 
-            request.AddParameter("title", "test", ParameterType.RequestBody);
+            request.AddBodyParameter("title", "test");
 
             var response = await _client.ExecuteAsync(request);
             Assert.Null(response.ErrorException);
@@ -157,7 +157,7 @@ namespace RestSharp.IntegrationTests
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             request.AddFile("fileName", path);
 
-            request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+            request.AddBodyParameter("controlName", "test", "application/json");
 
             string boundary = null;
             request.OnBeforeRequest += http => boundary = http.FormBoundary;
@@ -182,7 +182,7 @@ namespace RestSharp.IntegrationTests
 
             request.AddFile("fileName", path);
 
-            request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+            request.AddBodyParameter("controlName", "test", "application/json");
 
             string boundary = null;
             request.OnBeforeRequest += http => boundary = http.FormBoundary;
@@ -207,7 +207,7 @@ namespace RestSharp.IntegrationTests
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             request.AddFile("fileName", path);
 
-            request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+            request.AddBodyParameter("controlName", "test", "application/json");
 
             string boundary = null;
             request.OnBeforeRequest += http => boundary = http.FormBoundary;
@@ -230,7 +230,7 @@ namespace RestSharp.IntegrationTests
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
             request.AddFile("fileName", path);
 
-            request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+            request.AddBodyParameter("controlName", "test", "application/json");
 
             string boundary = null;
             request.OnBeforeRequest += http => boundary = http.FormBoundary;
