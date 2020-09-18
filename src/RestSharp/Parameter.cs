@@ -12,12 +12,11 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 #endregion
 
 using System;
-using JetBrains.Annotations;
 using RestSharp.Validation;
 
 namespace RestSharp
@@ -25,7 +24,6 @@ namespace RestSharp
     /// <summary>
     /// Parameter container for REST requests
     /// </summary>
-    [Obsolete("Use Add[XXX]Parameter methods of IRestRequest instead of instantiating the Parameter class.")]
     public class Parameter : IEquatable<Parameter>
     {
         public Parameter(string name, object value, ParameterType type)
