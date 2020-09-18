@@ -40,6 +40,8 @@ namespace RestSharp
         static readonly Regex PortSplitRegex = new Regex(@":\d+");
 
         readonly IList<DecompressionMethods> _allowedDecompressionMethods;
+        readonly List<Parameter> _parameters;
+        readonly List<FileParameter> _files;
 
         Action<Stream, IHttpResponse> _advancedResponseWriter;
 
@@ -52,13 +54,15 @@ namespace RestSharp
         {
             RequestFormat                = DataFormat.Xml;
             Method                       = Method.GET;
-            Parameters                   = new PublicReadOnlyCollection<Parameter>();
-            Files                        = new PublicReadOnlyCollection<FileParameter>();
+            _parameters                  = new List<Parameter>();
+            Parameters                   = _parameters.AsReadOnly();
+            _files                       = new List<FileParameter>();
+            Files                        = _files.AsReadOnly();
             _allowedDecompressionMethods = new List<DecompressionMethods>();
 
-            OnBeforeDeserialization = r => { };
-            OnBeforeRequest = h => { };
-	   }
+            OnBeforeDeserialization      = r => { };
+            OnBeforeRequest              = h => { };
+        }
 
         /// <summary>
         /// Sets Method property to value of method
@@ -336,7 +340,7 @@ namespace RestSharp
         public IRestRequest AddObject(object obj) => this.With(x => x.AddObject(obj, new string[] { }));
 
         /// <inheritdoc />
-        public IRestRequest AddParameter(Parameter p) => this.With(x => x.Parameters.Add(p));
+        public IRestRequest AddParameter(Parameter p) => this.With(x => x._parameters.Add(p));
 
         /// <inheritdoc />
         public IRestRequest AddParameter(string name, object value) => AddParameter(new Parameter(name, value, ParameterType.GetOrPost));
@@ -354,9 +358,9 @@ namespace RestSharp
             var p = Parameters
                 .FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
 
-            if (p != null) Parameters.Remove(p);
+            if (p != null) _parameters.Remove(p);
 
-            Parameters.Add(parameter);
+            _parameters.Add(parameter);
             return this;
         }
 
@@ -435,10 +439,10 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        public PublicReadOnlyCollection<Parameter> Parameters { get; }
+        public IReadOnlyCollection<Parameter> Parameters { get; }
 
         /// <inheritdoc />
-        public PublicReadOnlyCollection<FileParameter> Files { get; }
+        public IReadOnlyCollection<FileParameter> Files { get; }
 
         /// <inheritdoc />
         public Method Method { get; set; }
@@ -485,6 +489,6 @@ namespace RestSharp
         /// <inheritdoc />
         public IRestRequest AddUrlSegment(string name, object value) => AddParameter(name, value, ParameterType.UrlSegment);
 
-        IRestRequest AddFile(FileParameter file) => this.With(x => x.Files.Add(file));
+        IRestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
     }
 }
