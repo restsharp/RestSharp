@@ -12,7 +12,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 #endregion
 
@@ -60,12 +60,12 @@ namespace RestSharp
         /// Container of all HTTP parameters to be passed with the request.
         /// See AddParameter() for explanation of the types of parameters that can be passed
         /// </summary>
-        List<Parameter> Parameters { get; }
+        PublicReadOnlyCollection<Parameter> Parameters { get; }
 
         /// <summary>
         /// Container of all the files to be uploaded with the request.
         /// </summary>
-        List<FileParameter> Files { get; }
+        PublicReadOnlyCollection<FileParameter> Files { get; }
 
         /// <summary>
         /// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
@@ -150,12 +150,12 @@ namespace RestSharp
         /// When supplied, the function will be called before calling the deserializer
         /// </summary>
         Action<IRestResponse>? OnBeforeDeserialization { get; set; }
-        
+
         /// <summary>
         /// When supplied, the function will be called before making a request
         /// </summary>
         Action<IHttp>? OnBeforeRequest { get; set; }
-        
+
         /// <summary>
         /// Serialized request body to be accessed in authenticators
         /// </summary>
@@ -277,6 +277,7 @@ namespace RestSharp
         /// </summary>
         /// <param name="p">Parameter to add</param>
         /// <returns></returns>
+        [Obsolete("Use AddOrUpdateParameter methods of IRestRequest instead of instantiating the Parameter class.")]
         IRestRequest AddParameter(Parameter p);
 
         /// <summary>
@@ -322,8 +323,9 @@ namespace RestSharp
         /// </summary>
         /// <param name="parameter">Parameter to add</param>
         /// <returns></returns>
+        [Obsolete("Use AddOrUpdateParameter methods of IRestRequest instead of instantiating the Parameter class.")]
         IRestRequest AddOrUpdateParameter(Parameter parameter);
-        
+
         /// <summary>
         /// Add or update parameters to the request
         /// </summary>
@@ -375,7 +377,7 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         IRestRequest AddHeader(string name, string value);
-        
+
         /// <summary>
         /// Uses AddHeader(name, value) in a convenient way to pass
         /// in multiple headers at once.

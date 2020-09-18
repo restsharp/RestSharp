@@ -52,8 +52,8 @@ namespace RestSharp
         {
             RequestFormat                = DataFormat.Xml;
             Method                       = Method.GET;
-            Parameters                   = new List<Parameter>();
-            Files                        = new List<FileParameter>();
+            Parameters                   = new PublicReadOnlyCollection<Parameter>();
+            Files                        = new PublicReadOnlyCollection<FileParameter>();
             _allowedDecompressionMethods = new List<DecompressionMethods>();
 
             OnBeforeDeserialization = r => { };
@@ -435,10 +435,10 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        public List<Parameter> Parameters { get; }
+        public PublicReadOnlyCollection<Parameter> Parameters { get; }
 
         /// <inheritdoc />
-        public List<FileParameter> Files { get; }
+        public PublicReadOnlyCollection<FileParameter> Files { get; }
 
         /// <inheritdoc />
         public Method Method { get; set; }
