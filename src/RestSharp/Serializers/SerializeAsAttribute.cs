@@ -76,7 +76,7 @@ namespace RestSharp.Serializers
             {
                 NameStyle.CamelCase  => name.ToCamelCase(Culture),
                 NameStyle.PascalCase => name.ToPascalCase(Culture),
-                NameStyle.LowerCase  => name.ToLower(),
+                NameStyle.LowerCase  => name.ToLower(Culture),
                 _                    => input
             };
         }

@@ -36,7 +36,7 @@ namespace RestSharp
     {
         const string LineBreak = "\r\n";
 
-        public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpper();
+        public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpperInvariant();
 
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
@@ -53,7 +53,7 @@ namespace RestSharp
 
             void AddSyncHeaderActions()
             {
-                _restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLower().Contains("keep-alive"); });
+                _restrictedHeaderActions.Add("Connection", (r, v) => { r.KeepAlive = v.ToLowerInvariant().Contains("keep-alive"); });
                 _restrictedHeaderActions.Add("Content-Length", (r, v) => r.ContentLength = Convert.ToInt64(v));
                 _restrictedHeaderActions.Add("Expect", (r, v) => r.Expect                = v);
 

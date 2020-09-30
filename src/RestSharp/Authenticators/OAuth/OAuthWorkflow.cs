@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -215,7 +215,7 @@ namespace RestSharp.Authenticators.OAuth
                 new WebPair("oauth_version", Version ?? "1.0")
             };
 
-            if (!Token.IsEmpty()) authParameters.Add(new WebPair("oauth_token", Token));
+            if (!Token.IsEmpty()) authParameters.Add(new WebPair("oauth_token", Token, true));
 
             if (!CallbackUrl.IsEmpty()) authParameters.Add(new WebPair("oauth_callback", CallbackUrl, true));
 
