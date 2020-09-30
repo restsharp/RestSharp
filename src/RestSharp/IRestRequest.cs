@@ -159,7 +159,7 @@ namespace RestSharp
         /// <summary>
         /// Serialized request body to be accessed in authenticators
         /// </summary>
-        RequestBody Body { get; set; }
+        RequestBody? Body { get; set; }
 
         /// <summary>
         /// Adds a file to the Files collection to be included with a POST or PUT request

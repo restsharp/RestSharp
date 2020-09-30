@@ -14,17 +14,14 @@
 
 using System;
 
-namespace RestSharp
-{
-    [Obsolete("The RestBody class will be internal in future versions")]
-    public class RequestBody
-    {
+namespace RestSharp {
+    public class RequestBody {
         public string ContentType { get; }
         public string Name { get; }
         public object Value { get; }
 
-        public RequestBody(string contentType, string name, object value)
-        {
+        [Obsolete("The RestBody constructor will be internal in future versions")]
+        public RequestBody(string contentType, string name, object value) {
             ContentType = contentType;
             Name        = name;
             Value       = value;
