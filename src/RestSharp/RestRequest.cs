@@ -263,7 +263,7 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            return AddParameter(new JsonBodyParameter("", obj));
+            return AddParameter(ParameterFactory.CreateJsonBody(obj));
         }
 
         /// <inheritdoc />
@@ -271,7 +271,7 @@ namespace RestSharp
         {
             RequestFormat = DataFormat.Json;
 
-            return AddParameter(new JsonBodyParameter(contentType, obj, contentType));
+            return AddParameter(ParameterFactory.CreateJsonBody(obj, contentType));
         }
 
         /// <inheritdoc />
@@ -287,7 +287,7 @@ namespace RestSharp
             else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
                 xmlNamespace = XmlSerializer.Namespace;
 
-            AddParameter(new XmlBodyParameter("", obj, xmlNamespace));
+            AddParameter(ParameterFactory.CreateXmlBody(obj, xmlNamespace));
 
             return this;
         }
@@ -343,16 +343,15 @@ namespace RestSharp
         public IRestRequest AddParameter(Parameter p) => this.With(x => x._parameters.Add(p));
 
         /// <inheritdoc />
-        public IRestRequest AddParameter(string name, object value) => AddParameter(new GetOrPostParameter(name, value));
+        public IRestRequest AddParameter(string name, object value) => AddParameter(ParameterFactory.CreateGetOrPost(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddBodyParameter(string name, object value, string? contentType = null) => AddParameter(new BodyParameter(name, value, contentType));
+        public IRestRequest AddBodyParameter(string name, object value, string? contentType = null) => AddParameter(ParameterFactory.CreateBodyParameter(name, value, contentType));
 
         /// <inheritdoc />
         public IRestRequest AddOrUpdateParameter(Parameter parameter)
         {
-            var p = Parameters
-                .FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
+            var p = Parameters.FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
 
             if (p != null) _parameters.Remove(p);
 
@@ -377,7 +376,7 @@ namespace RestSharp
             if (name == "Host" && InvalidHost(value))
                 throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
 
-            return AddParameter(new HttpHeaderParameter(name, value));
+            return AddParameter(ParameterFactory.CreateHttpHeader(name, value));
         }
 
         /// <inheritdoc />
@@ -401,16 +400,16 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        public IRestRequest AddCookie(string name, string value) => AddParameter(new CookieParameter(name, value));
+        public IRestRequest AddCookie(string name, string value) => AddParameter(ParameterFactory.CreateCookie(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddUrlSegment(string name, string value) => AddParameter(new UrlSegmentParameter(name, value));
+        public IRestRequest AddUrlSegment(string name, string value) => AddParameter(ParameterFactory.CreateUrlSegment(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddQueryParameter(string name, string value) => AddParameter(new QueryStringParameter(name, value));
+        public IRestRequest AddQueryParameter(string name, string value) => AddParameter(ParameterFactory.CreateQueryString(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddQueryParameter(string name, string value, bool encode) => AddParameter(new QueryStringParameter(name, value, encode));
+        public IRestRequest AddQueryParameter(string name, string value, bool encode) => AddParameter(ParameterFactory.CreateQueryString(name, value, encode));
 
         /// <inheritdoc />
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)
@@ -470,7 +469,7 @@ namespace RestSharp
         public int Attempts { get; private set; }
 
         /// <inheritdoc />
-        public IRestRequest AddUrlSegment(string name, object value) => AddParameter(new UrlSegmentParameter(name, value));
+        public IRestRequest AddUrlSegment(string name, object value) => AddParameter(ParameterFactory.CreateUrlSegment(name, value));
 
         IRestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
     }

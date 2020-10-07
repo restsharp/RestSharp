@@ -49,6 +49,6 @@ namespace RestSharp.Authenticators
             => _tokenType = tokenType;
 
         protected override Parameter GetAuthenticationParameter(string accessToken)
-            => new HttpHeaderParameter("Authorization", $"{_tokenType} {accessToken}");
+            => ParameterFactory.CreateHttpHeader("Authorization", $"{_tokenType} {accessToken}");
     }
 }

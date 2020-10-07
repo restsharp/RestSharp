@@ -357,7 +357,7 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(new HttpHeaderParameter(name, value));
+            => restClient.AddDefaultParameter(ParameterFactory.CreateHttpHeader(name, value));
 
         /// <summary>
         /// Adds default headers to the RestClient. Used on every request made by this client instance.
@@ -368,7 +368,7 @@ namespace RestSharp
         public static IRestClient AddDefaultHeaders(this IRestClient restClient, Dictionary<string, string> headers)
         {
             foreach (var header in headers)
-                restClient.AddOrUpdateDefaultParameter(new HttpHeaderParameter(header.Key, header.Value));
+                restClient.AddOrUpdateDefaultParameter(ParameterFactory.CreateHttpHeader(header.Key, header.Value));
 
             return restClient;
         }
@@ -381,7 +381,7 @@ namespace RestSharp
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultUrlSegment(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(new UrlSegmentParameter(name, value));
+            => restClient.AddDefaultParameter(ParameterFactory.CreateUrlSegment(name, value));
 
         /// <summary>
         /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
@@ -391,7 +391,7 @@ namespace RestSharp
         /// <param name="value">Value of the query parameter to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultQueryParameter(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(new QueryStringParameter(name, value));
+            => restClient.AddDefaultParameter(ParameterFactory.CreateQueryString(name, value));
 
         static void ThrowIfError(IRestResponse response)
         {

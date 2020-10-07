@@ -183,7 +183,7 @@ namespace RestSharp
     {
         RestResponse SetHeaders(IEnumerable<HttpHeader> headers)
             => this.With(
-                x => x.Headers = headers.Select(p => new HttpHeaderParameter(p.Name, p.Value)).ToList()
+                x => x.Headers = headers.Select(p => ParameterFactory.CreateHttpHeader(p.Name, p.Value)).ToList()
             );
 
         RestResponse SetCookies(IEnumerable<HttpCookie> cookies)

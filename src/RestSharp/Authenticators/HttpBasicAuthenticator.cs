@@ -41,6 +41,6 @@ namespace RestSharp.Authenticators
 
         // return ;
         protected override Parameter GetAuthenticationParameter(string accessToken)
-            => new HttpHeaderParameter("Authorization", $"Basic {accessToken}");
+            => ParameterFactory.CreateHttpHeader("Authorization", $"Basic {accessToken}");
     }
 }

@@ -189,7 +189,7 @@ namespace RestSharp.IntegrationTests
             const string bodyData      = "abc123 foo bar baz BING!";
             const string multipartName = "mybody";
 
-            request.AddBodyParameter(multipartName, bodyData, contentType);
+            request.AddBodyParameter(bodyData, contentType);
 
             client.Execute(request);
 

@@ -34,7 +34,7 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_add_default_and_request_query_get_parameters()
         {
-            var client = new RestClient(_server.Url).AddDefaultParameter(new QueryStringParameter("foo", "bar"));
+            var client = new RestClient(_server.Url).AddDefaultParameter(ParameterFactory.CreateQueryString("foo", "bar"));
             var request = new RestRequest().AddQueryParameter("foo1", "bar1");
 
             client.Get(request);
@@ -47,7 +47,7 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_add_default_and_request_url_get_parameters()
         {
-            var client = new RestClient(_server.Url + "{foo}/").AddDefaultParameter(new UrlSegmentParameter("foo", "bar"));
+            var client = new RestClient(_server.Url + "{foo}/").AddDefaultParameter(ParameterFactory.CreateUrlSegment("foo", "bar"));
             var request = new RestRequest("{foo1}").AddUrlSegment("foo1", "bar1");
 
             client.Get(request);
@@ -58,7 +58,7 @@ namespace RestSharp.IntegrationTests
         [Test]
         public void Should_not_throw_exception_when_name_is_null()
         {
-            var client = new RestClient(_server.Url + "{foo}/").AddDefaultParameter(new UrlSegmentParameter("foo", "bar"));
+            var client = new RestClient(_server.Url + "{foo}/").AddDefaultParameter(ParameterFactory.CreateUrlSegment("foo", "bar"));
             var request = new RestRequest("{foo1}").AddBodyParameter(null, "value");
 
             client.Execute(request);

@@ -268,7 +268,7 @@ namespace RestSharp.Tests
         {
             var request = new RestRequest("resource", Method.POST);
 
-            request.AddParameter(new QueryStringParameter("foo", "bar"));
+            request.AddParameter(ParameterFactory.CreateQueryString("foo", "bar"));
 
             var client   = new RestClient("http://example.com");
             var expected = new Uri("http://example.com/resource?foo=bar");

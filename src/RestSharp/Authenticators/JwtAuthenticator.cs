@@ -39,6 +39,6 @@ namespace RestSharp.Authenticators
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
-            => request.AddOrUpdateParameter(new HttpHeaderParameter("Authorization", _authHeader));
+            => request.AddOrUpdateParameter(ParameterFactory.CreateHttpHeader("Authorization", _authHeader));
     }
 }

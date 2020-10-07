@@ -195,7 +195,7 @@ namespace RestSharp
             // add Accept header based on registered deserializers
             var accepts = AcceptTypes.JoinToString(", ");
 
-            this.AddOrUpdateDefaultParameter(new HttpHeaderParameter("Accept", accepts));
+            this.AddOrUpdateDefaultParameter(ParameterFactory.CreateHttpHeader("Accept", accepts));
         }
 
         /// <inheritdoc />>
@@ -341,31 +341,13 @@ namespace RestSharp
 
         IEnumerable<Parameter> GetDefaultQueryStringParameters(IRestRequest request)
             => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
-                ? DefaultParameters
-                    .Where(
-                        p => p.Type == ParameterType.GetOrPost   ||
-                            p.Type  == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
-                    )
-                : DefaultParameters
-                    .Where(
-                        p => p.Type == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
-                    );
+                ? DefaultParameters.OfType<GetOrPostParameter>()
+                : DefaultParameters.OfType<QueryStringParameter>();
 
         static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
             => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
-                ? request.Parameters
-                    .Where(
-                        p => p.Type == ParameterType.GetOrPost   ||
-                            p.Type  == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
-                    )
-                : request.Parameters
-                    .Where(
-                        p => p.Type == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
-                    );
+                ? request.Parameters.OfType<GetOrPostParameter>()
+                : request.Parameters.OfType<QueryStringParameter>();
 
         Func<IDeserializer>? GetHandler(string contentType)
         {
@@ -454,7 +436,7 @@ namespace RestSharp
             ))
             {
                 var accepts = Join(", ", AcceptTypes);
-                requestParameters.Add(new HttpHeaderParameter("Accept", accepts));
+                requestParameters.Add(ParameterFactory.CreateHttpHeader("Accept", accepts));
             }
 
             http.Url                                  = BuildUri(request);

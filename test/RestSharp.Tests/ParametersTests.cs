@@ -19,7 +19,7 @@ namespace RestSharp.Tests
                 {"Content-Encoding", "gzip, deflate"}
             };
 
-            var expected = headers.Select(x => new HttpHeaderParameter(x.Key, x.Value));
+            var expected = headers.Select(x => ParameterFactory.CreateHttpHeader(x.Key, x.Value));
 
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeaders(headers);

@@ -313,7 +313,7 @@ namespace RestSharp.Authenticators
             request.AddOrUpdateParameters(oauthParameters);
 
             IEnumerable<Parameter> CreateHeaderParameters()
-                => new[] {new HttpHeaderParameter("Authorization", GetAuthorizationHeader())};
+                => new[] {ParameterFactory.CreateHttpHeader("Authorization", GetAuthorizationHeader())};
 
             IEnumerable<Parameter> CreateUrlParameters()
                 => oauth.Parameters.Select(p => new GetOrPostParameter(p.Name, HttpUtility.UrlDecode(p.Value)));
