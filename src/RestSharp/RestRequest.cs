@@ -346,7 +346,7 @@ namespace RestSharp
         public IRestRequest AddParameter(string name, object value) => AddParameter(ParameterFactory.CreateGetOrPost(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddBodyParameter(string name, object value, string? contentType = null) => AddParameter(ParameterFactory.CreateBodyParameter(name, value, contentType));
+        public IRestRequest AddBodyParameter(string name, object value, string contentType = null) => AddParameter(ParameterFactory.CreateBodyParameter(name, value, contentType));
 
         /// <inheritdoc />
         public IRestRequest AddOrUpdateParameter(Parameter parameter)
