@@ -24,7 +24,7 @@ namespace RestSharp
     /// <summary>
     /// Parameter container for REST requests
     /// </summary>
-    public abstract class Parameter : IEquatable<Parameter>
+    public class Parameter : IEquatable<Parameter>
     {
         /// <summary>
         /// Name of the parameter
@@ -39,14 +39,16 @@ namespace RestSharp
         /// <summary>
         /// Type of the parameter
         /// </summary>
-        public abstract ParameterType Type { get;}
+        public virtual ParameterType Type { get; protected set; } = ParameterType.GetOrPost;
 
         protected Parameter(object value) => Value = value;
+
         protected Parameter(string name, object value) : this(value)
         {
             Ensure.NotEmpty(name, nameof(name));
             Name = name;
         }
+        public Parameter(string name, object value, ParameterType type) : this(name, value) => Type = type;
 
         /// <summary>
         /// Return a human-readable representation of this parameter
@@ -83,80 +85,207 @@ namespace RestSharp
         // ReSharper enable NonReadonlyMemberInGetHashCode
     }
 
-    public class CookieParameter : Parameter
+    public class CookieParameter : Parameter, IEquatable<CookieParameter>
     {
-        public override ParameterType Type { get; } = ParameterType.Cookie;
+        public override ParameterType Type { get; protected set; } = ParameterType.Cookie;
         internal CookieParameter(string name, string value) : base(name, value) {}
-    }
 
-    public class HttpHeaderParameter : Parameter
-    {
-        public override ParameterType Type { get; } = ParameterType.HttpHeader;
-        internal HttpHeaderParameter(string name, string value) : base(name, value) {}
-    }
-
-    public class GetOrPostParameter : Parameter
-    {
-        public virtual string? ContentType { get; }
-        public override ParameterType Type { get; } = ParameterType.GetOrPost;
-
-        internal GetOrPostParameter(string name, object value, string? contentType = null) : base(name, value) => ContentType = contentType;
-    }
-
-    public class QueryStringParameter : GetOrPostParameter
-    {
-        public override ParameterType Type { get; } = ParameterType.QueryString;
-
-        internal QueryStringParameter(string name, string value, bool encode) : base(name, value)
-            => Type = encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode;
-    }
-
-    public class UrlSegmentParameter : Parameter
-    {
-        public override ParameterType Type { get; } = ParameterType.UrlSegment;
-        internal UrlSegmentParameter(string name, string value) : base(name, value)
-        {
-            Value = value?.Replace("%2F", "/").Replace("%2f", "/");
-        }
-    }
-
-    public class BodyParameter : Parameter
-    {
-        public virtual string? ContentType { get; }
-        public virtual DataFormat DataFormat { get; } = DataFormat.None;
-        public override ParameterType Type { get; } = ParameterType.RequestBody;
-
-        internal BodyParameter(string name, object value) : base(value) => Name = name;
-        internal BodyParameter(string name, object value, string? contentType) : this(name, value) => ContentType = contentType;
-
-        public bool Equals(BodyParameter other)
+        public bool Equals(CookieParameter? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-
-            return base.Equals(other)
-                && DataFormat == other.DataFormat
-                && ContentType == other.ContentType;
+            return base.Equals(other) && Type == other.Type;
         }
 
-        public override bool Equals(object obj)
-            => !ReferenceEquals(null, obj)
-               && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && Equals((BodyParameter) obj));
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+
+            return Equals((CookieParameter) obj);
+        }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = base.GetHashCode();
+                return (base.GetHashCode() * 397) ^ (int) Type;
+            }
+        }
+    }
 
-                hashCode = (hashCode * 397) ^ (int) DataFormat;
+    public class HttpHeaderParameter : Parameter, IEquatable<HttpHeaderParameter>
+    {
+        public override ParameterType Type { get; protected set; } = ParameterType.HttpHeader;
+        internal HttpHeaderParameter(string name, string value) : base(name, value) {}
+
+        public bool Equals(HttpHeaderParameter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) && Type == other.Type;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+
+            return Equals((HttpHeaderParameter) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ (int) Type;
+            }
+        }
+    }
+
+    public class GetOrPostParameter : Parameter, IEquatable<GetOrPostParameter>
+    {
+        public virtual string? ContentType { get; }
+        public override ParameterType Type { get; protected set; } = ParameterType.GetOrPost;
+
+        internal GetOrPostParameter(string name, object value, string? contentType = null) : base(name, value) => ContentType = contentType;
+
+        public bool Equals(GetOrPostParameter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) && ContentType == other.ContentType && Type == other.Type;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+
+            return Equals((GetOrPostParameter) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = base.GetHashCode();
                 hashCode = (hashCode * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int) Type;
                 return hashCode;
             }
         }
     }
 
-    public class XmlBodyParameter : BodyParameter
+    public class QueryStringParameter : GetOrPostParameter, IEquatable<QueryStringParameter>
+    {
+        public override ParameterType Type { get; protected set; } = ParameterType.QueryString;
+
+        internal QueryStringParameter(string name, string value, bool encode) : base(name, value)
+            => Type = encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode;
+
+        public bool Equals(QueryStringParameter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) && Type == other.Type;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+
+            return Equals((QueryStringParameter) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ (int) Type;
+            }
+        }
+    }
+
+    public class UrlSegmentParameter : Parameter, IEquatable<UrlSegmentParameter>
+    {
+        public override ParameterType Type { get; protected set; } = ParameterType.UrlSegment;
+        internal UrlSegmentParameter(string name, string value) : base(name, value) => Value = value?.Replace("%2F", "/").Replace("%2f", "/");
+
+        public bool Equals(UrlSegmentParameter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) && Type == other.Type;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+
+            return Equals((UrlSegmentParameter) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ (int) Type;
+            }
+        }
+    }
+
+    public class BodyParameter : Parameter, IEquatable<BodyParameter>
+    {
+        public virtual string? ContentType { get; }
+        public virtual DataFormat DataFormat { get; } = DataFormat.None;
+        public override ParameterType Type { get; protected set; } = ParameterType.RequestBody;
+
+        internal BodyParameter(string name, object value) : base(value) => Name = name;
+        internal BodyParameter(string name, object value, string? contentType) : this(name, value) => ContentType = contentType;
+
+        public bool Equals(BodyParameter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) && ContentType == other.ContentType && DataFormat == other.DataFormat && Type == other.Type;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+
+            return Equals((BodyParameter) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int) DataFormat;
+                hashCode = (hashCode * 397) ^ (int) Type;
+                return hashCode;
+            }
+        }
+    }
+
+    public class XmlBodyParameter : BodyParameter, IEquatable<XmlBodyParameter>
     {
         public override DataFormat DataFormat { get; } = DataFormat.Xml;
         public override string ContentType { get; } = Serialization.ContentType.Xml;
@@ -188,7 +317,7 @@ namespace RestSharp
         }
     }
 
-    public class JsonBodyParameter : BodyParameter
+    public class JsonBodyParameter : BodyParameter, IEquatable<JsonBodyParameter>
     {
         public override DataFormat DataFormat { get; } = DataFormat.Json;
         public override string ContentType { get; } = Serialization.ContentType.Json;
@@ -198,6 +327,25 @@ namespace RestSharp
         public override bool Equals(object obj)
             => !ReferenceEquals(null, obj)
                && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && Equals((JsonBodyParameter) obj));
+
+        public bool Equals(JsonBodyParameter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) && DataFormat == other.DataFormat && ContentType == other.ContentType;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) DataFormat;
+                hashCode = (hashCode * 397) ^ ContentType.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 
     public static class ParameterFactory
