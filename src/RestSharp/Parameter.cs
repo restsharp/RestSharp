@@ -147,17 +147,16 @@ namespace RestSharp
 
     public class GetOrPostParameter : Parameter, IEquatable<GetOrPostParameter>
     {
-        public virtual string? ContentType { get; }
         public override ParameterType Type { get; protected set; } = ParameterType.GetOrPost;
 
-        internal GetOrPostParameter(string name, object value, string? contentType = null) : base(name, value) => ContentType = contentType;
+        internal GetOrPostParameter(string name, object value) : base(name, value) {}
 
         public bool Equals(GetOrPostParameter? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return base.Equals(other) && ContentType == other.ContentType && Type == other.Type;
+            return base.Equals(other) && Type == other.Type;
         }
 
         public override bool Equals(object? obj)
@@ -174,7 +173,6 @@ namespace RestSharp
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (int) Type;
                 return hashCode;
             }
@@ -356,7 +354,7 @@ namespace RestSharp
         public static UrlSegmentParameter CreateUrlSegment(string name, object value) => new UrlSegmentParameter(name, $"{value}");
         public static QueryStringParameter CreateQueryString(string name, string value, bool encode = true) => new QueryStringParameter(name, value, encode);
         public static QueryStringParameter CreateQueryString(string name, object value, bool encode = true) => CreateQueryString(name, value.ToString(), encode);
-        public static GetOrPostParameter CreateGetOrPost(string name, object value, string? contentType = null) => new GetOrPostParameter(name, value, contentType);
+        public static GetOrPostParameter CreateGetOrPost(string name, object value) => new GetOrPostParameter(name, value);
         public static CookieParameter CreateCookie(string name, string value) => new CookieParameter(name, value);
         public static CookieParameter CreateCookie(string name, object value) => CreateCookie(name, value.ToString());
         public static HttpHeaderParameter CreateHttpHeader(string name, string value) => new HttpHeaderParameter(name, value);
@@ -380,7 +378,7 @@ namespace RestSharp
             ParameterType.RequestBody => CreateBodyParameter(name, value, contentType),
             ParameterType.QueryString => CreateQueryString(name, value),
             ParameterType.QueryStringWithoutEncode => CreateQueryString(name, value, false),
-            _ => CreateGetOrPost(name, value, contentType)
+            _ => CreateGetOrPost(name, value)
         };
     }
 }
