@@ -346,7 +346,10 @@ namespace RestSharp
         public IRestRequest AddParameter(string name, object value) => AddParameter(ParameterFactory.CreateGetOrPost(name, value));
 
         /// <inheritdoc />
-        public IRestRequest AddBodyParameter(string name, object value, string contentType = null) => AddParameter(ParameterFactory.CreateBodyParameter(name, value, contentType));
+        public IRestRequest AddParameter(string name, object value, ParameterType type) => AddParameter(ParameterFactory.Create(name, value, type));
+
+        /// <inheritdoc />
+        public IRestRequest AddParameter(string name, object value, string contentType, ParameterType type) => AddParameter(ParameterFactory.Create(name, value, contentType, type));
 
         /// <inheritdoc />
         public IRestRequest AddOrUpdateParameter(Parameter parameter)
@@ -367,6 +370,15 @@ namespace RestSharp
 
             return this;
         }
+
+        /// <inheritdoc />
+        public IRestRequest AddOrUpdateParameter(string name, object value) => AddOrUpdateParameter(new GetOrPostParameter(name, value));
+
+        /// <inheritdoc />
+        public IRestRequest AddOrUpdateParameter(string name, object value, ParameterType type) => AddOrUpdateParameter(ParameterFactory.Create(name, value, type));
+
+        /// <inheritdoc />
+        public IRestRequest AddOrUpdateParameter(string name, object value, string contentType, ParameterType type) => AddOrUpdateParameter(ParameterFactory.Create(name, value, contentType, type));
 
         /// <inheritdoc />
         public IRestRequest AddHeader(string name, string value)

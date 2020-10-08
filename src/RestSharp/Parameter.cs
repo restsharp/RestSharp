@@ -97,8 +97,10 @@ namespace RestSharp
 
     public class GetOrPostParameter : Parameter
     {
+        public virtual string? ContentType { get; }
         public override ParameterType Type { get; } = ParameterType.GetOrPost;
-        internal GetOrPostParameter(string name, object value) : base(name, value) {}
+
+        internal GetOrPostParameter(string name, object value, string? contentType = null) : base(name, value) => ContentType = contentType;
     }
 
     public class QueryStringParameter : GetOrPostParameter
@@ -200,14 +202,38 @@ namespace RestSharp
 
     public static class ParameterFactory
     {
-        public static BodyParameter CreateBodyParameter(string name, object value, string contentType) => new BodyParameter(name, value, contentType);
+        public static BodyParameter CreateBodyParameter(string name, object value, string? contentType = null) => new BodyParameter(name, value, contentType);
         public static XmlBodyParameter CreateXmlBody(object value, string? xmlNamespace = null) => new XmlBodyParameter(value, xmlNamespace);
         public static JsonBodyParameter CreateJsonBody(object value, string? contentType = null) => new JsonBodyParameter(value, contentType);
         public static UrlSegmentParameter CreateUrlSegment(string name, string value) => new UrlSegmentParameter(name, value);
         public static UrlSegmentParameter CreateUrlSegment(string name, object value) => new UrlSegmentParameter(name, $"{value}");
         public static QueryStringParameter CreateQueryString(string name, string value, bool encode = true) => new QueryStringParameter(name, value, encode);
-        public static GetOrPostParameter CreateGetOrPost(string name, object value) => new GetOrPostParameter(name, value);
+        public static QueryStringParameter CreateQueryString(string name, object value, bool encode = true) => CreateQueryString(name, value.ToString(), encode);
+        public static GetOrPostParameter CreateGetOrPost(string name, object value, string? contentType = null) => new GetOrPostParameter(name, value, contentType);
         public static CookieParameter CreateCookie(string name, string value) => new CookieParameter(name, value);
+        public static CookieParameter CreateCookie(string name, object value) => CreateCookie(name, value.ToString());
         public static HttpHeaderParameter CreateHttpHeader(string name, string value) => new HttpHeaderParameter(name, value);
+        public static HttpHeaderParameter CreateHttpHeader(string name, object value) => CreateHttpHeader(name, value.ToString());
+
+        public static Parameter Create(string name, object value, ParameterType type)=> type switch
+        {
+            ParameterType.Cookie => CreateCookie(name, value),
+            ParameterType.UrlSegment => CreateUrlSegment(name, value),
+            ParameterType.HttpHeader => CreateHttpHeader(name, value),
+            ParameterType.RequestBody => CreateBodyParameter(name, value),
+            ParameterType.QueryString => CreateQueryString(name, value),
+            ParameterType.QueryStringWithoutEncode => CreateQueryString(name, value, false),
+            _ => CreateGetOrPost(name, value)
+        };
+        public static Parameter Create(string name, object value, string contentType, ParameterType type) => type switch
+        {
+            ParameterType.Cookie => CreateCookie(name, value),
+            ParameterType.UrlSegment => CreateUrlSegment(name, value),
+            ParameterType.HttpHeader => CreateHttpHeader(name, value),
+            ParameterType.RequestBody => CreateBodyParameter(name, value, contentType),
+            ParameterType.QueryString => CreateQueryString(name, value),
+            ParameterType.QueryStringWithoutEncode => CreateQueryString(name, value, false),
+            _ => CreateGetOrPost(name, value, contentType)
+        };
     }
 }
