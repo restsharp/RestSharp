@@ -24,7 +24,7 @@ namespace RestSharp
     /// <summary>
     /// Parameter container for REST requests
     /// </summary>
-    public class Parameter : IEquatable<Parameter>
+    public abstract class Parameter : IEquatable<Parameter>
     {
         /// <summary>
         /// Name of the parameter
@@ -48,7 +48,6 @@ namespace RestSharp
             Ensure.NotEmpty(name, nameof(name));
             Name = name;
         }
-        public Parameter(string name, object value, ParameterType type) : this(name, value) => Type = type;
 
         /// <summary>
         /// Return a human-readable representation of this parameter
