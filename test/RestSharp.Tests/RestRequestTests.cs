@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
@@ -17,14 +18,15 @@ namespace RestSharp.Tests
         {
             var request = new RestRequest("/api/get?query=Id%3d198&another=notencoded");
 
+            var parameters = request.Parameters.ToList();
             Assert.AreEqual("/api/get", request.Resource);
-            Assert.AreEqual(2, request.Parameters.Count);
-            Assert.AreEqual("query", request.Parameters[0].Name);
-            Assert.AreEqual("Id%3d198", request.Parameters[0].Value);
-            Assert.AreEqual(ParameterType.QueryStringWithoutEncode, request.Parameters[0].Type);
-            Assert.AreEqual("another", request.Parameters[1].Name);
-            Assert.AreEqual("notencoded", request.Parameters[1].Value);
-            Assert.AreEqual(ParameterType.QueryStringWithoutEncode, request.Parameters[1].Type);
+            Assert.AreEqual(2, parameters.Count);
+            Assert.AreEqual("query", parameters[0].Name);
+            Assert.AreEqual("Id%3d198", parameters[0].Value);
+            Assert.AreEqual(ParameterType.QueryStringWithoutEncode, parameters[0].Type);
+            Assert.AreEqual("another", parameters[1].Name);
+            Assert.AreEqual("notencoded", parameters[1].Value);
+            Assert.AreEqual(ParameterType.QueryStringWithoutEncode, parameters[1].Type);
         }
     }
 }

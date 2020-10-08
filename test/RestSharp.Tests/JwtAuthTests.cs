@@ -53,7 +53,7 @@ namespace RestSharp.Tests
             // In real case client.Execute(request) will invoke Authenticate method
             client.Authenticator.Authenticate(client, request);
 
-            var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+            var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
             Assert.AreEqual(2, paramList.Count);
 
@@ -77,7 +77,7 @@ namespace RestSharp.Tests
             //In real case client.Execute(...) will invoke Authenticate method
             client.Authenticator.Authenticate(client, request);
 
-            var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+            var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
             Assert.AreEqual(1, paramList.Count);
 
@@ -98,11 +98,11 @@ namespace RestSharp.Tests
 
             client.Authenticator = authenticator;
             client.Authenticator.Authenticate(client, request);
-            
+
             authenticator.SetBearerToken("second_header_auth_token");
             client.Authenticator.Authenticate(client, request);
 
-            var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+            var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
             Assert.AreEqual(1, paramList.Count);
 
