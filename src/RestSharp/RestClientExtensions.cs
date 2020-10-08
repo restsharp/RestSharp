@@ -347,7 +347,28 @@ namespace RestSharp
         /// <param name="value">Value of the parameter</param>
         /// <returns>This request</returns>
         public static IRestClient AddDefaultParameter(this IRestClient restClient, string name, object value)
-            => restClient.AddDefaultParameter(new GetOrPostParameter(name, value));
+            => restClient.AddDefaultParameter(ParameterFactory.CreateGetOrPost(name, value));
+
+        /// <summary>
+        /// Adds a default parameter to the request. There are four types of parameters:
+        /// - GetOrPost: Either a QueryString value or encoded form value based on method
+        /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
+        /// - UrlSegment: Inserted into URL if there is a matching url token e.g. {AccountId}
+        /// - RequestBody: Used by AddBody() (not recommended to use directly)
+        /// Used on every request made by this client instance
+        /// </summary>
+        /// <param name="restClient">The IRestClient instance</param>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="type">The type of parameter to add</param>
+        /// <returns>This request</returns>
+        public static IRestClient AddDefaultParameter(
+            this IRestClient restClient,
+            string name,
+            object value,
+            ParameterType type
+        )
+            => restClient.AddDefaultParameter(ParameterFactory.Create(name, value, type));
 
         /// <summary>
         /// Adds a default header to the RestClient. Used on every request made by this client instance.
@@ -357,7 +378,7 @@ namespace RestSharp
         /// <param name="value">Value of the header to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultHeader(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(ParameterFactory.CreateHttpHeader(name, value));
+            => restClient.AddDefaultParameter(name, value, ParameterType.HttpHeader);
 
         /// <summary>
         /// Adds default headers to the RestClient. Used on every request made by this client instance.
@@ -381,7 +402,7 @@ namespace RestSharp
         /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultUrlSegment(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(ParameterFactory.CreateUrlSegment(name, value));
+            => restClient.AddDefaultParameter(name, value, ParameterType.UrlSegment);
 
         /// <summary>
         /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
@@ -391,7 +412,7 @@ namespace RestSharp
         /// <param name="value">Value of the query parameter to add</param>
         /// <returns></returns>
         public static IRestClient AddDefaultQueryParameter(this IRestClient restClient, string name, string value)
-            => restClient.AddDefaultParameter(ParameterFactory.CreateQueryString(name, value));
+            => restClient.AddDefaultParameter(name, value, ParameterType.QueryString);
 
         static void ThrowIfError(IRestResponse response)
         {
