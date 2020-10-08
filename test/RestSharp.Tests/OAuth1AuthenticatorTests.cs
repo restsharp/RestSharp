@@ -81,55 +81,62 @@ namespace RestSharp.Tests
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "x_auth_username" && (string) x.Value == "ClientUsername"
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "x_auth_username" && (string) x.Value == "ClientUsername" &&
+                        x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "x_auth_password" && (string) x.Value == "ClientPassword"
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "x_auth_password" && (string) x.Value == "ClientPassword" &&
+                        x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type == ParameterType.GetOrPost && x.Name == "x_auth_mode" && (string) x.Value == "client_auth"
+                    x => x.Type == ParameterType.GetOrPost && x.Name == "x_auth_mode" && (string) x.Value == "client_auth" && x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_consumer_key" && (string) x.Value == "ConsumerKey"
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_consumer_key" && (string) x.Value == "ConsumerKey" &&
+                        x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_signature" && !string.IsNullOrWhiteSpace((string) x.Value)
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_signature" && !string.IsNullOrWhiteSpace((string) x.Value) &&
+                        x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_signature_method" && (string) x.Value == "PLAINTEXT"
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_signature_method" && (string) x.Value == "PLAINTEXT" &&
+                        x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_version" && (string) x.Value == "Version"
+                    x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_version" && (string) x.Value == "Version" && x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_nonce" && !string.IsNullOrWhiteSpace((string) x.Value)
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_nonce" && !string.IsNullOrWhiteSpace((string) x.Value) &&
+                        x.ContentType == null
                 )
             );
 
             Assert.IsNotNull(
                 parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_timestamp" && !string.IsNullOrWhiteSpace((string) x.Value)
+                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_timestamp" && !string.IsNullOrWhiteSpace((string) x.Value) &&
+                        x.ContentType == null
                 )
             );
         }

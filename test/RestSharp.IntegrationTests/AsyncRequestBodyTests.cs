@@ -72,7 +72,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -92,7 +92,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -112,7 +112,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -132,7 +132,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -152,7 +152,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -172,7 +172,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -206,7 +206,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
@@ -226,7 +226,7 @@ namespace RestSharp.IntegrationTests
             const string contentType = "text/plain";
             const string bodyData    = "abc123 foo bar baz BING!";
 
-            request.AddBodyParameter(contentType, bodyData);
+            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
             var resetEvent = new ManualResetEvent(false);
 
