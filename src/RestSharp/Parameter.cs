@@ -84,7 +84,7 @@ namespace RestSharp
         // ReSharper enable NonReadonlyMemberInGetHashCode
     }
 
-    public class CookieParameter : Parameter, IEquatable<CookieParameter>
+    public sealed class CookieParameter : Parameter, IEquatable<CookieParameter>
     {
         public override ParameterType Type { get; protected set; } = ParameterType.Cookie;
         internal CookieParameter(string name, string value) : base(name, value) {}
@@ -114,7 +114,7 @@ namespace RestSharp
         }
     }
 
-    public class HttpHeaderParameter : Parameter, IEquatable<HttpHeaderParameter>
+    public sealed class HttpHeaderParameter : Parameter, IEquatable<HttpHeaderParameter>
     {
         public override ParameterType Type { get; protected set; } = ParameterType.HttpHeader;
         internal HttpHeaderParameter(string name, string value) : base(name, value) {}
@@ -212,7 +212,7 @@ namespace RestSharp
         }
     }
 
-    public class UrlSegmentParameter : Parameter, IEquatable<UrlSegmentParameter>
+    public sealed class UrlSegmentParameter : Parameter, IEquatable<UrlSegmentParameter>
     {
         public override ParameterType Type { get; protected set; } = ParameterType.UrlSegment;
         internal UrlSegmentParameter(string name, string value) : base(name, value) => Value = value?.Replace("%2F", "/").Replace("%2f", "/");
