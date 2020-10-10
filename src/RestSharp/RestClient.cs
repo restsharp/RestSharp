@@ -421,7 +421,8 @@ namespace RestSharp
                 CookieContainer         = CookieContainer,
                 AutomaticDecompression  = AutomaticDecompression,
                 WebRequestConfigurator  = WebRequestConfigurator,
-                Encode                  = Encode
+                Encode                  = Encode,
+                ThrowOnAnyError         = ThrowOnAnyError,
             };
 
             var requestParameters = new List<Parameter>();

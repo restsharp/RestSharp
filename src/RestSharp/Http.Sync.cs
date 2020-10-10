@@ -118,6 +118,9 @@ namespace RestSharp
             }
             catch (Exception ex)
             {
+                if (ThrowOnAnyError)
+                    throw;
+
                 return ExtractErrorResponse(ex);
             }
 
