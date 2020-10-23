@@ -2,16 +2,17 @@ Follow these guidelines, in no particular order, to improve your chances of havi
 
 ### Before you do anything else
 
- * Before reporting an issue or creating a pull request, discuss it in the Google Group http://groups.google.com/group/restsharp
- * If you have an inquiry - ask a question on StackOverflow, tagged with `restsharp` tag.
+ * DO: Read about [getting help](https://restsharp.dev/get-help/) in the docs.
+ * DO: Follow the guidelines below when contributing.  
+ * DO: Discuss bigger change in the issue before implementing it.  
+ * DO NOT: Use issues to ask questions about using the library.
 
 ### Once a contribution is ready to be submitted
 
  * Make each pull request atomic and exclusive; don't send pull requests for a laundry list of changes.
  * Even better, commit in small manageable chunks.
  * Spaces, not tabs. Bracket style doesn't matter. Do not reformat code you didn't touch.
- * Changes to XmlDeserializer or JsonDeserializer must be accompanied by a unit test covering the change.
- * In general, changes should be accompanied by unit tests to show what was broken and how your patch fixes it.
+ * Changes should be accompanied by unit tests to show what was broken and how your patch fixes it.
  * No regions except for license header
  * Code must build for .NET 4.5.2 and .NET Standard 2.0
  * If you didn't write the code you must provide a reference to where you obtained it and preferably the license. 
