@@ -229,6 +229,8 @@ namespace RestSharp
         /// <inheritdoc />
         public Action<HttpWebRequest>? WebRequestConfigurator { get; set; }
 
+        public bool ThrowOnAnyError { get; set; }
+
         [Obsolete]
         public static IHttp Create() => new Http();
 

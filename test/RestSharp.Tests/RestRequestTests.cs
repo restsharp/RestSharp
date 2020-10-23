@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Net;
+using NUnit.Framework;
 
 namespace RestSharp.Tests
 {
@@ -25,6 +26,14 @@ namespace RestSharp.Tests
             Assert.AreEqual("another", request.Parameters[1].Name);
             Assert.AreEqual("notencoded", request.Parameters[1].Value);
             Assert.AreEqual(ParameterType.QueryStringWithoutEncode, request.Parameters[1].Type);
+        }
+
+        [Test]
+        public void RestRequest_Fail_On_Exception()
+        {
+            var req = new RestRequest("nonexisting");
+            var client = new RestClient("http://localhost:12345") { ThrowOnAnyError = true };
+            Assert.Throws<WebException>(() => client.Execute(req));
         }
     }
 }
