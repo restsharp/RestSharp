@@ -66,6 +66,14 @@ namespace RestSharp.Tests
             Assert.AreEqual(finish, result);
         }
 
+        [Test, TestCase("DueDate", "dueDate"), TestCase("ID", "id"), TestCase("IDENTIFIER", "identifier"), TestCase("primaryId", "primaryId"), TestCase("A", "a"), TestCase("ThisIsATest", "thisIsATest")]
+        public void ToCamelCase(string start, string finish)
+        {
+            var result = start.ToCamelCase(CultureInfo.InvariantCulture);
+
+            Assert.AreEqual(finish, result);
+        }
+
         [Test]
         public void Does_not_throw_on_invalid_encoding()
         {

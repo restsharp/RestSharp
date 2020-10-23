@@ -222,8 +222,11 @@ namespace RestSharp.Extensions
 
             string CaseWord(string word)
             {
-                var restOfWord = word.Substring(1).ToLower(culture);
+                var restOfWord = word.Substring(1);
                 var firstChar = char.ToUpper(word[0], culture);
+
+                if (restOfWord.IsUpperCase())
+                    restOfWord = restOfWord.ToLower(culture);
 
                 return string.Concat(firstChar, restOfWord);
             }
@@ -273,6 +276,13 @@ namespace RestSharp.Extensions
                 ),
                 "-"
             );
+
+        /// <summary>
+        ///     Checks to see if a string is all uppper case
+        /// </summary>
+        /// <param name="inputString">String to check</param>
+        /// <returns>bool</returns>
+        public static bool IsUpperCase(this string inputString) => IsUpperCaseRegex.IsMatch(inputString);
 
         /// <summary>
         /// Add an underscore prefix to a pascal-cased string
