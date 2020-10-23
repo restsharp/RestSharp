@@ -113,7 +113,7 @@ namespace RestSharp
         /// <summary>
         /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
         /// </summary>
-        [Obsolete("Use one of authenticators provided")]
+        [Obsolete("This property will be moved to RestClient")]
         ICredentials? Credentials { get; set; }
 
         /// <summary>
@@ -139,6 +139,7 @@ namespace RestSharp
         /// Determine whether or not the "default credentials" (e.g. the user account under which the current process is
         /// running) will be sent along to the server. The default is false.
         /// </summary>
+        [Obsolete("This property will be moved to RestClient")]
         bool UseDefaultCredentials { get; set; }
 
         /// <summary>
