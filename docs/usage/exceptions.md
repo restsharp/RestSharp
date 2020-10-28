@@ -1,6 +1,6 @@
 # Error Handling
 
-If there is a network transport error (network is down, failed DNS lookup, etc), `RestResponse.ResponseStatus` will be set to `ResponseStatus.Error`, otherwise it will be `ResponseStatus.Completed`. 
+If there is a network transport error (network is down, failed DNS lookup, etc), or any kind of server error (except 404), `RestResponse.ResponseStatus` will be set to `ResponseStatus.Error`, otherwise it will be `ResponseStatus.Completed`. 
 
 If an API returns a 404, `ResponseStatus` will still be `Completed`. If you need access to the HTTP status code returned you will find it at `RestResponse.StatusCode`. 
 The `Status` property is an indicator of completion independent of the API error handling.

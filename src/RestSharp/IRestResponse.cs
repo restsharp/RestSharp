@@ -111,7 +111,7 @@ namespace RestSharp
         /// Will contain only network transport or framework exceptions thrown during the request.
         /// HTTP protocol errors are handled by RestSharp and will not appear here.
         /// </remarks>
-        Exception ErrorException { get; set; }
+        Exception? ErrorException { get; set; }
 
         /// <summary>
         /// The HTTP protocol version (1.0, 1.1, etc)
