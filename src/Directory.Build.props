@@ -3,7 +3,7 @@
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
     <PackageIcon>restsharp.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
+    <PackageProjectUrl>http://restsharp.dev</PackageProjectUrl>
     <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>Simple REST and HTTP API Client</Description>
