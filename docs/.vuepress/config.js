@@ -58,7 +58,7 @@ module.exports = {
 
         docsRepo: "restsharp/RestSharp",
         docsDir: "docs",
-        docsBranch: "master",
+        docsBranch: "dev",
         editLinks: true,
         editLinkText: "Help us by improving this page!"
     }
