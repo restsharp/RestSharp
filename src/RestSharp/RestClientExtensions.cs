@@ -43,7 +43,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -59,7 +59,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -75,7 +75,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -91,7 +91,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -107,7 +107,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -123,7 +123,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -139,7 +139,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -155,7 +155,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using GET HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -166,7 +166,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using POST HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -177,7 +177,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using PUT HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -188,7 +188,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using HEAD HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -199,7 +199,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using OPTIONS HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -210,7 +210,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using PATCH HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
@@ -221,7 +221,7 @@ namespace RestSharp
 
         /// <summary>
         /// Execute the request using DELETE HTTP method.
-        /// The response data is deserialzied to the Data property of the returned response object.
+        /// The response data is deserialized to the Data property of the returned response object.
         /// </summary>
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
