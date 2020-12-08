@@ -173,20 +173,29 @@ namespace RestSharp
         void SetTimeout(IAsyncResult asyncResult)
         {
             if (Timeout != 0)
-                ThreadPool.RegisterWaitForSingleObject(
+                _timeoutState.Handle = ThreadPool.RegisterWaitForSingleObject(
                     asyncResult.AsyncWaitHandle,
                     TimeoutCallback, _timeoutState, Timeout, true
                 );
 
             static void TimeoutCallback(object state, bool timedOut)
             {
-                if (!timedOut)
-                    return;
-
                 if (!(state is TimeOutState tos))
                     return;
 
-                lock (tos) tos.TimedOut = true;
+                lock(tos)
+                {
+                    if(!timedOut)
+                    {
+                        if(tos.Handle != null)
+                        {
+                            tos.Handle.Unregister(null);
+                        }
+                        return;
+                    }
+
+                    tos.TimedOut = true;
+                }
 
                 tos.Request?.Abort();
             }
@@ -286,6 +295,8 @@ namespace RestSharp
             public bool TimedOut { get; set; }
 
             public HttpWebRequest? Request { get; set; }
+
+            public RegisteredWaitHandle? Handle { get; set; }
         }
     }
 }
