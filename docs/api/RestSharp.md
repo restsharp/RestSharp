@@ -7056,7 +7056,7 @@ Type | Description
 #### Method `GetAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7084,7 +7084,7 @@ Type | Description
 #### Method `PostAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7112,7 +7112,7 @@ Type | Description
 #### Method `PutAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7140,7 +7140,7 @@ Type | Description
 #### Method `HeadAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7168,7 +7168,7 @@ Type | Description
 #### Method `OptionsAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7196,7 +7196,7 @@ Type | Description
 #### Method `PatchAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7224,7 +7224,7 @@ Type | Description
 #### Method `DeleteAsync<T>(IRestClient, IRestRequest, CancellationToken)`
 
 Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7252,7 +7252,7 @@ Type | Description
 #### Method `Get<T>(IRestClient, IRestRequest)`
 
 Execute the request using GET HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7279,7 +7279,7 @@ Type | Description
 #### Method `Post<T>(IRestClient, IRestRequest)`
 
 Execute the request using POST HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7306,7 +7306,7 @@ Type | Description
 #### Method `Put<T>(IRestClient, IRestRequest)`
 
 Execute the request using PUT HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7333,7 +7333,7 @@ Type | Description
 #### Method `Head<T>(IRestClient, IRestRequest)`
 
 Execute the request using HEAD HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7360,7 +7360,7 @@ Type | Description
 #### Method `Options<T>(IRestClient, IRestRequest)`
 
 Execute the request using OPTIONS HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7387,7 +7387,7 @@ Type | Description
 #### Method `Patch<T>(IRestClient, IRestRequest)`
 
 Execute the request using PATCH HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
@@ -7414,7 +7414,7 @@ Type | Description
 #### Method `Delete<T>(IRestClient, IRestRequest)`
 
 Execute the request using DELETE HTTP method.
-The response data is deserialzied to the Data property of the returned response object.
+The response data is deserialized to the Data property of the returned response object.
 
 ##### Syntax
 ```csharp
