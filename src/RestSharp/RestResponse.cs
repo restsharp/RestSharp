@@ -127,7 +127,7 @@ namespace RestSharp
         /// <summary>
         /// The exception thrown during the request, if any
         /// </summary>
-        public Exception ErrorException { get; set; }
+        public Exception? ErrorException { get; set; }
 
         /// <summary>
         /// The HTTP protocol version (1.0, 1.1, etc)
