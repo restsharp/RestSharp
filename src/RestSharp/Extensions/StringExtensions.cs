@@ -25,7 +25,7 @@ namespace RestSharp.Extensions
     public static class StringExtensions
     {
         static readonly Regex DateRegex    = new Regex(@"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/");
-        static readonly Regex NewDateRegex = new Regex(@"newDate\((-?\d+)*\)");
+        static readonly Regex NewDateRegex = new Regex(@"newDate\((-?\d+)\)");
 
         static readonly Regex IsUpperCaseRegex = new Regex(@"^[A-Z]+$");
 
