@@ -33,6 +33,7 @@ jobs:
 
       - name: Build project
         id: build_project
+        shell: pwsh
         run: |
           dotnet build ./src/RestSharp/RestSharp.csproj -c Release
 
