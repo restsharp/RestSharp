@@ -34,7 +34,7 @@ jobs:
       - name: Build project
         id: build_project
         run: |
-          dotnet build ./RestSharp.sln -c Release
+          dotnet build ./src/RestSharp/RestSharp.csproj -c Release
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
