@@ -3,6 +3,7 @@ name: CodeQL Analysis
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron: '0 8 * * *'
 
@@ -31,6 +32,10 @@ jobs:
           queries: security-and-quality
 
       - name: Build project
+        id: build_project
+        shell: pwsh
+        run: |
+          dotnet build ./src/RestSharp/RestSharp.csproj -c Release
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
