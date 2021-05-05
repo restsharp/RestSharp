@@ -62,7 +62,7 @@ RestSharp supports sending XML or JSON body as part of the request. To add a bod
 
 There is no need to set the `Content-Type` or add the `DataFormat` parameter to the request when using those methods, RestSharp will do it for you.
 
-RestSharp will also handle both XML and JSON responses and perform all necessary deserialization tasks, depending on th server response type. Therefore, you only need to add the `Accept` header if you want to deserialize the response manually.
+RestSharp will also handle both XML and JSON responses and perform all necessary deserialization tasks, depending on the server response type. Therefore, you only need to add the `Accept` header if you want to deserialize the response manually.
 
 For example, only you'd only need these lines to make a request with JSON body:
 
