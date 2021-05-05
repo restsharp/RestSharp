@@ -3,7 +3,7 @@
     <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.14.5" />
+    <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
