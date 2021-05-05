@@ -117,6 +117,28 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_NewDateTime()
+        {
+            var payload = GetPayLoad<NewDateTimeTestStructure>("newdatetimes.json");
+
+            Assert.AreEqual(
+                new DateTime(2011, 6, 30, 8, 15, 46, 929, DateTimeKind.Utc),
+                payload.DateTime
+            );
+        }
+
+        [Test]
+        public void Can_Deserialize_Negative_NewDateTime()
+        {
+            var payload = GetPayLoad<NewDateTimeTestStructure>("newdatetimes.json");
+
+            Assert.AreEqual(
+                new DateTime(1969, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc),
+                payload.DateTimeNegative
+            );
+        }
+
+        [Test]
         public void Can_Deserialize_Decimal_With_Four_Zeros_After_Floating_Point()
         {
             const string json       = "{\"Value\":0.00005557}";
