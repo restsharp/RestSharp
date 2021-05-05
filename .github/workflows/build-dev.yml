@@ -16,7 +16,7 @@ jobs:
 #    runs-on: ubuntu-latest
 #
 #    steps:
-#      - uses: actions/checkout@v1
+#      - uses: actions/checkout@v2.3.4
 #      - uses: actions/setup-dotnet@v1
 #        with:
 #          dotnet-version: '3.1.201'
@@ -28,7 +28,7 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.3.4
 
     - name: Run tests on Windows for all targets
       run: dotnet test -c Release 
@@ -38,7 +38,7 @@ jobs:
     needs: [test-win] #,test-netcore-linux]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.3.4
 
     - name: Create and push NuGet package
       run: |
