@@ -98,7 +98,7 @@ It will send a `GET` request to `https://search.me/search?foo=bar")`.
 You can also specify the query string parameter type explicitly:
 
 ```csharp
-request.AddParameter("foo", "bar", RequestType.QueryString);
+request.AddParameter("foo", "bar", ParameterType.QueryString);
 ```
 
 In some cases you might need to prevent RestSharp from encoding the query string parameter. To do so, use the `QueryStringWithoutEncode` parameter type.
