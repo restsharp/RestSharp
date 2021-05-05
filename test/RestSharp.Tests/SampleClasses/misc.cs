@@ -222,6 +222,13 @@ namespace RestSharp.Tests.SampleClasses
         public DateTime DateTimeWithOffset { get; set; }
     }
 
+    public class NewDateTimeTestStructure
+    {
+        public DateTime DateTime { get; set; }
+
+        public DateTime DateTimeNegative { get; set; }
+    }
+
     public class TimeSpanTestStructure
     {
         public TimeSpan Tick { get; set; }
