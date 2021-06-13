@@ -12,15 +12,13 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
+using JetBrains.Annotations;
+using RestSharp.Authenticators.OAuth;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
-using JetBrains.Annotations;
-using RestSharp.Authenticators.OAuth;
-using RestSharp.Authenticators.OAuth.Extensions;
-using RestSharp.Extensions;
 
 // ReSharper disable CheckNamespace
 
@@ -42,7 +40,7 @@ namespace RestSharp.Authenticators
 
         internal virtual string ConsumerKey { get; set; }
 
-        internal virtual string ConsumerSecret { get; set; }
+        internal virtual string? ConsumerSecret { get; set; }
 
         internal virtual string Token { get; set; }
 
@@ -84,7 +82,7 @@ namespace RestSharp.Authenticators
 
         public static OAuth1Authenticator ForRequestToken(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1
         )
         {
@@ -101,7 +99,7 @@ namespace RestSharp.Authenticators
             return authenticator;
         }
 
-        public static OAuth1Authenticator ForRequestToken(string consumerKey, string consumerSecret, string callbackUrl)
+        public static OAuth1Authenticator ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl)
         {
             var authenticator = ForRequestToken(consumerKey, consumerSecret);
 
@@ -112,7 +110,7 @@ namespace RestSharp.Authenticators
 
         public static OAuth1Authenticator ForAccessToken(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             string token,
             string tokenSecret,
             OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1
@@ -131,7 +129,7 @@ namespace RestSharp.Authenticators
 
         public static OAuth1Authenticator ForAccessToken(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             string token,
             string tokenSecret,
             string verifier
@@ -155,7 +153,7 @@ namespace RestSharp.Authenticators
         /// <returns></returns>
         public static OAuth1Authenticator ForAccessTokenRefresh(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             string token,
             string tokenSecret,
             string sessionHandle
@@ -180,7 +178,7 @@ namespace RestSharp.Authenticators
         /// <returns></returns>
         public static OAuth1Authenticator ForAccessTokenRefresh(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             string token,
             string tokenSecret,
             string verifier,
@@ -206,7 +204,7 @@ namespace RestSharp.Authenticators
         /// <returns></returns>
         public static OAuth1Authenticator ForClientAuthentication(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             string username,
             string password,
             OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1
@@ -234,7 +232,7 @@ namespace RestSharp.Authenticators
         /// <returns></returns>
         public static OAuth1Authenticator ForProtectedResource(
             string consumerKey,
-            string consumerSecret,
+            string? consumerSecret,
             string accessToken,
             string accessTokenSecret,
             OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1

@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
@@ -209,7 +208,7 @@ namespace RestSharp.Authenticators.OAuth
         public static string GetSignature(
             OAuthSignatureMethod signatureMethod,
             string signatureBase,
-            string consumerSecret
+            string? consumerSecret
         )
             => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, signatureBase, consumerSecret, null);
 
@@ -226,7 +225,7 @@ namespace RestSharp.Authenticators.OAuth
             OAuthSignatureMethod signatureMethod,
             OAuthSignatureTreatment signatureTreatment,
             string signatureBase,
-            string consumerSecret
+            string? consumerSecret
         )
             => GetSignature(signatureMethod, signatureTreatment, signatureBase, consumerSecret, null);
 
@@ -243,14 +242,15 @@ namespace RestSharp.Authenticators.OAuth
             OAuthSignatureMethod signatureMethod,
             OAuthSignatureTreatment signatureTreatment,
             string signatureBase,
-            string consumerSecret,
+            string? consumerSecret,
             string? tokenSecret
         )
         {
-            if (tokenSecret.IsEmpty()) tokenSecret = string.Empty;
+            if (tokenSecret.IsEmpty()) tokenSecret       = string.Empty;
+            if (consumerSecret.IsEmpty()) consumerSecret = string.Empty;
 
-            var unencodedConsumerSecret = consumerSecret;
-            consumerSecret = Uri.EscapeDataString(consumerSecret);
+            var unencodedConsumerSecret = consumerSecret!;
+            consumerSecret = Uri.EscapeDataString(consumerSecret!);
             tokenSecret    = Uri.EscapeDataString(tokenSecret!);
 
             var signature = signatureMethod switch
