@@ -77,7 +77,7 @@ If you need to use different settings, you can supply your instance of
 
 ## Utf8Json
 
-The 'Utf8Json' package is known to be the fastest JSON serializer for .NET.
+The `Utf8Json` package is known to be the fastest JSON serializer for .NET.
 
 RestSharp supports `Utf8Json` serializer via a separate package. You can install it
 from NuGet:
