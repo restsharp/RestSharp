@@ -1,0 +1,27 @@
+{
+	"name": "RestSharp Codespace",
+	"settings": {
+		"workbench.colorTheme": "Default Dark+",
+		"terminal.integrated.defaultProfile.linux": "pwsh"
+	},
+	"extensions": [
+		"eamodio.gitlens",
+		"ms-dotnettools.csharp",
+		"VisualStudioExptTeam.vscodeintellicode",
+		"ms-vscode.powershell",
+		"cschleiden.vscode-github-actions",
+		"redhat.vscode-yaml",
+		"bierner.markdown-preview-github-styles",
+		"ban.spellright",
+		"jmrog.vscode-nuget-package-manager",
+		"coenraads.bracket-pair-colorizer",
+		"vscode-icons-team.vscode-icons",
+		"editorconfig.editorconfig"
+	],
+	"postCreateCommand": "dotnet restore RestSharp.sln && dotnet build RestSharp.sln --configuration Release --no-restore && dotnet test RestSharp.sln --configuration Release --no-build",
+	"build": {
+		"dockerfile": "Dockerfile"
+	}
+}
+
+// Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

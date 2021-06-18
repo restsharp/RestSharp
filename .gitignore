@@ -52,3 +52,4 @@ RestSharp.IntegrationTests/config.json
 /node_modules/
 /out/
 /docs/.vuepress/dist/
+.vscode/
