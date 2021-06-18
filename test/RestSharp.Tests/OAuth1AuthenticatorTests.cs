@@ -172,19 +172,20 @@ namespace RestSharp.Tests
         /// For more information, check the section 4 on https://oauth.net/core/1.0a/.
         /// </summary>
         [Test]
-        public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling()
+        [TestCase(OAuthType.AccessToken)]
+        [TestCase(OAuthType.ProtectedResource)]
+        [TestCase(OAuthType.AccessToken)]
+        [TestCase(OAuthType.ProtectedResource)]
+        public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling(OAuthType type)
         { 
             // Arrange
             const string url = "https://no-query.string";
 
-            var client = new RestClient(url);
+            var client  = new RestClient(url);
             var request = new RestRequest();
-
-            _authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
-
-            // According to OAuth Core 1.0 Revision A: the Consumer Secret MAY be an empty string
-            _authenticator.ConsumerSecret    = null;
-
+            _authenticator.Type           = type;
+            _authenticator.ConsumerSecret = null;
+            
             // Act
             _authenticator.Authenticate(client, request);
 
