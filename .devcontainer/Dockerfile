@@ -5,10 +5,9 @@ RUN sudo apt install gnupg ca-certificates && \
 	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
 	echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list && \
 	sudo apt update && \
-	sudo apt install -y mono-complete
-
+	sudo apt install -y mono-complete && \
 # Install .NET Core 3.1 for running tests
-RUN sudo apt-get install wget && \
+  sudo apt-get install wget && \
 	wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
 	sudo dpkg -i packages-microsoft-prod.deb && \
 	sudo apt-get update && \
