@@ -120,7 +120,7 @@ namespace RestSharp.Serialization.Json
                 if (!data.TryGetValue(name, out var value))
                 {
                     var parts       = name.Split('.');
-                    IDictionary<string, object> currentData = new Dictionary<string, object>(data, StringComparer.CurrentCultureIgnoreCase);
+                    IDictionary<string, object> currentData = new Dictionary<string, object>(data, StringComparer.Create(Culture, true));
 
                     for (var i = 0; i < parts.Length; ++i)
                     {
