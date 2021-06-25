@@ -437,6 +437,17 @@ namespace RestSharp.Tests
         }
 
         [Test]
+        public void Can_Deserialize_Names_With_Double_Uppercase()
+        {
+            var doc = JsonData.CreateJsonWithDoubleUppercase();
+            var serializer = new JsonSerializer();
+            var response = new RestResponse { Content = doc };
+            var p = serializer.Deserialize<PersonForJson>(response);
+
+            Assert.AreEqual(435, p.PersonId);
+        }
+
+        [Test]
         public void Can_Deserialize_Names_With_Dashes_With_Default_Root()
         {
             var doc        = JsonData.CreateJsonWithDashes();

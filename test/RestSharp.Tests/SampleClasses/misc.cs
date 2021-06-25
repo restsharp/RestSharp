@@ -127,6 +127,8 @@ namespace RestSharp.Tests.SampleClasses
         public Order Order { get; set; }
 
         public Disposition Disposition { get; set; }
+
+        public int PersonId { get; set; }
     }
 
     public enum Order { First, Second, Third }
