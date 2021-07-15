@@ -14,21 +14,23 @@ on:
 jobs:
   test-win:
     runs-on: windows-latest
-    
-    steps:
-    - uses: actions/checkout@v2.3.4
 
-    - name: Run tests on Windows for all targets
-      run: dotnet test -c Release 
-    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+      - name: Run tests on Windows for all targets
+        run: dotnet test -c Release
+
   nuget:
     runs-on: windows-latest
-    needs: [test-win] #,test-netcore-linux]
+    needs: [ test-win ] #,test-netcore-linux]
 
     steps:
-    - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.4
 
-    - name: Create and push NuGet package
-      run: |
-        dotnet pack -c Release -o nuget -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
-        dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: Create and push NuGet package
+        run: |
+          dotnet pack -c Release -o nuget -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+          dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
