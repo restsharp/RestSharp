@@ -166,5 +166,36 @@ namespace RestSharp.Tests
             Assert.IsNotNull(authHeader);
             Assert.IsTrue(authHeader.Contains($"oauth_token=\"{expected}\""));
         }
+
+        /// <summary>
+        /// According the specifications of OAuth 1.0a, the customer secret is not required.
+        /// For more information, check the section 4 on https://oauth.net/core/1.0a/.
+        /// </summary>
+        [Test]
+        [TestCase(OAuthType.AccessToken)]
+        [TestCase(OAuthType.ProtectedResource)]
+        [TestCase(OAuthType.AccessToken)]
+        [TestCase(OAuthType.ProtectedResource)]
+        public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling(OAuthType type)
+        { 
+            // Arrange
+            const string url = "https://no-query.string";
+
+            var client  = new RestClient(url);
+            var request = new RestRequest();
+            _authenticator.Type           = type;
+            _authenticator.ConsumerSecret = null;
+            
+            // Act
+            _authenticator.Authenticate(client, request);
+
+            // Assert
+            var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+            var value = (string)authParameter.Value;
+            
+            Assert.IsNotEmpty(value);
+            Assert.IsTrue(value!.Contains("OAuth"));
+            Assert.IsTrue(value.Contains("oauth_signature=\"" + OAuthTools.UrlEncodeStrict("&")));
+        }
     }
 }

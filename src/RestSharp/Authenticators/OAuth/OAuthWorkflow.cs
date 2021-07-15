@@ -13,7 +13,6 @@
 //   limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using RestSharp.Authenticators.OAuth.Extensions;
@@ -31,7 +30,7 @@ namespace RestSharp.Authenticators.OAuth
 
         public string ConsumerKey { get; set; }
 
-        public string ConsumerSecret { get; set; }
+        public string? ConsumerSecret { get; set; }
 
         public string Token { get; set; }
 
@@ -179,14 +178,12 @@ namespace RestSharp.Authenticators.OAuth
         {
             Ensure.NotEmpty(RequestTokenUrl, nameof(RequestTokenUrl));
             Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
         }
 
         void ValidateAccessRequestState()
         {
             Ensure.NotEmpty(AccessTokenUrl, nameof(AccessTokenUrl));
             Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
             Ensure.NotEmpty(Token, nameof(Token));
         }
 
@@ -194,14 +191,12 @@ namespace RestSharp.Authenticators.OAuth
         {
             Ensure.NotEmpty(AccessTokenUrl, nameof(AccessTokenUrl));
             Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
             Ensure.NotEmpty(ClientUsername, nameof(ClientUsername));
         }
 
         void ValidateProtectedResourceState()
         {
             Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-            Ensure.NotEmpty(ConsumerSecret, nameof(ConsumerSecret));
         }
 
         WebPairCollection GenerateAuthParameters(string timestamp, string nonce)
