@@ -126,6 +126,15 @@ namespace RestSharp.Tests.TestData
             return doc.ToString();
         }
 
+        public static string CreateJsonWithDoubleUppercase()
+        {
+            var doc = new JsonObject
+            {
+                ["personID"] = 435,
+            };
+            return doc.ToString();
+        }
+
         public static string CreateJson()
         {
             var doc = new JsonObject
