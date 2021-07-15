@@ -12,10 +12,10 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp.Deserializers
-{
-    public interface IDeserializer
-    {
+// ReSharper disable once CheckNamespace
+
+namespace RestSharp.Deserializers {
+    public interface IDeserializer {
         T Deserialize<T>(IRestResponse response);
     }
 }

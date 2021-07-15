@@ -18,16 +18,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Xml;
 using RestSharp.Deserializers;
 using RestSharp.Extensions;
 
-namespace RestSharp.Serialization.Json
-{
-    public class JsonSerializer : IRestSerializer, IWithRootElement
-    {
-        public string DateFormat { get; set; }
+// ReSharper disable CheckNamespace
+
+namespace RestSharp.Serialization.Json {
+    public class JsonSerializer : IRestSerializer, IWithRootElement {
+        public string? DateFormat { get; set; }
 
         public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
@@ -37,7 +36,7 @@ namespace RestSharp.Serialization.Json
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>JSON as String</returns>
-        public string Serialize(object obj)
+        public string? Serialize(object? obj)
             => IsSerializedString(obj, out var serializedString)
                 ? serializedString
                 : SimpleJson.SerializeObject(obj);
@@ -47,33 +46,28 @@ namespace RestSharp.Serialization.Json
         /// </summary>
         public string ContentType { get; set; } = Serialization.ContentType.Json;
 
-        public string[] SupportedContentTypes { get; } = Serialization.ContentType.JsonAccept;
+        public string[] SupportedContentTypes => Serialization.ContentType.JsonAccept;
 
-        public DataFormat DataFormat { get; } = DataFormat.Json;
+        public DataFormat DataFormat => DataFormat.Json;
 
-        public string Serialize(Parameter parameter) => Serialize(parameter.Value);
+        public string? Serialize(Parameter parameter) => Serialize(parameter.Value);
 
-        public T Deserialize<T>(IRestResponse response)
-        {
+        public T Deserialize<T>(IRestResponse response) {
             var json = FindRoot(response.Content);
 
-            return (T) ConvertValue(typeof(T).GetTypeInfo(), json);
+            return (T)ConvertValue(typeof(T).GetTypeInfo(), json);
         }
 
-        public string RootElement { get; set; }
+        public string? RootElement { get; set; }
 
         /// <summary>
         /// Determines if the object is already a serialized string.
         /// </summary>
-        static bool IsSerializedString(object obj, out string serializedString)
-        {
-            if (obj is string value)
-            {
+        static bool IsSerializedString(object? obj, out string? serializedString) {
+            if (obj is string value) {
                 var trimmed = value.Trim();
 
-                if (trimmed.StartsWith("{")     && trimmed.EndsWith("}")
-                    || trimmed.StartsWith("[{") && trimmed.EndsWith("}]"))
-                {
+                if (trimmed.StartsWith("{") && trimmed.EndsWith("}") || trimmed.StartsWith("[{") && trimmed.EndsWith("}]")) {
                     serializedString = value;
                     return true;
                 }
@@ -83,48 +77,42 @@ namespace RestSharp.Serialization.Json
             return false;
         }
 
-        object FindRoot(string content)
-        {
+        object FindRoot(string content) {
             var json = SimpleJson.DeserializeObject(content);
 
-            if (!RootElement.HasValue()) return json;
+            if (RootElement == null) return json;
 
             if (!(json is IDictionary<string, object> dictionary)) return json;
 
             return dictionary.TryGetValue(RootElement, out var result) ? result : json;
         }
 
-        object Map(object target, IDictionary<string, object> data)
-        {
+        object Map(object target, IDictionary<string, object> data) {
             var objType = target.GetType().GetTypeInfo();
 
             var props = objType.GetProperties()
                 .Where(p => p.CanWrite)
                 .ToList();
 
-            foreach (var prop in props)
-            {
+            foreach (var prop in props) {
                 string name;
                 var    attributes = prop.GetCustomAttributes(typeof(DeserializeAsAttribute), false);
 
-                if (attributes.Any())
-                {
-                    var attribute = (DeserializeAsAttribute) attributes.First();
+                if (attributes.Any()) {
+                    var attribute = (DeserializeAsAttribute)attributes.First();
                     name = attribute.Name;
                 }
-                else
-                {
+                else {
                     name = prop.Name;
                 }
 
-                if (!data.TryGetValue(name, out var value))
-                {
-                    var parts       = name.Split('.');
+                if (!data.TryGetValue(name, out var value)) {
+                    var parts = name.Split('.');
+
                     IDictionary<string, object> currentData = new Dictionary<string, object>(data, StringComparer.Create(Culture, true));
 
-                    for (var i = 0; i < parts.Length; ++i)
-                    {
-                        var variants = parts[i].GetNameVariants(Culture).Distinct();
+                    for (var i = 0; i < parts.Length; ++i) {
+                        var variants   = parts[i].GetNameVariants(Culture).Distinct();
                         var actualName = variants.FirstOrDefault(currentData.ContainsKey);
 
                         if (actualName == null) break;
@@ -132,12 +120,11 @@ namespace RestSharp.Serialization.Json
                         if (i == parts.Length - 1)
                             value = currentData[actualName];
                         else
-                            currentData = (IDictionary<string, object>) currentData[actualName];
+                            currentData = (IDictionary<string, object>)currentData[actualName];
                     }
                 }
 
-                if (value != null)
-                {
+                if (value != null) {
                     var type = prop.PropertyType.GetTypeInfo();
                     prop.SetValue(target, ConvertValue(type, value), null);
                 }
@@ -146,14 +133,14 @@ namespace RestSharp.Serialization.Json
             return target;
         }
 
-        IDictionary BuildDictionary(Type type, object parent)
-        {
-            var dict      = (IDictionary) Activator.CreateInstance(type);
+        IDictionary BuildDictionary(Type type, object? parent) {
+            var dict = (IDictionary)Activator.CreateInstance(type);
+            if (parent == null) return dict;
+
             var keyType   = type.GetTypeInfo().GetGenericArguments()[0];
             var valueType = type.GetTypeInfo().GetGenericArguments()[1];
 
-            foreach (var child in (IDictionary<string, object>) parent)
-            {
+            foreach (var child in (IDictionary<string, object>)parent) {
                 var key = keyType != typeof(string)
                     ? Convert.ChangeType(child.Key, keyType, CultureInfo.InvariantCulture)
                     : child.Key;
@@ -169,9 +156,9 @@ namespace RestSharp.Serialization.Json
             return dict;
         }
 
-        IList BuildList(Type type, object parent)
-        {
-            var list = (IList) Activator.CreateInstance(type);
+        IList BuildList(Type type, object? parent) {
+            var list = (IList)Activator.CreateInstance(type);
+            if (parent == null) return list;
 
             var listType = type
                 .GetTypeInfo()
@@ -181,26 +168,21 @@ namespace RestSharp.Serialization.Json
 
             if (parent is IList list1)
                 foreach (var element in list1)
-                    if (itemType.GetTypeInfo().IsPrimitive)
-                    {
+                    if (itemType.GetTypeInfo().IsPrimitive) {
                         var item = ConvertValue(itemType.GetTypeInfo(), element);
 
                         list.Add(item);
                     }
-                    else if (itemType == typeof(string))
-                    {
-                        if (element == null)
-                        {
+                    else if (itemType == typeof(string)) {
+                        if (element == null) {
                             list.Add(null);
                             continue;
                         }
 
                         list.Add(element.ToString());
                     }
-                    else
-                    {
-                        if (element == null)
-                        {
+                    else {
+                        if (element == null) {
                             list.Add(null);
                             continue;
                         }
@@ -215,21 +197,18 @@ namespace RestSharp.Serialization.Json
             return list;
         }
 
-        object ConvertValue(TypeInfo typeInfo, object value)
-        {
-            var stringValue = Convert.ToString(value, Culture);
+        object? ConvertValue(TypeInfo typeInfo, object? value) {
+            string stringValue = Convert.ToString(value, Culture)!;
 
             // check for nullable and extract underlying type
-            if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>))
-            {
+            if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>)) {
                 // Since the type is nullable and no value is provided return null
                 if (stringValue.IsEmpty()) return null;
 
                 typeInfo = typeInfo.GetGenericArguments()[0].GetTypeInfo();
             }
 
-            if (typeInfo.AsType() == typeof(object))
-            {
+            if (typeInfo.AsType() == typeof(object)) {
                 if (value == null) return null;
 
                 typeInfo = value.GetType().GetTypeInfo();
@@ -244,13 +223,14 @@ namespace RestSharp.Serialization.Json
 
             if (type == typeof(string)) return stringValue;
 
-            if (type == typeof(DateTime) || type == typeof(DateTimeOffset))
-            {
+            if (type == typeof(DateTime) || type == typeof(DateTimeOffset)) {
                 DateTime dt;
 
-                if (DateFormat.HasValue())
+                if (DateFormat != null)
                     dt = DateTime.ParseExact(
-                        stringValue, DateFormat, Culture,
+                        stringValue,
+                        DateFormat,
+                        Culture,
                         DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
                     );
                 else
@@ -259,33 +239,28 @@ namespace RestSharp.Serialization.Json
 
                 if (type == typeof(DateTime)) return dt;
 
-                if (type == typeof(DateTimeOffset)) return (DateTimeOffset) dt;
+                if (type == typeof(DateTimeOffset)) return (DateTimeOffset)dt;
             }
-            else if (type == typeof(decimal))
-            {
-                if (value is double d) return (decimal) d;
+            else if (type == typeof(decimal)) {
+                if (value is double d) return (decimal)d;
 
                 return stringValue.Contains("e")
                     ? decimal.Parse(stringValue, NumberStyles.Float, Culture)
                     : decimal.Parse(stringValue, Culture);
             }
-            else if (type == typeof(Guid))
-            {
+            else if (type == typeof(Guid)) {
                 return string.IsNullOrEmpty(stringValue)
                     ? Guid.Empty
                     : new Guid(stringValue);
             }
-            else if (type == typeof(TimeSpan))
-            {
+            else if (type == typeof(TimeSpan)) {
                 // This should handle ISO 8601 durations
                 return TimeSpan.TryParse(stringValue, out var timeSpan) ? timeSpan : XmlConvert.ToTimeSpan(stringValue);
             }
-            else if (type.GetTypeInfo().IsGenericType)
-            {
+            else if (type.GetTypeInfo().IsGenericType) {
                 var genericTypeDef = type.GetGenericTypeDefinition();
 
-                if (genericTypeDef == typeof(IEnumerable<>) || genericTypeDef == typeof(IList<>))
-                {
+                if (genericTypeDef == typeof(IEnumerable<>) || genericTypeDef == typeof(IList<>)) {
                     var itemType = typeInfo.GetGenericArguments()[0];
                     var listType = typeof(List<>).MakeGenericType(itemType);
                     return BuildList(listType, value);
@@ -298,18 +273,15 @@ namespace RestSharp.Serialization.Json
                 // nested property classes
                 return CreateAndMap(type, value);
             }
-            else if (type.IsSubclassOfRawGeneric(typeof(List<>)))
-            {
+            else if (type.IsSubclassOfRawGeneric(typeof(List<>))) {
                 // handles classes that derive from List<T>
                 return BuildList(type, value);
             }
-            else if (type == typeof(JsonObject))
-            {
+            else if (type == typeof(JsonObject)) {
                 // simplify JsonObject into a Dictionary<string, object> 
                 return BuildDictionary(typeof(Dictionary<string, object>), value);
             }
-            else
-            {
+            else {
                 // nested property classes
                 return CreateAndMap(type, value);
             }
@@ -317,11 +289,12 @@ namespace RestSharp.Serialization.Json
             return null;
         }
 
-        object CreateAndMap(Type type, object element)
-        {
+        object? CreateAndMap(Type type, object? element) {
+            if (element == null) return null;
+
             var instance = Activator.CreateInstance(type);
 
-            return Map(instance, (IDictionary<string, object>) element);
+            return Map(instance, (IDictionary<string, object>)element);
         }
     }
 
