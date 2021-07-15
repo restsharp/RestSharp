@@ -7,6 +7,6 @@
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All"/>
   </ItemGroup>
 </Project>
