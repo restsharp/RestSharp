@@ -384,29 +384,38 @@ namespace RestSharp
         /// <inheritdoc />
         public IRestRequest AddHeader(string name, string value)
         {
-            static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
-
-            if (name == "Host" && InvalidHost(value))
-                throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
-
+            CheckAndThrowsForInvalidHost(name, value);
             return AddParameter(name, value, ParameterType.HttpHeader);
+        }
+
+        /// <inheritdoc />
+        public IRestRequest AddOrUpdateHeader(string name, string value)
+        {
+            CheckAndThrowsForInvalidHost(name, value);
+            return AddOrUpdateParameter(name, value, ParameterType.HttpHeader);
         }
 
         /// <inheritdoc />
         public IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers)
         {
-            var duplicateKeys = headers
-                .GroupBy(pair => pair.Key.ToUpperInvariant())
-                .Where(group => group.Count() > 1)
-                .Select(group => group.Key)
-                .ToList();
-
-            if (duplicateKeys.Any())
-                throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+            CheckAndThrowsDuplicateKeys(headers);
 
             foreach (var pair in headers)
             {
                 AddHeader(pair.Key, pair.Value);
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IRestRequest AddOrUpdateHeaders(ICollection<KeyValuePair<string, string>> headers)
+        {
+            CheckAndThrowsDuplicateKeys(headers);
+
+            foreach (var pair in headers)
+            {
+                AddOrUpdateHeader(pair.Key, pair.Value);
             }
 
             return this;
@@ -486,5 +495,25 @@ namespace RestSharp
         public IRestRequest AddUrlSegment(string name, object value) => AddParameter(name, value, ParameterType.UrlSegment);
 
         IRestRequest AddFile(FileParameter file) => this.With(x => x.Files.Add(file));
+        
+        private static void CheckAndThrowsForInvalidHost(string name, string value)
+        {
+            static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
+
+            if (name == "Host" && InvalidHost(value))
+                throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
+        }
+        
+        private static void CheckAndThrowsDuplicateKeys(ICollection<KeyValuePair<string, string>> headers)
+        {
+            var duplicateKeys = headers
+                .GroupBy(pair => pair.Key.ToUpperInvariant())
+                .Where(group => group.Count() > 1)
+                .Select(group => group.Key)
+                .ToList();
+
+            if (duplicateKeys.Any())
+                throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+        }
     }
 }
