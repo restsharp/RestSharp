@@ -236,7 +236,7 @@ namespace RestSharp.Serialization.Json
             }
 
             var type = typeInfo.AsType();
-            if (typeInfo.IsPrimitive) return value.ChangeType(type);
+            if (typeInfo.IsPrimitive) return value.ChangeType(type, Culture);
 
             if (typeInfo.IsEnum) return type.FindEnumValue(stringValue, Culture);
 
