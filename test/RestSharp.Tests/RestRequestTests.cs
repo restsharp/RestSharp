@@ -22,10 +22,12 @@ namespace RestSharp.Tests
             Assert.AreEqual(2, request.Parameters.Count);
             Assert.AreEqual("query", request.Parameters[0].Name);
             Assert.AreEqual("Id%3d198", request.Parameters[0].Value);
-            Assert.AreEqual(ParameterType.QueryStringWithoutEncode, request.Parameters[0].Type);
+            Assert.AreEqual(ParameterType.QueryString, request.Parameters[0].Type);
+            Assert.AreEqual(false, request.Parameters[0].Encode);
             Assert.AreEqual("another", request.Parameters[1].Name);
             Assert.AreEqual("notencoded", request.Parameters[1].Value);
-            Assert.AreEqual(ParameterType.QueryStringWithoutEncode, request.Parameters[1].Type);
+            Assert.AreEqual(ParameterType.QueryString, request.Parameters[1].Type);
+            Assert.AreEqual(false, request.Parameters[1].Encode);
         }
 
         [Test]

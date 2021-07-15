@@ -274,7 +274,7 @@ namespace RestSharp.Authenticators
             // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
             // or implement a separate class for each OAuth version
             static bool BaseQuery(Parameter x)
-                => x.Type is ParameterType.GetOrPost or ParameterType.QueryString or ParameterType.QueryStringWithoutEncode;
+                => x.Type is ParameterType.GetOrPost or ParameterType.QueryString;
 
             var query =
                 request.AlwaysMultipartFormData || request.Files.Count > 0

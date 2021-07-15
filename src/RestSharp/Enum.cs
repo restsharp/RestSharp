@@ -12,19 +12,15 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp
-{
+namespace RestSharp {
     /// <summary>
     /// Types of parameters that can be added to requests
     /// </summary>
-    public enum ParameterType
-    {
+    public enum ParameterType {
         /// <summary>
         /// Cookie parameter
         /// </summary>
-        Cookie, 
-        GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString,
-        QueryStringWithoutEncode
+        Cookie, GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString, QueryStringWithoutEncode
     }
 
     /// <summary>
@@ -35,8 +31,7 @@ namespace RestSharp
     /// <summary>
     /// HTTP method to use when making requests
     /// </summary>
-    public enum Method
-    {
+    public enum Method {
         GET, POST, PUT, DELETE, HEAD, OPTIONS,
         PATCH, MERGE, COPY
     }
@@ -44,8 +39,7 @@ namespace RestSharp
     /// <summary>
     /// Format strings for commonly-used date formats
     /// </summary>
-    public struct DateFormat
-    {
+    public struct DateFormat {
         /// <summary>
         /// .NET format string for ISO 8601 date format
         /// </summary>

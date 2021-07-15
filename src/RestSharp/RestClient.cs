@@ -238,7 +238,7 @@ namespace RestSharp
             return new Uri(finalUri);
         }
 
-        string IRestClient.BuildUriWithoutQueryParameters(IRestRequest request)
+        string? IRestClient.BuildUriWithoutQueryParameters(IRestRequest request)
         {
             DoBuildUriValidations(request);
 
@@ -303,7 +303,7 @@ namespace RestSharp
             foreach (var parameter in parameters)
             {
                 var paramPlaceHolder = $"{{{parameter.Name}}}";
-                var paramValue       = Encode(parameter.Value!.ToString());
+                var paramValue       = parameter.Encode ? Encode(parameter.Value!.ToString()) : parameter.Value!.ToString();
 
                 if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
 
@@ -313,11 +313,11 @@ namespace RestSharp
             return new UrlSegmentParamsValues(builder.Uri, assembled);
         }
 
-        static string MergeBaseUrlAndResource(Uri baseUrl, string resource)
+        static string? MergeBaseUrlAndResource(Uri? baseUrl, string? resource)
         {
             var assembled = resource;
 
-            if (!IsNullOrEmpty(assembled) && assembled.StartsWith("/")) assembled = assembled.Substring(1);
+            if (!IsNullOrEmpty(assembled) && assembled!.StartsWith("/")) assembled = assembled.Substring(1);
 
             if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled;
 
@@ -326,7 +326,7 @@ namespace RestSharp
             return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
         }
 
-        string ApplyQueryStringParamsValuesToUri(string mergedUri, IRestRequest request)
+        string? ApplyQueryStringParamsValuesToUri(string? mergedUri, IRestRequest request)
         {
             var parameters = GetQueryStringParameters(request).ToList();
             parameters.AddRange(GetDefaultQueryStringParameters(request));
@@ -342,28 +342,22 @@ namespace RestSharp
             => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
                 ? DefaultParameters
                     .Where(
-                        p => p.Type == ParameterType.GetOrPost   ||
-                            p.Type  == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
+                        p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
                     )
                 : DefaultParameters
                     .Where(
-                        p => p.Type == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
+                        p => p.Type is ParameterType.QueryString
                     );
 
         static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
             => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
                 ? request.Parameters
                     .Where(
-                        p => p.Type == ParameterType.GetOrPost   ||
-                            p.Type  == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
+                        p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
                     )
                 : request.Parameters
                     .Where(
-                        p => p.Type == ParameterType.QueryString ||
-                            p.Type  == ParameterType.QueryStringWithoutEncode
+                        p => p.Type is ParameterType.QueryString 
                     );
 
         Func<IDeserializer>? GetHandler(string contentType)
@@ -402,7 +396,7 @@ namespace RestSharp
         string EncodeParameter(Parameter parameter, Encoding encoding)
         {
             return
-                parameter.Type == ParameterType.QueryStringWithoutEncode
+                !parameter.Encode
                     ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
                     : $"{EncodeQuery(parameter.Name!, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
 

@@ -426,13 +426,21 @@ namespace RestSharp
 
         /// <inheritdoc />
         public IRestRequest AddUrlSegment(string name, string value) => AddParameter(name, value, ParameterType.UrlSegment);
+        
+        /// <inheritdoc />
+        public IRestRequest AddUrlSegment(string name, string value, bool encode) {
+            var parameter = new Parameter(name, value, ParameterType.UrlSegment, encode);
+            return AddParameter(parameter);
+        }
 
         /// <inheritdoc />
         public IRestRequest AddQueryParameter(string name, string value) => AddParameter(name, value, ParameterType.QueryString);
 
         /// <inheritdoc />
-        public IRestRequest AddQueryParameter(string name, string value, bool encode)
-            => AddParameter(name, value, encode ? ParameterType.QueryString : ParameterType.QueryStringWithoutEncode);
+        public IRestRequest AddQueryParameter(string name, string value, bool encode) {
+            var parameter = new Parameter(name, value, ParameterType.QueryString, encode);
+            return AddParameter(parameter);
+        }
 
         /// <inheritdoc />
         public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod)

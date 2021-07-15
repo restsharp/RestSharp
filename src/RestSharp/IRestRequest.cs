@@ -422,6 +422,15 @@ namespace RestSharp
         /// </summary>
         /// <param name="name">Name of the segment to add</param>
         /// <param name="value">Value of the segment to add</param>
+        /// <param name="encode">Specify false if the value should not be encoded</param>
+        /// <returns></returns>
+        IRestRequest AddUrlSegment(string name, string value, bool encode);
+
+        /// <summary>
+        /// Shortcut to AddParameter(name, value, UrlSegment) overload
+        /// </summary>
+        /// <param name="name">Name of the segment to add</param>
+        /// <param name="value">Value of the segment to add</param>
         /// <returns></returns>
         IRestRequest AddUrlSegment(string name, object value);
 
