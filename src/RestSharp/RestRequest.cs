@@ -129,7 +129,7 @@ namespace RestSharp
         public IXmlSerializer XmlSerializer { get; set; }
 
         /// <inheritdoc />
-        public RequestBody Body { get; set; }
+        public RequestBody? Body { get; set; }
 
         /// <inheritdoc />
         public Action<Stream> ResponseWriter
@@ -463,10 +463,10 @@ namespace RestSharp
         public string RootElement { get; set; }
 
         /// <inheritdoc />
-        public Action<IRestResponse> OnBeforeDeserialization { get; set; }
+        public Action<IRestResponse>? OnBeforeDeserialization { get; set; }
 
         /// <inheritdoc />
-        public Action<IHttp> OnBeforeRequest { get; set; }
+        public Action<IHttp>? OnBeforeRequest { get; set; }
 
         /// <inheritdoc />
         [Obsolete("Add custom content handler instead. This property will be removed.")]
@@ -477,7 +477,7 @@ namespace RestSharp
         public string XmlNamespace { get; set; }
 
         /// <inheritdoc />
-        public ICredentials Credentials { get; set; }
+        public ICredentials? Credentials { get; set; }
 
         /// <inheritdoc />
         public int Timeout { get; set; }

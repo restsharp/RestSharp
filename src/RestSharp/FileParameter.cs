@@ -14,14 +14,14 @@
 
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
-namespace RestSharp
-{
+namespace RestSharp {
     /// <summary>
     /// Container for files to be uploaded with requests
     /// </summary>
-    public class FileParameter
-    {
+    [PublicAPI]
+    public class FileParameter {
         /// <summary>
         /// The length of data to be sent
         /// </summary>
@@ -40,7 +40,7 @@ namespace RestSharp
         /// <summary>
         /// MIME content type of file
         /// </summary>
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
         /// <summary>
         /// Name of the parameter
@@ -55,9 +55,8 @@ namespace RestSharp
         /// <param name="filename">The filename to use in the request.</param>
         /// <param name="contentType">The content type to use in the request.</param>
         /// <returns>The <see cref="FileParameter" /></returns>
-        public static FileParameter Create(string name, byte[] data, string filename, string contentType)
-            => new FileParameter
-            {
+        public static FileParameter Create(string name, byte[] data, string filename, string? contentType)
+            => new() {
                 Writer        = s => s.Write(data, 0, data.Length),
                 FileName      = filename,
                 ContentType   = contentType,
@@ -84,14 +83,13 @@ namespace RestSharp
         /// <param name="contentType">Optional: parameter content type</param>
         /// <returns>The <see cref="FileParameter" /> using the default content type.</returns>
         public static FileParameter Create(
-            string name,
+            string         name,
             Action<Stream> writer,
-            long contentLength,
-            string fileName,
-            string contentType = null
+            long           contentLength,
+            string         fileName,
+            string?        contentType = null
         )
-            => new FileParameter
-            {
+            => new() {
                 Name          = name,
                 FileName      = fileName,
                 ContentType   = contentType,

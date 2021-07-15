@@ -1,9 +1,9 @@
 using System.Text.Json;
+using JetBrains.Annotations;
 
-namespace RestSharp.Serializers.SystemTextJson
-{
-    public static class RestClientExtensions
-    {
+namespace RestSharp.Serializers.SystemTextJson {
+    [PublicAPI]
+    public static class RestClientExtensions {
         /// <summary>
         /// Use System.Text.Json serializer with default settings
         /// </summary>

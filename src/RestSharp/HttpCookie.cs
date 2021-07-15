@@ -19,7 +19,7 @@ namespace RestSharp
     /// <summary>
     /// Representation of an HTTP cookie
     /// </summary>
-    [Obsolete("The HttpCooking class will be removed in future versions")]
+    [Obsolete("The HttpCookie class will be removed in future versions")]
     public class HttpCookie
     {
         /// <summary>

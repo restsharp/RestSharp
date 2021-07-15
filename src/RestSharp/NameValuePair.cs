@@ -12,20 +12,20 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp
-{
-    public class NameValuePair
-    {
-        public static NameValuePair Empty = new NameValuePair(null, null);
+using JetBrains.Annotations;
 
-        public NameValuePair(string name, string value)
-        {
+namespace RestSharp {
+    [PublicAPI]
+    public class NameValuePair {
+        public static NameValuePair Empty = new(null, null);
+
+        public NameValuePair(string? name, string? value) {
             Name  = name;
             Value = value;
         }
 
-        public string Name { get; }
-        public string Value { get; }
+        public string? Name { get; }
+        public string? Value { get; }
 
         public bool IsEmpty => Name == null;
     }

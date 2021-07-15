@@ -32,13 +32,13 @@ namespace RestSharp.Deserializers
 
         public CultureInfo Culture { get; set; }
 
-        public string RootElement { get; set; }
+        public string? RootElement { get; set; }
 
         public string Namespace { get; set; }
 
         public string DateFormat { get; set; }
 
-        public virtual T Deserialize<T>(IRestResponse response)
+        public virtual T? Deserialize<T>(IRestResponse response)
         {
             if (string.IsNullOrEmpty(response.Content))
                 return default;
@@ -46,7 +46,7 @@ namespace RestSharp.Deserializers
             var doc  = XDocument.Parse(response.Content);
             var root = doc.Root;
 
-            if (RootElement.HasValue() && doc.Root != null)
+            if (RootElement != null && doc.Root != null)
                 root = doc.Root.DescendantsAndSelf(RootElement.AsNamespaced(Namespace)).SingleOrDefault();
 
             // autodetect xml namespace
@@ -54,12 +54,12 @@ namespace RestSharp.Deserializers
                 RemoveNamespace(doc);
 
             var x       = Activator.CreateInstance<T>();
-            var objType = x.GetType();
+            var objType = x!.GetType();
 
             if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
-                x = (T) HandleListDerivative(root, objType.Name, objType);
+                x = (T) HandleListDerivative(root!, objType.Name, objType);
             else
-                x = (T) Map(x, root);
+                x = (T) Map(x, root!);
 
             return x;
         }
@@ -402,9 +402,9 @@ namespace RestSharp.Deserializers
             return list;
         }
 
-        protected virtual object CreateAndMap(Type t, XElement element)
+        protected virtual object? CreateAndMap(Type t, XElement element)
         {
-            object item;
+            object? item;
 
             if (t == typeof(string))
             {
@@ -423,9 +423,9 @@ namespace RestSharp.Deserializers
             return item;
         }
 
-        protected virtual object GetValueFromXml(XElement root, XName name, PropertyInfo prop, bool useExactName)
+        protected virtual object? GetValueFromXml(XElement? root, XName name, PropertyInfo prop, bool useExactName)
         {
-            object val = null;
+            object? val = null;
             if (root == null) return val;
 
             var element = GetElementByName(root, name);
@@ -446,7 +446,7 @@ namespace RestSharp.Deserializers
             return val;
         }
 
-        protected virtual XElement GetElementByName(XElement root, XName name)
+        protected virtual XElement? GetElementByName(XElement root, XName name)
         {
             var lowerName = name.LocalName.ToLower(Culture).AsNamespaced(name.NamespaceName);
             var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
@@ -462,7 +462,7 @@ namespace RestSharp.Deserializers
 
             // try looking for element that matches sanitized property name (Order by depth)
             var orderedDescendants = root.Descendants()
-                .OrderBy(d => d.Ancestors().Count());
+                .OrderBy(d => d.Ancestors().Count()).ToList();
 
             var element = orderedDescendants
                     .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
@@ -480,7 +480,7 @@ namespace RestSharp.Deserializers
                     : element;
         }
 
-        protected virtual XAttribute GetAttributeByName(XElement root, XName name, bool useExactName)
+        protected virtual XAttribute? GetAttributeByName(XElement root, XName name, bool useExactName)
         {
             var names = useExactName
                 ? null
@@ -499,7 +499,7 @@ namespace RestSharp.Deserializers
                 .FirstOrDefault(
                     d => useExactName
                         ? d.Name == name
-                        : names.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes())
+                        : names?.Contains(d.Name.LocalName.RemoveUnderscoresAndDashes()) == true
                 );
         }
     }

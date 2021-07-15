@@ -69,7 +69,7 @@ namespace RestSharp.Serializers
         /// <summary>
         /// Name of the root element to use when serializing
         /// </summary>
-        public string RootElement { get; set; }
+        public string? RootElement { get; set; }
 
         /// <summary>
         /// XML namespace to use when serializing

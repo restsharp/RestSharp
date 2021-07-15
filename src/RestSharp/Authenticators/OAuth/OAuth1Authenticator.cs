@@ -274,7 +274,7 @@ namespace RestSharp.Authenticators
             // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
             // or implement a separate class for each OAuth version
             static bool BaseQuery(Parameter x)
-                => x.Type == ParameterType.GetOrPost || x.Type == ParameterType.QueryString || x.Type == ParameterType.QueryStringWithoutEncode;
+                => x.Type is ParameterType.GetOrPost or ParameterType.QueryString or ParameterType.QueryStringWithoutEncode;
 
             var query =
                 request.AlwaysMultipartFormData || request.Files.Count > 0
@@ -334,6 +334,6 @@ namespace RestSharp.Authenticators
 
     static class ParametersExtensions
     {
-        internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString(), false));
+        internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString()));
     }
 }

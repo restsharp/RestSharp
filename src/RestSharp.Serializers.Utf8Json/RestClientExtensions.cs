@@ -1,10 +1,9 @@
-
+using JetBrains.Annotations;
 using Utf8Json;
 
-namespace RestSharp.Serializers.Utf8Json
-{
-    public static class RestClientExtensions
-    {
+namespace RestSharp.Serializers.Utf8Json {
+    [PublicAPI]
+    public static class RestClientExtensions {
         /// <summary>
         /// Use Utf8Json serializer with default formatter resolver
         /// </summary>

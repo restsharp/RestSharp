@@ -30,7 +30,7 @@ namespace RestSharp.Extensions
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="prop">Member to retrieve attribute from</param>
         /// <returns></returns>
-        public static T GetAttribute<T>(this MemberInfo prop) where T : Attribute => Attribute.GetCustomAttribute(prop, typeof(T)) as T;
+        public static T? GetAttribute<T>(this MemberInfo prop) where T : Attribute => Attribute.GetCustomAttribute(prop, typeof(T)) as T;
 
         /// <summary>
         /// Retrieve an attribute from a type
@@ -38,7 +38,7 @@ namespace RestSharp.Extensions
         /// <typeparam name="T">Type of attribute to retrieve</typeparam>
         /// <param name="type">Type to retrieve attribute from</param>
         /// <returns></returns>
-        public static T GetAttribute<T>(this Type type) where T : Attribute => Attribute.GetCustomAttribute(type, typeof(T)) as T;
+        public static T? GetAttribute<T>(this Type type) where T : Attribute => Attribute.GetCustomAttribute(type, typeof(T)) as T;
 
         /// <summary>
         /// Checks a type to see if it derives from a raw generic (e.g. List[[]])
@@ -74,7 +74,7 @@ namespace RestSharp.Extensions
         /// <param name="value">Value for which to search</param>
         /// <param name="culture">The culture used to calculate the name variants</param>
         /// <returns></returns>
-        public static object FindEnumValue(this Type type, string value, CultureInfo culture)
+        public static object? FindEnumValue(this Type type, string value, CultureInfo culture)
         {
             var caseInsensitiveComparer = StringComparer.Create(culture, true);
 

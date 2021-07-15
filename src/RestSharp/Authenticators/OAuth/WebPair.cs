@@ -31,7 +31,7 @@ namespace RestSharp.Authenticators.OAuth
         public string WebValue { get; }
         public bool Encode { get; }
 
-        internal static WebPairComparer Comparer { get; } = new WebPairComparer();
+        internal static WebPairComparer Comparer { get; } = new();
 
         internal class WebPairComparer : IComparer<WebPair>
         {

@@ -16,6 +16,6 @@
 
 namespace RestSharp.Deserializers {
     public interface IDeserializer {
-        T Deserialize<T>(IRestResponse response);
+        T? Deserialize<T>(IRestResponse response);
     }
 }

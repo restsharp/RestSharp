@@ -24,7 +24,7 @@ namespace RestSharp
     [PublicAPI]
     public class HttpResponse : IHttpResponse
     {
-        string _content;
+        string? _content;
 
         public HttpResponse()
         {

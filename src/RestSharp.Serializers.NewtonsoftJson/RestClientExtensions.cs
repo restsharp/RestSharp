@@ -1,9 +1,9 @@
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace RestSharp.Serializers.NewtonsoftJson
-{
-    public static class RestClientExtensions
-    {
+namespace RestSharp.Serializers.NewtonsoftJson {
+    [PublicAPI]
+    public static class RestClientExtensions {
         /// <summary>
         /// Use Newtonsoft.Json serializer with default settings
         /// </summary>

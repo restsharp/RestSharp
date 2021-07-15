@@ -25,19 +25,20 @@ namespace RestSharp.Serialization.Xml
         XmlSerilizationOptions _options         = XmlSerilizationOptions.Default;
         IXmlDeserializer       _xmlDeserializer = new XmlDeserializer();
         IXmlSerializer         _xmlSerializer   = new XmlSerializer();
-        public string[] SupportedContentTypes { get; } = Serialization.ContentType.XmlAccept;
+        
+        public string[] SupportedContentTypes => Serialization.ContentType.XmlAccept;
 
-        public DataFormat DataFormat { get; } = DataFormat.Xml;
+        public DataFormat DataFormat => DataFormat.Xml;
 
         public string ContentType { get; set; } = Serialization.ContentType.Xml;
 
-        public string Serialize(object obj) => _xmlSerializer.Serialize(obj);
+        public string? Serialize(object? obj) => _xmlSerializer.Serialize(obj);
 
-        public T Deserialize<T>(IRestResponse response) => _xmlDeserializer.Deserialize<T>(response);
+        public T? Deserialize<T>(IRestResponse response) => _xmlDeserializer.Deserialize<T>(response);
 
-        public string Serialize(Parameter parameter)
+        public string? Serialize(Parameter parameter)
         {
-            if (!(parameter is XmlParameter xmlParameter))
+            if (parameter is not XmlParameter xmlParameter)
                 throw new InvalidOperationException("Supplied parameter is not an XML parameter");
 
             var savedNamespace = _xmlSerializer.Namespace;
@@ -50,7 +51,7 @@ namespace RestSharp.Serialization.Xml
             return result;
         }
 
-        public string RootElement
+        public string? RootElement
         {
             get => _options.RootElement;
             set

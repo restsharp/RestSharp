@@ -26,7 +26,7 @@ namespace RestSharp
     {
         static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method) => http.AsGetAsync(responseCb, method);
 
-        static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method) => http.AsPostAsync(responseCb, method);
+        static HttpWebRequest? DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method) => http.AsPostAsync(responseCb, method);
 
         /// <summary>
         /// Executes the request asynchronously, authenticating if needed

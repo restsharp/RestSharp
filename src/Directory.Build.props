@@ -13,7 +13,8 @@
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
     <UpdateVersionProperties>true</UpdateVersionProperties>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <LangVersion>8</LangVersion>
+    <LangVersion>9</LangVersion>
+    <Nullable>enable</Nullable>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>

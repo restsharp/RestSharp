@@ -1,4 +1,5 @@
 using System.Text.Json;
+using JetBrains.Annotations;
 using RestSharp.Serialization;
 
 namespace RestSharp.Serializers.SystemTextJson
@@ -18,11 +19,11 @@ namespace RestSharp.Serializers.SystemTextJson
         /// <param name="options">Json serializer settings</param>
         public SystemTextJsonSerializer(JsonSerializerOptions options) => _options = options;
 
-        public string Serialize(object obj) => JsonSerializer.Serialize(obj, _options);
+        public string? Serialize(object? obj) => obj == null ? null : JsonSerializer.Serialize(obj, _options);
 
-        public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
+        public string? Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
 
-        public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.Content, _options);
+        public T? Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.Content, _options);
 
         public string[] SupportedContentTypes { get; } =
         {
@@ -31,6 +32,6 @@ namespace RestSharp.Serializers.SystemTextJson
 
         public string ContentType { get; set; } = "application/json";
 
-        public DataFormat DataFormat { get; } = DataFormat.Json;
+        public DataFormat DataFormat => DataFormat.Json;
     }
 }
