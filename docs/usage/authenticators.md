@@ -35,6 +35,44 @@ client.Authenticator = new HttpBasicAuthenticator("username", "password");
 
 ## OAuth1
 
+For OAuth1 authentication the `OAuth1Authenticator` class provides static methods to help generate an OAuth authenticator.
+
+### For endpoints requiring a request token
+
+This method requires a `consumerKey` and `consumerSecret` to authenticate.
+
+```csharp
+var client = new RestClient("http://example.com");
+client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
+```
+
+### For endpoints requiring an access token
+
+This method retrieves an access token when provided `consumerKey`, `consumerSecret`, `oauthToken`, and `oauthTokenSecret`.
+
+```csharp
+client.Authenticator = OAuth1Authenticator.ForAccessToken(
+                        consumerKey, consumerSecret, oauthToken,
+                        oauthTokenSecret
+                       );
+```
+
+This method also includes an optional parameter to specity the `OAuthSignatureMethod`.
+```csharp
+client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, 
+                                                          consumerSecret, 
+                                                          oauthToken, 
+                                                          oauthTokenSecret, 
+                                                          OAuthSignatureMethod.PlainText);
+```
+
+### 0-legged OAuth
+
+The same access token authenticator can be used in 0-legged OAuth scenarios by providing `null` for the `consumerSecret`.
+```csharp
+client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, null, oauthToken, oauthTokenSecret);
+```
+
 ## JWT
 
 ## Custom Authenticator
