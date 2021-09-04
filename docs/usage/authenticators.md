@@ -26,6 +26,13 @@ the values as encoded form values instead.
 
 ## Basic Authentication
 
+The `HttpBasicAuthenticator` allows you pass a username and password as a basica auth Authorization header.
+
+```csharp
+var client = new RestClient("http://example.com");
+client.Authenticator = new HttpBasicAuthenticator("username", "password");
+```
+
 ## OAuth1
 
 ## JWT
