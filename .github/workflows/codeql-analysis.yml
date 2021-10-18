@@ -23,7 +23,7 @@ jobs:
 
       - name: Checkout repository
         id: checkout_repo
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2.3.5
 
       - name: Initialize CodeQL
         id: init_codeql
