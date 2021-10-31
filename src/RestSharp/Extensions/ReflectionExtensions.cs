@@ -93,6 +93,8 @@ namespace RestSharp.Extensions
             if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
                 ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
 
+            if (ret == null)
+                throw new ArgumentOutOfRangeException(value + " undefined for " + type);
             return ret;
         }
     }
