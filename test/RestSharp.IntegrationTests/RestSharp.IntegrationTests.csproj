@@ -1,26 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net452;net5</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
-    <WarningLevel>0</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)'=='net5'">
-    <DefineConstants>NETCORE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
-    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Assets\Koala.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\TestFile.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net452;net5</TargetFrameworks>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+        <WarningLevel>0</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)'=='net5'">
+        <DefineConstants>NETCORE</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Net.Http" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
 </Project>

@@ -2,14 +2,13 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
         <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-        <Nullable>enable</Nullable>
     </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'"/>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+        <Reference Include="System.Web"/>
+        <Using Remove="System.Net.Http"/>
     </ItemGroup>
     <ItemGroup>
         <None Remove="RestSharp.csproj.DotSettings"/>
-        <Using Remove="System.Net.Http"/>
     </ItemGroup>
     <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
         <ItemGroup>

@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.IntegrationTests.Models;
+using RestSharp.Tests.Shared.Extensions;
 
 namespace RestSharp.IntegrationTests;
 
@@ -42,7 +43,8 @@ public class OAuth1Tests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var qs               = HttpUtility.ParseQueryString(response.Content);
+        
+        var qs               = new Uri(response.Content).ParseQuery();
         var oauthToken       = qs["oauth_token"];
         var oauthTokenSecret = qs["oauth_token_secret"];
         var applicationName  = qs["application_name"];
@@ -77,7 +79,7 @@ public class OAuth1Tests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        qs               = HttpUtility.ParseQueryString(response.Content);
+        qs               = new Uri(response.Content).ParseQuery();
         oauthToken       = qs["oauth_token"];
         oauthTokenSecret = qs["oauth_token_secret"];
 
@@ -125,7 +127,7 @@ public class OAuth1Tests {
         Assert.NotNull(requestTokenResponse);
         Assert.Equal(HttpStatusCode.OK, requestTokenResponse.StatusCode);
 
-        var requestTokenResponseParameters = HttpUtility.ParseQueryString(requestTokenResponse.Content);
+        var requestTokenResponseParameters = new Uri(requestTokenResponse.Content).ParseQuery();
         var requestToken                   = requestTokenResponseParameters["oauth_token"];
         var requestSecret                  = requestTokenResponseParameters["oauth_token_secret"];
 
@@ -148,7 +150,7 @@ public class OAuth1Tests {
         Debugger.Break();
 
         // get the access token
-        var requestTokenQueryParameters = HttpUtility.ParseQueryString(new Uri(requestUrl).Query);
+        var requestTokenQueryParameters = new Uri(requestUrl).ParseQuery();
         var requestVerifier             = requestTokenQueryParameters["oauth_verifier"];
 
         client.Authenticator = OAuth1Authenticator.ForAccessToken(
@@ -165,7 +167,7 @@ public class OAuth1Tests {
         Assert.NotNull(requestActionTokenResponse);
         Assert.Equal(HttpStatusCode.OK, requestActionTokenResponse.StatusCode);
 
-        var requestActionTokenResponseParameters = HttpUtility.ParseQueryString(requestActionTokenResponse.Content);
+        var requestActionTokenResponseParameters = new Uri(requestActionTokenResponse.Content).ParseQuery();
         var accessToken                          = requestActionTokenResponseParameters["oauth_token"];
         var accessSecret                         = requestActionTokenResponseParameters["oauth_token_secret"];
 
@@ -195,7 +197,7 @@ public class OAuth1Tests {
         authenticator.Authenticate(client, request);
 
         var requestUri = client.BuildUri(request);
-        var actual     = HttpUtility.ParseQueryString(requestUri.Query).AllKeys.ToList();
+        var actual     = new Uri(requestUri.Query).ParseQuery().Select(x => x.Key).ToList();
 
         Assert.True(actual.SequenceEqual(expected));
     }
@@ -244,7 +246,7 @@ public class OAuth1Tests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var qs               = HttpUtility.ParseQueryString(response.Content);
+        var qs               = new Uri(response.Content).ParseQuery();
         var oauthToken       = qs["oauth_token"];
         var oauthTokenSecret = qs["oauth_token_secret"];
 
@@ -274,7 +276,7 @@ public class OAuth1Tests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        qs               = HttpUtility.ParseQueryString(response.Content);
+        qs               = new Uri(response.Content).ParseQuery();
         oauthToken       = qs["oauth_token"];
         oauthTokenSecret = qs["oauth_token_secret"];
 

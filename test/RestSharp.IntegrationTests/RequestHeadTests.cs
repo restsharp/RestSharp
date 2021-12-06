@@ -2,7 +2,7 @@
 using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests; 
+namespace RestSharp.IntegrationTests;
 
 public class RequestHeadTests : CaptureFixture {
     [Fact]
@@ -50,10 +50,8 @@ public class RequestHeadTests : CaptureFixture {
         Assert.Null(RequestHeadCapturer.CapturedHeaders);
     }
 
+#if !NETCORE
     [Fact]
-#if NETCORE
-         [Ignore("Not supported for .NET Core")]
-#endif
     public void Passes_Default_Credentials_When_UseDefaultCredentials_Is_True() {
         const Method httpMethod = Method.GET;
 
@@ -76,4 +74,5 @@ public class RequestHeadTests : CaptureFixture {
             "Authorization header not present in HTTP request from client, even though UseDefaultCredentials = true"
         );
     }
+#endif
 }

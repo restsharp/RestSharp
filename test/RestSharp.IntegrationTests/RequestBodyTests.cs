@@ -1,16 +1,14 @@
-﻿using RestSharp.Tests.Shared.Fixtures;
+﻿using RestSharp.IntegrationTests.Fixtures;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
-public class RequestBodyTests {
-    SimpleServer _server;
+public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
+    readonly SimpleServer _server;
+
     const string NewLine = "\r\n";
 
-    [OneTimeSetUp]
-    public void Setup() => _server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
-
-    [OneTimeTearDown]
-    public void Teardown() => _server.Dispose();
+    public RequestBodyTests(RequestBodyFixture fixture) => _server = fixture.Server;
 
     [Fact]
     public void Can_Be_Added_To_COPY_Request() {

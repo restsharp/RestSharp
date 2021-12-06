@@ -3,7 +3,7 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
-public class NonProtocolExceptionHandlingTests : IDisposable {
+public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     // ReSharper disable once ClassNeverInstantiated.Local
     class StupidClass {
         public string Property { get; set; }
@@ -19,7 +19,7 @@ public class NonProtocolExceptionHandlingTests : IDisposable {
 
     public void Dispose() => _server.Dispose();
 
-    SimpleServer _server;
+    readonly SimpleServer _server;
 
     /// <summary>
     /// Success of this test is based largely on the behavior of your current DNS.
@@ -112,10 +112,8 @@ public class NonProtocolExceptionHandlingTests : IDisposable {
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
 
+#if !NETCORE
     [Fact]
-#if NETCORE
-        [Ignore("Not supported for .NET Core")]
-#endif
     public async Task Task_Handles_Non_Existent_Domain() {
         var client = new RestClient("http://this.cannot.exist:8001");
 
@@ -129,4 +127,5 @@ public class NonProtocolExceptionHandlingTests : IDisposable {
         Assert.Equal(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
         Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
     }
+#endif
 }

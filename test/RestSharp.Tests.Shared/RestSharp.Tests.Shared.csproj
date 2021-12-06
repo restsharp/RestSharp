@@ -1,12 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net461;net5</TargetFrameworks>
-    <IsTestProject>false</IsTestProject>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'"/>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All"/>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net452;net5</TargetFrameworks>
+        <IsTestProject>false</IsTestProject>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+        <PackageReference Include="System.Net.Http" Version="4.3.*" />
+    </ItemGroup>
 </Project>

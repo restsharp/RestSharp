@@ -1,20 +1,16 @@
 ﻿using System.Net;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests; 
+namespace RestSharp.IntegrationTests;
 
 public class AsyncRequestBodyTests {
-    [OneTimeSetUp]
-    public void Setup() => _server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
+    public AsyncRequestBodyTests(RequestBodyFixture fixture) {
+        var server = fixture.Server;
+        _client = new RestClient(server.Url);
+    }
 
-    [OneTimeTearDown]
-    public void Teardown() => _server.Dispose();
-
-    [SetUp]
-    public void CreateClient() => _client = new RestClient(_server.Url);
-
-    SimpleServer _server;
-    RestClient   _client;
+    readonly RestClient _client;
 
     static void AssertHasNoRequestBody() {
         Assert.Null(RequestBodyCapturer.CapturedContentType);

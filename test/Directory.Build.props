@@ -3,6 +3,7 @@
     <PropertyGroup>
         <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,9 +11,11 @@
         <PackageReference Include="xunit" Version="2.4.1"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All"/>
         <PackageReference Include="AutoFixture" Version="4.17.0"/>
-        <PackageReference Include="FluentAssertions" Version="6.2.0"/>
+        <PackageReference Include="FluentAssertions" Version="5.10.3"/>
         <PackageReference Include="coverlet.collector" Version="3.1.0"/>
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net452" Version="1.0.2" PrivateAssets="All"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -21,5 +24,6 @@
         <Using Include="FluentAssertions"/>
         <Using Include="FluentAssertions.Extensions"/>
         <Using Include="AutoFixture"/>
+        <Using Remove="System.Net.Http"/>
     </ItemGroup>
 </Project>
