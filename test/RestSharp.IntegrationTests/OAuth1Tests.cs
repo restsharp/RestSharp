@@ -42,7 +42,6 @@ public class OAuth1Tests {
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
         
         var qs               = new Uri(response.Content).ParseQuery();
         var oauthToken       = qs["oauth_token"];
@@ -197,9 +196,10 @@ public class OAuth1Tests {
         authenticator.Authenticate(client, request);
 
         var requestUri = client.BuildUri(request);
-        var actual     = new Uri(requestUri.Query).ParseQuery().Select(x => x.Key).ToList();
+        var actual     = requestUri.ParseQuery().Select(x => x.Key).ToList();
 
-        Assert.True(actual.SequenceEqual(expected));
+        actual.Should().BeEquivalentTo(expected);
+        // Assert.True(actual.SequenceEqual(expected));
     }
 
     [Fact(Skip = "Provide your own consumer key/secret before running")]
