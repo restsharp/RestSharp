@@ -126,7 +126,7 @@ namespace RestSharp
         /// <summary>
         /// Request body to be sent with request
         /// </summary>
-        string RequestBody { get; set; }
+        string? RequestBody { get; set; }
 
         /// <summary>
         /// Content type of the request body.

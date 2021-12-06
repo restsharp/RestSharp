@@ -18,13 +18,11 @@ using System.Net;
 using RestSharp.Authenticators.OAuth.Extensions;
 using RestSharp.Extensions;
 
-namespace RestSharp
-{
+namespace RestSharp {
     /// <summary>
     /// HttpWebRequest wrapper (sync methods)
     /// </summary>
-    public partial class Http
-    {
+    public partial class Http {
         /// <summary>
         /// Execute a POST request
         /// </summary>
@@ -81,60 +79,54 @@ namespace RestSharp
 
         HttpResponse GetStyleMethodInternal(string method)
             => ExecuteRequest(
-                method, r =>
-                {
+                method,
+                r => {
                     if (!HasBody) return;
-                    
+
                     if (!CanGetWithBody())
-                        throw new NotSupportedException($"Http verb {method} does not support body");
+                        throw new NotSupportedException($"HTTP verb {method} does not support body");
 
                     r.ContentType = RequestContentType;
                     WriteRequestBody(r);
 
-                    bool CanGetWithBody() => method == "DELETE" || method == "OPTIONS";
+                    bool CanGetWithBody() => method is "DELETE" or "OPTIONS";
                 }
             );
 
         HttpResponse PostPutInternal(string method)
             => ExecuteRequest(
-                method, r =>
-                {
+                method,
+                r => {
                     PreparePostBody(r);
                     WriteRequestBody(r);
                 }
             );
 
-        HttpResponse ExecuteRequest(string httpMethod, Action<HttpWebRequest> prepareRequest)
-        {
+        HttpResponse ExecuteRequest(string httpMethod, Action<HttpWebRequest> prepareRequest) {
             var webRequest = ConfigureWebRequest(httpMethod, Url);
 
             prepareRequest(webRequest);
 
-            try
-            {
+            try {
                 using var webResponse = GetRawResponse(webRequest);
 
                 return ExtractResponseData(webResponse);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 if (ThrowOnAnyError)
                     throw;
 
                 return ExtractErrorResponse(ex);
             }
 
-            static HttpResponse ExtractErrorResponse(Exception ex)
-            {
-                var response = new HttpResponse {ErrorMessage = ex.Message};
+            static HttpResponse ExtractErrorResponse(Exception ex) {
+                var response = new HttpResponse { ErrorMessage = ex.Message };
 
-                if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
-                {
+                if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout) {
                     response.ResponseStatus = ResponseStatus.TimedOut;
                     response.ErrorException = webException;
                 }
-                else
-                {
+                else {
                     response.ErrorException = ex;
                     response.ResponseStatus = ResponseStatus.Error;
                 }
@@ -142,14 +134,11 @@ namespace RestSharp
                 return response;
             }
 
-            static HttpWebResponse GetRawResponse(WebRequest request)
-            {
-                try
-                {
-                    return (HttpWebResponse) request.GetResponse();
+            static HttpWebResponse GetRawResponse(WebRequest request) {
+                try {
+                    return (HttpWebResponse)request.GetResponse();
                 }
-                catch (WebException ex)
-                {
+                catch (WebException ex) {
                     // Check to see if this is an HTTP error or a transport error.
                     // In cases where an HTTP error occurs ( status code >= 400 )
                     // return the underlying HTTP response, otherwise assume a
@@ -164,8 +153,7 @@ namespace RestSharp
             }
         }
 
-        void WriteRequestBody(WebRequest webRequest)
-        {
+        void WriteRequestBody(WebRequest webRequest) {
             if (HasBody || HasFiles || AlwaysMultipartFormData)
                 webRequest.ContentLength = CalculateContentLength();
 
@@ -180,8 +168,7 @@ namespace RestSharp
         }
 
         [Obsolete("Use the WebRequestConfigurator delegate instead of overriding this method")]
-        protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url)
-        {
+        protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url) {
             var webRequest = CreateWebRequest(url) ?? CreateRequest(url);
 
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
@@ -192,12 +179,10 @@ namespace RestSharp
 #if NETSTANDARD2_0
             webRequest.Proxy = null;
 #endif
-            try
-            {
+            try {
                 webRequest.ServicePoint.Expect100Continue = false;
             }
-            catch (PlatformNotSupportedException)
-            {
+            catch (PlatformNotSupportedException) {
                 // Avoid to crash in UWP apps
             }
 
@@ -253,10 +238,8 @@ namespace RestSharp
 
             // handle restricted headers the .NET way - thanks @dimebrain!
             // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
-            void AppendHeaders()
-            {
-                foreach (var header in Headers)
-                {
+            void AppendHeaders() {
+                foreach (var header in Headers) {
                     if (_restrictedHeaderActions.TryGetValue(header.Name, out var restrictedHeaderAction))
                         restrictedHeaderAction.Invoke(webRequest, header.Value);
                     else
@@ -264,14 +247,11 @@ namespace RestSharp
                 }
             }
 
-            void AppendCookies()
-            {
+            void AppendCookies() {
                 webRequest.CookieContainer = CookieContainer ?? new CookieContainer();
 
-                foreach (var httpCookie in Cookies)
-                {
-                    var cookie = new Cookie
-                    {
+                foreach (var httpCookie in Cookies) {
+                    var cookie = new Cookie {
                         Name   = httpCookie.Name,
                         Value  = httpCookie.Value,
                         Domain = webRequest.RequestUri.Host

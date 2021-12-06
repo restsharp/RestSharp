@@ -182,7 +182,7 @@ public partial class Http : IHttp {
     public IList<HttpCookie> Cookies { get; internal set; } = null!;
 
     /// <inheritdoc />
-    public string RequestBody { get; set; } = null!;
+    public string? RequestBody { get; set; }
 
     /// <inheritdoc />
     public string RequestContentType { get; set; } = null!;

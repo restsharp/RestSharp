@@ -216,14 +216,14 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     }
 
     static void AssertHasNoRequestBody() {
-        Assert.Null(RequestBodyCapturer.CapturedContentType);
-        Assert.False(RequestBodyCapturer.CapturedHasEntityBody);
-        Assert.Equal(string.Empty, RequestBodyCapturer.CapturedEntityBody);
+        RequestBodyCapturer.CapturedContentType.Should().BeNull();
+        RequestBodyCapturer.CapturedHasEntityBody.Should().BeFalse();
+        RequestBodyCapturer.CapturedEntityBody.Should().BeNullOrEmpty();
     }
 
     static void AssertHasRequestBody(string contentType, string bodyData) {
-        Assert.Equal(contentType, RequestBodyCapturer.CapturedContentType);
-        Assert.True(RequestBodyCapturer.CapturedHasEntityBody);
-        Assert.Equal(bodyData, RequestBodyCapturer.CapturedEntityBody);
+        RequestBodyCapturer.CapturedContentType.Should().Be(contentType);
+        RequestBodyCapturer.CapturedHasEntityBody.Should().BeTrue();
+        RequestBodyCapturer.CapturedEntityBody.Should().Be(bodyData);
     }
 }

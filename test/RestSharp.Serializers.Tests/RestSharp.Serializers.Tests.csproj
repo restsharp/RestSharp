@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net461;net5</TargetFrameworks>
+        <TargetFrameworks>net461;net6.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj"/>

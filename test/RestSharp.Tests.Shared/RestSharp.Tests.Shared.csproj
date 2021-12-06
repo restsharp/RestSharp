@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net452;net5</TargetFrameworks>
+        <TargetFrameworks>net452;net6.0</TargetFrameworks>
         <IsTestProject>false</IsTestProject>
     </PropertyGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
