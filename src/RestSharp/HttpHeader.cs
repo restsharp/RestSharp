@@ -44,7 +44,6 @@ namespace RestSharp
         /// <summary>
         /// Creates a new instance of HttpHeader. Remember to assign properties!
         /// </summary>
-        [Obsolete("Use parameterized constructor")]
         public HttpHeader() { }
 
         /// <summary>

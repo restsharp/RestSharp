@@ -20,7 +20,6 @@ namespace RestSharp {
         public string Name { get; }
         public object Value { get; }
 
-        [Obsolete("The RestBody constructor will be internal in future versions")]
         public RequestBody(string contentType, string name, object value) {
             ContentType = contentType;
             Name        = name;

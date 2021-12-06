@@ -235,7 +235,6 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        [Obsolete("Use AddXmlBody")]
         public IRestRequest AddBody(object obj, string xmlNamespace)
             => RequestFormat switch
             {
@@ -245,7 +244,6 @@ namespace RestSharp
             };
 
         /// <inheritdoc />
-        [Obsolete("Use AddXmlBody or AddJsonBody")]
         public IRestRequest AddBody(object obj)
             => RequestFormat switch
             {
@@ -467,7 +465,6 @@ namespace RestSharp
         public DataFormat RequestFormat { get; set; }
 
         /// <inheritdoc />
-        [Obsolete("Add custom content handler instead. This property will be removed.")]
         public string RootElement { get; set; }
 
         /// <inheritdoc />
@@ -477,11 +474,9 @@ namespace RestSharp
         public Action<IHttp>? OnBeforeRequest { get; set; }
 
         /// <inheritdoc />
-        [Obsolete("Add custom content handler instead. This property will be removed.")]
         public string DateFormat { get; set; }
 
         /// <inheritdoc />
-        [Obsolete("Add custom content handler instead. This property will be removed.")]
         public string XmlNamespace { get; set; }
 
         /// <inheritdoc />

@@ -207,7 +207,6 @@ namespace RestSharp
         /// <param name="obj">The object to serialize</param>
         /// <param name="xmlNamespace">The XML namespace to use when serializing</param>
         /// <returns>This request</returns>
-        [Obsolete("Use AddJsonBody or AddXmlBody instead")]
         IRestRequest AddBody(object obj, string xmlNamespace);
 
         /// <summary>
@@ -216,7 +215,6 @@ namespace RestSharp
         /// </summary>
         /// <param name="obj">The object to serialize</param>
         /// <returns>This request</returns>
-        [Obsolete("Use AddJsonBody or AddXmlBody instead")]
         IRestRequest AddBody(object obj);
 
         /// <summary>

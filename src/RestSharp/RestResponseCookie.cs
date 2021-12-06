@@ -16,7 +16,6 @@ using System;
 
 namespace RestSharp
 {
-    [Obsolete("We will use HttpCookie in the response as well in the next major version")]
     public class RestResponseCookie
     {
         /// <summary>

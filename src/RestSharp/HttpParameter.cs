@@ -44,7 +44,6 @@ namespace RestSharp
         /// <param name="contentType">Parameter content type</param>
         public HttpParameter(string name, object? value, string? contentType = null) : this(name, value?.ToString(), contentType) { }
 
-        [Obsolete("Use parameterized constructor")]
         public HttpParameter() { }
 
         /// <summary>

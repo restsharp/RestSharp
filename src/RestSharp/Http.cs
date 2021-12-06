@@ -223,12 +223,9 @@ public partial class Http : IHttp {
     public bool ThrowOnAnyError { get; set; }
 
     [Obsolete]
-    public static IHttp Create()
-        => new Http();
+    public static IHttp Create() => new Http();
 
-    [Obsolete("Overriding this method won't be possible in future version")]
-    protected virtual HttpWebRequest? CreateWebRequest(Uri url)
-        => null;
+    protected virtual HttpWebRequest? CreateWebRequest(Uri url) => null;
 
     static HttpWebRequest CreateRequest(Uri uri)
         => (HttpWebRequest)WebRequest.Create(uri);
