@@ -1,150 +1,132 @@
 ﻿using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using NUnit.Framework;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests
-{
-    [TestFixture]
-    public class NonProtocolExceptionHandlingTests
-    {
-        // ReSharper disable once ClassNeverInstantiated.Local
-        class StupidClass
-        {
-            public string Property { get; set; }
-        }
+namespace RestSharp.IntegrationTests;
 
-        /// <summary>
-        /// Simulates a long server process that should result in a client timeout
-        /// </summary>
-        /// <param name="context"></param>
-        static void TimeoutHandler(HttpListenerContext context) => Thread.Sleep(101000);
+public class NonProtocolExceptionHandlingTests : IDisposable {
+    // ReSharper disable once ClassNeverInstantiated.Local
+    class StupidClass {
+        public string Property { get; set; }
+    }
 
-        [SetUp]
-        public void Setup() => _server = SimpleServer.Create(TimeoutHandler);
+    /// <summary>
+    /// Simulates a long server process that should result in a client timeout
+    /// </summary>
+    /// <param name="context"></param>
+    static void TimeoutHandler(HttpListenerContext context) => Thread.Sleep(101000);
 
-        [TearDown]
-        public void Teardown() => _server.Dispose();
+    public NonProtocolExceptionHandlingTests() => _server = SimpleServer.Create(TimeoutHandler);
 
-        SimpleServer _server;
+    public void Dispose() => _server.Dispose();
 
-        /// <summary>
-        /// Success of this test is based largely on the behavior of your current DNS.
-        /// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
-        /// </summary>
-        [Test]
-        public void Handles_Non_Existent_Domain()
-        {
-            var client   = new RestClient("http://nonexistantdomainimguessing.org");
-            var request  = new RestRequest("foo");
-            var response = client.Execute(request);
+    SimpleServer _server;
 
-            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
-        }
+    /// <summary>
+    /// Success of this test is based largely on the behavior of your current DNS.
+    /// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
+    /// </summary>
+    [Fact]
+    public void Handles_Non_Existent_Domain() {
+        var client   = new RestClient("http://nonexistantdomainimguessing.org");
+        var request  = new RestRequest("foo");
+        var response = client.Execute(request);
 
-        /// <summary>
-        /// Tests that RestSharp properly handles a non-protocol error.
-        /// Simulates a server timeout, then verifies that the ErrorException
-        /// property is correctly populated.
-        /// </summary>
-        [Test]
-        public void Handles_Server_Timeout_Error()
-        {
-            var client = new RestClient(_server.Url);
+        Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+    }
 
-            var request = new RestRequest("404")
-            {
-                Timeout = 500
-            };
-            var response = client.Execute(request);
+    /// <summary>
+    /// Tests that RestSharp properly handles a non-protocol error.
+    /// Simulates a server timeout, then verifies that the ErrorException
+    /// property is correctly populated.
+    /// </summary>
+    [Fact]
+    public void Handles_Server_Timeout_Error() {
+        var client = new RestClient(_server.Url);
 
-            Assert.NotNull(response.ErrorException);
-            Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
-        }
+        var request = new RestRequest("404") {
+            Timeout = 500
+        };
+        var response = client.Execute(request);
 
-        [Test]
-        public void Handles_Server_Timeout_Error_Async()
-        {
-            var resetEvent = new ManualResetEvent(false);
+        Assert.NotNull(response.ErrorException);
+        Assert.IsType<WebException>(response.ErrorException);
+        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+    }
 
-            var client = new RestClient(_server.Url);
+    [Fact]
+    public void Handles_Server_Timeout_Error_Async() {
+        var resetEvent = new ManualResetEvent(false);
 
-            var request = new RestRequest("404")
-            {
-                Timeout = 500
-            };
-            IRestResponse response = null;
+        var client = new RestClient(_server.Url);
 
-            client.ExecuteAsync(
-                request, responseCb =>
-                {
-                    response = responseCb;
-                    resetEvent.Set();
-                }
-            );
+        var request = new RestRequest("404") {
+            Timeout = 500
+        };
+        IRestResponse response = null;
 
-            resetEvent.WaitOne();
+        client.ExecuteAsync(
+            request,
+            responseCb => {
+                response = responseCb;
+                resetEvent.Set();
+            }
+        );
 
-            Assert.NotNull(response);
-            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
-            Assert.NotNull(response.ErrorException);
-            Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.IsTrue(response.ErrorException.Message.Contains("timed"));
-        }
+        resetEvent.WaitOne();
 
-        [Test]
-        public async Task Handles_Server_Timeout_Error_AsyncTask()
-        {
-            var client   = new RestClient(_server.Url);
-            var request  = new RestRequest("404") {Timeout = 500};
-            var response = await client.ExecuteAsync(request);
+        Assert.NotNull(response);
+        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+        Assert.NotNull(response.ErrorException);
+        Assert.IsType<WebException>(response.ErrorException);
+        Assert.Contains("timed", response.ErrorException.Message);
+    }
 
-            Assert.NotNull(response);
-            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
+    [Fact]
+    public async Task Handles_Server_Timeout_Error_AsyncTask() {
+        var client   = new RestClient(_server.Url);
+        var request  = new RestRequest("404") { Timeout = 500 };
+        var response = await client.ExecuteAsync(request);
 
-            Assert.NotNull(response.ErrorException);
-            Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.IsTrue(response.ErrorException.Message.Contains("timed"));
-        }
+        Assert.NotNull(response);
+        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
 
-        /// <summary>
-        /// Tests that RestSharp properly handles a non-protocol error.
-        /// Simulates a server timeout, then verifies that the ErrorException
-        /// property is correctly populated.
-        /// </summary>
-        [Test]
-        public void Handles_Server_Timeout_Error_With_Deserializer()
-        {
-            var client   = new RestClient(_server.Url);
-            var request  = new RestRequest("404") {Timeout = 500};
-            var response = client.Execute<Response>(request);
+        Assert.NotNull(response.ErrorException);
+        Assert.IsType<WebException>(response.ErrorException);
+        Assert.Contains("timed", response.ErrorException.Message);
+    }
 
-            Assert.Null(response.Data);
-            Assert.NotNull(response.ErrorException);
-            Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
-        }
+    /// <summary>
+    /// Tests that RestSharp properly handles a non-protocol error.
+    /// Simulates a server timeout, then verifies that the ErrorException
+    /// property is correctly populated.
+    /// </summary>
+    [Fact]
+    public void Handles_Server_Timeout_Error_With_Deserializer() {
+        var client   = new RestClient(_server.Url);
+        var request  = new RestRequest("404") { Timeout = 500 };
+        var response = client.Execute<Response>(request);
 
-        [Test]
+        Assert.Null(response.Data);
+        Assert.NotNull(response.ErrorException);
+        Assert.IsType<WebException>(response.ErrorException);
+        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+    }
+
+    [Fact]
 #if NETCORE
         [Ignore("Not supported for .NET Core")]
 #endif
-        public async Task Task_Handles_Non_Existent_Domain()
-        {
-            var client = new RestClient("http://this.cannot.exist:8001");
+    public async Task Task_Handles_Non_Existent_Domain() {
+        var client = new RestClient("http://this.cannot.exist:8001");
 
-            var request = new RestRequest("/")
-            {
-                RequestFormat = DataFormat.Json,
-                Method        = Method.GET
-            };
-            var response = await client.ExecuteAsync<StupidClass>(request);
+        var request = new RestRequest("/") {
+            RequestFormat = DataFormat.Json,
+            Method        = Method.GET
+        };
+        var response = await client.ExecuteAsync<StupidClass>(request);
 
-            Assert.IsInstanceOf<WebException>(response.ErrorException);
-            Assert.AreEqual(WebExceptionStatus.NameResolutionFailure, ((WebException) response.ErrorException).Status);
-            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
-        }
+        Assert.IsType<WebException>(response.ErrorException);
+        Assert.Equal(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
+        Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
     }
 }

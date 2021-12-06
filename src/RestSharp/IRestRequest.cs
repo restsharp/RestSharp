@@ -90,7 +90,6 @@ namespace RestSharp
         /// <summary>
         /// Serializer to use when writing request bodies.
         /// </summary>
-        [Obsolete("Use AddJsonBody or AddXmlBody to tell RestSharp how to serialize the request body")]
         DataFormat RequestFormat { get; set; }
 
         /// <summary>
@@ -113,7 +112,6 @@ namespace RestSharp
         /// <summary>
         /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
         /// </summary>
-        [Obsolete("This property will be moved to RestClient")]
         ICredentials? Credentials { get; set; }
 
         /// <summary>
@@ -139,7 +137,6 @@ namespace RestSharp
         /// Determine whether or not the "default credentials" (e.g. the user account under which the current process is
         /// running) will be sent along to the server. The default is false.
         /// </summary>
-        [Obsolete("This property will be moved to RestClient")]
         bool UseDefaultCredentials { get; set; }
 
         /// <summary>

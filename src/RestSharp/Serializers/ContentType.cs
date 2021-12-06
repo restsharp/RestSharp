@@ -12,31 +12,26 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-using System.Collections.Generic;
+// ReSharper disable once CheckNamespace
 
-namespace RestSharp.Serialization
-{
-    public static class ContentType
-    {
-        public const string Json = "application/json";
+namespace RestSharp.Serialization;
 
-        public const string Xml = "application/xml";
+public static class ContentType {
+    public const string Json = "application/json";
 
-        public static readonly Dictionary<DataFormat, string> FromDataFormat =
-            new Dictionary<DataFormat, string>
-            {
-                {DataFormat.Xml, Xml},
-                {DataFormat.Json, Json}
-            };
+    public const string Xml = "application/xml";
 
-        public static readonly string[] JsonAccept =
-        {
-            "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
+    public static readonly Dictionary<DataFormat, string> FromDataFormat =
+        new() {
+            { DataFormat.Xml, Xml },
+            { DataFormat.Json, Json }
         };
 
-        public static readonly string[] XmlAccept =
-        {
-            "application/xml", "text/xml", "*+xml", "*"
-        };
-    }
+    public static readonly string[] JsonAccept = {
+        "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
+    };
+
+    public static readonly string[] XmlAccept = {
+        "application/xml", "text/xml", "*+xml", "*"
+    };
 }

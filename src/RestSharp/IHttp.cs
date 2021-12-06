@@ -156,7 +156,7 @@ namespace RestSharp
         /// <summary>
         /// An alternative to RequestBody, for when the caller already has the byte array.
         /// </summary>
-        byte[] RequestBodyBytes { get; set; }
+        byte[]? RequestBodyBytes { get; set; }
 
         /// <summary>
         /// URL to call for this request

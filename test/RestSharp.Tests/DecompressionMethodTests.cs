@@ -1,28 +1,22 @@
 ﻿using System.Net;
-using NUnit.Framework;
 
-namespace RestSharp.Tests
-{
-    [TestFixture]
-    public class DecompressionMethodTests
-    {
-        [Test]
-        public void ShouldDecompressionMethodsContainsDefaultValues()
-        {
-            var restRequest = new RestRequest();
+namespace RestSharp.Tests; 
 
-            Assert.True(restRequest.AllowedDecompressionMethods.Contains(DecompressionMethods.None));
-            Assert.True(restRequest.AllowedDecompressionMethods.Contains(DecompressionMethods.Deflate));
-            Assert.True(restRequest.AllowedDecompressionMethods.Contains(DecompressionMethods.GZip));
-        }
+public class DecompressionMethodTests {
+    [Fact]
+    public void ShouldDecompressionMethodsContainsDefaultValues() {
+        var restRequest = new RestRequest();
 
-        [Test]
-        public void ShouldDecompressionMethodsNotEmptyOrNull()
-        {
-            var restRequest = new RestRequest();
+        Assert.True(restRequest.AllowedDecompressionMethods.Contains(DecompressionMethods.None));
+        Assert.True(restRequest.AllowedDecompressionMethods.Contains(DecompressionMethods.Deflate));
+        Assert.True(restRequest.AllowedDecompressionMethods.Contains(DecompressionMethods.GZip));
+    }
 
-            Assert.IsNotNull(restRequest.AllowedDecompressionMethods);
-            Assert.IsNotEmpty(restRequest.AllowedDecompressionMethods);
-        }
+    [Fact]
+    public void ShouldDecompressionMethodsNotEmptyOrNull() {
+        var restRequest = new RestRequest();
+
+        Assert.NotNull(restRequest.AllowedDecompressionMethods);
+        Assert.NotEmpty(restRequest.AllowedDecompressionMethods);
     }
 }

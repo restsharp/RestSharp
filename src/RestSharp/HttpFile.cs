@@ -20,7 +20,6 @@ namespace RestSharp
     /// <summary>
     /// Container for HTTP file
     /// </summary>
-    [Obsolete("The HttpFile class will be internal in future version")]
     public class HttpFile
     {
         /// <summary>
@@ -36,12 +35,12 @@ namespace RestSharp
         /// <summary>
         /// Name of the file to use when uploading
         /// </summary>
-        public string FileName { get; set; }
+        public string? FileName { get; set; }
 
         /// <summary>
         /// MIME content type of file
         /// </summary>
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
         /// <summary>
         /// Name of the parameter

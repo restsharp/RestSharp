@@ -1,46 +1,36 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using FluentAssertions;
-using NUnit.Framework;
+﻿using System.Text;
 using RestSharp.Authenticators;
 
-namespace RestSharp.Tests
-{
-    [TestFixture]
-    public class HttpBasicAuthenticatorTests
-    {
-        [SetUp]
-        public void Setup()
-        {
-            _username = "username";
-            _password = "password";
+namespace RestSharp.Tests; 
 
-            _authenticator = new HttpBasicAuthenticator(_username, _password);
-        }
+public class HttpBasicAuthenticatorTests {
+    public HttpBasicAuthenticatorTests() {
+        _username = "username";
+        _password = "password";
 
-        string _username;
-        string _password;
+        _authenticator = new HttpBasicAuthenticator(_username, _password);
+    }
 
-        HttpBasicAuthenticator _authenticator;
+    readonly string _username;
+    readonly string _password;
 
-        [Test]
-        public void Authenticate_ShouldAddAuthorizationParameter_IfPreviouslyUnassigned()
-        {
-            // Arrange
-            var client  = new RestClient();
-            var request = new RestRequest();
+    readonly HttpBasicAuthenticator _authenticator;
 
-            request.AddParameter(new Parameter("NotMatching", null, default));
+    [Fact]
+    public void Authenticate_ShouldAddAuthorizationParameter_IfPreviouslyUnassigned() {
+        // Arrange
+        var client  = new RestClient();
+        var request = new RestRequest();
 
-            var expectedToken =
-                $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_username}:{_password}"))}";
+        request.AddQueryParameter("NotMatching", "", default);
 
-            // Act
-            _authenticator.Authenticate(client, request);
+        var expectedToken =
+            $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_username}:{_password}"))}";
 
-            // Assert
-            request.Parameters.Single(x => x.Name == "Authorization").Value.Should().Be(expectedToken);
-        }
+        // Act
+        _authenticator.Authenticate(client, request);
+
+        // Assert
+        request.Parameters.Single(x => x.Name == "Authorization").Value.Should().Be(expectedToken);
     }
 }

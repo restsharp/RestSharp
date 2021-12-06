@@ -1,230 +1,208 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using System.Net;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests
-{
-    [TestFixture]
-    public class AsyncTests
-    {
-        static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
+namespace RestSharp.IntegrationTests; 
 
-        class ResponseHandler
-        {
-            void error(HttpListenerContext context)
-            {
-                context.Response.StatusCode = 400;
-                context.Response.Headers.Add("Content-Type", "application/xml");
+public class AsyncTests {
+    static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
 
-                context.Response.OutputStream.WriteStringUtf8(
-                    @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+    class ResponseHandler {
+        void error(HttpListenerContext context) {
+            context.Response.StatusCode = 400;
+            context.Response.Headers.Add("Content-Type", "application/xml");
+
+            context.Response.OutputStream.WriteStringUtf8(
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Error>
         <Message>Not found!</Message>
     </Error>
 </Response>"
-                );
-            }
+            );
+        }
 
-            void success(HttpListenerContext context)
-                => context.Response.OutputStream.WriteStringUtf8(
-                    @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+        void success(HttpListenerContext context)
+            => context.Response.OutputStream.WriteStringUtf8(
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Response>
     <Success>
         <Message>Works!</Message>
     </Success>
 </Response>"
-                );
-
-            void timeout(HttpListenerContext context) => Thread.Sleep(1000);
-        }
-
-        class Response
-        {
-            public string Message { get; set; }
-        }
-
-        [Test]
-        public void Can_Cancel_GET_TaskAsync_With_Response_Type()
-        {
-            const string val = "Basic async task test";
-
-            using var server = SimpleServer.Create(Handlers.EchoValue(val));
-
-            var client                  = new RestClient(server.Url);
-            var request                 = new RestRequest("timeout");
-            var cancellationTokenSource = new CancellationTokenSource();
-            var task                    = client.ExecuteAsync<Response>(request, cancellationTokenSource.Token);
-
-            cancellationTokenSource.Cancel();
-
-            Assert.True(task.IsCanceled);
-        }
-
-        [Test]
-        public async Task Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler()
-        {
-            const string exceptionMessage = "Thrown from OnBeforeDeserialization";
-
-            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
-
-            var client  = new RestClient(server.Url);
-            var request = new RestRequest("success");
-
-            request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
-
-            var response = await client.ExecuteAsync<Response>(request);
-
-            Assert.AreEqual(exceptionMessage, response.ErrorMessage);
-            Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
-        }
-
-        [Test]
-        public async Task Can_Perform_ExecuteGetTaskAsync_With_Response_Type()
-        {
-            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
-
-            var client   = new RestClient(server.Url);
-            var request  = new RestRequest("success");
-            var response = await client.ExecuteAsync<Response>(request);
-
-            Assert.AreEqual("Works!", response.Data.Message);
-        }
-
-        [Test]
-        public void Can_Perform_GET_Async()
-        {
-            const string val = "Basic async test";
-
-            var resetEvent = new ManualResetEvent(false);
-
-            using var server = SimpleServer.Create(Handlers.EchoValue(val));
-
-            var client  = new RestClient(server.Url);
-            var request = new RestRequest("");
-
-            client.ExecuteAsync(
-                request, (response, asyncHandle) =>
-                {
-                    Assert.NotNull(response.Content);
-                    Assert.AreEqual(val, response.Content);
-                    resetEvent.Set();
-                }
             );
 
-            resetEvent.WaitOne();
-        }
+        void timeout(HttpListenerContext context) => Thread.Sleep(1000);
+    }
 
-        [Test]
-        public void Can_Perform_GET_Async_Without_Async_Handle()
-        {
-            const string val = "Basic async test";
+    class Response {
+        public string Message { get; set; }
+    }
 
-            var resetEvent = new ManualResetEvent(false);
+    [Fact]
+    public void Can_Cancel_GET_TaskAsync_With_Response_Type() {
+        const string val = "Basic async task test";
 
-            using var server = SimpleServer.Create(Handlers.EchoValue(val));
+        using var server = SimpleServer.Create(Handlers.EchoValue(val));
 
-            var client  = new RestClient(server.Url);
-            var request = new RestRequest("");
+        var client                  = new RestClient(server.Url);
+        var request                 = new RestRequest("timeout");
+        var cancellationTokenSource = new CancellationTokenSource();
+        var task                    = client.ExecuteAsync<Response>(request, cancellationTokenSource.Token);
 
-            client.ExecuteAsync(
-                request, response =>
-                {
-                    Assert.NotNull(response.Content);
-                    Assert.AreEqual(val, response.Content);
-                    resetEvent.Set();
-                }
-            );
+        cancellationTokenSource.Cancel();
 
-            resetEvent.WaitOne();
-        }
+        Assert.True(task.IsCanceled);
+    }
 
-        [Test]
-        public async Task Can_Perform_GET_TaskAsync()
-        {
-            const string val = "Basic async task test";
+    [Fact]
+    public async Task Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler() {
+        const string exceptionMessage = "Thrown from OnBeforeDeserialization";
 
-            using var server = SimpleServer.Create(Handlers.EchoValue(val));
+        using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
 
-            var client  = new RestClient(server.Url);
-            var request = new RestRequest("");
-            var result  = await client.ExecuteAsync(request);
+        var client  = new RestClient(server.Url);
+        var request = new RestRequest("success");
 
-            Assert.NotNull(result.Content);
-            Assert.AreEqual(val, result.Content);
-        }
+        request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
 
-        [Test]
-        public async Task Can_Perform_GetTaskAsync_With_Response_Type()
-        {
-            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
+        var response = await client.ExecuteAsync<Response>(request);
 
-            var client   = new RestClient(server.Url);
-            var request  = new RestRequest("success");
-            var response = await client.GetAsync<Response>(request);
+        Assert.Equal(exceptionMessage, response.ErrorMessage);
+        Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+    }
 
-            Assert.AreEqual("Works!", response.Message);
-        }
+    [Fact]
+    public async Task Can_Perform_ExecuteGetTaskAsync_With_Response_Type() {
+        using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
 
-        [Test]
-        public async Task Can_Timeout_GET_TaskAsync()
-        {
-            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
+        var client   = new RestClient(server.Url);
+        var request  = new RestRequest("success");
+        var response = await client.ExecuteAsync<Response>(request);
 
-            var client  = new RestClient(server.Url);
-            var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
+        Assert.Equal("Works!", response.Data.Message);
+    }
 
-            // Half the value of ResponseHandler.Timeout
-            request.Timeout = 500;
+    [Fact]
+    public void Can_Perform_GET_Async() {
+        const string val = "Basic async test";
 
-            var response = await client.ExecuteAsync(request);
+        var resetEvent = new ManualResetEvent(false);
 
-            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
-        }
+        using var server = SimpleServer.Create(Handlers.EchoValue(val));
 
-        [Test]
-        public async Task Can_Timeout_PUT_TaskAsync()
-        {
-            using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
+        var client  = new RestClient(server.Url);
+        var request = new RestRequest("");
 
-            var client  = new RestClient(server.Url);
-            var request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
+        client.ExecuteAsync(
+            request,
+            (response, _) => {
+                Assert.NotNull(response.Content);
+                Assert.Equal(val, response.Content);
+                resetEvent.Set();
+            }
+        );
 
-            // Half the value of ResponseHandler.Timeout
-            request.Timeout = 500;
+        resetEvent.WaitOne();
+    }
 
-            var response = await client.ExecuteAsync(request);
+    [Fact]
+    public void Can_Perform_GET_Async_Without_Async_Handle() {
+        const string val = "Basic async test";
 
-            Assert.AreEqual(ResponseStatus.TimedOut, response.ResponseStatus);
-        }
+        var resetEvent = new ManualResetEvent(false);
 
-        [Test]
-        public async Task Handles_GET_Request_Errors_TaskAsync()
-        {
-            using var server = SimpleServer.Create(UrlToStatusCodeHandler);
+        using var server = SimpleServer.Create(Handlers.EchoValue(val));
 
-            var client   = new RestClient(server.Url);
-            var request  = new RestRequest("404");
-            var response = await client.ExecuteAsync(request);
+        var client  = new RestClient(server.Url);
+        var request = new RestRequest("");
 
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
-        }
+        client.ExecuteAsync(
+            request,
+            response => {
+                Assert.NotNull(response.Content);
+                Assert.Equal(val, response.Content);
+                resetEvent.Set();
+            }
+        );
 
-        [Test]
-        public async Task Handles_GET_Request_Errors_TaskAsync_With_Response_Type()
-        {
-            using var server = SimpleServer.Create(UrlToStatusCodeHandler);
+        resetEvent.WaitOne();
+    }
 
-            var client   = new RestClient(server.Url);
-            var request  = new RestRequest("404");
-            var response = await client.ExecuteAsync<Response>(request);
+    [Fact]
+    public async Task Can_Perform_GET_TaskAsync() {
+        const string val = "Basic async task test";
 
-            Assert.Null(response.Data);
-        }
+        using var server = SimpleServer.Create(Handlers.EchoValue(val));
+
+        var client  = new RestClient(server.Url);
+        var request = new RestRequest("");
+        var result  = await client.ExecuteAsync(request);
+
+        Assert.NotNull(result.Content);
+        Assert.Equal(val, result.Content);
+    }
+
+    [Fact]
+    public async Task Can_Perform_GetTaskAsync_With_Response_Type() {
+        using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
+
+        var client   = new RestClient(server.Url);
+        var request  = new RestRequest("success");
+        var response = await client.GetAsync<Response>(request);
+
+        Assert.Equal("Works!", response.Message);
+    }
+
+    [Fact]
+    public async Task Can_Timeout_GET_TaskAsync() {
+        using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
+
+        var client  = new RestClient(server.Url);
+        var request = new RestRequest("timeout", Method.GET).AddBody("Body_Content");
+
+        // Half the value of ResponseHandler.Timeout
+        request.Timeout = 500;
+
+        var response = await client.ExecuteAsync(request);
+
+        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+    }
+
+    [Fact]
+    public async Task Can_Timeout_PUT_TaskAsync() {
+        using var server = SimpleServer.Create(Handlers.Generic<ResponseHandler>());
+
+        var client  = new RestClient(server.Url);
+        var request = new RestRequest("timeout", Method.PUT).AddBody("Body_Content");
+
+        // Half the value of ResponseHandler.Timeout
+        request.Timeout = 500;
+
+        var response = await client.ExecuteAsync(request);
+
+        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+    }
+
+    [Fact]
+    public async Task Handles_GET_Request_Errors_TaskAsync() {
+        using var server = SimpleServer.Create(UrlToStatusCodeHandler);
+
+        var client   = new RestClient(server.Url);
+        var request  = new RestRequest("404");
+        var response = await client.ExecuteAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Handles_GET_Request_Errors_TaskAsync_With_Response_Type() {
+        using var server = SimpleServer.Create(UrlToStatusCodeHandler);
+
+        var client   = new RestClient(server.Url);
+        var request  = new RestRequest("404");
+        var response = await client.ExecuteAsync<Response>(request);
+
+        Assert.Null(response.Data);
     }
 }

@@ -1,30 +1,24 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
+﻿using System.Globalization;
 using RestSharp.Validation;
 
-namespace RestSharp.Tests.Fixtures
-{
-    public class CultureChange : IDisposable
-    {
-        public CultureChange(string culture)
-        {
-            Ensure.NotEmpty(culture, nameof(culture));
+namespace RestSharp.Tests.Fixtures; 
 
-            PreviousCulture = Thread.CurrentThread.CurrentCulture;
+public class CultureChange : IDisposable {
+    public CultureChange(string culture) {
+        Ensure.NotEmpty(culture, nameof(culture));
 
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
-        }
+        PreviousCulture = Thread.CurrentThread.CurrentCulture;
 
-        public CultureInfo PreviousCulture { get; private set; }
+        Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
+    }
 
-        public void Dispose()
-        {
-            if (PreviousCulture == null) return;
+    public CultureInfo? PreviousCulture { get; private set; }
 
-            Thread.CurrentThread.CurrentCulture = PreviousCulture;
+    public void Dispose() {
+        if (PreviousCulture == null) return;
 
-            PreviousCulture = null;
-        }
+        Thread.CurrentThread.CurrentCulture = PreviousCulture;
+
+        PreviousCulture = null;
     }
 }

@@ -1,93 +1,75 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text;
-using NUnit.Framework;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests
-{
-    [TestFixture]
-    public class FileTests
-    {
-        [TearDown]
-        public void ShutdownServer() => _server.Dispose();
+namespace RestSharp.IntegrationTests; 
 
-        [SetUp]
-        public void CreateClient()
-        {
-            _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
-            _client = new RestClient(_server.Url);
-        }
+public class FileTests : IDisposable {
+    public FileTests() {
+        _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
+        _client = new RestClient(_server.Url);
+    }
 
-        void FileHandler(HttpListenerRequest request, HttpListenerResponse response)
-        {
-            var pathToFile = Path.Combine(
-                _path,
-                Path.Combine(
-                    request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
-                )
-            );
+    public void Dispose() => _server.Dispose();
 
-            using var reader = new StreamReader(pathToFile);
+    void FileHandler(HttpListenerRequest request, HttpListenerResponse response) {
+        var pathToFile = Path.Combine(
+            _path,
+            Path.Combine(
+                request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
+            )
+        );
 
-            reader.BaseStream.CopyTo(response.OutputStream);
-        }
+        using var reader = new StreamReader(pathToFile);
 
-        HttpServerFixture _server;
-        RestClient        _client;
-        readonly string   _path = AppDomain.CurrentDomain.BaseDirectory;
+        reader.BaseStream.CopyTo(response.OutputStream);
+    }
 
-        [Test]
-        public void AdvancedResponseWriter_without_ResponseWriter_reads_stream()
-        {
-            var tag = string.Empty;
+    HttpServerFixture _server;
+    RestClient        _client;
+    readonly string   _path = AppDomain.CurrentDomain.BaseDirectory;
 
-            var rr = new RestRequest("Assets/Koala.jpg")
-            {
-                AdvancedResponseWriter = (stream, context) =>
-                {
-                    var buf = new byte[16];
-                    stream.Read(buf, 0, buf.Length);
-                    tag = Encoding.ASCII.GetString(buf, 6, 4);
-                }
-            };
+    [Fact]
+    public void AdvancedResponseWriter_without_ResponseWriter_reads_stream() {
+        var tag = string.Empty;
 
-            _client.Execute(rr);
-            Assert.IsTrue(string.Compare("JFIF", tag, StringComparison.Ordinal) == 0);
-        }
-
-        [Test]
-        public void Handles_Binary_File_Download()
-        {
-            var request  = new RestRequest("Assets/Koala.jpg");
-            var response = _client.DownloadData(request);
-            var expected = File.ReadAllBytes(Path.Combine(_path, "Assets", "Koala.jpg"));
-
-            Assert.AreEqual(expected, response);
-        }
-
-        [Test]
-        public void Writes_Response_To_Stream()
-        {
-            var tempFile = Path.GetTempFileName();
-
-            using (var writer = File.OpenWrite(tempFile))
-            {
-                var request = new RestRequest("Assets/Koala.jpg")
-                {
-                    ResponseWriter = responseStream => responseStream.CopyTo(writer)
-                };
-                var response = _client.DownloadData(request);
-
-                Assert.Null(response);
+        var rr = new RestRequest("Assets/Koala.jpg") {
+            AdvancedResponseWriter = (stream, _) => {
+                var buf = new byte[16];
+                stream.Read(buf, 0, buf.Length);
+                tag = Encoding.ASCII.GetString(buf, 6, 4);
             }
+        };
 
-            var fromTemp = File.ReadAllBytes(tempFile);
-            var expected = File.ReadAllBytes(Path.Combine(_path, "Assets", "Koala.jpg"));
+        _client.Execute(rr);
+        Assert.True(string.Compare("JFIF", tag, StringComparison.Ordinal) == 0);
+    }
 
-            Assert.AreEqual(expected, fromTemp);
+    [Fact]
+    public void Handles_Binary_File_Download() {
+        var request  = new RestRequest("Assets/Koala.jpg");
+        var response = _client.DownloadData(request);
+        var expected = File.ReadAllBytes(Path.Combine(_path, "Assets", "Koala.jpg"));
+
+        Assert.Equal(expected, response);
+    }
+
+    [Fact]
+    public void Writes_Response_To_Stream() {
+        var tempFile = Path.GetTempFileName();
+
+        using (var writer = File.OpenWrite(tempFile)) {
+            var request = new RestRequest("Assets/Koala.jpg") {
+                ResponseWriter = responseStream => responseStream.CopyTo(writer)
+            };
+            var response = _client.DownloadData(request);
+
+            Assert.Null(response);
         }
+
+        var fromTemp = File.ReadAllBytes(tempFile);
+        var expected = File.ReadAllBytes(Path.Combine(_path, "Assets", "Koala.jpg"));
+
+        Assert.Equal(expected, fromTemp);
     }
 }

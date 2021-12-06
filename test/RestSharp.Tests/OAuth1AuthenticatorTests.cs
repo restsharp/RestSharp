@@ -1,201 +1,204 @@
-﻿using System.Linq;
-using NUnit.Framework;
-using RestSharp.Authenticators;
+﻿using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 
-namespace RestSharp.Tests
-{
-    [TestFixture]
-    public class OAuth1AuthenticatorTests
-    {
-        [SetUp]
-        public void Setup()
-            => _authenticator = new OAuth1Authenticator
-            {
-                CallbackUrl        = "CallbackUrl",
-                ClientPassword     = "ClientPassword",
-                Type               = OAuthType.ClientAuthentication,
-                ClientUsername     = "ClientUsername",
-                ConsumerKey        = "ConsumerKey",
-                ConsumerSecret     = "ConsumerSecret",
-                Realm              = "Realm",
-                SessionHandle      = "SessionHandle",
-                SignatureMethod    = OAuthSignatureMethod.PlainText,
-                SignatureTreatment = OAuthSignatureTreatment.Escaped,
-                Token              = "Token",
-                TokenSecret        = "TokenSecret",
-                Verifier           = "Verifier",
-                Version            = "Version"
-            };
+namespace RestSharp.Tests;
 
-        OAuth1Authenticator _authenticator;
+public class OAuth1AuthenticatorTests {
+    public OAuth1AuthenticatorTests()
+        => _authenticator = new OAuth1Authenticator {
+            CallbackUrl        = "CallbackUrl",
+            ClientPassword     = "ClientPassword",
+            Type               = OAuthType.ClientAuthentication,
+            ClientUsername     = "ClientUsername",
+            ConsumerKey        = "ConsumerKey",
+            ConsumerSecret     = "ConsumerSecret",
+            Realm              = "Realm",
+            SessionHandle      = "SessionHandle",
+            SignatureMethod    = OAuthSignatureMethod.PlainText,
+            SignatureTreatment = OAuthSignatureTreatment.Escaped,
+            Token              = "Token",
+            TokenSecret        = "TokenSecret",
+            Verifier           = "Verifier",
+            Version            = "Version"
+        };
 
-        [Test]
-        public void Authenticate_ShouldAddAuthorizationAsTextValueToRequest_OnHttpAuthorizationHeaderHandling()
-        {
-            // Arrange
-            const string url = "https://no-query.string";
+    readonly OAuth1Authenticator _authenticator;
 
-            var client  = new RestClient(url);
-            var request = new RestRequest();
+    [Fact]
+    public void Authenticate_ShouldAddAuthorizationAsTextValueToRequest_OnHttpAuthorizationHeaderHandling() {
+        // Arrange
+        const string url = "https://no-query.string";
 
-            _authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
+        var client  = new RestClient(url);
+        var request = new RestRequest();
 
-            // Act
-            _authenticator.Authenticate(client, request);
+        _authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
 
-            // Assert
-            var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
-            var value         = (string) authParameter.Value;
+        // Act
+        _authenticator.Authenticate(client, request);
 
-            Assert.IsTrue(value.Contains("OAuth"));
-            Assert.IsTrue(value.Contains("realm=\"Realm\""));
-            Assert.IsTrue(value.Contains("oauth_timestamp="));
-            Assert.IsTrue(value.Contains("oauth_signature=\"ConsumerSecret"));
-            Assert.IsTrue(value.Contains("oauth_nonce="));
-            Assert.IsTrue(value.Contains("oauth_consumer_key=\"ConsumerKey\""));
-            Assert.IsTrue(value.Contains("oauth_signature_method=\"PLAINTEXT\""));
-            Assert.IsTrue(value.Contains("oauth_version=\"Version\""));
-            Assert.IsTrue(value.Contains("x_auth_mode=\"client_auth\""));
-            Assert.IsTrue(value.Contains("x_auth_username=\"ClientUsername\""));
-            Assert.IsTrue(value.Contains("x_auth_password=\"ClientPassword\""));
-        }
+        // Assert
+        var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+        var value         = (string)authParameter.Value;
 
-        [Test]
-        public void Authenticate_ShouldAddSignatureToRequestAsSeparateParameters_OnUrlOrPostParametersHandling()
-        {
-            // Arrange
-            const string url = "https://no-query.string";
+        Assert.True(value.Contains("OAuth"));
+        Assert.True(value.Contains("realm=\"Realm\""));
+        Assert.True(value.Contains("oauth_timestamp="));
+        Assert.True(value.Contains("oauth_signature=\"ConsumerSecret"));
+        Assert.True(value.Contains("oauth_nonce="));
+        Assert.True(value.Contains("oauth_consumer_key=\"ConsumerKey\""));
+        Assert.True(value.Contains("oauth_signature_method=\"PLAINTEXT\""));
+        Assert.True(value.Contains("oauth_version=\"Version\""));
+        Assert.True(value.Contains("x_auth_mode=\"client_auth\""));
+        Assert.True(value.Contains("x_auth_username=\"ClientUsername\""));
+        Assert.True(value.Contains("x_auth_password=\"ClientPassword\""));
+    }
 
-            var client  = new RestClient(url);
-            var request = new RestRequest();
-            request.AddQueryParameter("queryparameter", "foobartemp");
+    [Fact]
+    public void Authenticate_ShouldAddSignatureToRequestAsSeparateParameters_OnUrlOrPostParametersHandling() {
+        // Arrange
+        const string url = "https://no-query.string";
 
-            _authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
+        var client  = new RestClient(url);
+        var request = new RestRequest();
+        request.AddQueryParameter("queryparameter", "foobartemp");
 
-            // Act
-            _authenticator.Authenticate(client, request);
+        _authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
 
-            // Assert
-            var parameters = request.Parameters;
+        // Act
+        _authenticator.Authenticate(client, request);
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "x_auth_username" && (string) x.Value == "ClientUsername" &&
-                        x.ContentType == null
-                )
-            );
+        // Assert
+        var parameters = request.Parameters;
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "x_auth_password" && (string) x.Value == "ClientPassword" &&
-                        x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "x_auth_username" &&
+                    (string)x.Value == "ClientUsername" &&
+                    x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type == ParameterType.GetOrPost && x.Name == "x_auth_mode" && (string) x.Value == "client_auth" && x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "x_auth_password" &&
+                    (string)x.Value == "ClientPassword" &&
+                    x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_consumer_key" && (string) x.Value == "ConsumerKey" &&
-                        x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost && x.Name == "x_auth_mode" && (string)x.Value == "client_auth" && x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_signature" && !string.IsNullOrWhiteSpace((string) x.Value) &&
-                        x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "oauth_consumer_key" &&
+                    (string)x.Value == "ConsumerKey" &&
+                    x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_signature_method" && (string) x.Value == "PLAINTEXT" &&
-                        x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "oauth_signature" &&
+                    !string.IsNullOrWhiteSpace((string)x.Value) &&
+                    x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_version" && (string) x.Value == "Version" && x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "oauth_signature_method" &&
+                    (string)x.Value == "PLAINTEXT" &&
+                    x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_nonce" && !string.IsNullOrWhiteSpace((string) x.Value) &&
-                        x.ContentType == null
-                )
-            );
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_version" && (string)x.Value == "Version" && x.ContentType == null
+            )
+        );
 
-            Assert.IsNotNull(
-                parameters.FirstOrDefault(
-                    x => x.Type       == ParameterType.GetOrPost && x.Name == "oauth_timestamp" && !string.IsNullOrWhiteSpace((string) x.Value) &&
-                        x.ContentType == null
-                )
-            );
-        }
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "oauth_nonce" &&
+                    !string.IsNullOrWhiteSpace((string)x.Value) &&
+                    x.ContentType == null
+            )
+        );
 
-        [Test]
-        [TestCase(OAuthType.AccessToken, "Token", "Token")]
-        [TestCase(OAuthType.ProtectedResource, "Token", "Token")]
-        [TestCase(OAuthType.AccessToken, "SVyDD+RsFzSoZChk=", "SVyDD%2BRsFzSoZChk%3D")]
-        [TestCase(OAuthType.ProtectedResource, "SVyDD+RsFzSoZChk=", "SVyDD%2BRsFzSoZChk%3D")]
-        public void Authenticate_ShouldEncodeOAuthTokenParameter(OAuthType type,string value, string expected)
-        {
-            // Arrange
-            const string url = "https://no-query.string";
+        Assert.NotNull(
+            parameters.FirstOrDefault(
+                x => x.Type == ParameterType.GetOrPost &&
+                    x.Name == "oauth_timestamp" &&
+                    !string.IsNullOrWhiteSpace((string)x.Value) &&
+                    x.ContentType == null
+            )
+        );
+    }
 
-            var client  = new RestClient(url);
-            var request = new RestRequest();
-            _authenticator.Type  = type;
-            _authenticator.Token = value;
+    [Theory]
+    [InlineData(OAuthType.AccessToken, "Token", "Token")]
+    [InlineData(OAuthType.ProtectedResource, "Token", "Token")]
+    [InlineData(OAuthType.AccessToken, "SVyDD+RsFzSoZChk=", "SVyDD%2BRsFzSoZChk%3D")]
+    [InlineData(OAuthType.ProtectedResource, "SVyDD+RsFzSoZChk=", "SVyDD%2BRsFzSoZChk%3D")]
+    public void Authenticate_ShouldEncodeOAuthTokenParameter(OAuthType type, string value, string expected) {
+        // Arrange
+        const string url = "https://no-query.string";
 
-            // Act
-            _authenticator.Authenticate(client, request);
+        var client  = new RestClient(url);
+        var request = new RestRequest();
+        _authenticator.Type  = type;
+        _authenticator.Token = value;
 
-            // Assert
-            var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
-            var authHeader         = (string) authParameter.Value;
+        // Act
+        _authenticator.Authenticate(client, request);
 
-            Assert.IsNotNull(authHeader);
-            Assert.IsTrue(authHeader.Contains($"oauth_token=\"{expected}\""));
-        }
+        // Assert
+        var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+        var authHeader    = (string)authParameter.Value;
 
-        /// <summary>
-        /// According the specifications of OAuth 1.0a, the customer secret is not required.
-        /// For more information, check the section 4 on https://oauth.net/core/1.0a/.
-        /// </summary>
-        [Test]
-        [TestCase(OAuthType.AccessToken)]
-        [TestCase(OAuthType.ProtectedResource)]
-        [TestCase(OAuthType.AccessToken)]
-        [TestCase(OAuthType.ProtectedResource)]
-        public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling(OAuthType type)
-        { 
-            // Arrange
-            const string url = "https://no-query.string";
+        Assert.NotNull(authHeader);
+        Assert.Contains($"oauth_token=\"{expected}\"", authHeader);
+    }
 
-            var client  = new RestClient(url);
-            var request = new RestRequest();
-            _authenticator.Type           = type;
-            _authenticator.ConsumerSecret = null;
-            
-            // Act
-            _authenticator.Authenticate(client, request);
+    /// <summary>
+    /// According the specifications of OAuth 1.0a, the customer secret is not required.
+    /// For more information, check the section 4 on https://oauth.net/core/1.0a/.
+    /// </summary>
+    [Theory]
+    [InlineData(OAuthType.AccessToken)]
+    [InlineData(OAuthType.ProtectedResource)]
+    [InlineData(OAuthType.AccessToken)]
+    [InlineData(OAuthType.ProtectedResource)]
+    public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling(OAuthType type) {
+        // Arrange
+        const string url = "https://no-query.string";
 
-            // Assert
-            var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
-            var value = (string)authParameter.Value;
-            
-            Assert.IsNotEmpty(value);
-            Assert.IsTrue(value!.Contains("OAuth"));
-            Assert.IsTrue(value.Contains("oauth_signature=\"" + OAuthTools.UrlEncodeStrict("&")));
-        }
+        var client  = new RestClient(url);
+        var request = new RestRequest();
+        _authenticator.Type           = type;
+        _authenticator.ConsumerSecret = null;
+
+        // Act
+        _authenticator.Authenticate(client, request);
+
+        // Assert
+        var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+        var value         = (string)authParameter.Value;
+
+        Assert.NotEmpty(value);
+        Assert.Contains("OAuth", value!);
+        Assert.Contains("oauth_signature=\"" + OAuthTools.UrlEncodeStrict("&"), value);
     }
 }

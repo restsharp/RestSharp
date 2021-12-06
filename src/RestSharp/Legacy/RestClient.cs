@@ -138,7 +138,6 @@ namespace RestSharp
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="callback">Callback function to be executed upon completion</param>
-        [Obsolete("This method will be removed soon in favour of the proper async call")]
         public virtual RestRequestAsyncHandle ExecuteAsync<T>(
             IRestRequest request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback

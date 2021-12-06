@@ -1,23 +1,17 @@
-﻿using NUnit.Framework;
+﻿namespace RestSharp.Tests;
 
-namespace RestSharp.Tests
-{
-    [TestFixture]
-    public class RequestConfiguratorTests
-    {
-        [Test]
-        public void ConfiguresTheHttpProtocolVersion()
-        {
-            var executed = false;
+public class RequestConfiguratorTests {
+    [Fact]
+    public void ConfiguresTheHttpProtocolVersion() {
+        var executed = false;
 
-            var restClient = new RestClient("http://localhost");
-            restClient.ConfigureWebRequest(r => executed = true);
+        var restClient = new RestClient("http://localhost");
+        restClient.ConfigureWebRequest(r => executed = true);
 
-            var req = new RestRequest("bob", Method.GET);
+        var req = new RestRequest("bob", Method.GET);
 
-            restClient.Execute(req);
+        restClient.Execute(req);
 
-            Assert.IsTrue(executed);
-        }
+        Assert.True(executed);
     }
 }

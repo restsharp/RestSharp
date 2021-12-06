@@ -25,7 +25,7 @@ namespace RestSharp
     /// </summary>
     public partial class Http
     {
-        TimeOutState _timeoutState;
+        TimeOutState _timeoutState = null!;
 
         /// <inheritdoc />
         public HttpWebRequest? AsPostAsync(Action<HttpResponse> action, string httpMethod)

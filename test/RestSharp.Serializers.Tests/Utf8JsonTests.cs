@@ -1,66 +1,56 @@
 using System.Net;
 using System.Text;
-using AutoFixture;
-using FluentAssertions;
-using NUnit.Framework;
-using RestSharp.Serializers.NewtonsoftJson;
 using RestSharp.Serializers.Utf8Json;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.Serializers.Tests
-{
-    [TestFixture]
-    public class Utf8JsonTests
-    {
-        static readonly Fixture Fixture = new Fixture();
+namespace RestSharp.Serializers.Tests;
 
-        byte[] _body;
+public class Utf8JsonTests {
+    static readonly Fixture Fixture = new();
 
-        [Test]
-        public void Use_Utf8Json_For_Requests()
-        {
-            using var server = HttpServerFixture.StartServer(CaptureBody);
-            _body = null;
-            var serializer = new Utf8JsonSerializer();
+    byte[]? _body;
 
-            var testData = Fixture.Create<TestClass>();
+    [Fact]
+    public void Use_Utf8Json_For_Requests() {
+        using var server = HttpServerFixture.StartServer(CaptureBody);
+        _body = null;
+        var serializer = new Utf8JsonSerializer();
 
-            var client  = new RestClient(server.Url).UseUtf8Json();
-            var request = new RestRequest().AddJsonBody(testData);
+        var testData = Fixture.Create<TestClass>();
 
-            var expected = testData;
+        var client  = new RestClient(server.Url).UseUtf8Json();
+        var request = new RestRequest().AddJsonBody(testData);
 
-           var a=  client.Post(request);
+        var expected = testData;
 
-            var actual = serializer.Deserialize<TestClass>(new RestResponse {RawBytes = _body});
+        client.Post(request);
 
-            actual.Should().BeEquivalentTo(expected);
-        }
+        var actual = serializer.Deserialize<TestClass>(new RestResponse { RawBytes = _body });
 
-        [Test]
-        public void Use_Utf8Json_For_Response()
-        {
-            var expected = Fixture.Create<TestClass>();
-
-            using var server = HttpServerFixture.StartServer(
-                (request, response) =>
-                {
-                    var serializer = new Utf8JsonSerializer();
-
-                    response.ContentType     = "application/json";
-                    response.ContentEncoding = Encoding.UTF8;
-                    response.OutputStream.WriteStringUtf8(serializer.Serialize(expected));
-                }
-            );
-
-            var client = new RestClient(server.Url).UseUtf8Json();
-
-            var actual = client.Get<TestClass>(new RestRequest()).Data;
-
-            actual.Should().BeEquivalentTo(expected);
-        }
-
-        void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToBytes();
+        actual.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public void Use_Utf8Json_For_Response() {
+        var expected = Fixture.Create<TestClass>();
+
+        using var server = HttpServerFixture.StartServer(
+            (_, response) => {
+                var serializer = new Utf8JsonSerializer();
+
+                response.ContentType     = "application/json";
+                response.ContentEncoding = Encoding.UTF8;
+                response.OutputStream.WriteStringUtf8(serializer.Serialize(expected)!);
+            }
+        );
+
+        var client = new RestClient(server.Url).UseUtf8Json();
+
+        var actual = client.Get<TestClass>(new RestRequest()).Data;
+
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    void CaptureBody(HttpListenerRequest request, HttpListenerResponse response) => _body = request.InputStream.StreamToBytes();
 }

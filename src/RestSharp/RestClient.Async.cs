@@ -18,10 +18,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using RestSharp.Validation;
 
-namespace RestSharp
-{
-    public partial class RestClient
-    {
+namespace RestSharp {
+    public partial class RestClient {
         /// <summary>
         /// Executes a GET-style request asynchronously, authenticating if needed
         /// </summary>
@@ -55,26 +53,23 @@ namespace RestSharp
         /// <param name="cancellationToken">Cancellation token</param>
         public Task<IRestResponse> ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken = default)
             => ExecuteAsync(request, Method.POST, cancellationToken);
-        
+
         /// <summary>
         /// Executes the request asynchronously, authenticating if needed
         /// </summary>
         /// <typeparam name="T">Target deserialization type</typeparam>
         /// <param name="request">Request to be executed</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        public Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default)
-        {
+        public Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default) {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
             var taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
 
-            try
-            {
+            try {
                 var async = ExecuteAsync<T>(
                     request,
-                    (response, _) =>
-                    {
+                    (response, _) => {
                         if (cancellationToken.IsCancellationRequested)
                             taskCompletionSource.TrySetCanceled();
                         // Don't run TrySetException, since we should set Error properties and swallow exceptions
@@ -86,8 +81,7 @@ namespace RestSharp
 
                 var registration =
                     cancellationToken.Register(
-                        () =>
-                        {
+                        () => {
                             async.Abort();
                             taskCompletionSource.TrySetCanceled();
                         }
@@ -95,8 +89,7 @@ namespace RestSharp
 
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), cancellationToken);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 taskCompletionSource.TrySetException(ex);
             }
 
@@ -110,11 +103,10 @@ namespace RestSharp
         /// <param name="httpMethod">Override the request method</param>
         /// <param name="cancellationToken">Cancellation token</param>
         public Task<IRestResponse> ExecuteAsync(
-            IRestRequest request,
-            Method httpMethod,
+            IRestRequest      request,
+            Method            httpMethod,
             CancellationToken cancellationToken = default
-        )
-        {
+        ) {
             Ensure.NotNull(request, nameof(request));
 
             request.Method = httpMethod;
@@ -129,11 +121,10 @@ namespace RestSharp
         /// <param name="httpMethod">Override the request method</param>
         /// <param name="cancellationToken">Cancellation token</param>
         public Task<IRestResponse<T>> ExecuteAsync<T>(
-            IRestRequest request,
-            Method httpMethod,
+            IRestRequest      request,
+            Method            httpMethod,
             CancellationToken cancellationToken = default
-        )
-        {
+        ) {
             Ensure.NotNull(request, nameof(request));
 
             request.Method = httpMethod;
@@ -141,18 +132,15 @@ namespace RestSharp
         }
 
         /// <inheritdoc />
-        public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token = default)
-        {
+        public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token = default) {
             Ensure.NotNull(request, nameof(request));
 
             var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
 
-            try
-            {
+            try {
                 var async = ExecuteAsync(
                     request,
-                    (response, _) =>
-                    {
+                    (response, _) => {
                         if (token.IsCancellationRequested)
                             taskCompletionSource.TrySetCanceled();
                         // Don't run TrySetException, since we should set Error
@@ -165,8 +153,7 @@ namespace RestSharp
 
                 var registration =
                     token.Register(
-                        () =>
-                        {
+                        () => {
                             async.Abort();
                             taskCompletionSource.TrySetCanceled();
                         }
@@ -174,8 +161,7 @@ namespace RestSharp
 
                 taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 taskCompletionSource.TrySetException(ex);
             }
 
@@ -183,12 +169,11 @@ namespace RestSharp
         }
 
         RestRequestAsyncHandle ExecuteAsync(
-            IRestRequest request,
-            Action<IRestResponse, RestRequestAsyncHandle> callback,
-            string httpMethod,
+            IRestRequest                                              request,
+            Action<IRestResponse, RestRequestAsyncHandle>             callback,
+            string                                                    httpMethod,
             Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest
-        )
-        {
+        ) {
             request.SerializeRequestBody(Serializers, request.XmlSerializer, request.JsonSerializer);
 
             AuthenticateIfNeeded(request);
@@ -201,8 +186,7 @@ namespace RestSharp
 
             Action<HttpResponse> responseCb = ProcessResponse;
 
-            if (UseSynchronizationContext && SynchronizationContext.Current != null)
-            {
+            if (UseSynchronizationContext && SynchronizationContext.Current != null) {
                 var ctx = SynchronizationContext.Current;
                 var cb  = responseCb;
 
@@ -213,8 +197,7 @@ namespace RestSharp
 
             return asyncHandle;
 
-            void ProcessResponse(IHttpResponse httpResponse)
-            {
+            void ProcessResponse(IHttpResponse httpResponse) {
                 var restResponse = RestResponse.FromHttpResponse(httpResponse, request);
                 restResponse.Request.IncreaseNumAttempts();
                 callback(restResponse, asyncHandle);
@@ -222,10 +205,10 @@ namespace RestSharp
         }
 
         void DeserializeResponse<T>(
-            IRestRequest request,
+            IRestRequest                                     request,
             Action<IRestResponse<T>, RestRequestAsyncHandle> callback,
-            IRestResponse response,
-            RestRequestAsyncHandle asyncHandle
+            IRestResponse                                    response,
+            RestRequestAsyncHandle                           asyncHandle
         )
             => callback(Deserialize<T>(request, response), asyncHandle);
     }

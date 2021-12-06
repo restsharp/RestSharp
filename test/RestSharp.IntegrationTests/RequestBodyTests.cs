@@ -1,246 +1,231 @@
-﻿using NUnit.Framework;
-using RestSharp.Tests.Shared.Fixtures;
+﻿using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests
-{
-    [TestFixture]
-    public class RequestBodyTests
-    {
-        SimpleServer _server;
-        const string NewLine = "\r\n";
+namespace RestSharp.IntegrationTests;
 
-        [OneTimeSetUp]
-        public void Setup() => _server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
+public class RequestBodyTests {
+    SimpleServer _server;
+    const string NewLine = "\r\n";
 
-        [OneTimeTearDown]
-        public void Teardown() => _server.Dispose();
+    [OneTimeSetUp]
+    public void Setup() => _server = SimpleServer.Create(Handlers.Generic<RequestBodyCapturer>());
 
-        [Test]
-        public void Can_Be_Added_To_COPY_Request()
-        {
-            const Method httpMethod = Method.COPY;
+    [OneTimeTearDown]
+    public void Teardown() => _server.Dispose();
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Be_Added_To_COPY_Request() {
+        const Method httpMethod = Method.COPY;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasRequestBody(contentType, bodyData);
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Be_Added_To_DELETE_Request()
-        {
-            const Method httpMethod = Method.DELETE;
+        AssertHasRequestBody(contentType, bodyData);
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Be_Added_To_DELETE_Request() {
+        const Method httpMethod = Method.DELETE;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasRequestBody(contentType, bodyData);
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Be_Added_To_OPTIONS_Request()
-        {
-            const Method httpMethod = Method.OPTIONS;
+        AssertHasRequestBody(contentType, bodyData);
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Be_Added_To_OPTIONS_Request() {
+        const Method httpMethod = Method.OPTIONS;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasRequestBody(contentType, bodyData);
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Be_Added_To_PATCH_Request()
-        {
-            const Method httpMethod = Method.PATCH;
+        AssertHasRequestBody(contentType, bodyData);
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Be_Added_To_PATCH_Request() {
+        const Method httpMethod = Method.PATCH;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasRequestBody(contentType, bodyData);
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Be_Added_To_POST_Request()
-        {
-            const Method httpMethod = Method.POST;
+        AssertHasRequestBody(contentType, bodyData);
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Be_Added_To_POST_Request() {
+        const Method httpMethod = Method.POST;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasRequestBody(contentType, bodyData);
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Be_Added_To_PUT_Request()
-        {
-            const Method httpMethod = Method.PUT;
+        AssertHasRequestBody(contentType, bodyData);
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Be_Added_To_PUT_Request() {
+        const Method httpMethod = Method.PUT;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasRequestBody(contentType, bodyData);
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Have_No_Body_Added_To_POST_Request()
-        {
-            const Method httpMethod = Method.POST;
+        AssertHasRequestBody(contentType, bodyData);
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Have_No_Body_Added_To_POST_Request() {
+        const Method httpMethod = Method.POST;
 
-            client.Execute(request);
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            AssertHasNoRequestBody();
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Not_Be_Added_To_GET_Request()
-        {
-            const Method httpMethod = Method.GET;
+        AssertHasNoRequestBody();
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Not_Be_Added_To_GET_Request() {
+        const Method httpMethod = Method.GET;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasNoRequestBody();
-        }
+        client.Execute(request);
 
-        [Test]
-        public void Can_Not_Be_Added_To_HEAD_Request()
-        {
-            const Method httpMethod = Method.HEAD;
+        AssertHasNoRequestBody();
+    }
 
-            var client  = new RestClient(_server.Url);
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+    [Fact]
+    public void Can_Not_Be_Added_To_HEAD_Request() {
+        const Method httpMethod = Method.HEAD;
 
-            const string contentType = "text/plain";
-            const string bodyData    = "abc123 foo bar baz BING!";
+        var client  = new RestClient(_server.Url);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-            request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
+        const string contentType = "text/plain";
+        const string bodyData    = "abc123 foo bar baz BING!";
 
-            client.Execute(request);
+        request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-            AssertHasNoRequestBody();
-        }
+        client.Execute(request);
 
-        [Test]
-        public void MultipartFormData_Without_File_Creates_A_Valid_RequestBody()
-        {
-            string expectedFormBoundary = null;
+        AssertHasNoRequestBody();
+    }
 
-            var client = new RestClient(_server.Url);
+    [Fact]
+    public void MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
+        string? expectedFormBoundary = null;
 
-            var request = new RestRequest(RequestBodyCapturer.Resource, Method.POST)
-            {
-                AlwaysMultipartFormData = true
-            };
-            request.OnBeforeRequest += http => expectedFormBoundary = http.FormBoundary;
+        var client = new RestClient(_server.Url);
 
-            const string contentType   = "text/plain";
-            const string bodyData      = "abc123 foo bar baz BING!";
-            const string multipartName = "mybody";
+        var request = new RestRequest(RequestBodyCapturer.Resource, Method.POST) {
+            AlwaysMultipartFormData = true
+        };
+        request.OnBeforeRequest += http => expectedFormBoundary = http.FormBoundary;
 
-            request.AddParameter(multipartName, bodyData, contentType, ParameterType.RequestBody);
+        const string contentType   = "text/plain";
+        const string bodyData      = "abc123 foo bar baz BING!";
+        const string multipartName = "mybody";
 
-            client.Execute(request);
+        request.AddParameter(multipartName, bodyData, contentType, ParameterType.RequestBody);
 
-            var expectedBody = "--" + expectedFormBoundary +
-                NewLine
-                + "Content-Type: " +
-                contentType
-                + NewLine
-                + @"Content-Disposition: form-data; name=""" + multipartName + @""""
-                + NewLine
-                + NewLine
-                + bodyData
-                + NewLine
-                + "--" + expectedFormBoundary + "--"
-                + NewLine;
+        client.Execute(request);
 
-            Assert.AreEqual(
-                expectedBody, RequestBodyCapturer.CapturedEntityBody, "Empty multipart generated: " + RequestBodyCapturer.CapturedEntityBody
-            );
-        }
+        var expectedBody = "--" +
+            expectedFormBoundary +
+            NewLine +
+            "Content-Type: " +
+            contentType +
+            NewLine +
+            @"Content-Disposition: form-data; name=""" +
+            multipartName +
+            @"""" +
+            NewLine +
+            NewLine +
+            bodyData +
+            NewLine +
+            "--" +
+            expectedFormBoundary +
+            "--" +
+            NewLine;
 
-        [Test]
-        public void Query_Parameters_With_Json_Body()
-        {
-            const Method httpMethod = Method.PUT;
+        Assert.Equal(expectedBody, RequestBodyCapturer.CapturedEntityBody);
+    }
 
-            var client = new RestClient(_server.Url);
+    [Fact]
+    public void Query_Parameters_With_Json_Body() {
+        const Method httpMethod = Method.PUT;
 
-            var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod)
-                .AddJsonBody(new {displayName = "Display Name"})
-                .AddQueryParameter("key", "value");
+        var client = new RestClient(_server.Url);
 
-            client.Execute(request);
+        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod)
+            .AddJsonBody(new { displayName = "Display Name" })
+            .AddQueryParameter("key", "value");
 
-            Assert.AreEqual($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
-            Assert.AreEqual("application/json", RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
-        }
+        client.Execute(request);
 
-        static void AssertHasNoRequestBody()
-        {
-            Assert.Null(RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual(false, RequestBodyCapturer.CapturedHasEntityBody);
-            Assert.AreEqual(string.Empty, RequestBodyCapturer.CapturedEntityBody);
-        }
+        Assert.Equal($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
+        Assert.Equal("application/json", RequestBodyCapturer.CapturedContentType);
+        Assert.Equal("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
+    }
 
-        static void AssertHasRequestBody(string contentType, string bodyData)
-        {
-            Assert.AreEqual(contentType, RequestBodyCapturer.CapturedContentType);
-            Assert.AreEqual(true, RequestBodyCapturer.CapturedHasEntityBody);
-            Assert.AreEqual(bodyData, RequestBodyCapturer.CapturedEntityBody);
-        }
+    static void AssertHasNoRequestBody() {
+        Assert.Null(RequestBodyCapturer.CapturedContentType);
+        Assert.False(RequestBodyCapturer.CapturedHasEntityBody);
+        Assert.Equal(string.Empty, RequestBodyCapturer.CapturedEntityBody);
+    }
+
+    static void AssertHasRequestBody(string contentType, string bodyData) {
+        Assert.Equal(contentType, RequestBodyCapturer.CapturedContentType);
+        Assert.True(RequestBodyCapturer.CapturedHasEntityBody);
+        Assert.Equal(bodyData, RequestBodyCapturer.CapturedEntityBody);
     }
 }

@@ -1,0 +1,10 @@
+<Project>
+    <PropertyGroup>
+        <RepoRoot>$([System.IO.Directory]::GetParent($(MSBuildThisFileDirectory)).Parent.FullName)</RepoRoot>
+        <AssemblyOriginatorKeyFile>$(RepoRoot)\RestSharp.snk</AssemblyOriginatorKeyFile>
+        <SignAssembly>true</SignAssembly>
+        <LangVersion>10</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+</Project>

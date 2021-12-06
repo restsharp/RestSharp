@@ -1,97 +1,93 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
-using FluentAssertions;
-using NUnit.Framework;
 using RestSharp.Extensions;
 
-namespace RestSharp.Tests
-{
-    public class StringExtensionsTests
-    {
-        [Test]
-        public void UrlEncode_Throws_ArgumentNullException_For_Null_Input()
-        {
-            const string nullString = null;
+namespace RestSharp.Tests;
 
-            Assert.Throws<ArgumentNullException>(() => nullString.UrlEncode());
-        }
+public class StringExtensionsTests {
+    [Fact]
+    public void UrlEncode_Throws_ArgumentNullException_For_Null_Input() {
+        string? nullString = null;
 
-        [Test]
-        public void UrlEncode_Returns_Correct_Length_When_Less_Than_Limit()
-        {
-            const int numLessThanLimit      = 32766;
-            var       stringWithLimitLength = new string('*', numLessThanLimit);
-            var       encodedAndDecoded     = stringWithLimitLength.UrlEncode().UrlDecode();
-            Assert.AreEqual(numLessThanLimit, encodedAndDecoded.Length);
-        }
+        Assert.Throws<ArgumentNullException>(() => nullString!.UrlEncode());
+    }
 
-        [Test]
-        public void UrlEncode_Returns_Correct_Length_When_More_Than_Limit()
-        {
-            const int numGreaterThanLimit   = 65000;
-            var       stringWithLimitLength = new string('*', numGreaterThanLimit);
-            var       encodedAndDecoded     = stringWithLimitLength.UrlEncode().UrlDecode();
-            Assert.AreEqual(numGreaterThanLimit, encodedAndDecoded.Length);
-        }
+    [Fact]
+    public void UrlEncode_Returns_Correct_Length_When_Less_Than_Limit() {
+        const int numLessThanLimit      = 32766;
+        var       stringWithLimitLength = new string('*', numLessThanLimit);
+        var       encodedAndDecoded     = stringWithLimitLength.UrlEncode().UrlDecode();
+        Assert.Equal(numLessThanLimit, encodedAndDecoded.Length);
+    }
 
-        [Test]
-        public void UrlEncode_Does_Not_Fail_When_4_Byte_Unicode_Character_Lies_Between_Chunks()
-        {
-            var stringWithLimitLength = new string('*', 32765);
-            stringWithLimitLength += "😉*****"; // 2 + 5 chars
-            var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
-            Assert.AreEqual(stringWithLimitLength, encodedAndDecoded);
+    [Fact]
+    public void UrlEncode_Returns_Correct_Length_When_More_Than_Limit() {
+        const int numGreaterThanLimit   = 65000;
+        var       stringWithLimitLength = new string('*', numGreaterThanLimit);
+        var       encodedAndDecoded     = stringWithLimitLength.UrlEncode().UrlDecode();
+        Assert.Equal(numGreaterThanLimit, encodedAndDecoded.Length);
+    }
 
-            // now between another 2 chunks
-            stringWithLimitLength = new string('*', 32766 * 2 - 1);
-            stringWithLimitLength += "😉*****"; // 2 + 5 chars
-            encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
-            Assert.AreEqual(stringWithLimitLength, encodedAndDecoded);
-        }
+    [Fact]
+    public void UrlEncode_Does_Not_Fail_When_4_Byte_Unicode_Character_Lies_Between_Chunks() {
+        var stringWithLimitLength = new string('*', 32765);
+        stringWithLimitLength += "😉*****"; // 2 + 5 chars
+        var encodedAndDecoded = stringWithLimitLength.UrlEncode().UrlDecode();
+        Assert.Equal(stringWithLimitLength, encodedAndDecoded);
 
-        [Test]
-        public void UrlEncodeTest()
-        {
-            const string parameter = "ø";
-            Assert.True(string.Equals("%F8", parameter.UrlEncode(Encoding.GetEncoding("ISO-8859-1")), StringComparison.OrdinalIgnoreCase));
-            Assert.True(string.Equals("%C3%B8", parameter.UrlEncode(), StringComparison.OrdinalIgnoreCase));
-        }
+        // now between another 2 chunks
+        stringWithLimitLength =  new string('*', 32766 * 2 - 1);
+        stringWithLimitLength += "😉*****"; // 2 + 5 chars
+        encodedAndDecoded     =  stringWithLimitLength.UrlEncode().UrlDecode();
+        Assert.Equal(stringWithLimitLength, encodedAndDecoded);
+    }
 
-        [Test, TestCase("this_is_a_test", true, "ThisIsATest"), TestCase("this_is_a_test", false, "This_Is_A_Test")]
-        public void ToPascalCase(string start, bool removeUnderscores, string finish)
-        {
-            var result = start.ToPascalCase(removeUnderscores, CultureInfo.InvariantCulture);
+    [Fact]
+    public void UrlEncodeTest() {
+        const string parameter = "ø";
+        Assert.Equal("%F8", parameter.UrlEncode(Encoding.GetEncoding("ISO-8859-1")), true);
+        Assert.Equal("%C3%B8", parameter.UrlEncode(), true);
+    }
 
-            Assert.AreEqual(finish, result);
-        }
+    [Theory]
+    [InlineData("this_is_a_test", true, "ThisIsATest")]
+    [InlineData("this_is_a_test", false, "This_Is_A_Test")]
+    public void ToPascalCase(string start, bool removeUnderscores, string finish) {
+        var result = start.ToPascalCase(removeUnderscores, CultureInfo.InvariantCulture);
 
-        [Test, TestCase("DueDate", "dueDate"), TestCase("ID", "id"), TestCase("IDENTIFIER", "identifier"), TestCase("primaryId", "primaryId"), TestCase("A", "a"), TestCase("ThisIsATest", "thisIsATest")]
-        public void ToCamelCase(string start, string finish)
-        {
-            var result = start.ToCamelCase(CultureInfo.InvariantCulture);
+        Assert.Equal(finish, result);
+    }
 
-            Assert.AreEqual(finish, result);
-        }
+    [Theory]
+    [InlineData("DueDate", "dueDate")]
+    [InlineData("ID", "id")]
+    [InlineData("IDENTIFIER", "identifier")]
+    [InlineData("primaryId", "primaryId")]
+    [InlineData("A", "a")]
+    [InlineData("ThisIsATest", "thisIsATest")]
+    public void ToCamelCase(string start, string finish) {
+        var result = start.ToCamelCase(CultureInfo.InvariantCulture);
 
-        [Test]
-        public void Does_not_throw_on_invalid_encoding()
-        {
-            const string value = "SomeValue";
-            var bytes = Encoding.UTF8.GetBytes(value);
+        Assert.Equal(finish, result);
+    }
 
-            var decoded = bytes.AsString("blah");
-            decoded.Should().Be(value);
-        }
-        
-        [Test]
-        public void Does_not_throw_on_missing_encoding()
-        {
-            const string value = "SomeValue";
-            var bytes = Encoding.UTF8.GetBytes(value);
+    [Fact]
+    public void Does_not_throw_on_invalid_encoding() {
+        const string value = "SomeValue";
 
-            var decoded = bytes.AsString(null);
-            decoded.Should().Be(value);
-        }
+        var bytes = Encoding.UTF8.GetBytes(value);
+
+        var decoded = bytes.AsString("blah");
+        decoded.Should().Be(value);
+    }
+
+    [Fact]
+    public void Does_not_throw_on_missing_encoding() {
+        const string value = "SomeValue";
+
+        var bytes = Encoding.UTF8.GetBytes(value);
+
+        var decoded = bytes.AsString(null);
+        decoded.Should().Be(value);
     }
 }

@@ -1,41 +1,36 @@
-﻿using System;
-using System.Net;
-using NUnit.Framework.Internal;
+﻿using System.Net;
 
-namespace RestSharp.Tests.Shared.Fixtures
-{
-    public class SimpleServer : IDisposable
-    {
-        static readonly Random Random = new Randomizer(DateTimeOffset.Now.Millisecond);
+namespace RestSharp.Tests.Shared.Fixtures; 
 
-        readonly WebServer _server;
-        
-        public string Url { get; }
-        public string ServerUrl { get; }
+public class SimpleServer : IDisposable {
+    static readonly Random Random = new(DateTimeOffset.Now.Millisecond);
 
-        SimpleServer(
-            int port,
-            Action<HttpListenerContext> handler = null,
-            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous
-        )
-        {
-            Url = $"http://localhost:{port}/";;
-            ServerUrl = $"http://{Environment.MachineName}:{port}/";
-            _server = new WebServer(Url, handler, authenticationSchemes);
-            _server.Run();
-        }
+    readonly WebServer _server;
 
-        public void Dispose() => _server.Stop();
+    public string Url { get; }
+    public string ServerUrl { get; }
 
-        public static SimpleServer Create(
-            Action<HttpListenerContext> handler = null,
-            AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous
-        )
-        {
-            var port = Random.Next(1000, 9999);
-            return new SimpleServer(port, handler, authenticationSchemes);
-        }
-
-        public void SetHandler(Action<HttpListenerContext> handler) => _server.ChangeHandler(handler);
+    SimpleServer(
+        int                          port,
+        Action<HttpListenerContext>? handler               = null,
+        AuthenticationSchemes        authenticationSchemes = AuthenticationSchemes.Anonymous
+    ) {
+        Url = $"http://localhost:{port}/";
+        ;
+        ServerUrl = $"http://{Environment.MachineName}:{port}/";
+        _server   = new WebServer(Url, handler, authenticationSchemes);
+        _server.Run();
     }
+
+    public void Dispose() => _server.Stop();
+
+    public static SimpleServer Create(
+        Action<HttpListenerContext> handler               = null,
+        AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
+    ) {
+        var port = Random.Next(1000, 9999);
+        return new SimpleServer(port, handler, authenticationSchemes);
+    }
+
+    public void SetHandler(Action<HttpListenerContext> handler) => _server.ChangeHandler(handler);
 }

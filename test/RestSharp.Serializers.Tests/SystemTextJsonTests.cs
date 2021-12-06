@@ -1,65 +1,56 @@
 using System.Net;
 using System.Text;
-using AutoFixture;
-using FluentAssertions;
-using NUnit.Framework;
 using RestSharp.Serializers.SystemTextJson;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.Serializers.Tests
-{
-    [TestFixture]
-    public class SystemTextJsonTests
-    {
-        static readonly Fixture Fixture = new Fixture();
+namespace RestSharp.Serializers.Tests; 
 
-        string _body;
+public class SystemTextJsonTests {
+    static readonly Fixture Fixture = new();
 
-        [Test]
-        public void Use_JsonNet_For_Requests()
-        {
-            using var server = HttpServerFixture.StartServer(CaptureBody);
-            _body = null;
-            var serializer = new SystemTextJsonSerializer();
+    string? _body;
 
-            var testData = Fixture.Create<TestClass>();
+    [Fact]
+    public void Use_JsonNet_For_Requests() {
+        using var server = HttpServerFixture.StartServer(CaptureBody);
+        _body = null;
+        var serializer = new SystemTextJsonSerializer();
 
-            var client  = new RestClient(server.Url).UseSystemTextJson();
-            var request = new RestRequest().AddJsonBody(testData);
+        var testData = Fixture.Create<TestClass>();
 
-            var expected = testData;
+        var client  = new RestClient(server.Url).UseSystemTextJson();
+        var request = new RestRequest().AddJsonBody(testData);
 
-            client.Post(request);
+        var expected = testData;
 
-            var actual = serializer.Deserialize<TestClass>(new RestResponse {Content = _body});
+        client.Post(request);
 
-            actual.Should().BeEquivalentTo(expected);
+        var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body });
 
-            void CaptureBody(HttpListenerRequest req, HttpListenerResponse response) => _body = req.InputStream.StreamToString();
-        }
+        actual.Should().BeEquivalentTo(expected);
 
-        [Test]
-        public void Use_JsonNet_For_Response()
-        {
-            var expected = Fixture.Create<TestClass>();
+        void CaptureBody(HttpListenerRequest req, HttpListenerResponse response) => _body = req.InputStream.StreamToString();
+    }
 
-            using var server = HttpServerFixture.StartServer(
-                (request, response) =>
-                {
-                    var serializer = new SystemTextJsonSerializer();
+    [Fact]
+    public void Use_JsonNet_For_Response() {
+        var expected = Fixture.Create<TestClass>();
 
-                    response.ContentType     = "application/json";
-                    response.ContentEncoding = Encoding.UTF8;
-                    response.OutputStream.WriteStringUtf8(serializer.Serialize(expected));
-                }
-            );
+        using var server = HttpServerFixture.StartServer(
+            (_, response) => {
+                var serializer = new SystemTextJsonSerializer();
 
-            var client = new RestClient(server.Url).UseSystemTextJson();
+                response.ContentType     = "application/json";
+                response.ContentEncoding = Encoding.UTF8;
+                response.OutputStream.WriteStringUtf8(serializer.Serialize(expected)!);
+            }
+        );
 
-            var actual = client.Get<TestClass>(new RestRequest()).Data;
+        var client = new RestClient(server.Url).UseSystemTextJson();
 
-            actual.Should().BeEquivalentTo(expected);
-        }
+        var actual = client.Get<TestClass>(new RestRequest()).Data;
+
+        actual.Should().BeEquivalentTo(expected);
     }
 }

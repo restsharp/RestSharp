@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-using System;
 using System.Net;
 using static System.Net.WebExceptionStatus;
 
@@ -31,8 +30,8 @@ namespace RestSharp.Extensions
             {
                 ResponseStatus.None     => new WebException("The request could not be processed.", ServerProtocolViolation),
                 ResponseStatus.Error    => new WebException("An error occurred while processing the request.", ServerProtocolViolation),
-                ResponseStatus.TimedOut => new WebException("The request timed-out.", Timeout),
-                ResponseStatus.Aborted  => new WebException("The request was aborted.", Timeout),
+                ResponseStatus.TimedOut => new WebException("The request timed-out.",  WebExceptionStatus.Timeout),
+                ResponseStatus.Aborted  => new WebException("The request was aborted.", WebExceptionStatus.Timeout),
                 _                       => throw new ArgumentOutOfRangeException(nameof(responseStatus))
             };
     }
