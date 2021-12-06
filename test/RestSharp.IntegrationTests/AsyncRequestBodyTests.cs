@@ -4,7 +4,7 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
-public class AsyncRequestBodyTests {
+public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
     public AsyncRequestBodyTests(RequestBodyFixture fixture) {
         var server = fixture.Server;
         _client = new RestClient(server.Url);

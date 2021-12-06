@@ -11,7 +11,7 @@ namespace RestSharp.Serializers.Tests;
 public class NewtonsoftJsonTests {
     static readonly Fixture Fixture = new();
 
-    string? _body;
+    string _body;
 
     readonly JsonSerializerSettings _jsonSerializerSettings = new() {
         ContractResolver = new DefaultContractResolver {
@@ -48,7 +48,7 @@ public class NewtonsoftJsonTests {
         Parallel.For(
             0,
             100,
-            n => {
+            _ => {
                 var dummy                 = Fixture.Create<TestClass>();
                 var expectedSerialization = JsonConvert.SerializeObject(dummy, _jsonSerializerSettings);
                 var actualSerialization   = serializer.Serialize(dummy);
