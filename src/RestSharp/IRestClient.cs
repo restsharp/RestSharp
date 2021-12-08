@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Cache;
+using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -23,8 +24,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using RestSharp.Authenticators;
-using RestSharp.Deserializers;
-using RestSharp.Serialization;
+using RestSharp.Serializers;
+
 #pragma warning disable 618
 
 namespace RestSharp
@@ -122,7 +123,7 @@ namespace RestSharp
 
         IWebProxy? Proxy { get; set; }
 
-        RequestCachePolicy? CachePolicy { get; set; }
+        CacheControlHeaderValue? CachePolicy { get; set; }
 
         bool Pipelined { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using RestSharp.Serialization.Xml;
+﻿using RestSharp.Serializers.Xml;
 
 namespace RestSharp.IntegrationTests.SampleDeserializers; 
 

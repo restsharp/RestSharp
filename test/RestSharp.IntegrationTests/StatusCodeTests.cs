@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using RestSharp.Serialization;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -22,7 +21,7 @@ public class StatusCodeTests : IDisposable {
     public void ContentType_Additional_Information() {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
-        var request = new RestRequest(Method.POST) {
+        var request = new RestRequest(Method.Post) {
             RequestFormat = DataFormat.Json,
             Resource      = "contenttype_odata"
         };

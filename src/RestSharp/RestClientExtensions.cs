@@ -18,7 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using RestSharp.Serialization;
+using RestSharp.Serializers;
 
 namespace RestSharp
 {
@@ -84,7 +84,7 @@ namespace RestSharp
         /// <returns></returns>
         public static async Task<T> PutAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default)
         {
-            var response = await client.ExecuteAsync<T>(request, Method.PUT, cancellationToken);
+            var response = await client.ExecuteAsync<T>(request, Method.Put, cancellationToken);
             ThrowIfError(response);
             return response.Data;
         }
@@ -100,7 +100,7 @@ namespace RestSharp
         /// <returns></returns>
         public static async Task<T> HeadAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default)
         {
-            var response = await client.ExecuteAsync<T>(request, Method.HEAD, cancellationToken);
+            var response = await client.ExecuteAsync<T>(request, Method.Head, cancellationToken);
             ThrowIfError(response);
             return response.Data;
         }
@@ -116,7 +116,7 @@ namespace RestSharp
         /// <returns></returns>
         public static async Task<T> OptionsAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default)
         {
-            var response = await client.ExecuteAsync<T>(request, Method.OPTIONS, cancellationToken);
+            var response = await client.ExecuteAsync<T>(request, Method.Options, cancellationToken);
             ThrowIfError(response);
             return response.Data;
         }
@@ -132,7 +132,7 @@ namespace RestSharp
         /// <returns></returns>
         public static async Task<T> PatchAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default)
         {
-            var response = await client.ExecuteAsync<T>(request, Method.PATCH, cancellationToken);
+            var response = await client.ExecuteAsync<T>(request, Method.Patch, cancellationToken);
             ThrowIfError(response);
             return response.Data;
         }
@@ -148,7 +148,7 @@ namespace RestSharp
         /// <returns></returns>
         public static async Task<T> DeleteAsync<T>(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default)
         {
-            var response = await client.ExecuteAsync<T>(request, Method.DELETE, cancellationToken);
+            var response = await client.ExecuteAsync<T>(request, Method.Delete, cancellationToken);
             ThrowIfError(response);
             return response.Data;
         }
@@ -162,7 +162,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Get<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.GET);
+            => client.Execute<T>(request, Method.Get);
 
         /// <summary>
         /// Execute the request using POST HTTP method.
@@ -173,7 +173,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Post<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.POST);
+            => client.Execute<T>(request, Method.Post);
 
         /// <summary>
         /// Execute the request using PUT HTTP method.
@@ -184,7 +184,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Put<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.PUT);
+            => client.Execute<T>(request, Method.Put);
 
         /// <summary>
         /// Execute the request using HEAD HTTP method.
@@ -195,7 +195,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Head<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.HEAD);
+            => client.Execute<T>(request, Method.Head);
 
         /// <summary>
         /// Execute the request using OPTIONS HTTP method.
@@ -206,7 +206,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Options<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.OPTIONS);
+            => client.Execute<T>(request, Method.Options);
 
         /// <summary>
         /// Execute the request using PATCH HTTP method.
@@ -217,7 +217,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Patch<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.PATCH);
+            => client.Execute<T>(request, Method.Patch);
 
         /// <summary>
         /// Execute the request using DELETE HTTP method.
@@ -228,7 +228,7 @@ namespace RestSharp
         /// <typeparam name="T">Expected result type</typeparam>
         /// <returns></returns>
         public static IRestResponse<T> Delete<T>(this IRestClient client, IRestRequest request)
-            => client.Execute<T>(request, Method.DELETE);
+            => client.Execute<T>(request, Method.Delete);
 
         /// <summary>
         /// Execute the request using GET HTTP method.
@@ -236,7 +236,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Get(this IRestClient client, IRestRequest request) => client.Execute(request, Method.GET);
+        public static IRestResponse Get(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Get);
 
         /// <summary>
         /// Execute the request using POST HTTP method.
@@ -244,7 +244,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Post(this IRestClient client, IRestRequest request) => client.Execute(request, Method.POST);
+        public static IRestResponse Post(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Post);
 
         /// <summary>
         /// Execute the request using PUT HTTP method.
@@ -252,7 +252,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Put(this IRestClient client, IRestRequest request) => client.Execute(request, Method.PUT);
+        public static IRestResponse Put(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Put);
 
         /// <summary>
         /// Execute the request using HEAD HTTP method.
@@ -260,7 +260,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Head(this IRestClient client, IRestRequest request) => client.Execute(request, Method.HEAD);
+        public static IRestResponse Head(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Head);
 
         /// <summary>
         /// Execute the request using OPTIONS HTTP method.
@@ -268,7 +268,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Options(this IRestClient client, IRestRequest request) => client.Execute(request, Method.OPTIONS);
+        public static IRestResponse Options(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Options);
 
         /// <summary>
         /// Execute the request using PATCH HTTP method.
@@ -276,7 +276,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Patch(this IRestClient client, IRestRequest request) => client.Execute(request, Method.PATCH);
+        public static IRestResponse Patch(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Patch);
 
         /// <summary>
         /// Execute the request using DELETE HTTP method.
@@ -284,7 +284,7 @@ namespace RestSharp
         /// <param name="client">RestClient instance</param>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        public static IRestResponse Delete(this IRestClient client, IRestRequest request) => client.Execute(request, Method.DELETE);
+        public static IRestResponse Delete(this IRestClient client, IRestRequest request) => client.Execute(request, Method.Delete);
 
         /// <summary>
         /// Add a parameter to use on every request made with this client instance

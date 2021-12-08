@@ -7,7 +7,7 @@ namespace RestSharp.IntegrationTests;
 public class RequestHeadTests : CaptureFixture {
     [Fact]
     public void Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate() {
-        const Method httpMethod = Method.GET;
+        const Method httpMethod = Method.Get;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>());
 
@@ -32,7 +32,7 @@ public class RequestHeadTests : CaptureFixture {
 
     [Fact]
     public void Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False() {
-        const Method httpMethod = Method.GET;
+        const Method httpMethod = Method.Get;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 
@@ -53,7 +53,7 @@ public class RequestHeadTests : CaptureFixture {
 #if !NETCORE
     [Fact]
     public void Passes_Default_Credentials_When_UseDefaultCredentials_Is_True() {
-        const Method httpMethod = Method.GET;
+        const Method httpMethod = Method.Get;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 

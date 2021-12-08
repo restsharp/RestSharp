@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using RestSharp.IntegrationTests.SampleDeserializers;
-using RestSharp.Serialization;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 

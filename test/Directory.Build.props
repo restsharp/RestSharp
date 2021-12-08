@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
-        <Nullable>disable</Nullable>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,9 +14,6 @@
         <PackageReference Include="FluentAssertions" Version="5.10.3"/>
         <PackageReference Include="coverlet.collector" Version="3.1.0"/>
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net452" Version="1.0.2" PrivateAssets="All"/>
-    </ItemGroup>
 
     <ItemGroup>
         <Using Include="Xunit"/>
@@ -24,6 +21,5 @@
         <Using Include="FluentAssertions"/>
         <Using Include="FluentAssertions.Extensions"/>
         <Using Include="AutoFixture"/>
-        <Using Remove="System.Net.Http"/>
     </ItemGroup>
 </Project>

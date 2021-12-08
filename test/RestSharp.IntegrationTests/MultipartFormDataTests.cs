@@ -76,7 +76,7 @@ public class MultipartFormDataTests : IDisposable {
     public void AlwaysMultipartFormData_WithParameter_Execute() {
         var request = new RestRequest("?json_route=/posts") {
             AlwaysMultipartFormData = true,
-            Method                  = Method.POST
+            Method                  = Method.Post
         };
 
         request.AddParameter("title", "test", ParameterType.RequestBody);
@@ -90,7 +90,7 @@ public class MultipartFormDataTests : IDisposable {
     public void AlwaysMultipartFormData_WithParameter_ExecuteAsync() {
         var request = new RestRequest("?json_route=/posts") {
             AlwaysMultipartFormData = true,
-            Method                  = Method.POST
+            Method                  = Method.Post
         };
 
         request.AddParameter("title", "test", ParameterType.RequestBody);
@@ -116,7 +116,7 @@ public class MultipartFormDataTests : IDisposable {
     public async Task AlwaysMultipartFormData_WithParameter_ExecuteTaskAsync() {
         var request = new RestRequest("?json_route=/posts") {
             AlwaysMultipartFormData = true,
-            Method                  = Method.POST
+            Method                  = Method.Post
         };
 
         request.AddParameter("title", "test", ParameterType.RequestBody);
@@ -127,7 +127,7 @@ public class MultipartFormDataTests : IDisposable {
 
     [Fact]
     public void MultipartFormData() {
-        var request = new RestRequest("/", Method.POST) {
+        var request = new RestRequest("/", Method.Post) {
             AlwaysMultipartFormData = true
         };
 
@@ -145,7 +145,7 @@ public class MultipartFormDataTests : IDisposable {
 
     [Fact]
     public void MultipartFormData_HasDefaultContentType() {
-        var request = new RestRequest("/", Method.POST);
+        var request = new RestRequest("/", Method.Post);
 
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
         request.AddFile("fileName", path);
@@ -166,7 +166,7 @@ public class MultipartFormDataTests : IDisposable {
 
     [Fact]
     public void MultipartFormData_WithCustomContentType() {
-        var request = new RestRequest("/", Method.POST);
+        var request = new RestRequest("/", Method.Post);
 
         var path              = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
         var customContentType = "multipart/vnd.resteasy+form-data";
@@ -190,7 +190,7 @@ public class MultipartFormDataTests : IDisposable {
 
     [Fact]
     public void MultipartFormData_WithParameterAndFile() {
-        var request = new RestRequest("/", Method.POST) {
+        var request = new RestRequest("/", Method.Post) {
             AlwaysMultipartFormData = true
         };
 
@@ -211,7 +211,7 @@ public class MultipartFormDataTests : IDisposable {
 
     [Fact]
     public async Task MultipartFormData_WithParameterAndFile_Async() {
-        var request = new RestRequest("/", Method.POST) {
+        var request = new RestRequest("/", Method.Post) {
             AlwaysMultipartFormData = true
         };
 
@@ -232,7 +232,7 @@ public class MultipartFormDataTests : IDisposable {
 
     [Fact]
     public void MultipartFormDataAsync() {
-        var request = new RestRequest("/", Method.POST) {
+        var request = new RestRequest("/", Method.Post) {
             AlwaysMultipartFormData = true
         };
 

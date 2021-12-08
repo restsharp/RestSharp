@@ -12,7 +12,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_COPY_Request() {
-        const Method httpMethod = Method.COPY;
+        const Method httpMethod = Method.Copy;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -29,7 +29,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_DELETE_Request() {
-        const Method httpMethod = Method.DELETE;
+        const Method httpMethod = Method.Delete;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -46,7 +46,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_OPTIONS_Request() {
-        const Method httpMethod = Method.OPTIONS;
+        const Method httpMethod = Method.Options;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -63,7 +63,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_PATCH_Request() {
-        const Method httpMethod = Method.PATCH;
+        const Method httpMethod = Method.Patch;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -80,7 +80,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_POST_Request() {
-        const Method httpMethod = Method.POST;
+        const Method httpMethod = Method.Post;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -97,7 +97,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_PUT_Request() {
-        const Method httpMethod = Method.PUT;
+        const Method httpMethod = Method.Put;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -114,7 +114,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Have_No_Body_Added_To_POST_Request() {
-        const Method httpMethod = Method.POST;
+        const Method httpMethod = Method.Post;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -126,7 +126,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Not_Be_Added_To_GET_Request() {
-        const Method httpMethod = Method.GET;
+        const Method httpMethod = Method.Get;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -143,7 +143,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Not_Be_Added_To_HEAD_Request() {
-        const Method httpMethod = Method.HEAD;
+        const Method httpMethod = Method.Head;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -164,7 +164,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         var client = new RestClient(_server.Url);
 
-        var request = new RestRequest(RequestBodyCapturer.Resource, Method.POST) {
+        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
             AlwaysMultipartFormData = true
         };
         request.OnBeforeRequest += http => expectedFormBoundary = http.FormBoundary;
@@ -200,7 +200,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Query_Parameters_With_Json_Body() {
-        const Method httpMethod = Method.PUT;
+        const Method httpMethod = Method.Put;
 
         var client = new RestClient(_server.Url);
 

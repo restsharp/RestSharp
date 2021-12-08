@@ -18,7 +18,6 @@
 
 using System;
 using JetBrains.Annotations;
-using RestSharp.Validation;
 
 namespace RestSharp {
     /// <summary>
@@ -104,7 +103,7 @@ namespace RestSharp {
         public XmlParameter(string name, object value, string? xmlNamespace = null) : base(name, value, ParameterType.RequestBody) {
             XmlNamespace = xmlNamespace;
             DataFormat   = DataFormat.Xml;
-            ContentType  = Serialization.ContentType.Xml;
+            ContentType  = Serializers.ContentType.Xml;
         }
 
         public string? XmlNamespace { get; }
@@ -113,12 +112,12 @@ namespace RestSharp {
     public class JsonParameter : Parameter {
         public JsonParameter(string name, object value) : base(name, value, ParameterType.RequestBody) {
             DataFormat  = DataFormat.Json;
-            ContentType = Serialization.ContentType.Json;
+            ContentType = Serializers.ContentType.Json;
         }
 
         public JsonParameter(string name, object value, string? contentType) : base(name, value, ParameterType.RequestBody) {
             DataFormat  = DataFormat.Json;
-            ContentType = contentType ?? Serialization.ContentType.Json;
+            ContentType = contentType ?? Serializers.ContentType.Json;
         }
     }
 }

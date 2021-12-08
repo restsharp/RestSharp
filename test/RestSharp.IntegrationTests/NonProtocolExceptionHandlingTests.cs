@@ -119,7 +119,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
         var request = new RestRequest("/") {
             RequestFormat = DataFormat.Json,
-            Method        = Method.GET
+            Method        = Method.Get
         };
         var response = await client.ExecuteAsync<StupidClass>(request);
 

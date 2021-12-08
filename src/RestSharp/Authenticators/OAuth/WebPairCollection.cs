@@ -1,48 +1,43 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace RestSharp.Authenticators.OAuth
-{
-    internal class WebPairCollection : IList<WebPair>
-    {
-        readonly List<WebPair> _parameters = new List<WebPair>();
+namespace RestSharp.Authenticators.OAuth; 
 
-        public IEnumerator<WebPair> GetEnumerator() => _parameters.GetEnumerator();
+class WebPairCollection : IList<WebPair> {
+    readonly List<WebPair> _parameters = new();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerator<WebPair> GetEnumerator() => _parameters.GetEnumerator();
 
-        public void Add(WebPair parameter) => _parameters.Add(parameter);
-        
-        public void AddRange(IEnumerable<WebPair> collection) => AddCollection(collection);
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public void Add(string name, string value) => Add(new WebPair(name, value));
+    public void Add(WebPair parameter) => _parameters.Add(parameter);
 
-        public void Clear() => _parameters.Clear();
+    public void AddRange(IEnumerable<WebPair> collection) => AddCollection(collection);
 
-        public bool Contains(WebPair parameter) => _parameters.Contains(parameter);
+    public void Add(string name, string value) => Add(new WebPair(name, value));
 
-        public void CopyTo(WebPair[] parametersArray, int arrayIndex) => _parameters.CopyTo(parametersArray, arrayIndex);
+    public void Clear() => _parameters.Clear();
 
-        public bool Remove(WebPair parameter) => _parameters.Remove(parameter);
+    public bool Contains(WebPair parameter) => _parameters.Contains(parameter);
 
-        public int Count => _parameters.Count;
+    public void CopyTo(WebPair[] parametersArray, int arrayIndex) => _parameters.CopyTo(parametersArray, arrayIndex);
 
-        public bool IsReadOnly => false;
+    public bool Remove(WebPair parameter) => _parameters.Remove(parameter);
 
-        public int IndexOf(WebPair parameter) => _parameters.IndexOf(parameter);
+    public int Count => _parameters.Count;
 
-        public void Insert(int index, WebPair parameter) => _parameters.Insert(index, parameter);
+    public bool IsReadOnly => false;
 
-        public void RemoveAt(int index) => _parameters.RemoveAt(index);
+    public int IndexOf(WebPair parameter) => _parameters.IndexOf(parameter);
 
-        public WebPair this[int index]
-        {
-            get => _parameters[index];
-            set => _parameters[index] = value;
-        }
+    public void Insert(int index, WebPair parameter) => _parameters.Insert(index, parameter);
 
-        void AddCollection(IEnumerable<WebPair> collection)
-            => _parameters.AddRange(collection.Select(parameter => new WebPair(parameter.Name, parameter.Value)));
+    public void RemoveAt(int index) => _parameters.RemoveAt(index);
+
+    public WebPair this[int index] {
+        get => _parameters[index];
+        set => _parameters[index] = value;
     }
+
+    void AddCollection(IEnumerable<WebPair> collection)
+        => _parameters.AddRange(collection.Select(parameter => new WebPair(parameter.Name, parameter.Value)));
 }

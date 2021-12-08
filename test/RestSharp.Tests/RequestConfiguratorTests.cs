@@ -8,7 +8,7 @@ public class RequestConfiguratorTests {
         var restClient = new RestClient("http://localhost");
         restClient.ConfigureWebRequest(r => executed = true);
 
-        var req = new RestRequest("bob", Method.GET);
+        var req = new RestRequest("bob", Method.Get);
 
         restClient.Execute(req);
 

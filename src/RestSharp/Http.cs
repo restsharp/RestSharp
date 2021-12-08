@@ -1,18 +1,4 @@
-﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License. 
-
-using System.Globalization;
+﻿using System.Globalization;
 using System.Net;
 using System.Net.Cache;
 using System.Net.Security;
@@ -21,17 +7,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 
-#pragma warning disable 618
-
 namespace RestSharp;
 
 /// <summary>
 /// HttpWebRequest wrapper
 /// </summary>
-public partial class Http : IHttp {
+public partial class Http {
     const string LineBreak = "\r\n";
 
-    public string FormBoundary { get; } = "---------" + Guid.NewGuid().ToString().ToUpperInvariant();
+    public string FormBoundary { get; } = $"---------{Guid.NewGuid().ToString().ToUpperInvariant()}";
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     static readonly Regex AddRangeRegex = new("(\\w+)=(\\d+)-(\\d+)$");
@@ -119,7 +103,6 @@ public partial class Http : IHttp {
 
     internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
-    /// <inheritdoc />
     public bool AutomaticDecompression { get; set; }
 
     /// <summary>
@@ -127,103 +110,70 @@ public partial class Http : IHttp {
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
 
-    /// <inheritdoc />
     public string UserAgent { get; set; } = null!;
 
-    /// <inheritdoc />
     public int Timeout { get; set; }
 
-    /// <inheritdoc />
     public int ReadWriteTimeout { get; set; }
 
-    /// <inheritdoc />
     public ICredentials? Credentials { get; set; }
 
-    /// <inheritdoc />
     public CookieContainer? CookieContainer { get; set; }
 
-    /// <inheritdoc />
-    public Action<Stream, IHttpResponse> AdvancedResponseWriter { get; set; } = null!;
+    public Action<Stream, HttpResponse> AdvancedResponseWriter { get; set; } = null!;
 
-    /// <inheritdoc />
     public Action<Stream> ResponseWriter { get; set; } = null!;
 
-    /// <inheritdoc />
     public IList<HttpFile> Files { get; internal set; } = null!;
 
-    /// <inheritdoc />
     public bool FollowRedirects { get; set; }
 
-    /// <inheritdoc />
     public bool Pipelined { get; set; }
 
-    /// <inheritdoc />
     public X509CertificateCollection? ClientCertificates { get; set; }
 
-    /// <inheritdoc />
     public int? MaxRedirects { get; set; }
 
-    /// <inheritdoc />
     public bool UseDefaultCredentials { get; set; }
 
-    /// <inheritdoc />
     public string ConnectionGroupName { get; set; } = null!;
 
-    /// <inheritdoc />
     public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-    /// <inheritdoc />
     public IList<HttpHeader> Headers { get; internal set; } = null!;
 
-    /// <inheritdoc />
     public IList<HttpParameter> Parameters { get; internal set; } = null!;
 
-    /// <inheritdoc />
     public IList<HttpCookie> Cookies { get; internal set; } = null!;
 
-    /// <inheritdoc />
     public string? RequestBody { get; set; }
 
-    /// <inheritdoc />
     public string RequestContentType { get; set; } = null!;
 
-    /// <inheritdoc />
     public byte[]? RequestBodyBytes { get; set; }
 
-    /// <inheritdoc />
     public Uri Url { get; set; } = null!;
 
-    /// <inheritdoc />
     public string? Host { get; set; }
 
-    /// <inheritdoc />
     public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; } = null!;
 
-    /// <inheritdoc />
     public bool PreAuthenticate { get; set; }
 
-    /// <inheritdoc />
-    public bool UnsafeAuthenticatedConnectionSharing { get; set; }
+    // public bool UnsafeAuthenticatedConnectionSharing { get; set; }
 
-    /// <inheritdoc />
     public IWebProxy? Proxy { get; set; }
 
-    /// <inheritdoc />
     public RequestCachePolicy? CachePolicy { get; set; }
 
-    /// <inheritdoc />
     /// <summary>
     /// Callback function for handling the validation of remote certificates.
     /// </summary>
     public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
-    /// <inheritdoc />
     public Action<HttpWebRequest>? WebRequestConfigurator { get; set; }
 
     public bool ThrowOnAnyError { get; set; }
-
-    [Obsolete]
-    public static IHttp Create() => new Http();
 
     protected virtual HttpWebRequest? CreateWebRequest(Uri url) => null;
 

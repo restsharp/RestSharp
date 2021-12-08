@@ -1,5 +1,5 @@
-using RestSharp.Serialization.Xml;
 using RestSharp.Serializers;
+using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests; 
@@ -55,7 +55,7 @@ public class CustomRequestSerializerTests {
 
         public string Serialize(object obj) => BodyString = obj?.ToString();
 
-        public string ContentType { get; set; } = Serialization.ContentType.Xml;
+        public string ContentType { get; set; } = Serializers.ContentType.Xml;
         public string RootElement { get; set; }
         public string Namespace { get; set; }
         public string DateFormat { get; set; }
@@ -66,6 +66,6 @@ public class CustomRequestSerializerTests {
 
         public string Serialize(object obj) => BodyString = obj?.ToString();
 
-        public string ContentType { get; set; } = Serialization.ContentType.Json;
+        public string ContentType { get; set; } = Serializers.ContentType.Json;
     }
 }

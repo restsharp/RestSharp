@@ -1,32 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <LangVersion>10</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoFixture" Version="4.17.0" />
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-      <PackageReference Include="Utf8Json" Version="1.3.7" />
+        <PackageReference Include="AutoFixture" Version="4.17.0" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     </ItemGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
-      <ProjectReference Include="..\..\src\RestSharp.Serializers.Utf8Json\RestSharp.Serializers.Utf8Json.csproj" />
-      <ProjectReference Include="..\..\test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
+        <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
+        <ProjectReference Include="..\..\test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
-
     <ItemGroup>
-      <Compile Remove="BenchmarkDotNet.Artifacts\**" />
+        <Compile Remove="BenchmarkDotNet.Artifacts\**" />
+        <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
+        <None Remove="BenchmarkDotNet.Artifacts\**" />
     </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="BenchmarkDotNet.Artifacts\**" />
-    </ItemGroup>
-
 </Project>

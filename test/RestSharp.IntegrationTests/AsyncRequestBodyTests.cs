@@ -1,5 +1,4 @@
-﻿using System.Net;
-using RestSharp.IntegrationTests.Fixtures;
+﻿using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
@@ -26,7 +25,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public async Task Can_Be_Added_To_COPY_Request() {
-        const Method httpMethod = Method.COPY;
+        const Method httpMethod = Method.Copy;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -42,7 +41,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_DELETE_Request() {
-        const Method httpMethod = Method.DELETE;
+        const Method httpMethod = Method.Delete;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -61,7 +60,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_OPTIONS_Request() {
-        const Method httpMethod = Method.OPTIONS;
+        const Method httpMethod = Method.Options;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -80,7 +79,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_PATCH_Request() {
-        const Method httpMethod = Method.PATCH;
+        const Method httpMethod = Method.Patch;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -99,7 +98,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_POST_Request() {
-        const Method httpMethod = Method.POST;
+        const Method httpMethod = Method.Post;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -118,7 +117,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Be_Added_To_PUT_Request() {
-        const Method httpMethod = Method.PUT;
+        const Method httpMethod = Method.Put;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -137,7 +136,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Have_No_Body_Added_To_POST_Request() {
-        const Method httpMethod = Method.POST;
+        const Method httpMethod = Method.Post;
 
         var request    = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
         var resetEvent = new ManualResetEvent(false);
@@ -150,7 +149,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public async Task Can_Be_Added_To_GET_Request() {
-        const Method httpMethod = Method.GET;
+        const Method httpMethod = Method.Get;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
@@ -166,7 +165,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public void Can_Not_Be_Added_To_HEAD_Request() {
-        const Method httpMethod = Method.HEAD;
+        const Method httpMethod = Method.Head;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 

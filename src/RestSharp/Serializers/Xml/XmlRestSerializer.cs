@@ -12,149 +12,123 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-using System;
 using System.Globalization;
-using System.Text;
-using RestSharp.Deserializers;
-using RestSharp.Serializers;
 
-namespace RestSharp.Serialization.Xml
-{
-    public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer
-    {
-        XmlSerilizationOptions _options         = XmlSerilizationOptions.Default;
-        IXmlDeserializer       _xmlDeserializer = new XmlDeserializer();
-        IXmlSerializer         _xmlSerializer   = new XmlSerializer();
-        
-        public string[] SupportedContentTypes => Serialization.ContentType.XmlAccept;
+namespace RestSharp.Serializers.Xml; 
 
-        public DataFormat DataFormat => DataFormat.Xml;
+public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer {
+    XmlSerilizationOptions _options         = XmlSerilizationOptions.Default;
+    IXmlDeserializer       _xmlDeserializer = new XmlDeserializer();
+    IXmlSerializer         _xmlSerializer   = new XmlSerializer();
 
-        public string ContentType { get; set; } = Serialization.ContentType.Xml;
+    public string[] SupportedContentTypes => Serializers.ContentType.XmlAccept;
 
-        public string? Serialize(object? obj) => _xmlSerializer.Serialize(obj);
+    public DataFormat DataFormat => DataFormat.Xml;
 
-        public T? Deserialize<T>(IRestResponse response) => _xmlDeserializer.Deserialize<T>(response);
+    public string ContentType { get; set; } = Serializers.ContentType.Xml;
 
-        public string? Serialize(Parameter parameter)
-        {
-            if (parameter is not XmlParameter xmlParameter)
-                throw new InvalidOperationException("Supplied parameter is not an XML parameter");
+    public string? Serialize(object? obj) => _xmlSerializer.Serialize(obj);
 
-            var savedNamespace = _xmlSerializer.Namespace;
-            _xmlSerializer.Namespace = xmlParameter.XmlNamespace ?? savedNamespace;
+    public T? Deserialize<T>(IRestResponse response) => _xmlDeserializer.Deserialize<T>(response);
 
-            var result = _xmlSerializer.Serialize(parameter.Value);
+    public string? Serialize(Parameter parameter) {
+        if (parameter is not XmlParameter xmlParameter)
+            throw new InvalidOperationException("Supplied parameter is not an XML parameter");
 
-            _xmlSerializer.Namespace = savedNamespace;
+        var savedNamespace = _xmlSerializer.Namespace;
+        _xmlSerializer.Namespace = xmlParameter.XmlNamespace ?? savedNamespace;
 
-            return result;
-        }
+        var result = _xmlSerializer.Serialize(parameter.Value);
 
-        public string? RootElement
-        {
-            get => _options.RootElement;
-            set
-            {
-                _options.RootElement         = value;
-                _xmlSerializer.RootElement   = value;
-                _xmlDeserializer.RootElement = value;
-            }
-        }
+        _xmlSerializer.Namespace = savedNamespace;
 
-        public string Namespace
-        {
-            get => _options.Namespace;
-            set
-            {
-                _options.Namespace         = value;
-                _xmlSerializer.Namespace   = value;
-                _xmlDeserializer.Namespace = value;
-            }
-        }
+        return result;
+    }
 
-        public string DateFormat
-        {
-            get => _options.DateFormat;
-            set
-            {
-                _options.DateFormat         = value;
-                _xmlSerializer.DateFormat   = value;
-                _xmlDeserializer.DateFormat = value;
-            }
-        }
-
-        public XmlRestSerializer WithOptions(XmlSerilizationOptions options)
-        {
-            _options = options;
-            return this;
-        }
-
-        public XmlRestSerializer WithXmlSerializer<T>(XmlSerilizationOptions options = null)
-            where T : IXmlSerializer, new()
-        {
-            if (options != null) _options = options;
-
-            return WithXmlSerializer(
-                new T
-                {
-                    Namespace   = _options.Namespace,
-                    DateFormat  = _options.DateFormat,
-                    RootElement = _options.RootElement
-                }
-            );
-        }
-
-        public XmlRestSerializer WithXmlSerializer(IXmlSerializer xmlSerializer)
-        {
-            _xmlSerializer = xmlSerializer;
-            return this;
-        }
-
-        public XmlRestSerializer WithXmlDeserialzier<T>(XmlSerilizationOptions options = null)
-            where T : IXmlDeserializer, new()
-        {
-            if (options != null) _options = options;
-
-            return WithXmlDeserializer(
-                new T
-                {
-                    Namespace   = _options.Namespace,
-                    DateFormat  = _options.DateFormat,
-                    RootElement = _options.RootElement
-                }
-            );
-        }
-
-        public XmlRestSerializer WithXmlDeserializer(IXmlDeserializer xmlDeserializer)
-        {
-            _xmlDeserializer = xmlDeserializer;
-            return this;
+    public string? RootElement {
+        get => _options.RootElement;
+        set {
+            _options.RootElement         = value;
+            _xmlSerializer.RootElement   = value;
+            _xmlDeserializer.RootElement = value;
         }
     }
 
-    public class XmlSerilizationOptions
-    {
-        /// <summary>
-        /// Name of the root element to use when serializing
-        /// </summary>
-        public string RootElement { get; set; }
-
-        /// <summary>
-        /// XML namespace to use when serializing
-        /// </summary>
-        public string Namespace { get; set; }
-
-        /// <summary>
-        /// Format string to use when serializing dates
-        /// </summary>
-        public string DateFormat { get; set; }
-
-        public CultureInfo Culture { get; set; }
-
-        public static XmlSerilizationOptions Default => new XmlSerilizationOptions
-        {
-            Culture = CultureInfo.InvariantCulture
-        };
+    public string Namespace {
+        get => _options.Namespace;
+        set {
+            _options.Namespace         = value;
+            _xmlSerializer.Namespace   = value;
+            _xmlDeserializer.Namespace = value;
+        }
     }
+
+    public string DateFormat {
+        get => _options.DateFormat;
+        set {
+            _options.DateFormat         = value;
+            _xmlSerializer.DateFormat   = value;
+            _xmlDeserializer.DateFormat = value;
+        }
+    }
+
+    public XmlRestSerializer WithOptions(XmlSerilizationOptions options) {
+        _options = options;
+        return this;
+    }
+
+    public XmlRestSerializer WithXmlSerializer<T>(XmlSerilizationOptions? options = null) where T : IXmlSerializer, new() {
+        if (options != null) _options = options;
+
+        return WithXmlSerializer(
+            new T {
+                Namespace   = _options.Namespace,
+                DateFormat  = _options.DateFormat,
+                RootElement = _options.RootElement
+            }
+        );
+    }
+
+    public XmlRestSerializer WithXmlSerializer(IXmlSerializer xmlSerializer) {
+        _xmlSerializer = xmlSerializer;
+        return this;
+    }
+
+    public XmlRestSerializer WithXmlDeserializer<T>(XmlSerilizationOptions? options = null) where T : IXmlDeserializer, new() {
+        if (options != null) _options = options;
+
+        return WithXmlDeserializer(
+            new T {
+                Namespace   = _options.Namespace,
+                DateFormat  = _options.DateFormat,
+                RootElement = _options.RootElement
+            }
+        );
+    }
+
+    public XmlRestSerializer WithXmlDeserializer(IXmlDeserializer xmlDeserializer) {
+        _xmlDeserializer = xmlDeserializer;
+        return this;
+    }
+}
+
+public class XmlSerilizationOptions {
+    /// <summary>
+    /// Name of the root element to use when serializing
+    /// </summary>
+    public string RootElement { get; set; }
+
+    /// <summary>
+    /// XML namespace to use when serializing
+    /// </summary>
+    public string Namespace { get; set; }
+
+    /// <summary>
+    /// Format string to use when serializing dates
+    /// </summary>
+    public string DateFormat { get; set; }
+
+    public CultureInfo Culture { get; set; }
+
+    public static XmlSerilizationOptions Default => new() { Culture = CultureInfo.InvariantCulture };
 }

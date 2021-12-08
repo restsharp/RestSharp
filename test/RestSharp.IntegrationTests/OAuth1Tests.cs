@@ -190,7 +190,7 @@ public class OAuth1Tests {
         };
 
         var client        = new RestClient(baseUrl);
-        var request       = new RestRequest(Method.GET);
+        var request       = new RestRequest(Method.Get);
         var authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
         authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
         authenticator.Authenticate(client, request);
@@ -240,7 +240,7 @@ public class OAuth1Tests {
         var client = new RestClient(baseUrl) {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
-        var request  = new RestRequest("oauth/request_token", Method.POST);
+        var request  = new RestRequest("oauth/request_token", Method.Post);
         var response = client.Execute(request);
 
         Assert.NotNull(response);
@@ -262,7 +262,7 @@ public class OAuth1Tests {
         // then set verifier in debugger to the value in the URL where you get redirected
         var verifier = "123456";
 
-        request = new RestRequest("oauth/access_token", Method.POST);
+        request = new RestRequest("oauth/access_token", Method.Post);
 
         client.Authenticator = OAuth1Authenticator.ForAccessToken(
             consumerKey,
