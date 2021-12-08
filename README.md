@@ -3,7 +3,6 @@
 | | |
 |-|-|
 | dev | [![](https://img.shields.io/github/workflow/status/restsharp/RestSharp/Build%20and%20deploy)](https://github.com/restsharp/RestSharp/actions?query=workflow%3A%22Build+and+deploy%22) |
-| docs | [![Netlify Status](https://img.shields.io/netlify/ae5b8e6e-32d9-4cdc-8a39-ca12ff2948f3?label=docs)](https://app.netlify.com/sites/restsharp/deploys) |
 
 ### Nuget
 
@@ -12,6 +11,12 @@
 | downloads | ![](https://img.shields.io/nuget/dt/RestSharp) |
 | stable | ![](https://img.shields.io/nuget/v/RestSharp) |
 | preview | ![](https://img.shields.io/nuget/vpre/RestSharp) |
+
+### Support
+
+RestSharp is an open-source project with a single maintainer. Do not expect your issue to be resolved unless it concerns a large group of RestSharp users.
+The best way to resolve your issue is to fix it yourself. Fork the repository and submit a pull request.
+You can also motivate the maintainer by sponsoring this project.
 
 ### Get help
 
