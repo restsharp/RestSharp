@@ -76,11 +76,6 @@ public interface IRestRequest
     string XmlNamespace { get; set; }
 
     /// <summary>
-    /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
-    /// </summary>
-    ICredentials? Credentials { get; set; }
-
-    /// <summary>
     /// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
     /// </summary>
     int Timeout { get; set; }
@@ -99,11 +94,6 @@ public interface IRestRequest
     /// </remarks>
     int Attempts { get; }
 
-    /// <summary>
-    /// Determine whether or not the "default credentials" (e.g. the user account under which the current process is
-    /// running) will be sent along to the server. The default is false.
-    /// </summary>
-    bool UseDefaultCredentials { get; set; }
 
     /// <summary>
     /// List of allowed decompression methods

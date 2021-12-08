@@ -198,4 +198,18 @@ public partial class RestClient {
     //     RestRequestAsyncHandle                           asyncHandle
     // )
     //     => callback(Deserialize<T>(request, response), asyncHandle);
+    
+    static void ThrowIfError(IRestResponse response) {
+        var exception = response.ResponseStatus switch {
+            ResponseStatus.Aborted   => new WebException("Request aborted", response.ErrorException),
+            ResponseStatus.Error     => response.ErrorException,
+            ResponseStatus.TimedOut  => new TimeoutException("Request timed out", response.ErrorException),
+            ResponseStatus.None      => null,
+            ResponseStatus.Completed => null,
+            _                        => throw response.ErrorException ?? new ArgumentOutOfRangeException()
+        };
+
+        if (exception != null)
+            throw exception;
+    }
 }

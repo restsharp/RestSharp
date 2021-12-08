@@ -136,7 +136,7 @@ public partial class Http {
 
     public bool UseDefaultCredentials { get; set; }
 
-    public string ConnectionGroupName { get; set; } = null!;
+    // public string ConnectionGroupName { get; set; } = null!;
 
     public Encoding Encoding { get; set; } = Encoding.UTF8;
 
@@ -156,7 +156,7 @@ public partial class Http {
 
     public string? Host { get; set; }
 
-    public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; } = null!;
+    // public IList<DecompressionMethods> AllowedDecompressionMethods { get; set; } = null!;
 
     public bool PreAuthenticate { get; set; }
 

@@ -59,7 +59,7 @@ public class NewtonsoftJsonTests {
     }
 
     [Fact]
-    public void Use_JsonNet_For_Requests() {
+    public async Task Use_JsonNet_For_Requests() {
         using var server = HttpServerFixture.StartServer(CaptureBody);
         _body = null;
         var serializer = new JsonNetSerializer();
@@ -69,7 +69,7 @@ public class NewtonsoftJsonTests {
         var client  = new RestClient(server.Url).UseNewtonsoftJson();
         var request = new RestRequest().AddJsonBody(testData);
 
-        client.Post(request);
+        client.PostAsync(request);
 
         var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body! });
 

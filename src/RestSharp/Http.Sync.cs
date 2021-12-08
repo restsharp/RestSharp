@@ -149,7 +149,7 @@ public partial class Http {
         if (ClientCertificates != null)
             webRequest.ClientCertificates.AddRange(ClientCertificates);
 
-        AllowedDecompressionMethods.ForEach(x => webRequest.AutomaticDecompression |= x);
+        // AllowedDecompressionMethods.ForEach(x => webRequest.AutomaticDecompression |= x);
 
         if (AutomaticDecompression)
             webRequest.AutomaticDecompression =

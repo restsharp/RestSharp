@@ -411,7 +411,6 @@ public class RestRequest : IRestRequest {
     public string XmlNamespace { get; set; }
 
     /// <inheritdoc />
-    public ICredentials? Credentials { get; set; }
 
     /// <inheritdoc />
     public int Timeout { get; set; }

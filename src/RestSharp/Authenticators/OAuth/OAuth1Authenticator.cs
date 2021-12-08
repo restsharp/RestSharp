@@ -39,7 +39,7 @@ public class OAuth1Authenticator : IAuthenticator {
 
     internal virtual string ClientPassword { get; set; }
 
-    public void Authenticate(IRestClient client, IRestRequest request) {
+    public void Authenticate(RestClient client, IRestRequest request) {
         var workflow = new OAuthWorkflow {
             ConsumerKey        = ConsumerKey,
             ConsumerSecret     = ConsumerSecret,
@@ -219,7 +219,7 @@ public class OAuth1Authenticator : IAuthenticator {
             TokenSecret        = accessTokenSecret
         };
 
-    void AddOAuthData(IRestClient client, IRestRequest request, OAuthWorkflow workflow) {
+    void AddOAuthData(RestClient client, IRestRequest request, OAuthWorkflow workflow) {
         var requestUrl = client.BuildUriWithoutQueryParameters(request);
 
         if (requestUrl.Contains('?'))
@@ -249,7 +249,7 @@ public class OAuth1Authenticator : IAuthenticator {
                 ? x => BaseQuery(x) && x.Name.StartsWith("oauth_")
                 : (Func<Parameter, bool>)BaseQuery;
 
-        parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
+        parameters.AddRange(client.Options.DefaultParameters.Where(query).ToWebParameters());
         parameters.AddRange(request.Parameters.Where(query).ToWebParameters());
 
         if (Type == OAuthType.RequestToken)

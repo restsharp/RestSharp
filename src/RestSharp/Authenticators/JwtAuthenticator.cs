@@ -20,6 +20,6 @@ public class JwtAuthenticator : IAuthenticator {
         _authHeader = $"Bearer {accessToken}";
     }
 
-    public void Authenticate(IRestClient client, IRestRequest request)
+    public void Authenticate(RestClient client, IRestRequest request)
         => request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader);
 }

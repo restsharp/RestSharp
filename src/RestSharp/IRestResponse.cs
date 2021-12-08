@@ -110,5 +110,5 @@ public interface IRestResponse<T> : IRestResponse {
     /// <summary>
     /// Deserialized entity data
     /// </summary>
-    T Data { get; set; }
+    T? Data { get; set; }
 }

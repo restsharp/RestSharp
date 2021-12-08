@@ -27,9 +27,9 @@ public class RestRequestTests {
     }
 
     [Fact]
-    public void RestRequest_Fail_On_Exception() {
+    public async Task RestRequest_Fail_On_Exception() {
         var req    = new RestRequest("nonexisting");
-        var client = new RestClient("http://localhost:12345") { ThrowOnAnyError = true };
-        Assert.Throws<WebException>(() => client.Execute(req));
+        var client = new RestClient(new RestClientOptions("http://localhost:12345") { ThrowOnAnyError = true });
+        await Assert.ThrowsAsync<WebException>(() => client.ExecuteAsync(req));
     }
 }

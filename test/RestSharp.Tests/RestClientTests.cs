@@ -12,11 +12,11 @@ public class RestClientTests {
     [InlineData(Method.Patch, Method.Put)]
     [InlineData(Method.Post, Method.Put)]
     [InlineData(Method.Get, Method.Delete)]
-    public void Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
+    public async Task Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
         var req    = new RestRequest(reqMethod);
         var client = new RestClient(BaseUrl);
 
-        client.Execute(req, overrideMethod);
+        await client.ExecuteAsync(req, overrideMethod);
 
         req.Method.Should().Be(overrideMethod);
     }
@@ -24,7 +24,7 @@ public class RestClientTests {
     [Fact]
     public void ConfigureHttp_will_set_proxy_to_null_with_no_exceptions_When_no_proxy_can_be_found() {
         var req    = new RestRequest();
-        var client = new RestClient(BaseUrl) { Proxy = null };
+        var client = new RestClient(new RestClientOptions(BaseUrl) { Proxy = null });
 
         client.Execute(req);
         client.Proxy.Should().BeNull();

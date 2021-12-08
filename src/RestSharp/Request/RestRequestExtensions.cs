@@ -4,28 +4,12 @@ using RestSharp.Serializers;
 namespace RestSharp;
 
 static class RestRequestExtensions {
-    internal static void SerializeRequestBody(
-        this IRestRequest                        request,
-        IDictionary<DataFormat, IRestSerializer> restSerializers,
-        params ISerializer[]                     serializers
-    ) {
+    internal static void SerializeRequestBody(this IRestRequest request, IDictionary<DataFormat, IRestSerializer> restSerializers) {
         var body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
         if (body == null) return;
 
         if (body.DataFormat == DataFormat.None) {
             request.Body = new RequestBody(body.ContentType, body.Name, body.Value);
-            return;
-        }
-
-        var contentType       = body.ContentType ?? ContentType.FromDataFormat[body.DataFormat];
-        var requestSerializer = serializers.FirstOrDefault(x => x != null && x.ContentType == contentType);
-
-        if (requestSerializer != null) {
-            request.Body = new RequestBody(
-                requestSerializer.ContentType,
-                requestSerializer.ContentType,
-                requestSerializer.Serialize(body.Value)
-            );
             return;
         }
 

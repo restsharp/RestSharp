@@ -6,6 +6,6 @@
     <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Using Include="Newtonsoft.Json"/>
+    <Using Include="Newtonsoft.Json" />
   </ItemGroup>
 </Project>

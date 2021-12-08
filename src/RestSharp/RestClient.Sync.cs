@@ -2,25 +2,14 @@
 
 public partial class RestClient {
     /// <inheritdoc />
-    public byte[] DownloadData(IRestRequest request) => DownloadData(request, false);
-
-    /// <inheritdoc />
-    public byte[] DownloadData(IRestRequest request, bool throwOnError) {
+    public byte[] DownloadData(IRestRequest request) {
         var response = Execute(request);
 
-        return response.ResponseStatus == ResponseStatus.Error && throwOnError
+        return response.ResponseStatus == ResponseStatus.Error && Options.ThrowOnAnyError
             ? throw response.ErrorException!
             : response.RawBytes;
     }
 
-    /// <inheritdoc />
-    public virtual IRestResponse Execute(IRestRequest request, Method httpMethod) {
-        if (request == null)
-            throw new ArgumentNullException(nameof(request));
-
-        request.Method = httpMethod;
-        return Execute(request);
-    }
 
     /// <inheritdoc />
     public virtual IRestResponse Execute(IRestRequest request) {
@@ -66,7 +55,7 @@ public partial class RestClient {
         string                            httpMethod,
         Func<Http, string, HttpResponse> getResponse
     ) {
-        request.SerializeRequestBody(Serializers, request.XmlSerializer, request.JsonSerializer);
+        request.SerializeRequestBody(Serializers);
 
         AuthenticateIfNeeded(request);
 

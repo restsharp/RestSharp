@@ -7,5 +7,5 @@ public abstract class AuthenticatorBase : IAuthenticator {
 
     protected abstract Parameter GetAuthenticationParameter(string accessToken);
 
-    public void Authenticate(IRestClient client, IRestRequest request) => request.AddOrUpdateParameter(GetAuthenticationParameter(Token));
+    public void Authenticate(RestClient client, IRestRequest request) => request.AddOrUpdateParameter(GetAuthenticationParameter(Token));
 }

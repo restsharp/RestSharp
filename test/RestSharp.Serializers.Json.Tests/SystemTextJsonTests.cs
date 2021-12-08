@@ -12,7 +12,7 @@ public class SystemTextJsonTests {
     string? _body;
 
     [Fact]
-    public void Use_JsonNet_For_Requests() {
+    public async Task Use_JsonNet_For_Requests() {
         using var server = HttpServerFixture.StartServer(CaptureBody);
         _body = null;
         var serializer = new SystemTextJsonSerializer();
@@ -24,7 +24,7 @@ public class SystemTextJsonTests {
 
         var expected = testData;
 
-        client.Post(request);
+        await client.PostAsync(request);
 
         var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body });
 
@@ -34,7 +34,7 @@ public class SystemTextJsonTests {
     }
 
     [Fact]
-    public void Use_JsonNet_For_Response() {
+    public async Task Use_JsonNet_For_Response() {
         var expected = Fixture.Create<TestClass>();
 
         using var server = HttpServerFixture.StartServer(
@@ -49,7 +49,7 @@ public class SystemTextJsonTests {
 
         var client = new RestClient(server.Url).UseSystemTextJson();
 
-        var actual = client.Get<TestClass>(new RestRequest()).Data;
+        var actual = await client.GetAsync<TestClass>(new RestRequest()).Data;
 
         actual.Should().BeEquivalentTo(expected);
     }
