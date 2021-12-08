@@ -12,25 +12,8 @@ on:
       - '*'
 
 jobs:
-  test-win:
-    runs-on: windows-latest
-
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2.4.0
-      -
-        name: Setup .NET
-        uses: actions/setup-dotnet@v1.9.0
-        with:
-          dotnet-version: '6.0'
-      -  
-        name: Run tests on Windows for all targets
-        run: dotnet test -c Release
-
   nuget:
-    runs-on: windows-latest
-    needs: [ test-win ] #,test-netcore-linux]
+    runs-on: ubuntu-latest
 
     steps:
       -
