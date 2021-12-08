@@ -299,7 +299,7 @@ public class UrlBuilderTests {
         var client = new RestClient("http://example.com/resource");
 
         var expectedDefaultEncoding  = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
-        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%F8d");
+        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%f8d");
         Assert.Equal(expectedDefaultEncoding, client.BuildUri(request));
         // now changing encoding
         client.Encoding = Encoding.GetEncoding("ISO-8859-1");
