@@ -23,7 +23,7 @@ public class DotNetXmlDeserializer : IXmlDeserializer {
 
     public string DateFormat { get; set; }
 
-    public T? Deserialize<T>(IRestResponse response) {
+    public T? Deserialize<T>(RestResponse response) {
         if (string.IsNullOrEmpty(response.Content)) return default;
 
         using var stream = new MemoryStream(Encoding.GetBytes(response.Content));

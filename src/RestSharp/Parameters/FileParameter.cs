@@ -18,7 +18,7 @@ namespace RestSharp;
 /// Container for files to be uploaded with requests
 /// </summary>
 [PublicAPI]
-public class FileParameter {
+public record FileParameter {
     /// <summary>
     /// The length of data to be sent
     /// </summary>
@@ -27,7 +27,7 @@ public class FileParameter {
     /// <summary>
     /// Provides raw data for file
     /// </summary>
-    public Action<Stream> Writer { get; }
+    public Func<Stream> GetFile { get; }
 
     /// <summary>
     /// Name of the file to use when uploading
@@ -44,11 +44,11 @@ public class FileParameter {
     /// </summary>
     public string Name { get; }
 
-    FileParameter(string name, string fileName, long contentLength, Action<Stream> writer, string? contentType = null) {
+    FileParameter(string name, string fileName, long contentLength, Func<Stream> getFile, string? contentType = null) {
         Name          = name;
         FileName      = fileName;
         ContentLength = contentLength;
-        Writer        = writer;
+        GetFile       = getFile;
         ContentType   = contentType;
     }
 
@@ -60,33 +60,44 @@ public class FileParameter {
     /// <param name="filename">The filename to use in the request.</param>
     /// <param name="contentType">The content type to use in the request.</param>
     /// <returns>The <see cref="FileParameter" /></returns>
-    public static FileParameter Create(string name, byte[] data, string filename, string? contentType)
-        => new(name, filename, data.Length, s => s.Write(data, 0, data.Length), contentType);
+    public static FileParameter Create(string name, byte[] data, string filename, string? contentType = null) {
+        return new FileParameter(name, filename, data.Length, GetFile, contentType);
+
+        Stream GetFile() {
+            var stream = new MemoryStream();
+            stream.Write(data, 0, data.Length);
+            return stream;
+        }
+    }
 
     /// <summary>
     /// Creates a file parameter from an array of bytes.
     /// </summary>
     /// <param name="name">The parameter name to use in the request.</param>
-    /// <param name="data">The data to use as the file's contents.</param>
-    /// <param name="filename">The filename to use in the request.</param>
-    /// <returns>The <see cref="FileParameter" /> using the default content type.</returns>
-    public static FileParameter Create(string name, byte[] data, string filename) => Create(name, data, filename, null);
-
-    /// <summary>
-    /// Creates a file parameter from an array of bytes.
-    /// </summary>
-    /// <param name="name">The parameter name to use in the request.</param>
-    /// <param name="writer">Delegate that will be called with the request stream so you can write to it..</param>
+    /// <param name="getFile">Delegate that will be called with the request stream so you can write to it..</param>
     /// <param name="contentLength">The length of the data that will be written by te writer.</param>
     /// <param name="fileName">The filename to use in the request.</param>
     /// <param name="contentType">Optional: parameter content type</param>
     /// <returns>The <see cref="FileParameter" /> using the default content type.</returns>
     public static FileParameter Create(
-        string         name,
-        Action<Stream> writer,
-        long           contentLength,
-        string         fileName,
-        string?        contentType = null
+        string       name,
+        Func<Stream> getFile,
+        long         contentLength,
+        string       fileName,
+        string?      contentType = null
     )
-        => new(name, fileName, contentLength, writer, contentType);
+        => new(name, fileName, contentLength, getFile, contentType);
+
+    public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null) {
+        if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath))))
+            throw new FileNotFoundException("File not found", fullPath);
+
+        var fileName = Path.GetFileName(fullPath);
+        var parameterName = name ?? fileName;
+        var length = new FileInfo(fullPath).Length;
+        
+        return new FileParameter(parameterName, fileName, length, GetFile);
+
+        Stream GetFile() => File.OpenRead(fileName);
+    }
 }

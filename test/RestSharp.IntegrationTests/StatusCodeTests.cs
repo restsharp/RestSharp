@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using RestSharp.Serializers;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -18,7 +19,7 @@ public class StatusCodeTests : IDisposable {
     static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
 
     [Fact]
-    public void ContentType_Additional_Information() {
+    public async Task ContentType_Additional_Information() {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
         var request = new RestRequest(Method.Post) {
@@ -30,13 +31,13 @@ public class StatusCodeTests : IDisposable {
         request.AddHeader("Accept", $"{ContentType.Json}; odata=verbose");
         request.AddHeader("Content-Type", $"{ContentType.Json}; odata=verbose");
 
-        var response = _client.Execute<Response>(request);
+        var response = await _client.ExecuteAsync<Response>(request);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
-    public void Handles_Default_Root_Element_On_No_Error() {
+    public async Task Handles_Default_Root_Element_On_No_Error() {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
         var request = new RestRequest("success") {
@@ -47,14 +48,14 @@ public class StatusCodeTests : IDisposable {
             if (resp.StatusCode == HttpStatusCode.NotFound) request.RootElement = "Error";
         };
 
-        var response = _client.Execute<Response>(request);
+        var response = await _client.ExecuteAsync<Response>(request);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("Works!", response.Data.Message);
     }
 
     [Fact]
-    public void Handles_Different_Root_Element_On_Http_Error() {
+    public async Task Handles_Different_Root_Element_On_Http_Error() {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
         var request = new RestRequest("error") {
@@ -66,56 +67,56 @@ public class StatusCodeTests : IDisposable {
                 if (resp.StatusCode == HttpStatusCode.BadRequest) request.RootElement = "Error";
             };
 
-        var response = _client.Execute<Response>(request);
+        var response = await _client.ExecuteAsync<Response>(request);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("Not found!", response.Data.Message);
     }
 
     [Fact]
-    public void Handles_GET_Request_404_Error() {
+    public async Task Handles_GET_Request_404_Error() {
         var request  = new RestRequest("404");
-        var response = _client.Execute(request);
+        var response = await _client.ExecuteAsync(request);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact(Skip = "Not sure why this hangs")]
-    public void Reports_1xx_Status_Code_Success_Accurately() {
+    public async Task Reports_1xx_Status_Code_Success_Accurately() {
         var request  = new RestRequest("100");
-        var response = _client.Execute(request);
+        var response = await _client.ExecuteAsync(request);
 
         Assert.False(response.IsSuccessful);
     }
 
     [Fact]
-    public void Reports_2xx_Status_Code_Success_Accurately() {
+    public async Task Reports_2xx_Status_Code_Success_Accurately() {
         var request  = new RestRequest("204");
-        var response = _client.Execute(request);
+        var response = await _client.ExecuteAsync(request);
 
         Assert.True(response.IsSuccessful);
     }
 
     [Fact]
-    public void Reports_3xx_Status_Code_Success_Accurately() {
+    public async Task Reports_3xx_Status_Code_Success_Accurately() {
         var request  = new RestRequest("301");
-        var response = _client.Execute(request);
+        var response = await _client.ExecuteAsync(request);
 
         Assert.False(response.IsSuccessful);
     }
 
     [Fact]
-    public void Reports_4xx_Status_Code_Success_Accurately() {
+    public async Task Reports_4xx_Status_Code_Success_Accurately() {
         var request  = new RestRequest("404");
-        var response = _client.Execute(request);
+        var response = await _client.ExecuteAsync(request);
 
         Assert.False(response.IsSuccessful);
     }
 
     [Fact]
-    public void Reports_5xx_Status_Code_Success_Accurately() {
+    public async Task Reports_5xx_Status_Code_Success_Accurately() {
         var request  = new RestRequest("503");
-        var response = _client.Execute(request);
+        var response = await _client.ExecuteAsync(request);
 
         Assert.False(response.IsSuccessful);
     }

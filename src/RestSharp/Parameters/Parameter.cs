@@ -1,6 +1,4 @@
-﻿#region License
-
-//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -14,110 +12,75 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-#endregion
+namespace RestSharp; 
 
-using System;
-using JetBrains.Annotations;
+/// <summary>
+/// Parameter container for REST requests
+/// </summary>
+public record Parameter {
+    public Parameter(string name, object? value, ParameterType type, bool encode = true) {
+        if (type != ParameterType.RequestBody)
+            Ensure.NotEmpty(name, nameof(name));
 
-namespace RestSharp {
+        Name   = name;
+        Value  = type != ParameterType.UrlSegment ? value : value?.ToString().Replace("%2F", "/").Replace("%2f", "/");
+        Type   = type == ParameterType.QueryStringWithoutEncode ? ParameterType.QueryString : type;
+        Encode = type != ParameterType.QueryStringWithoutEncode && encode;
+    }
+
+    public Parameter(string name, object value, string contentType, ParameterType type, bool encode = true) : this(name, value, type, encode)
+        => ContentType = contentType;
+
     /// <summary>
-    /// Parameter container for REST requests
+    /// Name of the parameter
     /// </summary>
-    public class Parameter : IEquatable<Parameter> {
-        public Parameter(string name, object? value, ParameterType type, bool encode = true) {
-            if (type != ParameterType.RequestBody)
-                Ensure.NotEmpty(name, nameof(name));
+    public string? Name { get; set; }
 
-            Name   = name;
-            Value  = type != ParameterType.UrlSegment ? value : value?.ToString().Replace("%2F", "/").Replace("%2f", "/");
-            Type   = type == ParameterType.QueryStringWithoutEncode ? ParameterType.QueryString : type;
-            Encode = type != ParameterType.QueryStringWithoutEncode && encode;
-        }
+    /// <summary>
+    /// Value of the parameter
+    /// </summary>
+    public object? Value { get; set; }
 
-        public Parameter(string name, object value, string contentType, ParameterType type, bool encode = true) : this(name, value, type, encode)
-            => ContentType = contentType;
+    /// <summary>
+    /// Type of the parameter
+    /// </summary>
+    public ParameterType Type { get; set; }
 
-        /// <summary>
-        /// Name of the parameter
-        /// </summary>
-        public string? Name { get; set; }
+    /// <summary>
+    /// Body parameter data type
+    /// </summary>
+    public DataFormat DataFormat { get; set; } = DataFormat.None;
 
-        /// <summary>
-        /// Value of the parameter
-        /// </summary>
-        public object? Value { get; set; }
+    /// <summary>
+    /// MIME content type of the parameter
+    /// </summary>
+    public string? ContentType { get; set; }
 
-        /// <summary>
-        /// Type of the parameter
-        /// </summary>
-        public ParameterType Type { get; set; }
+    internal bool Encode { get; }
 
-        /// <summary>
-        /// Body parameter data type
-        /// </summary>
-        public DataFormat DataFormat { get; set; } = DataFormat.None;
+    /// <summary>
+    /// Return a human-readable representation of this parameter
+    /// </summary>
+    /// <returns>String</returns>
+    public override string ToString() => $"{Name}={Value}";
 
-        /// <summary>
-        /// MIME content type of the parameter
-        /// </summary>
-        public string? ContentType { get; set; }
+}
 
-        internal bool Encode { get; }
-
-        /// <summary>
-        /// Return a human-readable representation of this parameter
-        /// </summary>
-        /// <returns>String</returns>
-        public override string ToString() => $"{Name}={Value}";
-
-        public bool Equals(Parameter? other) {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Name == other.Name &&
-                Equals(Value, other.Value) &&
-                Type == other.Type &&
-                DataFormat == other.DataFormat &&
-                ContentType == other.ContentType;
-        }
-
-        public override bool Equals(object? obj)
-            => !ReferenceEquals(null, obj) && (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((Parameter)obj));
-
-        // ReSharper disable NonReadonlyMemberInGetHashCode
-        public override int GetHashCode() {
-            unchecked {
-                var hashCode = Name != null ? Name.GetHashCode() : 0;
-
-                hashCode = (hashCode * 397) ^ (Value != null ? Value.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (int)Type;
-                hashCode = (hashCode * 397) ^ (int)DataFormat;
-                hashCode = (hashCode * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
-                return hashCode;
-            }
-        }
-        // ReSharper enable NonReadonlyMemberInGetHashCode
+public record XmlParameter : Parameter {
+    public XmlParameter(string name, object value, string? xmlNamespace = null, string contentType = Serializers.ContentType.Xml) 
+        : base(name, value, ParameterType.RequestBody) {
+        XmlNamespace = xmlNamespace;
+        DataFormat   = DataFormat.Xml;
+        ContentType  = contentType;
     }
 
-    public class XmlParameter : Parameter {
-        public XmlParameter(string name, object value, string? xmlNamespace = null) : base(name, value, ParameterType.RequestBody) {
-            XmlNamespace = xmlNamespace;
-            DataFormat   = DataFormat.Xml;
-            ContentType  = Serializers.ContentType.Xml;
-        }
+    public string? XmlNamespace { get; }
+}
 
-        public string? XmlNamespace { get; }
-    }
-
-    public class JsonParameter : Parameter {
-        public JsonParameter(string name, object value) : base(name, value, ParameterType.RequestBody) {
-            DataFormat  = DataFormat.Json;
-            ContentType = Serializers.ContentType.Json;
-        }
-
-        public JsonParameter(string name, object value, string? contentType) : base(name, value, ParameterType.RequestBody) {
-            DataFormat  = DataFormat.Json;
-            ContentType = contentType ?? Serializers.ContentType.Json;
-        }
+public record JsonParameter : Parameter {
+    public JsonParameter(string name, object value, string contentType = Serializers.ContentType.Json) 
+        : base(name, value, ParameterType.RequestBody) {
+        DataFormat  = DataFormat.Json;
+        ContentType = contentType;
     }
 }

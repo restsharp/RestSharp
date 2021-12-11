@@ -26,8 +26,7 @@ public class RestClientTests {
         var req    = new RestRequest();
         var client = new RestClient(new RestClientOptions(BaseUrl) { Proxy = null });
 
-        client.Execute(req);
-        client.Proxy.Should().BeNull();
+        client.ExecuteAsync(req);
     }
 
     [Fact]

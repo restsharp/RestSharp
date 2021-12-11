@@ -19,7 +19,7 @@ public class XmlDeserializer : IXmlDeserializer {
 
     public string DateFormat { get; set; }
 
-    public virtual T? Deserialize<T>(IRestResponse response) {
+    public virtual T? Deserialize<T>(RestResponse response) {
         if (string.IsNullOrEmpty(response.Content))
             return default;
 

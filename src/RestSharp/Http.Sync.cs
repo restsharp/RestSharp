@@ -66,7 +66,7 @@ public partial class Http {
         static HttpResponse ExtractErrorResponse(Exception ex) {
             var response = new HttpResponse { ErrorMessage = ex.Message };
 
-            if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout) {
+            if (ex is WebException { Status: WebExceptionStatus.Timeout } webException) {
                 response.ResponseStatus = ResponseStatus.TimedOut;
                 response.ErrorException = webException;
             }
@@ -173,7 +173,7 @@ public partial class Http {
 
         webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
 
-        webRequest.ConnectionGroupName = ConnectionGroupName;
+        // webRequest.ConnectionGroupName = ConnectionGroupName;
 
         WebRequestConfigurator?.Invoke(webRequest);
 

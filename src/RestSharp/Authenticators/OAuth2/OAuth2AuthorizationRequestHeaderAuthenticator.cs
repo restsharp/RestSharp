@@ -23,6 +23,6 @@ public class OAuth2AuthorizationRequestHeaderAuthenticator : AuthenticatorBase {
     /// <param name="tokenType">The token type.</param>
     public OAuth2AuthorizationRequestHeaderAuthenticator(string accessToken, string tokenType) : base(accessToken) => _tokenType = tokenType;
 
-    protected override Parameter GetAuthenticationParameter(string accessToken)
-        => new("Authorization", $"{_tokenType} {accessToken}", ParameterType.HttpHeader);
+    protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
+        => new(new Parameter("Authorization", $"{_tokenType} {accessToken}", ParameterType.HttpHeader));
 }

@@ -39,7 +39,7 @@ public class OAuth1Authenticator : IAuthenticator {
 
     internal virtual string ClientPassword { get; set; }
 
-    public void Authenticate(RestClient client, IRestRequest request) {
+    public ValueTask Authenticate(RestClient client, IRestRequest request) {
         var workflow = new OAuthWorkflow {
             ConsumerKey        = ConsumerKey,
             ConsumerSecret     = ConsumerSecret,
@@ -57,6 +57,7 @@ public class OAuth1Authenticator : IAuthenticator {
         };
 
         AddOAuthData(client, request, workflow);
+        return default;
     }
 
     public static OAuth1Authenticator ForRequestToken(

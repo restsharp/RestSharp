@@ -30,7 +30,7 @@ public class FileTests : IDisposable {
     readonly string   _path = AppDomain.CurrentDomain.BaseDirectory;
 
     [Fact]
-    public void AdvancedResponseWriter_without_ResponseWriter_reads_stream() {
+    public async Task AdvancedResponseWriter_without_ResponseWriter_reads_stream() {
         var tag = string.Empty;
 
         var rr = new RestRequest("Assets/Koala.jpg") {
@@ -41,7 +41,7 @@ public class FileTests : IDisposable {
             }
         };
 
-        _client.Execute(rr);
+        await _client.ExecuteAsync(rr);
         Assert.True(string.Compare("JFIF", tag, StringComparison.Ordinal) == 0);
     }
 

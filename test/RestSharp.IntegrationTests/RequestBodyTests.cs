@@ -11,7 +11,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     public RequestBodyTests(RequestBodyFixture fixture) => _server = fixture.Server;
 
     [Fact]
-    public void Can_Be_Added_To_COPY_Request() {
+    public async Task Can_Be_Added_To_COPY_Request() {
         const Method httpMethod = Method.Copy;
 
         var client  = new RestClient(_server.Url);
@@ -22,13 +22,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_DELETE_Request() {
+    public async Task Can_Be_Added_To_DELETE_Request() {
         const Method httpMethod = Method.Delete;
 
         var client  = new RestClient(_server.Url);
@@ -39,13 +39,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_OPTIONS_Request() {
+    public async Task Can_Be_Added_To_OPTIONS_Request() {
         const Method httpMethod = Method.Options;
 
         var client  = new RestClient(_server.Url);
@@ -56,13 +56,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_PATCH_Request() {
+    public async Task Can_Be_Added_To_PATCH_Request() {
         const Method httpMethod = Method.Patch;
 
         var client  = new RestClient(_server.Url);
@@ -73,13 +73,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_POST_Request() {
+    public async Task Can_Be_Added_To_POST_Request() {
         const Method httpMethod = Method.Post;
 
         var client  = new RestClient(_server.Url);
@@ -90,13 +90,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_PUT_Request() {
+    public async Task Can_Be_Added_To_PUT_Request() {
         const Method httpMethod = Method.Put;
 
         var client  = new RestClient(_server.Url);
@@ -107,25 +107,25 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Have_No_Body_Added_To_POST_Request() {
+    public async Task Can_Have_No_Body_Added_To_POST_Request() {
         const Method httpMethod = Method.Post;
 
         var client  = new RestClient(_server.Url);
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasNoRequestBody();
     }
 
     [Fact]
-    public void Can_Not_Be_Added_To_GET_Request() {
+    public async Task Can_Not_Be_Added_To_GET_Request() {
         const Method httpMethod = Method.Get;
 
         var client  = new RestClient(_server.Url);
@@ -136,13 +136,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasNoRequestBody();
     }
 
     [Fact]
-    public void Can_Not_Be_Added_To_HEAD_Request() {
+    public async Task Can_Not_Be_Added_To_HEAD_Request() {
         const Method httpMethod = Method.Head;
 
         var client  = new RestClient(_server.Url);
@@ -153,13 +153,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         AssertHasNoRequestBody();
     }
 
     [Fact]
-    public void MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
+    public async Task MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
         string? expectedFormBoundary = null;
 
         var client = new RestClient(_server.Url);
@@ -175,7 +175,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(multipartName, bodyData, contentType, ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         var expectedBody = "--" +
             expectedFormBoundary +
@@ -199,7 +199,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     }
 
     [Fact]
-    public void Query_Parameters_With_Json_Body() {
+    public async Task Query_Parameters_With_Json_Body() {
         const Method httpMethod = Method.Put;
 
         var client = new RestClient(_server.Url);
@@ -208,7 +208,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
             .AddJsonBody(new { displayName = "Display Name" })
             .AddQueryParameter("key", "value");
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         Assert.Equal($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
         Assert.Equal("application/json", RequestBodyCapturer.CapturedContentType);

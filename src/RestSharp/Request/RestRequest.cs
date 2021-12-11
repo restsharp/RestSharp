@@ -1,36 +1,25 @@
-﻿using System.Net;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using RestSharp.Extensions;
-using RestSharp.Serializers;
-using RestSharp.Serializers.Xml;
 
 namespace RestSharp;
 
 /// <summary>
 /// Container for data used to make requests
 /// </summary>
-[PublicAPI]
 public class RestRequest : IRestRequest {
     static readonly Regex PortSplitRegex = new(@":\d+");
 
-    readonly IList<DecompressionMethods> _allowedDecompressionMethods;
-
-    Action<Stream, HttpResponse> _advancedResponseWriter;
-
-    Action<Stream> _responseWriter;
+    Action<Stream, HttpResponse>? _advancedResponseWriter;
+    Action<Stream>?               _responseWriter;
 
     /// <summary>
     /// Default constructor
     /// </summary>
     public RestRequest() {
-        RequestFormat                = DataFormat.Xml;
-        Method                       = Method.Get;
-        Parameters                   = new List<Parameter>();
-        Files                        = new List<FileParameter>();
-        _allowedDecompressionMethods = new List<DecompressionMethods>();
-
-        OnBeforeDeserialization = r => { };
-        OnBeforeRequest         = h => { };
+        RequestFormat = DataFormat.Json;
+        Method        = Method.Get;
+        Parameters    = new List<Parameter>();
+        Files         = new List<FileParameter>();
     }
 
     /// <summary>
@@ -39,16 +28,16 @@ public class RestRequest : IRestRequest {
     /// <param name="method">Method to use for this request</param>
     public RestRequest(Method method) : this() => Method = method;
 
-    public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Xml) { }
+    public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Json) { }
 
     public RestRequest(string resource, DataFormat dataFormat) : this(resource, Method.Get, dataFormat) { }
 
-    public RestRequest(string resource) : this(resource, Method.Get, DataFormat.Xml) { }
-
-    public RestRequest(string resource, Method method, DataFormat dataFormat) : this() {
+    public RestRequest(string? resource, Method method = Method.Get, DataFormat dataFormat = DataFormat.Json) : this() {
         Resource      = resource ?? "";
         Method        = method;
         RequestFormat = dataFormat;
+
+        if (string.IsNullOrWhiteSpace(resource)) return;
 
         var queryStringStart = Resource.IndexOf('?');
 
@@ -57,23 +46,23 @@ public class RestRequest : IRestRequest {
             Resource = Resource.Substring(0, queryStringStart);
 
             foreach (var param in queryParams)
-                AddQueryParameter(param.Name, param.Value, false);
+                AddQueryParameter(param.Key, param.Value, false);
         }
 
-        static IEnumerable<NameValuePair> ParseQuery(string query)
+        static IEnumerable<KeyValuePair<string, string>> ParseQuery(string query)
             => query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(
                     x => {
                         var position = x.IndexOf('=');
 
                         return position > 0
-                            ? new NameValuePair(x.Substring(0, position), x.Substring(position + 1))
-                            : new NameValuePair(x, string.Empty);
+                            ? new KeyValuePair<string, string>(x.Substring(0, position), x.Substring(position + 1))
+                            : new KeyValuePair<string, string>(x, string.Empty);
                     }
                 );
     }
 
-    public RestRequest(Uri resource, Method method, DataFormat dataFormat)
+    public RestRequest(Uri resource, Method method = Method.Get, DataFormat dataFormat = DataFormat.Json)
         : this(
             resource.IsAbsoluteUri
                 ? resource.AbsoluteUri
@@ -82,23 +71,8 @@ public class RestRequest : IRestRequest {
             dataFormat
         ) { }
 
-    public RestRequest(Uri resource, Method method) : this(resource, method, DataFormat.Xml) { }
-
-    public RestRequest(Uri resource) : this(resource, Method.Get, DataFormat.Xml) { }
-
-    /// <inheritdoc />
-    public IList<DecompressionMethods> AllowedDecompressionMethods => _allowedDecompressionMethods.Any()
-        ? _allowedDecompressionMethods
-        : new[] { DecompressionMethods.None, DecompressionMethods.Deflate, DecompressionMethods.GZip };
-
     /// <inheritdoc />
     public bool AlwaysMultipartFormData { get; set; }
-
-    /// <inheritdoc />
-    public ISerializer JsonSerializer { get; set; }
-
-    /// <inheritdoc />
-    public IXmlSerializer XmlSerializer { get; set; }
 
     /// <inheritdoc />
     public RequestBody? Body { get; set; }
@@ -128,26 +102,7 @@ public class RestRequest : IRestRequest {
     }
 
     /// <inheritdoc />
-    public bool UseDefaultCredentials { get; set; }
-
-    /// <inheritdoc />
-    public IRestRequest AddFile(string name, string path, string contentType = null) {
-        var f          = new FileInfo(path);
-        var fileLength = f.Length;
-
-        return AddFile(
-            FileParameter.Create(
-                name,
-                s => {
-                    using var file = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read));
-                    file.BaseStream.CopyTo(s);
-                },
-                fileLength,
-                Path.GetFileName(path),
-                contentType
-            )
-        );
-    }
+    public IRestRequest AddFile(string name, string path, string? contentType = null) => AddFile(FileParameter.FromFile(path, name, contentType));
 
     /// <inheritdoc />
     public IRestRequest AddFile(string name, byte[] bytes, string fileName, string? contentType = null)
@@ -155,13 +110,13 @@ public class RestRequest : IRestRequest {
 
     /// <inheritdoc />
     public IRestRequest AddFile(
-        string         name,
-        Action<Stream> writer,
-        string         fileName,
-        long           contentLength,
-        string?        contentType = null
+        string       name,
+        Func<Stream> getFile,
+        string       fileName,
+        long         contentLength,
+        string?      contentType = null
     )
-        => AddFile(FileParameter.Create(name, writer, contentLength, fileName, contentType));
+        => AddFile(FileParameter.Create(name, getFile, contentLength, fileName, contentType));
 
     /// <inheritdoc />
     public IRestRequest AddFileBytes(
@@ -169,23 +124,8 @@ public class RestRequest : IRestRequest {
         byte[] bytes,
         string filename,
         string contentType = "application/x-gzip"
-    ) {
-        long length = bytes.Length;
-
-        return AddFile(
-            FileParameter.Create(
-                name,
-                s => {
-                    using var file = new StreamReader(new MemoryStream(bytes));
-
-                    file.BaseStream.CopyTo(s);
-                },
-                length,
-                filename,
-                contentType
-            )
-        );
-    }
+    )
+        => AddFile(FileParameter.Create(name, bytes, filename, contentType));
 
     /// <inheritdoc />
     public IRestRequest AddBody(object obj, string xmlNamespace)
@@ -200,7 +140,7 @@ public class RestRequest : IRestRequest {
         => RequestFormat switch {
             DataFormat.Json => AddJsonBody(obj),
             DataFormat.Xml  => AddXmlBody(obj),
-            _               => this
+            _               => AddParameter("", obj.ToString())
         };
 
     /// <inheritdoc />
@@ -223,14 +163,7 @@ public class RestRequest : IRestRequest {
     /// <inheritdoc />
     public IRestRequest AddXmlBody(object obj, string xmlNamespace) {
         RequestFormat = DataFormat.Xml;
-
-        if (!string.IsNullOrWhiteSpace(XmlNamespace))
-            xmlNamespace = XmlNamespace;
-        else if (!string.IsNullOrWhiteSpace(XmlSerializer?.Namespace))
-            xmlNamespace = XmlSerializer.Namespace;
-
         AddParameter(new XmlParameter("", obj, xmlNamespace));
-
         return this;
     }
 
@@ -373,14 +306,6 @@ public class RestRequest : IRestRequest {
     }
 
     /// <inheritdoc />
-    public IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod) {
-        if (!_allowedDecompressionMethods.Contains(decompressionMethod))
-            _allowedDecompressionMethods.Add(decompressionMethod);
-
-        return this;
-    }
-
-    /// <inheritdoc />
     public List<Parameter> Parameters { get; }
 
     /// <inheritdoc />
@@ -388,35 +313,29 @@ public class RestRequest : IRestRequest {
 
     /// <inheritdoc />
     public Method Method { get; set; }
+    
+    public int Timeout { get; set; }
 
     /// <inheritdoc />
-    public string Resource { get; set; }
+    public string Resource { get; set; } = "";
 
     /// <inheritdoc />
     public DataFormat RequestFormat { get; set; }
 
     /// <inheritdoc />
-    public string RootElement { get; set; }
+    public string? RootElement { get; set; }
 
     /// <inheritdoc />
-    public Action<IRestResponse>? OnBeforeDeserialization { get; set; }
+    public Action<RestResponse>? OnBeforeDeserialization { get; set; }
 
     /// <inheritdoc />
     public Action<Http>? OnBeforeRequest { get; set; }
 
     /// <inheritdoc />
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
     /// <inheritdoc />
-    public string XmlNamespace { get; set; }
-
-    /// <inheritdoc />
-
-    /// <inheritdoc />
-    public int Timeout { get; set; }
-
-    /// <inheritdoc />
-    public int ReadWriteTimeout { get; set; }
+    public string? XmlNamespace { get; set; }
 
     /// <inheritdoc />
     public void IncreaseNumAttempts() => Attempts++;
@@ -429,14 +348,14 @@ public class RestRequest : IRestRequest {
 
     IRestRequest AddFile(FileParameter file) => this.With(x => x.Files.Add(file));
 
-    private static void CheckAndThrowsForInvalidHost(string name, string value) {
+    static void CheckAndThrowsForInvalidHost(string name, string value) {
         static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
 
         if (name == "Host" && InvalidHost(value))
             throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
     }
 
-    private static void CheckAndThrowsDuplicateKeys(ICollection<KeyValuePair<string, string>> headers) {
+    static void CheckAndThrowsDuplicateKeys(ICollection<KeyValuePair<string, string>> headers) {
         var duplicateKeys = headers
             .GroupBy(pair => pair.Key.ToUpperInvariant())
             .Where(group => group.Count() > 1)

@@ -22,13 +22,11 @@ public class SystemTextJsonTests {
         var client  = new RestClient(server.Url).UseSystemTextJson();
         var request = new RestRequest().AddJsonBody(testData);
 
-        var expected = testData;
-
         await client.PostAsync(request);
 
         var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body });
 
-        actual.Should().BeEquivalentTo(expected);
+        actual.Should().BeEquivalentTo(testData);
 
         void CaptureBody(HttpListenerRequest req, HttpListenerResponse response) => _body = req.InputStream.StreamToString();
     }
@@ -49,7 +47,7 @@ public class SystemTextJsonTests {
 
         var client = new RestClient(server.Url).UseSystemTextJson();
 
-        var actual = await client.GetAsync<TestClass>(new RestRequest()).Data;
+        var actual = await client.GetAsync<TestClass>(new RestRequest());
 
         actual.Should().BeEquivalentTo(expected);
     }

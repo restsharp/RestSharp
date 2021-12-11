@@ -11,7 +11,7 @@ namespace RestSharp.Serializers.Json.Tests;
 public class NewtonsoftJsonTests {
     static readonly Fixture Fixture = new();
 
-    string? _body;
+    string _body;
 
     readonly JsonSerializerSettings _jsonSerializerSettings = new() {
         ContractResolver = new DefaultContractResolver {
@@ -69,7 +69,7 @@ public class NewtonsoftJsonTests {
         var client  = new RestClient(server.Url).UseNewtonsoftJson();
         var request = new RestRequest().AddJsonBody(testData);
 
-        client.PostAsync(request);
+        await client.PostAsync(request);
 
         var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body! });
 
@@ -77,7 +77,7 @@ public class NewtonsoftJsonTests {
     }
 
     [Fact]
-    public void Use_JsonNet_For_Response() {
+    public async Task Use_JsonNet_For_Response() {
         var expected = Fixture.Create<TestClass>();
 
         using var server = HttpServerFixture.StartServer(
@@ -92,7 +92,7 @@ public class NewtonsoftJsonTests {
 
         var client = new RestClient(server.Url).UseNewtonsoftJson();
 
-        var actual = client.Get<TestClass>(new RestRequest()).Data;
+        var actual = await client.GetAsync<TestClass>(new RestRequest());
 
         actual.Should().BeEquivalentTo(expected);
     }

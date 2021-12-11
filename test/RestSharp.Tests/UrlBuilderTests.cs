@@ -214,8 +214,6 @@ public class UrlBuilderTests {
         var expected = new Uri("http://example.com/resource/?foo=bar");
         var output   = client.BuildUri(request);
 
-        client.Execute(request);
-
         Assert.Equal(expected, output);
     }
 
@@ -296,13 +294,12 @@ public class UrlBuilderTests {
         // utf-8 and iso-8859-1
         request.AddOrUpdateParameter("town", "Hillerød");
 
-        var client = new RestClient("http://example.com/resource");
-
+        var client = new RestClient(new RestClientOptions("http://example.com/resource"));
         var expectedDefaultEncoding  = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
-        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%F8d");
         Assert.Equal(expectedDefaultEncoding, client.BuildUri(request));
-        // now changing encoding
-        client.Encoding = Encoding.GetEncoding("ISO-8859-1");
+        
+        client = new RestClient(new RestClientOptions("http://example.com/resource"){Encoding = Encoding.GetEncoding("ISO-8859-1")});
+        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%F8d");
         Assert.Equal(expectedIso89591Encoding, client.BuildUri(request));
     }
 

@@ -40,7 +40,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
     }
 
     [Fact]
-    public void Can_Be_Added_To_DELETE_Request() {
+    public async Task Can_Be_Added_To_DELETE_Request() {
         const Method httpMethod = Method.Delete;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -50,16 +50,13 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        var resetEvent = new ManualResetEvent(false);
-
-        _client.ExecuteAsync(request, response => resetEvent.Set());
-        resetEvent.WaitOne();
+        var response = await _client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_OPTIONS_Request() {
+    public async Task Can_Be_Added_To_OPTIONS_Request() {
         const Method httpMethod = Method.Options;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -69,16 +66,13 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        var resetEvent = new ManualResetEvent(false);
-
-        _client.ExecuteAsync(request, response => resetEvent.Set());
-        resetEvent.WaitOne();
+        await _client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_PATCH_Request() {
+    public async Task Can_Be_Added_To_PATCH_Request() {
         const Method httpMethod = Method.Patch;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -88,16 +82,13 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        var resetEvent = new ManualResetEvent(false);
-
-        _client.ExecuteAsync(request, response => resetEvent.Set());
-        resetEvent.WaitOne();
+        await _client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_POST_Request() {
+    public async Task Can_Be_Added_To_POST_Request() {
         const Method httpMethod = Method.Post;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -107,16 +98,13 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        var resetEvent = new ManualResetEvent(false);
-
-        _client.ExecuteAsync(request, response => resetEvent.Set());
-        resetEvent.WaitOne();
+        await _client.ExecuteAsync(request);
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Be_Added_To_PUT_Request() {
+    public async Task Can_Be_Added_To_PUT_Request() {
         const Method httpMethod = Method.Put;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -128,21 +116,19 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         var resetEvent = new ManualResetEvent(false);
 
-        _client.ExecuteAsync(request, response => resetEvent.Set());
+        await _client.ExecuteAsync(request);
         resetEvent.WaitOne();
 
         AssertHasRequestBody(contentType, bodyData);
     }
 
     [Fact]
-    public void Can_Have_No_Body_Added_To_POST_Request() {
+    public async Task Can_Have_No_Body_Added_To_POST_Request() {
         const Method httpMethod = Method.Post;
 
         var request    = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
-        var resetEvent = new ManualResetEvent(false);
 
-        _client.ExecuteAsync(request, response => resetEvent.Set());
-        resetEvent.WaitOne();
+        await _client.ExecuteAsync(request);
 
         AssertHasNoRequestBody();
     }
@@ -164,7 +150,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
     }
 
     [Fact]
-    public void Can_Not_Be_Added_To_HEAD_Request() {
+    public async Task Can_Not_Be_Added_To_HEAD_Request() {
         const Method httpMethod = Method.Head;
 
         var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
@@ -174,10 +160,7 @@ public class AsyncRequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         request.AddParameter(contentType, bodyData, ParameterType.RequestBody);
 
-        var resetEvent = new ManualResetEvent(false);
-
-        _client.ExecuteAsync(request, response => resetEvent.Set());
-        resetEvent.WaitOne();
+        await _client.ExecuteAsync(request);
 
         AssertHasNoRequestBody();
     }

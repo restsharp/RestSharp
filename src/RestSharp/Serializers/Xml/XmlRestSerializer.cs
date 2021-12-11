@@ -14,12 +14,19 @@
 
 using System.Globalization;
 
-namespace RestSharp.Serializers.Xml; 
+namespace RestSharp.Serializers.Xml;
 
 public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer {
-    XmlSerilizationOptions _options         = XmlSerilizationOptions.Default;
-    IXmlDeserializer       _xmlDeserializer = new XmlDeserializer();
-    IXmlSerializer         _xmlSerializer   = new XmlSerializer();
+    XmlSerilizationOptions _options = XmlSerilizationOptions.Default;
+    IXmlDeserializer       _xmlDeserializer;
+    IXmlSerializer         _xmlSerializer;
+
+    public XmlRestSerializer() : this(new XmlSerializer(), new XmlDeserializer()) { }
+
+    public XmlRestSerializer(IXmlSerializer xmlSerializer, IXmlDeserializer xmlDeserializer) {
+        _xmlDeserializer = xmlDeserializer;
+        _xmlSerializer   = xmlSerializer;
+    }
 
     public string[] SupportedContentTypes => Serializers.ContentType.XmlAccept;
 
@@ -29,7 +36,7 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializ
 
     public string? Serialize(object? obj) => _xmlSerializer.Serialize(obj);
 
-    public T? Deserialize<T>(IRestResponse response) => _xmlDeserializer.Deserialize<T>(response);
+    public T? Deserialize<T>(RestResponse response) => _xmlDeserializer.Deserialize<T>(response);
 
     public string? Serialize(Parameter parameter) {
         if (parameter is not XmlParameter xmlParameter)

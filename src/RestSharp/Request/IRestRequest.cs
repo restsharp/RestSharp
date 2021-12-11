@@ -2,11 +2,9 @@ using System.Net;
 using RestSharp.Serializers;
 using RestSharp.Serializers.Xml;
 
-namespace RestSharp; 
+namespace RestSharp;
 
-[PublicAPI]
-public interface IRestRequest
-{
+public interface IRestRequest {
     /// <summary>
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
@@ -76,17 +74,6 @@ public interface IRestRequest
     string XmlNamespace { get; set; }
 
     /// <summary>
-    /// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
-    /// </summary>
-    int Timeout { get; set; }
-
-    /// <summary>
-    /// The number of milliseconds before the writing or reading times out. This timeout value overrides a timeout set on
-    /// the RestClient.
-    /// </summary>
-    int ReadWriteTimeout { get; set; }
-
-    /// <summary>
     /// How many attempts were made to send this Request?
     /// </summary>
     /// <remarks>
@@ -94,26 +81,22 @@ public interface IRestRequest
     /// </remarks>
     int Attempts { get; }
 
-
-    /// <summary>
-    /// List of allowed decompression methods
-    /// </summary>
-    IList<DecompressionMethods> AllowedDecompressionMethods { get; }
-
     /// <summary>
     /// When supplied, the function will be called before calling the deserializer
     /// </summary>
-    Action<IRestResponse>? OnBeforeDeserialization { get; set; }
-        
+    Action<RestResponse>? OnBeforeDeserialization { get; set; }
+
     /// <summary>
     /// When supplied, the function will be called before making a request
     /// </summary>
     Action<Http>? OnBeforeRequest { get; set; }
-        
+
     /// <summary>
     /// Serialized request body to be accessed in authenticators
     /// </summary>
-    RequestBody? Body { get; set; }
+    RequestBody Body { get; set; }
+
+    int Timeout { get; set; }
 
     /// <summary>
     /// Adds a file to the Files collection to be included with a POST or PUT request
@@ -123,7 +106,7 @@ public interface IRestRequest
     /// <param name="path">Full path to file to upload</param>
     /// <param name="contentType">The MIME type of the file to upload</param>
     /// <returns>This request</returns>
-    IRestRequest AddFile(string name, string path, string contentType = null);
+    IRestRequest AddFile(string name, string path, string? contentType = null);
 
     /// <summary>
     /// Adds the bytes to the Files collection with the specified file name and content type
@@ -133,18 +116,18 @@ public interface IRestRequest
     /// <param name="fileName">The file name to use for the uploaded file</param>
     /// <param name="contentType">The MIME type of the file to upload</param>
     /// <returns>This request</returns>
-    IRestRequest AddFile(string name, byte[] bytes, string fileName, string contentType = null);
+    IRestRequest AddFile(string name, byte[] bytes, string fileName, string? contentType = null);
 
     /// <summary>
     /// Adds the bytes to the Files collection with the specified file name and content type
     /// </summary>
     /// <param name="name">The parameter name to use in the request</param>
-    /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+    /// <param name="getFile">A function that returns the stream. Should NOT close the stream.</param>
     /// <param name="fileName">The file name to use for the uploaded file</param>
     /// <param name="contentLength">The length (in bytes) of the file content.</param>
     /// <param name="contentType">The MIME type of the file to upload</param>
     /// <returns>This request</returns>
-    IRestRequest AddFile(string name, Action<Stream> writer, string fileName, long contentLength, string contentType = null);
+    IRestRequest AddFile(string name, Func<Stream> getFile, string fileName, long contentLength, string? contentType = null);
 
     /// <summary>
     /// Add bytes to the Files collection as if it was a file of specific type
@@ -275,7 +258,7 @@ public interface IRestRequest
     /// <param name="parameter">Parameter to add</param>
     /// <returns></returns>
     IRestRequest AddOrUpdateParameter(Parameter parameter);
-        
+
     /// <summary>
     /// Add or update parameters to the request
     /// </summary>
@@ -327,7 +310,7 @@ public interface IRestRequest
     /// <param name="value">Value of the header to add</param>
     /// <returns>This request</returns>
     IRestRequest AddHeader(string name, string value);
-        
+
     /// <summary>
     /// Shortcut to AddOrUpdateParameter(name, value, HttpHeader) overload
     /// </summary>
@@ -335,7 +318,7 @@ public interface IRestRequest
     /// <param name="value">Value of the header to add or update</param>
     /// <returns>This request</returns>
     IRestRequest AddOrUpdateHeader(string name, string value);
-        
+
     /// <summary>
     /// Uses AddHeader(name, value) in a convenient way to pass
     /// in multiple headers at once.
@@ -343,7 +326,7 @@ public interface IRestRequest
     /// <param name="headers">Key/Value pairs containing the name: value of the headers</param>
     /// <returns>This request</returns>
     IRestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers);
-        
+
     /// <summary>
     /// Uses AddOrUpdateHeader(name, value) in a convenient way to pass
     /// in multiple headers at once.
@@ -401,8 +384,6 @@ public interface IRestRequest
     /// <param name="encode">Whether parameter should be encoded or not</param>
     /// <returns></returns>
     IRestRequest AddQueryParameter(string name, string value, bool encode);
-
-    IRestRequest AddDecompressionMethod(DecompressionMethods decompressionMethod);
 
     void IncreaseNumAttempts();
 }

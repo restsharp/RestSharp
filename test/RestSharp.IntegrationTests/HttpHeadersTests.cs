@@ -5,7 +5,7 @@ namespace RestSharp.IntegrationTests;
 
 public class HttpHeadersTests : CaptureFixture {
     [Fact]
-    public void Ensure_headers_correctly_set_in_the_hook() {
+    public async Task Ensure_headers_correctly_set_in_the_hook() {
         const string headerName  = "HeaderName";
         const string headerValue = "HeaderValue";
 
@@ -19,7 +19,7 @@ public class HttpHeadersTests : CaptureFixture {
         };
 
         // Run
-        client.Execute(request);
+        await client.ExecuteAsync(request);
 
         // Assert
         RequestHeadCapturer.CapturedHeaders[headerName].Should().Be(headerValue);

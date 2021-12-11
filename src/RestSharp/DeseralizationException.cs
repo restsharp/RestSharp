@@ -1,9 +1,9 @@
 namespace RestSharp;
 
 public class DeserializationException : Exception {
-    public DeserializationException(IRestResponse response, Exception innerException)
+    public DeserializationException(RestResponse response, Exception innerException)
         : base("Error occured while deserializing the response", innerException)
         => Response = response;
 
-    public IRestResponse Response { get; }
+    public RestResponse Response { get; }
 }

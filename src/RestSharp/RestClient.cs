@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth.Extensions;
@@ -24,6 +25,9 @@ public partial class RestClient : IRestClient {
 
     static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
 
+    readonly List<string>    _acceptTypes = new();
+    readonly CookieContainer _cookieContainer;
+
     HttpClient HttpClient { get; }
 
     internal RestClientOptions Options { get; }
@@ -31,14 +35,40 @@ public partial class RestClient : IRestClient {
     /// <summary>
     /// Default constructor that registers default content handlers
     /// </summary>
-    public RestClient() {
+    public RestClient() : this(new RestClientOptions()) { }
+
+    public RestClient(RestClientOptions options) {
         // register default serializers
         UseSerializer<SystemTextJsonSerializer>();
         UseSerializer<XmlRestSerializer>();
-        Options = new RestClientOptions();
-    }
 
-    public RestClient(RestClientOptions options) : this() => Options = options;
+        Options          = options;
+        _cookieContainer = Options.CookieContainer ?? new CookieContainer();
+
+        var handler = new HttpClientHandler {
+            Credentials            = Options.Credentials,
+            UseDefaultCredentials  = Options.UseDefaultCredentials,
+            CookieContainer        = _cookieContainer,
+            AutomaticDecompression = Options.AutomaticDecompression,
+            PreAuthenticate        = Options.PreAuthenticate,
+            AllowAutoRedirect      = Options.FollowRedirects,
+            Proxy                  = Options.Proxy,
+        };
+
+        if (Options.RemoteCertificateValidationCallback != null)
+            handler.ServerCertificateCustomValidationCallback =
+                (request, cert, chain, errors) => Options.RemoteCertificateValidationCallback(request, cert, chain, errors);
+
+        if (Options.ClientCertificates != null)
+            handler.ClientCertificates.AddRange(Options.ClientCertificates);
+
+        if (Options.MaxRedirects.HasValue)
+            handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
+
+        HttpClient         = new HttpClient(handler);
+        HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
+        HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+    }
 
     /// <inheritdoc />
     /// <summary>
@@ -56,9 +86,9 @@ public partial class RestClient : IRestClient {
 
     internal Dictionary<DataFormat, IRestSerializer> Serializers { get; } = new();
 
-    Func<string, string>           Encode      { get; set; } = s => s.UrlEncode();
+    Func<string, string> Encode { get; set; } = s => s.UrlEncode();
+
     Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
-    IList<string>                  AcceptTypes { get; }
 
     /// <inheritdoc />
     public IRestClient UseUrlEncoder(Func<string, string> encoder) => this.With(x => x.Encode = encoder);
@@ -66,13 +96,15 @@ public partial class RestClient : IRestClient {
     /// <inheritdoc />
     public IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) => this.With(x => x.EncodeQuery = queryEncoder);
 
+    public byte[] DownloadData(IRestRequest request) => throw new NotImplementedException();
+
     /// <inheritdoc />
     public IAuthenticator? Authenticator { get; set; }
 
-    public IList<Parameter> DefaultParameters { get; }
+    public IList<Parameter> DefaultParameters { get; } = new List<Parameter>();
 
     /// <inheritdoc />
-    public IRestResponse<T> Deserialize<T>(IRestResponse response) => Deserialize<T>(response.Request, response);
+    public RestResponse<T> Deserialize<T>(RestResponse response) => Deserialize<T>(response.Request, response);
 
     /// <inheritdoc />
     public Uri BuildUri(IRestRequest request) {
@@ -193,8 +225,6 @@ public partial class RestClient : IRestClient {
                     p => p.Type is ParameterType.QueryString
                 );
 
-    void AuthenticateIfNeeded(IRestRequest request) => Authenticator?.Authenticate(this, request);
-
     string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
         => Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
@@ -208,36 +238,6 @@ public partial class RestClient : IRestClient {
     }
 
     Http ConfigureHttp(IRestRequest request) {
-        var handler = new HttpClientHandler {
-            Credentials            = Options.Credentials,
-            UseDefaultCredentials  = Options.UseDefaultCredentials,
-            CookieContainer        = Options.CookieContainer,
-            AutomaticDecompression = Options.AutomaticDecompression,
-            PreAuthenticate        = Options.PreAuthenticate,
-            AllowAutoRedirect      = Options.FollowRedirects,
-            Proxy                  = Options.Proxy,
-        };
-
-        if (Options.RemoteCertificateValidationCallback != null)
-            handler.ServerCertificateCustomValidationCallback =
-                (_, cert, chain, errors) => Options.RemoteCertificateValidationCallback(request, cert, chain, errors);
-
-        if (Options.ClientCertificates != null)
-            handler.ClientCertificates.AddRange(Options.ClientCertificates);
-
-        if (Options.MaxRedirects.HasValue)
-            handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
-
-        var httpClient = new HttpClient(handler);
-        httpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
-        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
-
-        var message = new HttpRequestMessage(HttpMethod.Post, "") {
-            Content = new StringContent("", Options.Encoding),
-        };
-        message.Headers.Host         = Options.BaseHost;
-        message.Headers.CacheControl = Options.CachePolicy;
-
         var http = new Http {
             // Encoding                = Encoding,
             AlwaysMultipartFormData = request.AlwaysMultipartFormData,
@@ -275,17 +275,14 @@ public partial class RestClient : IRestClient {
         }
 
         // Add Accept header based on registered deserializers if none has been set by the caller.
-        if (requestParameters.All(
-                p => !p.Name!.EqualsIgnoreCase("accept")
-            )) {
-            var accepts = Join(", ", AcceptTypes);
-
+        if (requestParameters.All(p => !p.Name!.EqualsIgnoreCase("accept"))) {
+            var accepts = Join(", ", _acceptTypes);
             requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
         }
 
         #endregion
 
-        http.Url = BuildUri(request);
+        // http.Url = BuildUri(request);
         // http.Host                                 = BaseHost;
         // http.PreAuthenticate                      = PreAuthenticate;
         // http.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
@@ -328,18 +325,18 @@ public partial class RestClient : IRestClient {
             .Select(p => new HttpParameter(p.Name!, p.Value))
             .ToList();
 
-        http.Files = request.Files.Select(
-                file => new HttpFile {
-                    Name          = file.Name,
-                    ContentType   = file.ContentType,
-                    Writer        = file.Writer,
-                    FileName      = file.FileName,
-                    ContentLength = file.ContentLength
-                }
-            )
-            .ToList();
-
-        if (request.Body != null) http.AddBody(request.Body);
+        // http.Files = request.Files.Select(
+        //         file => new HttpFile {
+        //             Name          = file.Name,
+        //             ContentType   = file.ContentType,
+        //             Writer        = file.GetFile,
+        //             FileName      = file.FileName,
+        //             ContentLength = file.ContentLength
+        //         }
+        //     )
+        //     .ToList();
+        //
+        // if (request.Body != null) http.AddBody(request.Body);
 
         // http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
 
@@ -359,13 +356,11 @@ public partial class RestClient : IRestClient {
         return http;
     }
 
-    IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw) {
-        IRestResponse<T> response = new RestResponse<T>();
+    RestResponse<T> Deserialize<T>(IRestRequest request, RestResponse raw) {
+        var response = RestResponse<T>.FromResponse(raw);
 
         try {
             request.OnBeforeDeserialization?.Invoke(raw);
-
-            response = raw.ToAsyncResponse<T>();
 
             // Only attempt to deserialize if the request has not errored due
             // to a transport or framework exception.  HTTP errors should attempt to
@@ -378,7 +373,6 @@ public partial class RestClient : IRestClient {
                 // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
                 if (handler is IXmlDeserializer xml) {
                     if (request.DateFormat.IsNotEmpty()) xml.DateFormat = request.DateFormat;
-
                     if (request.XmlNamespace.IsNotEmpty()) xml.Namespace = request.XmlNamespace;
                 }
 

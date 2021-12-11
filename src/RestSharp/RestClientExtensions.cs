@@ -47,6 +47,10 @@ public static class RestClientExtensions {
         return response.Data;
     }
 
+    public static Task<RestResponse> PostAsync(this IRestClient client, IRestRequest request, CancellationToken cancellationToken = default) {
+        return client.ExecuteAsync(request, Method.Post, cancellationToken);
+    }
+
     /// <summary>
     /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
     /// The response data is deserialized to the Data property of the returned response object.
@@ -214,7 +218,7 @@ public static class RestClientExtensions {
     public static RestClientOptions AddDefaultQueryParameter(this RestClientOptions options, string name, string value)
         => options.AddDefaultParameter(name, value, ParameterType.QueryString);
 
-    static void ThrowIfError(IRestResponse response) {
+    static void ThrowIfError(RestResponse response) {
         var exception = response.ResponseStatus switch {
             ResponseStatus.Aborted   => new WebException("Request aborted", response.ErrorException),
             ResponseStatus.Error     => response.ErrorException,

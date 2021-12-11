@@ -28,7 +28,7 @@ public class OAuth1Tests {
     }
 
     [Fact(Skip = "Needs Netflix token")]
-    public void Can_Authenticate_Netflix_With_OAuth() {
+    public async Task Can_Authenticate_Netflix_With_OAuth() {
         const string consumerKey    = "";
         const string consumerSecret = "";
 
@@ -38,7 +38,7 @@ public class OAuth1Tests {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
         var request  = new RestRequest("oauth/request_token");
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -73,7 +73,7 @@ public class OAuth1Tests {
             oauthToken,
             oauthTokenSecret
         );
-        response = client.Execute(request);
+        response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -98,7 +98,7 @@ public class OAuth1Tests {
         request.AddUrlSegment("user_id", userId);
         request.AddParameter("max_results", "2");
 
-        var queueResponse = client.Execute<Queue>(request);
+        var queueResponse = await client.ExecuteAsync<Queue>(request);
 
         Assert.NotNull(queueResponse);
         Assert.Equal(HttpStatusCode.OK, queueResponse.StatusCode);
@@ -107,13 +107,12 @@ public class OAuth1Tests {
     }
 
     [Fact(Skip = "Provide your own consumer key/secret before running")]
-    public void Can_Authenticate_LinkedIN_With_OAuth() {
+    public async Task Can_Authenticate_LinkedIN_With_OAuth() {
         const string consumerKey    = "TODO_CONSUMER_KEY_HERE";
         const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
 
         // request token
-        var client = new RestClient {
-            BaseUrl = new Uri("https://api.linkedin.com/uas/oauth"),
+        var client = new RestClient("https://api.linkedin.com/uas/oauth") {
             Authenticator = OAuth1Authenticator.ForRequestToken(
                 consumerKey,
                 consumerSecret,
@@ -121,7 +120,7 @@ public class OAuth1Tests {
             )
         };
         var requestTokenRequest  = new RestRequest("requestToken");
-        var requestTokenResponse = client.Execute(requestTokenRequest);
+        var requestTokenResponse = await client.ExecuteAsync(requestTokenRequest);
 
         Assert.NotNull(requestTokenResponse);
         Assert.Equal(HttpStatusCode.OK, requestTokenResponse.StatusCode);
@@ -161,7 +160,7 @@ public class OAuth1Tests {
         );
 
         var requestAccessTokenRequest  = new RestRequest("accessToken");
-        var requestActionTokenResponse = client.Execute(requestAccessTokenRequest);
+        var requestActionTokenResponse = await client.ExecuteAsync(requestAccessTokenRequest);
 
         Assert.NotNull(requestActionTokenResponse);
         Assert.Equal(HttpStatusCode.OK, requestActionTokenResponse.StatusCode);
@@ -199,11 +198,10 @@ public class OAuth1Tests {
         var actual     = requestUri.ParseQuery().Select(x => x.Key).ToList();
 
         actual.Should().BeEquivalentTo(expected);
-        // Assert.True(actual.SequenceEqual(expected));
     }
 
     [Fact(Skip = "Provide your own consumer key/secret before running")]
-    public void Can_Authenticate_Twitter() {
+    public async Task Can_Authenticate_Twitter() {
         var config = new {
             ConsumerKey    = "",
             ConsumerSecret = "",
@@ -224,14 +222,14 @@ public class OAuth1Tests {
 
         request.AddParameter("include_entities", "true", ParameterType.QueryString);
 
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact(Skip = "Provide your own consumer key/secret before running")]
-    public void Can_Authenticate_With_OAuth() {
+    public async Task Can_Authenticate_With_OAuth() {
         const string consumerKey    = "";
         const string consumerSecret = "";
 
@@ -241,7 +239,7 @@ public class OAuth1Tests {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
         var request  = new RestRequest("oauth/request_token", Method.Post);
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -271,7 +269,7 @@ public class OAuth1Tests {
             oauthTokenSecret,
             verifier
         );
-        response = client.Execute(request);
+        response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -292,20 +290,19 @@ public class OAuth1Tests {
             oauthTokenSecret
         );
 
-        response = client.Execute(request);
+        response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact(Skip = "Provide your own consumer key/secret before running")]
-    public void Can_Query_Vimeo() {
+    public async Task Can_Query_Vimeo() {
         const string consumerKey    = "TODO_CONSUMER_KEY_HERE";
         const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
 
         // arrange
-        var client = new RestClient {
-            BaseUrl       = new Uri("http://vimeo.com/api/rest/v2"),
+        var client = new RestClient("http://vimeo.com/api/rest/v2") {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
         var request = new RestRequest();
@@ -316,7 +313,7 @@ public class OAuth1Tests {
         request.AddParameter("full_response", 1);
 
         // act
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         // assert
         Assert.NotNull(response);
@@ -329,15 +326,14 @@ public class OAuth1Tests {
     [Fact(Skip =
         "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test"
     )]
-    public void Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN() {
+    public async Task Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN() {
         const string consumerKey    = "TODO_CONSUMER_KEY_HERE";
         const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
         const string accessToken    = "TODO_ACCES_TOKEN_HERE";
         const string accessSecret   = "TODO_ACCES_SECRET_HERE";
 
         // arrange
-        var client = new RestClient {
-            BaseUrl = new Uri("http://api.linkedin.com/v1"),
+        var client = new RestClient("http://api.linkedin.com/v1") {
             Authenticator = OAuth1Authenticator.ForProtectedResource(
                 consumerKey,
                 consumerSecret,
@@ -348,7 +344,7 @@ public class OAuth1Tests {
         var request = new RestRequest("people/~:(id,first-name,last-name)");
 
         // act
-        var response = client.Execute<LinkedInMemberProfile>(request);
+        var response = await client.ExecuteAsync<LinkedInMemberProfile>(request);
 
         // assert
         Assert.NotNull(response);

@@ -1,6 +1,8 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 
-namespace RestSharp; 
+namespace RestSharp;
 
 public partial class RestClient {
     /// <summary>
@@ -9,7 +11,7 @@ public partial class RestClient {
     /// <typeparam name="T">Target deserialization type</typeparam>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public Task<IRestResponse<T>> ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken = default)
+    public Task<RestResponse<T>> ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken = default)
         => ExecuteAsync<T>(request, Method.Get, cancellationToken);
 
     /// <summary>
@@ -18,7 +20,7 @@ public partial class RestClient {
     /// <typeparam name="T">Target deserialization type</typeparam>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">The cancellation token</param>
-    public Task<IRestResponse<T>> ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken = default)
+    public Task<RestResponse<T>> ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken = default)
         => ExecuteAsync<T>(request, Method.Post, cancellationToken);
 
     /// <summary>
@@ -26,7 +28,7 @@ public partial class RestClient {
     /// </summary>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public Task<IRestResponse> ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken = default)
+    public Task<RestResponse> ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken = default)
         => ExecuteAsync(request, Method.Get, cancellationToken);
 
     /// <summary>
@@ -34,7 +36,7 @@ public partial class RestClient {
     /// </summary>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public Task<IRestResponse> ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken = default)
+    public Task<RestResponse> ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken = default)
         => ExecuteAsync(request, Method.Post, cancellationToken);
 
     /// <summary>
@@ -43,44 +45,12 @@ public partial class RestClient {
     /// <typeparam name="T">Target deserialization type</typeparam>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public async Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default) {
+    public async Task<RestResponse<T>> ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken = default) {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
-        var taskCompletionSource = new TaskCompletionSource<IRestResponse<T>>();
-
-        try {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, BaseUrl);
-
-            var body = request.Parameters.FirstOrDefault(x => x.Type == ParameterType.RequestBody);
-            
-            requestMessage.Content = new StringContent()
-            var response = await HttpClient.SendAsync(requestMessage, CancellationToken.None);
-            // var async = ExecuteAsync<T>(
-            //     request,
-            //     (response, _) => {
-            //         if (cancellationToken.IsCancellationRequested)
-            //             taskCompletionSource.TrySetCanceled();
-            //         // Don't run TrySetException, since we should set Error properties and swallow exceptions
-            //         // to be consistent with sync methods
-            //         else
-            //             taskCompletionSource.TrySetResult(response);
-            //     }
-            // );
-
-            // var registration =
-            //     cancellationToken.Register(
-            //         () => {
-            //             async.Abort();
-            //             taskCompletionSource.TrySetCanceled();
-            //         }
-            //     );
-
-            // taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), cancellationToken);
-        }
-        catch (Exception ex) {
-            taskCompletionSource.TrySetException(ex);
-        }
+        var response = await ExecuteAsync(request, cancellationToken);
+        return Deserialize<T>(request, response);
     }
 
     /// <summary>
@@ -89,7 +59,7 @@ public partial class RestClient {
     /// <param name="request">Request to be executed</param>
     /// <param name="httpMethod">Override the request method</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public Task<IRestResponse> ExecuteAsync(
+    public Task<RestResponse> ExecuteAsync(
         IRestRequest      request,
         Method            httpMethod,
         CancellationToken cancellationToken = default
@@ -107,7 +77,7 @@ public partial class RestClient {
     /// <param name="request">Request to be executed</param>
     /// <param name="httpMethod">Override the request method</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public Task<IRestResponse<T>> ExecuteAsync<T>(
+    public Task<RestResponse<T>> ExecuteAsync<T>(
         IRestRequest      request,
         Method            httpMethod,
         CancellationToken cancellationToken = default
@@ -116,43 +86,6 @@ public partial class RestClient {
 
         request.Method = httpMethod;
         return ExecuteAsync<T>(request, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public Task<IRestResponse> ExecuteAsync(IRestRequest request, CancellationToken token = default) {
-        Ensure.NotNull(request, nameof(request));
-
-        var taskCompletionSource = new TaskCompletionSource<IRestResponse>();
-
-        try {
-            // var async = ExecuteAsync(
-            //     request,
-            //     (response, _) => {
-            //         if (token.IsCancellationRequested)
-            //             taskCompletionSource.TrySetCanceled();
-            //         // Don't run TrySetException, since we should set Error
-            //         // properties and swallow exceptions to be consistent
-            //         // with sync methods
-            //         else
-            //             taskCompletionSource.TrySetResult(response);
-            //     }
-            // );
-            //
-            // var registration =
-            //     token.Register(
-            //         () => {
-            //             async.Abort();
-            //             taskCompletionSource.TrySetCanceled();
-            //         }
-            //     );
-            //
-            // taskCompletionSource.Task.ContinueWith(t => registration.Dispose(), token);
-        }
-        catch (Exception ex) {
-            taskCompletionSource.TrySetException(ex);
-        }
-
-        return taskCompletionSource.Task;
     }
 
     // RestRequestAsyncHandle ExecuteAsync(
@@ -198,15 +131,141 @@ public partial class RestClient {
     //     RestRequestAsyncHandle                           asyncHandle
     // )
     //     => callback(Deserialize<T>(request, response), asyncHandle);
-    
-    static void ThrowIfError(IRestResponse response) {
+
+    /// <inheritdoc />
+    public async Task<RestResponse> ExecuteAsync(IRestRequest request, CancellationToken cancellationToken = default) {
+        Ensure.NotNull(request, nameof(request));
+        HttpContent? content = null;
+
+        var streams = new List<Stream>();
+
+        if (request.HasFiles() || request.AlwaysMultipartFormData) {
+            var mpContent = new MultipartFormDataContent();
+
+            foreach (var file in request.Files) {
+                var stream = file.GetFile();
+                streams.Add(stream);
+                var fileContent = new StreamContent(stream);
+
+                if (file.ContentType != null)
+                    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
+                mpContent.Add(fileContent, file.Name, file.FileName);
+            }
+
+            content = mpContent;
+        }
+
+        var postParameters = request.GetPostParameters();
+
+        if (request.TryGetBodyParameter(out var bodyParameter)) {
+            var bodyContent = Serialize(bodyParameter!);
+
+            // we need to send the body
+            if (postParameters.Length > 0 || request.Files.Count > 0) {
+                // here we must use multipart form data
+                var mpContent = content as MultipartFormDataContent ?? new MultipartFormDataContent();
+                mpContent.Add(bodyContent);
+                content = mpContent;
+            }
+            else {
+                // we don't have parameters, only the body
+                content = bodyContent;
+            }
+        }
+
+        if (postParameters.Length > 0) {
+            // it's a form
+            if (content is MultipartFormDataContent mpContent) {
+                // we got the multipart form already instantiated, just add parameters to it
+                foreach (var postParameter in postParameters) {
+                    mpContent.Add(new StringContent(postParameter.Value.ToString(), Options.Encoding, postParameter.ContentType), postParameter.Name);
+                }
+            }
+            else {
+                // we should not have anything else except the parameters, so we send them as form URL encoded
+                var formContent = new FormUrlEncodedContent(
+                    request.Parameters
+                        .Where(x => x.Type == ParameterType.GetOrPost)
+                        .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()))
+                );
+                content = formContent;
+            }
+        }
+
+        if (Authenticator != null)
+            await Authenticator.Authenticate(this, request);
+
+        var response = new RestResponse();
+
+        var url     = BuildUri(request);
+        var message = new HttpRequestMessage(HttpMethod.Post, url) { Content = content };
+        message.Headers.Host         = Options.BaseHost;
+        message.Headers.CacheControl = Options.CachePolicy;
+
+        // Add other parameters than the body and files (headers, cookies, URL segments and query)
+
+        var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : Int32.MaxValue);
+        var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
+        var ct         = cts.Token;
+
+        try {
+            var resp = await HttpClient.SendAsync(message, ct);
+
+            // var http = ConfigureHttp(request);
+            // request.OnBeforeRequest?.Invoke(http);
+
+            response = await RestResponse.FromHttpResponse(resp, request, _cookieContainer.GetCookies(url), cancellationToken);
+        }
+        catch (Exception ex) {
+            return ReturnErrorOrThrow(response, ex, timeoutCts.Token);
+        }
+        finally {
+            streams.ForEach(x => x.Dispose());
+        }
+
+        response.Request = request;
+        response.Request.IncreaseNumAttempts();
+
+        return response;
+    }
+
+    StringContent Serialize(Parameter body) {
+        if (!Serializers.TryGetValue(body.DataFormat, out var serializer))
+            throw new InvalidDataContractException(
+                $"Can't find serializer for content type {body.DataFormat}"
+            );
+
+        return new StringContent(
+            serializer.Serialize(body),
+            Options.Encoding,
+            body.ContentType ?? serializer.ContentType
+        );
+    }
+
+    RestResponse ReturnErrorOrThrow(RestResponse response, Exception exception, CancellationToken timeoutToken) {
+        if (exception is OperationCanceledException) {
+            response.ResponseStatus = timeoutToken.IsCancellationRequested ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
+        }
+        else {
+            response.ResponseStatus = ResponseStatus.Error;
+        }
+
+        if (Options.ThrowOnAnyError)
+            ThrowIfError(response);
+
+        response.ErrorMessage   = exception.Message;
+        response.ErrorException = exception;
+        return response;
+    }
+
+    static void ThrowIfError(RestResponse response) {
         var exception = response.ResponseStatus switch {
             ResponseStatus.Aborted   => new WebException("Request aborted", response.ErrorException),
             ResponseStatus.Error     => response.ErrorException,
             ResponseStatus.TimedOut  => new TimeoutException("Request timed out", response.ErrorException),
             ResponseStatus.None      => null,
             ResponseStatus.Completed => null,
-            _                        => throw response.ErrorException ?? new ArgumentOutOfRangeException()
+            _                        => throw response.ErrorException ?? new ArgumentOutOfRangeException(nameof(response.ResponseStatus))
         };
 
         if (exception != null)
