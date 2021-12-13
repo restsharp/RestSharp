@@ -1,5 +1,7 @@
 # RestSharp Release Notes
 
+Newer release notes can be found on the [Releases](https://github.com/restsharp/RestSharp/releases) page.
+
 # 106.10
 
 * Added a new package `RestSharp.Serializers.NewtonsoftJson`
