@@ -19,7 +19,7 @@ public class SystemTextJsonTests {
 
         var testData = Fixture.Create<TestClass>();
 
-        var client  = new RestClient(server.Url).UseSystemTextJson();
+        var client  = new RestClient(server.Url);
         var request = new RestRequest().AddJsonBody(testData);
 
         await client.PostAsync(request);

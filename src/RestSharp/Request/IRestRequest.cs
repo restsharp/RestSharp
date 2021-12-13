@@ -5,98 +5,6 @@ using RestSharp.Serializers.Xml;
 namespace RestSharp;
 
 public interface IRestRequest {
-    /// <summary>
-    /// Always send a multipart/form-data request - even when no Files are present.
-    /// </summary>
-    bool AlwaysMultipartFormData { get; set; }
-
-    /// <summary>
-    /// Set this to handle the response stream yourself, based on the response details
-    /// </summary>
-    Action<Stream, HttpResponse> AdvancedResponseWriter { get; set; }
-
-    /// <summary>
-    /// Set this to write response to Stream rather than reading into memory.
-    /// </summary>
-    Action<Stream> ResponseWriter { get; set; }
-
-    /// <summary>
-    /// Container of all HTTP parameters to be passed with the request.
-    /// See AddParameter() for explanation of the types of parameters that can be passed
-    /// </summary>
-    List<Parameter> Parameters { get; }
-
-    /// <summary>
-    /// Container of all the files to be uploaded with the request.
-    /// </summary>
-    List<FileParameter> Files { get; }
-
-    /// <summary>
-    /// Determines what HTTP method to use for this request. Supported methods: GET, POST, PUT, DELETE, HEAD, OPTIONS
-    /// Default is GET
-    /// </summary>
-    Method Method { get; set; }
-
-    /// <summary>
-    /// The Resource URL to make the request against.
-    /// Tokens are substituted with UrlSegment parameters and match by name.
-    /// Should not include the scheme or domain. Do not include leading slash.
-    /// Combined with RestClient.BaseUrl to assemble final URL:
-    /// {BaseUrl}/{Resource} (BaseUrl is scheme + domain, e.g. http://example.com)
-    /// </summary>
-    /// <example>
-    /// // example for url token replacement
-    /// request.Resource = "Products/{ProductId}";
-    /// request.AddParameter("ProductId", 123, ParameterType.UrlSegment);
-    /// </example>
-    string Resource { get; set; }
-
-    /// <summary>
-    /// Serializer to use when writing request bodies.
-    /// </summary>
-    DataFormat RequestFormat { get; set; }
-
-    /// <summary>
-    /// Used by the default deserializers to determine where to start deserializing from.
-    /// Can be used to skip container or root elements that do not have corresponding deserialzation targets.
-    /// </summary>
-    string RootElement { get; set; }
-
-    /// <summary>
-    /// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
-    /// </summary>
-    string DateFormat { get; set; }
-
-    /// <summary>
-    /// Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from
-    /// element names.
-    /// </summary>
-    string XmlNamespace { get; set; }
-
-    /// <summary>
-    /// How many attempts were made to send this Request?
-    /// </summary>
-    /// <remarks>
-    /// This number is incremented each time the RestClient sends the request.
-    /// </remarks>
-    int Attempts { get; }
-
-    /// <summary>
-    /// When supplied, the function will be called before calling the deserializer
-    /// </summary>
-    Action<RestResponse>? OnBeforeDeserialization { get; set; }
-
-    /// <summary>
-    /// When supplied, the function will be called before making a request
-    /// </summary>
-    Action<Http>? OnBeforeRequest { get; set; }
-
-    /// <summary>
-    /// Serialized request body to be accessed in authenticators
-    /// </summary>
-    RequestBody Body { get; set; }
-
-    int Timeout { get; set; }
 
     /// <summary>
     /// Adds a file to the Files collection to be included with a POST or PUT request
@@ -215,14 +123,6 @@ public interface IRestRequest {
     IRestRequest AddParameter(Parameter p);
 
     /// <summary>
-    /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
-    /// </summary>
-    /// <param name="name">Name of the parameter</param>
-    /// <param name="value">Value of the parameter</param>
-    /// <returns>This request</returns>
-    IRestRequest AddParameter(string name, object value);
-
-    /// <summary>
     /// Adds a parameter to the request. There are five types of parameters:
     /// - GetOrPost: Either a QueryString value or encoded form value based on method
     /// - HttpHeader: Adds the name/value pair to the HTTP request's Headers collection
@@ -334,14 +234,6 @@ public interface IRestRequest {
     /// <param name="headers">Key/Value pairs containing the name: value of the headers</param>
     /// <returns>This request</returns>
     IRestRequest AddOrUpdateHeaders(ICollection<KeyValuePair<string, string>> headers);
-
-    /// <summary>
-    /// Shortcut to AddParameter(name, value, Cookie) overload
-    /// </summary>
-    /// <param name="name">Name of the cookie to add</param>
-    /// <param name="value">Value of the cookie to add</param>
-    /// <returns></returns>
-    IRestRequest AddCookie(string name, string value);
 
     /// <summary>
     /// Shortcut to AddParameter(name, value, UrlSegment) overload

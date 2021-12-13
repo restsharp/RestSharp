@@ -19,13 +19,13 @@ public class RootElementTests {
         var restSerializer = new XmlRestSerializer(new XmlSerializer(), deserializer);
         client.UseSerializer(() => restSerializer);
         
-        await client.ExecuteAsync<Response>(request);
+        await client.ExecuteAsync<TestResponse>(request);
 
         Assert.Equal(request.RootElement, deserializer.RootElement);
 
         static void Handle(HttpListenerRequest req, HttpListenerResponse response) {
             response.StatusCode = 200;
-            response.Headers.Add("Content-Type", Serializers.ContentType.Xml);
+            response.Headers.Add(KnownHeaders.ContentType, Serializers.ContentType.Xml);
 
             response.OutputStream.WriteStringUtf8(
                 @"<?xml version=""1.0"" encoding=""utf-8"" ?>

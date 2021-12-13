@@ -18,9 +18,12 @@ namespace RestSharp;
 /// Parameter container for REST requests
 /// </summary>
 public record Parameter {
-    public Parameter(string name, object? value, ParameterType type, bool encode = true) {
+    public Parameter(string? name, object? value, ParameterType type, bool encode = true) {
         if (type != ParameterType.RequestBody)
             Ensure.NotEmpty(name, nameof(name));
+        else {
+            Ensure.NotNull(value, nameof(value));
+        }
 
         Name   = name;
         Value  = type != ParameterType.UrlSegment ? value : value?.ToString().Replace("%2F", "/").Replace("%2f", "/");

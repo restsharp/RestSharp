@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace RestSharp.Tests; 
+namespace RestSharp.Tests;
 
 /// <summary>
 /// Note: These tests do not handle QueryString building, which is handled in Http, not RestClient
@@ -294,12 +294,12 @@ public class UrlBuilderTests {
         // utf-8 and iso-8859-1
         request.AddOrUpdateParameter("town", "Hillerød");
 
-        var client = new RestClient(new RestClientOptions("http://example.com/resource"));
-        var expectedDefaultEncoding  = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
+        var client                  = new RestClient(new RestClientOptions("http://example.com/resource"));
+        var expectedDefaultEncoding = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
         Assert.Equal(expectedDefaultEncoding, client.BuildUri(request));
-        
-        client = new RestClient(new RestClientOptions("http://example.com/resource"){Encoding = Encoding.GetEncoding("ISO-8859-1")});
-        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%F8d");
+
+        client = new RestClient(new RestClientOptions("http://example.com/resource") { Encoding = Encoding.GetEncoding("ISO-8859-1") });
+        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%f8d");
         Assert.Equal(expectedIso89591Encoding, client.BuildUri(request));
     }
 

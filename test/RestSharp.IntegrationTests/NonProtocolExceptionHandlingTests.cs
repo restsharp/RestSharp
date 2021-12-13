@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.TestHost;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
@@ -47,7 +48,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response.ErrorException);
-        Assert.IsType<WebException>(response.ErrorException);
+        Assert.IsType<TaskCanceledException>(response.ErrorException);
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
 
@@ -60,11 +61,11 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
         var client   = new RestClient(_server.Url);
         var request  = new RestRequest("404") { Timeout = 500 };
-        var response = await client.ExecuteAsync<Response>(request);
+        var response = await client.ExecuteAsync<TestResponse>(request);
 
         Assert.Null(response.Data);
         Assert.NotNull(response.ErrorException);
-        Assert.IsType<WebException>(response.ErrorException);
+        Assert.IsType<TaskCanceledException>(response.ErrorException);
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
 
@@ -78,8 +79,8 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         };
         var response = await client.ExecuteAsync<StupidClass>(request);
 
-        Assert.IsType<WebException>(response.ErrorException);
-        Assert.Equal(WebExceptionStatus.NameResolutionFailure, ((WebException)response.ErrorException).Status);
-        Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+        response.ErrorException.Should().BeOfType<HttpRequestException>();
+        response.ErrorException!.Message.Should().Contain("nodename nor servname provided, or not known");
+        response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 }

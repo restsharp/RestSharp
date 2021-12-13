@@ -17,7 +17,7 @@ public class JwtAuthenticator : IAuthenticator {
     [PublicAPI]
     public void SetBearerToken(string accessToken) => _authHeader = $"Bearer {Ensure.NotEmpty(accessToken, nameof(accessToken))}";
 
-    public ValueTask Authenticate(RestClient client, IRestRequest request) {
+    public ValueTask Authenticate(RestClient client, RestRequest request) {
         request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader);
         return default;
     }

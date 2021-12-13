@@ -54,8 +54,8 @@ public class StructuredSyntaxSuffixTests : IDisposable {
 
         var response = await client.ExecuteAsync<Person>(request);
 
-        Assert.Equal("Bob", response.Data.Name);
-        Assert.Equal(50, response.Data.Age);
+        response.Data!.Name.Should().Be("Bob");
+        response.Data.Age.Should().Be(50);
     }
 
     [Fact]
@@ -67,9 +67,9 @@ public class StructuredSyntaxSuffixTests : IDisposable {
             .AddParameter("c", XmlContent);
 
         var response = await client.ExecuteAsync<Person>(request);
-
-        Assert.Equal("Bob", response.Data.Name);
-        Assert.Equal(50, response.Data.Age);
+        
+        response.Data!.Name.Should().Be("Bob");
+        response.Data.Age.Should().Be(50);
     }
 
     [Fact]

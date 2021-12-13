@@ -8,7 +8,7 @@ public class SystemTextJsonSerializer : IRestSerializer {
     /// <summary>
     /// Create the new serializer that uses System.Text.Json.JsonSerializer with default settings
     /// </summary>
-    public SystemTextJsonSerializer() => _options = new JsonSerializerOptions();
+    public SystemTextJsonSerializer() => _options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     /// <summary>
     /// Create the new serializer that uses System.Text.Json.JsonSerializer with custom settings

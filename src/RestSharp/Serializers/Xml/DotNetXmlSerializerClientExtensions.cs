@@ -17,8 +17,8 @@ using System.Text;
 namespace RestSharp.Serializers.Xml; 
 
 public static class DotNetXmlSerializerClientExtensions {
-    public static IRestClient UseDotNetXmlSerializer(
-        this IRestClient restClient,
+    public static RestClient UseDotNetXmlSerializer(
+        this RestClient restClient,
         string?          xmlNamespace = null,
         Encoding?        encoding     = null
     ) {

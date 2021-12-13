@@ -13,8 +13,21 @@
 // limitations under the License.
 // 
 
+using RestSharp.Extensions;
+
 namespace RestSharp; 
 
-public class RestClientOptionsExtensions {
-    
+static class HttpRequestMessageExtensions {
+    public static void AddHeaders(this HttpRequestMessage message, IEnumerable<Parameter> parameters) {
+        var headerParameters = parameters
+            .Where(x => x.Type == ParameterType.HttpHeader && !RequestContent.ContentHeaders.Contains(x.Name));
+
+        headerParameters.ForEach(AddHeader);
+        
+        void AddHeader(Parameter parameter) {
+            var parameterStringValue = parameter.Value!.ToString();
+            message.Headers.Remove(parameter.Name);
+            message.Headers.TryAddWithoutValidation(parameter.Name, parameterStringValue);
+        }
+    }
 }

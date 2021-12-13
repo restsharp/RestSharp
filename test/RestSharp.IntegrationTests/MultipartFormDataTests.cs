@@ -1,10 +1,14 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
 public class MultipartFormDataTests : IDisposable {
-    public MultipartFormDataTests() {
+    readonly ITestOutputHelper _output;
+
+    public MultipartFormDataTests(ITestOutputHelper output) {
+        _output = output;
         _server = SimpleServer.Create(RequestHandler.Handle);
         _client = new RestClient(_server.Url);
     }
@@ -13,47 +17,28 @@ public class MultipartFormDataTests : IDisposable {
 
     const string LineBreak = "\r\n";
 
-    const string Expected = "--{0}" +
-        LineBreak +
-        "Content-Disposition: form-data; name=\"foo\"" +
-        LineBreak +
-        LineBreak +
-        "bar" +
-        LineBreak +
+    const string CharsetString            = "charset=utf-8";
+    const string ContentTypeString        = $"{KnownHeaders.ContentType}: text/plain; {CharsetString}";
+    const string ContentDispositionString = $"{KnownHeaders.ContentDisposition}: form-data;";
+
+    const string Expected =
+        $"--{{0}}{LineBreak}{ContentTypeString}{LineBreak}{ContentDispositionString} name=foo{LineBreak}{LineBreak}bar{LineBreak}" +
+        $"--{{0}}{LineBreak}{ContentTypeString}{LineBreak}{ContentDispositionString} name=\"a name with spaces\"{LineBreak}{LineBreak}somedata{LineBreak}" +
+        $"--{{0}}--{LineBreak}";
+
+    const string ExpectedFileAndBodyRequestContent =
         "--{0}" +
-        LineBreak +
-        "Content-Disposition: form-data; name=\"a name with spaces\"" +
-        LineBreak +
-        LineBreak +
-        "somedata" +
-        LineBreak +
-        "--{0}--" +
-        LineBreak;
+        $"{LineBreak}{KnownHeaders.ContentType}: application/octet-stream" +
+        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=fileName; filename=TestFile.txt; filename*=utf-8''TestFile.txt" +
+        $"{LineBreak}{LineBreak}This is a test file for RestSharp.{LineBreak}" +
+        $"--{{0}}{LineBreak}{KnownHeaders.ContentType}: application/json; {CharsetString}" +
+        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=controlName" +
+        $"{LineBreak}{LineBreak}test{LineBreak}" +
+        $"--{{0}}--{LineBreak}";
 
-    const string ExpectedFileAndBodyRequestContent = "--{0}" +
-        LineBreak +
-        "Content-Type: application/json" +
-        LineBreak +
-        "Content-Disposition: form-data; name=\"controlName\"" +
-        LineBreak +
-        LineBreak +
-        "test" +
-        LineBreak +
-        "--{0}" +
-        LineBreak +
-        "Content-Disposition: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" +
-        LineBreak +
-        "Content-Type: application/octet-stream" +
-        LineBreak +
-        LineBreak +
-        "This is a test file for RestSharp." +
-        LineBreak +
-        "--{0}--" +
-        LineBreak;
+    const string ExpectedDefaultMultipartContentType = "multipart/form-data; boundary=\"{0}\"";
 
-    const string ExpectedDefaultMultipartContentType = "multipart/form-data; boundary={0}";
-
-    const string ExpectedCustomMultipartContentType = "multipart/vnd.resteasy+form-data; boundary={0}";
+    const string ExpectedCustomMultipartContentType = "multipart/vnd.resteasy+form-data; boundary=\"{0}\"";
 
     readonly SimpleServer _server;
     readonly RestClient   _client;
@@ -67,7 +52,7 @@ public class MultipartFormDataTests : IDisposable {
         }
     }
 
-    static void AddParameters(IRestRequest request) {
+    static void AddParameters(RestRequest request) {
         request.AddParameter("foo", "bar");
         request.AddParameter("a name with spaces", "somedata");
     }
@@ -95,11 +80,14 @@ public class MultipartFormDataTests : IDisposable {
         AddParameters(request);
 
         string? boundary = null;
-        request.OnBeforeRequest += http => boundary = http.FormBoundary;
+        request.OnBeforeRequest += http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
 
         var expected = string.Format(Expected, boundary);
+
+        _output.WriteLine($"Expected: {expected}");
+        _output.WriteLine($"Actual: {response.Content}");
 
         Assert.Equal(expected, response.Content);
     }
@@ -114,12 +102,15 @@ public class MultipartFormDataTests : IDisposable {
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
         string? boundary = null;
-        request.OnBeforeRequest += http => boundary = http.FormBoundary;
+        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
 
         var expectedFileAndBodyRequestContent   = string.Format(ExpectedFileAndBodyRequestContent, boundary);
         var expectedDefaultMultipartContentType = string.Format(ExpectedDefaultMultipartContentType, boundary);
+
+        _output.WriteLine($"Expected: {expectedFileAndBodyRequestContent}");
+        _output.WriteLine($"Actual: {response.Content}");
 
         Assert.Equal(expectedFileAndBodyRequestContent, response.Content);
         Assert.Equal(expectedDefaultMultipartContentType, RequestHandler.CapturedContentType);
@@ -132,20 +123,20 @@ public class MultipartFormDataTests : IDisposable {
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
 
         const string customContentType = "multipart/vnd.resteasy+form-data";
-        request.AddHeader("Content-Type", customContentType);
+        request.AddHeader(KnownHeaders.ContentType, customContentType);
         request.AddFile("fileName", path);
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
         string? boundary = null;
-        request.OnBeforeRequest += http => boundary = http.FormBoundary;
+        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
 
         var expectedFileAndBodyRequestContent  = string.Format(ExpectedFileAndBodyRequestContent, boundary);
         var expectedCustomMultipartContentType = string.Format(ExpectedCustomMultipartContentType, boundary);
 
-        Assert.Equal(expectedFileAndBodyRequestContent, response.Content);
-        Assert.Equal(expectedCustomMultipartContentType, RequestHandler.CapturedContentType);
+        response.Content.Should().Be(expectedFileAndBodyRequestContent);
+        RequestHandler.CapturedContentType.Should().Be(expectedCustomMultipartContentType);
     }
 
     [Fact]
@@ -160,13 +151,13 @@ public class MultipartFormDataTests : IDisposable {
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
         string? boundary = null;
-        request.OnBeforeRequest += http => boundary = http.FormBoundary;
+        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
 
         var expectedFileAndBodyRequestContent = string.Format(ExpectedFileAndBodyRequestContent, boundary);
 
-        Assert.Equal(expectedFileAndBodyRequestContent, response.Content);
+        response.Content.Should().Be(expectedFileAndBodyRequestContent);
     }
 
     [Fact]
@@ -177,11 +168,11 @@ public class MultipartFormDataTests : IDisposable {
 
         string? boundary = null;
 
-        var expected = string.Format(Expected, boundary);
-
-        request.OnBeforeRequest += http => boundary = http.FormBoundary;
+        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
-        Assert.Equal(expected, response.Content);
+        var expected = string.Format(Expected, boundary);
+
+        response.Content.Should().Be(expected);
     }
 }

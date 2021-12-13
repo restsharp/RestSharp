@@ -15,16 +15,15 @@
 
 namespace RestSharp; 
 
-static class BodyExtensions {
-    public static bool TryGetBodyParameter(this RestRequest request, out Parameter? bodyParameter) {
-        bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
-        return bodyParameter != null;
-    }
+public class RestXmlRequest : RestRequest {
+    /// <summary>
+    /// Used by the default deserializers to explicitly set which date format string to use when parsing dates.
+    /// </summary>
+    public string? DateFormat { get; set; }
 
-    public static Parameter[] GetPostParameters(this RestRequest request)
-        => request.Parameters.Where(x => x.Type == ParameterType.GetOrPost).ToArray();
-
-    public static bool HasPostParameters(this RestRequest request) => request.Parameters.Any(x => x.Type == ParameterType.GetOrPost);
-
-    public static bool HasFiles(this RestRequest request) => request.Files.Count > 0;
+    /// <summary>
+    /// Used by XmlDeserializer. If not specified, XmlDeserializer will flatten response by removing namespaces from
+    /// element names.
+    /// </summary>
+    public string? XmlNamespace { get; set; }
 }

@@ -34,7 +34,7 @@ public abstract class RestResponseBase {
     /// <remarks>
     /// Mainly for debugging if ResponseStatus is not OK
     /// </remarks>
-    public IRestRequest? Request { get; set; }
+    public RestRequest? Request { get; set; }
 
     /// <summary>
     /// MIME content type of response
@@ -54,7 +54,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// String representation of response content
     /// </summary>
-    public string Content { get; init; }
+    public string? Content { get; init; }
 
     /// <summary>
     /// HTTP response status code
@@ -74,7 +74,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Response content
     /// </summary>
-    public byte[] RawBytes { get; init; }
+    public byte[]? RawBytes { get; init; }
 
     /// <summary>
     /// The URL that actually responded to the content (different from request if redirected)
@@ -113,8 +113,23 @@ public abstract class RestResponseBase {
     public Exception? ErrorException { get; set; }
 
     /// <summary>
+    /// HTTP protocol version of the request
+    /// </summary>
+    public Version? Version { get; set; }
+
+    /// <summary>
     /// Assists with debugging responses by displaying in the debugger output
     /// </summary>
     /// <returns></returns>
     protected string DebuggerDisplay() => $"StatusCode: {StatusCode}, Content-Type: {ContentType}, Content-Length: {ContentLength})";
+
+    internal Exception? GetException()
+        => ResponseStatus switch {
+            ResponseStatus.Aborted   => new HttpRequestException("Request aborted", ErrorException),
+            ResponseStatus.Error     => ErrorException,
+            ResponseStatus.TimedOut  => new TimeoutException("Request timed out", ErrorException),
+            ResponseStatus.None      => null,
+            ResponseStatus.Completed => null,
+            _                        => throw ErrorException ?? new ArgumentOutOfRangeException(nameof(ResponseStatus))
+        };
 }

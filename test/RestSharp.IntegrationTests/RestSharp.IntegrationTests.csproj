@@ -7,4 +7,8 @@
         <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest" />
         <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0" />
+        <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
+    </ItemGroup>
 </Project>

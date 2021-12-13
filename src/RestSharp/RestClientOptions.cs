@@ -23,8 +23,9 @@ using System.Text;
 namespace RestSharp;
 
 public class RestClientOptions {
-    static readonly Version Version          = new AssemblyName(typeof(RestClientOptions).Assembly.FullName).Version;
-    static readonly string  DefaultUserAgent = $"RestSharp/{Version}";
+    static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName).Version;
+
+    static readonly string DefaultUserAgent = $"RestSharp/{Version}";
 
     public RestClientOptions() { }
 
@@ -49,7 +50,11 @@ public class RestClientOptions {
     /// </summary>
     public bool UseDefaultCredentials { get; set; }
 
-    public DecompressionMethods AutomaticDecompression { get; set; }
+#if NETSTANDARD
+    public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;
+#else
+    public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.All;
+#endif
 
     public int? MaxRedirects { get; set; }
 
@@ -65,8 +70,6 @@ public class RestClientOptions {
     public string                   UserAgent       { get; set; } = DefaultUserAgent;
     public int                      Timeout         { get; set; }
     public Encoding                 Encoding        { get; set; } = Encoding.UTF8;
-
-    public IList<Parameter> DefaultParameters { get; } = new List<Parameter>();
 
     /// <summary>
     /// Flag to send authorisation header with the HttpWebRequest

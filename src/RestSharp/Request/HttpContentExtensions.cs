@@ -15,16 +15,15 @@
 
 namespace RestSharp; 
 
-static class BodyExtensions {
-    public static bool TryGetBodyParameter(this RestRequest request, out Parameter? bodyParameter) {
-        bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
-        return bodyParameter != null;
+public static class HttpContentExtensions {
+    public static string GetFormBoundary(this HttpContent content) {
+        var contentType = content.Headers.ContentType.ToString();
+        var index       = contentType.IndexOf("boundary=", StringComparison.Ordinal);
+        return index > 0 ? GetFormBoundary(contentType, index) : "";
+    } 
+    
+    static string GetFormBoundary(string headerValue, int index) {
+        var part = headerValue.Substring(index);
+        return part.Substring(10, 36);
     }
-
-    public static Parameter[] GetPostParameters(this RestRequest request)
-        => request.Parameters.Where(x => x.Type == ParameterType.GetOrPost).ToArray();
-
-    public static bool HasPostParameters(this RestRequest request) => request.Parameters.Any(x => x.Type == ParameterType.GetOrPost);
-
-    public static bool HasFiles(this RestRequest request) => request.Files.Count > 0;
 }

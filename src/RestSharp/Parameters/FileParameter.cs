@@ -49,7 +49,7 @@ public record FileParameter {
         FileName      = fileName;
         ContentLength = contentLength;
         GetFile       = getFile;
-        ContentType   = contentType;
+        ContentType   = contentType ?? "application/octet-stream";
     }
 
     /// <summary>
@@ -98,6 +98,6 @@ public record FileParameter {
         
         return new FileParameter(parameterName, fileName, length, GetFile);
 
-        Stream GetFile() => File.OpenRead(fileName);
+        Stream GetFile() => File.OpenRead(fullPath);
     }
 }

@@ -9,7 +9,7 @@ public static class RestClientExtensions {
     /// </summary>
     /// <param name="client"></param>
     /// <returns></returns>
-    public static IRestClient UseSystemTextJson(this IRestClient client) => client.UseSerializer(() => new SystemTextJsonSerializer());
+    public static RestClient UseSystemTextJson(this RestClient client) => client.UseSerializer(() => new SystemTextJsonSerializer());
 
     /// <summary>
     /// Use System.Text.Json serializer with custom settings
@@ -17,6 +17,6 @@ public static class RestClientExtensions {
     /// <param name="client"></param>
     /// <param name="options">System.Text.Json serializer options</param>
     /// <returns></returns>
-    public static IRestClient UseSystemTextJson(this IRestClient client, JsonSerializerOptions options)
+    public static RestClient UseSystemTextJson(this RestClient client, JsonSerializerOptions options)
         => client.UseSerializer(() => new SystemTextJsonSerializer(options));
 }

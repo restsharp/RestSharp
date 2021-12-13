@@ -46,7 +46,7 @@ public class JwtAuthTests {
         // In real case client.Execute(request) will invoke Authenticate method
         client.Authenticator.Authenticate(client, request);
 
-        var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+        var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
         Assert.Equal(2, paramList.Count);
 
@@ -69,7 +69,7 @@ public class JwtAuthTests {
         //In real case client.Execute(...) will invoke Authenticate method
         client.Authenticator.Authenticate(client, request);
 
-        var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+        var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
         Assert.Equal(1, paramList.Count);
 
@@ -93,7 +93,7 @@ public class JwtAuthTests {
         authenticator.SetBearerToken("second_header_auth_token");
         client.Authenticator.Authenticate(client, request);
 
-        var paramList = request.Parameters.FindAll(p => p.Name.Equals("Authorization"));
+        var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
         Assert.Single(paramList);
 
