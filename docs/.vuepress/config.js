@@ -4,54 +4,75 @@ module.exports = {
     plugins: ["@vuepress/active-header-links"],
     themeConfig: {
         logo: "/restsharp.png",
-        nav: [
-            {text: "Get help", link: "/get-help/"},
-            {text: "Gitter", link: "https://gitter.im/RestSharp/RestSharp"},
+        navbar: [
+            {text: "vNext", link: "/v107/"},
+            {text: "Documentation", link: "/intro.html"},
+            {text: "Get help", link: "/support/"},
             {text: "NuGet", link: "https://nuget.org/packages/RestSharp"}
         ],
         sidebarDepth: 2,
-        sidebar: [
-            {
-                title: "Getting Started",
-                path: "/getting-started/",
-                collapsable: false,
-                children: [
-                    "/getting-started/",
-                    "/getting-started/getting-started"
-                ]
-            },
-            {
-                title: "Using RestSharp",
-                path: "/usage/",
-                collapsable: false,
-                children: [
-                    "/usage/serialization",
-                    "/usage/files",
-                    "/usage/authenticators",
-                    "/usage/parameters",
-                    "/usage/exceptions"
-                ]
-            },
-            {
-                title: "Got stuck?",
-                path: "/get-help/",
-                collapsable: false,
-                children: [
-                    "/get-help/faq"
-                ]
-            },
-            {
-                title: "Reference",
-                path: "/api/",
-                collapsable: true,
-                children: [
-                    "/api/RestSharp",
-                    "/api/RestSharp.Serializers.NewtonsoftJson",
-                    "/api/RestSharp.Serializers.SystemTextJson",
-                    "/api/RestSharp.Serializers.Utf8Json",
-                ]
-            }
-        ],
+        sidebar: {
+            "/": [
+                {
+                    text: "",
+                    header: "RestSharp",
+                    children: [
+                        "intro.md",
+                        "usage.md",
+                        "authenticators.md"
+                    ]
+                }
+            ],
+            "/v107/": [
+                {
+                    text: "",
+                    header: "RestSharp vNext",
+                    children: [
+                        "/v107/README.md"
+                    ]
+                }
+            ],
+            "/support/": [
+                {
+                    text: "",
+                    header: "Get help",
+                    children: [
+                        "/support/README.md"
+                    ]
+                }
+            ]
+        },
+        //     [
+        //     {
+        //         title: "Getting Started",
+        //         path: "/getting-started/",
+        //         collapsable: false,
+        //         children: [
+        //             "/getting-started/",
+        //             "/getting-started/getting-started"
+        //         ]
+        //     },
+        //     {
+        //         title: "Using RestSharp",
+        //         path: "/usage/",
+        //         collapsable: false,
+        //         children: [
+        //             "/usage/serialization",
+        //             "/usage/files",
+        //             "/usage/authenticators",
+        //             "/usage/parameters",
+        //             "/usage/exceptions"
+        //         ]
+        //     },
+        //     {
+        //         title: "Got stuck?",
+        //         path: "/get-help/",
+        //         collapsable: false,
+        //         children: [
+        //             "/get-help/faq"
+        //         ]
+        //     }
+        // ],
         searchPlaceholder: "Search...",
         lastUpdated: "Last Updated",
         repo: "restsharp/RestSharp",

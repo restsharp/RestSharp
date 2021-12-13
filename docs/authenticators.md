@@ -3,27 +3,6 @@
 RestSharp includes authenticators for basic HTTP (Authorization header), 
 NTLM and parameter-based systems. 
 
-## Using SimpleAuthenticator
-
-The `SimpleAuthenticator` included allows you to pass a 
-username and password (or API and secret key) as GET or POST 
-parameters depending on the method used for the request. 
-You pass it the username, password and the names of the 
-parameters for each.
-
-```csharp
-var client = new RestClient("http://example.com");
-client.Authenticator = new SimpleAuthenticator("username", "foo", "password", "bar");
-
-var request = new RestRequest("resource", Method.GET);
-client.Execute(request);
-```
-
-The URL generated for this request would be `http://example.com/resource?username=foo&password=bar`
-
-Changing the above request to use a POST or PUT would send 
-the values as encoded form values instead.
-
 ## Basic Authentication
 
 The `HttpBasicAuthenticator` allows you pass a username and password as a basica auth Authorization header.
@@ -37,7 +16,7 @@ client.Authenticator = new HttpBasicAuthenticator("username", "password");
 
 For OAuth1 authentication the `OAuth1Authenticator` class provides static methods to help generate an OAuth authenticator.
 
-### For endpoints requiring a request token
+### Request token
 
 This method requires a `consumerKey` and `consumerSecret` to authenticate.
 
@@ -46,7 +25,7 @@ var client = new RestClient("http://example.com");
 client.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
 ```
 
-### For endpoints requiring an access token
+### Access token
 
 This method retrieves an access token when provided `consumerKey`, `consumerSecret`, `oauthToken`, and `oauthTokenSecret`.
 

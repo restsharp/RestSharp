@@ -1,8 +1,6 @@
 {
   "devDependencies": {
-    "vuepress": "^1.8.2",
-    "glob-parent": "^5.1.2",
-    "normalize-url": "^4.5.1"
+    "vuepress-vite": "2.0.0-beta.27"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
