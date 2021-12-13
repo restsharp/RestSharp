@@ -6,9 +6,9 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 
 - for PRs with version updates, this pipeline comes pre-configured for all current dependency sources in the project, so at "Insights" tab -> "Dependency graph" -> "Dependabot", you should be able to see all tracked sources of dependencies, when they have been checked last and view a full log of the last check
 
-![Dependabot_tab](/docs/CI-CD_DOCUMENTATION/Dependabot_tab.png)
+![Dependabot_tab](./Dependabot_tab.png)
 
-![Dependabot_log_page](/docs/CI-CD_DOCUMENTATION/Dependabot_log_page.png)
+![Dependabot_log_page](./Dependabot_log_page.png)
 
 ### Set up security alerts and updates
 ##### - GitHub, through Dependabot, also natively offers a security check for vulnerable dependencies
@@ -21,13 +21,13 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 
 - By enabling "Dependabot alerts", you would be notified for any vulnerable dependencies in the project. At "Security" tab -> "Dependabot alerts", you can manage all alerts. By clicking on an alert, you would be able to see a detailed explanation of the vulnerability and a viable solution.
 
-![Dependabot_alerts_page](/docs/CI-CD_DOCUMENTATION/Dependabot_alerts_page.png)
+![Dependabot_alerts_page](./Dependabot_alerts_page.png)
 
-![Dependabot_alert_page](/docs/CI-CD_DOCUMENTATION/Dependabot_alert_page.png)
+![Dependabot_alert_page](./Dependabot_alert_page.png)
 
 - By enabling "Dependabot security updates", you authorize Dependabot to create PRs specifically for **security updates**
 
-![Dependabot_PRs](/docs/CI-CD_DOCUMENTATION/Dependabot_PRs.png)
+![Dependabot_PRs](./Dependabot_PRs.png)
 
 ### Set up Dependency graph
 ##### - The "Dependency graph" option should be enabled by default for all public repos, but in case it isn't:
@@ -40,7 +40,7 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 
 - this option enables the "Insights" tab -> "Dependency graph" section -> "Dependencies" tab, in which all the dependencies for the project are listed, under the different manifests they are included in
 
-![Dependabot_dependency_graph](/docs/CI-CD_DOCUMENTATION/Dependabot_dependency_graph.png)
+![Dependabot_dependency_graph](./Dependabot_dependency_graph.png)
 
 NOTE: **screenshots are only exemplary**
 
@@ -56,11 +56,11 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 - you can see the results here at **Security** tab -> **Code scanning alerts** -> **CodeQL**:
 
-![CodeQL_results](/docs/CI-CD_DOCUMENTATION/CodeQL_results.png)
+![CodeQL_results](./CodeQL_results.png)
 
 - on the page of each result, you can see an explanation of what the problem is and also one or more solutions:
 
-![CodeQL_alert_page](/docs/CI-CD_DOCUMENTATION/CodeQL_alert_page.png)
+![CodeQL_alert_page](./CodeQL_alert_page.png)
 
 #
 
