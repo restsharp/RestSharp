@@ -1,5 +1,19 @@
 # RestSharp - Simple .NET REST Client 
 
+## RestSharp vNext
+
+Finally, RestSharp has moved to `HttpClient`. We also deprecated the following:
+- All sync calls in favour of async calls
+- SimpleJson in favour of `System.Text.Json.JsonSerialzer`
+- `IRestClient`, `IRestRequest`, and `IRestResponse` in favour of implementing classes
+- Everything `Http` and `IHttp` as those are just wrappers
+
+Most of the client and some of the request options are now in `RestClientOptions`.
+
+Check [v107 docs](https://restsharp.dev/v107) for more information.
+
+### Build
+
 | | |
 |-|-|
 | dev | [![](https://img.shields.io/github/workflow/status/restsharp/RestSharp/Build%20and%20deploy)](https://github.com/restsharp/RestSharp/actions?query=workflow%3A%22Build+and+deploy%22) |
