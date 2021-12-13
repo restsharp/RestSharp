@@ -17,14 +17,14 @@ public class AuthenticationTests {
     }
 
     [Fact]
-    public void Can_Authenticate_With_Basic_Http_Auth() {
+    public async Task Can_Authenticate_With_Basic_Http_Auth() {
         using var server = SimpleServer.Create(UsernamePasswordEchoHandler);
 
         var client = new RestClient(server.Url) {
             Authenticator = new HttpBasicAuthenticator("testuser", "testpassword")
         };
         var request  = new RestRequest("test");
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.Equal("testuser|testpassword", response.Content);
     }

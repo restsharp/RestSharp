@@ -1,47 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net452;net6.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
-    <Using Remove="System.Net.Http"/>
   </ItemGroup>
   <ItemGroup>
-    <None Update="SampleData\GoodreadsFormatError.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\header_and_rows.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\bearertoken.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\boolean_from_number.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\boolean_from_string.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\datetimes.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\deserialize_as_list.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\directlists.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\eventful.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\GenericWithList.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\Goodreads.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\GoogleWeather.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\InlineListSample.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\iso8601datetimes.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsonarray.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsondictionary.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsondictionary_KeysType.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsondictionary_null.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsonenums.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsonenumtypes.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\jsonlists.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\Lastfm.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\ListWithAttributes.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\NestedListSample.xml" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\newdatetimes.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\objectproperty.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\person.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\restsharp.nuspec" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\sojson.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\timespans.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest"/>
-    <None Update="SampleData\xmllists.xml" CopyToOutputDirectory="PreserveNewest"/>
+    <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\bearertoken.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\datetimes.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\GenericWithList.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\iso8601datetimes.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsonarray.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsondictionary.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsondictionary_KeysType.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsondictionary_null.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsonenums.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsonenumtypes.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\jsonlists.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\newdatetimes.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\objectproperty.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\person.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\sojson.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\timespans.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

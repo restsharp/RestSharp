@@ -25,34 +25,34 @@ public class CompressionTests {
         };
 
     [Fact]
-    public void Can_Handle_Deflate_Compressed_Content() {
+    public async Task Can_Handle_Deflate_Compressed_Content() {
         using var server = SimpleServer.Create(DeflateEchoValue("This is some deflated content"));
 
         var client   = new RestClient(server.Url);
         var request  = new RestRequest("");
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.Equal("This is some deflated content", response.Content);
     }
 
     [Fact]
-    public void Can_Handle_Gzip_Compressed_Content() {
+    public async Task Can_Handle_Gzip_Compressed_Content() {
         using var server = SimpleServer.Create(GzipEchoValue("This is some gzipped content"));
 
         var client   = new RestClient(server.Url);
         var request  = new RestRequest("");
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.Equal("This is some gzipped content", response.Content);
     }
 
     [Fact]
-    public void Can_Handle_Uncompressed_Content() {
+    public async Task Can_Handle_Uncompressed_Content() {
         using var server = SimpleServer.Create(Handlers.EchoValue("This is some sample content"));
 
         var client   = new RestClient(server.Url);
         var request  = new RestRequest("");
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.Equal("This is some sample content", response.Content);
     }

@@ -10,7 +10,7 @@ public class AuthenticationTests {
         public string? ConsumerSecret { get; set; }
     }
 
-    public static void Can_Authenticate_With_OAuth(TwitterKeys twitterKeys) {
+    public static async Task Can_Authenticate_With_OAuth(TwitterKeys twitterKeys) {
         Console.WriteLine("OAuth test");
 
         var baseUrl = new Uri("https://api.twitter.com");
@@ -21,7 +21,7 @@ public class AuthenticationTests {
             Authenticator = OAuth1Authenticator.ForRequestToken(twitterKeys.ConsumerKey, twitterKeys.ConsumerSecret)
         };
         var request  = new RestRequest("oauth/request_token");
-        var response = client.Execute(request);
+        var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -52,7 +52,7 @@ public class AuthenticationTests {
             oauthTokenSecret,
             verifier!
         );
-        response = client.Execute(request);
+        response = await client.ExecuteAsync(request);
 
         Console.WriteLine($"Code: {response.StatusCode}, response: {response.Content}");
         Assert.NotNull(response);
@@ -74,7 +74,7 @@ public class AuthenticationTests {
             oauthToken,
             oauthTokenSecret
         );
-        response = client.Execute(request);
+        response = await client.ExecuteAsync(request);
 
         Console.WriteLine($"Code: {response.StatusCode}, response: {response.Content}");
     }

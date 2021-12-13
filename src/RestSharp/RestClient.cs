@@ -1,611 +1,363 @@
-﻿//   Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License. 
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Cache;
-using System.Net.Security;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 using RestSharp.Authenticators;
-using RestSharp.Authenticators.OAuth.Extensions;
-using RestSharp.Deserializers;
 using RestSharp.Extensions;
-using RestSharp.Serialization;
-using RestSharp.Serialization.Json;
-using RestSharp.Serialization.Xml;
+using RestSharp.Serializers;
+using RestSharp.Serializers.Json;
+using RestSharp.Serializers.Xml;
 using static System.String;
+
 // ReSharper disable VirtualMemberCallInConstructor
 #pragma warning disable 618
 
-namespace RestSharp
-{
+namespace RestSharp;
+
+/// <summary>
+/// Client to translate RestRequests into Http requests and process response result
+/// </summary>
+public partial class RestClient {
+    readonly CookieContainer _cookieContainer;
+    readonly List<Parameter> _defaultParameters = new();
+
+    HttpClient HttpClient { get; }
+
+    internal RestClientOptions Options { get; }
+
     /// <summary>
-    /// Client to translate RestRequests into Http requests and process response result
+    /// Default constructor that registers default content handlers
     /// </summary>
+    public RestClient() : this(new RestClientOptions()) { }
+
+    public RestClient(HttpClient httpClient) {
+        UseSerializer<SystemTextJsonSerializer>();
+        UseSerializer<XmlRestSerializer>();
+
+        Options          = new RestClientOptions();
+        _cookieContainer = new CookieContainer();
+        HttpClient       = httpClient;
+
+        if (Options.Timeout > 0)
+            HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
+        HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+    }
+
+    public RestClient(HttpMessageHandler handler) : this(new HttpClient(handler)) { }
+
+    public RestClient(RestClientOptions options) {
+        UseSerializer<SystemTextJsonSerializer>();
+        UseSerializer<XmlRestSerializer>();
+
+        Options          = options;
+        _cookieContainer = Options.CookieContainer ?? new CookieContainer();
+
+        var handler = new HttpClientHandler {
+            Credentials            = Options.Credentials,
+            UseDefaultCredentials  = Options.UseDefaultCredentials,
+            CookieContainer        = _cookieContainer,
+            AutomaticDecompression = Options.AutomaticDecompression,
+            PreAuthenticate        = Options.PreAuthenticate,
+            AllowAutoRedirect      = Options.FollowRedirects,
+            Proxy                  = Options.Proxy,
+        };
+
+        if (Options.RemoteCertificateValidationCallback != null)
+            handler.ServerCertificateCustomValidationCallback =
+                (request, cert, chain, errors) => Options.RemoteCertificateValidationCallback(request, cert, chain, errors);
+
+        if (Options.ClientCertificates != null)
+            handler.ClientCertificates.AddRange(Options.ClientCertificates);
+
+        if (Options.MaxRedirects.HasValue)
+            handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
+
+        HttpClient = new HttpClient(handler);
+
+        if (Options.Timeout > 0)
+            HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
+        HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// Sets the BaseUrl property for requests made by this client instance
+    /// </summary>
+    /// <param name="baseUrl"></param>
+    public RestClient(Uri baseUrl) : this(new RestClientOptions { BaseUrl = baseUrl }) { }
+
+    /// <inheritdoc />
+    /// <summary>
+    /// Sets the BaseUrl property for requests made by this client instance
+    /// </summary>
+    /// <param name="baseUrl"></param>
+    public RestClient(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
+
+    internal Dictionary<DataFormat, IRestSerializer> Serializers { get; } = new();
+
+    Func<string, string> Encode { get; set; } = s => s.UrlEncode();
+
+    Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
+
+    /// <summary>
+    /// Allows to use a custom way to encode URL parameters
+    /// </summary>
+    /// <param name="encoder">A delegate to encode URL parameters</param>
+    /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
+    /// <returns></returns>
+    public RestClient UseUrlEncoder(Func<string, string> encoder) => this.With(x => x.Encode = encoder);
+
+    /// <summary>
+    /// Allows to use a custom way to encode query parameters
+    /// </summary>
+    /// <param name="queryEncoder">A delegate to encode query parameters</param>
+    /// <example>client.UseUrlEncoder((s, encoding) => HttpUtility.UrlEncode(s, encoding));</example>
+    /// <returns></returns>
+    public RestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) => this.With(x => x.EncodeQuery = queryEncoder);
+
+    /// <summary>
+    /// Authenticator that will be used to populate request with necessary authentication data
+    /// </summary>
+    public IAuthenticator? Authenticator { get; set; }
+
+    public IReadOnlyCollection<Parameter> DefaultParameters {
+        get { lock (_defaultParameters) return _defaultParameters; }
+    }
+
+    /// <summary>
+    /// Add a parameter to use on every request made with this client instance
+    /// </summary>
+    /// <param name="p">Parameter to add</param>
+    /// <returns></returns>
+    public RestClient AddDefaultParameter(Parameter p) {
+        switch (p.Type) {
+            case ParameterType.RequestBody:
+                throw new NotSupportedException(
+                    "Cannot set request body from default headers. Use Request.AddBody() instead."
+                );
+            case ParameterType.Cookie: {
+                lock (_cookieContainer) {
+                    _cookieContainer.Add(new Cookie(p.Name, p.Value!.ToString()));
+                }
+                break;
+            }
+            default: {
+                lock (_defaultParameters) {
+                    _defaultParameters.Add(p);
+                }
+                break;
+            }
+        }
+
+        return this;
+    }
+
     [PublicAPI]
-    public partial class RestClient : IRestClient
-    {
-        static readonly Version Version = new AssemblyName(typeof(RestClient).Assembly.FullName).Version;
+    public RestResponse<T> Deserialize<T>(RestResponse response) => Deserialize<T>(response.Request!, response);
 
-        static readonly string DefaultUserAgent = $"RestSharp/{Version}";
+    public Uri BuildUri(RestRequest request) {
+        DoBuildUriValidations(request);
 
-        static readonly Regex StructuredSyntaxSuffixRegex = new Regex(@"\+\w+$");
+        var applied   = GetUrlSegmentParamsValues(request);
+        var mergedUri = MergeBaseUrlAndResource(applied.Uri, applied.Resource);
+        var finalUri  = ApplyQueryStringParamsValuesToUri(mergedUri, request);
 
-        static readonly Regex StructuredSyntaxSuffixWildcardRegex = new Regex(@"^\*\+\w+$");
+        return new Uri(finalUri!);
+    }
 
-        static readonly ParameterType[] MultiParameterTypes =
-            {ParameterType.QueryString, ParameterType.GetOrPost};
+    internal string? BuildUriWithoutQueryParameters(RestRequest request) {
+        DoBuildUriValidations(request);
 
-        /// <summary>
-        /// Default constructor that registers default content handlers
-        /// </summary>
-        public RestClient()
-        {
-            Encoding               = Encoding.UTF8;
-            ContentHandlers        = new Dictionary<string, Func<IDeserializer>>();
-            Serializers            = new Dictionary<DataFormat, IRestSerializer>();
-            AcceptTypes            = new List<string>();
-            DefaultParameters      = new List<Parameter>();
-            AutomaticDecompression = true;
+        var applied = GetUrlSegmentParamsValues(request);
 
-            // register default serializers
-            UseSerializer<JsonSerializer>();
-            UseSerializer<XmlRestSerializer>();
+        return MergeBaseUrlAndResource(applied.Uri, applied.Resource);
+    }
 
-            FollowRedirects = true;
+    public string[] AcceptedContentTypes { get; private set; } = null!;
+
+    internal void AssignAcceptedContentTypes()
+        => AcceptedContentTypes = Serializers.SelectMany(x => x.Value.SupportedContentTypes).Distinct().ToArray();
+
+    /// <summary>
+    /// Replace the default serializer with a custom one
+    /// </summary>
+    /// <param name="serializerFactory">Function that returns the serializer instance</param>
+    public RestClient UseSerializer(Func<IRestSerializer> serializerFactory) {
+        var instance = serializerFactory();
+        Serializers[instance.DataFormat] = instance;
+        AssignAcceptedContentTypes();
+        return this;
+    }
+
+    /// <summary>
+    /// Replace the default serializer with a custom one
+    /// </summary>
+    /// <typeparam name="T">The type that implements <see cref="IRestSerializer"/></typeparam>
+    /// <returns></returns>
+    public RestClient UseSerializer<T>() where T : class, IRestSerializer, new() => UseSerializer(() => new T());
+
+    void DoBuildUriValidations(RestRequest request) {
+        if (Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
+            throw new ArgumentOutOfRangeException(
+                nameof(request),
+                "Request resource doesn't contain a valid scheme for an empty client base URL"
+            );
+
+        var nullValuedParams = request.Parameters
+            .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
+            .Select(p => p.Name)
+            .ToArray();
+
+        if (nullValuedParams.Any()) {
+            var names = nullValuedParams.JoinToString(", ", name => $"'{name}'");
+
+            throw new ArgumentException(
+                $"Cannot build uri when url segment parameter(s) {names} value is null.",
+                nameof(request)
+            );
+        }
+    }
+
+    UrlSegmentParamsValues GetUrlSegmentParamsValues(RestRequest request) {
+        var assembled = Options.BaseUrl == null ? "" : request.Resource;
+        var baseUrl   = Options.BaseUrl ?? new Uri(request.Resource);
+
+        var hasResource = !assembled.IsEmpty();
+        var parameters  = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
+
+        lock (_defaultParameters) {
+            parameters.AddRange(_defaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
+        }
+        var builder = new UriBuilder(baseUrl);
+
+        foreach (var parameter in parameters) {
+            var paramPlaceHolder = $"{{{parameter.Name}}}";
+            var paramValue       = parameter.Encode ? Encode(parameter.Value!.ToString()) : parameter.Value!.ToString();
+
+            if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
+
+            builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
         }
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Sets the BaseUrl property for requests made by this client instance
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        public RestClient(Uri baseUrl) : this() => BaseUrl = baseUrl;
+        return new UrlSegmentParamsValues(builder.Uri, assembled);
+    }
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Sets the BaseUrl property for requests made by this client instance
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        public RestClient(string baseUrl) : this()
-        {
-            if (baseUrl.IsEmpty()) throw new ArgumentNullException(nameof(baseUrl));
+    static string? MergeBaseUrlAndResource(Uri? baseUrl, string? resource) {
+        var assembled = resource;
 
-            BaseUrl = new Uri(baseUrl);
-        }
+        if (!IsNullOrEmpty(assembled) && assembled!.StartsWith("/")) assembled = assembled.Substring(1);
 
-        IDictionary<string, Func<IDeserializer>> ContentHandlers { get; }
-        internal IDictionary<DataFormat, IRestSerializer> Serializers { get; }
-        Func<string, string> Encode { get; set; } = s => s.UrlEncode();
-        Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
-        IList<string> AcceptTypes { get; }
-        Action<HttpWebRequest>? WebRequestConfigurator { get; set; }
+        if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled;
 
-        /// <inheritdoc />
-        [Obsolete("Use the overload that accepts the delegate factory")]
-        public IRestClient UseSerializer(IRestSerializer serializer) => this.With(x => x.UseSerializer(() => serializer));
+        var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || IsNullOrEmpty(assembled) ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
 
-        /// <inheritdoc />
-        public IRestClient UseUrlEncoder(Func<string, string> encoder) => this.With(x => x.Encode = encoder);
+        return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
+    }
 
-        /// <inheritdoc />
-        public IRestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) => this.With(x => x.EncodeQuery = queryEncoder);
+    string? ApplyQueryStringParamsValuesToUri(string? mergedUri, RestRequest request) {
+        var parameters = GetQueryStringParameters(request).ToList();
+        parameters.AddRange(GetDefaultQueryStringParameters(request));
 
-        /// <inheritdoc />
-        public bool AutomaticDecompression { get; set; }
+        if (!parameters.Any()) return mergedUri;
 
-        /// <inheritdoc />
-        public int? MaxRedirects { get; set; }
+        var separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
 
-        /// <inheritdoc />
-        public X509CertificateCollection? ClientCertificates { get; set; }
+        return Concat(mergedUri, separator, EncodeParameters(parameters, Options.Encoding));
+    }
 
-        /// <inheritdoc />
-        public IWebProxy? Proxy { get; set; }
-
-        /// <inheritdoc />
-        public RequestCachePolicy? CachePolicy { get; set; }
-
-        /// <inheritdoc />
-        public bool Pipelined { get; set; }
-
-        /// <inheritdoc />
-        public bool FollowRedirects { get; set; }
-
-        /// <inheritdoc />
-        public CookieContainer? CookieContainer { get; set; }
-
-        /// <inheritdoc />
-        public string UserAgent { get; set; } = DefaultUserAgent;
-
-        /// <inheritdoc />
-        public int Timeout { get; set; }
-
-        /// <inheritdoc />
-        public int ReadWriteTimeout { get; set; }
-
-        /// <inheritdoc />
-        public bool UseSynchronizationContext { get; set; }
-
-        /// <inheritdoc />
-        public IAuthenticator? Authenticator { get; set; }
-
-        /// <inheritdoc />
-        public virtual Uri? BaseUrl { get; set; }
-
-        /// <inheritdoc />
-        public Encoding Encoding { get; set; }
-
-        /// <inheritdoc />
-        public bool PreAuthenticate { get; set; }
-
-        /// <inheritdoc />
-        public bool ThrowOnDeserializationError { get; set; }
-
-        /// <inheritdoc />
-        public bool FailOnDeserializationError { get; set; } = true;
-
-        /// <inheritdoc />
-        public bool ThrowOnAnyError { get; set; }
-
-        /// <inheritdoc />
-        public bool UnsafeAuthenticatedConnectionSharing { get; set; }
-
-        /// <inheritdoc />
-        public string? ConnectionGroupName { get; set; }
-
-        /// <inheritdoc />
-        public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
-
-        /// <inheritdoc />
-        public IList<Parameter> DefaultParameters { get; }
-
-        /// <inheritdoc />>
-        public string? BaseHost { get; set; }
-
-        /// <inheritdoc />>
-        public bool AllowMultipleDefaultParametersWithSameName { get; set; }
-
-        /// <inheritdoc />>
-        public void AddHandler(string contentType, Func<IDeserializer> deserializerFactory)
-        {
-            ContentHandlers[contentType] = deserializerFactory;
-
-            if (contentType == "*" || IsWildcardStructuredSuffixSyntax(contentType)) return;
-
-            if (!AcceptTypes.Contains(contentType)) AcceptTypes.Add(contentType);
-
-            // add Accept header based on registered deserializers
-            var accepts = AcceptTypes.JoinToString(", ");
-
-            this.AddOrUpdateDefaultParameter(new Parameter("Accept", accepts, ParameterType.HttpHeader));
-        }
-
-        /// <inheritdoc />>
-        [Obsolete("Use the overload that accepts a factory delegate")]
-        public void AddHandler(string contentType, IDeserializer deserializer) => AddHandler(contentType, () => deserializer);
-
-        /// <inheritdoc />
-        public void RemoveHandler(string contentType)
-        {
-            ContentHandlers.Remove(contentType);
-            AcceptTypes.Remove(contentType);
-            this.RemoveDefaultParameter("Accept");
-        }
-
-        /// <inheritdoc />
-        public void ClearHandlers()
-        {
-            ContentHandlers.Clear();
-            AcceptTypes.Clear();
-            this.RemoveDefaultParameter("Accept");
-        }
-
-        /// <inheritdoc />
-        public IRestResponse<T> Deserialize<T>(IRestResponse response) => Deserialize<T>(response.Request, response);
-
-        /// <inheritdoc />
-        public void ConfigureWebRequest(Action<HttpWebRequest> configurator) => WebRequestConfigurator = configurator;
-
-        /// <inheritdoc />
-        public Uri BuildUri(IRestRequest request)
-        {
-            DoBuildUriValidations(request);
-
-            var applied = GetUrlSegmentParamsValues(request);
-
-            var mergedUri = MergeBaseUrlAndResource(applied.Uri, applied.Resource);
-
-            var finalUri = ApplyQueryStringParamsValuesToUri(mergedUri, request);
-
-            return new Uri(finalUri);
-        }
-
-        string? IRestClient.BuildUriWithoutQueryParameters(IRestRequest request)
-        {
-            DoBuildUriValidations(request);
-
-            var applied = GetUrlSegmentParamsValues(request);
-
-            return MergeBaseUrlAndResource(applied.Uri, applied.Resource);
-        }
-
-        /// <inheritdoc />
-        public IRestClient UseSerializer(Func<IRestSerializer> serializerFactory)
-        {
-            var instance = serializerFactory();
-            Serializers[instance.DataFormat] = instance;
-
-            AddHandler(serializerFactory, instance.SupportedContentTypes);
-
-            return this;
-        }
-
-        /// <inheritdoc />
-        public IRestClient UseSerializer<T>() where T : IRestSerializer, new() => UseSerializer(() => new T());
-
-        void AddHandler(Func<IDeserializer> deserializerFactory, params string[] contentTypes)
-        {
-            foreach (var contentType in contentTypes) AddHandler(contentType, deserializerFactory);
-        }
-
-        void DoBuildUriValidations(IRestRequest request)
-        {
-            if (BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
-                throw new ArgumentOutOfRangeException(
-                    nameof(request),
-                    "Request resource doesn't contain a valid scheme for an empty client base URL"
-                );
-
-            var nullValuedParams = request.Parameters
-                .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
-                .Select(p => p.Name)
-                .ToArray();
-
-            if (nullValuedParams.Any())
-            {
-                var names = nullValuedParams.JoinToString(", ", name => $"'{name}'");
-
-                throw new ArgumentException(
-                    $"Cannot build uri when url segment parameter(s) {names} value is null.",
-                    nameof(request)
-                );
-            }
-        }
-
-        UrlSegmentParamsValues GetUrlSegmentParamsValues(IRestRequest request)
-        {
-            var assembled = BaseUrl == null ? "" : request.Resource;
-            var baseUrl   = BaseUrl ?? new Uri(request.Resource);
-
-            var hasResource = !assembled.IsEmpty();
-            var parameters  = request.Parameters.Where(p => p.Type  == ParameterType.UrlSegment).ToList();
-            parameters.AddRange(DefaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
-            var builder = new UriBuilder(baseUrl);
-
-            foreach (var parameter in parameters)
-            {
-                var paramPlaceHolder = $"{{{parameter.Name}}}";
-                var paramValue       = parameter.Encode ? Encode(parameter.Value!.ToString()) : parameter.Value!.ToString();
-
-                if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
-
-                builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
-            }
-
-            return new UrlSegmentParamsValues(builder.Uri, assembled);
-        }
-
-        static string? MergeBaseUrlAndResource(Uri? baseUrl, string? resource)
-        {
-            var assembled = resource;
-
-            if (!IsNullOrEmpty(assembled) && assembled!.StartsWith("/")) assembled = assembled.Substring(1);
-
-            if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled;
-
-            var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || IsNullOrEmpty(assembled) ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
-
-            return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
-        }
-
-        string? ApplyQueryStringParamsValuesToUri(string? mergedUri, IRestRequest request)
-        {
-            var parameters = GetQueryStringParameters(request).ToList();
-            parameters.AddRange(GetDefaultQueryStringParameters(request));
-
-            if (!parameters.Any()) return mergedUri;
-
-            var separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
-
-            return Concat(mergedUri, separator, EncodeParameters(parameters, Encoding));
-        }
-
-        IEnumerable<Parameter> GetDefaultQueryStringParameters(IRestRequest request)
-            => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
-                ? DefaultParameters
-                    .Where(
-                        p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                    )
-                : DefaultParameters
-                    .Where(
-                        p => p.Type is ParameterType.QueryString
-                    );
-
-        static IEnumerable<Parameter> GetQueryStringParameters(IRestRequest request)
-            => request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH
-                ? request.Parameters
-                    .Where(
-                        p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                    )
-                : request.Parameters
-                    .Where(
-                        p => p.Type is ParameterType.QueryString 
-                    );
-
-        Func<IDeserializer>? GetHandler(string contentType)
-        {
-            if (contentType.IsEmpty() && ContentHandlers.ContainsKey("*")) return ContentHandlers["*"];
-
-            if (contentType.IsEmpty()) return ContentHandlers.First().Value;
-
-            var semicolonIndex = contentType.IndexOf(';');
-
-            if (semicolonIndex > -1) contentType = contentType.Substring(0, semicolonIndex);
-
-            if (ContentHandlers.TryGetValue(contentType, out var contentHandler)) return contentHandler;
-
-            // Avoid unnecessary use of regular expressions in checking for structured syntax suffix by looking for a '+' first
-            if (contentType.IndexOf('+') >= 0)
-            {
-                // https://tools.ietf.org/html/rfc6839#page-4
-                var structuredSyntaxSuffixMatch = StructuredSyntaxSuffixRegex.Match(contentType);
-
-                if (structuredSyntaxSuffixMatch.Success)
-                {
-                    var structuredSyntaxSuffixWildcard = "*" + structuredSyntaxSuffixMatch.Value;
-                    if (ContentHandlers.TryGetValue(structuredSyntaxSuffixWildcard, out var contentHandlerWildcard)) return contentHandlerWildcard;
-                }
-            }
-
-            return ContentHandlers.ContainsKey("*") ? ContentHandlers["*"] : null;
-        }
-
-        void AuthenticateIfNeeded(IRestRequest request) => Authenticator?.Authenticate(this, request);
-
-        string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
-            => Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
-
-        string EncodeParameter(Parameter parameter, Encoding encoding)
-        {
-            return
-                !parameter.Encode
-                    ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
-                    : $"{EncodeQuery(parameter.Name!, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
-
-            static string StringOrEmpty(object? value) => value == null ? "" : value.ToString();
-        }
-
-        IHttp ConfigureHttp(IRestRequest request)
-        {
-            var http = new Http
-            {
-                Encoding                = Encoding,
-                AlwaysMultipartFormData = request.AlwaysMultipartFormData,
-                UseDefaultCredentials   = request.UseDefaultCredentials,
-                ResponseWriter          = request.ResponseWriter,
-                AdvancedResponseWriter  = request.AdvancedResponseWriter,
-                CookieContainer         = CookieContainer,
-                AutomaticDecompression  = AutomaticDecompression,
-                WebRequestConfigurator  = WebRequestConfigurator,
-                Encode                  = Encode,
-                ThrowOnAnyError         = ThrowOnAnyError,
-            };
-
-            var requestParameters = new List<Parameter>();
-            requestParameters.AddRange(request.Parameters);
-
-            // move RestClient.DefaultParameters into Request.Parameters
-            foreach (var defaultParameter in DefaultParameters)
-            {
-                var parameterExists =
-                    request.Parameters.Any(
-                        p =>
-                            p.Name != null
-                         && p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase)
-                         && p.Type == defaultParameter.Type
-                    );
-
-                if (AllowMultipleDefaultParametersWithSameName)
-                {
-                    var isMultiParameter = MultiParameterTypes.Any(pt => pt == defaultParameter.Type);
-                    parameterExists = !isMultiParameter && parameterExists;
-                }
-
-                if (!parameterExists) requestParameters.Add(defaultParameter);
-            }
-
-            // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (requestParameters.All(
-                p => !p.Name!.EqualsIgnoreCase("accept")
-            ))
-            {
-                var accepts = Join(", ", AcceptTypes);
-
-                requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
-            }
-
-            http.Url                                  = BuildUri(request);
-            http.Host                                 = BaseHost;
-            http.PreAuthenticate                      = PreAuthenticate;
-            http.UnsafeAuthenticatedConnectionSharing = UnsafeAuthenticatedConnectionSharing;
-            http.UserAgent                            = UserAgent ?? http.UserAgent;
-
-            var timeout = request.Timeout != 0
-                ? request.Timeout
-                : Timeout;
-
-            if (timeout != 0) http.Timeout = timeout;
-
-            var readWriteTimeout = request.ReadWriteTimeout != 0
-                ? request.ReadWriteTimeout
-                : ReadWriteTimeout;
-
-            if (readWriteTimeout != 0) http.ReadWriteTimeout = readWriteTimeout;
-
-            http.FollowRedirects = FollowRedirects;
-
-            if (ClientCertificates != null) http.ClientCertificates = ClientCertificates;
-
-            http.MaxRedirects = MaxRedirects;
-            http.CachePolicy  = CachePolicy;
-            http.Pipelined    = Pipelined;
-
-            if (request.Credentials != null) http.Credentials = request.Credentials;
-
-            if (!IsNullOrEmpty(ConnectionGroupName)) http.ConnectionGroupName = ConnectionGroupName!;
-
-            http.Headers = requestParameters
-                .Where(p => p.Type == ParameterType.HttpHeader)
-                .Select(p => new HttpHeader(p.Name!, p.Value))
-                .ToList();
-
-            http.Cookies = requestParameters
-                .Where(p => p.Type == ParameterType.Cookie)
-                .Select(p => new HttpCookie {Name = p.Name!, Value = p.Value?.ToString() ?? ""})
-                .ToList();
-
-            http.Parameters = requestParameters
-                .Where(p => p.Type == ParameterType.GetOrPost)
-                .Select(p => new HttpParameter(p.Name!, p.Value))
-                .ToList();
-
-            http.Files = request.Files.Select(
-                    file => new HttpFile
-                    {
-                        Name          = file.Name,
-                        ContentType   = file.ContentType,
-                        Writer        = file.Writer,
-                        FileName      = file.FileName,
-                        ContentLength = file.ContentLength
-                    }
+    IEnumerable<Parameter> GetDefaultQueryStringParameters(RestRequest request)
+        => request.Method != Method.Post && request.Method != Method.Put && request.Method != Method.Patch
+            ? DefaultParameters
+                .Where(
+                    p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
                 )
-                .ToList();
+            : DefaultParameters
+                .Where(
+                    p => p.Type is ParameterType.QueryString
+                );
 
-            if (request.Body != null) http.AddBody(request.Body);
+    static IEnumerable<Parameter> GetQueryStringParameters(RestRequest request)
+        => request.Method != Method.Post && request.Method != Method.Put && request.Method != Method.Patch
+            ? request.Parameters
+                .Where(
+                    p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
+                )
+            : request.Parameters
+                .Where(
+                    p => p.Type is ParameterType.QueryString
+                );
 
-            http.AllowedDecompressionMethods = request.AllowedDecompressionMethods;
+    string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
+        => Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
 
-            var proxy = Proxy ?? WebRequest.DefaultWebProxy;
+    string EncodeParameter(Parameter parameter, Encoding encoding) {
+        return
+            !parameter.Encode
+                ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
+                : $"{EncodeQuery(parameter.Name!, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
 
-            try
-            {
-                proxy ??= WebRequest.GetSystemWebProxy();
-            }
-            catch (PlatformNotSupportedException)
-            {
-                // Ignore platform unsupported proxy detection
-            }
+        static string StringOrEmpty(object? value) => value == null ? "" : value.ToString();
+    }
 
-            http.Proxy = proxy;
+    internal RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) {
+        var response = RestResponse<T>.FromResponse(raw);
 
-            http.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
+        try {
+            request.OnBeforeDeserialization?.Invoke(raw);
 
-            return http;
-        }
+            // Only attempt to deserialize if the request has not errored due
+            // to a transport or framework exception.  HTTP errors should attempt to
+            // be deserialized
+            if (response.ErrorException == null) {
+                var handler = GetContentDeserializer(raw, request.RequestFormat);
 
-        IRestResponse<T> Deserialize<T>(IRestRequest request, IRestResponse raw)
-        {
-            IRestResponse<T> response = new RestResponse<T>();
-
-            try
-            {
-                request.OnBeforeDeserialization?.Invoke(raw);
-
-                response = raw.ToAsyncResponse<T>();
-
-                // Only attempt to deserialize if the request has not errored due
-                // to a transport or framework exception.  HTTP errors should attempt to
-                // be deserialized
-                if (response.ErrorException == null)
-                {
-                    var func    = GetHandler(raw.ContentType);
-                    var handler = func?.Invoke();
-
-                    // Only continue if there is a handler defined else there is no way to deserialize the data.
-                    // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
-                    if (handler is IXmlDeserializer xml)
-                    {
-                        if (request.DateFormat.IsNotEmpty()) xml.DateFormat = request.DateFormat;
-
-                        if (request.XmlNamespace.IsNotEmpty()) xml.Namespace = request.XmlNamespace;
-                    }
-
-                    if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty()) deserializer.RootElement = request.RootElement;
-
-                    if (handler != null) response.Data = handler.Deserialize<T>(raw);
+                // Only continue if there is a handler defined else there is no way to deserialize the data.
+                // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
+                if (handler is IXmlDeserializer xml && request is RestXmlRequest xmlRequest) {
+                    if (xmlRequest.DateFormat.IsNotEmpty()) xml.DateFormat  = xmlRequest.DateFormat!;
+                    if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
                 }
+
+                if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty()) deserializer.RootElement = request.RootElement;
+
+                if (handler != null) response.Data = handler.Deserialize<T>(raw);
             }
-            catch (Exception ex)
-            {
-                if (ThrowOnAnyError) throw;
+        }
+        catch (Exception ex) {
+            if (Options.ThrowOnAnyError) throw;
 
-                if (FailOnDeserializationError || ThrowOnDeserializationError) response.ResponseStatus = ResponseStatus.Error;
+            if (Options.FailOnDeserializationError || Options.ThrowOnDeserializationError) response.ResponseStatus = ResponseStatus.Error;
 
-                response.ErrorMessage   = ex.Message;
-                response.ErrorException = ex;
+            response.ErrorMessage   = ex.Message;
+            response.ErrorException = ex;
 
-                if (ThrowOnDeserializationError) throw new DeserializationException(response, ex);
-            }
-
-            response.Request = request;
-
-            return response;
+            if (Options.ThrowOnDeserializationError) throw new DeserializationException(response, ex);
         }
 
-        static bool IsWildcardStructuredSuffixSyntax(string contentType)
-        {
-            var i = 0;
+        response.Request = request;
 
-            // Avoid most unnecessary uses of RegEx by checking for necessary characters explicitly first
-            if (contentType[i++] != '*') return false;
+        return response;
+    }
 
-            if (contentType[i++] != '+') return false;
+    IDeserializer? GetContentDeserializer(RestResponseBase response, DataFormat requestFormat) {
+        var contentType = response.ContentType != null && AcceptedContentTypes.Contains(response.ContentType)
+            ? response.ContentType
+            : DetectContentType();
+        if (contentType.IsEmpty()) return null;
 
-            // If no more characters to check, exit now
-            if (i == contentType.Length) return false;
+        var serializer = Serializers.FirstOrDefault(x => x.Value.SupportedContentTypes.Contains(contentType));
+        return serializer.Value ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
 
-            // At this point it is probably using a wildcard structured syntax suffix, but let's confirm.
-            return StructuredSyntaxSuffixWildcardRegex.IsMatch(contentType);
+        string? DetectContentType()
+            => response.Content!.StartsWith("<") ? ContentType.Xml : response.Content.StartsWith("{") ? ContentType.Json : null;
+    }
+
+    class UrlSegmentParamsValues {
+        public UrlSegmentParamsValues(Uri builderUri, string assembled) {
+            Uri      = builderUri;
+            Resource = assembled;
         }
 
-        class UrlSegmentParamsValues
-        {
-            public UrlSegmentParamsValues(Uri builderUri, string assembled)
-            {
-                Uri      = builderUri;
-                Resource = assembled;
-            }
-
-            public Uri Uri { get; }
-            public string Resource { get; }
-        }
+        public Uri    Uri      { get; }
+        public string Resource { get; }
     }
 }

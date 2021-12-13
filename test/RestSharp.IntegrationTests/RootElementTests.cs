@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using RestSharp.IntegrationTests.SampleDeserializers;
-using RestSharp.Serialization;
+using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -8,24 +8,24 @@ namespace RestSharp.IntegrationTests;
 
 public class RootElementTests {
     [Fact]
-    public void Copy_RootElement_From_Request_To_IWithRootElement_Deserializer() {
+    public async Task Copy_RootElement_From_Request_To_IWithRootElement_Deserializer() {
         using var server = HttpServerFixture.StartServer("success", Handle);
 
         var client = new RestClient(server.Url);
 
-        var request = new RestRequest("success") {
-            RootElement = "Success"
-        };
+        var request = new RestRequest("success") { RootElement = "Success" };
 
-        var deserializer = new CustomDeserializer();
-        client.AddHandler(ContentType.Xml, () => deserializer);
-        client.Execute<Response>(request);
+        var deserializer   = new CustomDeserializer();
+        var restSerializer = new XmlRestSerializer(new XmlSerializer(), deserializer);
+        client.UseSerializer(() => restSerializer);
+        
+        await client.ExecuteAsync<TestResponse>(request);
 
         Assert.Equal(request.RootElement, deserializer.RootElement);
 
         static void Handle(HttpListenerRequest req, HttpListenerResponse response) {
             response.StatusCode = 200;
-            response.Headers.Add("Content-Type", ContentType.Xml);
+            response.Headers.Add(KnownHeaders.ContentType, Serializers.ContentType.Xml);
 
             response.OutputStream.WriteStringUtf8(
                 @"<?xml version=""1.0"" encoding=""utf-8"" ?>

@@ -14,33 +14,28 @@
 
 using System.Collections.Generic;
 
-namespace RestSharp.Authenticators.OAuth
-{
-    class WebPair
-    {
-        public WebPair(string name, string value, bool encode = false)
-        {
-            Name     = name;
-            Value    = value;
-            WebValue = encode ? OAuthTools.UrlEncodeRelaxed(value ?? "") : value;
-            Encode   = encode;
-        }
+namespace RestSharp.Authenticators.OAuth; 
 
-        public string Name { get; }
-        public string Value { get; }
-        public string WebValue { get; }
-        public bool Encode { get; }
+class WebPair {
+    public WebPair(string name, string value, bool encode = false) {
+        Name     = name;
+        Value    = value;
+        WebValue = encode ? OAuthTools.UrlEncodeRelaxed(value) : value;
+        Encode   = encode;
+    }
 
-        internal static WebPairComparer Comparer { get; } = new();
+    public string Name     { get; }
+    public string Value    { get; }
+    public string WebValue { get; }
+    public bool   Encode   { get; }
 
-        internal class WebPairComparer : IComparer<WebPair>
-        {
-            public int Compare(WebPair x, WebPair y)
-            {
-                var compareName = string.CompareOrdinal(x.Name, y.Name);
+    internal static WebPairComparer Comparer { get; } = new();
 
-                return compareName != 0 ? compareName : string.CompareOrdinal(x.Value, y.Value);
-            }
+    internal class WebPairComparer : IComparer<WebPair> {
+        public int Compare(WebPair x, WebPair y) {
+            var compareName = string.CompareOrdinal(x.Name, y.Name);
+
+            return compareName != 0 ? compareName : string.CompareOrdinal(x.Value, y.Value);
         }
     }
 }

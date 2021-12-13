@@ -1,7 +1,7 @@
 using System.Net;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.IntegrationTests; 
+namespace RestSharp.IntegrationTests;
 
 public class DefaultParameterTests : IDisposable {
     readonly SimpleServer _server;
@@ -11,11 +11,11 @@ public class DefaultParameterTests : IDisposable {
     public void Dispose() => _server.Dispose();
 
     [Fact]
-    public void Should_add_default_and_request_query_get_parameters() {
+    public async Task Should_add_default_and_request_query_get_parameters() {
         var client  = new RestClient(_server.Url).AddDefaultParameter("foo", "bar", ParameterType.QueryString);
         var request = new RestRequest().AddParameter("foo1", "bar1", ParameterType.QueryString);
 
-        client.Get(request);
+        await client.GetAsync(request);
 
         var query = RequestHandler.Url.Query;
         query.Should().Contain("foo=bar");
@@ -23,21 +23,21 @@ public class DefaultParameterTests : IDisposable {
     }
 
     [Fact]
-    public void Should_add_default_and_request_url_get_parameters() {
-        var client  = new RestClient(_server.Url + "{foo}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+    public async Task Should_add_default_and_request_url_get_parameters() {
+        var client  = new RestClient($"{_server.Url}{{foo}}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
         var request = new RestRequest("{foo1}").AddParameter("foo1", "bar1", ParameterType.UrlSegment);
 
-        client.Get(request);
+        await client.GetAsync(request);
 
         RequestHandler.Url.Segments.Should().BeEquivalentTo("/", "bar/", "bar1");
     }
 
     [Fact]
-    public void Should_not_throw_exception_when_name_is_null() {
-        var client  = new RestClient(_server.Url + "{foo}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+    public async Task Should_not_throw_exception_when_name_is_null() {
+        var client  = new RestClient($"{_server.Url}{{foo}}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
         var request = new RestRequest("{foo1}").AddParameter(null, "value", ParameterType.RequestBody);
 
-        client.Execute(request);
+        await client.ExecuteAsync(request);
     }
 
     static class RequestHandler {

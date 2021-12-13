@@ -4,19 +4,19 @@ public class RestClientTests {
     const string BaseUrl = "http://localhost:8888/";
 
     [Theory]
-    [InlineData(Method.GET, Method.POST)]
-    [InlineData(Method.POST, Method.GET)]
-    [InlineData(Method.DELETE, Method.GET)]
-    [InlineData(Method.HEAD, Method.POST)]
-    [InlineData(Method.PUT, Method.PATCH)]
-    [InlineData(Method.PATCH, Method.PUT)]
-    [InlineData(Method.POST, Method.PUT)]
-    [InlineData(Method.GET, Method.DELETE)]
-    public void Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
+    [InlineData(Method.Get, Method.Post)]
+    [InlineData(Method.Post, Method.Get)]
+    [InlineData(Method.Delete, Method.Get)]
+    [InlineData(Method.Head, Method.Post)]
+    [InlineData(Method.Put, Method.Patch)]
+    [InlineData(Method.Patch, Method.Put)]
+    [InlineData(Method.Post, Method.Put)]
+    [InlineData(Method.Get, Method.Delete)]
+    public async Task Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
         var req    = new RestRequest(reqMethod);
         var client = new RestClient(BaseUrl);
 
-        client.Execute(req, overrideMethod);
+        await client.ExecuteAsync(req, overrideMethod);
 
         req.Method.Should().Be(overrideMethod);
     }
@@ -24,10 +24,9 @@ public class RestClientTests {
     [Fact]
     public void ConfigureHttp_will_set_proxy_to_null_with_no_exceptions_When_no_proxy_can_be_found() {
         var req    = new RestRequest();
-        var client = new RestClient(BaseUrl) { Proxy = null };
+        var client = new RestClient(new RestClientOptions(BaseUrl) { Proxy = null });
 
-        client.Execute(req);
-        client.Proxy.Should().BeNull();
+        client.ExecuteAsync(req);
     }
 
     [Fact]

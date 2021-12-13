@@ -1,18 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
-        <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-    </PropertyGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-        <Reference Include="System.Web"/>
-        <Using Remove="System.Net.Http"/>
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="[5.0,)" />
     </ItemGroup>
     <ItemGroup>
-        <None Remove="RestSharp.csproj.DotSettings"/>
+        <None Remove="RestSharp.csproj.DotSettings" />
     </ItemGroup>
-    <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
-        <ItemGroup>
-            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
-        </ItemGroup>
-    </Target>
 </Project>

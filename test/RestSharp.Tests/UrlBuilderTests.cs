@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace RestSharp.Tests; 
+namespace RestSharp.Tests;
 
 /// <summary>
 /// Note: These tests do not handle QueryString building, which is handled in Http, not RestClient
@@ -97,7 +97,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_multiple_instances_of_same_key() {
-        var request = new RestRequest("v1/people/~/network/updates", Method.GET);
+        var request = new RestRequest("v1/people/~/network/updates", Method.Get);
 
         request.AddParameter("type", "STAT");
         request.AddParameter("type", "PICT");
@@ -115,7 +115,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_resource_containing_null_token() {
-        var request = new RestRequest("/resource/{foo}", Method.GET);
+        var request = new RestRequest("/resource/{foo}", Method.Get);
 
         request.AddUrlSegment("foo", null);
 
@@ -214,14 +214,12 @@ public class UrlBuilderTests {
         var expected = new Uri("http://example.com/resource/?foo=bar");
         var output   = client.BuildUri(request);
 
-        client.Execute(request);
-
         Assert.Equal(expected, output);
     }
 
     [Fact]
     public void POST_with_leading_slash() {
-        var request  = new RestRequest("/resource", Method.POST);
+        var request  = new RestRequest("/resource", Method.Post);
         var client   = new RestClient(new Uri("http://example.com"));
         var expected = new Uri("http://example.com/resource");
         var output   = client.BuildUri(request);
@@ -231,7 +229,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_leading_slash_and_baseurl_trailing_slash() {
-        var request  = new RestRequest("/resource", Method.POST);
+        var request  = new RestRequest("/resource", Method.Post);
         var client   = new RestClient(new Uri("http://example.com"));
         var expected = new Uri("http://example.com/resource");
         var output   = client.BuildUri(request);
@@ -241,7 +239,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_querystring_containing_tokens() {
-        var request = new RestRequest("resource", Method.POST);
+        var request = new RestRequest("resource", Method.Post);
 
         request.AddParameter("foo", "bar", ParameterType.QueryString);
 
@@ -254,7 +252,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_resource_containing_slashes() {
-        var request  = new RestRequest("resource/foo", Method.POST);
+        var request  = new RestRequest("resource/foo", Method.Post);
         var client   = new RestClient(new Uri("http://example.com"));
         var expected = new Uri("http://example.com/resource/foo");
         var output   = client.BuildUri(request);
@@ -264,7 +262,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_resource_containing_tokens() {
-        var request = new RestRequest("resource/{foo}", Method.POST);
+        var request = new RestRequest("resource/{foo}", Method.Post);
 
         request.AddUrlSegment("foo", "bar");
 
@@ -296,13 +294,12 @@ public class UrlBuilderTests {
         // utf-8 and iso-8859-1
         request.AddOrUpdateParameter("town", "Hillerød");
 
-        var client = new RestClient("http://example.com/resource");
-
-        var expectedDefaultEncoding  = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
-        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%f8d");
+        var client                  = new RestClient(new RestClientOptions("http://example.com/resource"));
+        var expectedDefaultEncoding = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
         Assert.Equal(expectedDefaultEncoding, client.BuildUri(request));
-        // now changing encoding
-        client.Encoding = Encoding.GetEncoding("ISO-8859-1");
+
+        client = new RestClient(new RestClientOptions("http://example.com/resource") { Encoding = Encoding.GetEncoding("ISO-8859-1") });
+        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%f8d");
         Assert.Equal(expectedIso89591Encoding, client.BuildUri(request));
     }
 
@@ -349,7 +346,7 @@ public class UrlBuilderTests {
         const string requestUrl = "reportserver?/Prod/Report";
 
         var client    = new RestClient(baseUrl);
-        var req       = new RestRequest(requestUrl, Method.POST);
+        var req       = new RestRequest(requestUrl, Method.Post);
         var resultUrl = client.BuildUri(req).ToString();
 
         resultUrl.Should().Be($"{baseUrl}/{requestUrl}");

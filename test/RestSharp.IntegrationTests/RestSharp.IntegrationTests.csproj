@@ -1,22 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>net452;net6.0</TargetFrameworks>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
-        <WarningLevel>0</WarningLevel>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
-        <DefineConstants>NETCORE</DefineConstants>
-    </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Using Remove="System.Net.Http" />
-    </ItemGroup>
-    <ItemGroup>
         <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest" />
         <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0" />
+        <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
     </ItemGroup>
 </Project>
