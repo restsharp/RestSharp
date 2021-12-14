@@ -1,10 +1,8 @@
 ﻿using System.Globalization;
 using System.Xml.Linq;
-using RestSharp.Serializers.Xml;
-using RestSharp.Tests.SampleClasses;
-using Event = RestSharp.Tests.SampleClasses.Lastfm.Event;
+using RestSharp.Serializers.Xml.Tests.SampleClasses;
 
-namespace RestSharp.Tests; 
+namespace RestSharp.Serializers.Xml.Tests; 
 
 public class XmlAttributeDeserializerTests {
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";

@@ -1,24 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
+        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
     </ItemGroup>
-
     <ItemGroup>
-      <None Update="SampleData\boolean_from_number.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\boolean_from_string.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\deserialize_as_list.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\directlists.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\eventful.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\Goodreads.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\GoodreadsFormatError.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\GoogleWeather.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\header_and_rows.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\InlineListSample.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\Lastfm.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\ListWithAttributes.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\NestedListSample.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\xmllists.xml" CopyToOutputDirectory="PreserveNewest"/>
-      <None Update="SampleData\restsharp.nuspec" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\boolean_from_number.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\boolean_from_string.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\deserialize_as_list.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\directlists.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\eventful.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\Goodreads.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\GoodreadsFormatError.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\GoogleWeather.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\header_and_rows.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\InlineListSample.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\Lastfm.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\ListWithAttributes.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\NestedListSample.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\xmllists.xml" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="SampleData\restsharp.nuspec" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>

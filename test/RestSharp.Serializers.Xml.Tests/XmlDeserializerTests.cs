@@ -1,11 +1,9 @@
 ﻿using System.Globalization;
 using System.Xml.Linq;
-using RestSharp.Serializers.Xml;
-using RestSharp.Tests.SampleClasses;
-using RestSharp.Tests.SampleClasses.DeserializeAsTest;
-using Event = RestSharp.Tests.SampleClasses.Lastfm.Event;
+using RestSharp.Serializers.Xml.Tests.SampleClasses;
+using RestSharp.Serializers.Xml.Tests.SampleClasses.DeserializeAsTest;
 
-namespace RestSharp.Tests;
+namespace RestSharp.Serializers.Xml.Tests;
 
 public class XmlDeserializerTests {
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
@@ -312,14 +310,14 @@ public class XmlDeserializerTests {
     static string CreateXmlWithAttributesAndNullValues() {
         var doc       = new XDocument();
         var root      = new XElement("NullableValues");
-        var idElement = new XElement("Id", null);
+        var idElement = new XElement("Id", null!);
 
         idElement.SetAttributeValue("SomeAttribute", "SomeAttribute_Value");
 
         root.Add(
             idElement,
-            new XElement("StartDate", null),
-            new XElement("UniqueId", null)
+            new XElement("StartDate", null!),
+            new XElement("UniqueId", null!)
         );
 
         doc.Add(root);

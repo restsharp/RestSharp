@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses.Lastfm; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public class Event : LastfmBase {
     public string id { get; set; }

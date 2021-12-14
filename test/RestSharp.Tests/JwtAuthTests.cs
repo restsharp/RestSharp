@@ -71,7 +71,7 @@ public class JwtAuthTests {
 
         var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
 
-        Assert.Equal(1, paramList.Count);
+        paramList.Should().HaveCount(1);
 
         var authParam = paramList[0];
 

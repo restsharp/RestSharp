@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
         <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
@@ -12,6 +16,6 @@
         <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
     </ItemGroup>
     <ItemGroup>
-        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>

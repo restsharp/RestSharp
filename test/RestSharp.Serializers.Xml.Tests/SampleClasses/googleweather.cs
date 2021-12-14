@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public class xml_api_reply {
     public string version { get; set; }

@@ -18,7 +18,7 @@ public class XmlAttributeDeserializer : XmlDeserializer {
 
         if (!isAttribute) return base.GetValueFromXml(root, name, prop, useExactName);
 
-        var attributeVal = GetAttributeByName(root!, name, useExactName);
+        var attributeVal = GetAttributeByName(root!, name!, useExactName);
 
         return attributeVal?.Value ?? base.GetValueFromXml(root, name, prop, useExactName);
     }

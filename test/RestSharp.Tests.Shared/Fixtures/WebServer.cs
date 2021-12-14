@@ -42,7 +42,15 @@ public class WebServer {
         Task<HttpListenerContext> GetContextAsync()
             => taskFactory.FromAsync(
                 (callback, state) => ((HttpListener)state!).BeginGetContext(callback, state),
-                iar => ((HttpListener)iar.AsyncState!).EndGetContext(iar),
+                iar => {
+                    try {
+                        return ((HttpListener)iar.AsyncState!).EndGetContext(iar);
+                    }
+                    catch (HttpListenerException e) {
+                        // it's ok
+                        return null;
+                    }
+                },
                 _listener
             );
     }

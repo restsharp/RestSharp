@@ -1,4 +1,5 @@
-﻿namespace RestSharp.Serializers;
+﻿// ReSharper disable once CheckNamespace
+namespace RestSharp.Serializers;
 
 /// <summary>
 /// Allows control how class and property names and values are deserialized by XmlAttributeDeserializer

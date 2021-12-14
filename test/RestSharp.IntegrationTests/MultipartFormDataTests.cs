@@ -79,7 +79,7 @@ public class MultipartFormDataTests : IDisposable {
 
         AddParameters(request);
 
-        string? boundary = null;
+        string boundary = null;
         request.OnBeforeRequest += http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
@@ -101,7 +101,7 @@ public class MultipartFormDataTests : IDisposable {
 
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-        string? boundary = null;
+        string boundary = null;
         request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
@@ -127,7 +127,7 @@ public class MultipartFormDataTests : IDisposable {
         request.AddFile("fileName", path);
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-        string? boundary = null;
+        string boundary = null;
         request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
@@ -150,7 +150,7 @@ public class MultipartFormDataTests : IDisposable {
 
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
-        string? boundary = null;
+        string boundary = null;
         request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 
         var response = await _client.ExecuteAsync(request);
@@ -166,7 +166,7 @@ public class MultipartFormDataTests : IDisposable {
 
         AddParameters(request);
 
-        string? boundary = null;
+        string boundary = null;
 
         request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
 

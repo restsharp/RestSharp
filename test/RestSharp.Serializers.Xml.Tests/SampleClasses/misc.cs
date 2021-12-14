@@ -1,6 +1,4 @@
-﻿using RestSharp.Serializers;
-
-namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public class PersonForXml {
     public string Name { get; set; }

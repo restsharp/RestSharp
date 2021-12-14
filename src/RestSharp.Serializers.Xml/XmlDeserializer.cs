@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
@@ -23,7 +23,7 @@ public class XmlDeserializer : IXmlDeserializer {
         if (string.IsNullOrEmpty(response.Content))
             return default;
 
-        var doc  = XDocument.Parse(response.Content!);
+        var doc  = XDocument.Parse(response.Content);
         var root = doc.Root;
 
         if (RootElement != null && doc.Root != null)
@@ -87,16 +87,13 @@ public class XmlDeserializer : IXmlDeserializer {
             if (attributes.Any()) {
                 var attribute = (DeserializeAsAttribute)attributes.First();
 
-                name                     = attribute.Name!.AsNamespaced(Namespace);
+                name                     = attribute.Name.AsNamespaced(Namespace);
                 isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
 
                 deserializeFromContent = attribute.Content;
 
                 if (deserializeFromContentAttributeAlreadyUsed && deserializeFromContent)
-                    throw new ArgumentException(
-                        "Class cannot have two properties marked with " +
-                        "SerializeAs(Content = true) attribute."
-                    );
+                    throw new ArgumentException("Class cannot have two properties marked with SerializeAs(Content = true) attribute.");
 
                 deserializeFromContentAttributeAlreadyUsed |= deserializeFromContent;
             }
@@ -149,7 +146,8 @@ public class XmlDeserializer : IXmlDeserializer {
             var asType = type.AsType();
 
             if (asType == typeof(bool)) {
-                var toConvert = value.ToString()!.ToLower(Culture);
+                var toConvert = value.ToString()!
+                    .ToLower(Culture);
 
                 prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
             }
@@ -302,17 +300,17 @@ public class XmlDeserializer : IXmlDeserializer {
         var name      = t.Name;
         var attribute = t.GetAttribute<DeserializeAsAttribute>();
 
-        if (attribute?.Name != null)
+        if (attribute != null)
             name = attribute.Name;
 
         if (!elements.Any()) {
-            var lowerName = name.ToLower(Culture).AsNamespaced(Namespace);
+            var lowerName = name?.ToLower(Culture).AsNamespaced(Namespace);
 
             elements = root.Descendants(lowerName).ToList();
         }
 
         if (!elements.Any()) {
-            var camelName = name.ToCamelCase(Culture).AsNamespaced(Namespace);
+            var camelName = name?.ToCamelCase(Culture).AsNamespaced(Namespace);
 
             elements = root.Descendants(camelName).ToList();
         }
@@ -323,7 +321,7 @@ public class XmlDeserializer : IXmlDeserializer {
                 .ToList();
 
         if (!elements.Any()) {
-            var lowerName = name.ToLower(Culture).AsNamespaced(Namespace);
+            var lowerName = name?.ToLower(Culture).AsNamespaced(Namespace);
 
             elements = root.Descendants()
                 .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
@@ -364,7 +362,7 @@ public class XmlDeserializer : IXmlDeserializer {
         var element = GetElementByName(root, name);
 
         if (element == null) {
-            var attribute = GetAttributeByName(root, name, useExactName);
+            var attribute = GetAttributeByName(root, name!, useExactName);
 
             if (attribute != null)
                 val = attribute.Value;
@@ -391,9 +389,9 @@ public class XmlDeserializer : IXmlDeserializer {
             return root.Element(camelName!);
 
         // try looking for element that matches sanitized property name (Order by depth)
-        var orderedDescendants = root?.Descendants()
+        var orderedDescendants = root!.Descendants()
             .OrderBy(d => d.Ancestors().Count())
-            .ToList() ?? new List<XElement>();
+            .ToList();
 
         var element = orderedDescendants
                 .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name?.LocalName) ??
@@ -407,21 +405,19 @@ public class XmlDeserializer : IXmlDeserializer {
                 );
 
         return element == null &&
-            name == "Value".AsNamespaced(name?.NamespaceName) && root != null &&
-            (root.HasAttributes || root.Attributes().All(x => x.Name != name))
+            name == "Value".AsNamespaced(name?.NamespaceName) &&
+            (!root.HasAttributes || root.Attributes().All(x => x.Name != name))
                 ? root
                 : element;
     }
 
-    protected virtual XAttribute? GetAttributeByName(XElement root, XName? name, bool useExactName) {
+    protected virtual XAttribute? GetAttributeByName(XElement root, XName name, bool useExactName) {
         var names = useExactName
             ? null
-            : new List<XName?> {
-                name?.LocalName,
-                name?.LocalName.ToLower(Culture)
-                    .AsNamespaced(name.NamespaceName),
-                name?.LocalName.ToCamelCase(Culture)
-                    .AsNamespaced(name.NamespaceName)
+            : new List<XName> {
+                name.LocalName,
+                name.LocalName.ToLower(Culture).AsNamespaced(name.NamespaceName)!,
+                name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName)!
             };
 
         return root.DescendantsAndSelf()

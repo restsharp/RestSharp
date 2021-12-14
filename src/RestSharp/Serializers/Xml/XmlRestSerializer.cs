@@ -21,7 +21,7 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializ
     IXmlDeserializer        _xmlDeserializer;
     IXmlSerializer          _xmlSerializer;
 
-    public XmlRestSerializer() : this(new XmlSerializer(), new XmlDeserializer()) { }
+    public XmlRestSerializer() : this(new DotNetXmlSerializer(), new DotNetXmlDeserializer()) { }
 
     public XmlRestSerializer(IXmlSerializer xmlSerializer, IXmlDeserializer xmlDeserializer) {
         _xmlDeserializer = xmlDeserializer;

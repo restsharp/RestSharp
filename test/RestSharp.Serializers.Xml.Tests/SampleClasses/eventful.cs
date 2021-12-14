@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public class VenueSearch {
     public string total_items { get; set; }
@@ -106,22 +106,4 @@ public class ServiceImage1 {
     public string width { get; set; }
 
     public string height { get; set; }
-}
-
-public class Event {
-    public string id { get; set; }
-
-    public string url { get; set; }
-
-    public string title { get; set; }
-
-    public string description { get; set; }
-
-    public string start_time { get; set; }
-
-    public string venue_name { get; set; }
-
-    public string venue_id { get; set; }
-
-    public List<Performer> performers { get; set; }
 }

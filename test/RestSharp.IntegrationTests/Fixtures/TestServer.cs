@@ -10,7 +10,7 @@ public class HttpServer {
 
     const string Address = "http://localhost:5151";
 
-    public HttpServer(ITestOutputHelper? output = null) {
+    public HttpServer(ITestOutputHelper output = null) {
         var builder = WebApplication.CreateBuilder();
 
         if (output != null)

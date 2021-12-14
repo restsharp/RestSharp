@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses;
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses;
 
 public struct SimpleStruct {
     public string One { get; set; }

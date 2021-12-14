@@ -319,8 +319,8 @@ public class OAuth1Tests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(response.Content);
-        Assert.False(response.Content.Contains("\"stat\":\"fail\""));
-        Assert.True(response.Content.Contains("\"stat\":\"ok\""));
+        response.Content.Should().NotContain("\"stat\":\"fail\"");
+        response.Content.Should().Contain("\"stat\":\"ok\"");
     }
 
     [Fact(Skip =
