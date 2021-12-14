@@ -132,7 +132,7 @@ public static class RestRequestExtensions {
         => request.RequestFormat switch {
             DataFormat.Json => request.AddJsonBody(obj),
             DataFormat.Xml  => request.AddXmlBody(obj),
-            _               => request.AddParameter("", obj.ToString())
+            _               => request.AddParameter("", obj.ToString()!)
         };
 
     public static RestRequest AddJsonBody(this RestRequest request, object obj) {

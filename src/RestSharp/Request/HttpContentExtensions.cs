@@ -17,9 +17,9 @@ namespace RestSharp;
 
 public static class HttpContentExtensions {
     public static string GetFormBoundary(this HttpContent content) {
-        var contentType = content.Headers.ContentType.ToString();
-        var index       = contentType.IndexOf("boundary=", StringComparison.Ordinal);
-        return index > 0 ? GetFormBoundary(contentType, index) : "";
+        var contentType = content.Headers.ContentType?.ToString();
+        var index       = contentType?.IndexOf("boundary=", StringComparison.Ordinal) ?? 0;
+        return index > 0 ? GetFormBoundary(contentType!, index) : "";
     } 
     
     static string GetFormBoundary(string headerValue, int index) {

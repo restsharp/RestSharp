@@ -96,7 +96,7 @@ public partial class RestClient {
 
     Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
-    Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding);
+    Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
 
     /// <summary>
     /// Allows to use a custom way to encode URL parameters
@@ -136,7 +136,7 @@ public partial class RestClient {
                 );
             case ParameterType.Cookie: {
                 lock (_cookieContainer) {
-                    _cookieContainer.Add(new Cookie(p.Name, p.Value!.ToString()));
+                    _cookieContainer.Add(new Cookie(p.Name!, p.Value!.ToString()));
                 }
                 break;
             }
@@ -164,7 +164,7 @@ public partial class RestClient {
         return new Uri(finalUri!);
     }
 
-    internal string? BuildUriWithoutQueryParameters(RestRequest request) {
+    internal string BuildUriWithoutQueryParameters(RestRequest request) {
         DoBuildUriValidations(request);
 
         var applied = GetUrlSegmentParamsValues(request);
@@ -231,7 +231,7 @@ public partial class RestClient {
 
         foreach (var parameter in parameters) {
             var paramPlaceHolder = $"{{{parameter.Name}}}";
-            var paramValue       = parameter.Encode ? Encode(parameter.Value!.ToString()) : parameter.Value!.ToString();
+            var paramValue       = parameter.Encode ? Encode(parameter.Value!.ToString()!) : parameter.Value!.ToString();
 
             if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
 
@@ -241,12 +241,12 @@ public partial class RestClient {
         return new UrlSegmentParamsValues(builder.Uri, assembled);
     }
 
-    static string? MergeBaseUrlAndResource(Uri? baseUrl, string? resource) {
+    static string MergeBaseUrlAndResource(Uri? baseUrl, string? resource) {
         var assembled = resource;
 
         if (!IsNullOrEmpty(assembled) && assembled!.StartsWith("/")) assembled = assembled.Substring(1);
 
-        if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled;
+        if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled ?? "";
 
         var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || IsNullOrEmpty(assembled) ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
 
@@ -295,7 +295,7 @@ public partial class RestClient {
                 ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
                 : $"{EncodeQuery(parameter.Name!, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
 
-        static string StringOrEmpty(object? value) => value == null ? "" : value.ToString();
+        static string StringOrEmpty(object? value) => value == null ? "" : value.ToString()!;
     }
 
     internal RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) {

@@ -53,12 +53,12 @@ public class DotNetXmlSerializer : IXmlSerializer {
     /// <summary>
     /// XML namespace to use when serializing
     /// </summary>
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
     /// <summary>
     /// Format string to use when serializing dates
     /// </summary>
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
     /// <summary>
     /// Content type for serialized content

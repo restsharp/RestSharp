@@ -15,22 +15,22 @@ public class XmlDeserializer : IXmlDeserializer {
 
     public string? RootElement { get; set; }
 
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
     public virtual T? Deserialize<T>(RestResponse response) {
         if (string.IsNullOrEmpty(response.Content))
             return default;
 
-        var doc  = XDocument.Parse(response.Content);
+        var doc  = XDocument.Parse(response.Content!);
         var root = doc.Root;
 
         if (RootElement != null && doc.Root != null)
             root = doc.Root.DescendantsAndSelf(RootElement.AsNamespaced(Namespace)).SingleOrDefault();
 
         // autodetect xml namespace
-        if (!Namespace.HasValue())
+        if (Namespace.IsEmpty())
             RemoveNamespace(doc);
 
         var x       = Activator.CreateInstance<T>();
@@ -87,8 +87,8 @@ public class XmlDeserializer : IXmlDeserializer {
             if (attributes.Any()) {
                 var attribute = (DeserializeAsAttribute)attributes.First();
 
-                name                     = attribute.Name.AsNamespaced(Namespace);
-                isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
+                name                     = attribute.Name!.AsNamespaced(Namespace);
+                isNameDefinedInAttribute = !string.IsNullOrEmpty(name.LocalName);
 
                 deserializeFromContent = attribute.Content;
 
@@ -108,7 +108,7 @@ public class XmlDeserializer : IXmlDeserializer {
             if (value == null) {
                 // special case for text content node
                 if (deserializeFromContent) {
-                    var textNode = root.Nodes().FirstOrDefault(n => n is XText);
+                    var textNode = root!.Nodes().FirstOrDefault(n => n is XText);
 
                     if (textNode != null) {
                         value = ((XText)textNode).Value;
@@ -122,7 +122,7 @@ public class XmlDeserializer : IXmlDeserializer {
                 if (type.IsGenericType) {
                     var genericType = type.GetGenericArguments()[0];
                     var first       = GetElementByName(root, genericType.Name);
-                    var list        = (IList)Activator.CreateInstance(type.AsType());
+                    var list        = (IList)Activator.CreateInstance(type.AsType())!;
 
                     if (first != null && root != null) {
                         var elements = root.Elements(first.Name);
@@ -149,8 +149,7 @@ public class XmlDeserializer : IXmlDeserializer {
             var asType = type.AsType();
 
             if (asType == typeof(bool)) {
-                var toConvert = value.ToString()
-                    .ToLower(Culture);
+                var toConvert = value.ToString()!.ToLower(Culture);
 
                 prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
             }
@@ -167,12 +166,12 @@ public class XmlDeserializer : IXmlDeserializer {
                 }
             }
             else if (type.IsEnum) {
-                var converted = type.AsType().FindEnumValue(value.ToString(), Culture);
+                var converted = type.AsType().FindEnumValue(value.ToString()!, Culture);
 
                 prop.SetValue(x, converted, null);
             }
             else if (asType == typeof(Uri)) {
-                var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+                var uri = new Uri(value.ToString()!, UriKind.RelativeOrAbsolute);
 
                 prop.SetValue(x, uri, null);
             }
@@ -180,9 +179,9 @@ public class XmlDeserializer : IXmlDeserializer {
                 prop.SetValue(x, value, null);
             }
             else if (asType == typeof(DateTime)) {
-                value = DateFormat.HasValue()
-                    ? DateTime.ParseExact(value.ToString(), DateFormat, Culture)
-                    : DateTime.Parse(value.ToString(), Culture);
+                value = DateFormat.IsNotEmpty()
+                    ? DateTime.ParseExact(value.ToString()!, DateFormat!, Culture)
+                    : DateTime.Parse(value.ToString()!, Culture);
 
                 prop.SetValue(x, value, null);
             }
@@ -209,7 +208,7 @@ public class XmlDeserializer : IXmlDeserializer {
                 }
             }
             else if (asType == typeof(decimal)) {
-                value = decimal.Parse(value.ToString(), Culture);
+                value = decimal.Parse(value.ToString()!, Culture);
                 prop.SetValue(x, value, null);
             }
             else if (asType == typeof(Guid)) {
@@ -217,20 +216,20 @@ public class XmlDeserializer : IXmlDeserializer {
 
                 value = string.IsNullOrEmpty(raw)
                     ? Guid.Empty
-                    : new Guid(value.ToString());
+                    : new Guid(value.ToString()!);
 
                 prop.SetValue(x, value, null);
             }
             else if (asType == typeof(TimeSpan)) {
-                var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
+                var timeSpan = XmlConvert.ToTimeSpan(value.ToString()!);
 
                 prop.SetValue(x, timeSpan, null);
             }
             else if (type.IsGenericType) {
-                var list      = (IList)Activator.CreateInstance(asType);
+                var list      = (IList)Activator.CreateInstance(asType)!;
                 var container = GetElementByName(root, name);
 
-                if (container.HasElements) {
+                if (container?.HasElements == true) {
                     var first = container.Elements().FirstOrDefault();
 
                     if (first != null) {
@@ -246,14 +245,14 @@ public class XmlDeserializer : IXmlDeserializer {
             else if (asType.IsSubclassOfRawGeneric(typeof(List<>))) {
                 // handles classes that derive from List<T>
                 // e.g. a collection that also has attributes
-                var list = HandleListDerivative(root, prop.Name, asType);
+                var list = HandleListDerivative(root!, prop.Name, asType);
 
                 prop.SetValue(x, list, null);
             }
             else {
                 //fallback to type converters if possible
 
-                if (TryGetFromString(value.ToString(), out var result, asType)) {
+                if (TryGetFromString(value.ToString()!, out var result, asType)) {
                     prop.SetValue(x, result, null);
                 }
                 else {
@@ -294,16 +293,16 @@ public class XmlDeserializer : IXmlDeserializer {
     object HandleListDerivative(XElement root, string propName, Type type) {
         var t = type.IsGenericType
             ? type.GetGenericArguments()[0]
-            : type.BaseType.GetGenericArguments()[0];
+            : type.BaseType!.GetGenericArguments()[0];
 
-        var list = (IList)Activator.CreateInstance(type);
+        var list = (IList)Activator.CreateInstance(type)!;
 
         IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(Namespace)).ToList();
 
         var name      = t.Name;
         var attribute = t.GetAttribute<DeserializeAsAttribute>();
 
-        if (attribute != null)
+        if (attribute?.Name != null)
             name = attribute.Name;
 
         if (!elements.Any()) {
@@ -351,7 +350,7 @@ public class XmlDeserializer : IXmlDeserializer {
             item = element.Value.ChangeType(t);
         }
         else {
-            item = Activator.CreateInstance(t);
+            item = Activator.CreateInstance(t)!;
             Map(item, element);
         }
 
@@ -378,23 +377,23 @@ public class XmlDeserializer : IXmlDeserializer {
         return val;
     }
 
-    protected virtual XElement? GetElementByName(XElement root, XName name) {
+    protected virtual XElement? GetElementByName(XElement? root, XName name) {
         var lowerName = name.LocalName.ToLower(Culture).AsNamespaced(name.NamespaceName);
         var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
-        if (root.Element(name) != null)
+        if (root?.Element(name) != null)
             return root.Element(name);
 
-        if (root.Element(lowerName) != null)
+        if (root?.Element(lowerName) != null)
             return root.Element(lowerName);
 
-        if (root.Element(camelName) != null)
+        if (root?.Element(camelName) != null)
             return root.Element(camelName);
 
         // try looking for element that matches sanitized property name (Order by depth)
-        var orderedDescendants = root.Descendants()
+        var orderedDescendants = root?.Descendants()
             .OrderBy(d => d.Ancestors().Count())
-            .ToList();
+            .ToList() ?? new List<XElement>();
 
         var element = orderedDescendants
                 .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
@@ -408,8 +407,8 @@ public class XmlDeserializer : IXmlDeserializer {
                 );
 
         return element == null &&
-            name == "Value".AsNamespaced(name.NamespaceName) &&
-            (!root.HasAttributes || root.Attributes().All(x => x.Name != name))
+            name == "Value".AsNamespaced(name.NamespaceName) && root != null &&
+            (root.HasAttributes || root.Attributes().All(x => x.Name != name))
                 ? root
                 : element;
     }

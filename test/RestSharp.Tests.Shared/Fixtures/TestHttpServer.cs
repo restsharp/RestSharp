@@ -53,8 +53,8 @@ public class TestHttpServer : IDisposable {
                 var context = await _listener.GetContextAsync();
 
                 try {
-                    Dictionary<string, string>? parameters = null;
-                    TestRequestHandler          handler;
+                    Dictionary<string, string> parameters = null;
+                    TestRequestHandler         handler;
 
                     lock (_requestHandlersLock) {
                         handler = _requestHandlers.FirstOrDefault(
@@ -62,7 +62,7 @@ public class TestHttpServer : IDisposable {
                         );
                     }
 
-                    string? responseString = null;
+                    string responseString = null;
 
                     if (handler != null) {
                         //add the query string parameters to the pre-defined url parameters that were set from MatchesUrl()

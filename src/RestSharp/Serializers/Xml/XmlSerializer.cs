@@ -79,12 +79,12 @@ public class XmlSerializer : IXmlSerializer {
     /// <summary>
     /// XML namespace to use when serializing
     /// </summary>
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
     /// <summary>
     /// Format string to use when serializing dates
     /// </summary>
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
     /// <summary>
     /// Content type for serialized content
@@ -115,11 +115,11 @@ public class XmlSerializer : IXmlSerializer {
             var options        = prop.GetAttribute<SerializeAsAttribute>();
 
             if (options != null) {
-                name = options.Name.HasValue()
+                name = options.Name.IsNotEmpty()
                     ? options.Name
                     : name;
 
-                name = options.TransformName(name);
+                name = options.TransformName(name!);
 
                 useAttribute = options.Attribute;
 
@@ -159,11 +159,11 @@ public class XmlSerializer : IXmlSerializer {
                     var type    = item.GetType();
                     var setting = type.GetAttribute<SerializeAsAttribute>();
 
-                    var itemTypeName = setting != null && setting.Name.HasValue()
+                    var itemTypeName = setting != null && setting.Name.IsNotEmpty()
                         ? setting.Name
                         : type.Name;
 
-                    var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                    var instance = new XElement(itemTypeName!.AsNamespaced(Namespace));
 
                     Map(instance, item);
 
@@ -189,12 +189,12 @@ public class XmlSerializer : IXmlSerializer {
 
     string GetSerializedValue(object obj) {
         var output = obj switch {
-            DateTime time when DateFormat.HasValue() => time.ToString(DateFormat, CultureInfo.InvariantCulture),
-            bool b                                   => b.ToString().ToLowerInvariant(),
-            _                                        => obj
+            DateTime time when DateFormat.IsNotEmpty() => time.ToString(DateFormat, CultureInfo.InvariantCulture),
+            bool b                                     => b.ToString().ToLowerInvariant(),
+            _                                          => obj
         };
 
-        return IsNumeric(obj) ? SerializeNumber(obj) : output.ToString();
+        return IsNumeric(obj) ? SerializeNumber(obj) : output.ToString()!;
     }
 
     static string SerializeNumber(object number)

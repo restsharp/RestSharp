@@ -12,9 +12,9 @@ public sealed class SimpleServer : IDisposable {
     public string ServerUrl { get; }
 
     SimpleServer(
-        int                          port,
-        Action<HttpListenerContext>? handler               = null,
-        AuthenticationSchemes        authenticationSchemes = AuthenticationSchemes.Anonymous
+        int                         port,
+        Action<HttpListenerContext> handler               = null,
+        AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
         Url       = $"http://localhost:{port}/";
         ServerUrl = $"http://{Environment.MachineName}:{port}/";
@@ -29,8 +29,8 @@ public sealed class SimpleServer : IDisposable {
     }
 
     public static SimpleServer Create(
-        Action<HttpListenerContext>? handler = null,
-        AuthenticationSchemes        authenticationSchemes = AuthenticationSchemes.Anonymous
+        Action<HttpListenerContext> handler               = null,
+        AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
         var port = Random.Next(1000, 9999);
         return new SimpleServer(port, handler, authenticationSchemes);

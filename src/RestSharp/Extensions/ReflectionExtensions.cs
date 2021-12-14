@@ -29,7 +29,7 @@ public static class ReflectionExtensions {
     /// <param name="toCheck"></param>
     /// <param name="generic"></param>
     /// <returns></returns>
-    public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic) {
+    public static bool IsSubclassOfRawGeneric(this Type? toCheck, Type generic) {
         while (toCheck != null && toCheck != typeof(object)) {
             var cur = toCheck.GetTypeInfo().IsGenericType
                 ? toCheck.GetGenericTypeDefinition()
@@ -70,7 +70,7 @@ public static class ReflectionExtensions {
 
         var enumValueAsUnderlyingType = Convert.ChangeType(value, Enum.GetUnderlyingType(type), culture);
 
-        if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
+        if (Enum.IsDefined(type, enumValueAsUnderlyingType))
             ret = (Enum)Enum.ToObject(type, enumValueAsUnderlyingType);
 
         return ret ?? Activator.CreateInstance(type);

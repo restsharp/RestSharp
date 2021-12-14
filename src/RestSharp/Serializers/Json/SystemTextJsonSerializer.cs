@@ -20,7 +20,7 @@ public class SystemTextJsonSerializer : IRestSerializer {
 
     public string? Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
 
-    public T? Deserialize<T>(RestResponse response) => JsonSerializer.Deserialize<T>(response.Content, _options);
+    public T? Deserialize<T>(RestResponse response) => JsonSerializer.Deserialize<T>(response.Content!, _options);
 
     public string[] SupportedContentTypes { get; } = {
         "application/json", "text/json", "text/x-json", "text/javascript", "*+json"

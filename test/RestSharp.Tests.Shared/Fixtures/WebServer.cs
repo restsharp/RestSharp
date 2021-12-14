@@ -3,10 +3,10 @@
 namespace RestSharp.Tests.Shared.Fixtures;
 
 public class WebServer {
-    readonly HttpListener            _listener = new();
-    Action<HttpListenerContext>?     _responderMethod;
+    readonly HttpListener       _listener = new();
+    Action<HttpListenerContext> _responderMethod;
 
-    public WebServer(string prefix, Action<HttpListenerContext>? method, AuthenticationSchemes authenticationSchemes) {
+    public WebServer(string prefix, Action<HttpListenerContext> method, AuthenticationSchemes authenticationSchemes) {
         if (string.IsNullOrEmpty(prefix))
             throw new ArgumentException("URI prefix is required");
 
@@ -19,6 +19,7 @@ public class WebServer {
     public async Task Run(CancellationToken token) {
         var taskFactory = new TaskFactory(token);
         _listener.Start();
+
         try {
             while (!token.IsCancellationRequested && _listener.IsListening) {
                 try {
@@ -29,9 +30,6 @@ public class WebServer {
                     _responderMethod?.Invoke(ctx);
                     ctx.Response.OutputStream.Close();
                 }
-                // catch (HttpListenerException) {
-                //     // it's ok
-                // }
                 catch (Exception e) {
                     Console.WriteLine(e.ToString());
                 }
@@ -40,11 +38,13 @@ public class WebServer {
         catch (Exception e) {
             Console.WriteLine(e.ToString());
         }
-        
-        Task<HttpListenerContext> GetContextAsync() => taskFactory.FromAsync(
-            (callback, state) => ((HttpListener)state!).BeginGetContext(callback, state),
-            iar => ((HttpListener)iar.AsyncState!).EndGetContext(iar),
-            _listener);
+
+        Task<HttpListenerContext> GetContextAsync()
+            => taskFactory.FromAsync(
+                (callback, state) => ((HttpListener)state!).BeginGetContext(callback, state),
+                iar => ((HttpListener)iar.AsyncState!).EndGetContext(iar),
+                _listener
+            );
     }
 
     public void Stop() {

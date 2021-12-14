@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace RestSharp.Tests.Shared.Fixtures; 
+namespace RestSharp.Tests.Shared.Fixtures;
 
 public class TestRequestHandler {
     readonly Regex _comparisonRegex;
@@ -24,7 +24,7 @@ public class TestRequestHandler {
         : this(url, null, handlerAction) { }
 
     string                                                                                 Url           { get; }
-    string?                                                                                HttpMethod    { get; }
+    string                                                                                 HttpMethod    { get; }
     internal Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> HandlerAction { get; }
 
     Regex CreateComparisonRegex(string url) {
@@ -45,7 +45,7 @@ public class TestRequestHandler {
         return new Regex(regexString);
     }
 
-    public bool TryMatchUrl(string rawUrl, string httpMethod, out Dictionary<string, string>? parameters) {
+    public bool TryMatchUrl(string rawUrl, string httpMethod, out Dictionary<string, string> parameters) {
         var match = _comparisonRegex.Match(rawUrl);
 
         var isMethodMatched = HttpMethod == null || HttpMethod.Split(',').Contains(httpMethod);
