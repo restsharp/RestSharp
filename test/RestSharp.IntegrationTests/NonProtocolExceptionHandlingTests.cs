@@ -80,7 +80,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync<StupidClass>(request);
 
         response.ErrorException.Should().BeOfType<HttpRequestException>();
-        response.ErrorException!.Message.Should().Contain("nodename nor servname provided, or not known");
+        response.ErrorException!.Message.Should().Contain("known");
         response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 }
