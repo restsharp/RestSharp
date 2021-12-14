@@ -6,11 +6,13 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.IntegrationTests;
 
 public class AsyncTests : IAsyncLifetime {
-    readonly HttpServer _server;
+    readonly ITestOutputHelper _output;
+    readonly HttpServer        _server;
 
-    public AsyncTests(ITestOutputHelper output) => _server = new HttpServer(output);
-
-    static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
+    public AsyncTests(ITestOutputHelper output) {
+        _output = output;
+        _server = new HttpServer(output);
+    }
 
     class ResponseHandler {
         void error(HttpListenerContext context) {

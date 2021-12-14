@@ -3,10 +3,10 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests; 
 
-public class ResourcestringParametersTests : IDisposable {
+public sealed class ResourceStringParametersTests : IDisposable {
     readonly SimpleServer _server;
 
-    public ResourcestringParametersTests() => _server = SimpleServer.Create(RequestHandler.Handle);
+    public ResourceStringParametersTests() => _server = SimpleServer.Create(RequestHandler.Handle);
 
     public void Dispose() => _server.Dispose();
 

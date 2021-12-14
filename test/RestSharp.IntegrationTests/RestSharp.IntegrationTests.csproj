@@ -11,4 +11,7 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0" />
         <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
     </ItemGroup>
+    <ItemGroup>
+        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
 </Project>

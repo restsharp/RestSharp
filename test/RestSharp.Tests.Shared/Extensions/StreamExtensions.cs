@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace RestSharp.Tests.Shared.Extensions; 
+namespace RestSharp.Tests.Shared.Extensions;
 
 public static class StreamExtensions {
     public static void WriteStringUtf8(this Stream target, string value) {
@@ -14,6 +14,4 @@ public static class StreamExtensions {
 
         return streamReader.ReadToEnd();
     }
-
-    public static byte[] StreamToBytes(this Stream stream) => Encoding.UTF8.GetBytes(stream.StreamToString());
 }

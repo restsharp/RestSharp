@@ -6,6 +6,8 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.IntegrationTests; 
 
 public class CompressionTests {
+    readonly ITestOutputHelper _output;
+
     static Action<HttpListenerContext> GzipEchoValue(string value)
         => context => {
             context.Response.Headers.Add("Content-encoding", "gzip");
@@ -23,6 +25,8 @@ public class CompressionTests {
 
             gzip.WriteStringUtf8(value);
         };
+    
+    public CompressionTests(ITestOutputHelper output) => _output = output;
 
     [Fact]
     public async Task Can_Handle_Deflate_Compressed_Content() {
