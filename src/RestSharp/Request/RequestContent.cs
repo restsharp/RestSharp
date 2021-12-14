@@ -13,6 +13,7 @@
 // limitations under the License.
 // 
 
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
@@ -61,26 +62,28 @@ class RequestContent : IDisposable {
     }
 
     HttpContent Serialize(Parameter body) {
-        if (body.DataFormat == DataFormat.None) {
-            var stringContent = new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType);
-            return stringContent;
-        }
+        return body.DataFormat switch {
+            DataFormat.None => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType),
+            _               => GetSerialized()
+        };
 
-        if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializer))
-            throw new InvalidDataContractException(
-                $"Can't find serializer for content type {body.DataFormat}"
+        HttpContent GetSerialized() {
+            if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializer))
+                throw new InvalidDataContractException(
+                    $"Can't find serializer for content type {body.DataFormat}"
+                );
+
+            var content = serializer.Serialize(body);
+
+            if (content == null)
+                throw new SerializationException("Request body serialized to null");
+
+            return new StringContent(
+                content,
+                _client.Options.Encoding,
+                body.ContentType ?? serializer.ContentType
             );
-
-        var content = serializer.Serialize(body);
-
-        if (content == null)
-            throw new SerializationException("Request body serialized to null");
-
-        return new StringContent(
-            content,
-            _client.Options.Encoding,
-            body.ContentType ?? serializer.ContentType
-        );
+        }
     }
 
     static bool BodyShouldBeMultipartForm(Parameter bodyParameter) {
@@ -154,7 +157,10 @@ class RequestContent : IDisposable {
     }
 
     string GetContentTypeHeader(string contentType) {
-        var boundary = Content!.GetFormBoundary();
+        if (Content == null)
+            throw new InvalidRequestException("Content type headers should not be used when there's no body in the request");
+
+        var boundary = Content.GetFormBoundary();
         return boundary.IsEmpty() ? contentType : $"{contentType}; boundary=\"{boundary}\"";
     }
 

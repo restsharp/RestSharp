@@ -3,6 +3,7 @@ using RestSharp.Extensions;
 
 namespace RestSharp;
 
+[PublicAPI]
 public static class RestRequestExtensions {
     static readonly Regex PortSplitRegex = new(@":\d+");
 
@@ -190,7 +191,9 @@ public static class RestRequestExtensions {
             => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
     }
 
-    public static RestRequest AddObject(this RestRequest request, object obj) => request.With(x => x.AddObject(obj, new string[] { }));
+    public static RestRequest AddObject(this RestRequest request, object obj) {
+        return request.With(x => x.AddObject(obj, new string[] { }));
+    }
 
     static void CheckAndThrowsForInvalidHost(string name, string value) {
         static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
