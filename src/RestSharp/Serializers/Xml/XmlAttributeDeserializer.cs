@@ -5,7 +5,7 @@ using RestSharp.Extensions;
 namespace RestSharp.Serializers.Xml;
 
 public class XmlAttributeDeserializer : XmlDeserializer {
-    protected override object? GetValueFromXml(XElement? root, XName name, PropertyInfo prop, bool useExactName) {
+    protected override object? GetValueFromXml(XElement? root, XName? name, PropertyInfo prop, bool useExactName) {
         var isAttribute = false;
 
         //Check for the DeserializeAs attribute on the property

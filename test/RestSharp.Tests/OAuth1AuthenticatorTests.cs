@@ -179,8 +179,6 @@ public class OAuth1AuthenticatorTests {
     [Theory]
     [InlineData(OAuthType.AccessToken)]
     [InlineData(OAuthType.ProtectedResource)]
-    [InlineData(OAuthType.AccessToken)]
-    [InlineData(OAuthType.ProtectedResource)]
     public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling(OAuthType type) {
         // Arrange
         const string url = "https://no-query.string";

@@ -35,7 +35,7 @@ public class XmlSerializer : IXmlSerializer {
         if (options != null)
             name = options.TransformName(options.Name ?? name);
 
-        var root = new XElement(name.AsNamespaced(Namespace));
+        var root = new XElement(name.AsNamespaced(Namespace)!);
 
         if (obj is IList list) {
             var itemTypeName = "";
@@ -50,7 +50,7 @@ public class XmlSerializer : IXmlSerializer {
                 if (itemTypeName == "")
                     itemTypeName = type.Name;
 
-                var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                var instance = new XElement(itemTypeName.AsNamespaced(Namespace)!);
 
                 Map(instance, item);
                 root.Add(instance);
@@ -61,7 +61,7 @@ public class XmlSerializer : IXmlSerializer {
         }
 
         if (RootElement != null) {
-            var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
+            var wrapper = new XElement(RootElement.AsNamespaced(Namespace)!, root);
             doc.Add(wrapper);
         }
         else {
@@ -135,7 +135,7 @@ public class XmlSerializer : IXmlSerializer {
             }
 
             var nsName  = name.AsNamespaced(Namespace);
-            var element = new XElement(nsName);
+            var element = new XElement(nsName!);
 
             if (propType.GetTypeInfo().IsPrimitive ||
                 propType.GetTypeInfo().IsValueType ||
@@ -163,7 +163,7 @@ public class XmlSerializer : IXmlSerializer {
                         ? setting.Name
                         : type.Name;
 
-                    var instance = new XElement(itemTypeName!.AsNamespaced(Namespace));
+                    var instance = new XElement(itemTypeName!.AsNamespaced(Namespace)!);
 
                     Map(instance, item);
 

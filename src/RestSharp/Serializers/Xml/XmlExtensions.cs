@@ -13,8 +13,8 @@ public static class XmlExtensions {
     /// <param name="name">Element name</param>
     /// <param name="namespace">XML Namespace</param>
     /// <returns></returns>
-    public static XName AsNamespaced(this string? name, string? @namespace) {
-        XName xName = Ensure.NotNull(name, nameof(name));
+    public static XName? AsNamespaced(this string? name, string? @namespace) {
+        XName? xName = name;
 
         if (name != null && @namespace.IsNotEmpty()) xName = XName.Get(name, @namespace!);
 

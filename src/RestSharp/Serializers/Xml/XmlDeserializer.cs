@@ -88,7 +88,7 @@ public class XmlDeserializer : IXmlDeserializer {
                 var attribute = (DeserializeAsAttribute)attributes.First();
 
                 name                     = attribute.Name!.AsNamespaced(Namespace);
-                isNameDefinedInAttribute = !string.IsNullOrEmpty(name.LocalName);
+                isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
 
                 deserializeFromContent = attribute.Content;
 
@@ -335,7 +335,7 @@ public class XmlDeserializer : IXmlDeserializer {
         // get properties too, not just list items
         // only if this isn't a generic type
         if (!type.IsGenericType)
-            Map(list, root.Element(propName.AsNamespaced(Namespace)) ?? root);
+            Map(list, root.Element(propName.AsNamespaced(Namespace)!) ?? root);
 
         return list;
     }
@@ -357,7 +357,7 @@ public class XmlDeserializer : IXmlDeserializer {
         return item;
     }
 
-    protected virtual object? GetValueFromXml(XElement? root, XName name, PropertyInfo prop, bool useExactName) {
+    protected virtual object? GetValueFromXml(XElement? root, XName? name, PropertyInfo prop, bool useExactName) {
         object? val = null;
         if (root == null) return val;
 
@@ -377,18 +377,18 @@ public class XmlDeserializer : IXmlDeserializer {
         return val;
     }
 
-    protected virtual XElement? GetElementByName(XElement? root, XName name) {
-        var lowerName = name.LocalName.ToLower(Culture).AsNamespaced(name.NamespaceName);
-        var camelName = name.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
+    protected virtual XElement? GetElementByName(XElement? root, XName? name) {
+        var lowerName = name?.LocalName.ToLower(Culture).AsNamespaced(name.NamespaceName);
+        var camelName = name?.LocalName.ToCamelCase(Culture).AsNamespaced(name.NamespaceName);
 
-        if (root?.Element(name) != null)
-            return root.Element(name);
+        if (root?.Element(name!) != null)
+            return root.Element(name!);
 
-        if (root?.Element(lowerName) != null)
-            return root.Element(lowerName);
+        if (root?.Element(lowerName!) != null)
+            return root.Element(lowerName!);
 
-        if (root?.Element(camelName) != null)
-            return root.Element(camelName);
+        if (root?.Element(camelName!) != null)
+            return root.Element(camelName!);
 
         // try looking for element that matches sanitized property name (Order by depth)
         var orderedDescendants = root?.Descendants()
@@ -396,31 +396,31 @@ public class XmlDeserializer : IXmlDeserializer {
             .ToList() ?? new List<XElement>();
 
         var element = orderedDescendants
-                .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name.LocalName) ??
+                .FirstOrDefault(d => d.Name.LocalName.RemoveUnderscoresAndDashes() == name?.LocalName) ??
             orderedDescendants
                 .FirstOrDefault(
                     d => string.Equals(
                         d.Name.LocalName.RemoveUnderscoresAndDashes(),
-                        name.LocalName,
+                        name?.LocalName,
                         StringComparison.OrdinalIgnoreCase
                     )
                 );
 
         return element == null &&
-            name == "Value".AsNamespaced(name.NamespaceName) && root != null &&
+            name == "Value".AsNamespaced(name?.NamespaceName) && root != null &&
             (root.HasAttributes || root.Attributes().All(x => x.Name != name))
                 ? root
                 : element;
     }
 
-    protected virtual XAttribute? GetAttributeByName(XElement root, XName name, bool useExactName) {
+    protected virtual XAttribute? GetAttributeByName(XElement root, XName? name, bool useExactName) {
         var names = useExactName
             ? null
-            : new List<XName> {
-                name.LocalName,
-                name.LocalName.ToLower(Culture)
+            : new List<XName?> {
+                name?.LocalName,
+                name?.LocalName.ToLower(Culture)
                     .AsNamespaced(name.NamespaceName),
-                name.LocalName.ToCamelCase(Culture)
+                name?.LocalName.ToCamelCase(Culture)
                     .AsNamespaced(name.NamespaceName)
             };
 
