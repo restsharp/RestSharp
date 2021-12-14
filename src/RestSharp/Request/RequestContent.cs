@@ -13,7 +13,6 @@
 // limitations under the License.
 // 
 
-using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
