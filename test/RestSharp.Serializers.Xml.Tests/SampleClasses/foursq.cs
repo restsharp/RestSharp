@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses;
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses;
 
 public class VenuesResponse {
     public List<Group> Groups { get; set; }

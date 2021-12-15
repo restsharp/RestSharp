@@ -3,10 +3,10 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests; 
 
-public class ResourcestringParametersTests : IDisposable {
+public sealed class ResourceStringParametersTests : IDisposable {
     readonly SimpleServer _server;
 
-    public ResourcestringParametersTests() => _server = SimpleServer.Create(RequestHandler.Handle);
+    public ResourceStringParametersTests() => _server = SimpleServer.Create(RequestHandler.Handle);
 
     public void Dispose() => _server.Dispose();
 
@@ -24,7 +24,7 @@ public class ResourcestringParametersTests : IDisposable {
     }
 
     static class RequestHandler {
-        public static Uri? Url { get; private set; }
+        public static Uri Url { get; private set; }
 
         public static void Handle(HttpListenerContext context) {
             Url = context.Request.Url;

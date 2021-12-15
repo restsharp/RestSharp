@@ -1,6 +1,4 @@
-﻿using RestSharp.Serializers;
-
-namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public class status {
     public bool truncated { get; set; }

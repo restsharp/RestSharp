@@ -9,7 +9,7 @@ namespace RestSharp.Serializers.Json.Tests;
 public class SystemTextJsonTests {
     static readonly Fixture Fixture = new();
 
-    string? _body;
+    string _body;
 
     [Fact]
     public async Task Use_JsonNet_For_Requests() {

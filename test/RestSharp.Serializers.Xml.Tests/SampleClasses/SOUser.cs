@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public class SoUser {
     public int Id { get; set; }

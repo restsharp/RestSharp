@@ -1,10 +1,8 @@
 ﻿using System.Globalization;
 using System.Xml.Linq;
-using RestSharp.Serializers;
-using RestSharp.Serializers.Xml;
-using RestSharp.Tests.SampleClasses;
+using RestSharp.Serializers.Xml.Tests.SampleClasses;
 
-namespace RestSharp.Tests;
+namespace RestSharp.Serializers.Xml.Tests;
 
 public class XmlSerializerTests {
     public XmlSerializerTests() {

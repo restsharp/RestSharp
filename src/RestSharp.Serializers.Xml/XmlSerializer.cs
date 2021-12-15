@@ -35,7 +35,7 @@ public class XmlSerializer : IXmlSerializer {
         if (options != null)
             name = options.TransformName(options.Name ?? name);
 
-        var root = new XElement(name.AsNamespaced(Namespace));
+        var root = new XElement(name.AsNamespaced(Namespace)!);
 
         if (obj is IList list) {
             var itemTypeName = "";
@@ -50,7 +50,7 @@ public class XmlSerializer : IXmlSerializer {
                 if (itemTypeName == "")
                     itemTypeName = type.Name;
 
-                var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                var instance = new XElement(itemTypeName.AsNamespaced(Namespace)!);
 
                 Map(instance, item);
                 root.Add(instance);
@@ -61,7 +61,7 @@ public class XmlSerializer : IXmlSerializer {
         }
 
         if (RootElement != null) {
-            var wrapper = new XElement(RootElement.AsNamespaced(Namespace), root);
+            var wrapper = new XElement(RootElement.AsNamespaced(Namespace)!, root);
             doc.Add(wrapper);
         }
         else {
@@ -79,12 +79,12 @@ public class XmlSerializer : IXmlSerializer {
     /// <summary>
     /// XML namespace to use when serializing
     /// </summary>
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
     /// <summary>
     /// Format string to use when serializing dates
     /// </summary>
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
     /// <summary>
     /// Content type for serialized content
@@ -115,11 +115,11 @@ public class XmlSerializer : IXmlSerializer {
             var options        = prop.GetAttribute<SerializeAsAttribute>();
 
             if (options != null) {
-                name = options.Name.HasValue()
+                name = options.Name.IsNotEmpty()
                     ? options.Name
                     : name;
 
-                name = options.TransformName(name);
+                name = options.TransformName(name!);
 
                 useAttribute = options.Attribute;
 
@@ -135,7 +135,7 @@ public class XmlSerializer : IXmlSerializer {
             }
 
             var nsName  = name.AsNamespaced(Namespace);
-            var element = new XElement(nsName);
+            var element = new XElement(nsName!);
 
             if (propType.GetTypeInfo().IsPrimitive ||
                 propType.GetTypeInfo().IsValueType ||
@@ -159,11 +159,11 @@ public class XmlSerializer : IXmlSerializer {
                     var type    = item.GetType();
                     var setting = type.GetAttribute<SerializeAsAttribute>();
 
-                    var itemTypeName = setting != null && setting.Name.HasValue()
+                    var itemTypeName = setting != null && setting.Name.IsNotEmpty()
                         ? setting.Name
                         : type.Name;
 
-                    var instance = new XElement(itemTypeName.AsNamespaced(Namespace));
+                    var instance = new XElement(itemTypeName!.AsNamespaced(Namespace)!);
 
                     Map(instance, item);
 
@@ -189,12 +189,12 @@ public class XmlSerializer : IXmlSerializer {
 
     string GetSerializedValue(object obj) {
         var output = obj switch {
-            DateTime time when DateFormat.HasValue() => time.ToString(DateFormat, CultureInfo.InvariantCulture),
-            bool b                                   => b.ToString().ToLowerInvariant(),
-            _                                        => obj
+            DateTime time when DateFormat.IsNotEmpty() => time.ToString(DateFormat, CultureInfo.InvariantCulture),
+            bool b                                     => b.ToString().ToLowerInvariant(),
+            _                                          => obj
         };
 
-        return IsNumeric(obj) ? SerializeNumber(obj) : output.ToString();
+        return IsNumeric(obj) ? SerializeNumber(obj) : output.ToString()!;
     }
 
     static string SerializeNumber(object number)

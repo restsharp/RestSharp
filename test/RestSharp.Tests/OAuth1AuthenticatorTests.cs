@@ -41,17 +41,17 @@ public class OAuth1AuthenticatorTests {
         var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
         var value         = (string)authParameter.Value;
 
-        Assert.True(value.Contains("OAuth"));
-        Assert.True(value.Contains("realm=\"Realm\""));
-        Assert.True(value.Contains("oauth_timestamp="));
-        Assert.True(value.Contains("oauth_signature=\"ConsumerSecret"));
-        Assert.True(value.Contains("oauth_nonce="));
-        Assert.True(value.Contains("oauth_consumer_key=\"ConsumerKey\""));
-        Assert.True(value.Contains("oauth_signature_method=\"PLAINTEXT\""));
-        Assert.True(value.Contains("oauth_version=\"Version\""));
-        Assert.True(value.Contains("x_auth_mode=\"client_auth\""));
-        Assert.True(value.Contains("x_auth_username=\"ClientUsername\""));
-        Assert.True(value.Contains("x_auth_password=\"ClientPassword\""));
+        Assert.Contains("OAuth", value);
+        Assert.Contains("realm=\"Realm\"", value);
+        Assert.Contains("oauth_timestamp=", value);
+        Assert.Contains("oauth_signature=\"ConsumerSecret", value);
+        Assert.Contains("oauth_nonce=", value);
+        Assert.Contains("oauth_consumer_key=\"ConsumerKey\"", value);
+        Assert.Contains("oauth_signature_method=\"PLAINTEXT\"", value);
+        Assert.Contains("oauth_version=\"Version\"", value);
+        Assert.Contains("x_auth_mode=\"client_auth\"", value);
+        Assert.Contains("x_auth_username=\"ClientUsername\"", value);
+        Assert.Contains("x_auth_password=\"ClientPassword\"", value);
     }
 
     [Fact]
@@ -179,8 +179,6 @@ public class OAuth1AuthenticatorTests {
     [Theory]
     [InlineData(OAuthType.AccessToken)]
     [InlineData(OAuthType.ProtectedResource)]
-    [InlineData(OAuthType.AccessToken)]
-    [InlineData(OAuthType.ProtectedResource)]
     public void Authenticate_ShouldAllowEmptyConsumerSecret_OnHttpAuthorizationHeaderHandling(OAuthType type) {
         // Arrange
         const string url = "https://no-query.string";
@@ -197,6 +195,7 @@ public class OAuth1AuthenticatorTests {
         var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
         var value         = (string)authParameter.Value;
 
+        Assert.NotNull(value);
         Assert.NotEmpty(value);
         Assert.Contains("OAuth", value!);
         Assert.Contains("oauth_signature=\"" + OAuthTools.UrlEncodeStrict("&"), value);

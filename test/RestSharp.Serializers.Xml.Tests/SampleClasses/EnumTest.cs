@@ -1,4 +1,4 @@
-﻿namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 public enum ByteEnum : byte { EnumMin = 0, EnumMax = 255 }
 

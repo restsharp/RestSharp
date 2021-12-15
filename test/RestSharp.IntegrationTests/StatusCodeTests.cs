@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using RestSharp.Serializers;
+using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -9,6 +10,7 @@ public class StatusCodeTests : IDisposable {
     public StatusCodeTests() {
         _server = SimpleServer.Create(UrlToStatusCodeHandler);
         _client = new RestClient(_server.Url);
+        _client.UseXmlSerializer();
     }
 
     public void Dispose() => _server.Dispose();
@@ -81,7 +83,7 @@ public class StatusCodeTests : IDisposable {
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact(Skip = "Not sure why this hangs")]
+    [Fact]
     public async Task Reports_1xx_Status_Code_Success_Accurately() {
         var request  = new RestRequest("100");
         var response = await _client.ExecuteAsync(request);

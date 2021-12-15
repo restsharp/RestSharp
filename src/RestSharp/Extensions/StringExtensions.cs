@@ -5,7 +5,7 @@ using System.Web;
 
 namespace RestSharp.Extensions; 
 
-public static class StringExtensions {
+static class StringExtensions {
     static readonly Regex IsUpperCaseRegex = new(@"^[A-Z]+$");
 
     static readonly Regex AddUnderscoresRegex1 = new(@"[-\s]");
@@ -57,13 +57,6 @@ public static class StringExtensions {
         var encoded = HttpUtility.UrlEncode(input, encoding);
         return encoded?.Replace("+", "%20");
     }
-
-    /// <summary>
-    /// Check that a string is not null or empty
-    /// </summary>
-    /// <param name="input">String to check</param>
-    /// <returns>bool</returns>
-    public static bool HasValue(this string input) => !string.IsNullOrEmpty(input);
 
     /// <summary>
     /// Remove underscores from a string

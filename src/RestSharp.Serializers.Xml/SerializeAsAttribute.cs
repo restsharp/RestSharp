@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using RestSharp.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace RestSharp.Serializers; 
 
 /// <summary>

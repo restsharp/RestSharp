@@ -4,7 +4,7 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.IntegrationTests;
 
 public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
-    readonly SimpleServer _server;
+    readonly SimpleServer      _server;
 
     const string NewLine = "\r\n";
 

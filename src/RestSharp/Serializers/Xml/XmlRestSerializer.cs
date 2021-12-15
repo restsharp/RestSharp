@@ -17,11 +17,11 @@ using System.Globalization;
 namespace RestSharp.Serializers.Xml;
 
 public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializer {
-    XmlSerilizationOptions _options = XmlSerilizationOptions.Default;
-    IXmlDeserializer       _xmlDeserializer;
-    IXmlSerializer         _xmlSerializer;
+    XmlSerializationOptions _options = XmlSerializationOptions.Default;
+    IXmlDeserializer        _xmlDeserializer;
+    IXmlSerializer          _xmlSerializer;
 
-    public XmlRestSerializer() : this(new XmlSerializer(), new XmlDeserializer()) { }
+    public XmlRestSerializer() : this(new DotNetXmlSerializer(), new DotNetXmlDeserializer()) { }
 
     public XmlRestSerializer(IXmlSerializer xmlSerializer, IXmlDeserializer xmlDeserializer) {
         _xmlDeserializer = xmlDeserializer;
@@ -34,13 +34,16 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializ
 
     public string ContentType { get; set; } = Serializers.ContentType.Xml;
 
-    public string? Serialize(object? obj) => _xmlSerializer.Serialize(obj);
+    public string? Serialize(object? obj) => _xmlSerializer.Serialize(Ensure.NotNull(obj, nameof(obj)));
 
     public T? Deserialize<T>(RestResponse response) => _xmlDeserializer.Deserialize<T>(response);
 
     public string? Serialize(Parameter parameter) {
         if (parameter is not XmlParameter xmlParameter)
-            throw new InvalidOperationException("Supplied parameter is not an XML parameter");
+            throw new ArgumentException("Supplied parameter is not an XML parameter", nameof(parameter));
+
+        if (parameter.Value == null)
+            throw new ArgumentNullException(nameof(parameter), "Parameter value is null");
 
         var savedNamespace = _xmlSerializer.Namespace;
         _xmlSerializer.Namespace = xmlParameter.XmlNamespace ?? savedNamespace;
@@ -61,30 +64,32 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializ
         }
     }
 
-    public string Namespace {
+    public string? Namespace {
         get => _options.Namespace;
         set {
-            _options.Namespace         = value;
-            _xmlSerializer.Namespace   = value;
-            _xmlDeserializer.Namespace = value;
+            var ns = Ensure.NotEmptyString(value, nameof(Namespace));
+            _options.Namespace         = ns;
+            _xmlSerializer.Namespace   = ns;
+            _xmlDeserializer.Namespace = ns;
         }
     }
 
-    public string DateFormat {
+    public string? DateFormat {
         get => _options.DateFormat;
         set {
-            _options.DateFormat         = value;
-            _xmlSerializer.DateFormat   = value;
-            _xmlDeserializer.DateFormat = value;
+            var dateFormat = Ensure.NotEmptyString(value, nameof(DataFormat));
+            _options.DateFormat         = dateFormat;
+            _xmlSerializer.DateFormat   = dateFormat;
+            _xmlDeserializer.DateFormat = dateFormat;
         }
     }
 
-    public XmlRestSerializer WithOptions(XmlSerilizationOptions options) {
+    public XmlRestSerializer WithOptions(XmlSerializationOptions options) {
         _options = options;
         return this;
     }
 
-    public XmlRestSerializer WithXmlSerializer<T>(XmlSerilizationOptions? options = null) where T : IXmlSerializer, new() {
+    public XmlRestSerializer WithXmlSerializer<T>(XmlSerializationOptions? options = null) where T : IXmlSerializer, new() {
         if (options != null) _options = options;
 
         return WithXmlSerializer(
@@ -101,7 +106,7 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializ
         return this;
     }
 
-    public XmlRestSerializer WithXmlDeserializer<T>(XmlSerilizationOptions? options = null) where T : IXmlDeserializer, new() {
+    public XmlRestSerializer WithXmlDeserializer<T>(XmlSerializationOptions? options = null) where T : IXmlDeserializer, new() {
         if (options != null) _options = options;
 
         return WithXmlDeserializer(
@@ -119,23 +124,23 @@ public class XmlRestSerializer : IRestSerializer, IXmlSerializer, IXmlDeserializ
     }
 }
 
-public class XmlSerilizationOptions {
+public class XmlSerializationOptions {
     /// <summary>
     /// Name of the root element to use when serializing
     /// </summary>
-    public string RootElement { get; set; }
+    public string? RootElement { get; set; }
 
     /// <summary>
     /// XML namespace to use when serializing
     /// </summary>
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
     /// <summary>
     /// Format string to use when serializing dates
     /// </summary>
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
-    public CultureInfo Culture { get; set; }
+    public CultureInfo? Culture { get; set; }
 
-    public static XmlSerilizationOptions Default => new() { Culture = CultureInfo.InvariantCulture };
+    public static XmlSerializationOptions Default => new() { Culture = CultureInfo.InvariantCulture };
 }

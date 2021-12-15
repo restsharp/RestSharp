@@ -26,7 +26,7 @@ public record Parameter {
         }
 
         Name   = name;
-        Value  = type != ParameterType.UrlSegment ? value : value?.ToString().Replace("%2F", "/").Replace("%2f", "/");
+        Value  = type != ParameterType.UrlSegment ? value : value?.ToString()?.Replace("%2F", "/").Replace("%2f", "/");
         Type   = type == ParameterType.QueryStringWithoutEncode ? ParameterType.QueryString : type;
         Encode = type != ParameterType.QueryStringWithoutEncode && encode;
     }

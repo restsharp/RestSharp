@@ -4,46 +4,31 @@ using System.Web;
 
 // ReSharper disable CheckNamespace
 
-namespace RestSharp.Authenticators; 
+namespace RestSharp.Authenticators;
 
 /// <seealso href="http://tools.ietf.org/html/rfc5849">RFC: The OAuth 1.0 Protocol</seealso>
-[PublicAPI]
 public class OAuth1Authenticator : IAuthenticator {
-    public virtual string Realm { get; set; }
-
-    public virtual OAuthParameterHandling ParameterHandling { get; set; }
-
-    public virtual OAuthSignatureMethod SignatureMethod { get; set; }
-
+    public virtual string?                 Realm              { get; set; }
+    public virtual OAuthParameterHandling  ParameterHandling  { get; set; }
+    public virtual OAuthSignatureMethod    SignatureMethod    { get; set; }
     public virtual OAuthSignatureTreatment SignatureTreatment { get; set; }
-
-    internal virtual OAuthType Type { get; set; }
-
-    internal virtual string ConsumerKey { get; set; }
-
-    internal virtual string? ConsumerSecret { get; set; }
-
-    internal virtual string Token { get; set; }
-
-    internal virtual string TokenSecret { get; set; }
-
-    internal virtual string Verifier { get; set; }
-
-    internal virtual string Version { get; set; }
-
-    internal virtual string CallbackUrl { get; set; }
-
-    internal virtual string SessionHandle { get; set; }
-
-    internal virtual string ClientUsername { get; set; }
-
-    internal virtual string ClientPassword { get; set; }
+    public virtual OAuthType               Type               { get; set; }
+    public virtual string?                 ConsumerKey        { get; set; }
+    public virtual string?                 ConsumerSecret     { get; set; }
+    public virtual string?                 Token              { get; set; }
+    public virtual string?                 TokenSecret        { get; set; }
+    public virtual string?                 Verifier           { get; set; }
+    public virtual string?                 Version            { get; set; }
+    public virtual string?                 CallbackUrl        { get; set; }
+    public virtual string?                 SessionHandle      { get; set; }
+    public virtual string?                 ClientUsername     { get; set; }
+    public virtual string?                 ClientPassword     { get; set; }
 
     public ValueTask Authenticate(RestClient client, RestRequest request) {
         var workflow = new OAuthWorkflow {
-            ConsumerKey        = ConsumerKey,
-            ConsumerSecret     = ConsumerSecret,
-            ParameterHandling  = ParameterHandling,
+            ConsumerKey    = ConsumerKey,
+            ConsumerSecret = ConsumerSecret,
+            // ParameterHandling  = ParameterHandling,
             SignatureMethod    = SignatureMethod,
             SignatureTreatment = SignatureTreatment,
             Verifier           = Verifier,
@@ -60,6 +45,7 @@ public class OAuth1Authenticator : IAuthenticator {
         return default;
     }
 
+    [PublicAPI]
     public static OAuth1Authenticator ForRequestToken(
         string               consumerKey,
         string?              consumerSecret,
@@ -77,6 +63,7 @@ public class OAuth1Authenticator : IAuthenticator {
         return authenticator;
     }
 
+    [PublicAPI]
     public static OAuth1Authenticator ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
         var authenticator = ForRequestToken(consumerKey, consumerSecret);
 
@@ -85,6 +72,7 @@ public class OAuth1Authenticator : IAuthenticator {
         return authenticator;
     }
 
+    [PublicAPI]
     public static OAuth1Authenticator ForAccessToken(
         string               consumerKey,
         string?              consumerSecret,
@@ -103,6 +91,7 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.AccessToken
         };
 
+    [PublicAPI]
     public static OAuth1Authenticator ForAccessToken(
         string  consumerKey,
         string? consumerSecret,
@@ -117,15 +106,7 @@ public class OAuth1Authenticator : IAuthenticator {
         return authenticator;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="consumerKey"></param>
-    /// <param name="consumerSecret"></param>
-    /// <param name="token"></param>
-    /// <param name="tokenSecret"></param>
-    /// <param name="sessionHandle"></param>
-    /// <returns></returns>
+    [PublicAPI]
     public static OAuth1Authenticator ForAccessTokenRefresh(
         string  consumerKey,
         string? consumerSecret,
@@ -140,16 +121,7 @@ public class OAuth1Authenticator : IAuthenticator {
         return authenticator;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="consumerKey"></param>
-    /// <param name="consumerSecret"></param>
-    /// <param name="token"></param>
-    /// <param name="tokenSecret"></param>
-    /// <param name="verifier"></param>
-    /// <param name="sessionHandle"></param>
-    /// <returns></returns>
+    [PublicAPI]
     public static OAuth1Authenticator ForAccessTokenRefresh(
         string  consumerKey,
         string? consumerSecret,
@@ -166,15 +138,7 @@ public class OAuth1Authenticator : IAuthenticator {
         return authenticator;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="consumerKey"></param>
-    /// <param name="consumerSecret"></param>
-    /// <param name="username"></param>
-    /// <param name="password"></param>
-    /// <param name="signatureMethod"></param>
-    /// <returns></returns>
+    [PublicAPI]
     public static OAuth1Authenticator ForClientAuthentication(
         string               consumerKey,
         string?              consumerSecret,
@@ -193,15 +157,7 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.ClientAuthentication
         };
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="consumerKey"></param>
-    /// <param name="consumerSecret"></param>
-    /// <param name="accessToken"></param>
-    /// <param name="accessTokenSecret"></param>
-    /// <param name="signatureMethod"></param>
-    /// <returns></returns>
+    [PublicAPI]
     public static OAuth1Authenticator ForProtectedResource(
         string               consumerKey,
         string?              consumerSecret,
@@ -247,7 +203,7 @@ public class OAuth1Authenticator : IAuthenticator {
 
         var query =
             request.AlwaysMultipartFormData || request.Files.Count > 0
-                ? x => BaseQuery(x) && x.Name.StartsWith("oauth_")
+                ? x => BaseQuery(x) && x.Name != null && x.Name.StartsWith("oauth_")
                 : (Func<Parameter, bool>)BaseQuery;
 
         parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
@@ -291,7 +247,7 @@ public class OAuth1Authenticator : IAuthenticator {
                     .ToList();
 
             if (!Realm.IsEmpty())
-                oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
+                oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm!)}\"");
 
             return "OAuth " + string.Join(",", oathParameters);
         }
@@ -299,5 +255,6 @@ public class OAuth1Authenticator : IAuthenticator {
 }
 
 static class ParametersExtensions {
-    internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p) => p.Select(x => new WebPair(x.Name, x.Value.ToString()));
+    internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p)
+        => p.Select(x => new WebPair(Ensure.NotNull(x.Name, "Parameter name"), Ensure.NotNull(x.Value, "Parameter value").ToString()!));
 }

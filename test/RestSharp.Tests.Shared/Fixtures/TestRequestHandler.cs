@@ -1,74 +1,64 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace RestSharp.Tests.Shared.Fixtures
-{
-    public class TestRequestHandler
-    {
-        readonly Regex _comparisonRegex;
+namespace RestSharp.Tests.Shared.Fixtures;
 
-        readonly List<string> _urlParameterNames = new List<string>();
+public class TestRequestHandler {
+    readonly Regex _comparisonRegex;
 
-        public TestRequestHandler(
-            string url,
-            string httpMethod,
-            Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction
-        )
-        {
-            Url           = url;
-            HttpMethod    = httpMethod;
-            HandlerAction = handlerAction;
+    readonly List<string> _urlParameterNames = new();
 
-            _comparisonRegex = CreateComparisonRegex(url);
+    public TestRequestHandler(
+        string                                                                        url,
+        string                                                                        httpMethod,
+        Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction
+    ) {
+        Url           = url;
+        HttpMethod    = httpMethod;
+        HandlerAction = handlerAction;
+
+        _comparisonRegex = CreateComparisonRegex(url);
+    }
+
+    public TestRequestHandler(string url, Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction)
+        : this(url, null, handlerAction) { }
+
+    string                                                                                 Url           { get; }
+    string                                                                                 HttpMethod    { get; }
+    internal Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> HandlerAction { get; }
+
+    Regex CreateComparisonRegex(string url) {
+        var regexString = Regex.Escape(url).Replace(@"\{", "{");
+
+        regexString += regexString.EndsWith("/") ? "?" : "/?";
+        regexString =  (regexString.StartsWith("/") ? "^" : "^/") + regexString;
+
+        var regex = new Regex(@"{(.*?)}");
+
+        foreach (Match match in regex.Matches(regexString)) {
+            regexString = regexString.Replace(match.Value, @"(.*?)");
+            _urlParameterNames.Add(match.Groups[1].Value);
         }
 
-        public TestRequestHandler(string url, Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction)
-            : this(url, null, handlerAction) { }
+        regexString += !regexString.Contains(@"\?") ? @"(\?.*)?$" : "$";
 
-        string Url { get; }
-        string HttpMethod { get; }
-        internal Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> HandlerAction { get; }
+        return new Regex(regexString);
+    }
 
-        Regex CreateComparisonRegex(string url)
-        {
-            var regexString = Regex.Escape(url).Replace(@"\{", "{");
+    public bool TryMatchUrl(string rawUrl, string httpMethod, out Dictionary<string, string> parameters) {
+        var match = _comparisonRegex.Match(rawUrl);
 
-            regexString += regexString.EndsWith("/") ? "?" : "/?";
-            regexString =  (regexString.StartsWith("/") ? "^" : "^/") + regexString;
+        var isMethodMatched = HttpMethod == null || HttpMethod.Split(',').Contains(httpMethod);
 
-            var regex = new Regex(@"{(.*?)}");
-
-            foreach (Match match in regex.Matches(regexString))
-            {
-                regexString = regexString.Replace(match.Value, @"(.*?)");
-                _urlParameterNames.Add(match.Groups[1].Value);
-            }
-
-            regexString += !regexString.Contains(@"\?") ? @"(\?.*)?$" : "$";
-
-            return new Regex(regexString);
+        if (!match.Success || !isMethodMatched) {
+            parameters = null;
+            return false;
         }
 
-        public bool TryMatchUrl(string rawUrl, string httpMethod, out Dictionary<string, string> parameters)
-        {
-            var match = _comparisonRegex.Match(rawUrl);
+        parameters = new Dictionary<string, string>();
 
-            var isMethodMatched = HttpMethod == null || HttpMethod.Split(',').Contains(httpMethod);
-
-            if (!match.Success || !isMethodMatched)
-            {
-                parameters = null;
-                return false;
-            }
-
-            parameters = new Dictionary<string, string>();
-
-            for (var i = 0; i < _urlParameterNames.Count; i++)
-                parameters[_urlParameterNames[i]] = match.Groups[i + 1].Value;
-            return true;
-        }
+        for (var i = 0; i < _urlParameterNames.Count; i++)
+            parameters[_urlParameterNames[i]] = match.Groups[i + 1].Value;
+        return true;
     }
 }

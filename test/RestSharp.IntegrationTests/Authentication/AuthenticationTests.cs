@@ -7,10 +7,14 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.IntegrationTests.Authentication; 
 
 public class AuthenticationTests {
-    static void UsernamePasswordEchoHandler(HttpListenerContext context) {
-        var header = context.Request.Headers["Authorization"];
+    readonly ITestOutputHelper _output;
 
-        var parts = Encoding.ASCII.GetString(Convert.FromBase64String(header.Substring("Basic ".Length)))
+    public AuthenticationTests(ITestOutputHelper output) => _output = output;
+
+    static void UsernamePasswordEchoHandler(HttpListenerContext context) {
+        var header = context.Request.Headers["Authorization"]!;
+
+        var parts = Encoding.ASCII.GetString(Convert.FromBase64String(header["Basic ".Length..]))
             .Split(':');
 
         context.Response.OutputStream.WriteStringUtf8(string.Join("|", parts));

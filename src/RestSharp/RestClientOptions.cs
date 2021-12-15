@@ -23,7 +23,7 @@ using System.Text;
 namespace RestSharp;
 
 public class RestClientOptions {
-    static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName).Version;
+    static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
 
     static readonly string DefaultUserAgent = $"RestSharp/{Version}";
 

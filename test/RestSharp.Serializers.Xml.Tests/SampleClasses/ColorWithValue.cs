@@ -1,6 +1,4 @@
-﻿using RestSharp.Serializers;
-
-namespace RestSharp.Tests.SampleClasses; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses; 
 
 [DeserializeAs(Name = "Color")]
 public class ColorWithValue {

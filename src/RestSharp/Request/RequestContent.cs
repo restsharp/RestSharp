@@ -61,21 +61,28 @@ class RequestContent : IDisposable {
     }
 
     HttpContent Serialize(Parameter body) {
-        if (body.DataFormat == DataFormat.None) {
-            var stringContent = new StringContent(body.Value!.ToString(), _client.Options.Encoding, body.ContentType);
-            return stringContent;
-        }
+        return body.DataFormat switch {
+            DataFormat.None => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType),
+            _               => GetSerialized()
+        };
 
-        if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializer))
-            throw new InvalidDataContractException(
-                $"Can't find serializer for content type {body.DataFormat}"
+        HttpContent GetSerialized() {
+            if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializer))
+                throw new InvalidDataContractException(
+                    $"Can't find serializer for content type {body.DataFormat}"
+                );
+
+            var content = serializer.Serialize(body);
+
+            if (content == null)
+                throw new SerializationException("Request body serialized to null");
+
+            return new StringContent(
+                content,
+                _client.Options.Encoding,
+                body.ContentType ?? serializer.ContentType
             );
-
-        return new StringContent(
-            serializer.Serialize(body),
-            _client.Options.Encoding,
-            body.ContentType ?? serializer.ContentType
-        );
+        }
     }
 
     static bool BodyShouldBeMultipartForm(Parameter bodyParameter) {
@@ -96,7 +103,7 @@ class RequestContent : IDisposable {
             if (bodyParameter!.Name.IsEmpty())
                 mpContent.Add(bodyContent);
             else
-                mpContent.Add(bodyContent, bodyParameter.Name);
+                mpContent.Add(bodyContent, bodyParameter.Name!);
             Content = mpContent;
         }
         else {
@@ -114,8 +121,8 @@ class RequestContent : IDisposable {
             // we got the multipart form already instantiated, just add parameters to it
             foreach (var postParameter in postParameters) {
                 mpContent.Add(
-                    new StringContent(postParameter.Value!.ToString(), _client.Options.Encoding, postParameter.ContentType),
-                    postParameter.Name
+                    new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
+                    postParameter.Name!
                 );
             }
         }
@@ -124,7 +131,7 @@ class RequestContent : IDisposable {
             var formContent = new FormUrlEncodedContent(
                 _request.Parameters
                     .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()))
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
             );
             Content = formContent;
         }
@@ -139,16 +146,20 @@ class RequestContent : IDisposable {
             var parameterStringValue = parameter.Value!.ToString();
 
             var value = parameter.Name switch {
-                ContentType => GetContentTypeHeader(parameterStringValue),
+                ContentType => GetContentTypeHeader(Ensure.NotNull(parameterStringValue, nameof(parameter))),
                 _           => parameterStringValue
             };
-            Content!.Headers.Remove(parameter.Name);
-            Content!.Headers.TryAddWithoutValidation(parameter.Name, value);
+            var pName = Ensure.NotNull(parameter.Name, nameof(parameter.Name));
+            Content!.Headers.Remove(pName);
+            Content!.Headers.TryAddWithoutValidation(pName, value);
         }
     }
 
     string GetContentTypeHeader(string contentType) {
-        var boundary = Content!.GetFormBoundary();
+        if (Content == null)
+            throw new InvalidRequestException("Content type headers should not be used when there's no body in the request");
+
+        var boundary = Content.GetFormBoundary();
         return boundary.IsEmpty() ? contentType : $"{contentType}; boundary=\"{boundary}\"";
     }
 

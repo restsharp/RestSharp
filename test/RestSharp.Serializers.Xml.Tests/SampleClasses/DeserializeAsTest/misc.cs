@@ -1,6 +1,4 @@
-﻿using RestSharp.Serializers;
-
-namespace RestSharp.Tests.SampleClasses.DeserializeAsTest; 
+﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses.DeserializeAsTest; 
 
 public class NodeWithAttributeAndValue {
     [DeserializeAs(Name = "attribute-value", Attribute = true)]

@@ -5,6 +5,8 @@ public static class ContentType {
 
     public const string Xml = "application/xml";
 
+    public const string Plain = "text/plain";
+
     public static readonly Dictionary<DataFormat, string> FromDataFormat =
         new() {
             { DataFormat.Xml, Xml },

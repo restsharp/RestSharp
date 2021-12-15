@@ -26,8 +26,8 @@ static class HttpRequestMessageExtensions {
         
         void AddHeader(Parameter parameter) {
             var parameterStringValue = parameter.Value!.ToString();
-            message.Headers.Remove(parameter.Name);
-            message.Headers.TryAddWithoutValidation(parameter.Name, parameterStringValue);
+            message.Headers.Remove(parameter.Name!);
+            message.Headers.TryAddWithoutValidation(parameter.Name!, parameterStringValue);
         }
     }
 }

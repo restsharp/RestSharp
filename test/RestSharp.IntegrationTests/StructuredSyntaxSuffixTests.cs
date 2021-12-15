@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -60,7 +61,7 @@ public class StructuredSyntaxSuffixTests : IDisposable {
 
     [Fact]
     public async Task By_default_content_types_with_XML_structured_syntax_suffix_should_deserialize_as_XML() {
-        var client = new RestClient(_url);
+        var client = new RestClient(_url).UseXmlSerializer();
 
         var request = new RestRequest()
             .AddParameter("ct", "application/vnd.somebody.something+xml")
@@ -74,7 +75,7 @@ public class StructuredSyntaxSuffixTests : IDisposable {
 
     [Fact]
     public async Task By_default_text_xml_content_type_should_deserialize_as_XML() {
-        var client = new RestClient(_url);
+        var client = new RestClient(_url).UseXmlSerializer();
 
         var request = new RestRequest()
             .AddParameter("ct", "text/xml")
@@ -85,21 +86,4 @@ public class StructuredSyntaxSuffixTests : IDisposable {
         Assert.Equal("Bob", response.Data.Name);
         Assert.Equal(50, response.Data.Age);
     }
-
-    // [Fact]
-    // public void Should_allow_wildcard_content_types_to_be_defined() {
-    //     var client = new RestClient(_url);
-    //
-    //     // In spite of the content type, handle ALL structured syntax suffixes of "+xml" as JSON
-    //     client.AddHandler("*+xml", new JsonSerializer());
-    //
-    //     var request = new RestRequest()
-    //         .AddParameter("ct", "application/vnd.somebody.something+xml")
-    //         .AddParameter("c", JsonContent);
-    //
-    //     var response = client.Execute<Person>(request);
-    //
-    //     Assert.Equal("Bob", response.Data.Name);
-    //     Assert.Equal(50, response.Data.Age);
-    // }
 }

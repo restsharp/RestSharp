@@ -7,8 +7,8 @@ namespace RestSharp.Tests;
 public class StringExtensionsTests {
     [Fact]
     public void UrlEncode_Throws_ArgumentNullException_For_Null_Input() {
-        string? nullString = null;
-
+        string nullString = null;
+        // ReSharper disable once ExpressionIsAlwaysNull
         Assert.Throws<ArgumentNullException>(() => nullString!.UrlEncode());
     }
 
@@ -69,25 +69,5 @@ public class StringExtensionsTests {
         var result = start.ToCamelCase(CultureInfo.InvariantCulture);
 
         Assert.Equal(finish, result);
-    }
-
-    [Fact]
-    public void Does_not_throw_on_invalid_encoding() {
-        const string value = "SomeValue";
-
-        var bytes = Encoding.UTF8.GetBytes(value);
-
-        var decoded = bytes.AsString("blah");
-        decoded.Should().Be(value);
-    }
-
-    [Fact]
-    public void Does_not_throw_on_missing_encoding() {
-        const string value = "SomeValue";
-
-        var bytes = Encoding.UTF8.GetBytes(value);
-
-        var decoded = bytes.AsString(null);
-        decoded.Should().Be(value);
     }
 }

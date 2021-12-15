@@ -49,7 +49,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Encoding of the response content
     /// </summary>
-    public ICollection<string> ContentEncoding { get; init; }
+    public ICollection<string> ContentEncoding { get; init; } = new List<string>();
 
     /// <summary>
     /// String representation of response content
@@ -84,17 +84,17 @@ public abstract class RestResponseBase {
     /// <summary>
     /// HttpWebResponse.Server
     /// </summary>
-    public string Server { get; init; }
+    public string? Server { get; init; }
 
     /// <summary>
     /// Cookies returned by server with the response
     /// </summary>
-    public CookieCollection Cookies { get; protected internal set; }
+    public CookieCollection? Cookies { get; protected internal set; }
 
     /// <summary>
     /// Headers returned by server with the response
     /// </summary>
-    public IList<Parameter> Headers { get; protected internal set; }
+    public IList<Parameter>? Headers { get; protected internal set; }
 
     /// <summary>
     /// Status of the request. Will return Error for transport errors.
@@ -105,7 +105,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Transport or other non-HTTP error generated while attempting request
     /// </summary>
-    public string ErrorMessage { get; set; }
+    public string? ErrorMessage { get; set; }
 
     /// <summary>
     /// The exception thrown during the request, if any

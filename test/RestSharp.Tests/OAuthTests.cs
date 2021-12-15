@@ -57,7 +57,7 @@ public class OAuthTests {
     [InlineData("", 2048)]
     [InlineData(" !\"#$%&'()*+,", 2048)]
     public void RsaSha1_Signs_Correctly(string value, int keySize) {
-        var hasher = new SHA1Managed();
+        var hasher = SHA1.Create();
         var hash   = hasher.ComputeHash(value.GetBytes());
 
         using var crypto = new RSACryptoServiceProvider(keySize) { PersistKeyInCsp = false };

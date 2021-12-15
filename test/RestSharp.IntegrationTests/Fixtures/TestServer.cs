@@ -10,7 +10,7 @@ public class HttpServer {
 
     const string Address = "http://localhost:5151";
 
-    public HttpServer(ITestOutputHelper? output = null) {
+    public HttpServer(ITestOutputHelper output = null) {
         var builder = WebApplication.CreateBuilder();
 
         if (output != null)
@@ -21,6 +21,7 @@ public class HttpServer {
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
         _app.MapGet("echo", (string msg) => msg);
         _app.MapGet("timeout", async () => await Task.Delay(2000));
+        // ReSharper disable once ConvertClosureToMethodGroup
         _app.MapGet("status", (int code) => Results.StatusCode(code));
     }
 
