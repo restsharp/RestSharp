@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using RestSharp.Extensions;
+﻿using RestSharp.Extensions;
 
 namespace RestSharp;
 
@@ -130,12 +129,12 @@ public class RestRequest {
     /// <summary>
     /// When supplied, the function will be called before making a request
     /// </summary>
-    public Action<HttpRequestMessage>? OnBeforeRequest { get; set; }
+    public Func<HttpRequestMessage, ValueTask>? OnBeforeRequest { get; set; }
 
     /// <summary>
     /// When supplied, the function will be called after the request is complete
     /// </summary>
-    public Action<HttpResponseMessage>? OnAfterRequest { get; set; }
+    public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
     internal void IncreaseNumAttempts() => Attempts++;
 

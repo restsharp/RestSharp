@@ -52,11 +52,13 @@ public partial class RestClient {
                 .AddAcceptHeader(this);
             message.AddHeaders(parameters.Parameters);
 
-            request.OnBeforeRequest?.Invoke(message);
+            if (request.OnBeforeRequest != null)
+                await request.OnBeforeRequest(message);
 
             var responseMessage = await HttpClient.SendAsync(message, ct);
 
-            request.OnAfterRequest?.Invoke(responseMessage);
+            if (request.OnAfterRequest != null)
+                await request.OnAfterRequest(responseMessage);
 
             return new InternalResponse(responseMessage, url, null, timeoutCts.Token);
         }
