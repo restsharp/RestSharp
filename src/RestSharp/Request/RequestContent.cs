@@ -138,9 +138,14 @@ class RequestContent : IDisposable {
     }
 
     void AddHeaders() {
-        _request.Parameters
+        var contentHeaders = _request.Parameters
             .Where(x => x.Type == ParameterType.HttpHeader && ContentHeaders.Contains(x.Name))
-            .ForEach(AddHeader);
+            .ToArray();
+
+        if (contentHeaders.Length > 0 && Content == null)
+            throw new InvalidRequestException("Content headers should not be used when there's no body in the request");
+
+        contentHeaders.ForEach(AddHeader);
 
         void AddHeader(Parameter parameter) {
             var parameterStringValue = parameter.Value!.ToString();
@@ -156,10 +161,7 @@ class RequestContent : IDisposable {
     }
 
     string GetContentTypeHeader(string contentType) {
-        if (Content == null)
-            throw new InvalidRequestException("Content type headers should not be used when there's no body in the request");
-
-        var boundary = Content.GetFormBoundary();
+        var boundary = Content!.GetFormBoundary();
         return boundary.IsEmpty() ? contentType : $"{contentType}; boundary=\"{boundary}\"";
     }
 
