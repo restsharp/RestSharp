@@ -1,15 +1,21 @@
 ﻿using System.Net;
+using HttpTracer;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
-public class MultipartFormDataTests : IDisposable {
+public sealed class MultipartFormDataTests : IDisposable {
     readonly ITestOutputHelper _output;
 
     public MultipartFormDataTests(ITestOutputHelper output) {
         _output = output;
         _server = SimpleServer.Create(RequestHandler.Handle);
-        _client = new RestClient(_server.Url);
+
+        var options = new RestClientOptions(_server.Url) {
+            ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new OutputLogger(output), HttpMessageParts.All)
+        };
+        _client = new RestClient(options);
     }
 
     public void Dispose() => _server.Dispose();

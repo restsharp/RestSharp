@@ -57,7 +57,7 @@ public partial class RestClient {
             AutomaticDecompression = Options.AutomaticDecompression,
             PreAuthenticate        = Options.PreAuthenticate,
             AllowAutoRedirect      = Options.FollowRedirects,
-            Proxy                  = Options.Proxy,
+            Proxy                  = Options.Proxy
         };
 
         if (Options.RemoteCertificateValidationCallback != null)
@@ -70,7 +70,9 @@ public partial class RestClient {
         if (Options.MaxRedirects.HasValue)
             handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
 
-        HttpClient = new HttpClient(handler);
+        var finalHandler = Options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
+        
+        HttpClient = new HttpClient(finalHandler);
 
         if (Options.Timeout > 0)
             HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
