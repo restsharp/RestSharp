@@ -46,7 +46,7 @@ public class WebServer {
                     try {
                         return ((HttpListener)iar.AsyncState!).EndGetContext(iar);
                     }
-                    catch (HttpListenerException e) {
+                    catch (HttpListenerException) {
                         // it's ok
                         return null;
                     }

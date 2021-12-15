@@ -1,11 +1,9 @@
-﻿using System.Net.Http.Formatting;
-using RestSharp.IntegrationTests.Fixtures;
+﻿using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
 public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
-    readonly ITestOutputHelper _output;
     readonly SimpleServer      _server;
 
     const string NewLine = "\r\n";
@@ -13,10 +11,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     const string TextPlainContentType    = "text/plain";
     const string ExpectedTextContentType = $"{TextPlainContentType}; charset=utf-8";
 
-    public RequestBodyTests(RequestBodyFixture fixture, ITestOutputHelper output) {
-        _output = output;
-        _server = fixture.Server;
-    }
+    public RequestBodyTests(RequestBodyFixture fixture) => _server = fixture.Server;
 
     async Task AssertBody(Method method) {
         var client  = new RestClient(_server.Url);

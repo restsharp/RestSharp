@@ -18,9 +18,4 @@
     <ItemGroup>
         <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
-    <ItemGroup>
-      <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-        <HintPath>..\..\..\..\..\..\Library\Frameworks\Mono.framework\Versions\6.12.0\lib\mono\4.5\System.Net.Http.Formatting.dll</HintPath>
-      </Reference>
-    </ItemGroup>
 </Project>
