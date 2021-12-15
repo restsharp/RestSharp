@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
@@ -29,13 +28,13 @@ public partial class RestClient {
     /// </summary>
     public RestClient() : this(new RestClientOptions()) { }
 
-    public RestClient(HttpClient httpClient) {
+    public RestClient(HttpClient httpClient, RestClientOptions? options = null) {
         UseSerializer<SystemTextJsonSerializer>();
         UseSerializer<XmlRestSerializer>();
 
-        Options          = new RestClientOptions();
-        _cookieContainer = new CookieContainer();
         HttpClient       = httpClient;
+        Options          = options ?? new RestClientOptions();
+        _cookieContainer = Options.CookieContainer ?? new CookieContainer();
 
         if (Options.Timeout > 0)
             HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);

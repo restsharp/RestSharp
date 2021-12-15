@@ -2,6 +2,10 @@ name: CodeQL Analysis
 
 on:
   push:
+    tags:
+      - '*'
+    branches:
+      - dev
   pull_request:
   workflow_dispatch:
   schedule:

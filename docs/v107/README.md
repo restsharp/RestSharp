@@ -88,16 +88,40 @@ This way you avoid instantiating `RestRequest` explicitly.
 
 This way you can use a pre-configured `HttpClient` or `HttpMessageHandler`, customized for your needs.
 
-### Recommended usage
+### Default serializers
+
+For JSON, RestSharp will use `JsonSerializer` from the `System.Text.Json` package. This package is now referenced by default, and it is the only dependency of the RestSharp NuGet package.
+
+The `Utf8` serializer package is deprecated as the package is not being updated.
+
+For XML requests and responses RestSharp uses `DotNetXmlSerializer` and `DotNetXmlDeserializer`.
+Previously used default `XmlSerializer`, `XmlDeserializer`, and `XmlAttrobuteDeserializer` are moved to a separate package `RestSharp.Serializers.Xml`.
+
+## Recommended usage
 
 `RestClient` should be thread-safe. It holds an instance of `HttpClient` and `HttpMessageHandler` inside.
 Do not instantiate the client for a single call, otherwise you get issues with hanging connections and connection pooling won't be possible.
 
-Do use use case-specific typed API clients. Use a single instance of `RestClient` internally in such an API client for making calls.
+Do create typed API clients for your use cases. Use a single instance of `RestClient` internally in such an API client for making calls.
+It would be similar to using typed clients using `HttpClient`, for example:
+
+```csharp
+public class GitHubClient {
+    readonly RestClient _client;
+
+    public GitHubClient() {
+        _client = new RestClient("https://api.github.com/")
+            .AddDefaultHeader(KnownHeaders.Accept, "application/vnd.github.v3+json");
+    }
+
+    public Task<GitHubRepo[]> GetRepos()
+        => _client.GetAsync<GitHubRepo[]>("users/aspnet/repos");
+}
+```
 
 Do not use one instance of `RestClient` across different API clients.
 
-### Presumably solved issues
+## Presumably solved issues
 
 The next RestSharp version presumably solves the following issues:
 - Connection pool starvation
@@ -108,3 +132,19 @@ The next RestSharp version presumably solves the following issues:
 - Intermediate certificate issue
 - Uploading large files (use file parameters with `Stream`)
 - Downloading large files (use `DownloadFileStreanAsync`)
+
+## Deprecated interfaces
+
+The following interfaces are removed from RestSharp:
+- `IRestClient`
+- `IRestRequest`
+- `IRestResponse`
+- `IHttp`
+
+### Motivation
+
+All the deprecated interfaces had only one implementation in RestSharp, so those interfaces were abstracting nothing. It is now unclear what was the purpose for adding those interfaces initially.
+
+What about mocking it, you might ask? The answer is: what would you do if you use a plain `HttpClient` instance? It doesn't implement any interface for the same reason - there's nothing to abstract, and there's only one implementation. We don't recommend mocking `RestClient` in your tests when you are testing against APIs that are controlled by you or people in your organisation. Test your clients against the real thing, as REST calls are I/O-bound. Mocking REST calls is like mocking database calls, and lead to a lot of issues in production even if all your tests pass against mocks.
+
+As mentioned in [Recommended usage](#recommended-usage), we advise against using `RestClient` in the application code, and advocate wrapping it inside particular API client classes. Those classes would be under your control, and you are totally free to use interfaces there. If you absolutely must mock, you can mock your interfaces instead.
