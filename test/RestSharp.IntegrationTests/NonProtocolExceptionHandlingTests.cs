@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Microsoft.AspNetCore.TestHost;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
