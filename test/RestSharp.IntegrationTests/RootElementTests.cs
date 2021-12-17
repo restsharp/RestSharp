@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using RestSharp.IntegrationTests.SampleDeserializers;
 using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
@@ -11,17 +10,14 @@ public class RootElementTests {
     public async Task Copy_RootElement_From_Request_To_IWithRootElement_Deserializer() {
         using var server = HttpServerFixture.StartServer("success", Handle);
 
-        var client = new RestClient(server.Url);
+        var client = new RestClient(server.Url).UseXmlSerializer();
 
         var request = new RestRequest("success") { RootElement = "Success" };
 
-        var deserializer   = new CustomDeserializer();
-        var restSerializer = new XmlRestSerializer(new XmlSerializer(), deserializer);
-        client.UseSerializer(() => restSerializer);
-        
-        await client.ExecuteAsync<TestResponse>(request);
+        var response = await client.ExecuteAsync<TestResponse>(request);
 
-        Assert.Equal(request.RootElement, deserializer.RootElement);
+        response.Data.Should().NotBeNull();
+        response.Data!.Message.Should().Be("Works!");
 
         static void Handle(HttpListenerRequest req, HttpListenerResponse response) {
             response.StatusCode = 200;

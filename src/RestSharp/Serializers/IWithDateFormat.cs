@@ -12,13 +12,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-// ReSharper disable once CheckNamespace
-namespace RestSharp;
+namespace RestSharp.Serializers; 
 
-public class DeserializationException : Exception {
-    public DeserializationException(RestResponse response, Exception innerException)
-        : base("Error occured while deserializing the response", innerException)
-        => Response = response;
-
-    public RestResponse Response { get; }
+public interface IWithDateFormat {
+    string? DateFormat { get; set; }
 }

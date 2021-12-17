@@ -1,4 +1,4 @@
-//  Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+//  Copyright © 2009-2021 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
 
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
@@ -67,10 +66,12 @@ class RequestContent : IDisposable {
         };
 
         HttpContent GetSerialized() {
-            if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializer))
+            if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializerRecord))
                 throw new InvalidDataContractException(
                     $"Can't find serializer for content type {body.DataFormat}"
                 );
+
+            var serializer = serializerRecord.GetSerializer();
 
             var content = serializer.Serialize(body);
 
@@ -80,7 +81,7 @@ class RequestContent : IDisposable {
             return new StringContent(
                 content,
                 _client.Options.Encoding,
-                body.ContentType ?? serializer.ContentType
+                body.ContentType ?? serializer.Serializer.ContentType
             );
         }
     }
@@ -131,7 +132,7 @@ class RequestContent : IDisposable {
             var formContent = new FormUrlEncodedContent(
                 _request.Parameters
                     .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))
             );
             Content = formContent;
         }

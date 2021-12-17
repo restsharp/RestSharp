@@ -1,4 +1,4 @@
-//  Copyright © 2009-2020 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+//  Copyright © 2009-2021 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,9 @@ public class RestClientOptions {
     /// If null, default host value extracted from URI is used.
     /// </summary>
     public Uri? BaseUrl { get; set; }
-
+    
+    public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
+    
     /// <summary>
     /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
     /// </summary>
