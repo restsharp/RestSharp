@@ -19,7 +19,10 @@ public class HttpHeadersTests : CaptureFixture {
         var client = new RestClient(server.Url);
 
         var request = new RestRequest(RequestHeadCapturer.Resource) {
-            OnBeforeRequest = http => http.Headers.Add(headerName, headerValue)
+            OnBeforeRequest = http => {
+                http.Headers.Add(headerName, headerValue);
+                return default;
+            }
         };
 
         // Run

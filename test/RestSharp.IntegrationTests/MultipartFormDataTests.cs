@@ -1,16 +1,21 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
+using HttpTracer;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
-public class MultipartFormDataTests : IDisposable {
+public sealed class MultipartFormDataTests : IDisposable {
     readonly ITestOutputHelper _output;
 
     public MultipartFormDataTests(ITestOutputHelper output) {
         _output = output;
         _server = SimpleServer.Create(RequestHandler.Handle);
-        _client = new RestClient(_server.Url);
+
+        var options = new RestClientOptions(_server.Url) {
+            ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new OutputLogger(output), HttpMessageParts.All)
+        };
+        _client = new RestClient(options);
     }
 
     public void Dispose() => _server.Dispose();
@@ -80,7 +85,10 @@ public class MultipartFormDataTests : IDisposable {
         AddParameters(request);
 
         string boundary = null;
-        request.OnBeforeRequest += http => boundary = http.Content!.GetFormBoundary();
+        request.OnBeforeRequest = http => {
+            boundary = http.Content!.GetFormBoundary();
+            return default;
+        };
 
         var response = await _client.ExecuteAsync(request);
 
@@ -102,7 +110,10 @@ public class MultipartFormDataTests : IDisposable {
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
         string boundary = null;
-        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
+        request.OnBeforeRequest = http => {
+            boundary = http.Content!.GetFormBoundary();
+            return default;
+        };
 
         var response = await _client.ExecuteAsync(request);
 
@@ -128,7 +139,10 @@ public class MultipartFormDataTests : IDisposable {
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
         string boundary = null;
-        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
+        request.OnBeforeRequest = http => {
+            boundary = http.Content!.GetFormBoundary();
+            return default;
+        };
 
         var response = await _client.ExecuteAsync(request);
 
@@ -151,7 +165,10 @@ public class MultipartFormDataTests : IDisposable {
         request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
 
         string boundary = null;
-        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
+        request.OnBeforeRequest = http => {
+            boundary = http.Content!.GetFormBoundary();
+            return default;
+        };
 
         var response = await _client.ExecuteAsync(request);
 
@@ -168,7 +185,10 @@ public class MultipartFormDataTests : IDisposable {
 
         string boundary = null;
 
-        request.OnBeforeRequest = http => boundary = http.Content!.GetFormBoundary();
+        request.OnBeforeRequest = http => {
+            boundary = http.Content!.GetFormBoundary();
+            return default;
+        };
 
         var response = await _client.ExecuteAsync(request);
         var expected = string.Format(Expected, boundary);
