@@ -1,3 +1,17 @@
+//  Copyright © 2009-2021 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System.Security.Cryptography;
 using System.Text;
 using RestSharp.Authenticators.OAuth.Extensions;
@@ -8,25 +22,15 @@ namespace RestSharp.Authenticators.OAuth;
 
 static class OAuthTools {
     const string AlphaNumeric = Upper + Lower + Digit;
+    const string Digit        = "1234567890";
+    const string Lower        = "abcdefghijklmnopqrstuvwxyz";
+    const string Unreserved   = AlphaNumeric + "-._~";
+    const string Upper        = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    const string Digit = "1234567890";
-
-    const string Lower = "abcdefghijklmnopqrstuvwxyz";
-
-    const string Unreserved = AlphaNumeric + "-._~";
-
-    const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    static readonly Random Random;
-
-    static readonly object RandomLock = new();
-
-    static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
-
-    /// <summary>
-    /// All text parameters are UTF-8 encoded (per section 5.1).
-    /// </summary>
-    static readonly Encoding Encoding = Encoding.UTF8;
+    static readonly Random                Random;
+    static readonly object                RandomLock = new();
+    static readonly RandomNumberGenerator Rng        = RandomNumberGenerator.Create();
+    static readonly Encoding              Encoding   = Encoding.UTF8;
 
     /// <summary>
     /// The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.

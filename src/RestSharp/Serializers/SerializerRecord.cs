@@ -11,19 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
 
-namespace RestSharp; 
+namespace RestSharp.Serializers; 
 
-public static class HttpContentExtensions {
-    public static string GetFormBoundary(this HttpContent content) {
-        var contentType = content.Headers.ContentType?.ToString();
-        var index       = contentType?.IndexOf("boundary=", StringComparison.Ordinal) ?? 0;
-        return index > 0 ? GetFormBoundary(contentType!, index) : "";
-    } 
-    
-    static string GetFormBoundary(string headerValue, int index) {
-        var part = headerValue.Substring(index);
-        return part.Substring(10, 36);
-    }
-}
+public record SerializerRecord(DataFormat DataFormat, string[] SupportedContentTypes, Func<IRestSerializer> GetSerializer);

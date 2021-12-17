@@ -1,8 +1,22 @@
+//   Copyright © 2009-2021 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License. 
+
 using Newtonsoft.Json.Serialization;
 
-namespace RestSharp.Serializers.NewtonsoftJson; 
+namespace RestSharp.Serializers.NewtonsoftJson;
 
-public class JsonNetSerializer : IRestSerializer {
+public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     /// <summary>
     /// Default serialization settings:
     /// - Camel-case contract resolver
@@ -37,7 +51,7 @@ public class JsonNetSerializer : IRestSerializer {
 
     public string? Serialize(object? obj) {
         if (obj == null) return null;
-            
+
         using var writerBuffer = _writerBuffer ??= new WriterBuffer(_serializer);
 
         _serializer.Serialize(writerBuffer.GetJsonTextWriter(), obj, obj.GetType());
@@ -50,10 +64,14 @@ public class JsonNetSerializer : IRestSerializer {
     public T? Deserialize<T>(RestResponse response) {
         if (response.Content == null)
             throw new DeserializationException(response, new InvalidOperationException("Response content is null"));
+
         using var reader = new JsonTextReader(new StringReader(response.Content)) { CloseInput = true };
 
         return _serializer.Deserialize<T>(reader);
     }
+
+    public ISerializer   Serializer   => this;
+    public IDeserializer Deserializer => this;
 
     public string[] SupportedContentTypes { get; } = {
         "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
