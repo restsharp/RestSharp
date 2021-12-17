@@ -24,7 +24,11 @@ class RequestContent : IDisposable {
     readonly RestRequest  _request;
     readonly List<Stream> _streams = new();
 
-    internal static readonly string[] ContentHeaders = { ContentType, ContentEncoding, ContentDisposition };
+    internal static readonly string[] ContentHeaders = {
+        Allow, Expires,
+        ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
+        LastModified
+    };
 
     HttpContent? Content { get; set; }
 
@@ -147,6 +151,7 @@ class RequestContent : IDisposable {
             // We need some content to add content headers to it, so if necessary, we'll add empty content
             Content = new StringContent("");
         }
+
         contentHeaders.ForEach(AddHeader);
 
         void AddHeader(Parameter parameter) {

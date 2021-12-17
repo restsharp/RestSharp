@@ -53,9 +53,9 @@ class RequestParameters {
 
     // Add Accept header based on registered deserializers if none has been set by the caller.
     public RequestParameters AddAcceptHeader(RestClient client) {
-        if (_requestParameters.All(p => !p.Name!.EqualsIgnoreCase("accept"))) {
+        if (_requestParameters.All(p => !p.Name!.EqualsIgnoreCase(KnownHeaders.Accept))) {
             var accepts = string.Join(", ", client.AcceptedContentTypes);
-            _requestParameters.Add(new Parameter("Accept", accepts, ParameterType.HttpHeader));
+            _requestParameters.Add(new Parameter(KnownHeaders.Accept, accepts, ParameterType.HttpHeader));
         }
 
         return this;
