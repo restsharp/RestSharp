@@ -142,9 +142,10 @@ class RequestContent : IDisposable {
             .Where(x => x.Type == ParameterType.HttpHeader && ContentHeaders.Contains(x.Name))
             .ToArray();
 
-        if (contentHeaders.Length > 0 && Content == null)
-            throw new InvalidRequestException("Content headers should not be used when there's no body in the request");
-
+        if (contentHeaders.Length > 0 && Content == null) {
+            // We need some content to add content headers to it, so if necessary, we'll add empty content
+            Content = new StringContent("");
+        }
         contentHeaders.ForEach(AddHeader);
 
         void AddHeader(Parameter parameter) {
