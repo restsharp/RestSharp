@@ -88,7 +88,7 @@ public class AsyncTests : IAsyncLifetime {
         var request = new RestRequest("timeout", Method.Get).AddBody("Body_Content");
 
         // Half the value of ResponseHandler.Timeout
-        request.Timeout = 500;
+        request.Timeout = 200;
 
         var response = await client.ExecuteAsync(request);
 
@@ -103,7 +103,7 @@ public class AsyncTests : IAsyncLifetime {
         var request = new RestRequest("timeout", Method.Put).AddBody("Body_Content");
 
         // Half the value of ResponseHandler.Timeout
-        request.Timeout = 500;
+        request.Timeout = 200;
 
         var response = await client.ExecuteAsync(request);
 
