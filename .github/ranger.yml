@@ -2,7 +2,18 @@ default:
   close:
     delay: "3 days"
     comment: "⚠️ This issue has been marked $LABEL and will be closed in $DELAY"
-
+  remind:
+    action: label
+    delay: 7d
+    message: "A reminder to provide the necessary information or feedback, waiting for $DELAY days"
+    labels:
+      - stale
+    
+labels:
+  awaiting-feedback:
+    action: remind
+  awaiting-info:
+    action: remind
   duplicate:
     action: close
     delay: 15s
