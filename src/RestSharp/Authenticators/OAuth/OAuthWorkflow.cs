@@ -171,7 +171,7 @@ sealed class OAuthWorkflow {
 
     WebPairCollection GenerateAuthParameters(string timestamp, string nonce) {
         var authParameters = new WebPairCollection {
-            new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey))),
+            new("oauth_consumer_key", Ensure.NotNull(HttpUtility.UrlEncode(ConsumerKey), nameof(ConsumerKey))),
             new("oauth_nonce", nonce),
             new("oauth_signature_method", SignatureMethod.ToRequestValue()),
             new("oauth_timestamp", timestamp),
