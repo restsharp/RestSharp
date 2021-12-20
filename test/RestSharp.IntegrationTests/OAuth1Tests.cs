@@ -174,6 +174,27 @@ public class OAuth1Tests {
     }
 
     [Fact]
+    public void Ensure_Consumer_Key_Is_Url_Encoded() {
+
+        const string consumerKey = "Consumer+Key/Containing+Reserved+Characters";
+        const string consumerSecret = "enterConsumerSecretHere";
+        const string baseUrl = "http://restsharp.org";
+
+        var expected = HttpUtility.UrlEncode(consumerKey);
+
+        var client = new RestClient(baseUrl);
+        var request = new RestRequest(Method.Get);
+        var authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret, OAuthSignatureMethod.HmacSha256);
+
+
+        authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
+        authenticator.Authenticate(client, request);
+
+        var actual = request.Parameters.Where(x => x.Name.Equals("oauth_consumer_key")).Select(x => x.Value).FirstOrDefault();
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public void Can_Authenticate_OAuth1_With_Querystring_Parameters() {
         const string consumerKey    = "enterConsumerKeyHere";
         const string consumerSecret = "enterConsumerSecretHere";
