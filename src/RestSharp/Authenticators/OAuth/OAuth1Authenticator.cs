@@ -251,7 +251,7 @@ public class OAuth1Authenticator : IAuthenticator {
             => new[] { new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader) };
 
         IEnumerable<Parameter> CreateUrlParameters()
-            => oauth.Parameters.Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
+            => oauth.Parameters.Select(p => new Parameter(p.Name, p.Value, ParameterType.GetOrPost));
 
         string GetAuthorizationHeader() {
             var oathParameters =
