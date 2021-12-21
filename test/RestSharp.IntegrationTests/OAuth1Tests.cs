@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Web;
 using System.Xml.Serialization;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;

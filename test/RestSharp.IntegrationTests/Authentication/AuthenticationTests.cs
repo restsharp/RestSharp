@@ -4,7 +4,6 @@ using System.Web;
 using RestSharp.Authenticators;
 using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Extensions;
-using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests.Authentication;
 

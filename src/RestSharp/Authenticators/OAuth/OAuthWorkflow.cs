@@ -14,7 +14,6 @@
 
 using System.Web;
 using RestSharp.Authenticators.OAuth.Extensions;
-using RestSharp.Extensions;
 
 namespace RestSharp.Authenticators.OAuth;
 
