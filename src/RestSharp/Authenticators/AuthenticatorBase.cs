@@ -17,7 +17,7 @@ namespace RestSharp.Authenticators;
 public abstract class AuthenticatorBase : IAuthenticator {
     protected AuthenticatorBase(string token) => Token = token;
 
-    protected string Token { get; }
+    protected string Token { get; set; }
 
     protected abstract ValueTask<Parameter> GetAuthenticationParameter(string accessToken);
 

@@ -131,8 +131,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task GetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Get, cancellationToken);
+    public static async Task<RestResponse> GetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Get, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
@@ -149,8 +152,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task<RestResponse> PostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Post, cancellationToken);
+    public static async Task<RestResponse> PostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Post, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
@@ -167,8 +173,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task PutAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Put, cancellationToken);
+    public static async Task<RestResponse> PutAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Put, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
@@ -185,8 +194,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task HeadAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Head, cancellationToken);
+    public static async Task<RestResponse> HeadAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Head, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
@@ -203,8 +215,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task OptionsAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Options, cancellationToken);
+    public static async Task<RestResponse> OptionsAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Options, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
@@ -221,8 +236,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task PatchAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Patch, cancellationToken);
+    public static async Task<RestResponse> PatchAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Patch, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
@@ -239,8 +257,11 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
-    public static Task DeleteAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(request, Method.Delete, cancellationToken);
+    public static async Task<RestResponse> DeleteAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var response = await client.ExecuteAsync(request, Method.Delete, cancellationToken);
+        ThrowIfError(response);
+        return response;
+    }
 
     /// <summary>
     /// Sets the <see cref="RestClient"/> to only use JSON

@@ -40,9 +40,9 @@ public class OAuth1Authenticator : IAuthenticator {
 
     public ValueTask Authenticate(RestClient client, RestRequest request) {
         var workflow = new OAuthWorkflow {
-            ConsumerKey    = ConsumerKey,
-            ConsumerSecret = ConsumerSecret,
-            // ParameterHandling  = ParameterHandling,
+            ConsumerKey        = ConsumerKey,
+            ConsumerSecret     = ConsumerSecret,
+            ParameterHandling  = ParameterHandling,
             SignatureMethod    = SignatureMethod,
             SignatureTreatment = SignatureTreatment,
             Verifier           = Verifier,
@@ -191,7 +191,7 @@ public class OAuth1Authenticator : IAuthenticator {
         };
 
     void AddOAuthData(RestClient client, RestRequest request, OAuthWorkflow workflow) {
-        var requestUrl = client.BuildUriWithoutQueryParameters(request);
+        var requestUrl = client.BuildUriWithoutQueryParameters(request).AbsoluteUri;
 
         if (requestUrl.Contains('?'))
             throw new ApplicationException(
@@ -233,7 +233,7 @@ public class OAuth1Authenticator : IAuthenticator {
             OAuthType.AccessToken          => workflow.BuildAccessTokenSignature(method, parameters),
             OAuthType.ClientAuthentication => workflow.BuildClientAuthAccessTokenSignature(method, parameters),
             OAuthType.ProtectedResource    => workflow.BuildProtectedResourceSignature(method, parameters, url),
-            _                              => throw new ArgumentOutOfRangeException()
+            _                              => throw new ArgumentOutOfRangeException(nameof(Type))
         };
 
         oauth.Parameters.Add("oauth_signature", oauth.Signature);
@@ -242,13 +242,13 @@ public class OAuth1Authenticator : IAuthenticator {
             OAuthParameterHandling.HttpAuthorizationHeader => CreateHeaderParameters(),
             OAuthParameterHandling.UrlOrPostParameters     => CreateUrlParameters(),
             _ =>
-                throw new ArgumentOutOfRangeException()
+                throw new ArgumentOutOfRangeException(nameof(ParameterHandling))
         };
 
         request.AddOrUpdateParameters(oauthParameters);
 
         IEnumerable<Parameter> CreateHeaderParameters()
-            => new[] { new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader) };
+            => new[] { new Parameter(KnownHeaders.Authorization, GetAuthorizationHeader(), ParameterType.HttpHeader) };
 
         IEnumerable<Parameter> CreateUrlParameters()
             => oauth.Parameters.Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));

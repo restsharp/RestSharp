@@ -66,7 +66,6 @@ public record Parameter {
     /// </summary>
     /// <returns>String</returns>
     public override string ToString() => $"{Name}={Value}";
-
 }
 
 public record XmlParameter : Parameter {

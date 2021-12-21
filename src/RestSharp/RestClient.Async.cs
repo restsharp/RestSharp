@@ -61,10 +61,10 @@ public partial class RestClient {
 
         try {
             var parameters = new RequestParameters()
-                .AddRequestParameters(request)
-                .AddDefaultParameters(this)
-                .AddAcceptHeader(this);
-            message.AddHeaders(parameters.Parameters);
+                .AddParameters(request.Parameters, true)
+                .AddParameters(DefaultParameters, Options.AllowMultipleDefaultParametersWithSameName)
+                .AddAcceptHeader(AcceptedContentTypes);
+            message.AddHeaders(parameters.Parameters, Encode);
 
             if (request.OnBeforeRequest != null)
                 await request.OnBeforeRequest(message);
@@ -164,12 +164,12 @@ public partial class RestClient {
         return Options.ThrowOnAnyError ? ThrowIfError(response) : response;
     }
 
-    internal static RestResponse ThrowIfError(RestResponse response) {
+    static RestResponse ThrowIfError(RestResponse response) {
         var exception = response.GetException();
         return exception != null ? throw exception : response;
     }
 
-    HttpMethod AsHttpMethod(Method method)
+    static HttpMethod AsHttpMethod(Method method)
         => method switch {
             Method.Get     => HttpMethod.Get,
             Method.Post    => HttpMethod.Post,

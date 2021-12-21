@@ -25,7 +25,4 @@
     <None Update="SampleData\timespans.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Fixtures" />
-  </ItemGroup>
 </Project>

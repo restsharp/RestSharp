@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Web;
 using System.Xml.Serialization;
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
@@ -189,7 +188,7 @@ public class OAuth1Tests {
         };
 
         var client        = new RestClient(baseUrl);
-        var request       = new RestRequest(Method.Get);
+        var request       = new RestRequest();
         var authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
         authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
         authenticator.Authenticate(client, request);

@@ -18,21 +18,18 @@ namespace RestSharp.Authenticators;
 /// JSON WEB TOKEN (JWT) Authenticator class.
 /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
 /// </summary>
-public class JwtAuthenticator : IAuthenticator {
-    string _authHeader = null!;
-
-    // ReSharper disable once IntroduceOptionalParameters.Global
-    public JwtAuthenticator(string accessToken) => SetBearerToken(accessToken);
+public class JwtAuthenticator : AuthenticatorBase {
+    public JwtAuthenticator(string accessToken) : base(GetToken(accessToken)) { }
 
     /// <summary>
     /// Set the new bearer token so the request gets the new header value
     /// </summary>
     /// <param name="accessToken"></param>
     [PublicAPI]
-    public void SetBearerToken(string accessToken) => _authHeader = $"Bearer {Ensure.NotEmpty(accessToken, nameof(accessToken))}";
+    public void SetBearerToken(string accessToken) => Token = GetToken(accessToken);
 
-    public ValueTask Authenticate(RestClient client, RestRequest request) {
-        request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader);
-        return default;
-    }
+    static string GetToken(string accessToken) => $"Bearer {Ensure.NotEmpty(accessToken, nameof(accessToken))}";
+
+    protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
+        => new(new Parameter(KnownHeaders.Authorization, accessToken, ParameterType.HttpHeader, false));
 }
