@@ -32,11 +32,11 @@ sealed class OAuthWorkflow {
     public string?                 SessionHandle      { get; set; }
     public OAuthSignatureMethod    SignatureMethod    { get; set; }
     public OAuthSignatureTreatment SignatureTreatment { get; set; }
-    // public OAuthParameterHandling  ParameterHandling  { get; set; }
-    public string? ClientUsername  { get; set; }
-    public string? ClientPassword  { get; set; }
-    public string? RequestTokenUrl { get; set; }
-    public string? AccessTokenUrl  { get; set; }
+    public OAuthParameterHandling  ParameterHandling  { get; set; }
+    public string?                 ClientUsername     { get; set; }
+    public string?                 ClientPassword     { get; set; }
+    public string?                 RequestTokenUrl    { get; set; }
+    public string?                 AccessTokenUrl     { get; set; }
 
     /// <summary>
     /// Generates an OAuth signature to pass to an
@@ -169,32 +169,24 @@ sealed class OAuthWorkflow {
         Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
     }
 
-    WebPairCollection GenerateAuthParameters(string timestamp, string nonce) {
-        var authParameters = new WebPairCollection {
-            new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey))),
-            new("oauth_nonce", nonce),
-            new("oauth_signature_method", SignatureMethod.ToRequestValue()),
-            new("oauth_timestamp", timestamp),
-            new("oauth_version", Version ?? "1.0")
-        };
-
-        if (!Token.IsEmpty()) authParameters.Add(new WebPair("oauth_token", Token!, true));
-
-        if (!CallbackUrl.IsEmpty()) authParameters.Add(new WebPair("oauth_callback", CallbackUrl!, true));
-
-        if (!Verifier.IsEmpty()) authParameters.Add(new WebPair("oauth_verifier", Verifier!));
-
-        if (!SessionHandle.IsEmpty()) authParameters.Add(new WebPair("oauth_session_handle", SessionHandle!));
-
-        return authParameters;
-    }
+    WebPairCollection GenerateAuthParameters(string timestamp, string nonce)
+        => new WebPairCollection {
+                new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey)), true),
+                new("oauth_nonce", nonce),
+                new("oauth_signature_method", SignatureMethod.ToRequestValue()),
+                new("oauth_timestamp", timestamp),
+                new("oauth_version", Version ?? "1.0")
+            }.AddNotEmpty("oauth_token", Token!, true)
+            .AddNotEmpty("oauth_callback", CallbackUrl!, true)
+            .AddNotEmpty("oauth_verifier", Verifier!)
+            .AddNotEmpty("oauth_session_handle", SessionHandle!);
 
     WebPairCollection GenerateXAuthParameters(string timestamp, string nonce)
-        => new() {
+        => new WebPairCollection {
             new("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
             new("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
             new("x_auth_mode", "client_auth"),
-            new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey))),
+            new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey)), true),
             new("oauth_signature_method", SignatureMethod.ToRequestValue()),
             new("oauth_timestamp", timestamp),
             new("oauth_nonce", nonce),

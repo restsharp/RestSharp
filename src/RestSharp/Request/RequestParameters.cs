@@ -19,33 +19,25 @@ namespace RestSharp;
 
 class RequestParameters {
     static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
-    
-    readonly List<Parameter> _requestParameters = new();
 
-    public IReadOnlyCollection<Parameter> Parameters => _requestParameters.AsReadOnly();
+    public ParametersCollection Parameters { get; } = new();
 
     public RequestParameters AddRequestParameters(RestRequest request) {
-        _requestParameters.AddRange(request.Parameters);
+        Parameters.AddParameters(request.Parameters);
         return this;
     }
 
     // move RestClient.DefaultParameters into Request.Parameters
     public RequestParameters AddDefaultParameters(RestClient client) {
         foreach (var defaultParameter in client.DefaultParameters) {
-            var parameterExists =
-                _requestParameters.Any(
-                    p =>
-                        p.Name != null &&
-                        p.Name.Equals(defaultParameter.Name, StringComparison.InvariantCultureIgnoreCase) &&
-                        p.Type == defaultParameter.Type
-                );
+            var parameterExists = Parameters.Exists(defaultParameter);
 
             if (client.Options.AllowMultipleDefaultParametersWithSameName) {
                 var isMultiParameter = MultiParameterTypes.Any(pt => pt == defaultParameter.Type);
                 parameterExists = !isMultiParameter && parameterExists;
             }
 
-            if (!parameterExists) _requestParameters.Add(defaultParameter);
+            if (!parameterExists) Parameters.AddParameter(defaultParameter);
         }
 
         return this;
@@ -53,9 +45,9 @@ class RequestParameters {
 
     // Add Accept header based on registered deserializers if none has been set by the caller.
     public RequestParameters AddAcceptHeader(RestClient client) {
-        if (_requestParameters.All(p => !p.Name!.EqualsIgnoreCase(KnownHeaders.Accept))) {
+        if (Parameters.TryFind(KnownHeaders.Accept) == null) {
             var accepts = string.Join(", ", client.AcceptedContentTypes);
-            _requestParameters.Add(new Parameter(KnownHeaders.Accept, accepts, ParameterType.HttpHeader));
+            Parameters.AddParameter(new Parameter(KnownHeaders.Accept, accepts, ParameterType.HttpHeader));
         }
 
         return this;

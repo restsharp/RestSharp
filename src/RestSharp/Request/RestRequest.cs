@@ -70,7 +70,7 @@ public class RestRequest {
             dataFormat
         ) { }
 
-    readonly List<Parameter>     _parameters = new();
+    // readonly List<Parameter>     _parameters = new();
     readonly List<FileParameter> _files      = new();
 
     /// <summary>
@@ -82,7 +82,7 @@ public class RestRequest {
     /// Container of all HTTP parameters to be passed with the request.
     /// See AddParameter() for explanation of the types of parameters that can be passed
     /// </summary>
-    public IReadOnlyCollection<Parameter> Parameters => _parameters.AsReadOnly();
+    public ParametersCollection Parameters { get; } = new();
 
     /// <summary>
     /// Container of all the files to be uploaded with the request.
@@ -182,10 +182,10 @@ public class RestRequest {
         if (p.Type == ParameterType.Cookie)
             throw new InvalidOperationException("Cookie parameters should be added to the RestClient's cookie container");
 
-        return this.With(x => x._parameters.Add(p));
+        return this.With(x => x.Parameters.AddParameter(p));
     }
 
-    public void RemoveParameter(Parameter p) => _parameters.Remove(p);
+    public void RemoveParameter(Parameter p) => Parameters.RemoveParameter(p);
 
     internal RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
 }

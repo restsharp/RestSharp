@@ -31,7 +31,7 @@ namespace RestSharp;
 /// </summary>
 public partial class RestClient {
     readonly CookieContainer _cookieContainer;
-    readonly List<Parameter> _defaultParameters = new();
+    // readonly List<Parameter> _defaultParameters = new();
 
     HttpClient HttpClient { get; }
 
@@ -85,7 +85,7 @@ public partial class RestClient {
             handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
 
         var finalHandler = Options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
-        
+
         HttpClient = new HttpClient(finalHandler);
 
         if (Options.Timeout > 0)
@@ -134,9 +134,10 @@ public partial class RestClient {
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
 
-    public IReadOnlyCollection<Parameter> DefaultParameters {
-        get { lock (_defaultParameters) return _defaultParameters; }
-    }
+    // public IReadOnlyCollection<Parameter> DefaultParameters {
+    //     get { lock (_defaultParameters) return _defaultParameters; }
+    // }
+    public ParametersCollection DefaultParameters { get; } = new();
 
     /// <summary>
     /// Add a parameter to use on every request made with this client instance
@@ -153,12 +154,11 @@ public partial class RestClient {
                 lock (_cookieContainer) {
                     _cookieContainer.Add(new Cookie(p.Name!, p.Value!.ToString()));
                 }
+
                 break;
             }
             default: {
-                lock (_defaultParameters) {
-                    _defaultParameters.Add(p);
-                }
+                DefaultParameters.AddParameter(p);
                 break;
             }
         }
@@ -218,7 +218,8 @@ public partial class RestClient {
             );
 
         var nullValuedParams = request.Parameters
-            .Where(p => p.Type == ParameterType.UrlSegment && p.Value == null)
+            .GetParameters(ParameterType.UrlSegment)
+            .Where(p => p.Value == null)
             .Select(p => p.Name)
             .ToArray();
 
@@ -237,11 +238,10 @@ public partial class RestClient {
         var baseUrl   = Options.BaseUrl ?? new Uri(request.Resource);
 
         var hasResource = !assembled.IsEmpty();
-        var parameters  = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment).ToList();
+        var parameters  = request.Parameters
+            .GetParameters(ParameterType.UrlSegment)
+            .AddParameters(DefaultParameters.GetParameters(ParameterType.UrlSegment));
 
-        lock (_defaultParameters) {
-            parameters.AddRange(_defaultParameters.Where(p => p.Type == ParameterType.UrlSegment));
-        }
         var builder = new UriBuilder(baseUrl);
 
         foreach (var parameter in parameters) {
@@ -269,37 +269,16 @@ public partial class RestClient {
     }
 
     string? ApplyQueryStringParamsValuesToUri(string? mergedUri, RestRequest request) {
-        var parameters = GetQueryStringParameters(request).ToList();
-        parameters.AddRange(GetDefaultQueryStringParameters(request));
+        var parameters = request.Parameters
+            .GetQueryParameters(request.Method)
+            .AddParameters(DefaultParameters.GetQueryParameters(request.Method));
 
-        if (!parameters.Any()) return mergedUri;
+        if (parameters.Count == 0) return mergedUri;
 
         var separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
 
         return Concat(mergedUri, separator, EncodeParameters(parameters, Options.Encoding));
     }
-
-    IEnumerable<Parameter> GetDefaultQueryStringParameters(RestRequest request)
-        => request.Method != Method.Post && request.Method != Method.Put && request.Method != Method.Patch
-            ? DefaultParameters
-                .Where(
-                    p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                )
-            : DefaultParameters
-                .Where(
-                    p => p.Type is ParameterType.QueryString
-                );
-
-    static IEnumerable<Parameter> GetQueryStringParameters(RestRequest request)
-        => request.Method != Method.Post && request.Method != Method.Put && request.Method != Method.Patch
-            ? request.Parameters
-                .Where(
-                    p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                )
-            : request.Parameters
-                .Where(
-                    p => p.Type is ParameterType.QueryString
-                );
 
     string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
         => Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
@@ -329,9 +308,9 @@ public partial class RestClient {
                 // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
                 if (handler is IXmlDeserializer xml && request is RestXmlRequest xmlRequest) {
                     if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
-                    
+
                     if (xml is IWithDateFormat withDateFormat && xmlRequest.DateFormat.IsNotEmpty())
-                        withDateFormat.DateFormat  = xmlRequest.DateFormat!;
+                        withDateFormat.DateFormat = xmlRequest.DateFormat!;
                 }
 
                 if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty()) deserializer.RootElement = request.RootElement;
@@ -362,7 +341,7 @@ public partial class RestClient {
         if (contentType.IsEmpty()) return null;
 
         var serializer = Serializers.FirstOrDefault(x => x.Value.SupportedContentTypes.Contains(contentType));
-        var factory = serializer.Value ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
+        var factory    = serializer.Value ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
         return factory?.GetSerializer().Deserializer;
 
         string? DetectContentType()

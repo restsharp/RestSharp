@@ -28,6 +28,12 @@ class WebPairCollection : IList<WebPair> {
     public void AddRange(IEnumerable<WebPair> collection) => AddCollection(collection);
 
     public void Add(string name, string value) => Add(new WebPair(name, value));
+    
+    public WebPairCollection AddNotEmpty(string name, string? value, bool encode = false) {
+        if (value != null)
+            Add(new WebPair(name, value, encode));
+        return this;
+    }
 
     public void Clear() => _parameters.Clear();
 
