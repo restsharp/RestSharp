@@ -35,5 +35,5 @@ public class HttpBasicAuthenticator : AuthenticatorBase {
 
     // return ;
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
-        => new(new Parameter("Authorization", $"Basic {accessToken}", ParameterType.HttpHeader));
+        => new(new Parameter(KnownHeaders.Authorization, $"Basic {accessToken}", ParameterType.HttpHeader, false));
 }

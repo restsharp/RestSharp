@@ -18,6 +18,7 @@
 namespace RestSharp;
 
 public static class KnownHeaders {
+    public const string Authorization      = "Authorization";
     public const string Accept             = "Accept";
     public const string Allow              = "Allow";
     public const string Expires            = "Expires";

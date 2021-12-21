@@ -28,14 +28,14 @@ public static class RestRequestExtensions {
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
     /// <returns>This request</returns>
-    public static RestRequest AddParameter(this RestRequest request, string name, object value)
-        => request.AddParameter(new Parameter(name, value, ParameterType.GetOrPost));
+    public static RestRequest AddParameter(this RestRequest request, string name, object value, bool encode = true)
+        => request.AddParameter(new Parameter(name, value, ParameterType.GetOrPost, encode));
 
-    public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type)
-        => request.AddParameter(new Parameter(name, value, type));
+    public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
+        => request.AddParameter(new Parameter(name, value, type, encode));
 
-    public static RestRequest AddParameter(this RestRequest request, string name, object value, string contentType, ParameterType type)
-        => request.AddParameter(new Parameter(name, value, contentType, type));
+    public static RestRequest AddParameter(this RestRequest request, string name, object value, string contentType, ParameterType type, bool encode = true)
+        => request.AddParameter(new Parameter(name, value, contentType, type, encode));
 
     public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter) {
         var p = request.Parameters .FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
@@ -56,20 +56,20 @@ public static class RestRequestExtensions {
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value)
         => request.AddOrUpdateParameter(new Parameter(name, value, ParameterType.GetOrPost));
 
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type)
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
         => request.AddOrUpdateParameter(new Parameter(name, value, type));
 
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, string contentType, ParameterType type)
-        => request.AddOrUpdateParameter(new Parameter(name, value, contentType, type));
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, string contentType, ParameterType type, bool encode = true)
+        => request.AddOrUpdateParameter(new Parameter(name, value, contentType, type, encode));
 
-    public static RestRequest AddHeader(this RestRequest request, string name, string value) {
+    public static RestRequest AddHeader(this RestRequest request, string name, string value, bool encode = true) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddParameter(name, value, ParameterType.HttpHeader);
+        return request.AddParameter(name, value, ParameterType.HttpHeader, encode);
     }
 
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
+    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value, bool encode = true) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddOrUpdateParameter(name, value, ParameterType.HttpHeader);
+        return request.AddOrUpdateParameter(name, value, ParameterType.HttpHeader, encode);
     }
 
     public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {

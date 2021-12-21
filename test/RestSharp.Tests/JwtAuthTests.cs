@@ -22,31 +22,31 @@ public class JwtAuthTests {
     }
 
     [Fact]
-    public void Can_Set_ValidFormat_Auth_Header() {
+    public async Task Can_Set_ValidFormat_Auth_Header() {
         var client  = new RestClient { Authenticator = new JwtAuthenticator(_testJwt) };
         var request = new RestRequest();
 
         //In real case client.Execute(request) will invoke Authenticate method
-        client.Authenticator.Authenticate(client, request);
+        await client.Authenticator.Authenticate(client, request);
 
-        var authParam = request.Parameters.Single(p => p.Name.Equals("Authorization", StringComparison.OrdinalIgnoreCase));
+        var authParam = request.Parameters.Single(p => p.Name.Equals(KnownHeaders.Authorization, StringComparison.OrdinalIgnoreCase));
 
         Assert.True(authParam.Type == ParameterType.HttpHeader);
         Assert.Equal(_expectedAuthHeaderContent, authParam.Value);
     }
 
     [Fact]
-    public void Check_Only_Header_Authorization() {
+    public async Task Check_Only_Header_Authorization() {
         var client  = new RestClient { Authenticator = new JwtAuthenticator(_testJwt) };
         var request = new RestRequest();
 
         // Paranoid server needs "two-factor authentication": jwt header and query param key for example
-        request.AddParameter("Authorization", "manualAuth", ParameterType.QueryString);
+        request.AddParameter(KnownHeaders.Authorization, "manualAuth", ParameterType.QueryString);
 
         // In real case client.Execute(request) will invoke Authenticate method
-        client.Authenticator.Authenticate(client, request);
+        await client.Authenticator.Authenticate(client, request);
 
-        var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
+        var paramList = request.Parameters.Where(p => p.Name.Equals(KnownHeaders.Authorization)).ToList();
 
         Assert.Equal(2, paramList.Count);
 
@@ -58,18 +58,18 @@ public class JwtAuthTests {
     }
 
     [Fact]
-    public void Set_Auth_Header_Only_Once() {
+    public async Task Set_Auth_Header_Only_Once() {
         var client  = new RestClient();
         var request = new RestRequest();
 
-        request.AddHeader("Authorization", "second_header_auth_token");
+        request.AddHeader(KnownHeaders.Authorization, "second_header_auth_token");
 
         client.Authenticator = new JwtAuthenticator(_testJwt);
 
         //In real case client.Execute(...) will invoke Authenticate method
-        client.Authenticator.Authenticate(client, request);
+        await client.Authenticator.Authenticate(client, request);
 
-        var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
+        var paramList = request.Parameters.Where(p => p.Name.Equals(KnownHeaders.Authorization)).ToList();
 
         paramList.Should().HaveCount(1);
 
@@ -81,19 +81,19 @@ public class JwtAuthTests {
     }
 
     [Fact]
-    public void Updates_Auth_Header() {
+    public async Task Updates_Auth_Header() {
         var client  = new RestClient();
         var request = new RestRequest();
 
         var authenticator = new JwtAuthenticator(_expectedAuthHeaderContent);
 
         client.Authenticator = authenticator;
-        client.Authenticator.Authenticate(client, request);
+        await client.Authenticator.Authenticate(client, request);
 
         authenticator.SetBearerToken("second_header_auth_token");
-        client.Authenticator.Authenticate(client, request);
+        await client.Authenticator.Authenticate(client, request);
 
-        var paramList = request.Parameters.Where(p => p.Name.Equals("Authorization")).ToList();
+        var paramList = request.Parameters.Where(p => p.Name.Equals(KnownHeaders.Authorization)).ToList();
 
         Assert.Single(paramList);
 
