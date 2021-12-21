@@ -136,7 +136,7 @@ class RequestContent : IDisposable {
             var formContent = new FormUrlEncodedContent(
                 _request.Parameters
                     .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
             );
             Content = formContent;
         }

@@ -24,7 +24,7 @@ public class StatusCodeTests : IDisposable {
     public async Task ContentType_Additional_Information() {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
-        var request = new RestRequest(Method.Post) {
+        var request = new RestRequest("", Method.Post) {
             RequestFormat = DataFormat.Json,
             Resource      = "contenttype_odata"
         };

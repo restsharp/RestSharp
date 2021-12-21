@@ -31,16 +31,6 @@ public class RestRequest {
         Method        = Method.Get;
     }
 
-    /// <summary>
-    /// Sets Method property to value of method
-    /// </summary>
-    /// <param name="method">Method to use for this request</param>
-    public RestRequest(Method method) : this() => Method = method;
-
-    public RestRequest(string resource, Method method) : this(resource, method, DataFormat.Json) { }
-
-    public RestRequest(string resource, DataFormat dataFormat) : this(resource, Method.Get, dataFormat) { }
-
     public RestRequest(string? resource, Method method = Method.Get, DataFormat dataFormat = DataFormat.Json) : this() {
         Resource      = resource ?? "";
         Method        = method;
