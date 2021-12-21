@@ -13,8 +13,6 @@
 // limitations under the License.
 // 
 
-using RestSharp.Authenticators.OAuth.Extensions;
-
 namespace RestSharp; 
 
 class RequestParameters {
@@ -22,31 +20,28 @@ class RequestParameters {
 
     public ParametersCollection Parameters { get; } = new();
 
-    public RequestParameters AddRequestParameters(RestRequest request) {
-        Parameters.AddParameters(request.Parameters);
+    public RequestParameters AddParameters(ParametersCollection parameters, bool allowSameName) {
+        Parameters.AddParameters(GetParameters(parameters, allowSameName));
         return this;
     }
 
-    // move RestClient.DefaultParameters into Request.Parameters
-    public RequestParameters AddDefaultParameters(RestClient client) {
-        foreach (var defaultParameter in client.DefaultParameters) {
-            var parameterExists = Parameters.Exists(defaultParameter);
+    IEnumerable<Parameter> GetParameters(ParametersCollection parametersCollection, bool allowSameName) {
+        foreach (var parameter in parametersCollection) {
+            var parameterExists = Parameters.Exists(parameter);
 
-            if (client.Options.AllowMultipleDefaultParametersWithSameName) {
-                var isMultiParameter = MultiParameterTypes.Any(pt => pt == defaultParameter.Type);
+            if (allowSameName) {
+                var isMultiParameter = MultiParameterTypes.Any(pt => pt == parameter.Type);
                 parameterExists = !isMultiParameter && parameterExists;
             }
 
-            if (!parameterExists) Parameters.AddParameter(defaultParameter);
+            if (!parameterExists) yield return parameter;
         }
-
-        return this;
     }
 
     // Add Accept header based on registered deserializers if none has been set by the caller.
-    public RequestParameters AddAcceptHeader(RestClient client) {
+    public RequestParameters AddAcceptHeader(string[] acceptedContentTypes) {
         if (Parameters.TryFind(KnownHeaders.Accept) == null) {
-            var accepts = string.Join(", ", client.AcceptedContentTypes);
+            var accepts = string.Join(", ", acceptedContentTypes);
             Parameters.AddParameter(new Parameter(KnownHeaders.Accept, accepts, ParameterType.HttpHeader));
         }
 

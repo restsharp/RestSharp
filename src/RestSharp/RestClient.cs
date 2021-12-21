@@ -172,19 +172,22 @@ public partial class RestClient {
     public Uri BuildUri(RestRequest request) {
         DoBuildUriValidations(request);
 
-        var applied   = GetUrlSegmentParamsValues(request);
-        var mergedUri = MergeBaseUrlAndResource(applied.Uri, applied.Resource);
-        var finalUri  = ApplyQueryStringParamsValuesToUri(mergedUri, request);
-
-        return new Uri(finalUri!);
+        var (uri, resource) = Options.BaseUrl.GetUrlSegmentParamsValues(request.Resource, Encode, request.Parameters, DefaultParameters);
+        var mergedUri = uri.MergeBaseUrlAndResource(resource);
+        var finalUri = mergedUri.ApplyQueryStringParamsValuesToUri(
+            request.Method,
+            Options.Encoding,
+            EncodeQuery,
+            request.Parameters,
+            DefaultParameters
+        );
+        return finalUri;
     }
 
-    internal string BuildUriWithoutQueryParameters(RestRequest request) {
+    internal Uri BuildUriWithoutQueryParameters(RestRequest request) {
         DoBuildUriValidations(request);
-
-        var applied = GetUrlSegmentParamsValues(request);
-
-        return MergeBaseUrlAndResource(applied.Uri, applied.Resource);
+        var (uri, resource) = Options.BaseUrl.GetUrlSegmentParamsValues(request.Resource, Encode, request.Parameters, DefaultParameters);
+        return uri.MergeBaseUrlAndResource(resource);
     }
 
     public string[] AcceptedContentTypes { get; private set; } = null!;
@@ -231,65 +234,6 @@ public partial class RestClient {
                 nameof(request)
             );
         }
-    }
-
-    UrlSegmentParamsValues GetUrlSegmentParamsValues(RestRequest request) {
-        var assembled = Options.BaseUrl == null ? "" : request.Resource;
-        var baseUrl   = Options.BaseUrl ?? new Uri(request.Resource);
-
-        var hasResource = !assembled.IsEmpty();
-        var parameters  = request.Parameters
-            .GetParameters(ParameterType.UrlSegment)
-            .AddParameters(DefaultParameters.GetParameters(ParameterType.UrlSegment));
-
-        var builder = new UriBuilder(baseUrl);
-
-        foreach (var parameter in parameters) {
-            var paramPlaceHolder = $"{{{parameter.Name}}}";
-            var paramValue       = parameter.Encode ? Encode(parameter.Value!.ToString()!) : parameter.Value!.ToString();
-
-            if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
-
-            builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
-        }
-
-        return new UrlSegmentParamsValues(builder.Uri, assembled);
-    }
-
-    static string MergeBaseUrlAndResource(Uri? baseUrl, string? resource) {
-        var assembled = resource;
-
-        if (!IsNullOrEmpty(assembled) && assembled!.StartsWith("/")) assembled = assembled.Substring(1);
-
-        if (baseUrl == null || IsNullOrEmpty(baseUrl.AbsoluteUri)) return assembled ?? "";
-
-        var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || IsNullOrEmpty(assembled) ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
-
-        return assembled != null ? new Uri(usingBaseUri, assembled).AbsoluteUri : baseUrl.AbsoluteUri;
-    }
-
-    string? ApplyQueryStringParamsValuesToUri(string? mergedUri, RestRequest request) {
-        var parameters = request.Parameters
-            .GetQueryParameters(request.Method)
-            .AddParameters(DefaultParameters.GetQueryParameters(request.Method));
-
-        if (parameters.Count == 0) return mergedUri;
-
-        var separator = mergedUri != null && mergedUri.Contains("?") ? "&" : "?";
-
-        return Concat(mergedUri, separator, EncodeParameters(parameters, Options.Encoding));
-    }
-
-    string EncodeParameters(IEnumerable<Parameter> parameters, Encoding encoding)
-        => Join("&", parameters.Select(parameter => EncodeParameter(parameter, encoding)).ToArray());
-
-    string EncodeParameter(Parameter parameter, Encoding encoding) {
-        return
-            !parameter.Encode
-                ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
-                : $"{EncodeQuery(parameter.Name!, encoding)}={EncodeQuery(StringOrEmpty(parameter.Value), encoding)}";
-
-        static string StringOrEmpty(object? value) => value == null ? "" : value.ToString()!;
     }
 
     internal RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) {
@@ -346,15 +290,5 @@ public partial class RestClient {
 
         string? DetectContentType()
             => response.Content!.StartsWith("<") ? ContentType.Xml : response.Content.StartsWith("{") ? ContentType.Json : null;
-    }
-
-    class UrlSegmentParamsValues {
-        public UrlSegmentParamsValues(Uri builderUri, string assembled) {
-            Uri      = builderUri;
-            Resource = assembled;
-        }
-
-        public Uri    Uri      { get; }
-        public string Resource { get; }
     }
 }

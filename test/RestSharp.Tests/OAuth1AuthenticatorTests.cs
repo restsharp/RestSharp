@@ -38,7 +38,7 @@ public class OAuth1AuthenticatorTests {
         _authenticator.Authenticate(client, request);
 
         // Assert
-        var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+        var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);
         var value         = (string)authParameter.Value;
 
         Assert.Contains("OAuth", value);
@@ -165,7 +165,7 @@ public class OAuth1AuthenticatorTests {
         _authenticator.Authenticate(client, request);
 
         // Assert
-        var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+        var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);
         var authHeader    = (string)authParameter.Value;
 
         Assert.NotNull(authHeader);
@@ -192,12 +192,12 @@ public class OAuth1AuthenticatorTests {
         _authenticator.Authenticate(client, request);
 
         // Assert
-        var authParameter = request.Parameters.Single(x => x.Name == "Authorization");
+        var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);
         var value         = (string)authParameter.Value;
 
         Assert.NotNull(value);
         Assert.NotEmpty(value);
         Assert.Contains("OAuth", value!);
-        Assert.Contains("oauth_signature=\"" + OAuthTools.UrlEncodeStrict("&"), value);
+        Assert.Contains($"oauth_signature=\"{OAuthTools.UrlEncodeStrict("&")}", value);
     }
 }

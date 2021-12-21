@@ -26,6 +26,11 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
 
     public ParametersCollection(IEnumerable<Parameter> parameters) => _parameters.AddRange(parameters);
 
+    public ParametersCollection AddParameters(IEnumerable<Parameter> parameters) {
+        _parameters.AddRange(parameters);
+        return this;
+    }
+
     public ParametersCollection AddParameters(ParametersCollection parameters) {
         _parameters.AddRange(parameters);
         return this;

@@ -15,7 +15,7 @@ public class HttpServer {
 
         if (output != null)
             builder.WebHost.ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Information).AddXunit(output, LogLevel.Debug));
-        
+
         builder.WebHost.UseUrls(Address);
         _app = builder.Build();
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
@@ -23,6 +23,13 @@ public class HttpServer {
         _app.MapGet("timeout", async () => await Task.Delay(2000));
         // ReSharper disable once ConvertClosureToMethodGroup
         _app.MapGet("status", (int code) => Results.StatusCode(code));
+
+        _app.MapGet("headers", HandleHeaders);
+
+        IResult HandleHeaders(HttpContext ctx) {
+            var response = ctx.Request.Headers.Select(x => new TestServerResponse(x.Key, x.Value));
+            return Results.Ok(response);
+        }
     }
 
     public Uri Url => new(Address);
@@ -31,3 +38,5 @@ public class HttpServer {
 
     public Task Stop() => _app.StopAsync();
 }
+
+public record TestServerResponse(string Name, string Value);

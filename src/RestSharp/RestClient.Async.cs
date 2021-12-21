@@ -61,9 +61,9 @@ public partial class RestClient {
 
         try {
             var parameters = new RequestParameters()
-                .AddRequestParameters(request)
-                .AddDefaultParameters(this)
-                .AddAcceptHeader(this);
+                .AddParameters(request.Parameters, true)
+                .AddParameters(DefaultParameters, Options.AllowMultipleDefaultParametersWithSameName)
+                .AddAcceptHeader(AcceptedContentTypes);
             message.AddHeaders(parameters.Parameters, Encode);
 
             if (request.OnBeforeRequest != null)

@@ -22,7 +22,7 @@ public class RequestHeadTests : CaptureFixture {
         var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
 
         Assert.False(
-            keys.Contains("Authorization"),
+            keys.Contains(KnownHeaders.Authorization),
             "Authorization header was present in HTTP request from client, even though server does not use the Negotiate scheme"
         );
     }
@@ -58,7 +58,7 @@ public class RequestHeadTests : CaptureFixture {
 
         keys.Should()
             .Contain(
-                "Authorization",
+                KnownHeaders.Authorization,
                 "Authorization header not present in HTTP request from client, even though UseDefaultCredentials = true"
             );
     }

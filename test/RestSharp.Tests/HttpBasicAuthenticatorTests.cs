@@ -31,6 +31,6 @@ public class HttpBasicAuthenticatorTests {
         _authenticator.Authenticate(client, request);
 
         // Assert
-        request.Parameters.Single(x => x.Name == "Authorization").Value.Should().Be(expectedToken);
+        request.Parameters.Single(x => x.Name == KnownHeaders.Authorization).Value.Should().Be(expectedToken);
     }
 }

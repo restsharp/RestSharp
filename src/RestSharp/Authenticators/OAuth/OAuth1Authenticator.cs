@@ -191,7 +191,7 @@ public class OAuth1Authenticator : IAuthenticator {
         };
 
     void AddOAuthData(RestClient client, RestRequest request, OAuthWorkflow workflow) {
-        var requestUrl = client.BuildUriWithoutQueryParameters(request);
+        var requestUrl = client.BuildUriWithoutQueryParameters(request).AbsoluteUri;
 
         if (requestUrl.Contains('?'))
             throw new ApplicationException(
@@ -248,7 +248,7 @@ public class OAuth1Authenticator : IAuthenticator {
         request.AddOrUpdateParameters(oauthParameters);
 
         IEnumerable<Parameter> CreateHeaderParameters()
-            => new[] { new Parameter("Authorization", GetAuthorizationHeader(), ParameterType.HttpHeader) };
+            => new[] { new Parameter(KnownHeaders.Authorization, GetAuthorizationHeader(), ParameterType.HttpHeader) };
 
         IEnumerable<Parameter> CreateUrlParameters()
             => oauth.Parameters.Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
