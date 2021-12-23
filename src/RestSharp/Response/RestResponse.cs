@@ -42,6 +42,7 @@ public class RestResponse<T> : RestResponse {
             ErrorMessage      = response.ErrorMessage,
             ErrorException    = response.ErrorException,
             Headers           = response.Headers,
+            IsSuccessful      = response.IsSuccessful,
             ResponseStatus    = response.ResponseStatus,
             ResponseUri       = response.ResponseUri,
             Server            = response.Server,

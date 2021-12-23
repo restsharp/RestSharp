@@ -36,6 +36,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync<TestResponse>(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]
