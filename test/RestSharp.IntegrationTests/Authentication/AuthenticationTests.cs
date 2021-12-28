@@ -1,25 +1,18 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using System.Web;
 using RestSharp.Authenticators;
 using RestSharp.IntegrationTests.Fixtures;
-using RestSharp.Tests.Shared.Extensions;
 
 namespace RestSharp.IntegrationTests.Authentication;
 
+[Collection(nameof(TestServerCollection))]
 public class AuthenticationTests {
+    readonly TestServerFixture _fixture;
     readonly ITestOutputHelper _output;
 
-    public AuthenticationTests(ITestOutputHelper output) => _output = output;
-
-    static void UsernamePasswordEchoHandler(HttpListenerContext context) {
-        var header = context.Request.Headers["Authorization"]!;
-
-        var parts = Encoding.ASCII
-            .GetString(Convert.FromBase64String(header["Basic ".Length..]))
-            .Split(':');
-
-        context.Response.OutputStream.WriteStringUtf8(string.Join("|", parts));
+    public AuthenticationTests(TestServerFixture fixture, ITestOutputHelper output) {
+        _fixture = fixture;
+        _output  = output;
     }
 
     [Fact]
@@ -27,10 +20,7 @@ public class AuthenticationTests {
         const string userName = "testuser";
         const string password = "testpassword";
 
-        var server = new HttpServer();
-        await server.Start();
-
-        var client = new RestClient(server.Url) {
+        var client = new RestClient(_fixture.Server.Url) {
             Authenticator = new HttpBasicAuthenticator(userName, password)
         };
         var request  = new RestRequest("headers");
@@ -40,10 +30,8 @@ public class AuthenticationTests {
         var auth   = HttpUtility.UrlDecode(header.Value)["Basic ".Length..];
         var value  = Convert.FromBase64String(auth);
         var parts  = Encoding.UTF8.GetString(value).Split(':');
-        
+
         parts[0].Should().Be(userName);
         parts[1].Should().Be(password);
-
-        await server.Stop();
     }
 }

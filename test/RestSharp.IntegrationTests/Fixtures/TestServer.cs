@@ -5,7 +5,18 @@ using Microsoft.Extensions.Logging;
 
 namespace RestSharp.IntegrationTests.Fixtures;
 
-public class HttpServer {
+public class TestServerFixture : IAsyncLifetime {
+    public HttpServer Server { get; } = new();
+
+    public Task InitializeAsync() => Server.Start();
+
+    public Task DisposeAsync() => Server.Stop();
+}
+
+[CollectionDefinition(nameof(TestServerCollection))]
+public class TestServerCollection : ICollectionFixture<TestServerFixture> { }
+
+public sealed class HttpServer {
     readonly WebApplication _app;
 
     const string Address = "http://localhost:5151";
@@ -21,6 +32,7 @@ public class HttpServer {
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
         _app.MapGet("echo", (string msg) => msg);
         _app.MapGet("timeout", async () => await Task.Delay(2000));
+        _app.MapPut("timeout", async () => await Task.Delay(2000));
         // ReSharper disable once ConvertClosureToMethodGroup
         _app.MapGet("status", (int code) => Results.StatusCode(code));
 
@@ -36,7 +48,10 @@ public class HttpServer {
 
     public Task Start() => _app.StartAsync();
 
-    public Task Stop() => _app.StopAsync();
+    public async Task Stop() {
+        await _app.StopAsync();
+        await _app.DisposeAsync();
+    }
 }
 
 public record TestServerResponse(string Name, string Value);
