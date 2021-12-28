@@ -19,7 +19,6 @@ using RestSharp.Extensions;
 using RestSharp.Serializers;
 using RestSharp.Serializers.Json;
 using RestSharp.Serializers.Xml;
-using static System.String;
 
 // ReSharper disable VirtualMemberCallInConstructor
 #pragma warning disable 618

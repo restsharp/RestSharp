@@ -69,7 +69,7 @@ public partial class RestClient {
             if (request.OnBeforeRequest != null)
                 await request.OnBeforeRequest(message);
 
-            var responseMessage = await HttpClient.SendAsync(message, ct);
+            var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct);
 
             if (request.OnAfterRequest != null)
                 await request.OnAfterRequest(responseMessage);

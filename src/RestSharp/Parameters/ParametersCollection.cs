@@ -14,7 +14,6 @@
 // 
 
 using System.Collections;
-using System.Collections.Concurrent;
 using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp;

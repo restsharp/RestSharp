@@ -51,7 +51,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
 
         ns.Add(string.Empty, Namespace);
 
-        var serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
+        var serializer = new XmlSerializer(obj.GetType());
         var writer     = new EncodingStringWriter(Encoding);
 
         serializer.Serialize(writer, obj, ns);

@@ -27,6 +27,7 @@ public static class RestRequestExtensions {
     /// <param name="request"></param>
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
     /// <returns>This request</returns>
     public static RestRequest AddParameter(this RestRequest request, string name, object value, bool encode = true)
         => request.AddParameter(new Parameter(name, value, ParameterType.GetOrPost, encode));

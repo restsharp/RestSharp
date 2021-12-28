@@ -13,7 +13,6 @@
 // limitations under the License.
 // 
 
-using System.Text;
 using RestSharp.Extensions;
 
 namespace RestSharp;

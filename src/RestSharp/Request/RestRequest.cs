@@ -143,12 +143,17 @@ public class RestRequest {
     internal void IncreaseNumAttempts() => Attempts++;
 
     /// <summary>
-    /// How many attempts were made to send this Request?
+    /// How many attempts were made to send this Request
     /// </summary>
     /// <remarks>
     /// This number is incremented each time the RestClient sends the request.
     /// </remarks>
     public int Attempts { get; private set; }
+
+    /// <summary>
+    /// Completion option for <seealso cref="HttpClient"/>
+    /// </summary>
+    public HttpCompletionOption CompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
 
     /// <summary>
     /// Set this to write response to Stream rather than reading into memory.
