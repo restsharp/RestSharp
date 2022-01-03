@@ -42,7 +42,7 @@ class RequestParameters {
     public RequestParameters AddAcceptHeader(string[] acceptedContentTypes) {
         if (Parameters.TryFind(KnownHeaders.Accept) == null) {
             var accepts = string.Join(", ", acceptedContentTypes);
-            Parameters.AddParameter(new Parameter(KnownHeaders.Accept, accepts, ParameterType.HttpHeader));
+            Parameters.AddParameter(new HeaderParameter(KnownHeaders.Accept, accepts));
         }
 
         return this;

@@ -31,5 +31,5 @@ public class JwtAuthenticator : AuthenticatorBase {
     static string GetToken(string accessToken) => $"Bearer {Ensure.NotEmpty(accessToken, nameof(accessToken))}";
 
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
-        => new(new Parameter(KnownHeaders.Authorization, accessToken, ParameterType.HttpHeader, false));
+        => new(new HeaderParameter(KnownHeaders.Authorization, accessToken));
 }

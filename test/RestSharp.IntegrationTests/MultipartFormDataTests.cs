@@ -107,7 +107,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
         request.AddFile("fileName", path);
 
-        request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+        request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
         string boundary = null;
         request.OnBeforeRequest = http => {
@@ -136,7 +136,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         const string customContentType = "multipart/vnd.resteasy+form-data";
         request.AddHeader(KnownHeaders.ContentType, customContentType);
         request.AddFile("fileName", path);
-        request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+        request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
         string boundary = null;
         request.OnBeforeRequest = http => {
@@ -162,7 +162,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
         request.AddFile("fileName", path);
 
-        request.AddParameter("controlName", "test", "application/json", ParameterType.RequestBody);
+        request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
         string boundary = null;
         request.OnBeforeRequest = http => {

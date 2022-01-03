@@ -28,5 +28,5 @@ public class OAuth2UriQueryParameterAuthenticator : AuthenticatorBase {
     public OAuth2UriQueryParameterAuthenticator(string accessToken) : base(accessToken) { }
 
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
-        => new(new Parameter("oauth_token", accessToken, ParameterType.GetOrPost));
+        => new(new GetOrPostParameter("oauth_token", accessToken));
 }

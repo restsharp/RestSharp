@@ -14,6 +14,7 @@
 
 using System.Text.RegularExpressions;
 using RestSharp.Extensions;
+using RestSharp.Serializers;
 
 namespace RestSharp;
 
@@ -30,16 +31,13 @@ public static class RestRequestExtensions {
     /// <param name="encode">Encode the value or not, default true</param>
     /// <returns>This request</returns>
     public static RestRequest AddParameter(this RestRequest request, string name, object value, bool encode = true)
-        => request.AddParameter(new Parameter(name, value, ParameterType.GetOrPost, encode));
+        => request.AddParameter(new GetOrPostParameter(name, value, encode));
 
     public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
-        => request.AddParameter(new Parameter(name, value, type, encode));
-
-    public static RestRequest AddParameter(this RestRequest request, string name, object value, string contentType, ParameterType type, bool encode = true)
-        => request.AddParameter(new Parameter(name, value, contentType, type, encode));
+        => request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
 
     public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter) {
-        var p = request.Parameters .FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
+        var p = request.Parameters.FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
 
         if (p != null) request.RemoveParameter(p);
 
@@ -55,20 +53,17 @@ public static class RestRequestExtensions {
     }
 
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value)
-        => request.AddOrUpdateParameter(new Parameter(name, value, ParameterType.GetOrPost));
+        => request.AddOrUpdateParameter(new GetOrPostParameter(name, value));
 
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
-        => request.AddOrUpdateParameter(new Parameter(name, value, type));
+        => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
 
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, string contentType, ParameterType type, bool encode = true)
-        => request.AddOrUpdateParameter(new Parameter(name, value, contentType, type, encode));
-
-    public static RestRequest AddHeader(this RestRequest request, string name, string value, bool encode = true) {
+    public static RestRequest AddHeader(this RestRequest request, string name, string value, bool encode = false) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddParameter(name, value, ParameterType.HttpHeader, encode);
+        return request.AddParameter(new HeaderParameter(name, value, encode));
     }
 
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value, bool encode = true) {
+    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value, bool encode = false) {
         CheckAndThrowsForInvalidHost(name, value);
         return request.AddOrUpdateParameter(name, value, ParameterType.HttpHeader, encode);
     }
@@ -93,24 +88,14 @@ public static class RestRequestExtensions {
         return request;
     }
 
-    public static RestRequest AddUrlSegment(this RestRequest request, string name, string value)
-        => request.AddParameter(name, value, ParameterType.UrlSegment);
+    public static RestRequest AddUrlSegment(this RestRequest request, string name, string value, bool encode = true)
+        => request.AddParameter(new UrlSegmentParameter(name, value, encode));
 
-    public static RestRequest AddUrlSegment(this RestRequest request, string name, string value, bool encode) {
-        var parameter = new Parameter(name, value, ParameterType.UrlSegment, encode);
-        return request.AddParameter(parameter);
-    }
+    public static RestRequest AddQueryParameter(this RestRequest request, string name, string value, bool encode = true)
+        => request.AddParameter(new QueryParameter(name, value, encode));
 
-    public static RestRequest AddQueryParameter(this RestRequest request, string name, string value)
-        => request.AddParameter(name, value, ParameterType.QueryString);
-
-    public static RestRequest AddQueryParameter(this RestRequest request, string name, string value, bool encode) {
-        var parameter = new Parameter(name, value, ParameterType.QueryString, encode);
-        return request.AddParameter(parameter);
-    }
-
-    public static RestRequest AddUrlSegment(this RestRequest request, string name, object value)
-        => request.AddParameter(name, value, ParameterType.UrlSegment);
+    public static RestRequest AddUrlSegment(this RestRequest request, string name, object value, bool encode = true)
+        => request.AddParameter(new UrlSegmentParameter(name, value, encode));
 
     public static RestRequest AddFile(this RestRequest request, string name, string path, string? contentType = null)
         => request.AddFile(FileParameter.FromFile(path, name, contentType));
@@ -148,7 +133,7 @@ public static class RestRequestExtensions {
         => request.RequestFormat switch {
             DataFormat.Json => request.AddJsonBody(obj),
             DataFormat.Xml  => request.AddXmlBody(obj),
-            _               => request.AddParameter("", obj.ToString()!)
+            _               => request.AddParameter(new BodyParameter("", obj.ToString()!, ContentType.Plain))
         };
 
     public static RestRequest AddJsonBody(this RestRequest request, object obj) {

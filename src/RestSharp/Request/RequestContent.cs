@@ -63,7 +63,7 @@ class RequestContent : IDisposable {
         Content = mpContent;
     }
 
-    HttpContent Serialize(Parameter body) {
+    HttpContent Serialize(BodyParameter body) {
         return body.DataFormat switch {
             DataFormat.None => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType),
             _               => GetSerialized()
@@ -90,7 +90,7 @@ class RequestContent : IDisposable {
         }
     }
 
-    static bool BodyShouldBeMultipartForm(Parameter bodyParameter) {
+    static bool BodyShouldBeMultipartForm(BodyParameter bodyParameter) {
         var bodyContentType = bodyParameter.ContentType ?? bodyParameter.Name;
         return bodyParameter.Name.IsNotEmpty() && bodyParameter.Name != bodyContentType;
     }

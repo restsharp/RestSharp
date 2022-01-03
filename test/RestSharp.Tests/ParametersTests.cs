@@ -11,7 +11,7 @@ public class ParametersTests {
             { KnownHeaders.ContentEncoding, "gzip, deflate" }
         };
 
-        var expected = headers.Select(x => new Parameter(x.Key, x.Value, ParameterType.HttpHeader));
+        var expected = headers.Select(x => new HeaderParameter(x.Key, x.Value));
 
         var options = new RestClientOptions(BaseUrl);
         var client  = new RestClient(options);

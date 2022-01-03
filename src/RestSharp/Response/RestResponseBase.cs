@@ -93,7 +93,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Headers returned by server with the response
     /// </summary>
-    public IList<Parameter>? Headers { get; protected internal set; }
+    public IList<HeaderParameter>? Headers { get; protected internal set; }
 
     /// <summary>
     /// Status of the request. Will return Error for transport errors.

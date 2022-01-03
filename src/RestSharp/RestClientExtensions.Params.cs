@@ -25,7 +25,7 @@ public static partial class RestClientExtensions {
     /// <param name="value">Value of the parameter</param>
     /// <returns>This request</returns>
     public static RestClient AddDefaultParameter(this RestClient client, string name, object value)
-        => client.AddDefaultParameter(new Parameter(name, value, ParameterType.GetOrPost));
+        => client.AddDefaultParameter(new GetOrPostParameter(name, value));
 
     /// <summary>
     /// Adds a default parameter to the client options. There are four types of parameters:
@@ -40,13 +40,8 @@ public static partial class RestClientExtensions {
     /// <param name="value">Value of the parameter</param>
     /// <param name="type">The type of parameter to add</param>
     /// <returns>This request</returns>
-    public static RestClient AddDefaultParameter(
-        this RestClient client,
-        string          name,
-        object          value,
-        ParameterType   type
-    )
-        => client.AddDefaultParameter(new Parameter(name, value, type));
+    public static RestClient AddDefaultParameter(this RestClient client, string name, object value, ParameterType type)
+        => client.AddDefaultParameter(Parameter.CreateParameter(name, value, type));
 
     /// <summary>
     /// Adds a default header to the RestClient. Used on every request made by this client instance.
@@ -56,7 +51,7 @@ public static partial class RestClientExtensions {
     /// <param name="value">Value of the header to add</param>
     /// <returns></returns>
     public static RestClient AddDefaultHeader(this RestClient client, string name, string value)
-        => client.AddDefaultParameter(name, value, ParameterType.HttpHeader);
+        => client.AddDefaultParameter(new HeaderParameter(name, value));
 
     /// <summary>
     /// Adds default headers to the RestClient. Used on every request made by this client instance.
@@ -66,7 +61,7 @@ public static partial class RestClientExtensions {
     /// <returns></returns>
     public static RestClient AddDefaultHeaders(this RestClient client, Dictionary<string, string> headers) {
         foreach (var header in headers)
-            client.AddDefaultParameter(new Parameter(header.Key, header.Value, ParameterType.HttpHeader));
+            client.AddDefaultParameter(new HeaderParameter(header.Key, header.Value));
 
         return client;
     }
@@ -79,7 +74,7 @@ public static partial class RestClientExtensions {
     /// <param name="value">Value of the segment to add</param>
     /// <returns></returns>
     public static RestClient AddDefaultUrlSegment(this RestClient client, string name, string value)
-        => client.AddDefaultParameter(name, value, ParameterType.UrlSegment);
+        => client.AddDefaultParameter(new UrlSegmentParameter(name, value));
 
     /// <summary>
     /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
@@ -89,5 +84,5 @@ public static partial class RestClientExtensions {
     /// <param name="value">Value of the query parameter to add</param>
     /// <returns></returns>
     public static RestClient AddDefaultQueryParameter(this RestClient client, string name, string value)
-        => client.AddDefaultParameter(name, value, ParameterType.QueryString);
+        => client.AddDefaultParameter(new QueryParameter(name, value));
 }

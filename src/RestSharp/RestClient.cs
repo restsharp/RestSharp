@@ -138,29 +138,26 @@ public partial class RestClient {
     // }
     public ParametersCollection DefaultParameters { get; } = new();
 
+    public RestClient AddCookie(string name, string value) {
+        lock (_cookieContainer) {
+            _cookieContainer.Add(new Cookie(name, value));
+        }
+
+        return this;
+    }
+
     /// <summary>
     /// Add a parameter to use on every request made with this client instance
     /// </summary>
     /// <param name="p">Parameter to add</param>
     /// <returns></returns>
     public RestClient AddDefaultParameter(Parameter p) {
-        switch (p.Type) {
-            case ParameterType.RequestBody:
-                throw new NotSupportedException(
-                    "Cannot set request body from default headers. Use Request.AddBody() instead."
-                );
-            case ParameterType.Cookie: {
-                lock (_cookieContainer) {
-                    _cookieContainer.Add(new Cookie(p.Name!, p.Value!.ToString()));
-                }
+        if (p.Type == ParameterType.RequestBody)
+            throw new NotSupportedException(
+                "Cannot set request body using default parameters. Use Request.AddBody() instead."
+            );
 
-                break;
-            }
-            default: {
-                DefaultParameters.AddParameter(p);
-                break;
-            }
-        }
+        DefaultParameters.AddParameter(p);
 
         return this;
     }
@@ -173,6 +170,7 @@ public partial class RestClient {
 
         var (uri, resource) = Options.BaseUrl.GetUrlSegmentParamsValues(request.Resource, Encode, request.Parameters, DefaultParameters);
         var mergedUri = uri.MergeBaseUrlAndResource(resource);
+
         var finalUri = mergedUri.ApplyQueryStringParamsValuesToUri(
             request.Method,
             Options.Encoding,

@@ -60,7 +60,7 @@ public class RestResponse : RestResponseBase {
     RestResponse SetHeaders(HttpResponseHeaders headers) {
         var headerParams = headers
             .SelectMany(x => x.Value.Select(y => (x.Key, y)))
-            .Select(x => new Parameter(x.Key, x.y, ParameterType.HttpHeader))
+            .Select(x => new HeaderParameter(x.Key, x.y))
             .ToList();
         return this.With(x => x.Headers = headerParams);
     }

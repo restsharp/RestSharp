@@ -248,10 +248,10 @@ public class OAuth1Authenticator : IAuthenticator {
         request.AddOrUpdateParameters(oauthParameters);
 
         IEnumerable<Parameter> CreateHeaderParameters()
-            => new[] { new Parameter(KnownHeaders.Authorization, GetAuthorizationHeader(), ParameterType.HttpHeader) };
+            => new[] { new HeaderParameter(KnownHeaders.Authorization, GetAuthorizationHeader()) };
 
         IEnumerable<Parameter> CreateUrlParameters()
-            => oauth.Parameters.Select(p => new Parameter(p.Name, HttpUtility.UrlDecode(p.Value), ParameterType.GetOrPost));
+            => oauth.Parameters.Select(p => new GetOrPostParameter(p.Name, HttpUtility.UrlDecode(p.Value)));
 
         string GetAuthorizationHeader() {
             var oathParameters =

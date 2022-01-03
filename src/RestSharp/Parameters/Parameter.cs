@@ -12,77 +12,62 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp; 
+namespace RestSharp;
 
 /// <summary>
 /// Parameter container for REST requests
 /// </summary>
 public record Parameter {
-    public Parameter(string? name, object? value, ParameterType type, bool encode = true) {
-        if (type != ParameterType.RequestBody)
-            Ensure.NotEmpty(name, nameof(name));
-        else {
-            Ensure.NotNull(value, nameof(value));
-        }
-
+    protected Parameter(string? name, object? value, ParameterType type, bool encode = true) {
         Name   = name;
-        Value  = type != ParameterType.UrlSegment ? value : value?.ToString()?.Replace("%2F", "/").Replace("%2f", "/");
-        Type   = type == ParameterType.QueryStringWithoutEncode ? ParameterType.QueryString : type;
-        Encode = type != ParameterType.QueryStringWithoutEncode && encode;
+        Value  = value;
+        Type   = type;
+        Encode = encode;
     }
 
-    public Parameter(string name, object value, string contentType, ParameterType type, bool encode = true) : this(name, value, type, encode)
-        => ContentType = contentType;
+    // Parameter(string name, object value, string contentType, ParameterType type, bool encode = true) : this(name, value, type, encode)
+    // => ContentType = contentType;
 
     /// <summary>
     /// Name of the parameter
     /// </summary>
-    public string? Name { get; set; }
+    public string? Name { get; }
 
     /// <summary>
     /// Value of the parameter
     /// </summary>
-    public object? Value { get; set; }
+    public object? Value { get; }
 
     /// <summary>
     /// Type of the parameter
     /// </summary>
-    public ParameterType Type { get; set; }
+    public ParameterType Type { get; }
 
-    /// <summary>
-    /// Body parameter data type
-    /// </summary>
-    public DataFormat DataFormat { get; set; } = DataFormat.None;
+    internal bool Encode { get; }
 
     /// <summary>
     /// MIME content type of the parameter
     /// </summary>
-    public string? ContentType { get; set; }
-
-    internal bool Encode { get; }
+    public string? ContentType { get; protected init; }
 
     /// <summary>
     /// Return a human-readable representation of this parameter
     /// </summary>
     /// <returns>String</returns>
     public override string ToString() => $"{Name}={Value}";
+
+    public static Parameter CreateParameter(string? name, object value, ParameterType type, bool encode = true)
+        => type switch {
+            ParameterType.GetOrPost   => new GetOrPostParameter(name!, value, encode),
+            ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value, encode),
+            ParameterType.HttpHeader  => new HeaderParameter(name, value, encode),
+            ParameterType.RequestBody => new BodyParameter(name, value, Serializers.ContentType.Plain),
+            ParameterType.QueryString => new QueryParameter(name!, value, encode),
+            _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
 }
 
-public record XmlParameter : Parameter {
-    public XmlParameter(string name, object value, string? xmlNamespace = null, string contentType = Serializers.ContentType.Xml) 
-        : base(name, value, ParameterType.RequestBody) {
-        XmlNamespace = xmlNamespace;
-        DataFormat   = DataFormat.Xml;
-        ContentType  = contentType;
-    }
-
-    public string? XmlNamespace { get; }
-}
-
-public record JsonParameter : Parameter {
-    public JsonParameter(string name, object value, string contentType = Serializers.ContentType.Json) 
-        : base(name, value, ParameterType.RequestBody) {
-        DataFormat  = DataFormat.Json;
-        ContentType = contentType;
-    }
+public record NamedParameter : Parameter {
+    protected NamedParameter(string name, object? value, ParameterType type, bool encode = true)
+        : base(Ensure.NotEmptyString(name, nameof(name)), value, type, encode) { }
 }

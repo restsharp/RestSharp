@@ -16,8 +16,8 @@
 namespace RestSharp; 
 
 static class BodyExtensions {
-    public static bool TryGetBodyParameter(this RestRequest request, out Parameter? bodyParameter) {
-        bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
+    public static bool TryGetBodyParameter(this RestRequest request, out BodyParameter? bodyParameter) {
+        bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody) as BodyParameter;
         return bodyParameter != null;
     }
 

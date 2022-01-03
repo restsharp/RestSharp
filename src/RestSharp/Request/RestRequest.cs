@@ -183,12 +183,7 @@ public class RestRequest {
         }
     }
 
-    public RestRequest AddParameter(Parameter p) {
-        if (p.Type == ParameterType.Cookie)
-            throw new InvalidOperationException("Cookie parameters should be added to the RestClient's cookie container");
-
-        return this.With(x => x.Parameters.AddParameter(p));
-    }
+    public RestRequest AddParameter(Parameter p) => this.With(x => x.Parameters.AddParameter(p));
 
     public void RemoveParameter(Parameter p) => Parameters.RemoveParameter(p);
 

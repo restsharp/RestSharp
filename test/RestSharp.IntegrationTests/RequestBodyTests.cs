@@ -83,7 +83,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
         const string bodyData      = "abc123 foo bar baz BING!";
         const string multipartName = "mybody";
 
-        request.AddParameter(multipartName, bodyData, TextPlainContentType, ParameterType.RequestBody);
+        request.AddParameter(new BodyParameter(multipartName, bodyData, TextPlainContentType));
 
         await client.ExecuteAsync(request);
 

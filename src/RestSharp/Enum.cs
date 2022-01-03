@@ -21,7 +21,7 @@ public enum ParameterType {
     /// <summary>
     /// Cookie parameter
     /// </summary>
-    Cookie, GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString, QueryStringWithoutEncode
+    GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString
 }
 
 /// <summary>
