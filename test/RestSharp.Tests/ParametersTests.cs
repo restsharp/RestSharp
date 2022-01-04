@@ -13,8 +13,7 @@ public class ParametersTests {
 
         var expected = headers.Select(x => new HeaderParameter(x.Key, x.Value));
 
-        var options = new RestClientOptions(BaseUrl);
-        var client  = new RestClient(options);
+        var client  = new RestClient(BaseUrl);
         client.AddDefaultHeaders(headers);
 
         expected.Should().BeSubsetOf(client.DefaultParameters);

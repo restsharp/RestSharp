@@ -77,7 +77,7 @@ public record FileParameter {
     /// <param name="getFile">Delegate that will be called with the request stream so you can write to it..</param>
     /// <param name="contentLength">The length of the data that will be written by te writer.</param>
     /// <param name="fileName">The filename to use in the request.</param>
-    /// <param name="contentType">Optional: parameter content type</param>
+    /// <param name="contentType">Optional: parameter content type, default is "application/g-zip"</param>
     /// <returns>The <see cref="FileParameter" /> using the default content type.</returns>
     public static FileParameter Create(
         string       name,
@@ -86,7 +86,7 @@ public record FileParameter {
         string       fileName,
         string?      contentType = null
     )
-        => new(name, fileName, contentLength, getFile, contentType);
+        => new(name, fileName, contentLength, getFile, contentType ?? Serializers.ContentType.File);
 
     public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null) {
         if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath))))
