@@ -115,16 +115,8 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_resource_containing_null_token() {
-        var request = new RestRequest("/resource/{foo}", Method.Get);
-
-        request.AddUrlSegment("foo", null);
-
-        var client    = new RestClient("http://example.com/api/1.0");
-        var exception = Assert.Throws<ArgumentException>(() => client.BuildUri(request));
-
-        Assert.NotNull(exception);
-        Assert.False(string.IsNullOrEmpty(exception.Message));
-        Assert.Contains("foo", exception.Message);
+        var request = new RestRequest("/resource/{foo}");
+        Assert.Throws<ArgumentNullException>(() => request.AddUrlSegment("foo", null));
     }
 
     [Fact]
