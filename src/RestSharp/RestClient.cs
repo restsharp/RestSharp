@@ -16,7 +16,6 @@ using System.Net;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
-using RestSharp.Serializers;
 using RestSharp.Serializers.Json;
 using RestSharp.Serializers.Xml;
 
@@ -29,8 +28,9 @@ namespace RestSharp;
 /// Client to translate RestRequests into Http requests and process response result
 /// </summary>
 public partial class RestClient {
-    readonly CookieContainer _cookieContainer;
-    // readonly List<Parameter> _defaultParameters = new();
+    public CookieContainer CookieContainer { get; }
+
+    public string[] AcceptedContentTypes { get; private set; } = null!;
 
     HttpClient HttpClient { get; }
 
@@ -42,12 +42,11 @@ public partial class RestClient {
     public RestClient() : this(new RestClientOptions()) { }
 
     public RestClient(HttpClient httpClient, RestClientOptions? options = null) {
-        UseSerializer<SystemTextJsonSerializer>();
-        UseSerializer<XmlRestSerializer>();
+        UseDefaultSerializers();
 
-        HttpClient       = httpClient;
-        Options          = options ?? new RestClientOptions();
-        _cookieContainer = Options.CookieContainer ?? new CookieContainer();
+        HttpClient      = httpClient;
+        Options         = options ?? new RestClientOptions();
+        CookieContainer = Options.CookieContainer ?? new CookieContainer();
 
         if (Options.Timeout > 0)
             HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
@@ -57,16 +56,15 @@ public partial class RestClient {
     public RestClient(HttpMessageHandler handler) : this(new HttpClient(handler)) { }
 
     public RestClient(RestClientOptions options) {
-        UseSerializer<SystemTextJsonSerializer>();
-        UseSerializer<XmlRestSerializer>();
+        UseDefaultSerializers();
 
-        Options          = options;
-        _cookieContainer = Options.CookieContainer ?? new CookieContainer();
+        Options         = options;
+        CookieContainer = Options.CookieContainer ?? new CookieContainer();
 
         var handler = new HttpClientHandler {
             Credentials            = Options.Credentials,
             UseDefaultCredentials  = Options.UseDefaultCredentials,
-            CookieContainer        = _cookieContainer,
+            CookieContainer        = CookieContainer,
             AutomaticDecompression = Options.AutomaticDecompression,
             PreAuthenticate        = Options.PreAuthenticate,
             AllowAutoRedirect      = Options.FollowRedirects,
@@ -106,8 +104,6 @@ public partial class RestClient {
     /// <param name="baseUrl"></param>
     public RestClient(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
-    internal Dictionary<DataFormat, SerializerRecord> Serializers { get; } = new();
-
     Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
     Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
@@ -133,14 +129,17 @@ public partial class RestClient {
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
 
-    // public IReadOnlyCollection<Parameter> DefaultParameters {
-    //     get { lock (_defaultParameters) return _defaultParameters; }
-    // }
     public ParametersCollection DefaultParameters { get; } = new();
 
+    /// <summary>
+    /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
+    /// </summary>
+    /// <param name="name">Cookie name</param>
+    /// <param name="value">Cookie value</param>
+    /// <returns></returns>
     public RestClient AddCookie(string name, string value) {
-        lock (_cookieContainer) {
-            _cookieContainer.Add(new Cookie(name, value));
+        lock (CookieContainer) {
+            CookieContainer.Add(new Cookie(name, value));
         }
 
         return this;
@@ -149,21 +148,26 @@ public partial class RestClient {
     /// <summary>
     /// Add a parameter to use on every request made with this client instance
     /// </summary>
-    /// <param name="p">Parameter to add</param>
+    /// <param name="parameter">Parameter to add</param>
     /// <returns></returns>
-    public RestClient AddDefaultParameter(Parameter p) {
-        if (p.Type == ParameterType.RequestBody)
+    public RestClient AddDefaultParameter(Parameter parameter) {
+        if (parameter.Type == ParameterType.RequestBody)
             throw new NotSupportedException(
                 "Cannot set request body using default parameters. Use Request.AddBody() instead."
             );
 
-        DefaultParameters.AddParameter(p);
+        if (!Options.AllowMultipleDefaultParametersWithSameName &&
+            !MultiParameterTypes.Contains(parameter.Type) &&
+            DefaultParameters.Any(x => x.Name == parameter.Name)) {
+            throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
+        }
+
+        DefaultParameters.AddParameter(parameter);
 
         return this;
     }
 
-    [PublicAPI]
-    public RestResponse<T> Deserialize<T>(RestResponse response) => Deserialize<T>(response.Request!, response);
+    static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
 
     public Uri BuildUri(RestRequest request) {
         DoBuildUriValidations(request);
@@ -187,28 +191,8 @@ public partial class RestClient {
         return uri.MergeBaseUrlAndResource(resource);
     }
 
-    public string[] AcceptedContentTypes { get; private set; } = null!;
-
     internal void AssignAcceptedContentTypes()
         => AcceptedContentTypes = Serializers.SelectMany(x => x.Value.SupportedContentTypes).Distinct().ToArray();
-
-    /// <summary>
-    /// Replace the default serializer with a custom one
-    /// </summary>
-    /// <param name="serializerFactory">Function that returns the serializer instance</param>
-    public RestClient UseSerializer(Func<IRestSerializer> serializerFactory) {
-        var instance = serializerFactory();
-        Serializers[instance.DataFormat] = new SerializerRecord(instance.DataFormat, instance.SupportedContentTypes, serializerFactory);
-        AssignAcceptedContentTypes();
-        return this;
-    }
-
-    /// <summary>
-    /// Replace the default serializer with a custom one
-    /// </summary>
-    /// <typeparam name="T">The type that implements <see cref="IRestSerializer"/></typeparam>
-    /// <returns></returns>
-    public RestClient UseSerializer<T>() where T : class, IRestSerializer, new() => UseSerializer(() => new T());
 
     void DoBuildUriValidations(RestRequest request) {
         if (Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
@@ -216,76 +200,5 @@ public partial class RestClient {
                 nameof(request),
                 "Request resource doesn't contain a valid scheme for an empty client base URL"
             );
-
-        var nullValuedParams = request.Parameters
-            .GetParameters(ParameterType.UrlSegment)
-            .Where(p => p.Value == null)
-            .Select(p => p.Name)
-            .ToArray();
-
-        if (nullValuedParams.Any()) {
-            var names = nullValuedParams.JoinToString(", ", name => $"'{name}'");
-
-            throw new ArgumentException(
-                $"Cannot build uri when url segment parameter(s) {names} value is null.",
-                nameof(request)
-            );
-        }
-    }
-
-    internal RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw) {
-        var response = RestResponse<T>.FromResponse(raw);
-
-        try {
-            request.OnBeforeDeserialization?.Invoke(raw);
-
-            // Only attempt to deserialize if the request has not errored due
-            // to a transport or framework exception.  HTTP errors should attempt to
-            // be deserialized
-            if (response.ErrorException == null) {
-                var handler = GetContentDeserializer(raw, request.RequestFormat);
-
-                // Only continue if there is a handler defined else there is no way to deserialize the data.
-                // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
-                if (handler is IXmlDeserializer xml && request is RestXmlRequest xmlRequest) {
-                    if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
-
-                    if (xml is IWithDateFormat withDateFormat && xmlRequest.DateFormat.IsNotEmpty())
-                        withDateFormat.DateFormat = xmlRequest.DateFormat!;
-                }
-
-                if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty()) deserializer.RootElement = request.RootElement;
-
-                if (handler != null) response.Data = handler.Deserialize<T>(raw);
-            }
-        }
-        catch (Exception ex) {
-            if (Options.ThrowOnAnyError) throw;
-
-            if (Options.FailOnDeserializationError || Options.ThrowOnDeserializationError) response.ResponseStatus = ResponseStatus.Error;
-
-            response.ErrorMessage   = ex.Message;
-            response.ErrorException = ex;
-
-            if (Options.ThrowOnDeserializationError) throw new DeserializationException(response, ex);
-        }
-
-        response.Request = request;
-
-        return response;
-    }
-
-    IDeserializer? GetContentDeserializer(RestResponseBase response, DataFormat requestFormat) {
-        var contentType = response.ContentType != null && AcceptedContentTypes.Contains(response.ContentType)
-            ? response.ContentType
-            : DetectContentType();
-        if (contentType.IsEmpty()) return null;
-
-        var serializer = Serializers.FirstOrDefault(x => x.Value.SupportedContentTypes.Contains(contentType));
-        var factory    = serializer.Value ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
-        return factory?.GetSerializer().Deserializer;
-
-        string? DetectContentType()
-            => response.Content!.StartsWith("<") ? ContentType.Xml : response.Content.StartsWith("{") ? ContentType.Json : null;
     }
 }

@@ -16,5 +16,5 @@
 namespace RestSharp;
 
 public record HeaderParameter : Parameter {
-    public HeaderParameter(string? name, object? value, bool encode = false) : base(name, value, ParameterType.HttpHeader, encode) { }
+    public HeaderParameter(string? name, object? value) : base(name, value, ParameterType.HttpHeader, false) { }
 }

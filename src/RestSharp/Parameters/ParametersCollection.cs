@@ -50,18 +50,21 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
 
     internal ParametersCollection GetParameters(ParameterType parameterType) => new(_parameters.Where(x => x.Type == parameterType));
 
-    internal ParametersCollection GetQueryParameters(Method method)
-        => new(
-            method is not Method.Post and not Method.Put and not Method.Patch
-                ? _parameters
-                    .Where(
-                        p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                    )
-                : _parameters
-                    .Where(
-                        p => p.Type is ParameterType.QueryString
-                    )
-        );
+    internal ParametersCollection GetParameters<T>() => new(_parameters.Where(x => x is T));
+
+    internal ParametersCollection GetQueryParameters(Method method) {
+        Func<Parameter, bool> condition =
+            !IsPostStyle(method)
+                ? p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
+                : p => p.Type is ParameterType.QueryString;
+
+        return new ParametersCollection(_parameters.Where(p => condition(p)));
+    }
+
+    internal ParametersCollection? GetContentParameters(Method method)
+        => !IsPostStyle(method) ? null : new ParametersCollection(GetParameters<GetOrPostParameter>());
+
+    bool IsPostStyle(Method method) => method is Method.Post or Method.Put or Method.Patch;
 
     public IEnumerator<Parameter> GetEnumerator() => _parameters.GetEnumerator();
 

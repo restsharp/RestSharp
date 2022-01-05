@@ -58,14 +58,14 @@ public static class RestRequestExtensions {
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
         => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
 
-    public static RestRequest AddHeader(this RestRequest request, string name, string value, bool encode = false) {
+    public static RestRequest AddHeader(this RestRequest request, string name, string value) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddParameter(new HeaderParameter(name, value, encode));
+        return request.AddParameter(new HeaderParameter(name, value));
     }
 
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value, bool encode = false) {
+    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddOrUpdateParameter(name, value, ParameterType.HttpHeader, encode);
+        return request.AddOrUpdateParameter(new HeaderParameter(name, value));
     }
 
     public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {

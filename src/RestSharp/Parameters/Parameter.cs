@@ -33,7 +33,7 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
         => type switch {
             ParameterType.GetOrPost   => new GetOrPostParameter(name!, value, encode),
             ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value, encode),
-            ParameterType.HttpHeader  => new HeaderParameter(name, value, encode),
+            ParameterType.HttpHeader  => new HeaderParameter(name, value),
             ParameterType.RequestBody => new BodyParameter(name, value, Serializers.ContentType.Plain),
             ParameterType.QueryString => new QueryParameter(name!, value, encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)

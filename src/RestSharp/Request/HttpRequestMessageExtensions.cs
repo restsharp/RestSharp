@@ -18,18 +18,14 @@ using RestSharp.Extensions;
 namespace RestSharp;
 
 static class HttpRequestMessageExtensions {
-    public static void AddHeaders(this HttpRequestMessage message, ParametersCollection parameters, Func<string, string> encode) {
-        var headerParameters = parameters
-            .GetParameters(ParameterType.HttpHeader)
-            .Where(x => !RequestContent.ContentHeaders.Contains(x.Name));
+    public static void AddHeaders(this HttpRequestMessage message, RequestHeaders headers) {
+        var headerParameters = headers.Parameters.Where(x => !RequestContent.ContentHeaders.Contains(x.Name));
 
         headerParameters.ForEach(AddHeader);
 
         void AddHeader(Parameter parameter) {
             var parameterStringValue = parameter.Value!.ToString();
 
-            if (parameter.Encode) parameterStringValue = encode(parameterStringValue!);
-            
             message.Headers.Remove(parameter.Name!);
             message.Headers.TryAddWithoutValidation(parameter.Name!, parameterStringValue);
         }

@@ -39,8 +39,9 @@ class RequestContent : IDisposable {
 
     public HttpContent BuildContent() {
         AddFiles();
-        AddBody();
-        AddPostParameters();
+        var postParameters = _request.Parameters.GetContentParameters(_request.Method);
+        AddBody(postParameters != null);
+        AddPostParameters(postParameters);
         AddHeaders();
         return Content!;
     }
@@ -95,13 +96,13 @@ class RequestContent : IDisposable {
         return bodyParameter.Name.IsNotEmpty() && bodyParameter.Name != bodyContentType;
     }
 
-    void AddBody() {
+    void AddBody(bool hasPostParameters) {
         if (!_request.TryGetBodyParameter(out var bodyParameter)) return;
 
         var bodyContent = Serialize(bodyParameter!);
 
         // we need to send the body
-        if (_request.HasPostParameters() || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!)) {
+        if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!)) {
             // here we must use multipart form data
             var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
 
@@ -117,29 +118,20 @@ class RequestContent : IDisposable {
         }
     }
 
-    void AddPostParameters() {
-        var postParameters = _request.GetPostParameters();
-        if (postParameters.Length <= 0) return;
+    void AddPostParameters(ParametersCollection? postParameters) {
+        if (postParameters == null) return;
 
-        // it's a form
-        if (Content is MultipartFormDataContent mpContent) {
-            // we got the multipart form already instantiated, just add parameters to it
-            foreach (var postParameter in postParameters) {
-                mpContent.Add(
-                    new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
-                    postParameter.Name!
-                );
-            }
-        }
-        else {
-            // we should not have anything else except the parameters, so we send them as form URL encoded
-            var formContent = new FormUrlEncodedContent(
-                _request.Parameters
-                    .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+        var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
+
+        // we got the multipart form already instantiated, just add parameters to it
+        foreach (var postParameter in postParameters) {
+            mpContent.Add(
+                new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
+                postParameter.Name!
             );
-            Content = formContent;
         }
+
+        Content = mpContent;
     }
 
     void AddHeaders() {

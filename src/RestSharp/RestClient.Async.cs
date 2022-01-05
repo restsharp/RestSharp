@@ -31,7 +31,7 @@ public partial class RestClient {
             ? await RestResponse.FromHttpResponse(
                 internalResponse.ResponseMessage!,
                 request,
-                _cookieContainer.GetCookies(internalResponse.Url),
+                CookieContainer.GetCookies(internalResponse.Url),
                 cancellationToken
             )
             : ReturnErrorOrThrow(response, internalResponse.Exception, internalResponse.TimeoutToken);
@@ -60,11 +60,11 @@ public partial class RestClient {
         var ct         = cts.Token;
 
         try {
-            var parameters = new RequestParameters()
-                .AddParameters(request.Parameters, true)
-                .AddParameters(DefaultParameters, Options.AllowMultipleDefaultParametersWithSameName)
+            var headers = new RequestHeaders()
+                .AddHeaders(request.Parameters)
+                .AddHeaders(DefaultParameters)
                 .AddAcceptHeader(AcceptedContentTypes);
-            message.AddHeaders(parameters.Parameters, Encode);
+            message.AddHeaders(headers);
 
             if (request.OnBeforeRequest != null)
                 await request.OnBeforeRequest(message);
