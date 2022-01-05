@@ -64,7 +64,7 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
     internal ParametersCollection? GetContentParameters(Method method)
         => !IsPostStyle(method) ? null : new ParametersCollection(GetParameters<GetOrPostParameter>());
 
-    bool IsPostStyle(Method method) => method is Method.Post or Method.Put or Method.Patch;
+    static bool IsPostStyle(Method method) => method is Method.Post or Method.Put or Method.Patch;
 
     public IEnumerator<Parameter> GetEnumerator() => _parameters.GetEnumerator();
 

@@ -21,10 +21,7 @@ static class BodyExtensions {
         return bodyParameter != null;
     }
 
-    public static Parameter[] GetPostParameters(this RestRequest request)
-        => request.Parameters.Where(x => x.Type == ParameterType.GetOrPost).ToArray();
-
-    public static bool HasPostParameters(this RestRequest request) => request.Parameters.Any(x => x.Type == ParameterType.GetOrPost);
-
     public static bool HasFiles(this RestRequest request) => request.Files.Count > 0;
+
+    public static bool IsEmpty(this ParametersCollection? parameters) => parameters == null || parameters.Count == 0;
 }

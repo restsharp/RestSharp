@@ -40,7 +40,7 @@ class RequestContent : IDisposable {
     public HttpContent BuildContent() {
         AddFiles();
         var postParameters = _request.Parameters.GetContentParameters(_request.Method);
-        AddBody(postParameters != null);
+        AddBody(!postParameters.IsEmpty());
         AddPostParameters(postParameters);
         AddHeaders();
         return Content!;
@@ -119,12 +119,12 @@ class RequestContent : IDisposable {
     }
 
     void AddPostParameters(ParametersCollection? postParameters) {
-        if (postParameters == null) return;
+        if (postParameters.IsEmpty()) return;
 
         var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
 
         // we got the multipart form already instantiated, just add parameters to it
-        foreach (var postParameter in postParameters) {
+        foreach (var postParameter in postParameters!) {
             mpContent.Add(
                 new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
                 postParameter.Name!
