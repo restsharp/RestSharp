@@ -21,6 +21,10 @@ public static class ContentType {
 
     public const string Plain = "text/plain";
 
+    public const string File = "application/octet-stream";
+
+    public const string GZip = "application/x-gzip";
+
     public static readonly Dictionary<DataFormat, string> FromDataFormat =
         new() {
             { DataFormat.Xml, Xml },

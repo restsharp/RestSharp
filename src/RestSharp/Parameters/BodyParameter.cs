@@ -17,7 +17,7 @@ namespace RestSharp;
 
 public record BodyParameter : Parameter {
     public BodyParameter(string? name, object value, string contentType, DataFormat dataFormat = DataFormat.None)
-        : base(name, Ensure.NotNull(value, nameof(value)), ParameterType.RequestBody) {
+        : base(name, Ensure.NotNull(value, nameof(value)), ParameterType.RequestBody, false) {
         ContentType = contentType;
         DataFormat  = dataFormat;
     }

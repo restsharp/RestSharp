@@ -13,9 +13,9 @@
 // limitations under the License.
 // 
 
-namespace RestSharp; 
+namespace RestSharp;
 
 public record UrlSegmentParameter : NamedParameter {
-    public UrlSegmentParameter(string name, object? value, bool encode = true) 
-        : base(name, value?.ToString()?.Replace("%2F", "/").Replace("%2f", "/"), ParameterType.UrlSegment, encode) { }
+    public UrlSegmentParameter(string name, object value, bool encode = true)
+        : base(name, Ensure.NotEmptyString(value, nameof(value)).Replace("%2F", "/").Replace("%2f", "/"), ParameterType.UrlSegment, encode) { }
 }

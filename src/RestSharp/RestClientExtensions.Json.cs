@@ -14,6 +14,7 @@
 // 
 
 using System.Net;
+using RestSharp.Extensions;
 
 namespace RestSharp;
 
@@ -28,6 +29,35 @@ public static partial class RestClientExtensions {
     /// <returns></returns>
     public static Task<TResponse?> GetJsonAsync<TResponse>(this RestClient client, string resource, CancellationToken cancellationToken = default) {
         var request = new RestRequest(resource);
+        return client.GetAsync<TResponse>(request, cancellationToken);
+    }
+
+    public static Task<TResponse?> GetJsonAsync<TResponse>(
+        this RestClient   client,
+        string            resource,
+        object            parameters,
+        CancellationToken cancellationToken = default
+    ) {
+        var props = parameters.GetProperties();
+        var query = new List<Parameter>();
+
+        foreach (var (name, value) in props) {
+            var param = $"{name}";
+
+            if (resource.Contains(param)) {
+                resource = resource.Replace(param, value.ToString());
+            }
+            else {
+                query.Add(new QueryParameter(name, value));
+            }
+        }
+
+        var request = new RestRequest(resource);
+
+        foreach (var parameter in query) {
+            request.AddParameter(parameter);
+        }
+
         return client.GetAsync<TResponse>(request, cancellationToken);
     }
 
@@ -69,7 +99,7 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) where TRequest : class {
         var restRequest = new RestRequest().AddJsonBody(request);
-        var response = await client.PostAsync(restRequest, cancellationToken);
+        var response    = await client.PostAsync(restRequest, cancellationToken);
         return response.StatusCode;
     }
 
@@ -93,7 +123,7 @@ public static partial class RestClientExtensions {
         var restRequest = new RestRequest().AddJsonBody(request);
         return client.PutAsync<TResponse>(restRequest, cancellationToken);
     }
-    
+
     /// <summary>
     /// Serializes the <code>request</code> object to JSON and makes a PUT call to the resource specified in the <code>resource</code> parameter.
     /// Expects no response back, just the status code.
@@ -111,7 +141,7 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) where TRequest : class {
         var restRequest = new RestRequest().AddJsonBody(request);
-        var response = await client.PutAsync(restRequest, cancellationToken);
+        var response    = await client.PutAsync(restRequest, cancellationToken);
         return response.StatusCode;
     }
 }

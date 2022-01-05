@@ -15,31 +15,16 @@
 
 namespace RestSharp; 
 
-class RequestParameters {
-    static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
-
+class RequestHeaders {
     public ParametersCollection Parameters { get; } = new();
 
-    public RequestParameters AddParameters(ParametersCollection parameters, bool allowSameName) {
-        Parameters.AddParameters(GetParameters(parameters, allowSameName));
+    public RequestHeaders AddHeaders(ParametersCollection parameters) {
+        Parameters.AddParameters(parameters.GetParameters<HeaderParameter>());
         return this;
     }
 
-    IEnumerable<Parameter> GetParameters(ParametersCollection parametersCollection, bool allowSameName) {
-        foreach (var parameter in parametersCollection) {
-            var parameterExists = Parameters.Exists(parameter);
-
-            if (allowSameName) {
-                var isMultiParameter = MultiParameterTypes.Any(pt => pt == parameter.Type);
-                parameterExists = !isMultiParameter && parameterExists;
-            }
-
-            if (!parameterExists) yield return parameter;
-        }
-    }
-
     // Add Accept header based on registered deserializers if none has been set by the caller.
-    public RequestParameters AddAcceptHeader(string[] acceptedContentTypes) {
+    public RequestHeaders AddAcceptHeader(string[] acceptedContentTypes) {
         if (Parameters.TryFind(KnownHeaders.Accept) == null) {
             var accepts = string.Join(", ", acceptedContentTypes);
             Parameters.AddParameter(new HeaderParameter(KnownHeaders.Accept, accepts));

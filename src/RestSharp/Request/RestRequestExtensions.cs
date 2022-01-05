@@ -58,14 +58,14 @@ public static class RestRequestExtensions {
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
         => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
 
-    public static RestRequest AddHeader(this RestRequest request, string name, string value, bool encode = false) {
+    public static RestRequest AddHeader(this RestRequest request, string name, string value) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddParameter(new HeaderParameter(name, value, encode));
+        return request.AddParameter(new HeaderParameter(name, value));
     }
 
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value, bool encode = false) {
+    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
         CheckAndThrowsForInvalidHost(name, value);
-        return request.AddOrUpdateParameter(name, value, ParameterType.HttpHeader, encode);
+        return request.AddOrUpdateParameter(new HeaderParameter(name, value));
     }
 
     public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
@@ -97,11 +97,28 @@ public static class RestRequestExtensions {
     public static RestRequest AddUrlSegment(this RestRequest request, string name, object value, bool encode = true)
         => request.AddParameter(new UrlSegmentParameter(name, value, encode));
 
+    /// <summary>
+    /// Adds a file parameter to the request body. The file will be read from disk as a stream.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Parameter name</param>
+    /// <param name="path">Full path to the file</param>
+    /// <param name="contentType">Optional: content type</param>
+    /// <returns></returns>
     public static RestRequest AddFile(this RestRequest request, string name, string path, string? contentType = null)
         => request.AddFile(FileParameter.FromFile(path, name, contentType));
 
-    public static RestRequest AddFile(this RestRequest request, string name, byte[] bytes, string fileName, string? contentType = null)
-        => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType));
+    /// <summary>
+    /// Adds bytes to the request as file attachment
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Parameter name</param>
+    /// <param name="bytes">File content as bytes</param>
+    /// <param name="filename">File name</param>
+    /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
+    /// <returns></returns>
+    public static RestRequest AddFile(this RestRequest request, string name, byte[] bytes, string filename, string? contentType = null)
+        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType));
 
     public static RestRequest AddFile(
         this RestRequest request,
@@ -113,86 +130,72 @@ public static class RestRequestExtensions {
     )
         => request.AddFile(FileParameter.Create(name, getFile, contentLength, fileName, contentType));
 
-    public static RestRequest AddFileBytes(
-        this RestRequest request,
-        string           name,
-        byte[]           bytes,
-        string           filename,
-        string           contentType = "application/x-gzip"
-    )
-        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType));
+    /// <summary>
+    /// Adds a body parameter to the request
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="obj">Object to be used as the request body, or string for plain content</param>
+    /// <param name="contentType">Optional: content type</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">Thrown if request body type cannot be resolved</exception>
+    /// <remarks>This method will try to figure out the right content type based on the request data format and the provided content type</remarks>
+    public static RestRequest AddBody(this RestRequest request, object obj, string? contentType = null) {
+        if (contentType == null) {
+            return request.RequestFormat switch {
+                DataFormat.Json => request.AddJsonBody(obj, contentType ?? ContentType.Json),
+                DataFormat.Xml  => request.AddXmlBody(obj, contentType ?? ContentType.Xml),
+                _               => request.AddParameter(new BodyParameter("", obj.ToString()!, contentType ?? ContentType.Plain))
+            };
+        }
 
-    public static RestRequest AddBody(this RestRequest request, object obj, string xmlNamespace)
-        => request.RequestFormat switch {
-            DataFormat.Json => request.AddJsonBody(obj),
-            DataFormat.Xml  => request.AddXmlBody(obj, xmlNamespace),
-            _               => request
-        };
-
-    public static RestRequest AddBody(this RestRequest request, object obj)
-        => request.RequestFormat switch {
-            DataFormat.Json => request.AddJsonBody(obj),
-            DataFormat.Xml  => request.AddXmlBody(obj),
-            _               => request.AddParameter(new BodyParameter("", obj.ToString()!, ContentType.Plain))
-        };
-
-    public static RestRequest AddJsonBody(this RestRequest request, object obj) {
-        request.RequestFormat = DataFormat.Json;
-        return request.AddParameter(new JsonParameter("", obj));
+        return
+            obj is string str            ? request.AddParameter(new BodyParameter("", str, contentType)) :
+            contentType.Contains("xml")  ? request.AddXmlBody(obj, contentType) :
+            contentType.Contains("json") ? request.AddJsonBody(obj, contentType) :
+                                           throw new ArgumentException("Non-string body found with unsupported content type", nameof(obj));
     }
 
-    public static RestRequest AddJsonBody(this RestRequest request, object obj, string contentType) {
+    /// <summary>
+    /// Adds a JSON body parameter to the request
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="obj">Object that will be serialized to JSON</param>
+    /// <param name="contentType">Optional: content type. Default is "application/json"</param>
+    /// <returns></returns>
+    public static RestRequest AddJsonBody(this RestRequest request, object obj, string contentType = ContentType.Json) {
         request.RequestFormat = DataFormat.Json;
-        return request.AddParameter(new JsonParameter(contentType, obj, contentType));
+        return request.AddParameter(new JsonParameter("", obj, contentType));
     }
 
-    public static RestRequest AddXmlBody(this RestRequest request, object obj) => request.AddXmlBody(obj, "");
-
-    public static RestRequest AddXmlBody(this RestRequest request, object obj, string xmlNamespace) {
+    /// <summary>
+    /// Adds an XML body parameter to the request
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="obj">Object that will be serialized to XML</param>
+    /// <param name="contentType">Optional: content type. Default is "application/xml"</param>
+    /// <param name="xmlNamespace">Optional: XML namespace</param>
+    /// <returns></returns>
+    public static RestRequest AddXmlBody(this RestRequest request, object obj, string contentType = ContentType.Xml, string xmlNamespace = "") {
         request.RequestFormat = DataFormat.Xml;
-        request.AddParameter(new XmlParameter("", obj, xmlNamespace));
+        request.AddParameter(new XmlParameter("", obj, xmlNamespace, contentType));
         return request;
     }
 
+    /// <summary>
+    /// Gets object properties and adds each property as a form data parameter
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="obj">Object to add as form data</param>
+    /// <param name="includedProperties">Properties to include, or nothing to include everything</param>
+    /// <returns></returns>
     public static RestRequest AddObject(this RestRequest request, object obj, params string[] includedProperties) {
-        // automatically create parameters from object props
-        var type  = obj.GetType();
-        var props = type.GetProperties();
+        var props = obj.GetProperties(includedProperties);
 
-        foreach (var prop in props) {
-            if (!IsAllowedProperty(prop.Name))
-                continue;
-
-            var val = prop.GetValue(obj, null);
-
-            if (val == null)
-                continue;
-
-            var propType = prop.PropertyType;
-
-            if (propType.IsArray) {
-                var elementType = propType.GetElementType();
-                var array       = (Array)val;
-
-                if (array.Length > 0 && elementType != null) {
-                    // convert the array to an array of strings
-                    var values = array.Cast<object>().Select(item => item.ToString());
-
-                    val = string.Join(",", values);
-                }
-            }
-
-            request.AddParameter(prop.Name, val);
+        foreach (var (name, value) in props) {
+            request.AddParameter(name, value);
         }
 
         return request;
-
-        bool IsAllowedProperty(string propertyName)
-            => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
-    }
-
-    public static RestRequest AddObject(this RestRequest request, object obj) {
-        return request.With(x => x.AddObject(obj, new string[] { }));
     }
 
     static void CheckAndThrowsForInvalidHost(string name, string value) {

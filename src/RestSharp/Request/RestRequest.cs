@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using RestSharp.Extensions;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace RestSharp;
 
@@ -26,15 +27,11 @@ public class RestRequest {
     /// <summary>
     /// Default constructor
     /// </summary>
-    public RestRequest() {
-        RequestFormat = DataFormat.Json;
-        Method        = Method.Get;
-    }
+    public RestRequest() => Method = Method.Get;
 
-    public RestRequest(string? resource, Method method = Method.Get, DataFormat dataFormat = DataFormat.Json) : this() {
-        Resource      = resource ?? "";
-        Method        = method;
-        RequestFormat = dataFormat;
+    public RestRequest(string? resource, Method method = Method.Get) : this() {
+        Resource = resource ?? "";
+        Method   = method;
 
         if (string.IsNullOrWhiteSpace(resource)) return;
 
@@ -61,17 +58,11 @@ public class RestRequest {
                 );
     }
 
-    public RestRequest(Uri resource, Method method = Method.Get, DataFormat dataFormat = DataFormat.Json)
-        : this(
-            resource.IsAbsoluteUri
-                ? resource.AbsoluteUri
-                : resource.OriginalString,
-            method,
-            dataFormat
-        ) { }
+    public RestRequest(Uri resource, Method method = Method.Get)
+        : this(resource.IsAbsoluteUri ? resource.AbsoluteUri : resource.OriginalString, method) { }
 
     // readonly List<Parameter>     _parameters = new();
-    readonly List<FileParameter> _files      = new();
+    readonly List<FileParameter> _files = new();
 
     /// <summary>
     /// Always send a multipart/form-data request - even when no Files are present.

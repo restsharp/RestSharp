@@ -17,34 +17,7 @@ namespace RestSharp;
 /// <summary>
 /// Parameter container for REST requests
 /// </summary>
-public record Parameter {
-    protected Parameter(string? name, object? value, ParameterType type, bool encode = true) {
-        Name   = name;
-        Value  = value;
-        Type   = type;
-        Encode = encode;
-    }
-
-    // Parameter(string name, object value, string contentType, ParameterType type, bool encode = true) : this(name, value, type, encode)
-    // => ContentType = contentType;
-
-    /// <summary>
-    /// Name of the parameter
-    /// </summary>
-    public string? Name { get; }
-
-    /// <summary>
-    /// Value of the parameter
-    /// </summary>
-    public object? Value { get; }
-
-    /// <summary>
-    /// Type of the parameter
-    /// </summary>
-    public ParameterType Type { get; }
-
-    internal bool Encode { get; }
-
+public abstract record Parameter(string? Name, object? Value, ParameterType Type, bool Encode) {
     /// <summary>
     /// MIME content type of the parameter
     /// </summary>
@@ -60,7 +33,7 @@ public record Parameter {
         => type switch {
             ParameterType.GetOrPost   => new GetOrPostParameter(name!, value, encode),
             ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value, encode),
-            ParameterType.HttpHeader  => new HeaderParameter(name, value, encode),
+            ParameterType.HttpHeader  => new HeaderParameter(name, value),
             ParameterType.RequestBody => new BodyParameter(name, value, Serializers.ContentType.Plain),
             ParameterType.QueryString => new QueryParameter(name!, value, encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
