@@ -48,7 +48,7 @@ public static partial class RestClientExtensions {
                 resource = resource.Replace(param, value.ToString());
             }
             else {
-                query.Add(new QueryParameter(name, value));
+                query.Add(new QueryParameter(name, value?.ToString()));
             }
         }
 

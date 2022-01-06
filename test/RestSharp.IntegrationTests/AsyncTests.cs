@@ -37,7 +37,7 @@ public class AsyncTests {
         var request  = new RestRequest("success");
         var response = await _client.ExecuteAsync<Response>(request);
 
-        response.StatusCode.Should().Be(200);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Data!.Message.Should().Be("Works!");
     }
 

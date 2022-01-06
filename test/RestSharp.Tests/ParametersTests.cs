@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace RestSharp.Tests;
 
 public class ParametersTests {
@@ -16,6 +18,7 @@ public class ParametersTests {
         var client  = new RestClient(BaseUrl);
         client.AddDefaultHeaders(headers);
 
-        expected.Should().BeSubsetOf(client.DefaultParameters);
+        var actual = client.DefaultParameters.Select(x => x as HeaderParameter);
+        expected.Should().BeSubsetOf(actual);
     }
 }

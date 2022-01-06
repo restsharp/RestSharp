@@ -30,8 +30,8 @@ public static class RestRequestExtensions {
     /// <param name="value">Value of the parameter</param>
     /// <param name="encode">Encode the value or not, default true</param>
     /// <returns>This request</returns>
-    public static RestRequest AddParameter(this RestRequest request, string name, object value, bool encode = true)
-        => request.AddParameter(new GetOrPostParameter(name, value, encode));
+    public static RestRequest AddParameter(this RestRequest request, string name, object? value, bool encode = true)
+        => request.AddParameter(new GetOrPostParameter(name, value?.ToString(), encode));
 
     public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
         => request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
@@ -52,8 +52,8 @@ public static class RestRequestExtensions {
         return request;
     }
 
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value)
-        => request.AddOrUpdateParameter(new GetOrPostParameter(name, value));
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object? value)
+        => request.AddOrUpdateParameter(new GetOrPostParameter(name, value?.ToString()));
 
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
         => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
@@ -93,9 +93,6 @@ public static class RestRequestExtensions {
 
     public static RestRequest AddQueryParameter(this RestRequest request, string name, string value, bool encode = true)
         => request.AddParameter(new QueryParameter(name, value, encode));
-
-    public static RestRequest AddUrlSegment(this RestRequest request, string name, object value, bool encode = true)
-        => request.AddParameter(new UrlSegmentParameter(name, value, encode));
 
     /// <summary>
     /// Adds a file parameter to the request body. The file will be read from disk as a stream.

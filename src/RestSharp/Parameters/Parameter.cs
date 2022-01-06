@@ -29,13 +29,13 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
     /// <returns>String</returns>
     public override string ToString() => $"{Name}={Value}";
 
-    public static Parameter CreateParameter(string? name, object value, ParameterType type, bool encode = true)
+    public static Parameter CreateParameter(string? name, object? value, ParameterType type, bool encode = true)
         => type switch {
-            ParameterType.GetOrPost   => new GetOrPostParameter(name!, value, encode),
-            ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value, encode),
-            ParameterType.HttpHeader  => new HeaderParameter(name, value),
-            ParameterType.RequestBody => new BodyParameter(name, value, Serializers.ContentType.Plain),
-            ParameterType.QueryString => new QueryParameter(name!, value, encode),
+            ParameterType.GetOrPost   => new GetOrPostParameter(name!, value?.ToString(), encode),
+            ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value?.ToString()!, encode),
+            ParameterType.HttpHeader  => new HeaderParameter(name, value?.ToString()),
+            ParameterType.RequestBody => new BodyParameter(name, value!, Serializers.ContentType.Plain),
+            ParameterType.QueryString => new QueryParameter(name!, value?.ToString(), encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 }

@@ -16,5 +16,5 @@
 namespace RestSharp;
 
 public record GetOrPostParameter : NamedParameter {
-    public GetOrPostParameter(string name, object? value, bool encode = true) : base(name, value, ParameterType.GetOrPost, encode) { }
+    public GetOrPostParameter(string name, string? value, bool encode = true) : base(name, value, ParameterType.GetOrPost, encode) { }
 }

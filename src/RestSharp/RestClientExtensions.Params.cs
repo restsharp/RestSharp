@@ -24,7 +24,7 @@ public static partial class RestClientExtensions {
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
     /// <returns>This request</returns>
-    public static RestClient AddDefaultParameter(this RestClient client, string name, object value)
+    public static RestClient AddDefaultParameter(this RestClient client, string name, string value)
         => client.AddDefaultParameter(new GetOrPostParameter(name, value));
 
     /// <summary>

@@ -16,5 +16,5 @@
 namespace RestSharp;
 
 public record QueryParameter : NamedParameter {
-    public QueryParameter(string name, object? value, bool encode = true) : base(name, value, ParameterType.QueryString, encode) { }
+    public QueryParameter(string name, string? value, bool encode = true) : base(name, value, ParameterType.QueryString, encode) { }
 }

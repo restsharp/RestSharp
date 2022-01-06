@@ -22,7 +22,7 @@ static class Ensure {
         => string.IsNullOrWhiteSpace(value) ? throw new ArgumentNullException(name) : value!;
 
     public static string NotEmptyString(object? value, string name) {
-        var s = value as string;
+        var s = value as string ?? value?.ToString();
         return string.IsNullOrWhiteSpace(s) ? throw new ArgumentNullException(name) : s!;
     }
 }
