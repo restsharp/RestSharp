@@ -11,10 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
 
 namespace RestSharp;
 
 public record GetOrPostParameter : NamedParameter {
+    /// <summary>
+    /// Instantiates an HTTP parameter instance (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+    /// </summary>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
     public GetOrPostParameter(string name, string? value, bool encode = true) : base(name, value, ParameterType.GetOrPost, encode) { }
 }

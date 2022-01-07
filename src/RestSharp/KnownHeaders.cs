@@ -31,4 +31,5 @@ public static class KnownHeaders {
     public const string ContentType        = "Content-Type";
     public const string LastModified       = "Last-Modified";
     public const string ContentMD5         = "Content-MD5";
+    public const string Host               = "Host";
 }

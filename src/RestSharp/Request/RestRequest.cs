@@ -174,9 +174,18 @@ public class RestRequest {
         }
     }
 
-    public RestRequest AddParameter(Parameter p) => this.With(x => x.Parameters.AddParameter(p));
+    /// <summary>
+    /// Adds a parameter object to the request parameters
+    /// </summary>
+    /// <param name="parameter">Parameter to add</param>
+    /// <returns></returns>
+    public RestRequest AddParameter(Parameter parameter) => this.With(x => x.Parameters.AddParameter(parameter));
 
-    public void RemoveParameter(Parameter p) => Parameters.RemoveParameter(p);
+    /// <summary>
+    /// Removes a parameter object from the request parameters
+    /// </summary>
+    /// <param name="parameter">Parameter to remove</param>
+    public void RemoveParameter(Parameter parameter) => Parameters.RemoveParameter(parameter);
 
     internal RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
 }

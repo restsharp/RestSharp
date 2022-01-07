@@ -30,8 +30,89 @@ public static class RestRequestExtensions {
     /// <param name="value">Value of the parameter</param>
     /// <param name="encode">Encode the value or not, default true</param>
     /// <returns>This request</returns>
-    public static RestRequest AddParameter(this RestRequest request, string name, object? value, bool encode = true)
-        => request.AddParameter(new GetOrPostParameter(name, value?.ToString(), encode));
+    public static RestRequest AddParameter(this RestRequest request, string name, string? value, bool encode = true)
+        => request.AddParameter(new GetOrPostParameter(name, value, encode));
+
+    /// <summary>
+    /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns>This request</returns>
+    public static RestRequest AddParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
+        => request.AddParameter(name, value.ToString(), encode);
+
+    /// <summary>
+    /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns>This request</returns>
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, string? value, bool encode = true)
+        => request.AddOrUpdateParameter(new GetOrPostParameter(name, value, encode));
+
+    /// <summary>
+    /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns>This request</returns>
+    public static RestRequest AddOrUpdateParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
+        => request.AddOrUpdateParameter(name, value.ToString(), encode);
+
+    public static RestRequest AddUrlSegment(this RestRequest request, string name, string value, bool encode = true)
+        => request.AddParameter(new UrlSegmentParameter(name, value, encode));
+
+    public static RestRequest AddUrlSegment<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
+        => request.AddUrlSegment(name, Ensure.NotNull(value.ToString(), nameof(value)), encode);
+
+    public static RestRequest AddQueryParameter(this RestRequest request, string name, string? value, bool encode = true)
+        => request.AddParameter(new QueryParameter(name, value, encode));
+
+    public static RestRequest AddQueryParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
+        => request.AddQueryParameter(name, value.ToString(), encode);
+
+    public static RestRequest AddHeader(this RestRequest request, string name, string value) {
+        CheckAndThrowsForInvalidHost(name, value);
+        return request.AddParameter(new HeaderParameter(name, value));
+    }
+
+    public static RestRequest AddHeader<T>(this RestRequest request, string name, T value) where T : struct
+        => request.AddHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
+
+    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
+        CheckAndThrowsForInvalidHost(name, value);
+        return request.AddOrUpdateParameter(new HeaderParameter(name, value));
+    }
+
+    public static RestRequest AddOrUpdateHeader<T>(this RestRequest request, string name, T value) where T : struct
+        => request.AddOrUpdateHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
+
+    public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
+        CheckAndThrowsDuplicateKeys(headers);
+
+        foreach (var header in headers) {
+            request.AddHeader(header.Key, header.Value);
+        }
+
+        return request;
+    }
+
+    public static RestRequest AddOrUpdateHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
+        CheckAndThrowsDuplicateKeys(headers);
+
+        foreach (var pair in headers) {
+            request.AddOrUpdateHeader(pair.Key, pair.Value);
+        }
+
+        return request;
+    }
 
     public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
         => request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
@@ -52,47 +133,8 @@ public static class RestRequestExtensions {
         return request;
     }
 
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object? value)
-        => request.AddOrUpdateParameter(new GetOrPostParameter(name, value?.ToString()));
-
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
         => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
-
-    public static RestRequest AddHeader(this RestRequest request, string name, string value) {
-        CheckAndThrowsForInvalidHost(name, value);
-        return request.AddParameter(new HeaderParameter(name, value));
-    }
-
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
-        CheckAndThrowsForInvalidHost(name, value);
-        return request.AddOrUpdateParameter(new HeaderParameter(name, value));
-    }
-
-    public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
-        CheckAndThrowsDuplicateKeys(headers);
-
-        foreach (var pair in headers) {
-            request.AddHeader(pair.Key, pair.Value);
-        }
-
-        return request;
-    }
-
-    public static RestRequest AddOrUpdateHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
-        CheckAndThrowsDuplicateKeys(headers);
-
-        foreach (var pair in headers) {
-            request.AddOrUpdateHeader(pair.Key, pair.Value);
-        }
-
-        return request;
-    }
-
-    public static RestRequest AddUrlSegment(this RestRequest request, string name, string value, bool encode = true)
-        => request.AddParameter(new UrlSegmentParameter(name, value, encode));
-
-    public static RestRequest AddQueryParameter(this RestRequest request, string name, string value, bool encode = true)
-        => request.AddParameter(new QueryParameter(name, value, encode));
 
     /// <summary>
     /// Adds a file parameter to the request body. The file will be read from disk as a stream.
@@ -198,7 +240,7 @@ public static class RestRequestExtensions {
     static void CheckAndThrowsForInvalidHost(string name, string value) {
         static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
 
-        if (name == "Host" && InvalidHost(value))
+        if (name == KnownHeaders.Host && InvalidHost(value))
             throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
     }
 

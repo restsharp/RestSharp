@@ -45,10 +45,10 @@ public static partial class RestClientExtensions {
             var param = $"{name}";
 
             if (resource.Contains(param)) {
-                resource = resource.Replace(param, value.ToString());
+                resource = resource.Replace(param, value);
             }
             else {
-                query.Add(new QueryParameter(name, value?.ToString()));
+                query.Add(new QueryParameter(name, value));
             }
         }
 
