@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
 using static RestSharp.KnownHeaders;
+// ReSharper disable SuggestBaseTypeForParameter
 
 namespace RestSharp;
 
@@ -121,17 +122,24 @@ class RequestContent : IDisposable {
     void AddPostParameters(ParametersCollection? postParameters) {
         if (postParameters.IsEmpty()) return;
 
-        var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
-
-        // we got the multipart form already instantiated, just add parameters to it
-        foreach (var postParameter in postParameters!) {
-            mpContent.Add(
-                new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
-                postParameter.Name!
-            );
+        if (Content is MultipartFormDataContent mpContent) {
+            // we got the multipart form already instantiated, just add parameters to it
+            foreach (var postParameter in postParameters!) {
+                mpContent.Add(
+                    new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
+                    postParameter.Name!
+                );
+            }
         }
-
-        Content = mpContent;
+        else {
+            // we should not have anything else except the parameters, so we send them as form URL encoded
+            var formContent = new FormUrlEncodedContent(
+                _request.Parameters
+                    .Where(x => x.Type == ParameterType.GetOrPost)
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+            );
+            Content = formContent;
+        }
     }
 
     void AddHeaders() {
