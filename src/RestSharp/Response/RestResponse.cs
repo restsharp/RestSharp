@@ -51,7 +51,8 @@ public class RestResponse<T> : RestResponse {
             Server            = response.Server,
             StatusCode        = response.StatusCode,
             StatusDescription = response.StatusDescription,
-            Request           = response.Request
+            Request           = response.Request,
+            ResponseMessage   = response.ResponseMessage
         };
 }
 
@@ -60,12 +61,6 @@ public class RestResponse<T> : RestResponse {
 /// </summary>
 [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
 public class RestResponse : RestResponseBase {
-    RestResponse SetHeaders(HttpResponseHeaders httpHeaders) => this.With(x => x.Headers = httpHeaders.GetHeaderParameters());
-
-    RestResponse SetContentHeaders(HttpContentHeaders httpHeaders) => this.With(x => x.ContentHeaders = httpHeaders.GetHeaderParameters());
-
-    RestResponse SetCookies(CookieCollection cookies) => this.With(x => x.Cookies = cookies);
-
     internal static async Task<RestResponse> FromHttpResponse(
         HttpResponseMessage httpResponse,
         RestRequest         request,
@@ -108,23 +103,24 @@ public class RestResponse : RestResponseBase {
             }
 
             return new RestResponse {
-                    Content           = content,
-                    RawBytes          = bytes,
-                    ContentEncoding   = httpResponse.Content.Headers.ContentEncoding,
-                    Version           = httpResponse.RequestMessage?.Version,
-                    ContentLength     = httpResponse.Content.Headers.ContentLength,
-                    ContentType       = httpResponse.Content.Headers.ContentType?.MediaType,
-                    ResponseStatus    = httpResponse.IsSuccessStatusCode ? ResponseStatus.Completed : ResponseStatus.Error,
-                    ResponseUri       = httpResponse.RequestMessage!.RequestUri,
-                    Server            = httpResponse.Headers.Server.ToString(),
-                    StatusCode        = httpResponse.StatusCode,
-                    StatusDescription = httpResponse.ReasonPhrase,
-                    IsSuccessful      = httpResponse.IsSuccessStatusCode,
-                    Request           = request
-                }
-                .SetHeaders(httpResponse.Headers)
-                .SetContentHeaders(httpResponse.Content.Headers)
-                .SetCookies(cookieCollection);
+                Content           = content,
+                RawBytes          = bytes,
+                ContentEncoding   = httpResponse.Content.Headers.ContentEncoding,
+                Version           = httpResponse.RequestMessage?.Version,
+                ContentLength     = httpResponse.Content.Headers.ContentLength,
+                ContentType       = httpResponse.Content.Headers.ContentType?.MediaType,
+                ResponseStatus    = httpResponse.IsSuccessStatusCode ? ResponseStatus.Completed : ResponseStatus.Error,
+                ResponseUri       = httpResponse.RequestMessage!.RequestUri,
+                Server            = httpResponse.Headers.Server.ToString(),
+                StatusCode        = httpResponse.StatusCode,
+                StatusDescription = httpResponse.ReasonPhrase,
+                IsSuccessful      = httpResponse.IsSuccessStatusCode,
+                Request           = request,
+                ResponseMessage   = httpResponse,
+                Headers           = httpResponse.Headers.GetHeaderParameters(),
+                ContentHeaders    = httpResponse.Content.Headers.GetHeaderParameters(),
+                Cookies           = cookieCollection
+            };
         }
     }
 }

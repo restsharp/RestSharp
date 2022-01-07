@@ -34,6 +34,8 @@ public abstract class RestResponseBase {
     /// Mainly for debugging if ResponseStatus is not OK
     /// </remarks>
     public RestRequest? Request { get; set; }
+    
+    public HttpResponseMessage? ResponseMessage { get; init; }
 
     /// <summary>
     /// MIME content type of response
@@ -58,7 +60,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// HTTP response status code
     /// </summary>
-    public HttpStatusCode StatusCode { get; set; }
+    public HttpStatusCode StatusCode { get; init; }
 
     /// <summary>
     /// Whether or not the response status code indicates success
@@ -88,17 +90,17 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Cookies returned by server with the response
     /// </summary>
-    public CookieCollection? Cookies { get; protected internal set; }
+    public CookieCollection? Cookies { get; init; }
 
     /// <summary>
     /// Response headers returned by server with the response
     /// </summary>
-    public IReadOnlyCollection<HeaderParameter>? Headers { get; protected internal set; }
+    public IReadOnlyCollection<HeaderParameter>? Headers { get; init; }
 
     /// <summary>
     /// Content headers returned by server with the response
     /// </summary>
-    public IReadOnlyCollection<HeaderParameter>? ContentHeaders { get; protected internal set; }
+    public IReadOnlyCollection<HeaderParameter>? ContentHeaders { get; init; }
 
     /// <summary>
     /// Status of the request. Will return Error for transport errors.
