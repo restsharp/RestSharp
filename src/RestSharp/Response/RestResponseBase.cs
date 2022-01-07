@@ -91,9 +91,14 @@ public abstract class RestResponseBase {
     public CookieCollection? Cookies { get; protected internal set; }
 
     /// <summary>
-    /// Headers returned by server with the response
+    /// Response headers returned by server with the response
     /// </summary>
-    public IList<HeaderParameter>? Headers { get; protected internal set; }
+    public IReadOnlyCollection<HeaderParameter>? Headers { get; protected internal set; }
+
+    /// <summary>
+    /// Content headers returned by server with the response
+    /// </summary>
+    public IReadOnlyCollection<HeaderParameter>? ContentHeaders { get; protected internal set; }
 
     /// <summary>
     /// Status of the request. Will return Error for transport errors.

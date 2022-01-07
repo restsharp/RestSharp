@@ -18,6 +18,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using RestSharp.Extensions;
 
+// ReSharper disable SuggestBaseTypeForParameter
+
 namespace RestSharp;
 
 /// <summary>
@@ -42,6 +44,7 @@ public class RestResponse<T> : RestResponse {
             ErrorMessage      = response.ErrorMessage,
             ErrorException    = response.ErrorException,
             Headers           = response.Headers,
+            ContentHeaders    = response.ContentHeaders,
             IsSuccessful      = response.IsSuccessful,
             ResponseStatus    = response.ResponseStatus,
             ResponseUri       = response.ResponseUri,
@@ -57,13 +60,9 @@ public class RestResponse<T> : RestResponse {
 /// </summary>
 [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
 public class RestResponse : RestResponseBase {
-    RestResponse SetHeaders(HttpResponseHeaders headers) {
-        var headerParams = headers
-            .SelectMany(x => x.Value.Select(y => (x.Key, y)))
-            .Select(x => new HeaderParameter(x.Key, x.y))
-            .ToList();
-        return this.With(x => x.Headers = headerParams);
-    }
+    RestResponse SetHeaders(HttpResponseHeaders httpHeaders) => this.With(x => x.Headers = httpHeaders.GetHeaderParameters());
+
+    RestResponse SetContentHeaders(HttpContentHeaders httpHeaders) => this.With(x => x.ContentHeaders = httpHeaders.GetHeaderParameters());
 
     RestResponse SetCookies(CookieCollection cookies) => this.With(x => x.Cookies = cookies);
 
@@ -124,6 +123,7 @@ public class RestResponse : RestResponseBase {
                     Request           = request
                 }
                 .SetHeaders(httpResponse.Headers)
+                .SetContentHeaders(httpResponse.Content.Headers)
                 .SetCookies(cookieCollection);
         }
     }
