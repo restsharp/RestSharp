@@ -55,9 +55,9 @@ public partial class RestClient {
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = Options.CachePolicy;
 
-        var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
-        var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
-        var ct         = cts.Token;
+        using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
+        using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
+        var       ct         = cts.Token;
 
         try {
             var headers = new RequestHeaders()
