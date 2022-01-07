@@ -11,11 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
 
 namespace RestSharp;
 
 public record UrlSegmentParameter : NamedParameter {
+    /// <summary>
+    /// Instantiates a new query parameter instance that will be added to the request URL part of the query string.
+    /// The request resource should have a placeholder {name} that will be replaced with the parameter value when the request is made.
+    /// </summary>
+    /// <param name="name">Parameter name</param>
+    /// <param name="value">Parameter value</param>
+    /// <param name="encode">Optional: encode the value, default is true</param>
     public UrlSegmentParameter(string name, string value, bool encode = true)
         : base(name, Ensure.NotEmpty(value, nameof(value)).Replace("%2F", "/").Replace("%2f", "/"), ParameterType.UrlSegment, encode) { }
 }

@@ -16,5 +16,11 @@
 namespace RestSharp;
 
 public record QueryParameter : NamedParameter {
+    /// <summary>
+    /// Instantiates a new query parameter instance that will be added to the request URL as {name}={value} part of the query string.
+    /// </summary>
+    /// <param name="name">Parameter name</param>
+    /// <param name="value">Parameter value</param>
+    /// <param name="encode">Optional: encode the value, default is true</param>
     public QueryParameter(string name, string? value, bool encode = true) : base(name, value, ParameterType.QueryString, encode) { }
 }

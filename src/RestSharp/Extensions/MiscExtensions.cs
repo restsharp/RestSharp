@@ -39,8 +39,8 @@ static class MiscExtensions {
 
         return ms.ToArray();
     }
-    
-    internal static IEnumerable<(string Name, object Value)> GetProperties(this object obj, params string[] includedProperties) {
+
+    internal static IEnumerable<(string Name, string? Value)> GetProperties(this object obj, params string[] includedProperties) {
         // automatically create parameters from object props
         var type  = obj.GetType();
         var props = type.GetProperties();
@@ -63,12 +63,13 @@ static class MiscExtensions {
                 if (array.Length > 0 && elementType != null) {
                     // convert the array to an array of strings
                     var values = array.Cast<object>().Select(item => item.ToString());
+                    yield return (prop.Name, string.Join(",", values));
 
-                    val = string.Join(",", values);
+                    continue;
                 }
             }
 
-            yield return(prop.Name, val);
+            yield return (prop.Name, val.ToString());
         }
 
         bool IsAllowedProperty(string propertyName)

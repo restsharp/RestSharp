@@ -20,11 +20,6 @@ namespace RestSharp;
 [PublicAPI]
 public record FileParameter {
     /// <summary>
-    /// The length of data to be sent
-    /// </summary>
-    public long ContentLength { get; }
-
-    /// <summary>
     /// Provides raw data for file
     /// </summary>
     public Func<Stream> GetFile { get; }
@@ -44,10 +39,9 @@ public record FileParameter {
     /// </summary>
     public string Name { get; }
 
-    FileParameter(string name, string fileName, long contentLength, Func<Stream> getFile, string? contentType = null) {
+    FileParameter(string name, string fileName, Func<Stream> getFile, string? contentType = null) {
         Name          = name;
         FileName      = fileName;
-        ContentLength = contentLength;
         GetFile       = getFile;
         ContentType   = contentType ?? "application/octet-stream";
     }
@@ -61,7 +55,7 @@ public record FileParameter {
     /// <param name="contentType">The content type to use in the request.</param>
     /// <returns>The <see cref="FileParameter" /></returns>
     public static FileParameter Create(string name, byte[] data, string filename, string? contentType = null) {
-        return new FileParameter(name, filename, data.Length, GetFile, contentType);
+        return new FileParameter(name, filename, GetFile, contentType);
 
         Stream GetFile() {
             var stream = new MemoryStream();
@@ -86,7 +80,7 @@ public record FileParameter {
         string       fileName,
         string?      contentType = null
     )
-        => new(name, fileName, contentLength, getFile, contentType ?? Serializers.ContentType.File);
+        => new(name, fileName, getFile, contentType ?? Serializers.ContentType.File);
 
     public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null) {
         if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath))))
@@ -94,9 +88,8 @@ public record FileParameter {
 
         var fileName = Path.GetFileName(fullPath);
         var parameterName = name ?? fileName;
-        var length = new FileInfo(fullPath).Length;
         
-        return new FileParameter(parameterName, fileName, length, GetFile);
+        return new FileParameter(parameterName, fileName, GetFile);
 
         Stream GetFile() => File.OpenRead(fullPath);
     }
