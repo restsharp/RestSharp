@@ -108,10 +108,10 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
             .AddQueryParameter("key", "value");
 
         await client.ExecuteAsync(request);
-
-        Assert.Equal($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
-        Assert.Equal("application/json; charset=utf-8", RequestBodyCapturer.CapturedContentType);
-        Assert.Equal("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
+        
+        RequestBodyCapturer.CapturedUrl.ToString().Should().Be($"{_server.Url}Capture?key=value");
+        RequestBodyCapturer.CapturedContentType.Should().Be("application/json; charset=utf-8");
+        RequestBodyCapturer.CapturedEntityBody.Should().Be("{\"displayName\":\"Display Name\"}");
     }
 
     static void AssertHasNoRequestBody() {
