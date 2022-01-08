@@ -201,7 +201,7 @@ public static class RestRequestExtensions {
     /// <param name="obj">Object that will be serialized to JSON</param>
     /// <param name="contentType">Optional: content type. Default is "application/json"</param>
     /// <returns></returns>
-    public static RestRequest AddJsonBody(this RestRequest request, object obj, string contentType = ContentType.Json) {
+    public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, string contentType = ContentType.Json) where T : class {
         request.RequestFormat = DataFormat.Json;
         return request.AddParameter(new JsonParameter("", obj, contentType));
     }
@@ -214,7 +214,8 @@ public static class RestRequestExtensions {
     /// <param name="contentType">Optional: content type. Default is "application/xml"</param>
     /// <param name="xmlNamespace">Optional: XML namespace</param>
     /// <returns></returns>
-    public static RestRequest AddXmlBody(this RestRequest request, object obj, string contentType = ContentType.Xml, string xmlNamespace = "") {
+    public static RestRequest AddXmlBody<T>(this RestRequest request, T obj, string contentType = ContentType.Xml, string xmlNamespace = "")
+        where T : class {
         request.RequestFormat = DataFormat.Xml;
         request.AddParameter(new XmlParameter("", obj, xmlNamespace, contentType));
         return request;
@@ -227,7 +228,7 @@ public static class RestRequestExtensions {
     /// <param name="obj">Object to add as form data</param>
     /// <param name="includedProperties">Properties to include, or nothing to include everything</param>
     /// <returns></returns>
-    public static RestRequest AddObject(this RestRequest request, object obj, params string[] includedProperties) {
+    public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
         var props = obj.GetProperties(includedProperties);
 
         foreach (var (name, value) in props) {
