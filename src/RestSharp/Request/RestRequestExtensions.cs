@@ -66,34 +66,106 @@ public static class RestRequestExtensions {
     public static RestRequest AddOrUpdateParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
         => request.AddOrUpdateParameter(name, value.ToString(), encode);
 
+    /// <summary>
+    /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
+    /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter, must be matching a placeholder in the resource URL as {name}</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns></returns>
     public static RestRequest AddUrlSegment(this RestRequest request, string name, string value, bool encode = true)
         => request.AddParameter(new UrlSegmentParameter(name, value, encode));
 
+    /// <summary>
+    /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
+    /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter, must be matching a placeholder in the resource URL as {name}</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns></returns>
     public static RestRequest AddUrlSegment<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
         => request.AddUrlSegment(name, Ensure.NotNull(value.ToString(), nameof(value)), encode);
 
+    /// <summary>
+    /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
+    /// The parameter will be added to the request URL as a query string using name=value format.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Parameter name</param>
+    /// <param name="value">Parameter value</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns></returns>
     public static RestRequest AddQueryParameter(this RestRequest request, string name, string? value, bool encode = true)
         => request.AddParameter(new QueryParameter(name, value, encode));
 
+    /// <summary>
+    /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
+    /// The parameter will be added to the request URL as a query string using name=value format.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Parameter name</param>
+    /// <param name="value">Parameter value</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns></returns>
     public static RestRequest AddQueryParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
         => request.AddQueryParameter(name, value.ToString(), encode);
 
+    /// <summary>
+    /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Header name</param>
+    /// <param name="value">Header value</param>
+    /// <returns></returns>
     public static RestRequest AddHeader(this RestRequest request, string name, string value) {
         CheckAndThrowsForInvalidHost(name, value);
         return request.AddParameter(new HeaderParameter(name, value));
     }
 
+    /// <summary>
+    /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Header name</param>
+    /// <param name="value">Header value</param>
+    /// <returns></returns>
     public static RestRequest AddHeader<T>(this RestRequest request, string name, T value) where T : struct
         => request.AddHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
 
+    /// <summary>
+    /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
+    /// Existing header with the same name will be replaced.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Header name</param>
+    /// <param name="value">Header value</param>
+    /// <returns></returns>
     public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
         CheckAndThrowsForInvalidHost(name, value);
         return request.AddOrUpdateParameter(new HeaderParameter(name, value));
     }
 
+    /// <summary>
+    /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
+    /// Existing header with the same name will be replaced.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Header name</param>
+    /// <param name="value">Header value</param>
+    /// <returns></returns>
     public static RestRequest AddOrUpdateHeader<T>(this RestRequest request, string name, T value) where T : struct
         => request.AddOrUpdateHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
 
+    /// <summary>
+    /// Adds multiple headers to the request, using the key-value pairs provided.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="headers">Collection of key-value pairs, where key will be used as header name, and value as header value</param>
+    /// <returns></returns>
     public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
         CheckAndThrowsDuplicateKeys(headers);
 
@@ -104,6 +176,12 @@ public static class RestRequestExtensions {
         return request;
     }
 
+    /// <summary>
+    /// Adds or updates multiple headers to the request, using the key-value pairs provided. Existing headers with the same name will be replaced.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="headers">Collection of key-value pairs, where key will be used as header name, and value as header value</param>
+    /// <returns></returns>
     public static RestRequest AddOrUpdateHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
         CheckAndThrowsDuplicateKeys(headers);
 
@@ -114,9 +192,42 @@ public static class RestRequestExtensions {
         return request;
     }
 
+    /// <summary>
+    /// Adds a parameter of a given type to the request. It will create a typed parameter instance based on the type argument.
+    /// It is not recommended to use this overload unless you must, as it doesn't provide any restrictions, and if the name-value-type
+    /// combination doesn't match, it will throw.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter, must be matching a placeholder in the resource URL as {name}</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="type">Enum value specifying what kind of parameter is being added</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns></returns>
     public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
         => request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
 
+    /// <summary>
+    /// Adds or updates request parameter of a given type. It will create a typed parameter instance based on the type argument.
+    /// Parameter will be added or updated based on its name. If the request has a parameter with the same name, it will be updated.
+    /// It is not recommended to use this overload unless you must, as it doesn't provide any restrictions, and if the name-value-type
+    /// combination doesn't match, it will throw.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Name of the parameter, must be matching a placeholder in the resource URL as {name}</param>
+    /// <param name="value">Value of the parameter</param>
+    /// <param name="type">Enum value specifying what kind of parameter is being added</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <returns></returns>
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
+        => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
+
+    /// <summary>
+    /// Adds or updates request parameter, given the parameter instance, for example <see cref="QueryParameter"/> or <see cref="UrlSegmentParameter"/>.
+    /// It will replace an existing parameter with the same name.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="parameter">Parameter instance</param>
+    /// <returns></returns>
     public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter) {
         var p = request.Parameters.FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
 
@@ -126,15 +237,19 @@ public static class RestRequestExtensions {
         return request;
     }
 
+    /// <summary>
+    /// Adds or updates multiple request parameters, given the parameter instance, for example
+    /// <see cref="QueryParameter"/> or <see cref="UrlSegmentParameter"/>. Parameters with the same name will be replaced.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="parameters">Collection of parameter instances</param>
+    /// <returns></returns>
     public static RestRequest AddOrUpdateParameters(this RestRequest request, IEnumerable<Parameter> parameters) {
         foreach (var parameter in parameters)
             request.AddOrUpdateParameter(parameter);
 
         return request;
     }
-
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
-        => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
 
     /// <summary>
     /// Adds a file parameter to the request body. The file will be read from disk as a stream.
@@ -159,15 +274,23 @@ public static class RestRequestExtensions {
     public static RestRequest AddFile(this RestRequest request, string name, byte[] bytes, string filename, string? contentType = null)
         => request.AddFile(FileParameter.Create(name, bytes, filename, contentType));
 
+    /// <summary>
+    /// Adds a file attachment to the request, where the file content will be retrieved from a given stream 
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Parameter name</param>
+    /// <param name="getFile">Function that returns a stream with the file content</param>
+    /// <param name="fileName">File name</param>
+    /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
+    /// <returns></returns>
     public static RestRequest AddFile(
         this RestRequest request,
         string           name,
         Func<Stream>     getFile,
         string           fileName,
-        long             contentLength,
         string?          contentType = null
     )
-        => request.AddFile(FileParameter.Create(name, getFile, contentLength, fileName, contentType));
+        => request.AddFile(FileParameter.Create(name, getFile, fileName, contentType));
 
     /// <summary>
     /// Adds a body parameter to the request
@@ -201,7 +324,7 @@ public static class RestRequestExtensions {
     /// <param name="obj">Object that will be serialized to JSON</param>
     /// <param name="contentType">Optional: content type. Default is "application/json"</param>
     /// <returns></returns>
-    public static RestRequest AddJsonBody(this RestRequest request, object obj, string contentType = ContentType.Json) {
+    public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, string contentType = ContentType.Json) where T : class {
         request.RequestFormat = DataFormat.Json;
         return request.AddParameter(new JsonParameter("", obj, contentType));
     }
@@ -214,7 +337,8 @@ public static class RestRequestExtensions {
     /// <param name="contentType">Optional: content type. Default is "application/xml"</param>
     /// <param name="xmlNamespace">Optional: XML namespace</param>
     /// <returns></returns>
-    public static RestRequest AddXmlBody(this RestRequest request, object obj, string contentType = ContentType.Xml, string xmlNamespace = "") {
+    public static RestRequest AddXmlBody<T>(this RestRequest request, T obj, string contentType = ContentType.Xml, string xmlNamespace = "")
+        where T : class {
         request.RequestFormat = DataFormat.Xml;
         request.AddParameter(new XmlParameter("", obj, xmlNamespace, contentType));
         return request;
@@ -227,7 +351,7 @@ public static class RestRequestExtensions {
     /// <param name="obj">Object to add as form data</param>
     /// <param name="includedProperties">Properties to include, or nothing to include everything</param>
     /// <returns></returns>
-    public static RestRequest AddObject(this RestRequest request, object obj, params string[] includedProperties) {
+    public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
         var props = obj.GetProperties(includedProperties);
 
         foreach (var (name, value) in props) {

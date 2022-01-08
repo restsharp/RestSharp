@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using RestSharp.IntegrationTests.Fixtures;
-using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
@@ -54,18 +53,6 @@ public class AsyncTests {
     [Fact]
     public async Task Can_Timeout_GET_Async() {
         var request = new RestRequest("timeout").AddBody("Body_Content");
-
-        // Half the value of ResponseHandler.Timeout
-        request.Timeout = 200;
-
-        var response = await _client.ExecuteAsync(request);
-
-        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
-    }
-
-    [Fact]
-    public async Task Can_Timeout_PUT_Async() {
-        var request = new RestRequest("timeout", Method.Put).AddBody("Body_Content");
 
         // Half the value of ResponseHandler.Timeout
         request.Timeout = 200;

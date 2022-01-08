@@ -117,6 +117,10 @@ class RequestContent : IDisposable {
             // we don't have parameters, only the body
             Content = bodyContent;
         }
+
+        if (_client.Options.DisableCharset) {
+            Content.Headers.ContentType.CharSet = "";
+        }
     }
 
     void AddPostParameters(ParametersCollection? postParameters) {

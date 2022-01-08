@@ -51,6 +51,11 @@ public class RestClientOptions {
     /// running) will be sent along to the server. The default is false.
     /// </summary>
     public bool UseDefaultCredentials { get; set; }
+    
+    /// <summary>
+    /// Set to true if you need the Content-Type not to have the charset 
+    /// </summary>
+    public bool DisableCharset { get; set; }
 
 #if NETSTANDARD
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;

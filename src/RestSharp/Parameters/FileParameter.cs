@@ -76,7 +76,6 @@ public record FileParameter {
     public static FileParameter Create(
         string       name,
         Func<Stream> getFile,
-        long         contentLength,
         string       fileName,
         string?      contentType = null
     )

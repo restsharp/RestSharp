@@ -9,16 +9,18 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     const string NewLine = "\r\n";
 
-    const string TextPlainContentType    = "text/plain";
-    const string ExpectedTextContentType = $"{TextPlainContentType}; charset=utf-8";
+    const string TextPlainContentType             = "text/plain";
+    const string ExpectedTextContentType          = $"{TextPlainContentType}; charset=utf-8";
+    const string ExpectedTextContentTypeNoCharset = TextPlainContentType;
 
     public RequestBodyTests(RequestBodyFixture fixture, ITestOutputHelper output) {
         _output = output;
         _server = fixture.Server;
     }
 
-    async Task AssertBody(Method method) {
-        var client = new RestClient(_server.Url);
+    async Task AssertBody(Method method, bool disableCharset = false) {
+        var options = new RestClientOptions(_server.Url) { DisableCharset = disableCharset };
+        var client  = new RestClient(options);
 
         var request = new RestRequest(RequestBodyCapturer.Resource, method) {
             OnBeforeRequest = async m => {
@@ -33,7 +35,8 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         await client.ExecuteAsync(request);
 
-        AssertHasRequestBody(ExpectedTextContentType, bodyData);
+        var expected = disableCharset ? ExpectedTextContentTypeNoCharset : ExpectedTextContentType;
+        AssertHasRequestBody(expected, bodyData);
     }
 
     [Fact]
@@ -49,7 +52,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     public Task Can_Be_Added_To_PATCH_Request() => AssertBody(Method.Patch);
 
     [Fact]
+    public Task Can_Be_Added_To_POST_Request_NoCharset() => AssertBody(Method.Post, true);
+    
+    [Fact]
     public Task Can_Be_Added_To_POST_Request() => AssertBody(Method.Post);
+
+    [Fact]
+    public Task Can_Be_Added_To_PUT_Request_NoCharset() => AssertBody(Method.Put, true);
 
     [Fact]
     public Task Can_Be_Added_To_PUT_Request() => AssertBody(Method.Put);
@@ -109,9 +118,9 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
         await client.ExecuteAsync(request);
 
-        Assert.Equal($"{_server.Url}Capture?key=value", RequestBodyCapturer.CapturedUrl.ToString());
-        Assert.Equal("application/json; charset=utf-8", RequestBodyCapturer.CapturedContentType);
-        Assert.Equal("{\"displayName\":\"Display Name\"}", RequestBodyCapturer.CapturedEntityBody);
+        RequestBodyCapturer.CapturedUrl.ToString().Should().Be($"{_server.Url}Capture?key=value");
+        RequestBodyCapturer.CapturedContentType.Should().Be("application/json; charset=utf-8");
+        RequestBodyCapturer.CapturedEntityBody.Should().Be("{\"displayName\":\"Display Name\"}");
     }
 
     static void AssertHasNoRequestBody() {
