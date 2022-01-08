@@ -1,7 +1,9 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using RestSharp.Tests.Shared.Extensions;
 
 namespace RestSharp.IntegrationTests.Fixtures;
 
@@ -29,14 +31,26 @@ public sealed class HttpServer {
 
         builder.WebHost.UseUrls(Address);
         _app = builder.Build();
+
+        var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+        // GET
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
         _app.MapGet("echo", (string msg) => msg);
         _app.MapGet("timeout", async () => await Task.Delay(2000));
         _app.MapPut("timeout", async () => await Task.Delay(2000));
         // ReSharper disable once ConvertClosureToMethodGroup
         _app.MapGet("status", (int code) => Results.StatusCode(code));
-
         _app.MapGet("headers", HandleHeaders);
+
+        // PUT
+        _app.MapPut(
+            "content",
+            async context => {
+                var content  = await context.Request.Body.StreamToStringAsync();
+                await context.Response.WriteAsync(content);
+            }
+        );
 
         IResult HandleHeaders(HttpContext ctx) {
             var response = ctx.Request.Headers.Select(x => new TestServerResponse(x.Key, x.Value));
@@ -54,4 +68,6 @@ public sealed class HttpServer {
     }
 }
 
-public record TestServerResponse(string Name, string Value);
+record TestServerResponse(string Name, string Value);
+
+record ContentResponse(string Content);

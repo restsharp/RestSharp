@@ -14,4 +14,10 @@ public static class StreamExtensions {
 
         return streamReader.ReadToEnd();
     }
+
+    public static async Task<string> StreamToStringAsync(this Stream stream) {
+        using var streamReader = new StreamReader(stream);
+
+        return await streamReader.ReadToEndAsync();
+    }
 }
