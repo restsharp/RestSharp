@@ -54,7 +54,7 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
 
     internal ParametersCollection GetQueryParameters(Method method) {
         Func<Parameter, bool> condition =
-            !IsPostStyle(method)
+            !IsPost(method)
                 ? p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
                 : p => p.Type is ParameterType.QueryString;
 
@@ -62,9 +62,9 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
     }
 
     internal ParametersCollection? GetContentParameters(Method method)
-        => !IsPostStyle(method) ? null : new ParametersCollection(GetParameters<GetOrPostParameter>());
+        => IsPost(method) ? new ParametersCollection(GetParameters<GetOrPostParameter>()) : null;
 
-    static bool IsPostStyle(Method method) => method is Method.Post or Method.Put or Method.Patch;
+    static bool IsPost(Method method) => method is Method.Post or Method.Put or Method.Patch;
 
     public IEnumerator<Parameter> GetEnumerator() => _parameters.GetEnumerator();
 
