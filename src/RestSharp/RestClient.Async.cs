@@ -182,8 +182,9 @@ public partial class RestClient {
 #else
             Method.Patch   => HttpMethod.Patch,
 #endif
-            Method.Merge => new HttpMethod("MERGE"),
-            Method.Copy  => new HttpMethod("COPY"),
-            _            => throw new ArgumentOutOfRangeException()
+            Method.Merge  => new HttpMethod("MERGE"),
+            Method.Copy   => new HttpMethod("COPY"),
+            Method.Search => new HttpMethod("SEARCH"),
+            _             => throw new ArgumentOutOfRangeException()
         };
 }

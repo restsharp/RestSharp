@@ -34,7 +34,7 @@ public enum DataFormat { Json, Xml, None }
 /// </summary>
 public enum Method {
     Get, Post, Put, Delete, Head, Options,
-    Patch, Merge, Copy
+    Patch, Merge, Copy, Search
 }
 
 /// <summary>
