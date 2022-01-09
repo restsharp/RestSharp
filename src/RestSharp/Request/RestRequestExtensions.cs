@@ -318,6 +318,30 @@ public static class RestRequestExtensions {
     }
 
     /// <summary>
+    /// Adds a string body and figures out the content type from the data format specified. You can, for example, add a JSON string
+    /// using this method as request body, using DataFormat.Json/>
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="body">String body</param>
+    /// <param name="dataFormat"><see cref="DataFormat"/> for the content</param>
+    /// <returns></returns>
+    public static RestRequest AddStringBody(this RestRequest request, string body, DataFormat dataFormat) {
+        var contentType = ContentType.FromDataFormat[dataFormat];
+        request.RequestFormat = dataFormat;
+        return request.AddParameter(new BodyParameter("", body, contentType));
+    }
+
+    /// <summary>
+    /// Adds a string body to the request using the specified content type.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="body">String body</param>
+    /// <param name="contentType">Content type of the body</param>
+    /// <returns></returns>
+    public static RestRequest AddStringBody(this RestRequest request, string body, string contentType)
+        => request.AddParameter(new BodyParameter("", body, Ensure.NotEmpty(contentType, nameof(contentType))));
+
+    /// <summary>
     /// Adds a JSON body parameter to the request
     /// </summary>
     /// <param name="request">Request instance</param>
