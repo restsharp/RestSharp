@@ -23,17 +23,18 @@ public partial class RestClient {
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        var internalResponse = await ExecuteInternal(request, cancellationToken);
+        var internalResponse = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
 
         var response = new RestResponse();
 
         response = internalResponse.Exception == null
             ? await RestResponse.FromHttpResponse(
-                internalResponse.ResponseMessage!,
-                request,
-                CookieContainer.GetCookies(internalResponse.Url),
-                cancellationToken
-            )
+                    internalResponse.ResponseMessage!,
+                    request,
+                    CookieContainer.GetCookies(internalResponse.Url),
+                    cancellationToken
+                )
+                .ConfigureAwait(false)
             : ReturnErrorOrThrow(response, internalResponse.Exception, internalResponse.TimeoutToken);
 
         response.Request = request;
@@ -47,7 +48,7 @@ public partial class RestClient {
         using var requestContent = new RequestContent(this, request);
 
         if (Authenticator != null)
-            await Authenticator.Authenticate(this, request);
+            await Authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = BuildUri(request);
@@ -67,12 +68,12 @@ public partial class RestClient {
             message.AddHeaders(headers);
 
             if (request.OnBeforeRequest != null)
-                await request.OnBeforeRequest(message);
+                await request.OnBeforeRequest(message).ConfigureAwait(false);
 
-            var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct);
+            var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
 
             if (request.OnAfterRequest != null)
-                await request.OnAfterRequest(responseMessage);
+                await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 
             return new InternalResponse(responseMessage, url, null, timeoutCts.Token);
         }
@@ -89,8 +90,9 @@ public partial class RestClient {
     /// <param name="request">Pre-configured request instance.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The downloaded stream.</returns>
+    [PublicAPI]
     public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        var response = await ExecuteInternal(request, cancellationToken);
+        var response = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
 
         if (response.Exception != null) {
             return Options.ThrowOnAnyError ? throw response.Exception : null;
@@ -99,18 +101,11 @@ public partial class RestClient {
         if (response.ResponseMessage == null) return null;
 
         if (request.ResponseWriter != null) {
-#if NETSTANDARD
-            var stream = await response.ResponseMessage.Content.ReadAsStreamAsync();
-# else
-            var stream = await response.ResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
-#endif
-            return request.ResponseWriter(stream);
+            using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+            return request.ResponseWriter(stream!);
         }
-#if NETSTANDARD
-        return await response.ResponseMessage.Content.ReadAsStreamAsync();
-# else
-        return await response.ResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
-#endif
+
+        return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -119,35 +114,10 @@ public partial class RestClient {
     /// <param name="request">Pre-configured request instance.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The downloaded file.</returns>
+    [PublicAPI]
     public async Task<byte[]?> DownloadDataAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        var response = await ExecuteInternal(request, cancellationToken);
-
-        if (response.Exception != null) {
-            return Options.ThrowOnAnyError ? throw response.Exception : null;
-        }
-
-        if (response.ResponseMessage == null) return null;
-
-        byte[]? bytes;
-
-        if (request.ResponseWriter != null) {
-#if NETSTANDARD
-            var stream = await response.ResponseMessage.Content.ReadAsStreamAsync();
-# else
-            var stream = await response.ResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
-#endif
-            var converted = request.ResponseWriter(stream);
-            bytes = converted == null ? null : await converted.ReadAsBytes(cancellationToken);
-        }
-        else {
-#if NETSTANDARD
-            bytes = await response.ResponseMessage.Content.ReadAsByteArrayAsync();
-# else
-            bytes = await response.ResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken);
-#endif
-        }
-
-        return bytes;
+        using var stream = await DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+        return stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
     }
 
     RestResponse ReturnErrorOrThrow(RestResponse response, Exception exception, CancellationToken timeoutToken) {
