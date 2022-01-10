@@ -39,22 +39,10 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) {
         var props = parameters.GetProperties();
-        var query = new List<Parameter>();
-
-        foreach (var (name, value) in props) {
-            var param = $"{name}";
-
-            if (resource.Contains(param)) {
-                resource = resource.Replace(param, value);
-            }
-            else {
-                query.Add(new QueryParameter(name, value));
-            }
-        }
-
         var request = new RestRequest(resource);
 
-        foreach (var parameter in query) {
+        foreach (var (name, value) in props) {
+            Parameter parameter = resource.Contains($"{name}") ? new UrlSegmentParameter(name, value!) : new QueryParameter(name, value);
             request.AddParameter(parameter);
         }
 
@@ -99,7 +87,7 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) where TRequest : class {
         var restRequest = new RestRequest().AddJsonBody(request);
-        var response    = await client.PostAsync(restRequest, cancellationToken);
+        var response    = await client.PostAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
 
@@ -141,7 +129,7 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) where TRequest : class {
         var restRequest = new RestRequest().AddJsonBody(request);
-        var response    = await client.PutAsync(restRequest, cancellationToken);
+        var response    = await client.PutAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
 }

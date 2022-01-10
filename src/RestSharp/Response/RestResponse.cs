@@ -14,8 +14,6 @@
 
 using System.Diagnostics;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 using RestSharp.Extensions;
 
 // ReSharper disable SuggestBaseTypeForParameter
@@ -51,8 +49,7 @@ public class RestResponse<T> : RestResponse {
             Server            = response.Server,
             StatusCode        = response.StatusCode,
             StatusDescription = response.StatusDescription,
-            Request           = response.Request,
-            ResponseMessage   = response.ResponseMessage
+            Request           = response.Request
         };
 }
 
@@ -67,40 +64,13 @@ public class RestResponse : RestResponseBase {
         CookieCollection    cookieCollection,
         CancellationToken   cancellationToken
     ) {
-        return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse();
+        return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse().ConfigureAwait(false);
 
         async Task<RestResponse> GetDefaultResponse() {
-            byte[]? bytes;
-            string? content;
-
-            if (request.ResponseWriter != null) {
-#if NETSTANDARD
-                var stream = await httpResponse.Content.ReadAsStreamAsync();
-# else
-                var stream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken);
-#endif
-                var converted = request.ResponseWriter(stream);
-
-                if (converted == null) {
-                    bytes   = null;
-                    content = null;
-                }
-                else {
-                    bytes = await converted.ReadAsBytes(cancellationToken);
-                    var encodingString = httpResponse.Content.Headers.ContentEncoding.FirstOrDefault();
-                    var encoding       = encodingString != null ? Encoding.GetEncoding(encodingString) : Encoding.UTF8;
-                    content = encoding.GetString(bytes);
-                }
-            }
-            else {
-#if NETSTANDARD
-                bytes   = await httpResponse.Content.ReadAsByteArrayAsync();
-                content = await httpResponse.Content.ReadAsStringAsync();
-# else
-                bytes = await httpResponse.Content.ReadAsByteArrayAsync(cancellationToken);
-                content = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-#endif
-            }
+            var       readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
+            using var stream   = await readTask.ConfigureAwait(false);
+            var       bytes    = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
+            var       content  = bytes == null ? null : httpResponse.GetResponseString(bytes);
 
             return new RestResponse {
                 Content           = content,
@@ -116,11 +86,17 @@ public class RestResponse : RestResponseBase {
                 StatusDescription = httpResponse.ReasonPhrase,
                 IsSuccessful      = httpResponse.IsSuccessStatusCode,
                 Request           = request,
-                ResponseMessage   = httpResponse,
                 Headers           = httpResponse.Headers.GetHeaderParameters(),
                 ContentHeaders    = httpResponse.Content.Headers.GetHeaderParameters(),
                 Cookies           = cookieCollection
             };
+
+            Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
+
+            async Task<Stream?> ReadAndConvertResponse() {
+                using var original = await ReadResponse().ConfigureAwait(false);
+                return request.ResponseWriter!(original!);
+            }
         }
     }
 }

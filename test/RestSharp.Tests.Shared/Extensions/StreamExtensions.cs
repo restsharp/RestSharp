@@ -18,6 +18,6 @@ public static class StreamExtensions {
     public static async Task<string> StreamToStringAsync(this Stream stream) {
         using var streamReader = new StreamReader(stream);
 
-        return await streamReader.ReadToEndAsync();
+        return await streamReader.ReadToEndAsync().ConfigureAwait(false);
     }
 }

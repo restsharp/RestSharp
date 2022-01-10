@@ -34,8 +34,6 @@ public abstract class RestResponseBase {
     /// Mainly for debugging if ResponseStatus is not OK
     /// </remarks>
     public RestRequest? Request { get; set; }
-    
-    public HttpResponseMessage? ResponseMessage { get; init; }
 
     /// <summary>
     /// MIME content type of response
