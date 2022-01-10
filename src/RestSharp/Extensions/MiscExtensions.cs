@@ -31,9 +31,9 @@ static class MiscExtensions {
 
         int read;
 #if NETSTANDARD
-        while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+        while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
 #else
-        while ((read = await input.ReadAsync(buffer, cancellationToken)) > 0)
+        while ((read = await input.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)
 #endif
             ms.Write(buffer, 0, read);
 
