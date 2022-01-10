@@ -14,8 +14,6 @@
 
 using System.Diagnostics;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 using RestSharp.Extensions;
 
 // ReSharper disable SuggestBaseTypeForParameter
@@ -66,7 +64,7 @@ public class RestResponse : RestResponseBase {
         CookieCollection    cookieCollection,
         CancellationToken   cancellationToken
     ) {
-        return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse();
+        return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse().ConfigureAwait(false);
 
         async Task<RestResponse> GetDefaultResponse() {
             var       readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
