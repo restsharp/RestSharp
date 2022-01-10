@@ -99,7 +99,7 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) where TRequest : class {
         var restRequest = new RestRequest().AddJsonBody(request);
-        var response    = await client.PostAsync(restRequest, cancellationToken);
+        var response    = await client.PostAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
 
