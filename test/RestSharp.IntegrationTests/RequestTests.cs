@@ -61,21 +61,4 @@ public class AsyncTests {
 
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
-
-    [Fact]
-    public async Task Handles_GET_Request_Errors_Async() {
-        var request  = new RestRequest("status?code=404");
-        var response = await _client.ExecuteAsync(request);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Handles_GET_Request_Errors_Async_With_Response_Type() {
-        var request  = new RestRequest("status?code=404");
-        var response = await _client.ExecuteAsync<Response>(request);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Null(response.Data);
-    }
 }

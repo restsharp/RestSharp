@@ -19,7 +19,7 @@ namespace RestSharp;
 
 static class ResponseHandling {
     public static string GetResponseString(this HttpResponseMessage response, byte[] bytes) {
-        var encodingString = response.Content.Headers.ContentEncoding.FirstOrDefault();
+        var encodingString = response.Content.Headers.ContentType?.CharSet;
         var encoding       = encodingString != null ? TryGetEncoding(encodingString) : Encoding.Default;
         return encoding.GetString(bytes);
 
@@ -37,7 +37,7 @@ static class ResponseHandling {
 #if NETSTANDARD
         return response.Content.ReadAsStreamAsync();
 # else
-        return response.Content.ReadAsStreamAsync(cancellationToken);
+        return response.Content.ReadAsStreamAsync(cancellationToken)!;
 #endif
     }
 }

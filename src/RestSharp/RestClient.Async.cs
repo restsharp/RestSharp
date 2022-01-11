@@ -35,11 +35,13 @@ public partial class RestClient {
                     cancellationToken
                 )
                 .ConfigureAwait(false)
-            : ReturnErrorOrThrow(response, internalResponse.Exception, internalResponse.TimeoutToken);
+            : AddError(response, internalResponse.Exception, internalResponse.TimeoutToken);
+        
 
         response.Request = request;
         response.Request.IncreaseNumAttempts();
-        return response;
+        
+        return Options.ThrowOnAnyError ? ThrowIfError(response) : response;
     }
 
     async Task<InternalResponse> ExecuteInternal(RestRequest request, CancellationToken cancellationToken) {
@@ -120,18 +122,15 @@ public partial class RestClient {
         return stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
     }
 
-    RestResponse ReturnErrorOrThrow(RestResponse response, Exception exception, CancellationToken timeoutToken) {
-        if (exception is OperationCanceledException) {
-            response.ResponseStatus = timeoutToken.IsCancellationRequested ? ResponseStatus.TimedOut : ResponseStatus.Aborted;
-        }
-        else {
-            response.ResponseStatus = ResponseStatus.Error;
-        }
+    static RestResponse AddError(RestResponse response, Exception exception, CancellationToken timeoutToken) {
+        response.ResponseStatus = exception is OperationCanceledException
+            ? timeoutToken.IsCancellationRequested ? ResponseStatus.TimedOut : ResponseStatus.Aborted
+            : ResponseStatus.Error;
 
         response.ErrorMessage   = exception.Message;
         response.ErrorException = exception;
 
-        return Options.ThrowOnAnyError ? ThrowIfError(response) : response;
+        return response;
     }
 
     static RestResponse ThrowIfError(RestResponse response) {

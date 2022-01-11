@@ -69,8 +69,9 @@ public class RestResponse : RestResponseBase {
         async Task<RestResponse> GetDefaultResponse() {
             var       readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
             using var stream   = await readTask.ConfigureAwait(false);
-            var       bytes    = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-            var       content  = bytes == null ? null : httpResponse.GetResponseString(bytes);
+
+            var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
+            var content = bytes == null ? null : httpResponse.GetResponseString(bytes);
 
             return new RestResponse {
                 Content           = content,
@@ -80,6 +81,7 @@ public class RestResponse : RestResponseBase {
                 ContentLength     = httpResponse.Content.Headers.ContentLength,
                 ContentType       = httpResponse.Content.Headers.ContentType?.MediaType,
                 ResponseStatus    = httpResponse.IsSuccessStatusCode ? ResponseStatus.Completed : ResponseStatus.Error,
+                ErrorException    = MaybeException(),
                 ResponseUri       = httpResponse.RequestMessage!.RequestUri,
                 Server            = httpResponse.Headers.Server.ToString(),
                 StatusCode        = httpResponse.StatusCode,
@@ -90,6 +92,11 @@ public class RestResponse : RestResponseBase {
                 ContentHeaders    = httpResponse.Content.Headers.GetHeaderParameters(),
                 Cookies           = cookieCollection
             };
+
+            Exception? MaybeException()
+                => httpResponse.IsSuccessStatusCode
+                    ? null
+                    : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
 
             Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
 
