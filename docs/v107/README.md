@@ -170,3 +170,28 @@ All the deprecated interfaces had only one implementation in RestSharp, so those
 What about mocking it, you might ask? The answer is: what would you do if you use a plain `HttpClient` instance? It doesn't implement any interface for the same reason - there's nothing to abstract, and there's only one implementation. We don't recommend mocking `RestClient` in your tests when you are testing against APIs that are controlled by you or people in your organisation. Test your clients against the real thing, as REST calls are I/O-bound. Mocking REST calls is like mocking database calls, and lead to a lot of issues in production even if all your tests pass against mocks.
 
 As mentioned in [Recommended usage](#recommended-usage), we advise against using `RestClient` in the application code, and advocate wrapping it inside particular API client classes. Those classes would be under your control, and you are totally free to use interfaces there. If you absolutely must mock, you can mock your interfaces instead.
+
+### Mocking
+
+Mocking an infrastructure component like RestSharp (or HttpClient) is not the best idea. Even if you check that all the parameters are added correctly to the request, your "unit test" will only give you a false sense of safety that your code actually works. But, you have no guarantee that the remote server will accept your request, or if you can handle the actual response correctly.
+
+The best way to test HTTP calls is to make some, using the actual service you call. However, you might still want to check if your API client forms requests in a certain way. You might also be sure about what the remote server responds to your calls with, so you can build a set of JSON (or XML) responses, so you can simulate remote calls.
+
+It is perfectly doable without using interfaces. As RestSharp uses `HttpClient` internally, it certainly uses `HttpMessageHandler`. Features like delegating handlers allow you to intersect the request pipeline, inspect the request, and substitute the response. You can do it yourself, or use a library like [MockHttp](https://github.com/richardszalay/mockhttp). They have an example provided in the repository README, so we have changed it for RestClient here:
+
+```csharp
+var mockHttp = new MockHttpMessageHandler();
+
+// Setup a respond for the user api (including a wildcard in the URL)
+mockHttp.When("http://localhost/api/user/*")
+        .Respond("application/json", "{'name' : 'Test McGee'}"); // Respond with JSON
+
+// Instantiate the client normally, but replace the message handler
+var client = new RestClient(...) { ConfigureMessageHandler = _ => mockHttp };
+
+var request = new RestRequest("http://localhost/api/user/1234");
+var response = await client.GetAsync(request);
+
+// No network connection required
+Console.Write(response.Content); // {'name' : 'Test McGee'}
+```
