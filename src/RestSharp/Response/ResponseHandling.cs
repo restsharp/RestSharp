@@ -18,9 +18,9 @@ using System.Text;
 namespace RestSharp;
 
 static class ResponseHandling {
-    public static string GetResponseString(this HttpResponseMessage response, byte[] bytes) {
+    public static string GetResponseString(this HttpResponseMessage response, byte[] bytes, Encoding clientEncoding) {
         var encodingString = response.Content.Headers.ContentType?.CharSet;
-        var encoding       = encodingString != null ? TryGetEncoding(encodingString) : Encoding.Default;
+        var encoding       = encodingString != null ? TryGetEncoding(encodingString) : clientEncoding;
         return encoding.GetString(bytes);
 
         Encoding TryGetEncoding(string es) {

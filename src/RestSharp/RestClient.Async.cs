@@ -31,6 +31,7 @@ public partial class RestClient {
             ? await RestResponse.FromHttpResponse(
                     internalResponse.ResponseMessage!,
                     request,
+                    Options.Encoding,
                     CookieContainer.GetCookies(internalResponse.Url),
                     cancellationToken
                 )

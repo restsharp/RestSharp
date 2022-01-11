@@ -14,6 +14,7 @@
 
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using RestSharp.Extensions;
 
 // ReSharper disable SuggestBaseTypeForParameter
@@ -61,6 +62,7 @@ public class RestResponse : RestResponseBase {
     internal static async Task<RestResponse> FromHttpResponse(
         HttpResponseMessage httpResponse,
         RestRequest         request,
+        Encoding            encoding,
         CookieCollection    cookieCollection,
         CancellationToken   cancellationToken
     ) {
@@ -71,7 +73,7 @@ public class RestResponse : RestResponseBase {
             using var stream   = await readTask.ConfigureAwait(false);
 
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-            var content = bytes == null ? null : httpResponse.GetResponseString(bytes);
+            var content = bytes == null ? null : httpResponse.GetResponseString(bytes, encoding);
 
             return new RestResponse {
                 Content           = content,
