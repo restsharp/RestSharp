@@ -6,46 +6,32 @@ title: Usage
 
 RestSharp works best as the foundation for a proxy class for your API. Here are a couple of examples from the <a href="http://github.com/twilio/twilio-csharp">Twilio</a> library.
 
-Create a class to contain your API proxy implementation with an `Execute` method for funneling all requests to the API. 
+Create a class to contain your API proxy implementation with an `ExecuteAsync` (or any of the extensions) method for funneling all requests to the API. 
 This allows you to set commonly-used parameters and other settings (like authentication) shared across requests. 
 Because an account ID and secret key are required for every request you are required to pass those two values when 
 creating a new instance of the proxy. 
 
 ::: warning
-Note that exceptions from `Execute` are not thrown but are available in the `ErrorException` property.
+Note that exceptions from `ExecuteAsync` are not thrown but are available in the `ErrorException` property.
 :::
 
 ```csharp
 // TwilioApi.cs
-public class TwilioApi 
-{
+public class TwilioApi {
     const string BaseUrl = "https://api.twilio.com/2008-08-01";
 
-    readonly IRestClient _client;
+    readonly RestClient _client;
 
     string _accountSid;
 
-    public TwilioApi(string accountSid, string secretKey) 
-    {
+    public TwilioApi(string accountSid, string secretKey) {
         _client = new RestClient(BaseUrl);
         _client.Authenticator = new HttpBasicAuthenticator(accountSid, secretKey);
+        _client.AddDefaultParameter(
+            "AccountSid", _accountSid, ParameterType.UrlSegment
+        ); // used on every request
         _accountSid = accountSid;
     }
-
-    public T Execute<T>(RestRequest request) where T : new()
-    {
-        request.AddParameter("AccountSid", _accountSid, ParameterType.UrlSegment); // used on every request
-        var response = _client.Execute<T>(request);
-
-        if (response.ErrorException != null)
-        {
-            const string message = "Error retrieving response.  Check inner details for more info.";
-            var twilioException = new Exception(message, response.ErrorException);
-            throw twilioException;
-        }
-        return response.Data;
-    }
-
 }
 ```
 
@@ -53,8 +39,7 @@ Next, define a class that maps to the data returned by the API.
 
 ```csharp
 // Call.cs
-public class Call
-{
+public class Call {
     public string Sid { get; set; }
     public DateTime DateCreated { get; set; }
     public DateTime DateUpdated { get; set; }
@@ -76,21 +61,19 @@ Then add a method to query the API for the details of a specific Call resource.
 
 ```csharp
 // TwilioApi.cs, GetCall method of TwilioApi class
-public Call GetCall(string callSid) 
-{
+public Task<Call> GetCall(string callSid) {
     var request = new RestRequest("Accounts/{AccountSid}/Calls/{CallSid}");
     request.RootElement = "Call";
-
     request.AddParameter("CallSid", callSid, ParameterType.UrlSegment);
 
-    return Execute<Call>(request);
+    return _client.GetAsync<Call>(request);
 }
 ```
 
-There's some magic here that RestSharp takes care of so you don't have to.
+There's some magic here that RestSharp takes care of, so you don't have to.
 
 The API returns XML, which is automatically detected and deserialized to the Call object using the default `XmlDeserializer`.
-By default a RestRequest is made via a GET HTTP request. You can change this by setting the `Method` property of `RestRequest` 
+By default, a call is made via a GET HTTP request. You can change this by setting the `Method` property of `RestRequest` 
 or specifying the method in the constructor when creating an instance (covered below).
 Parameters of type `UrlSegment` have their values injected into the URL based on a matching token name existing in the Resource property value. 
 `AccountSid` is set in `TwilioApi.Execute` because it is common to every request.
@@ -100,13 +83,12 @@ You can also make POST (and PUT/DELETE/HEAD/OPTIONS) requests:
 
 ```csharp
 // TwilioApi.cs, method of TwilioApi class
-public Call InitiateOutboundCall(CallOptions options) 
-{
+public Task<Call> InitiateOutboundCall(CallOptions options) {
     Require.Argument("Caller", options.Caller);
     Require.Argument("Called", options.Called);
     Require.Argument("Url", options.Url);
 
-    var request = new RestRequest("Accounts/{AccountSid}/Calls", Method.POST);
+    var request = new RestRequest("Accounts/{AccountSid}/Calls");
     request.RootElement = "Calls";
 
     request.AddParameter("Caller", options.Caller);
@@ -118,7 +100,7 @@ public Call InitiateOutboundCall(CallOptions options)
     if (options.IfMachine.HasValue) request.AddParameter("IfMachine", options.IfMachine.Value);
     if (options.Timeout.HasValue) request.AddParameter("Timeout", options.Timeout.Value);
 
-    return Execute<Call>(request);
+    return _client.PostAsync<Call>(request);
 }
 ```
 
@@ -126,7 +108,7 @@ This example also demonstrates RestSharp's lightweight validation helpers.
 These helpers allow you to verify before making the request that the values submitted are valid. 
 Read more about Validation here.
 
-All of the values added via AddParameter in this example will be submitted as a standard encoded form, 
+All the values added via `AddParameter` in this example will be submitted as a standard encoded form, 
 similar to a form submission made via a web page. If this were a GET-style request (GET/DELETE/OPTIONS/HEAD), 
 the parameter values would be submitted via the query string instead. You can also add header and cookie 
 parameters with `AddParameter`. To add all properties for an object as parameters, use `AddObject`. 
@@ -138,19 +120,9 @@ To include a request body like XML or JSON, use `AddXmlBody` or `AddJsonBody`.
 After you've created a `RestRequest`, you can add parameters to it.
 Here is a Description of the 5 currently supported types and their behavior when using the default IHttp implementation.
 
-### Cookie
-
-::: warning
-Cookie parameters cannot be added to individual requests since v107. You can still add them as default parameters of the client.
-:::
-
-Adds the parameter to the list of cookies that are sent along with the request. The cookie name is the name of the parameter and the value is the `Value.ToString()` you passed in.
-
 ### Http Header
 
 Adds the parameter as an HTTP header that is sent along with the request. The header name is the name of the parameter and the header value is the value.
-
-Note that there are some restricted headers that may behave differently or that are simply ignored. Please look at the `_restrictedHeaderActions` dictionary in `Http.cs` to see which headers are special and how they behave.
 
 ### Get or Post
 
@@ -244,50 +216,24 @@ In some cases you might need to prevent RestSharp from encoding the query string
 
 ## Serialization
 
-RestSharp has JSON and XML serializers built in without any additional packages
-or configuration. There are also a few JSON serializers provided as additional packages.
+RestSharp has JSON and XML serializers built in. 
 
 :::tip
 The default behavior of RestSharp is to swallow deserialization errors and return `null` in the `Data`
-property of the response. Read more about it in the [Error Handling](exceptions.md).
+property of the response. Read more about it in the [Error Handling](#error-handling).
 :::
-
-### Default Serializers
-
-RestSharp core package includes a few default serializers for both JSON and XML formats.
 
 ### JSON
 
-The default JSON serializer uses the forked version of `SimpleJson`. It is very simplistic and
-doesn't handle advanced scenarios in many cases. We do not plan to fix or add new features
-to the default JSON serializer, since it handles a lot of cases already and when you need
-to handle more complex objects, please consider using alternative JSON serializers mentioned below.
-
-There's a [known issue](https://github.com/restsharp/RestSharp/issues/1433) that SimpleJson doesn't use the UTC time zone when the regular .NET date format
-is used (`yyyy-MM-ddTHH:mm:ssZ`). As suggested in the issue, it can be solved by setting the
-date format explicitly for SimpleJson:
-
-```csharp
-client.UseSerializer(
-    () => new JsonSerializer { DateFormat = "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ" }
-);
-```
+The default JSON serializer uses `System.Text.Json`, which is a part of .NET since .NET 6. For earlier versions, it is added as a dependency. There are also a few serializers provided as additional packages.
 
 ### XML
 
-You can use either the default XML serializer or the `DotNetXmlSerializer`, which uses `System.Xml.Serialization` library
-from .NET. To use the `DotNetXmlSerializer` you need to configure the REST client instance:
-
-```csharp
-client.UseDotNetXmlSerializer();
-```
+The default XML serializer is `DotNetXmlSerializer`, which uses `System.Xml.Serialization` library from .NET.
 
 ### NewtonsoftJson (aka Json.Net)
 
-The `NewtonsoftJson` package is the most popular JSON serializer for .NET.
-It handles all possible scenarios and is very configurable. Such a flexibility
-comes with the cost of performance. If you need something faster, please check
-`Utf8Json` or `System.Text.Json` serializers (below).
+The `NewtonsoftJson` package is the most popular JSON serializer for .NET. It handles all possible scenarios and is very configurable. Such a flexibility comes with the cost of performance. If you need speed, keep the default JSON serializer.
 
 RestSharp support Json.Net serializer via a separate package. You can install it
 from NuGet:
@@ -318,32 +264,6 @@ JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
 
 If you need to use different settings, you can supply your instance of
 `JsonSerializerSettings` as a parameter for the extension method.
-
-### System.Text.Json
-
-Microsoft included the new JSON serializer package `System.Text.Json` together with .NET Core 3.
-It is a small and fast serializer that is used in the WebApi version for .NET Core 3
-and beyond by default. The package is also available for .NET Standard 2.0 and .NET Framework 4.6.1 and higher.
-
-RestSharp supports `System.Text.Json` serializer via a separate package. You can install it
-from NuGet:
-
-```
-dotnet add package RestSharp.Serializers.SystemTextJson
-```
-
-Configure your REST client using the extension method:
-
-```csharp
-client.UseSystemTextJson();
-``` 
-
-The serializer will use default options, unless you provide your
-own instance of `JsonSerializerOptions` to the extension method.
-
-:::warning
-Keep in mind that this serializer is case-sensitive by default.
-:::
 
 ### Custom
 
@@ -378,26 +298,6 @@ serializer with the response `Content-Type` headers.
 The `ContentType` property will be used when making a request so the
 server knows how to handle the payload.
 
-## Working with files
-
-Here's an example that will use a `Stream` to avoid memory buffering of request content. Useful when retrieving large amounts of data that you will be immediately writing to disk.
-
-```csharp
-var tempFile = Path.GetTempFileName();
-using var writer = File.OpenWrite(tempFile);
-
-var client = new RestClient(baseUrl);
-var request = new RestRequest("Assets/LargeFile.7z");
-request.ResponseWriter = responseStream =>
-{
-    using (responseStream)
-    {
-        responseStream.CopyTo(writer);
-    }
-};
-var response = client.DownloadData(request);
-```
-
 ## Error handling
 
 If there is a network transport error (network is down, failed DNS lookup, etc), or any kind of server error (except 404), `RestResponse.ResponseStatus` will be set to `ResponseStatus.Error`, otherwise it will be `ResponseStatus.Completed`.
@@ -410,18 +310,14 @@ Normally, RestSharp doesn't throw an exception if the request fails.
 However, it is possible to configure RestSharp to throw in different situations, when it normally doesn't throw
 in favour of giving you the error as a property.
 
-| Property        | Behavior           |
-| ------------- |-------------|
-| `FailOnDeserializationError` | Changes the default behavior when failed deserialization results in a successful response with an empty `Data` property of the response. Setting this property to `true` will tell RestSharp to consider failed deserialization as an error and set the `ResponseStatus` to `Error` accordingly. |
-| `ThrowOnDeserializationError` | Changes the default behavior when failed deserialization results in empty `Data` property of the response. Setting this property to `true` will tell RestSharp to throw when deserialization fails. |
-| `ThrowOnAnyError` | Setting this property to `true` changes the default behavior and forces RestSharp to throw if any errors occurs when making a request or during deserialization.     |
+| Property                      | Behavior                                                                                                                                                                                                                                                                                         |
+|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FailOnDeserializationError`  | Changes the default behavior when failed deserialization results in a successful response with an empty `Data` property of the response. Setting this property to `true` will tell RestSharp to consider failed deserialization as an error and set the `ResponseStatus` to `Error` accordingly. |
+| `ThrowOnDeserializationError` | Changes the default behavior when failed deserialization results in empty `Data` property of the response. Setting this property to `true` will tell RestSharp to throw when deserialization fails.                                                                                              |
+| `ThrowOnAnyError`             | Setting this property to `true` changes the default behavior and forces RestSharp to throw if any errors occurs when making a request or during deserialization.                                                                                                                                 |
 
-Those properties are available for the `IRestClient` instance and will be used for all request made with that instance.
+Those properties are available for the `RestClient` instance and will be used for all request made with that instance.
 
 There are also slight differences on how different overloads handle exceptions.
 
-Asynchronous generic methods `GetAsync<T>`, `PostAsync<T>` and so on, which aren't a part of `IRestClient` interface
-(those methods are extension methods) return `Task<T>`. It means that there's no `IRestResponse` to set the response status to error.
-We decided to throw an exception when such a request fails. It is a trade-off between the API
-consistency and usability of the library. Usually, you only need the content of `RestResponse` instance to diagnose issues
-and most of the time the exception would tell you what's wrong. 
+Asynchronous generic methods `GetAsync<T>`, `PostAsync<T>` and so on, which aren't a part of `RestClient` interface (those methods are extension methods) return `Task<T>`. It means that there's no `RestResponse` to set the response status to error. We decided to throw an exception when such a request fails. It is a trade-off between the API consistency and usability of the library. Usually, you only need the content of `RestResponse` instance to diagnose issues and most of the time the exception would tell you what's wrong. 

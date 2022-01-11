@@ -5,14 +5,12 @@ title: Quick start
 ## Introduction
 
 ::: warning
-RestSharp v107 changes the library API surface and its behaviour significantly. We advise looking at [vNext](/v107/) docs to understand how to migrate to the next version of RestSharp.
+RestSharp v107 changes the library API surface and its behaviour significantly. We advise looking at [v107](/v107/) docs to understand how to migrate to the latest version of RestSharp.
 :::
 
-The main purpose of RestSharp is to make synchronous and asynchronous calls to remote resources over HTTP. As the name suggests, the main audience of RestSharp are developers who use REST APIs. However, RestSharp can call any API over HTTP (but not HTTP/2), as long as you have the resource URI and request parameters that you want to send comply with W3C HTTP standards.
+The main purpose of RestSharp is to make synchronous and asynchronous calls to remote resources over HTTP. As the name suggests, the main audience of RestSharp are developers who use REST APIs. However, RestSharp can call any API over HTTP, as long as you have the resource URI and request parameters that you want to send comply with W3C HTTP standards.
 
 One of the main challenges of using HTTP APIs for .NET developers is to work with requests and responses of different kinds and translate them to complex C# types. RestSharp can take care of serializing the request body to JSON or XML and deserialize the response. It can also form a valid request URI based on different parameter kinds - path, query, form or body.
-
-Check the [Getting started](getting-started.md) page to learn about using RestSharp in your application. 
 
 ## Getting Started
 
@@ -30,26 +28,17 @@ If you only have a few number of one-off requests to make to an API, you can use
 using RestSharp;
 using RestSharp.Authenticators;
 
-var client = new RestClient("https://api.twitter.com/1.1");
-client.Authenticator = new HttpBasicAuthenticator("username", "password");
-
-var request = new RestRequest("statuses/home_timeline.json", DataFormat.Json);
-
-var response = client.Get(request);
+var client = new RestClient("https://api.twitter.com/1.1") {
+    Authenticator = new HttpBasicAuthenticator("username", "password");
+};
+var request = new RestRequest("statuses/home_timeline.json");
+var response = await client.GetAsync(request, cancellationToken);
 ```
 
-`IRestResponse` contains all the information returned from the remote server.
+It will return a `RestResponse` back, which contains all the information returned from the remote server.
 You have access to the headers, content, HTTP status and more.
 
 We recommend using the generic overloads like `Get<T>` to automatically deserialize the response into .NET classes.
-
-### Asynchronous Calls
-
-All synchronous methods have their asynchronous siblings, suffixed with `Async`.
-
-So, instead of `Get<T>` that returns `T` or `Execute<T>`, which returns `IRestResponse<T>`,
-you can use `GetAsync<T>` and `ExecuteAsync<T>`. The arguments set is usually identical.
-You can optionally supply the cancellation token, which by default is set to `CancellationToken.None`.
 
 For example:
 
@@ -70,7 +59,7 @@ throw an exception.
 
 All `ExecuteAsync` overloads, however, behave in the same way as `Execute` and return the `IRestResponse` or `IRestResponse<T>`.
 
-Read [here](../usage/exceptions.md) about how RestSharp handles exceptions.
+Read [here](usage.md#error-handling) about how RestSharp handles exceptions.
 
 ### Content type
 
@@ -83,15 +72,16 @@ RestSharp will also handle both XML and JSON responses and perform all necessary
 For example, only you'd only need these lines to make a request with JSON body:
 
 ```csharp
-var request = new RestRequest("address/update")
-    .AddJsonBody(updatedAddress);
+var request = new RestRequest("address/update").AddJsonBody(updatedAddress);
 var response = await client.PostAsync<AddressUpdateResponse>(request);
 ```
 
 ### Response
 
-When you use `Execute` or `ExecuteAsync`, you get an instance of `IRestResponse` back that has the `Content` property, which contains the response as string. You can find other useful properties there, like `StatusCode`, `ContentType` and so on. If the request wasn't successful, you'd get a response back with `IsSuccessful` property set to `false` and the error explained in the `ErrorException` and `ErrorMessage` properties.
+When you use `ExecuteAsync`, you get an instance of `RestResponse` back that has the `Content` property, which contains the response as string. You can find other useful properties there, like `StatusCode`, `ContentType` and so on. If the request wasn't successful, you'd get a response back with `IsSuccessful` property set to `false` and the error explained in the `ErrorException` and `ErrorMessage` properties.
 
-When using typed `Execute<T>` or `ExecuteAsync<T>`, you get an instance of `IRestResponse<T>` back, which is identical to `IRestResponse` but also contains the `T Data` property with the deserialized response.
+When using typed `ExecuteAsync<T>`, you get an instance of `RestResponse<T>` back, which is identical to `RestResponse` but also contains the `T Data` property with the deserialized response.
 
-Extensions like `Get<T>` and `GetAsync<T>` will not return the whole `IRestResponse<T>` but just a deserialized response. You might get `null` back if something goes wrong, and it can be hard to understand the issue. Therefore, when using typed extension methods, we suggest setting `IRestClient.ThrowOnAnyError` property to `true`. By doing that, you tell RestSharp to throw an exception when something goes wrong. You can then wrap the call in a `try`/`catch` block and handle the exception accordingly. To know more about how RestSharp deals with exceptions, please refer to the [Error handling](../usage/exceptions.md) page.
+None of `ExecuteAsync` overloads throw if the remote server returns an error. You can inspect the response and find the status code, error message, and, potentially, an exception.
+
+Extensions like `GetAsync<T>` will not return the whole `RestResponse<T>` but just a deserialized response. These extensions will throw an exception if the remote server returns an error. The exception will tell you what status code was returned by the server.

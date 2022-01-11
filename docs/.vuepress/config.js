@@ -5,7 +5,7 @@ module.exports = {
     themeConfig: {
         logo: "/restsharp.png",
         navbar: [
-            {text: "vNext", link: "/v107/"},
+            {text: "Migration", link: "/v107/"},
             {text: "Documentation", link: "/intro.html"},
             {text: "Get help", link: "/support/"},
             {text: "NuGet", link: "https://nuget.org/packages/RestSharp"}

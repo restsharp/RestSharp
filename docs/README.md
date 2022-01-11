@@ -5,7 +5,7 @@ heroText: RestSharp
 tagline: Probably, the most popular REST API client library for .NET
 actions:
 - text: Get Started →
-  link: /intro
+  link: /v107/
 features:
 - title: Serialization
   details: JSON, XML and custom serialization and deserialization

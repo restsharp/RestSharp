@@ -4,7 +4,7 @@ title: RestSharp Next (v107)
 
 ## RestSharp v107
 
-The next version of RestSharp is v107. It's a major upgrade, which contains quite a few breaking changes.
+The latest version of RestSharp is v107. It's a major upgrade, which contains quite a few breaking changes.
 
 The most important change is that RestSharp stop using the legacy `HttpWebRequest` class, and uses well-known 'HttpClient' instead.
 This move solves lots of issues, like hanging connections due to improper `HttpClient` instance cache, updated protocols support, and many other problems.
@@ -96,6 +96,28 @@ The `Utf8` serializer package is deprecated as the package is not being updated.
 
 For XML requests and responses RestSharp uses `DotNetXmlSerializer` and `DotNetXmlDeserializer`.
 Previously used default `XmlSerializer`, `XmlDeserializer`, and `XmlAttrobuteDeserializer` are moved to a separate package `RestSharp.Serializers.Xml`.
+
+### NTML authentication
+
+The `NtmlAuthenticator` is deprecated.
+
+NTLM authenticator was doing nothing more than telling `WebRequest` to use certain credentials. Now with RestSharp, the preferred way would be to set the `Credentials` or `UseDefaultCredentials` property in `RestClientOptions`.
+
+The reason to remove it was that all other authenticators use `AuthenticatorBase`, which must return a parameter. In general, any authenticator is given a request before its made, so it can do something with it. NTLM doesn't work this way, it needs some settings to be provided for `HttpClientHandler`, which is set up before the `HttpClient` instance is created, and it happens once per RestClient instance, and it cannot be changed per request.
+
+### Delegating handlers
+
+You can easily build your own request/response pipeline, as you would with `HttpClient`. RestClient will create an `HttpMessageHandler` instance for its own use, using the options provided. You can, of course, provide your own instance of `HttpMessageHandler` as `RestSharpClient` has a constructor that accepts a custom handler and uses it to create an `HttpClient` instance. However, you'll be on your own with the handler configuration in this case.
+
+If you want to build a _pipeline_, use [delegating handlers](https://docs.microsoft.com/en-us/aspnet/web-api/overview/advanced/httpclient-message-handlers). For example, you can use `HttpTracer` to [debug your HTTP calls](https://github.com/BSiLabs/HttpTracer) like this:
+
+```csharp
+var options = new RestClientOptions(_server.Url) {
+    ConfigureMessageHandler = handler => 
+        new HttpTracerHandler(handler, new ConsoleLogger(), HttpMessageParts.All)
+};
+var client = new RestClient(options);
+```
 
 ## Recommended usage
 

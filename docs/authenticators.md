@@ -36,7 +36,7 @@ client.Authenticator = OAuth1Authenticator.ForAccessToken(
                        );
 ```
 
-This method also includes an optional parameter to specity the `OAuthSignatureMethod`.
+This method also includes an optional parameter to specify the `OAuthSignatureMethod`.
 ```csharp
 client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, 
                                                           consumerSecret, 
@@ -53,6 +53,16 @@ client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, null, oau
 ```
 
 ## JWT
+
+The JWT authentication can be supported by using `JwtAuthenticator`. It is a very simple class that can be constructed like this:
+
+```csharp
+var authenticator = new JwtAuthenticator(myToken);
+```
+
+For each request, it will add an `Authorization` header with the value `Bearer <your token>`.
+
+As you might need to refresh the token from, you can use the `SetBearerToken` method to update the token.
 
 ## Custom Authenticator
 
