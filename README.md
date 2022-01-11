@@ -12,6 +12,11 @@ Most of the client and some of the request options are now in `RestClientOptions
 
 Check [v107 docs](https://restsharp.dev/v107) for more information.
 
+| :boom:  Interfaces rage!   |
+|:---------------------------|
+| Before you start to rage in public about interfaces that are useful for unit-testing HTTP calls,<br>please read [this page](https://restsharp.dev/v107/#mocking). |
+
+
 ### Build
 
 | | |
