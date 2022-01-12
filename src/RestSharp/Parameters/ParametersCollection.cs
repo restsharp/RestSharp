@@ -14,7 +14,6 @@
 // 
 
 using System.Collections;
-using RestSharp.Authenticators.OAuth.Extensions;
 
 namespace RestSharp;
 
@@ -41,16 +40,16 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
 
     public void RemoveParameter(Parameter parameter) => _parameters.Remove(parameter);
 
-    public bool Exists(Parameter parameter)
-        => _parameters.Any(
-            p => p.Name != null && p.Name.Equals(parameter.Name, StringComparison.InvariantCultureIgnoreCase) && p.Type == parameter.Type
-        );
+    static readonly Func<Parameter, string?, bool> SearchPredicate = (p, name)
+        => p.Name != null && p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase);
 
-    public Parameter? TryFind(string parameterName) => _parameters.FirstOrDefault(x => x.Name != null && x.Name.EqualsIgnoreCase(parameterName));
+    public bool Exists(Parameter parameter) => _parameters.Any(p => SearchPredicate(p, parameter.Name) && p.Type == parameter.Type);
 
-    internal ParametersCollection GetParameters(ParameterType parameterType) => new(_parameters.Where(x => x.Type == parameterType));
+    public Parameter? TryFind(string parameterName) => _parameters.FirstOrDefault(x => SearchPredicate(x, parameterName));
 
-    internal ParametersCollection GetParameters<T>() => new(_parameters.Where(x => x is T));
+    public ParametersCollection GetParameters(ParameterType parameterType) => new(_parameters.Where(x => x.Type == parameterType));
+
+    public ParametersCollection GetParameters<T>() => new(_parameters.Where(x => x is T));
 
     internal ParametersCollection GetQueryParameters(Method method) {
         Func<Parameter, bool> condition =

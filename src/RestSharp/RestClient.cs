@@ -16,8 +16,6 @@ using System.Net;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
-using RestSharp.Serializers.Json;
-using RestSharp.Serializers.Xml;
 
 // ReSharper disable VirtualMemberCallInConstructor
 #pragma warning disable 618
@@ -75,8 +73,10 @@ public partial class RestClient {
             handler.ServerCertificateCustomValidationCallback =
                 (request, cert, chain, errors) => Options.RemoteCertificateValidationCallback(request, cert, chain, errors);
 
-        if (Options.ClientCertificates != null)
+        if (Options.ClientCertificates != null) {
             handler.ClientCertificates.AddRange(Options.ClientCertificates);
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+        }
 
         if (Options.MaxRedirects.HasValue)
             handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
@@ -104,25 +104,9 @@ public partial class RestClient {
     /// <param name="baseUrl"></param>
     public RestClient(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
-    Func<string, string> Encode { get; set; } = s => s.UrlEncode();
+    internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
-    Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
-
-    /// <summary>
-    /// Allows to use a custom way to encode URL parameters
-    /// </summary>
-    /// <param name="encoder">A delegate to encode URL parameters</param>
-    /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
-    /// <returns></returns>
-    public RestClient UseUrlEncoder(Func<string, string> encoder) => this.With(x => x.Encode = encoder);
-
-    /// <summary>
-    /// Allows to use a custom way to encode query parameters
-    /// </summary>
-    /// <param name="queryEncoder">A delegate to encode query parameters</param>
-    /// <example>client.UseUrlEncoder((s, encoding) => HttpUtility.UrlEncode(s, encoding));</example>
-    /// <returns></returns>
-    public RestClient UseQueryEncoder(Func<string, Encoding, string> queryEncoder) => this.With(x => x.EncodeQuery = queryEncoder);
+    internal Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
 
     /// <summary>
     /// Authenticator that will be used to populate request with necessary authentication data
@@ -130,20 +114,6 @@ public partial class RestClient {
     public IAuthenticator? Authenticator { get; set; }
 
     public ParametersCollection DefaultParameters { get; } = new();
-
-    /// <summary>
-    /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
-    /// </summary>
-    /// <param name="name">Cookie name</param>
-    /// <param name="value">Cookie value</param>
-    /// <returns></returns>
-    public RestClient AddCookie(string name, string value) {
-        lock (CookieContainer) {
-            CookieContainer.Add(new Cookie(name, value));
-        }
-
-        return this;
-    }
 
     /// <summary>
     /// Add a parameter to use on every request made with this client instance

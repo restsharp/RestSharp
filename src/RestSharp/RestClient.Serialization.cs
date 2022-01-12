@@ -24,9 +24,6 @@ namespace RestSharp;
 
 public partial class RestClient {
     internal Dictionary<DataFormat, SerializerRecord> Serializers { get; } = new();
-    
-    [PublicAPI]
-    public RestResponse<T> Deserialize<T>(RestResponse response) => Deserialize<T>(response.Request!, response);
 
     /// <summary>
     /// Replace the default serializer with a custom one
@@ -38,11 +35,8 @@ public partial class RestClient {
         AssignAcceptedContentTypes();
         return this;
     }
-
-    public void UseDefaultSerializers() {
-        UseSerializer<SystemTextJsonSerializer>();
-        UseSerializer<XmlRestSerializer>();
-    }
+    
+    public void UseDefaultSerializers() => UseSerializer<SystemTextJsonSerializer>().UseSerializer<XmlRestSerializer>();
 
     /// <summary>
     /// Replace the default serializer with a custom one
