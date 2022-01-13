@@ -68,9 +68,22 @@ class RequestContent : IDisposable {
 
     HttpContent Serialize(BodyParameter body) {
         return body.DataFormat switch {
-            DataFormat.None => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType),
-            _               => GetSerialized()
+            DataFormat.None   => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType),
+            DataFormat.Binary => GetBinary(),
+            _                 => GetSerialized()
         };
+
+        HttpContent GetBinary() {
+            var byteContent = new ByteArrayContent((body.Value as byte[])!);
+            byteContent.Headers.ContentType = MediaTypeHeaderValue.Parse(body.ContentType);
+
+            if (body.ContentEncoding != null) {
+                byteContent.Headers.ContentEncoding.Clear();
+                byteContent.Headers.ContentEncoding.Add(body.ContentEncoding);
+            }
+
+            return byteContent;
+        }
 
         HttpContent GetSerialized() {
             if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializerRecord))
@@ -120,7 +133,7 @@ class RequestContent : IDisposable {
         }
 
         if (_client.Options.DisableCharset) {
-            Content.Headers.ContentType.CharSet = "";
+            Content.Headers.ContentType!.CharSet = "";
         }
     }
 

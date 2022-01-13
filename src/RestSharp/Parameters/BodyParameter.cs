@@ -18,6 +18,9 @@ namespace RestSharp;
 public record BodyParameter : Parameter {
     public BodyParameter(string? name, object value, string contentType, DataFormat dataFormat = DataFormat.None)
         : base(name, Ensure.NotNull(value, nameof(value)), ParameterType.RequestBody, false) {
+        if (dataFormat == DataFormat.Binary && value is not byte[]) {
+            throw new ArgumentException("Binary data format needs a byte array as value");
+        }
         ContentType = contentType;
         DataFormat  = dataFormat;
     }
@@ -26,6 +29,11 @@ public record BodyParameter : Parameter {
     /// Body parameter data type
     /// </summary>
     public DataFormat DataFormat { get; init; } = DataFormat.None;
+    
+    /// <summary>
+    /// Custom content encoding
+    /// </summary>
+    public string? ContentEncoding { get; init; }
 }
 
 public record XmlParameter : BodyParameter {

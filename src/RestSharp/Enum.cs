@@ -27,7 +27,7 @@ public enum ParameterType {
 /// <summary>
 /// Data formats
 /// </summary>
-public enum DataFormat { Json, Xml, None }
+public enum DataFormat { Json, Xml, Binary, None }
 
 /// <summary>
 /// HTTP method to use when making requests
