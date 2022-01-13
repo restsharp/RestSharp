@@ -4,8 +4,8 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
-public class FileTests : IDisposable {
-    public FileTests() {
+public sealed class DownloadFileTests : IDisposable {
+    public DownloadFileTests() {
         _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
         _client = new RestClient(_server.Url);
     }
@@ -25,9 +25,9 @@ public class FileTests : IDisposable {
         reader.BaseStream.CopyTo(response.OutputStream);
     }
 
-    HttpServerFixture _server;
-    RestClient        _client;
-    readonly string   _path = AppDomain.CurrentDomain.BaseDirectory;
+    readonly HttpServerFixture _server;
+    readonly RestClient        _client;
+    readonly string            _path = AppDomain.CurrentDomain.BaseDirectory;
 
     [Fact]
     public async Task AdvancedResponseWriter_without_ResponseWriter_reads_stream() {

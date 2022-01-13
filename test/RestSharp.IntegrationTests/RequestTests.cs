@@ -61,4 +61,21 @@ public class AsyncTests {
 
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
+
+    [Fact]
+    public async Task Can_Perform_Delete_With_Response_Type() {
+        var request  = new RestRequest("delete");
+        var response = await _client.ExecuteAsync<Response>(request, Method.Delete);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Data!.Message.Should().Be("Works!");
+    }
+
+    [Fact]
+    public async Task Can_Delete_With_Response_Type_using_extension() {
+        var request  = new RestRequest("delete");
+        var response = await _client.DeleteAsync<Response>(request);
+
+        response!.Message.Should().Be("Works!");
+    }
 }

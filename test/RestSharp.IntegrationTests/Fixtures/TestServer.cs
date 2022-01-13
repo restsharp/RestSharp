@@ -2,7 +2,10 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.Logging;
+using RestSharp.Extensions;
 using RestSharp.Tests.Shared.Extensions;
 
 namespace RestSharp.IntegrationTests.Fixtures;
@@ -42,19 +45,45 @@ public sealed class HttpServer {
         // ReSharper disable once ConvertClosureToMethodGroup
         _app.MapGet("status", (int code) => Results.StatusCode(code));
         _app.MapGet("headers", HandleHeaders);
+        _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
 
         // PUT
         _app.MapPut(
             "content",
             async context => {
-                var content  = await context.Request.Body.StreamToStringAsync();
+                var content = await context.Request.Body.StreamToStringAsync();
                 await context.Response.WriteAsync(content);
             }
         );
 
+        // Upload file
+        var assetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
+
+        _app.MapPost("/upload", HandleUpload);
+
         IResult HandleHeaders(HttpContext ctx) {
             var response = ctx.Request.Headers.Select(x => new TestServerResponse(x.Key, x.Value));
             return Results.Ok(response);
+        }
+
+        async Task<IResult> HandleUpload(HttpRequest req) {
+            if (!req.HasFormContentType) {
+                return Results.BadRequest("It's not a form");
+            }
+
+            var form = await req.ReadFormAsync();
+            var file = form.Files["file"];
+
+            if (file is null) {
+                return Results.BadRequest("File parameter 'file' is not present");
+            }
+
+            await using var stream = file.OpenReadStream();
+
+            var received = await stream.ReadAsBytes(default);
+            var expected = await File.ReadAllBytesAsync(Path.Combine(assetPath, file.FileName));
+
+            return Results.Ok(new UploadResponse(file.FileName, file.Length, received.SequenceEqual(expected)));
         }
     }
 
@@ -69,5 +98,9 @@ public sealed class HttpServer {
 }
 
 record TestServerResponse(string Name, string Value);
+
+record UploadRequest(string Filename, IFormFile File);
+
+record UploadResponse(string FileName, long Length, bool Equal);
 
 record ContentResponse(string Content);

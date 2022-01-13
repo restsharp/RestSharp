@@ -60,6 +60,8 @@ public record FileParameter {
         Stream GetFile() {
             var stream = new MemoryStream();
             stream.Write(data, 0, data.Length);
+            stream.Flush();
+            stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }
     }
@@ -69,7 +71,6 @@ public record FileParameter {
     /// </summary>
     /// <param name="name">The parameter name to use in the request.</param>
     /// <param name="getFile">Delegate that will be called with the request stream so you can write to it..</param>
-    /// <param name="contentLength">The length of the data that will be written by te writer.</param>
     /// <param name="fileName">The filename to use in the request.</param>
     /// <param name="contentType">Optional: parameter content type, default is "application/g-zip"</param>
     /// <returns>The <see cref="FileParameter" /> using the default content type.</returns>
@@ -88,7 +89,7 @@ public record FileParameter {
         var fileName = Path.GetFileName(fullPath);
         var parameterName = name ?? fileName;
         
-        return new FileParameter(parameterName, fileName, GetFile);
+        return new FileParameter(parameterName, fileName, GetFile, contentType);
 
         Stream GetFile() => File.OpenRead(fullPath);
     }

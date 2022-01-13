@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
 using static RestSharp.KnownHeaders;
+
 // ReSharper disable SuggestBaseTypeForParameter
 
 namespace RestSharp;
@@ -176,5 +177,8 @@ class RequestContent : IDisposable {
         return boundary.IsEmpty() ? contentType : $"{contentType}; boundary=\"{boundary}\"";
     }
 
-    public void Dispose() => _streams.ForEach(x => x.Dispose());
+    public void Dispose() {
+        _streams.ForEach(x => x.Dispose());
+        Content?.Dispose();
+    }
 }
