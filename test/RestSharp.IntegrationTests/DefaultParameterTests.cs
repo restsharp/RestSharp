@@ -1,12 +1,20 @@
 using System.Net;
+using RestSharp.IntegrationTests.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.IntegrationTests;
 
+[Collection(nameof(TestServerCollection))]
 public class DefaultParameterTests : IDisposable {
-    readonly SimpleServer _server;
+    readonly TestServerFixture _fixture;
+    readonly ITestOutputHelper _testOutputHelper;
+    readonly SimpleServer      _server;
 
-    public DefaultParameterTests() => _server = SimpleServer.Create(RequestHandler.Handle);
+    public DefaultParameterTests(TestServerFixture fixture, ITestOutputHelper testOutputHelper) {
+        _fixture          = fixture;
+        _testOutputHelper = testOutputHelper;
+        _server           = SimpleServer.Create(RequestHandler.Handle);
+    }
 
     public void Dispose() => _server.Dispose();
 
@@ -34,7 +42,7 @@ public class DefaultParameterTests : IDisposable {
 
     [Fact]
     public async Task Should_not_throw_exception_when_name_is_null() {
-        var client  = new RestClient($"{_server.Url}{{foo}}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+        var client  = new RestClient($"{_fixture.Server.Url}/request-echo").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
         var request = new RestRequest("{foo1}").AddParameter(null, "value", ParameterType.RequestBody);
 
         await client.ExecuteAsync(request);

@@ -25,10 +25,14 @@ namespace RestSharp;
 /// <summary>
 /// Client to translate RestRequests into Http requests and process response result
 /// </summary>
-public partial class RestClient {
+public partial class RestClient : IDisposable {
     public CookieContainer CookieContainer { get; }
 
-    public string[] AcceptedContentTypes { get; private set; } = null!;
+    /// <summary>
+    /// Content types that will be sent in the Accept header. The list is populated from the known serializers.
+    /// If you need to send something else by default, set this property to a different value.
+    /// </summary>
+    public string[] AcceptedContentTypes { get; set; } = null!;
 
     HttpClient HttpClient { get; }
 
@@ -168,7 +172,9 @@ public partial class RestClient {
         if (Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
             throw new ArgumentOutOfRangeException(
                 nameof(request),
-                "Request resource doesn't contain a valid scheme for an empty client base URL"
+                "Request resource doesn't contain a valid scheme for an empty base URL of the client"
             );
     }
+
+    public void Dispose() => HttpClient.Dispose();
 }

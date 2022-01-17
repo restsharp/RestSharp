@@ -42,7 +42,7 @@ public class DotNetXmlDeserializer : IXmlDeserializer {
 
         using var stream = new MemoryStream(Encoding.GetBytes(response.Content!));
 
-        var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+        var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T), Namespace);
 
         return (T?)serializer.Deserialize(stream);
     }

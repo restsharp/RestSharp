@@ -43,7 +43,7 @@ public record FileParameter {
         Name          = name;
         FileName      = fileName;
         GetFile       = getFile;
-        ContentType   = contentType ?? "application/octet-stream";
+        ContentType   = contentType ?? Serializers.ContentType.Binary;
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public record FileParameter {
         string       fileName,
         string?      contentType = null
     )
-        => new(name, fileName, getFile, contentType ?? Serializers.ContentType.File);
+        => new(name, fileName, getFile, contentType ?? Serializers.ContentType.Binary);
 
     public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null) {
         if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath))))

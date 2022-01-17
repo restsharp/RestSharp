@@ -108,7 +108,7 @@ public static partial class RestClientExtensions {
         TRequest          request,
         CancellationToken cancellationToken = default
     ) where TRequest : class {
-        var restRequest = new RestRequest().AddJsonBody(request);
+        var restRequest = new RestRequest(resource).AddJsonBody(request);
         return client.PutAsync<TResponse>(restRequest, cancellationToken);
     }
 

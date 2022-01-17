@@ -304,14 +304,16 @@ public static class RestRequestExtensions {
     public static RestRequest AddBody(this RestRequest request, object obj, string? contentType = null) {
         if (contentType == null) {
             return request.RequestFormat switch {
-                DataFormat.Json => request.AddJsonBody(obj, contentType ?? ContentType.Json),
-                DataFormat.Xml  => request.AddXmlBody(obj, contentType ?? ContentType.Xml),
-                _               => request.AddParameter(new BodyParameter("", obj.ToString()!, contentType ?? ContentType.Plain))
+                DataFormat.Json   => request.AddJsonBody(obj, contentType ?? ContentType.Json),
+                DataFormat.Xml    => request.AddXmlBody(obj, contentType ?? ContentType.Xml),
+                DataFormat.Binary => request.AddParameter(new BodyParameter("", obj, contentType ?? ContentType.Binary)),
+                _                 => request.AddParameter(new BodyParameter("", obj.ToString()!, contentType ?? ContentType.Plain))
             };
         }
 
         return
             obj is string str            ? request.AddParameter(new BodyParameter("", str, contentType)) :
+            obj is byte[] bytes          ? request.AddParameter(new BodyParameter("", bytes, contentType)) :
             contentType.Contains("xml")  ? request.AddXmlBody(obj, contentType) :
             contentType.Contains("json") ? request.AddJsonBody(obj, contentType) :
                                            throw new ArgumentException("Non-string body found with unsupported content type", nameof(obj));

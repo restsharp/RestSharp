@@ -37,11 +37,12 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
         if (string.IsNullOrEmpty(response.Content))
             return default;
 
-        var doc  = XDocument.Parse(response.Content);
-        var root = doc.Root;
+        var doc         = XDocument.Parse(response.Content);
+        var root        = doc.Root;
+        var rootElement = response.RootElement ?? RootElement;
 
-        if (RootElement != null && doc.Root != null)
-            root = doc.Root.DescendantsAndSelf(RootElement.AsNamespaced(Namespace)).SingleOrDefault();
+        if (rootElement != null && doc.Root != null)
+            root = doc.Root.DescendantsAndSelf(rootElement.AsNamespaced(Namespace)).SingleOrDefault();
 
         // autodetect xml namespace
         if (Namespace.IsEmpty())

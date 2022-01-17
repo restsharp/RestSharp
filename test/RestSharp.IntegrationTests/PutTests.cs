@@ -1,5 +1,6 @@
 using System.Text.Json;
 using RestSharp.IntegrationTests.Fixtures;
+using static RestSharp.IntegrationTests.Fixtures.HttpServer;
 
 namespace RestSharp.IntegrationTests; 
 
@@ -18,7 +19,8 @@ public class PutTests {
     [Fact]
     public async Task Should_put_json_body() {
         var body     = new TestRequest("foo", 100);
-        var request  = new RestRequest("content").AddJsonBody(body);
+        var request  = new RestRequest(ContentResource).AddJsonBody(body);
+
         var response = await _client.PutAsync(request);
 
         var expected = JsonSerializer.Serialize(body, Options);
@@ -28,13 +30,14 @@ public class PutTests {
     [Fact]
     public async Task Should_put_json_body_using_extension() {
         var body     = new TestRequest("foo", 100);
-        var response = await _client.PutJsonAsync<TestRequest, TestRequest>("content", body);
-        response.Should().BeEquivalentTo(response);
+        var response = await _client.PutJsonAsync<TestRequest, TestRequest>(ContentResource, body);
+        
+        response.Should().BeEquivalentTo(body);
     }
 
     [Fact]
     public async Task Can_Timeout_PUT_Async() {
-        var request = new RestRequest("timeout", Method.Put).AddBody("Body_Content");
+        var request = new RestRequest(TimeoutResource, Method.Put).AddBody("Body_Content");
 
         // Half the value of ResponseHandler.Timeout
         request.Timeout = 200;

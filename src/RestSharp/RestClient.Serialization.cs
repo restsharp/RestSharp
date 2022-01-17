@@ -54,7 +54,7 @@ public partial class RestClient {
             // Only attempt to deserialize if the request has not errored due
             // to a transport or framework exception.  HTTP errors should attempt to
             // be deserialized
-            if (response.ErrorException == null) {
+            if (response.Content != null) {
                 var handler = GetContentDeserializer(raw, request.RequestFormat);
 
                 // Only continue if there is a handler defined else there is no way to deserialize the data.

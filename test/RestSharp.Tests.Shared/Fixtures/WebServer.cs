@@ -46,6 +46,10 @@ public class WebServer {
                     try {
                         return ((HttpListener)iar.AsyncState!).EndGetContext(iar);
                     }
+                    catch (ObjectDisposedException) {
+                        // it's ok
+                        return null;
+                    }
                     catch (HttpListenerException) {
                         // it's ok
                         return null;

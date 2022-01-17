@@ -15,20 +15,18 @@
 namespace RestSharp.Serializers;
 
 public static class ContentType {
-    public const string Json = "application/json";
-
-    public const string Xml = "application/xml";
-
-    public const string Plain = "text/plain";
-
-    public const string File = "application/octet-stream";
-
-    public const string GZip = "application/x-gzip";
+    public const string Json   = "application/json";
+    public const string Xml    = "application/xml";
+    public const string Plain  = "text/plain";
+    public const string Binary = "application/octet-stream";
+    public const string GZip   = "application/x-gzip";
 
     public static readonly Dictionary<DataFormat, string> FromDataFormat =
         new() {
             { DataFormat.Xml, Xml },
-            { DataFormat.Json, Json },
+            { DataFormat.Json, Json }, 
+            { DataFormat.None, Plain }, 
+            { DataFormat.Binary, Binary }
         };
 
     public static readonly string[] JsonAccept = {

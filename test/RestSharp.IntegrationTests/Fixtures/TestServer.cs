@@ -26,6 +26,9 @@ public sealed class HttpServer {
 
     const string Address = "http://localhost:5151";
 
+    public const string ContentResource = "content";
+    public const string TimeoutResource = "timeout";
+
     public HttpServer(ITestOutputHelper output = null) {
         var builder = WebApplication.CreateBuilder();
 
@@ -40,16 +43,17 @@ public sealed class HttpServer {
         // GET
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
         _app.MapGet("echo", (string msg) => msg);
-        _app.MapGet("timeout", async () => await Task.Delay(2000));
-        _app.MapPut("timeout", async () => await Task.Delay(2000));
+        _app.MapGet(TimeoutResource, async () => await Task.Delay(2000));
+        _app.MapPut(TimeoutResource, async () => await Task.Delay(2000));
         // ReSharper disable once ConvertClosureToMethodGroup
         _app.MapGet("status", (int code) => Results.StatusCode(code));
         _app.MapGet("headers", HandleHeaders);
+        _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
 
         // PUT
         _app.MapPut(
-            "content",
+            ContentResource,
             async context => {
                 var content = await context.Request.Body.StreamToStringAsync();
                 await context.Response.WriteAsync(content);

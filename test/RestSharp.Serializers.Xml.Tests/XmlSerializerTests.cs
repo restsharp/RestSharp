@@ -177,7 +177,7 @@ public class XmlSerializerTests {
             StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
             ContactData = new ContactData {
                 EmailAddresses = new List<EmailAddress> {
-                    new EmailAddress {
+                    new() {
                         Address  = "test@test.com",
                         Location = "Work"
                     }

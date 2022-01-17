@@ -134,11 +134,13 @@ public partial class RestClient {
         return response;
     }
 
-    static RestResponse ThrowIfError(RestResponse response) {
+    internal static RestResponse ThrowIfError(RestResponse response) {
         var exception = response.GetException();
-        return exception != null ? throw exception : response;
-    }
+        if (exception != null) throw exception;
 
+        return response;
+    }
+    
     static HttpMethod AsHttpMethod(Method method)
         => method switch {
             Method.Get     => HttpMethod.Get,

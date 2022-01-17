@@ -62,13 +62,11 @@ public class StatusCodeTests : IDisposable {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
         var request = new RestRequest("error") {
-            RootElement = "Success"
+            RootElement             = "Success",
+            OnBeforeDeserialization = resp => {
+                if (resp.StatusCode == HttpStatusCode.BadRequest) resp.RootElement = "Error";
+            }
         };
-
-        request.OnBeforeDeserialization =
-            resp => {
-                if (resp.StatusCode == HttpStatusCode.BadRequest) request.RootElement = "Error";
-            };
 
         var response = await _client.ExecuteAsync<TestResponse>(request);
 

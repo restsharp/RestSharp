@@ -120,6 +120,11 @@ public abstract class RestResponseBase {
     /// HTTP protocol version of the request
     /// </summary>
     public Version? Version { get; set; }
+    
+    /// <summary>
+    /// Root element of the serialized response content, only works if deserializer supports it 
+    /// </summary>
+    public string? RootElement { get; set; }
 
     /// <summary>
     /// Assists with debugging responses by displaying in the debugger output

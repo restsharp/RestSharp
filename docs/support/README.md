@@ -62,7 +62,7 @@ Here are contribution guidelines:
  - No licence header for tested.
  - Code must build for .NET Standard 2.0, .NET 5, and .NET 6.
  - Test must run on .NET 6.
- - Use `autocrlf=true` (`git config --global core.autocrlf true` [http://help.github.com/dealing-with-lineendings/])
+ - Use `autocrlf=true` (`git config --global core.autocrlf true`)
  
 ### Sponsor
  
