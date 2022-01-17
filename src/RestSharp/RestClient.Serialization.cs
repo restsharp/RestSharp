@@ -66,8 +66,6 @@ public partial class RestClient {
                         withDateFormat.DateFormat = xmlRequest.DateFormat!;
                 }
 
-                if (handler is IWithRootElement deserializer && !request.RootElement.IsEmpty()) deserializer.RootElement = request.RootElement;
-
                 if (handler != null) response.Data = handler.Deserialize<T>(raw);
             }
         }
