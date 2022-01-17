@@ -55,10 +55,10 @@ public partial class RestClient {
             // to a transport or framework exception.  HTTP errors should attempt to
             // be deserialized
             if (response.Content != null) {
-                var handler = GetContentDeserializer(raw, request.RequestFormat);
-
                 // Only continue if there is a handler defined else there is no way to deserialize the data.
                 // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
+                var handler = GetContentDeserializer(raw, request.RequestFormat);
+                
                 if (handler is IXmlDeserializer xml && request is RestXmlRequest xmlRequest) {
                     if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
 

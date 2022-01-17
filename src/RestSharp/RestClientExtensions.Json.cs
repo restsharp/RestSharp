@@ -66,7 +66,7 @@ public static partial class RestClientExtensions {
         TRequest          request,
         CancellationToken cancellationToken = default
     ) where TRequest : class {
-        var restRequest = new RestRequest().AddJsonBody(request);
+        var restRequest = new RestRequest(resource).AddJsonBody(request);
         return client.PostAsync<TResponse>(restRequest, cancellationToken);
     }
 
@@ -86,7 +86,7 @@ public static partial class RestClientExtensions {
         TRequest          request,
         CancellationToken cancellationToken = default
     ) where TRequest : class {
-        var restRequest = new RestRequest().AddJsonBody(request);
+        var restRequest = new RestRequest(resource).AddJsonBody(request);
         var response    = await client.PostAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
@@ -128,7 +128,7 @@ public static partial class RestClientExtensions {
         TRequest          request,
         CancellationToken cancellationToken = default
     ) where TRequest : class {
-        var restRequest = new RestRequest().AddJsonBody(request);
+        var restRequest = new RestRequest(resource).AddJsonBody(request);
         var response    = await client.PutAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
