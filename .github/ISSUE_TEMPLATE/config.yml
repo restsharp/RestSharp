@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Get help
+    url: https://restsharp.dev/support/#get-help
+    about: Read about asking questions and reporting issues

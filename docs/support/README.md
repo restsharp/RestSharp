@@ -11,7 +11,7 @@ Got issues, questions, suggestions? Please read this page carefully to understan
 The most effective way to resolve questions about using RestSharp is StackOverflow.
 
 RestSharp has a large user base. Tens of thousands of projects and hundreds of thousands of developers
-use RestSharp on a daily basis. So, asking questions on StackOverflow with [restsharp](https://stackoverflow.com/questions/tagged/restsharp) tag
+use RestSharp on a daily basis. So, asking questions on **StackOverflow** with [restsharp](https://stackoverflow.com/questions/tagged/restsharp) tag
 would most definitely lead you to a solution.
 
 ::: warning
@@ -34,7 +34,7 @@ a crash or anything else that you consider a bug, is submitting an issue
 at our GitHub repository.
 
 ::: warning
-Please do not ignore our contribution guidelines, otherwise you risk your issue to be
+**Do not ignore our contribution guidelines**, otherwise you risk your issue to be
 closed without being considered. Respect the maintainers, be specific and provide
 as many details about the issue as you can.
 :::
@@ -55,12 +55,13 @@ Here are contribution guidelines:
 
  - Make each pull request atomic and exclusive; don't send pull requests for a laundry list of changes.
  - Even better, commit in small manageable chunks.
- - Use the supplied `.DotSettings` file to format the code.
+ - Use the supplied `.editorconfig` file to format the code.
  - Any change must be accompanied by a unit test covering the change.
- - New tests are preferred to use Shoudly.
- - No regions except for license header
- - Code must build for .NET Standard 2.0 and .NET Framework 4.5.2.
- - Test must run on .NET Core 3.1 and .NET Framework 4.5.2
+ - New tests are preferred to use FluentAssertions.
+ - No regions.
+ - No licence header for tested.
+ - Code must build for .NET Standard 2.0, .NET 5, and .NET 6.
+ - Test must run on .NET 6.
  - Use `autocrlf=true` (`git config --global core.autocrlf true` [http://help.github.com/dealing-with-lineendings/])
  
 ### Sponsor
@@ -68,32 +69,30 @@ Here are contribution guidelines:
 You can also support maintainers and motivate them by contributing
 financially at [Open Collective](https://opencollective.com/restsharp).
 
-## Common Issues
+## Common issues
 
 Before opening an issue on GitHub, please check the list of known issues below.
 
-### Connection closed with SSL
+### Content type
 
-When connecting via HTTPS, you get an exception:
+One of the mistakes developers make when using RestSharp is setting the `Content-Type` header manually.
+Remember that in most of the usual scenarios setting the content type header manually is not required, and it might be harmful.
 
-> The underlying connection was closed: An unexpected error occurred on a send
-
-The exception is thrown by `WebRequest` so you need to tell the .NET Framework to
-accept more certificate types than it does by default.
-
-Adding this line somewhere in your application, where it gets called once, should solve the issue:
+RestSharp sets the content type header automatically based on the request type. 
+You might want to override the request body content type, but the best way to do it is to supply the content type to the body parameter itself.
+Functions for adding the request body to the request have overloads, which accept content type. For example
 
 ```csharp
-ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+request.AddStringBody(jsonString, ContentType.Json);
 ```
 
 ### Setting the User Agent
 
 Setting the user agent on the request won't work when you use `AddHeader`.
 
-Instead, please use the `RestClient.UserAgent` property.
+Instead, please use the `RestClientOptions.UserAgent` property.
 
-### Empty Response
+### Empty response
 
 We regularly get issues where developers complain that their requests get executed
 and they get a proper raw response, but the `RestResponse<T>` instance doesn't
@@ -105,7 +104,7 @@ All those issues are caused by the design choice to swallow exceptions
 that occur when RestSharp makes the request and processes the response. Instead,
 RestSharp produces so-called _error response_.
 
-You can check the response status to find out if there're any errors.
+You can check the response status to find out if there are any errors.
 The following properties can tell you about those errors:
 
 - `IsSuccessful`

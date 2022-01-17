@@ -84,16 +84,12 @@ You can also make POST (and PUT/DELETE/HEAD/OPTIONS) requests:
 ```csharp
 // TwilioApi.cs, method of TwilioApi class
 public Task<Call> InitiateOutboundCall(CallOptions options) {
-    Require.Argument("Caller", options.Caller);
-    Require.Argument("Called", options.Called);
-    Require.Argument("Url", options.Url);
-
-    var request = new RestRequest("Accounts/{AccountSid}/Calls");
-    request.RootElement = "Calls";
-
-    request.AddParameter("Caller", options.Caller);
-    request.AddParameter("Called", options.Called);
-    request.AddParameter("Url", options.Url);
+    var request = new RestRequest("Accounts/{AccountSid}/Calls") {
+        RootElement = "Calls"
+    }
+        .AddParameter("Caller", options.Caller)
+        .AddParameter("Called", options.Called)
+        .AddParameter("Url", options.Url);
 
     if (options.Method.HasValue) request.AddParameter("Method", options.Method);
     if (options.SendDigits.HasValue()) request.AddParameter("SendDigits", options.SendDigits);
@@ -251,8 +247,7 @@ client.UseNewtonsoftJson();
 The serializer configures some options by default:
 
 ```csharp
-JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
-{
+JsonSerializerSettings DefaultSettings = new JsonSerializerSettings {
     ContractResolver     = new CamelCasePropertyNamesContractResolver(),
     DefaultValueHandling = DefaultValueHandling.Include,
     TypeNameHandling     = TypeNameHandling.None,
@@ -273,16 +268,14 @@ deserialization, you must implement the `IRestSerializer` interface.
 Here is an example of a custom serializer that uses `System.Text.Json`:
 
 ```csharp
-public class SimpleJsonSerializer : IRestSerializer
-{
+public class SimpleJsonSerializer : IRestSerializer {
     public string Serialize(object obj) => JsonSerializer.Serialize(obj);
 
     public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
 
     public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.Content);
 
-    public string[] SupportedContentTypes { get; } =
-    {
+    public string[] SupportedContentTypes { get; } = {
         "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
     };
 
@@ -318,6 +311,39 @@ in favour of giving you the error as a property.
 
 Those properties are available for the `RestClient` instance and will be used for all request made with that instance.
 
+::: warning
+Please be aware that deserialization failures will only work if the serializer throws an exception when deserializing the response.
+Many serializers don't throw by default, and just return a `null` result. RestSharp is unable to figure out why `null` is returned, so it won't fail in this case.
+Check the serializer documentation to find out if it can be configured to throw on deserialization error.
+:::
+
 There are also slight differences on how different overloads handle exceptions.
 
 Asynchronous generic methods `GetAsync<T>`, `PostAsync<T>` and so on, which aren't a part of `RestClient` interface (those methods are extension methods) return `Task<T>`. It means that there's no `RestResponse` to set the response status to error. We decided to throw an exception when such a request fails. It is a trade-off between the API consistency and usability of the library. Usually, you only need the content of `RestResponse` instance to diagnose issues and most of the time the exception would tell you what's wrong. 
+
+Below you can find how different extensions deal with errors. Note that functions, which don't throw by default, will throw exceptions when `ThrowOnAnyError` is set to `true`.
+
+| Function              | Throws on errors |
+|:----------------------|:-----------------|
+| `ExecuteAsync`        | No |
+| `ExecuteGetAsync`     | No |
+| `ExecuteGetAsync<T>`  | No |
+| `ExecutePostAsync`    | No |
+| `ExecutePutAsync`     | No |
+| `ExecuteGetAsync<T>`  | No |
+| `ExecutePostAsync<T>` | No |
+| `ExecutePutAsync<T>`  | No |
+| `GetAsync`            | Yes |
+| `GetAsync<T>`         | Yes |
+| `PostAsync`           | Yes |
+| `PostAsync<T>`        | Yes |
+| `PatchAsync`          | Yes |
+| `PatchAsync<T>`       | Yes |
+| `DeleteAsync`         | Yes |
+| `DeleteAsync<T>`      | Yes |
+| `OptionsAsync`        | Yes |
+| `OptionsAsync<T>`     | Yes |
+| `HeadAsync`           | Yes |
+| `HeadAsync<T>`        | Yes |
+
+In addition, all the functions for JSON requests, like `GetJsonAsync` and `PostJsonAsyn` throw an exception if the HTTP call fails.
