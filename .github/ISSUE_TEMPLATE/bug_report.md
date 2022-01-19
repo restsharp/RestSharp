@@ -11,12 +11,15 @@ assignees: ''
 
 **Describe the bug**
 A clear and concise description of what the bug is.
+Hint: use a tool like https://requestbin.com to compare working and non-working requests.
 
 **To Reproduce**
 Steps to reproduce the behavior, preferably using a code snippet. 
+Post the non-working request here as well if you made it work using Postman, Swagger, or any other client.
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
+Post the working request here as well if you made it work using Postman, Swagger, or any other client.
 
 **Stack trace**
 Copy the full stack trace here if you get an exception.
