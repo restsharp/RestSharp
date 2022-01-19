@@ -99,7 +99,6 @@ public partial class RestClient {
         return factory?.GetSerializer().Deserializer;
         
         string? DetectContentType()
-            => response.Content!.StartsWith("<") ? ContentType.Xml 
-                : response.Content.StartsWith("{") ? ContentType.Json : null;
+            => response.Content!.StartsWith("<") ? ContentType.Xml : response.Content.StartsWith("{") || response.Content.StartsWith("[") ? ContentType.Json : null;
     }
 }
