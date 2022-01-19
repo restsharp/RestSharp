@@ -92,13 +92,15 @@ public partial class RestClient {
     }
 
     IDeserializer? GetContentDeserializer(RestResponseBase response, DataFormat requestFormat) {
-        if (response.ContentType == null) return null;
+        var contentType = response.ContentType ?? DetectContentType();
+        if (contentType == null) return null;
 
-        var serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(response.ContentType));
+        var serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(contentType));
         var factory    = serializer ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
         return factory?.GetSerializer().Deserializer;
         
         string? DetectContentType()
-            => response.Content!.StartsWith("<") ? ContentType.Xml : response.Content.StartsWith("{") || response.Content.StartsWith("[") ? ContentType.Json : null;
+            => response.Content!.StartsWith("<") ? ContentType.Xml 
+                : response.Content.StartsWith("{") || response.Content.StartsWith("[") ? ContentType.Json : null;
     }
 }
