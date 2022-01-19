@@ -20,6 +20,8 @@ Post the non-working request here as well if you made it work using Postman, Swa
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 Post the working request here as well if you made it work using Postman, Swagger, or any other client.
+You can use https://requestbin.com/r to create a public request bin and share the link in the issue.
+
 
 **Stack trace**
 Copy the full stack trace here if you get an exception.
