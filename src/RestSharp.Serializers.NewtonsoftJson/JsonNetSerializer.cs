@@ -73,11 +73,11 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     public ISerializer   Serializer   => this;
     public IDeserializer Deserializer => this;
 
-    public string[] SupportedContentTypes { get; } = {
-        "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
-    };
+    public string[] AcceptedContentTypes => Serializers.ContentType.JsonAccept;
 
     public string ContentType { get; set; } = "application/json";
+
+    public SupportsContentType SupportsContentType => contentType => contentType.Contains("json");
 
     public DataFormat DataFormat => DataFormat.Json;
 }

@@ -183,7 +183,7 @@ public partial class RestClient : IDisposable {
     }
 
     internal void AssignAcceptedContentTypes()
-        => AcceptedContentTypes = Serializers.SelectMany(x => x.Value.SupportedContentTypes).Distinct().ToArray();
+        => AcceptedContentTypes = Serializers.SelectMany(x => x.Value.AcceptedContentTypes).Distinct().ToArray();
 
     void DoBuildUriValidations(RestRequest request) {
         if (Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
@@ -195,6 +195,7 @@ public partial class RestClient : IDisposable {
 
     public void Dispose() {
         if (_disposeHttpClient) HttpClient.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     readonly bool _disposeHttpClient;

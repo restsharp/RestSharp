@@ -31,11 +31,17 @@ public partial class RestClient {
     /// <param name="serializerFactory">Function that returns the serializer instance</param>
     public RestClient UseSerializer(Func<IRestSerializer> serializerFactory) {
         var instance = serializerFactory();
-        Serializers[instance.DataFormat] = new SerializerRecord(instance.DataFormat, instance.SupportedContentTypes, serializerFactory);
+
+        Serializers[instance.DataFormat] = new SerializerRecord(
+            instance.DataFormat,
+            instance.AcceptedContentTypes,
+            instance.SupportsContentType,
+            serializerFactory
+        );
         AssignAcceptedContentTypes();
         return this;
     }
-    
+
     public void UseDefaultSerializers() => UseSerializer<SystemTextJsonSerializer>().UseSerializer<XmlRestSerializer>();
 
     /// <summary>
@@ -58,7 +64,7 @@ public partial class RestClient {
                 // Only continue if there is a handler defined else there is no way to deserialize the data.
                 // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
                 var handler = GetContentDeserializer(raw, request.RequestFormat);
-                
+
                 if (handler is IXmlDeserializer xml && request is RestXmlRequest xmlRequest) {
                     if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
 
@@ -86,16 +92,14 @@ public partial class RestClient {
     }
 
     IDeserializer? GetContentDeserializer(RestResponseBase response, DataFormat requestFormat) {
-        var contentType = response.ContentType != null && AcceptedContentTypes.Contains(response.ContentType)
-            ? response.ContentType
-            : DetectContentType();
-        if (contentType.IsEmpty()) return null;
+        if (response.ContentType == null) return null;
 
-        var serializer = Serializers.FirstOrDefault(x => x.Value.SupportedContentTypes.Contains(contentType));
-        var factory    = serializer.Value ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
+        var serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(response.ContentType));
+        var factory    = serializer ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
         return factory?.GetSerializer().Deserializer;
-
+        
         string? DetectContentType()
-            => response.Content!.StartsWith("<") ? ContentType.Xml : response.Content.StartsWith("{") ? ContentType.Json : null;
+            => response.Content!.StartsWith("<") ? ContentType.Xml 
+                : response.Content.StartsWith("{") ? ContentType.Json : null;
     }
 }

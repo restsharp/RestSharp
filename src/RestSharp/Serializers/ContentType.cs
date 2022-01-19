@@ -14,6 +14,8 @@
 
 namespace RestSharp.Serializers;
 
+public delegate bool SupportsContentType(string contentType);
+
 public static class ContentType {
     public const string Json   = "application/json";
     public const string Xml    = "application/xml";
@@ -30,10 +32,10 @@ public static class ContentType {
         };
 
     public static readonly string[] JsonAccept = {
-        "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
+        "application/json", "text/json", "text/x-json", "text/javascript"
     };
 
     public static readonly string[] XmlAccept = {
-        "application/xml", "text/xml", "*+xml", "*"
+        "application/xml", "text/xml"
     };
 }

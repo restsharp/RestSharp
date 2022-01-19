@@ -185,10 +185,10 @@ class RequestContent : IDisposable {
         }
     }
 
-    string GetContentTypeHeader(string contentType) {
-        var boundary = Content!.GetFormBoundary();
-        return boundary.IsEmpty() ? contentType : $"{contentType}; boundary=\"{boundary}\"";
-    }
+    string GetContentTypeHeader(string contentType)
+        => Content is MultipartFormDataContent mpContent
+            ? $"{contentType}; boundary=\"{mpContent.GetFormBoundary()}\""
+            : contentType;
 
     public void Dispose() {
         _streams.ForEach(x => x.Dispose());

@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9051DDA0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests", "test\RestSharp.Tests\RestSharp.Tests.csproj", "{B1C55C9B-3287-4EB2-8ADD-795DBC77013D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.IntegrationTests", "test\RestSharp.IntegrationTests\RestSharp.IntegrationTests.csproj", "{AC3B3DDC-F011-4E19-8C9B-F748B19ED3C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests.Integrated", "test\RestSharp.Tests.Integrated\RestSharp.Tests.Integrated.csproj", "{AC3B3DDC-F011-4E19-8C9B-F748B19ED3C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.NewtonsoftJson", "src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj", "{4205A187-9732-4DA8-B0BE-77A2C6B8C6A1}"
 EndProject
@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serializers", "Serializers"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests.Shared", "test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj", "{73896669-F05C-41AC-9F6F-A11F549EDEDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.Json.Tests", "test\RestSharp.Serializers.Json.Tests\RestSharp.Serializers.Json.Tests.csproj", "{8BF81225-2F85-4412-AD18-6579CBA1879B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests.Serializers.Json", "test\RestSharp.Tests.Serializers.Json\RestSharp.Tests.Serializers.Json.csproj", "{8BF81225-2F85-4412-AD18-6579CBA1879B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Perf", "Perf", "{1C42C435-8826-4044-8775-A1DA40EF4866}"
 EndProject
@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Benchmarks", "ben
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.InteractiveTests", "test\RestSharp.InteractiveTests\RestSharp.InteractiveTests.csproj", "{6D7D1D60-4473-4C52-800C-9B892C6640A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.Xml.Tests", "test\RestSharp.Serializers.Xml.Tests\RestSharp.Serializers.Xml.Tests.csproj", "{E6D94C12-9AD7-46E6-AB62-3676F25FDE51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Tests.Serializers.Xml", "test\RestSharp.Tests.Serializers.Xml\RestSharp.Tests.Serializers.Xml.csproj", "{E6D94C12-9AD7-46E6-AB62-3676F25FDE51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Serializers.Xml", "src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj", "{4A35B1C5-520D-4267-BA70-2DCEAC0A5662}"
 EndProject
