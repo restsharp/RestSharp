@@ -150,7 +150,7 @@ services.AddSingleton<ITwitterClient>(
 );
 ```
 
-## Request
+## Create a request
 
 Before making a request using `RestClient`, you need to create a request instance:
 
@@ -282,7 +282,7 @@ request.AddParameter("foo", "bar", ParameterType.QueryString);
 
 In some cases you might need to prevent RestSharp from encoding the query string parameter. To do so, use the `QueryStringWithoutEncode` parameter type.
 
-## Making a request
+## Making a call
 
 When you have a `RestRequest` instance with all the parameters added to it, you are ready to make a request.
 
