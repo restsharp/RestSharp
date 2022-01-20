@@ -22,9 +22,9 @@ public static class HttpContentExtensions {
     
     public static string GetFormBoundary(this MultipartFormDataContent content) {
         return GetBoundary(content);
-        var contentType = content.Headers.ContentType?.ToString();
-        var index       = contentType?.IndexOf("boundary=", StringComparison.Ordinal) ?? 0;
-        return index > 0 ? GetFormBoundary(contentType!, index) : "";
+        // var contentType = content.Headers.ContentType?.ToString();
+        // var index       = contentType?.IndexOf("boundary=", StringComparison.Ordinal) ?? 0;
+        // return index > 0 ? GetFormBoundary(contentType!, index) : "";
     }
 
     static string GetFormBoundary(string headerValue, int index) {

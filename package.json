@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "vuepress-vite": "2.0.0-beta.27"
+    "vuepress-vite": "^2.0.0-beta.33"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",

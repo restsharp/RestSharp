@@ -298,9 +298,9 @@ public async Task<RestResponse> ExecuteAsync(
 You can also avoid setting the request method upfront and use one of the overloads:
 
 ```csharp
-Task<RestResponse> ExecuteGetAsync
-Task<RestResponse> ExecutePostAsync
-Task<RestResponse> ExecutePutAsync
+Task<RestResponse> ExecuteGetAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> ExecutePostAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> ExecutePutAsync(RestRequest request, CancellationToken cancellationToken)
 ```
 
 When using any of those methods, you will get the response content as string in `response.Content`.
@@ -308,10 +308,10 @@ When using any of those methods, you will get the response content as string in 
 RestSharp can deserialize the response for you. To use that feature, use one of the generic overloads:
 
 ```csharp
-Task<RestResponse<T>> ExecuteAsync<T>
-Task<RestResponse<T>> ExecuteGetAsync<T>
-Task<RestResponse<T>> ExecutePostAsync<T>
-Task<RestResponse<T>> ExecutePutAsync<T>
+Task<RestResponse<T>> ExecuteAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse<T>> ExecuteGetAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse<T>> ExecutePostAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse<T>> ExecutePutAsync<T>(RestRequest request, CancellationToken cancellationToken)
 ```
 
 All the overloads that return `RestResponse` or `RestResponse<T>` don't throw an exception if the server returns an error. Read more about it [here](error-handling.md).
@@ -319,12 +319,12 @@ All the overloads that return `RestResponse` or `RestResponse<T>` don't throw an
 If you just need a deserialized response, you can use one of the extensions:
 
 ```csharp
-Task<T> GetAsync<T>
-Task<T> PostAsync<T>
-Task<T> PutAsync<T>
-Task<T> HeadAsync<T>
-Task<T> PatchAsync<T>
-Task<T> DeleteAsync<T>
+Task<T> GetAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<T> PostAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<T> PutAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<T> HeadAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<T> PatchAsync<T>(RestRequest request, CancellationToken cancellationToken)
+Task<T> DeleteAsync<T>(RestRequest request, CancellationToken cancellationToken)
 ```
 
 Those extensions will throw an exception if the server returns an error, as there's no other way to float the error back to the caller.

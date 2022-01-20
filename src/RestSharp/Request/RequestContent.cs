@@ -187,7 +187,7 @@ class RequestContent : IDisposable {
 
     string GetContentTypeHeader(string contentType)
         => Content is MultipartFormDataContent mpContent
-            ? $"{contentType}; boundary=\"{mpContent.GetFormBoundary()}\""
+            ? _request.FormatMultipartContentType(contentType, mpContent.GetFormBoundary())
             : contentType;
 
     public void Dispose() {
