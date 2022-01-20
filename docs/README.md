@@ -14,7 +14,7 @@ features:
 - title: Extensive configuration
   details: Almost every aspect of an HTTP call can be customized
 - title: Authentication
-  details: Basic, OAuth 1, OAuth 2, and JWT are supported. Not enough? Write your own!
+  details: Basic, OAuth1, OAuth2, and JWT are supported. Not enough? Write your own!
 - title: Forms, request body, and files
   details: Send objects as the request body in JSON or XML, or as a form. Upload and download files as bytes or as streams.
 - title: Parameters

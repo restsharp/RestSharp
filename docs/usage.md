@@ -139,14 +139,40 @@ You can find the full example code in [this gist](https://gist.github.com/alexey
 
 Such a client can and should be used _as a singleton_, as it's thread-safe and authentication-aware. If you make it a transient dependency, you'll keep bombarding Twitter with token requests and effectively half your request limit.
 
-## Request Parameters
+You can, for example, register it in the DI container:
 
-After you've created a `RestRequest`, you can add parameters to it.
-Here is a Description of the 5 currently supported types and their behavior when using the default IHttp implementation.
+```csharp
+services.AddSingleton<ITwitterClient>(
+    new TwitterClient(
+        Configuration["Twitter:ApiKey"],
+        Configuration["Twitter:ApiKeySecret"]
+    )
+);
+```
+
+## Request
+
+Before making a request using `RestClient`, you need to create a request instance:
+
+```csharp
+var request = new RestRequest(resource); // resource is the sub-path of the client base path
+```
+
+The default request type is `GET` and you can override it by setting the `Method` property. You can also set the method using the constructor overload:
+
+```csharp
+var request = new RestRequest(resource, Method.Post);
+```
+
+After you've created a `RestRequest`, you can add parameters to it. Below, you can find all the parameter types supported by RestSharp.
 
 ### Http Header
 
 Adds the parameter as an HTTP header that is sent along with the request. The header name is the name of the parameter and the header value is the value.
+
+::: warning Content-Type
+RestSharp will use the correct content type by default. Avoid adding the `Content-Type` header manually to your requests, unless you are absolutely sure it is required. You can add a custom content type to the [body parameter](#request-body) itself.
+:::
 
 ### Get or Post
 
@@ -178,15 +204,20 @@ When the request executes, RestSharp will try to match any `{placeholder}` with 
 
 ### Request Body
 
-If this parameter is set, its value will be sent as the body of the request. *Only one* `RequestBody` parameter is accepted - the first one.
-
-The name of the parameter will be used as the `Content-Type` header for the request.
-
-`RequestBody` does not work on `GET` or `HEAD` Requests, as they do not send a body.
-
-If you have `GetOrPost` parameters as well, they will overwrite the `RequestBody` - RestSharp will not combine them, but it will instead throw the `RequestBody` parameter away.
+If this parameter is set, its value will be sent as the body of the request.
 
 We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
+
+#### AddStringBody
+
+If you have a pre-serialized payload like a JSON string, you can use `AddStringBody` to add it as a body parameter. You need to specify the content type, so the remote endpoint knows what to do with the request body. For example:
+
+```csharp
+const json = "{ data: { foo: \"bar\" } }";
+request.AddStringBody(json, ContentType.Json);
+```
+
+You can specify a custom body content type if necessary. The `contentType` argument is available in all the overloads that add a request body.
 
 #### AddStringBody
 
@@ -205,7 +236,9 @@ When you call `AddJsonBody`, it does the following for you:
 - Sets the content type to `application/json`
 - Sets the internal data type of the request body to `DataType.Json`
 
-Do not set content type headers or send JSON string or some sort of `JObject` instance to `AddJsonBody`, it won't work!
+::: warning
+Do not send JSON string or some sort of `JObject` instance to `AddJsonBody`, it won't work! Use `AddStringBody` instead.
+:::
 
 Here is the example:
 
@@ -222,7 +255,9 @@ When you call `AddXmlBody`, it does the following for you:
 - Sets the content type to `application/xml`
 - Sets the internal data type of the request body to `DataType.Xml`
 
-Do not set content type headers or send XML string to `AddXmlBody`, it won't work!
+::: warning
+Do not send XML string to `AddXmlBody`, it won't work!
+:::
 
 ### Query String
 
@@ -247,140 +282,90 @@ request.AddParameter("foo", "bar", ParameterType.QueryString);
 
 In some cases you might need to prevent RestSharp from encoding the query string parameter. To do so, use the `QueryStringWithoutEncode` parameter type.
 
-## Serialization
+## Making a request
 
-RestSharp has JSON and XML serializers built in. 
+When you have a `RestRequest` instance with all the parameters added to it, you are ready to make a request.
 
-:::tip
-The default behavior of RestSharp is to swallow deserialization errors and return `null` in the `Data`
-property of the response. Read more about it in the [Error Handling](#error-handling).
-:::
-
-### JSON
-
-The default JSON serializer uses `System.Text.Json`, which is a part of .NET since .NET 6. For earlier versions, it is added as a dependency. There are also a few serializers provided as additional packages.
-
-### XML
-
-The default XML serializer is `DotNetXmlSerializer`, which uses `System.Xml.Serialization` library from .NET.
-
-### NewtonsoftJson (aka Json.Net)
-
-The `NewtonsoftJson` package is the most popular JSON serializer for .NET. It handles all possible scenarios and is very configurable. Such a flexibility comes with the cost of performance. If you need speed, keep the default JSON serializer.
-
-RestSharp support Json.Net serializer via a separate package. You can install it
-from NuGet:
-
-```
-dotnet add package RestSharp.Serializers.NewtonsoftJson
-```
-
-Use the extension method provided by the package to configure the client:
+`RestClient` has a single function for this:
 
 ```csharp
-client.UseNewtonsoftJson();
+public async Task<RestResponse> ExecuteAsync(
+    RestRequest request, 
+    CancellationToken cancellationToken = default
+)
 ```
 
-The serializer configures some options by default:
+You can also avoid setting the request method upfront and use one of the overloads:
 
 ```csharp
-JsonSerializerSettings DefaultSettings = new JsonSerializerSettings {
-    ContractResolver     = new CamelCasePropertyNamesContractResolver(),
-    DefaultValueHandling = DefaultValueHandling.Include,
-    TypeNameHandling     = TypeNameHandling.None,
-    NullValueHandling    = NullValueHandling.Ignore,
-    Formatting           = Formatting.None,
-    ConstructorHandling  = ConstructorHandling.AllowNonPublicDefaultConstructor
+Task<RestResponse> ExecuteGetAsync
+Task<RestResponse> ExecutePostAsync
+Task<RestResponse> ExecutePutAsync
+```
+
+When using any of those methods, you will get the response content as string in `response.Content`.
+
+RestSharp can deserialize the response for you. To use that feature, use one of the generic overloads:
+
+```csharp
+Task<RestResponse<T>> ExecuteAsync<T>
+Task<RestResponse<T>> ExecuteGetAsync<T>
+Task<RestResponse<T>> ExecutePostAsync<T>
+Task<RestResponse<T>> ExecutePutAsync<T>
+```
+
+All the overloads that return `RestResponse` or `RestResponse<T>` don't throw an exception if the server returns an error. Read more about it [here](error-handling.md).
+
+If you just need a deserialized response, you can use one of the extensions:
+
+```csharp
+Task<T> GetAsync<T>
+Task<T> PostAsync<T>
+Task<T> PutAsync<T>
+Task<T> HeadAsync<T>
+Task<T> PatchAsync<T>
+Task<T> DeleteAsync<T>
+```
+
+Those extensions will throw an exception if the server returns an error, as there's no other way to float the error back to the caller.
+
+### JSON requests
+
+For making a simple `GET` call and get a deserialized JSON response with a pre-formed resource string, use this:
+
+```csharp
+var response = await client.GetJsonAsync<TResponse>("endpoint?foo=bar", cancellationToken);
+```
+
+You can also use a more advance extension that uses an object to compose the resource string:
+
+```csharp
+var client = new RestClient("https://example.org");
+var args = new {
+    id = "123",
+    foo = "bar"
 };
+var response = await client.GetJsonAsync<TResponse>("endpoint/{id}", args, cancellationToken);
+
+// will make a call to https://example.org/endpoint/123?foo=bar
 ```
 
-If you need to use different settings, you can supply your instance of
-`JsonSerializerSettings` as a parameter for the extension method.
+It will search for the URL segment parameters matching any of the object properties and replace them with values. All the other properties will be used as query parameters.
 
-### Custom
-
-You can also implement your custom serializer. To support both serialization and
-deserialization, you must implement the `IRestSerializer` interface.
-
-Here is an example of a custom serializer that uses `System.Text.Json`:
+Similar things are available for `POST` requests.
 
 ```csharp
-public class SimpleJsonSerializer : IRestSerializer {
-    public string Serialize(object obj) => JsonSerializer.Serialize(obj);
-
-    public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
-
-    public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.Content);
-
-    public string[] SupportedContentTypes { get; } = {
-        "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
-    };
-
-    public string ContentType { get; set; } = "application/json";
-
-    public DataFormat DataFormat { get; } = DataFormat.Json;
-}
+var request = new CreateOrder("123", "foo", 10100);
+var result = client.PostJsonAsync<CreateOrder, OrderCreated>("orders", request, cancellationToken);
+// Will post the request object as JSON to "orders" and returns a 
+// JSON response deserialized to OrderCreated  
 ```
 
-The value of the `SupportedContentTypes` property will be used to match the
-serializer with the response `Content-Type` headers.
+```csharp
+var request = new CreateOrder("123", "foo", 10100);
+var statusCode = client.PostJsonAsync("orders", request, cancellationToken);
+// Will post the request object as JSON to "orders" and returns a 
+// status code, not expecting any response body
+```
 
-The `ContentType` property will be used when making a request so the
-server knows how to handle the payload.
-
-## Error handling
-
-If there is a network transport error (network is down, failed DNS lookup, etc), or any kind of server error (except 404), `RestResponse.ResponseStatus` will be set to `ResponseStatus.Error`, otherwise it will be `ResponseStatus.Completed`.
-
-If an API returns a 404, `ResponseStatus` will still be `Completed`. If you need access to the HTTP status code returned you will find it at `RestResponse.StatusCode`.
-The `Status` property is an indicator of completion independent of the API error handling.
-
-Normally, RestSharp doesn't throw an exception if the request fails.
-
-However, it is possible to configure RestSharp to throw in different situations, when it normally doesn't throw
-in favour of giving you the error as a property.
-
-| Property                      | Behavior                                                                                                                                                                                                                                                                                         |
-|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `FailOnDeserializationError`  | Changes the default behavior when failed deserialization results in a successful response with an empty `Data` property of the response. Setting this property to `true` will tell RestSharp to consider failed deserialization as an error and set the `ResponseStatus` to `Error` accordingly. |
-| `ThrowOnDeserializationError` | Changes the default behavior when failed deserialization results in empty `Data` property of the response. Setting this property to `true` will tell RestSharp to throw when deserialization fails.                                                                                              |
-| `ThrowOnAnyError`             | Setting this property to `true` changes the default behavior and forces RestSharp to throw if any errors occurs when making a request or during deserialization.                                                                                                                                 |
-
-Those properties are available for the `RestClient` instance and will be used for all request made with that instance.
-
-::: warning
-Please be aware that deserialization failures will only work if the serializer throws an exception when deserializing the response.
-Many serializers don't throw by default, and just return a `null` result. RestSharp is unable to figure out why `null` is returned, so it won't fail in this case.
-Check the serializer documentation to find out if it can be configured to throw on deserialization error.
-:::
-
-There are also slight differences on how different overloads handle exceptions.
-
-Asynchronous generic methods `GetAsync<T>`, `PostAsync<T>` and so on, which aren't a part of `RestClient` interface (those methods are extension methods) return `Task<T>`. It means that there's no `RestResponse` to set the response status to error. We decided to throw an exception when such a request fails. It is a trade-off between the API consistency and usability of the library. Usually, you only need the content of `RestResponse` instance to diagnose issues and most of the time the exception would tell you what's wrong. 
-
-Below you can find how different extensions deal with errors. Note that functions, which don't throw by default, will throw exceptions when `ThrowOnAnyError` is set to `true`.
-
-| Function              | Throws on errors |
-|:----------------------|:-----------------|
-| `ExecuteAsync`        | No |
-| `ExecuteGetAsync`     | No |
-| `ExecuteGetAsync<T>`  | No |
-| `ExecutePostAsync`    | No |
-| `ExecutePutAsync`     | No |
-| `ExecuteGetAsync<T>`  | No |
-| `ExecutePostAsync<T>` | No |
-| `ExecutePutAsync<T>`  | No |
-| `GetAsync`            | Yes |
-| `GetAsync<T>`         | Yes |
-| `PostAsync`           | Yes |
-| `PostAsync<T>`        | Yes |
-| `PatchAsync`          | Yes |
-| `PatchAsync<T>`       | Yes |
-| `DeleteAsync`         | Yes |
-| `DeleteAsync<T>`      | Yes |
-| `OptionsAsync`        | Yes |
-| `OptionsAsync<T>`     | Yes |
-| `HeadAsync`           | Yes |
-| `HeadAsync<T>`        | Yes |
-
-In addition, all the functions for JSON requests, like `GetJsonAsync` and `PostJsonAsyn` throw an exception if the HTTP call fails.
+The same two extensions also exist for `PUT` requests (`PutJsonAsync`);

@@ -59,7 +59,7 @@ throw an exception.
 
 All `ExecuteAsync` overloads, however, behave in the same way as `Execute` and return the `IRestResponse` or `IRestResponse<T>`.
 
-Read [here](usage.md#error-handling) about how RestSharp handles exceptions.
+Read [here](error-handling.md) about how RestSharp handles exceptions.
 
 ### Content type
 
@@ -75,6 +75,8 @@ For example, only you'd only need these lines to make a request with JSON body:
 var request = new RestRequest("address/update").AddJsonBody(updatedAddress);
 var response = await client.PostAsync<AddressUpdateResponse>(request);
 ```
+
+Read more about serialization and deserialization [here](serialization.md).
 
 ### Response
 

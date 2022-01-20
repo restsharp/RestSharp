@@ -5,7 +5,7 @@ module.exports = {
     themeConfig: {
         logo: "/restsharp.png",
         navbar: [
-            {text: "Migration", link: "/v107/"},
+            {text: "Migration to v107", link: "/v107/"},
             {text: "Documentation", link: "/intro.html"},
             {text: "Get help", link: "/support/"},
             {text: "NuGet", link: "https://nuget.org/packages/RestSharp"}
@@ -19,14 +19,16 @@ module.exports = {
                     children: [
                         "intro.md",
                         "usage.md",
-                        "authenticators.md"
+                        "serialization.md",
+                        "authenticators.md",
+                        "error-handling.md"
                     ]
                 }
             ],
             "/v107/": [
                 {
                     text: "",
-                    header: "RestSharp vNext",
+                    header: "Migration to v107",
                     children: [
                         "/v107/README.md"
                     ]
@@ -42,37 +44,6 @@ module.exports = {
                 }
             ]
         },
-        //     [
-        //     {
-        //         title: "Getting Started",
-        //         path: "/getting-started/",
-        //         collapsable: false,
-        //         children: [
-        //             "/getting-started/",
-        //             "/getting-started/getting-started"
-        //         ]
-        //     },
-        //     {
-        //         title: "Using RestSharp",
-        //         path: "/usage/",
-        //         collapsable: false,
-        //         children: [
-        //             "/usage/serialization",
-        //             "/usage/files",
-        //             "/usage/authenticators",
-        //             "/usage/parameters",
-        //             "/usage/exceptions"
-        //         ]
-        //     },
-        //     {
-        //         title: "Got stuck?",
-        //         path: "/get-help/",
-        //         collapsable: false,
-        //         children: [
-        //             "/get-help/faq"
-        //         ]
-        //     }
-        // ],
         searchPlaceholder: "Search...",
         lastUpdated: "Last Updated",
         repo: "restsharp/RestSharp",

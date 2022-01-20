@@ -5,7 +5,7 @@ NTLM and parameter-based systems.
 
 ## Basic Authentication
 
-The `HttpBasicAuthenticator` allows you pass a username and password as a basica auth Authorization header.
+The `HttpBasicAuthenticator` allows you pass a username and password as a basic `Authorization` header using a base64 encoded string.
 
 ```csharp
 var client = new RestClient("http://example.com");
@@ -31,26 +31,47 @@ This method retrieves an access token when provided `consumerKey`, `consumerSecr
 
 ```csharp
 client.Authenticator = OAuth1Authenticator.ForAccessToken(
-                        consumerKey, consumerSecret, oauthToken,
-                        oauthTokenSecret
-                       );
+    consumerKey, consumerSecret, oauthToken, oauthTokenSecret
+);
 ```
 
 This method also includes an optional parameter to specify the `OAuthSignatureMethod`.
 ```csharp
-client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, 
-                                                          consumerSecret, 
-                                                          oauthToken, 
-                                                          oauthTokenSecret, 
-                                                          OAuthSignatureMethod.PlainText);
+client.Authenticator = OAuth1Authenticator.ForAccessToken(
+    consumerKey, consumerSecret, oauthToken, oauthTokenSecret, 
+    OAuthSignatureMethod.PlainText
+);
 ```
 
 ### 0-legged OAuth
 
 The same access token authenticator can be used in 0-legged OAuth scenarios by providing `null` for the `consumerSecret`.
+
 ```csharp
-client.Authenticator = OAuth1Authenticator.ForAccessToken(consumerKey, null, oauthToken, oauthTokenSecret);
+client.Authenticator = OAuth1Authenticator.ForAccessToken(
+    consumerKey, null, oauthToken, oauthTokenSecret
+);
 ```
+
+## OAuth2
+
+RestSharp has two very simple authenticators to send the access token as part of the request.
+
+`OAuth2UriQueryParameterAuthenticator` accepts the access token as the only constructor argument, and it will send the provided token as a query parameter `oauth_token`.
+
+`OAuth2AuthorizationRequestHeaderAuthenticator` has two constructors. One only accepts a single argument, which is the access token. The other constructor also allows you to specify the token type. The authenticator will then add an `Authorization` header using the specified token type or `OAuth` as the default token type, and the token itself.
+
+For example:
+
+```csharp
+client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(
+    "Bearer", token
+);
+```
+
+The code above will tell RestSharp to send the bearer token with each request as a header. Essentially, the code above does the same as the sample for `JwtAuthenticator` below.
+
+As those authenticators don't do much to get the token itself, you might be interested in looking at our [sample OAuth2 authenticator](usage.md#authenticator), which requests the token on its own.
 
 ## JWT
 
@@ -74,7 +95,6 @@ var client = new RestClient();
 client.Authenticator = new SuperAuthenticator(); // implements IAuthenticator
 ```
 
-The `Authenticate` method is the very first thing called upon calling 
-`RestClient.Execute` or `RestClient.Execute<T>`. 
-The `Authenticate` method is passed the `RestRequest` currently being executed giving 
-you access to  every part of the request data (headers, parameters, etc.)
+The `Authenticate` method is the very first thing called upon calling `RestClient.Execute` or `RestClient.Execute<T>`. The `Authenticate` method is passed the `RestRequest` currently being executed giving you access to  every part of the request data (headers, parameters, etc.)
+
+You can find an example of a custom authenticator that fetches and uses an OAuth2 bearer token [here](usage.md#authenticator).
