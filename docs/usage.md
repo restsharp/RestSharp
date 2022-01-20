@@ -345,9 +345,8 @@ var args = new {
     id = "123",
     foo = "bar"
 };
+// Will make a call to https://example.org/endpoint/123?foo=bar
 var response = await client.GetJsonAsync<TResponse>("endpoint/{id}", args, cancellationToken);
-
-// will make a call to https://example.org/endpoint/123?foo=bar
 ```
 
 It will search for the URL segment parameters matching any of the object properties and replace them with values. All the other properties will be used as query parameters.
@@ -356,16 +355,16 @@ Similar things are available for `POST` requests.
 
 ```csharp
 var request = new CreateOrder("123", "foo", 10100);
-var result = client.PostJsonAsync<CreateOrder, OrderCreated>("orders", request, cancellationToken);
 // Will post the request object as JSON to "orders" and returns a 
 // JSON response deserialized to OrderCreated  
+var result = client.PostJsonAsync<CreateOrder, OrderCreated>("orders", request, cancellationToken);
 ```
 
 ```csharp
 var request = new CreateOrder("123", "foo", 10100);
-var statusCode = client.PostJsonAsync("orders", request, cancellationToken);
 // Will post the request object as JSON to "orders" and returns a 
 // status code, not expecting any response body
+var statusCode = client.PostJsonAsync("orders", request, cancellationToken);
 ```
 
 The same two extensions also exist for `PUT` requests (`PutJsonAsync`);
