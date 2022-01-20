@@ -13,17 +13,30 @@
 // limitations under the License.
 // 
 
-namespace RestSharp; 
+using System.Linq.Expressions;
+
+namespace RestSharp;
 
 public static class HttpContentExtensions {
-    public static string GetFormBoundary(this HttpContent content) {
+    static readonly Func<MultipartContent, string> GetBoundary = GetFieldAccessor<MultipartContent, string>("_boundary");
+    
+    public static string GetFormBoundary(this MultipartFormDataContent content) {
+        return GetBoundary(content);
         var contentType = content.Headers.ContentType?.ToString();
         var index       = contentType?.IndexOf("boundary=", StringComparison.Ordinal) ?? 0;
         return index > 0 ? GetFormBoundary(contentType!, index) : "";
-    } 
-    
+    }
+
     static string GetFormBoundary(string headerValue, int index) {
         var part = headerValue.Substring(index);
         return part.Substring(10, 36);
+    }
+
+    static Func<T, TReturn> GetFieldAccessor<T, TReturn>(string fieldName) {
+        var param    = Expression.Parameter(typeof(T), "arg");
+        var member   = Expression.Field(param, fieldName);
+        var lambda   = Expression.Lambda(typeof(Func<T, TReturn>), member, param);
+        var compiled = (Func<T, TReturn>)lambda.Compile();
+        return compiled;
     }
 }

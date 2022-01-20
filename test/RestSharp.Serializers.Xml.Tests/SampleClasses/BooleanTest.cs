@@ -1,5 +1,0 @@
-﻿namespace RestSharp.Serializers.Xml.Tests.SampleClasses;
-
-public class BooleanTest {
-    public bool Value { get; set; }
-}

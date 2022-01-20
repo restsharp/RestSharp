@@ -38,61 +38,27 @@ public partial class RestClient : IDisposable {
 
     internal RestClientOptions Options { get; }
 
-    /// <summary>
-    /// Default constructor that registers default content handlers
-    /// </summary>
-    public RestClient() : this(new RestClientOptions()) { }
-
-    public RestClient(HttpClient httpClient, RestClientOptions? options = null) {
-        UseDefaultSerializers();
-
-        HttpClient      = httpClient;
-        Options         = options ?? new RestClientOptions();
-        CookieContainer = Options.CookieContainer ?? new CookieContainer();
-
-        if (Options.Timeout > 0)
-            HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
-        HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
-    }
-
-    public RestClient(HttpMessageHandler handler) : this(new HttpClient(handler)) { }
-
     public RestClient(RestClientOptions options) {
         UseDefaultSerializers();
 
-        Options         = options;
-        CookieContainer = Options.CookieContainer ?? new CookieContainer();
+        Options            = options;
+        CookieContainer    = Options.CookieContainer ?? new CookieContainer();
+        _disposeHttpClient = true;
 
-        var handler = new HttpClientHandler {
-            Credentials            = Options.Credentials,
-            UseDefaultCredentials  = Options.UseDefaultCredentials,
-            CookieContainer        = CookieContainer,
-            AutomaticDecompression = Options.AutomaticDecompression,
-            PreAuthenticate        = Options.PreAuthenticate,
-            AllowAutoRedirect      = Options.FollowRedirects,
-            Proxy                  = Options.Proxy
-        };
-
-        if (Options.RemoteCertificateValidationCallback != null)
-            handler.ServerCertificateCustomValidationCallback =
-                (request, cert, chain, errors) => Options.RemoteCertificateValidationCallback(request, cert, chain, errors);
-
-        if (Options.ClientCertificates != null) {
-            handler.ClientCertificates.AddRange(Options.ClientCertificates);
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-        }
-
-        if (Options.MaxRedirects.HasValue)
-            handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
+        var handler = new HttpClientHandler();
+        ConfigureHttpMessageHandler(handler);
 
         var finalHandler = Options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
 
         HttpClient = new HttpClient(finalHandler);
 
-        if (Options.Timeout > 0)
-            HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
-        HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+        ConfigureHttpClient(HttpClient);
     }
+
+    /// <summary>
+    /// Creates an instance of RestClient using the default <see cref="RestClientOptions"/>
+    /// </summary>
+    public RestClient() : this(new RestClientOptions()) { }
 
     /// <inheritdoc />
     /// <summary>
@@ -107,6 +73,57 @@ public partial class RestClient : IDisposable {
     /// </summary>
     /// <param name="baseUrl"></param>
     public RestClient(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
+
+    public RestClient(HttpClient httpClient, RestClientOptions? options = null, bool disposeHttpClient = false) {
+        if (Options?.CookieContainer != null) {
+            throw new ArgumentException("Custom cookie container cannot be added to the HttpClient instance", nameof(options.CookieContainer));
+        }
+
+        UseDefaultSerializers();
+
+        HttpClient         = httpClient;
+        Options            = options ?? new RestClientOptions();
+        CookieContainer    = new CookieContainer();
+        _disposeHttpClient = disposeHttpClient;
+
+        ConfigureHttpClient(HttpClient);
+    }
+
+    /// <summary>
+    /// Creates a new instance of RestSharp using the message handler provided. By default, HttpClient disposes the provided handler
+    /// when the client itself is disposed. If you want to keep the handler not disposed, set disposeHandler argument to false.
+    /// </summary>
+    /// <param name="handler">Message handler instance to use for HttpClient</param>
+    /// <param name="disposeHandler">Dispose the handler when disposing RestClient, true by default</param>
+    public RestClient(HttpMessageHandler handler, bool disposeHandler = true) : this(new HttpClient(handler, disposeHandler)) { }
+
+    void ConfigureHttpClient(HttpClient httpClient) {
+        if (Options.Timeout > 0)
+            httpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+    }
+
+    void ConfigureHttpMessageHandler(HttpClientHandler handler) {
+        handler.Credentials            = Options.Credentials;
+        handler.UseDefaultCredentials  = Options.UseDefaultCredentials;
+        handler.CookieContainer        = CookieContainer;
+        handler.AutomaticDecompression = Options.AutomaticDecompression;
+        handler.PreAuthenticate        = Options.PreAuthenticate;
+        handler.AllowAutoRedirect      = Options.FollowRedirects;
+        handler.Proxy                  = Options.Proxy;
+
+        if (Options.RemoteCertificateValidationCallback != null)
+            handler.ServerCertificateCustomValidationCallback =
+                (request, cert, chain, errors) => Options.RemoteCertificateValidationCallback(request, cert, chain, errors);
+
+        if (Options.ClientCertificates != null) {
+            handler.ClientCertificates.AddRange(Options.ClientCertificates);
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+        }
+
+        if (Options.MaxRedirects.HasValue)
+            handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
+    }
 
     internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
@@ -166,7 +183,7 @@ public partial class RestClient : IDisposable {
     }
 
     internal void AssignAcceptedContentTypes()
-        => AcceptedContentTypes = Serializers.SelectMany(x => x.Value.SupportedContentTypes).Distinct().ToArray();
+        => AcceptedContentTypes = Serializers.SelectMany(x => x.Value.AcceptedContentTypes).Distinct().ToArray();
 
     void DoBuildUriValidations(RestRequest request) {
         if (Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
@@ -176,5 +193,10 @@ public partial class RestClient : IDisposable {
             );
     }
 
-    public void Dispose() => HttpClient.Dispose();
+    public void Dispose() {
+        if (_disposeHttpClient) HttpClient.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    readonly bool _disposeHttpClient;
 }

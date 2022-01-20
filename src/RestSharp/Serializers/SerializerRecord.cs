@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RestSharp.Serializers; 
+namespace RestSharp.Serializers;
 
-public record SerializerRecord(DataFormat DataFormat, string[] SupportedContentTypes, Func<IRestSerializer> GetSerializer);
+public record SerializerRecord(
+    DataFormat            DataFormat,
+    string[]              AcceptedContentTypes,
+    SupportsContentType   SupportsContentType,
+    Func<IRestSerializer> GetSerializer
+);

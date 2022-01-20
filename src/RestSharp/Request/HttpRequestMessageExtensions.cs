@@ -13,6 +13,7 @@
 // limitations under the License.
 // 
 
+using System.Net.Http.Headers;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -21,13 +22,13 @@ static class HttpRequestMessageExtensions {
     public static void AddHeaders(this HttpRequestMessage message, RequestHeaders headers) {
         var headerParameters = headers.Parameters.Where(x => !RequestContent.ContentHeaders.Contains(x.Name));
 
-        headerParameters.ForEach(AddHeader);
+        headerParameters.ForEach(x => AddHeader(x, message.Headers));
 
-        void AddHeader(Parameter parameter) {
+        void AddHeader(Parameter parameter, HttpHeaders httpHeaders) {
             var parameterStringValue = parameter.Value!.ToString();
 
-            message.Headers.Remove(parameter.Name!);
-            message.Headers.TryAddWithoutValidation(parameter.Name!, parameterStringValue);
+            httpHeaders.Remove(parameter.Name!);
+            httpHeaders.TryAddWithoutValidation(parameter.Name!, parameterStringValue);
         }
     }
 }

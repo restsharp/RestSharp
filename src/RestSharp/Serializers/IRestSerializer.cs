@@ -18,7 +18,9 @@ public interface IRestSerializer {
     ISerializer   Serializer   { get; }
     IDeserializer Deserializer { get; }
     
-    string[] SupportedContentTypes { get; }
+    string[] AcceptedContentTypes { get; }
+
+    SupportsContentType SupportsContentType { get; }
 
     DataFormat DataFormat { get; }
 

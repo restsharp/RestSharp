@@ -2,114 +2,142 @@
 title: Usage
 ---
 
-## Recommended Usage
+## Recommended usage
 
-RestSharp works best as the foundation for a proxy class for your API. Here are a couple of examples from the <a href="http://github.com/twilio/twilio-csharp">Twilio</a> library.
+RestSharp works best as the foundation for a proxy class for your API. Each API would most probably require different settings for `RestClient`, so a dedicated API class (and its interface) gives you a nice isolation between different `RestClient` instances, and make them testable.
 
-Create a class to contain your API proxy implementation with an `ExecuteAsync` (or any of the extensions) method for funneling all requests to the API. 
-This allows you to set commonly-used parameters and other settings (like authentication) shared across requests. 
-Because an account ID and secret key are required for every request you are required to pass those two values when 
-creating a new instance of the proxy. 
+Essentially, RestSharp is a wrapper around `HttpClient` that allows you to do the following:
+- Add default parameters of any kind (not just headers) to the client, once
+- Add parameters of any kind to each request (query, URL segment, form, attachment, serialized body, header) in a straightforward way
+- Serialize the payload to JSON or XML if necessary
+- Set the correct content headers (content type, disposition, length, etc)
+- Handle the remote endpoint response
+- Deserialize the response from JSON or XML if necessary
 
-::: warning
-Note that exceptions from `ExecuteAsync` are not thrown but are available in the `ErrorException` property.
-:::
+As an example, let's look at a simple Twitter API v2 client, which uses OAuth2 machine-to-machine authentication. For it to work, you would need to have access to Twitter Developers portal, an a project, and an approved application inside the project with OAuth2 enabled.
+
+### Authenticator
+
+Before we can make any call to the API itself, we need to get a bearer token. Twitter exposes an endpoint `https://api.twitter.com/oauth2/token`. As it follows the OAuth2 conventions, the code can be used to create an authenticator for some other vendors.
+
+First, we need a model for deserializing the token endpoint response. OAuth2 uses snake case for property naming, so we need to decorate model properties with `JsonPropertyName` attribute:
 
 ```csharp
-// TwilioApi.cs
-public class TwilioApi {
-    const string BaseUrl = "https://api.twilio.com/2008-08-01";
+record TokenResponse {
+    [JsonPropertyName("token_type")]
+    public string TokenType { get; init; }
+    [JsonPropertyName("access_token")]
+    public string AccessToken { get; init; }
+}
+```
 
+Next, we create the authenticator itself. It needs the API key and API key secret for calling the token endpoint using basic HTTP authentication. In addition, we can extend the list of parameters with the base URL, so it can be converted to a more generic OAuth2 authenticator.
+
+The easiest way to create an authenticator is to inherit is from the `AuthanticatorBase` base class:
+
+```csharp
+public class TwitterAuthenticator : AuthenticatorBase {
+    readonly string _baseUrl;
+    readonly string _clientId;
+    readonly string _clientSecret;
+
+    public TwitterAuthenticator(string baseUrl, string clientId, string clientSecret) : base("") {
+        _baseUrl      = baseUrl;
+        _clientId     = clientId;
+        _clientSecret = clientSecret;
+    }
+
+    protected override async ValueTask<Parameter> GetAuthenticationParameter(string accessToken) {
+        var token = string.IsNullOrEmpty(Token) ? await GetToken() : Token;
+        return new HeaderParameter(KnownHeaders.Authorization, token);
+    }
+}
+```
+
+During the first call made by the client using the authenticator, it will find out that the `Token` property is empty. It will then call the `GetToken` function to get the token once, and then will reuse the token going forwards.
+
+Now, we need to include the `GetToken` function to the class:
+
+```csharp
+async Task<string> GetToken() {
+    var options = new RestClientOptions(_baseUrl);
+    using var client = new RestClient(options) {
+        Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
+    };
+
+    var request = new RestRequest("oauth2/token")
+        .AddParameter("grant_type", "client_credentials");
+    var response = await client.PostAsync<TokenResponse>(request);
+    return $"{response!.TokenType} {response!.AccessToken}";
+}
+```
+
+As we need to make a call to the token endpoint, we need our own, short-lived instance of `RestClient`. Unlike the actual Twitter client, it will use the `HttpBasicAuthenticator` to send API key and secret as username and password. The client is then gets disposed as we only use it once.
+
+Here we add a POST parameter `grant_type` with `client_credentials` as its value. At the moment, it's the only supported value.
+
+The POST request will use the `application/x-www-form-urlencoded` content type by default.
+
+### API client
+
+Now, we can start creating the API client itself. Here we start with a single function that retrieves one Twitter user. Let's being by defining the API client interface:
+
+```csharp
+public interface ITwitterClient {
+    Task<TwitterUser> GetUser(string user);
+}
+```
+
+As the function returns a `TwitterUser` instance, we need to define it as a model:
+
+```csharp
+public record TwitterUser(string Id, string Name, string Username);
+```
+
+When that is done, we can implement the interface and add all the necessary code blocks to get a working API client.
+
+The client class needs the following:
+- A constructor, which accepts API credentials to be passed to the authenticator
+- A wrapped `RestClient` instance with Twitter API base URI pre-configured
+- The `TwitterAuthenticator` that we created previously as the client authenticator
+- The actual function to get the user
+
+```csharp
+public class TwitterClient : ITwitterClient, IDisposable {
     readonly RestClient _client;
 
-    string _accountSid;
+    public TwitterClient(string apiKey, string apiKeySecret) {
+        var options = new RestClientOptions("https://api.twitter.com/2");
 
-    public TwilioApi(string accountSid, string secretKey) {
-        _client = new RestClient(BaseUrl);
-        _client.Authenticator = new HttpBasicAuthenticator(accountSid, secretKey);
-        _client.AddDefaultParameter(
-            "AccountSid", _accountSid, ParameterType.UrlSegment
-        ); // used on every request
-        _accountSid = accountSid;
+        _client = new RestClient(options) {
+            Authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret)
+        };
+    }
+
+    public async Task<TwitterUser> GetUser(string user) {
+        var response = await _client.GetJsonAsync<TwitterSingleObject<TwitterUser>>(
+            "users/by/username/{user}",
+            new { user }
+        );
+        return response!.Data;
+    }
+
+    record TwitterSingleObject<T>(T Data);
+
+    public void Dispose() {
+        _client?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
 ```
 
-Next, define a class that maps to the data returned by the API.
+Couple of things that don't fall to the "basics" list.
+- The API client class needs to be disposable, so it can dispose the wrapped `HttpClient` instance
+- Twitter API returns wrapped models. In this case we use the `TwitterSingleObject` wrapper, in other methods you'd need a similar object with `T[] Data` to accept collections
 
-```csharp
-// Call.cs
-public class Call {
-    public string Sid { get; set; }
-    public DateTime DateCreated { get; set; }
-    public DateTime DateUpdated { get; set; }
-    public string CallSegmentSid { get; set; }
-    public string AccountSid { get; set; }
-    public string Called { get; set; }
-    public string Caller { get; set; }
-    public string PhoneNumberSid { get; set; }
-    public int Status { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public int Duration { get; set; }
-    public decimal Price { get; set; }
-    public int Flags { get; set; }
-}
-```
+You can find the full example code in [this gist](https://gist.github.com/alexeyzimarev/62d77bb25d7aa5bb4b9685461f8aabdd).
 
-Then add a method to query the API for the details of a specific Call resource.
-
-```csharp
-// TwilioApi.cs, GetCall method of TwilioApi class
-public Task<Call> GetCall(string callSid) {
-    var request = new RestRequest("Accounts/{AccountSid}/Calls/{CallSid}");
-    request.RootElement = "Call";
-    request.AddParameter("CallSid", callSid, ParameterType.UrlSegment);
-
-    return _client.GetAsync<Call>(request);
-}
-```
-
-There's some magic here that RestSharp takes care of, so you don't have to.
-
-The API returns XML, which is automatically detected and deserialized to the Call object using the default `XmlDeserializer`.
-By default, a call is made via a GET HTTP request. You can change this by setting the `Method` property of `RestRequest` 
-or specifying the method in the constructor when creating an instance (covered below).
-Parameters of type `UrlSegment` have their values injected into the URL based on a matching token name existing in the Resource property value. 
-`AccountSid` is set in `TwilioApi.Execute` because it is common to every request.
-We specify the name of the root element to start deserializing from. In this case, the XML returned is `<Response><Call>...</Call></Response>` and since the Response element itself does not contain any information relevant to our model, we start the deserializing one step down the tree.
-
-You can also make POST (and PUT/DELETE/HEAD/OPTIONS) requests:
-
-```csharp
-// TwilioApi.cs, method of TwilioApi class
-public Task<Call> InitiateOutboundCall(CallOptions options) {
-    var request = new RestRequest("Accounts/{AccountSid}/Calls") {
-        RootElement = "Calls"
-    }
-        .AddParameter("Caller", options.Caller)
-        .AddParameter("Called", options.Called)
-        .AddParameter("Url", options.Url);
-
-    if (options.Method.HasValue) request.AddParameter("Method", options.Method);
-    if (options.SendDigits.HasValue()) request.AddParameter("SendDigits", options.SendDigits);
-    if (options.IfMachine.HasValue) request.AddParameter("IfMachine", options.IfMachine.Value);
-    if (options.Timeout.HasValue) request.AddParameter("Timeout", options.Timeout.Value);
-
-    return _client.PostAsync<Call>(request);
-}
-```
-
-This example also demonstrates RestSharp's lightweight validation helpers. 
-These helpers allow you to verify before making the request that the values submitted are valid. 
-Read more about Validation here.
-
-All the values added via `AddParameter` in this example will be submitted as a standard encoded form, 
-similar to a form submission made via a web page. If this were a GET-style request (GET/DELETE/OPTIONS/HEAD), 
-the parameter values would be submitted via the query string instead. You can also add header and cookie 
-parameters with `AddParameter`. To add all properties for an object as parameters, use `AddObject`. 
-To add a file for upload, use `AddFile` (the request will be sent as a multipart encoded form). 
-To include a request body like XML or JSON, use `AddXmlBody` or `AddJsonBody`.
+Such a client can and should be used _as a singleton_, as it's thread-safe and authentication-aware. If you make it a transient dependency, you'll keep bombarding Twitter with token requests and effectively half your request limit.
 
 ## Request Parameters
 
@@ -159,6 +187,15 @@ The name of the parameter will be used as the `Content-Type` header for the requ
 If you have `GetOrPost` parameters as well, they will overwrite the `RequestBody` - RestSharp will not combine them, but it will instead throw the `RequestBody` parameter away.
 
 We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
+
+#### AddStringBody
+
+If you have a pre-serialized payload like a JSON string, you can use `AddStringBody` to add it as a body parameter. You need to specify the content type, so the remote endpoint knows what to do with the request body. For example:
+
+```csharp
+const json = "{ data: { foo: \"bar\" } }";
+request.AddStringBody(json, ContentType.Json);
+```
 
 #### AddJsonBody
 
