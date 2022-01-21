@@ -150,7 +150,7 @@ public class RestRequest {
     /// <summary>
     /// Function that formats the content type header for multipart form fata
     /// </summary>
-    public FormatContentTypeHeader FormatMultipartContentType { get; set; } = (contentType, boundary) => $"{contentType}; boundary=\"{boundary}\"";
+    public FormatContentTypeHeader? FormatMultipartContentType { get; set; }
 
     /// <summary>
     /// Set this to write response to Stream rather than reading into memory.

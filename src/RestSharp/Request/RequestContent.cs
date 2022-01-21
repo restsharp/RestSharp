@@ -44,7 +44,13 @@ class RequestContent : IDisposable {
         var postParameters = _request.Parameters.GetContentParameters(_request.Method);
         AddBody(!postParameters.IsEmpty());
         AddPostParameters(postParameters);
+
+        if (Content is MultipartFormDataContent && _request.FormatMultipartContentType != null) {
+            ReplaceHeader(ContentType, GetContentTypeHeader(Content.Headers.ContentType!.MediaType!));
+        }
+
         AddHeaders();
+
         return Content!;
     }
 
@@ -180,15 +186,24 @@ class RequestContent : IDisposable {
                 _           => parameterStringValue
             };
             var pName = Ensure.NotNull(parameter.Name, nameof(parameter.Name));
-            Content!.Headers.Remove(pName);
-            Content!.Headers.TryAddWithoutValidation(pName, value);
+            ReplaceHeader(pName, value);
         }
     }
 
-    string GetContentTypeHeader(string contentType)
-        => Content is MultipartFormDataContent mpContent
-            ? _request.FormatMultipartContentType(contentType, mpContent.GetFormBoundary())
+    void ReplaceHeader(string name, string? value) {
+        Content!.Headers.Remove(name);
+        Content!.Headers.TryAddWithoutValidation(name, value);
+    }
+
+    static readonly FormatContentTypeHeader DefaultContentTypeHeader = (contentType, boundary) => $"{contentType}; boundary=\"{boundary}\"";
+
+    string GetContentTypeHeader(string contentType) {
+        return Content is MultipartFormDataContent mpContent
+            ? ContentTypeValue()(contentType, mpContent.GetFormBoundary())
             : contentType;
+
+        FormatContentTypeHeader ContentTypeValue() => _request.FormatMultipartContentType ?? DefaultContentTypeHeader;
+    }
 
     public void Dispose() {
         _streams.ForEach(x => x.Dispose());

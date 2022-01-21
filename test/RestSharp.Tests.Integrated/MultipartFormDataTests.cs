@@ -178,6 +178,30 @@ public sealed class MultipartFormDataTests : IDisposable {
     }
 
     [Fact]
+    public async Task MultipartFormDataWithBoundaryOverride() {
+        var request = new RestRequest("/", Method.Post) {
+            AlwaysMultipartFormData = true,
+            FormatMultipartContentType = (ct, b) => $"{ct}; boundary=--------{b}"
+        };
+
+        AddParameters(request);
+
+        HttpContent content  = null;
+        var      boundary = "";
+
+        request.OnBeforeRequest = http => {
+            content  = http.Content;
+            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
+            return default;
+        };
+        
+        await _client.ExecuteAsync(request);
+
+        var contentType = content.Headers.ContentType!.ToString();
+        contentType.Should().Be($"multipart/form-data; boundary=--------{boundary}");
+    }
+
+    [Fact]
     public async Task MultipartFormDataAsync() {
         var request = new RestRequest("/", Method.Post) { AlwaysMultipartFormData = true };
 
