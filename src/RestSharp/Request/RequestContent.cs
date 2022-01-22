@@ -128,14 +128,16 @@ class RequestContent : IDisposable {
         var bodyContent = Serialize(bodyParameter!);
 
         // we need to send the body
-        if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!)) {
+        if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!) || _request.AlwaysMultipartFormData) {
             // here we must use multipart form data
             var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
+            var ct        = bodyContent.Headers.ContentType?.MediaType;
+            var name      = bodyParameter!.Name.IsEmpty() ? ct : bodyParameter!.Name;
 
-            if (bodyParameter!.Name.IsEmpty())
+            if (name.IsEmpty())
                 mpContent.Add(bodyContent);
             else
-                mpContent.Add(bodyContent, bodyParameter.Name!);
+                mpContent.Add(bodyContent, name!);
             Content = mpContent;
         }
         else {

@@ -85,6 +85,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         AddParameters(request);
 
         string boundary = null;
+
         request.OnBeforeRequest = http => {
             boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
             return default;
@@ -110,6 +111,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
         string boundary = null;
+
         request.OnBeforeRequest = http => {
             boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
             return default;
@@ -139,6 +141,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
         string boundary = null;
+
         request.OnBeforeRequest = http => {
             boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
             return default;
@@ -165,6 +168,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
         string boundary = null;
+
         request.OnBeforeRequest = http => {
             boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
             return default;
@@ -180,21 +184,21 @@ public sealed class MultipartFormDataTests : IDisposable {
     [Fact]
     public async Task MultipartFormDataWithBoundaryOverride() {
         var request = new RestRequest("/", Method.Post) {
-            AlwaysMultipartFormData = true,
+            AlwaysMultipartFormData    = true,
             FormatMultipartContentType = (ct, b) => $"{ct}; boundary=--------{b}"
         };
 
         AddParameters(request);
 
         HttpContent content  = null;
-        var      boundary = "";
+        var         boundary = "";
 
         request.OnBeforeRequest = http => {
             content  = http.Content;
             boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
             return default;
         };
-        
+
         await _client.ExecuteAsync(request);
 
         var contentType = content.Headers.ContentType!.ToString();
@@ -218,5 +222,22 @@ public sealed class MultipartFormDataTests : IDisposable {
         var expected = string.Format(Expected, boundary);
 
         response.Content.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task ShouldHaveJsonContentType() {
+        var jsonData = new {
+            Company = "Microsoft",
+            ZipCode = "LS339",
+            Country = "USA"
+        };
+
+        var request = new RestRequest {
+            Method                  = Method.Post,
+            AlwaysMultipartFormData = true
+        };
+        request.AddJsonBody(jsonData);
+
+        var response = await _client.ExecuteAsync(request);
     }
 }
