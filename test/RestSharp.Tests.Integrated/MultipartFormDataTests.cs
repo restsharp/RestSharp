@@ -34,7 +34,7 @@ public sealed class MultipartFormDataTests : IDisposable {
     const string ExpectedFileAndBodyRequestContent =
         "--{0}" +
         $"{LineBreak}{KnownHeaders.ContentType}: application/octet-stream" +
-        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=fileName; filename=TestFile.txt; filename*=utf-8''TestFile.txt" +
+        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=fileName; filename=TestFile.txt" +
         $"{LineBreak}{LineBreak}This is a test file for RestSharp.{LineBreak}" +
         $"--{{0}}{LineBreak}{KnownHeaders.ContentType}: application/json; {CharsetString}" +
         $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=controlName" +
@@ -123,8 +123,8 @@ public sealed class MultipartFormDataTests : IDisposable {
         _output.WriteLine($"Expected: {expectedFileAndBodyRequestContent}");
         _output.WriteLine($"Actual: {response.Content}");
 
-        Assert.Equal(expectedFileAndBodyRequestContent, response.Content);
-        Assert.Equal(expectedDefaultMultipartContentType, RequestHandler.CapturedContentType);
+        response.Content.Should().Be(expectedFileAndBodyRequestContent);
+        expectedDefaultMultipartContentType.Should().Be(RequestHandler.CapturedContentType);
     }
 
     [Fact]

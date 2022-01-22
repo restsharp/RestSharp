@@ -66,6 +66,11 @@ class RequestContent : IDisposable {
 
             if (file.ContentType != null)
                 fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
+
+            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") {
+                Name     = file.Name,
+                FileName = file.FileName
+            };
             mpContent.Add(fileContent, file.Name, file.FileName);
         }
 
