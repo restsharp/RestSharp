@@ -75,7 +75,7 @@ public partial class RestClient : IDisposable {
     public RestClient(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
     public RestClient(HttpClient httpClient, RestClientOptions? options = null, bool disposeHttpClient = false) {
-        if (Options?.CookieContainer != null) {
+        if (options?.CookieContainer != null) {
             throw new ArgumentException("Custom cookie container cannot be added to the HttpClient instance", nameof(options.CookieContainer));
         }
 
