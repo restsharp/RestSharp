@@ -95,7 +95,7 @@ public partial class RestClient : IDisposable {
     /// </summary>
     /// <param name="handler">Message handler instance to use for HttpClient</param>
     /// <param name="disposeHandler">Dispose the handler when disposing RestClient, true by default</param>
-    public RestClient(HttpMessageHandler handler, bool disposeHandler = true) : this(new HttpClient(handler, disposeHandler)) { }
+    public RestClient(HttpMessageHandler handler, bool disposeHandler = true) : this(new HttpClient(handler, disposeHandler), null, true) { }
 
     void ConfigureHttpClient(HttpClient httpClient) {
         if (Options.Timeout > 0)
