@@ -359,3 +359,44 @@ var statusCode = client.PostJsonAsync("orders", request, cancellationToken);
 ```
 
 The same two extensions also exist for `PUT` requests (`PutJsonAsync`);
+
+## Blazor support
+
+Inside a Blazor webassembly app, you can make requests to external API endpoints. Microsoft examples show how to do it with `HttpClient`, and it's also possible to use RestSharp for the same purpose.
+
+You need to remember that webassembly has some platform-specific limitations. Therefore, you won't be able to instantiate `RestClient` using all of its constructors. In fact, you can only use `RestClient` constructors that accept `HttpClient` or `HttpMessageHandler` as an argument. If you use the default parameterless constructor, it will call the option-based constructor with default options. The options-based constructor will attempt to create an `HttpMessageHandler` instance using the options provided, and it will fail with Blazor, as some of those options throw thw "Unsupported platform" exception.
+
+Here is an example how to register the `RestClient` instance globally as a singleton:
+
+```csharp
+builder.Services.AddSingleton(new RestClient(new HttpClient()));
+```
+
+Then, on a page you can inject the instance:
+
+```html
+@page "/fetchdata"
+@using RestSharp
+@inject RestClient _restClient
+```
+
+And then use it:
+
+```csharp
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync() {
+        forecasts = await _restClient.GetJsonAsync<WeatherForecast[]>("http://localhost:5104/weather");
+    }
+
+    public class WeatherForecast {
+        public DateTime Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
+```
+
+In this case, the call will be made to a WebAPI server hosted at `http://localhost:5104/weather`. Remember that if this server is not hosting the webassembly itself, it needs to have a CORS policy configure to allow the webassembly host URL to access the API endpoint in the browser.
