@@ -193,10 +193,18 @@ public partial class RestClient : IDisposable {
             );
     }
 
-    public void Dispose() {
-        if (_disposeHttpClient) HttpClient.Dispose();
-        GC.SuppressFinalize(this);
+    readonly bool _disposeHttpClient;
+    bool          _disposed;
+
+    protected virtual void Dispose(bool disposing) {
+        if (disposing && !_disposed) {
+            _disposed = true;
+            if (_disposeHttpClient) HttpClient.Dispose();
+        }
     }
 
-    readonly bool _disposeHttpClient;
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 }
