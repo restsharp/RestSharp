@@ -4,21 +4,21 @@ title: Usage
 
 ## Recommended usage
 
-RestSharp works best as the foundation for a proxy class for your API. Each API would most probably require different settings for `RestClient`, so a dedicated API class (and its interface) gives you a nice isolation between different `RestClient` instances, and make them testable.
+RestSharp works best as the foundation for a proxy class for your API. Each API would most probably require different settings for `RestClient`. Hence, a dedicated API class (and its interface) gives you sound isolation between different `RestClient` instances and make them testable.
 
 Essentially, RestSharp is a wrapper around `HttpClient` that allows you to do the following:
 - Add default parameters of any kind (not just headers) to the client, once
 - Add parameters of any kind to each request (query, URL segment, form, attachment, serialized body, header) in a straightforward way
 - Serialize the payload to JSON or XML if necessary
-- Set the correct content headers (content type, disposition, length, etc)
+- Set the correct content headers (content type, disposition, length, etc.)
 - Handle the remote endpoint response
 - Deserialize the response from JSON or XML if necessary
 
-As an example, let's look at a simple Twitter API v2 client, which uses OAuth2 machine-to-machine authentication. For it to work, you would need to have access to Twitter Developers portal, an a project, and an approved application inside the project with OAuth2 enabled.
+For example, let's look at a simple Twitter API v2 client, which uses OAuth2 machine-to-machine authentication. For it to work, you would need to have access to the Twitter Developers portal, a project, and an approved application inside the project with OAuth2 enabled.
 
 ### Authenticator
 
-Before we can make any call to the API itself, we need to get a bearer token. Twitter exposes an endpoint `https://api.twitter.com/oauth2/token`. As it follows the OAuth2 conventions, the code can be used to create an authenticator for some other vendors.
+Before we can call the API itself, we need to get a bearer token. Twitter exposes an endpoint `https://api.twitter.com/oauth2/token`. As it follows the OAuth2 conventions, the code can be used to create an authenticator for some other vendors.
 
 First, we need a model for deserializing the token endpoint response. OAuth2 uses snake case for property naming, so we need to decorate model properties with `JsonPropertyName` attribute:
 
@@ -31,9 +31,9 @@ record TokenResponse {
 }
 ```
 
-Next, we create the authenticator itself. It needs the API key and API key secret for calling the token endpoint using basic HTTP authentication. In addition, we can extend the list of parameters with the base URL, so it can be converted to a more generic OAuth2 authenticator.
+Next, we create the authenticator itself. It needs the API key and API key secret to call the token endpoint using basic HTTP authentication. In addition, we can extend the list of parameters with the base URL to convert it to a more generic OAuth2 authenticator.
 
-The easiest way to create an authenticator is to inherit is from the `AuthanticatorBase` base class:
+The easiest way to create an authenticator is to inherit from the `AuthanticatorBase` base class:
 
 ```csharp
 public class TwitterAuthenticator : AuthenticatorBase {
@@ -54,9 +54,9 @@ public class TwitterAuthenticator : AuthenticatorBase {
 }
 ```
 
-During the first call made by the client using the authenticator, it will find out that the `Token` property is empty. It will then call the `GetToken` function to get the token once, and then will reuse the token going forwards.
+During the first call made by the client using the authenticator, it will find out that the `Token` property is empty. It will then call the `GetToken` function to get the token once and reuse the token going forward.
 
-Now, we need to include the `GetToken` function to the class:
+Now, we need to implement the `GetToken` function in the class:
 
 ```csharp
 async Task<string> GetToken() {
@@ -72,7 +72,7 @@ async Task<string> GetToken() {
 }
 ```
 
-As we need to make a call to the token endpoint, we need our own, short-lived instance of `RestClient`. Unlike the actual Twitter client, it will use the `HttpBasicAuthenticator` to send API key and secret as username and password. The client is then gets disposed as we only use it once.
+As we need to make a call to the token endpoint, we need our own short-lived instance of `RestClient`. Unlike the actual Twitter client, it will use the `HttpBasicAuthenticator` to send the API key and secret as the username and password. The client then gets disposed as we only use it once.
 
 Here we add a POST parameter `grant_type` with `client_credentials` as its value. At the moment, it's the only supported value.
 
@@ -97,8 +97,8 @@ public record TwitterUser(string Id, string Name, string Username);
 When that is done, we can implement the interface and add all the necessary code blocks to get a working API client.
 
 The client class needs the following:
-- A constructor, which accepts API credentials to be passed to the authenticator
-- A wrapped `RestClient` instance with Twitter API base URI pre-configured
+- A constructor, which accepts API credentials to pass to the authenticator
+- A wrapped `RestClient` instance with the Twitter API base URI pre-configured
 - The `TwitterAuthenticator` that we created previously as the client authenticator
 - The actual function to get the user
 
@@ -131,9 +131,9 @@ public class TwitterClient : ITwitterClient, IDisposable {
 }
 ```
 
-Couple of things that don't fall to the "basics" list.
-- The API client class needs to be disposable, so it can dispose the wrapped `HttpClient` instance
-- Twitter API returns wrapped models. In this case we use the `TwitterSingleObject` wrapper, in other methods you'd need a similar object with `T[] Data` to accept collections
+The code above includes a couple of things that go beyond the "basics", and so we won't cover them here:
+- The API client class needs to be disposable, so that it can dispose of the wrapped `HttpClient` instance
+- Twitter API returns wrapped models. In this case, we use the `TwitterSingleObject` wrapper. In other methods, you'd need a similar object with `T[] Data` to accept collections
 
 You can find the full example code in [this gist](https://gist.github.com/alexeyzimarev/62d77bb25d7aa5bb4b9685461f8aabdd).
 
@@ -168,15 +168,15 @@ After you've created a `RestRequest`, you can add parameters to it. Below, you c
 
 ### Http Header
 
-Adds the parameter as an HTTP header that is sent along with the request. The header name is the name of the parameter and the header value is the value.
+Adds the parameter as an HTTP header that is sent along with the request. The header name is the parameter's name and the header value is the value.
 
 ::: warning Content-Type
-RestSharp will use the correct content type by default. Avoid adding the `Content-Type` header manually to your requests, unless you are absolutely sure it is required. You can add a custom content type to the [body parameter](#request-body) itself.
+RestSharp will use the correct content type by default. Avoid adding the `Content-Type` header manually to your requests unless you are absolutely sure it is required. You can add a custom content type to the [body parameter](#request-body) itself.
 :::
 
 ### Get or Post
 
-This behaves differently based on the method. If you execute a GET call, RestSharp will append the parameters to the Url in the form `url?name1=value1&name2=value2`.
+`GetOrPost` behaves differently based on the method. If you execute a GET call, RestSharp will append the parameters to the Url in the form `url?name1=value1&name2=value2`.
 
 On a POST or PUT Requests, it depends on whether you have files attached to a Request.
 If not, the Parameters will be sent as the body of the request in the form `name1=value1&name2=value2`. Also, the request will be sent as `application/x-www-form-urlencoded`.
@@ -219,15 +219,6 @@ request.AddStringBody(json, ContentType.Json);
 
 You can specify a custom body content type if necessary. The `contentType` argument is available in all the overloads that add a request body.
 
-#### AddStringBody
-
-If you have a pre-serialized payload like a JSON string, you can use `AddStringBody` to add it as a body parameter. You need to specify the content type, so the remote endpoint knows what to do with the request body. For example:
-
-```csharp
-const json = "{ data: { foo: \"bar\" } }";
-request.AddStringBody(json, ContentType.Json);
-```
-
 #### AddJsonBody
 
 When you call `AddJsonBody`, it does the following for you:
@@ -237,7 +228,7 @@ When you call `AddJsonBody`, it does the following for you:
 - Sets the internal data type of the request body to `DataType.Json`
 
 ::: warning
-Do not send JSON string or some sort of `JObject` instance to `AddJsonBody`, it won't work! Use `AddStringBody` instead.
+Do not send JSON string or some sort of `JObject` instance to `AddJsonBody`; it won't work! Use `AddStringBody` instead.
 :::
 
 Here is the example:
@@ -256,12 +247,12 @@ When you call `AddXmlBody`, it does the following for you:
 - Sets the internal data type of the request body to `DataType.Xml`
 
 ::: warning
-Do not send XML string to `AddXmlBody`, it won't work!
+Do not send XML string to `AddXmlBody`; it won't work!
 :::
 
 ### Query String
 
-This works like `GetOrPost`, except that it always appends the parameters to the url in the form `url?name1=value1&name2=value2`, regardless of the request method.
+`QueryString` works like `GetOrPost`, except that it always appends the parameters to the url in the form `url?name1=value1&name2=value2`, regardless of the request method.
 
 Example:
 
@@ -280,11 +271,11 @@ You can also specify the query string parameter type explicitly:
 request.AddParameter("foo", "bar", ParameterType.QueryString);
 ```
 
-In some cases you might need to prevent RestSharp from encoding the query string parameter. To do so, use the `QueryStringWithoutEncode` parameter type.
+In some cases, you might need to prevent RestSharp from encoding the query string parameter. To do so, use the `QueryStringWithoutEncode` parameter type.
 
 ## Making a call
 
-When you have a `RestRequest` instance with all the parameters added to it, you are ready to make a request.
+Once you've added all the parameters to your `RestRequest`, you are ready to make a request.
 
 `RestClient` has a single function for this:
 
@@ -331,13 +322,13 @@ Those extensions will throw an exception if the server returns an error, as ther
 
 ### JSON requests
 
-For making a simple `GET` call and get a deserialized JSON response with a pre-formed resource string, use this:
+To make a simple `GET` call and get a deserialized JSON response with a pre-formed resource string, use this:
 
 ```csharp
 var response = await client.GetJsonAsync<TResponse>("endpoint?foo=bar", cancellationToken);
 ```
 
-You can also use a more advance extension that uses an object to compose the resource string:
+You can also use a more advanced extension that uses an object to compose the resource string:
 
 ```csharp
 var client = new RestClient("https://example.org");
