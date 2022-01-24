@@ -34,7 +34,7 @@ public sealed class MultipartFormDataTests : IDisposable {
     const string ExpectedFileAndBodyRequestContent =
         "--{0}" +
         $"{LineBreak}{KnownHeaders.ContentType}: application/octet-stream" +
-        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=fileName; filename=TestFile.txt" +
+        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" +
         $"{LineBreak}{LineBreak}This is a test file for RestSharp.{LineBreak}" +
         $"--{{0}}{LineBreak}{KnownHeaders.ContentType}: application/json; {CharsetString}" +
         $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=controlName" +

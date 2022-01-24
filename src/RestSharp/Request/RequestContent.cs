@@ -68,8 +68,8 @@ class RequestContent : IDisposable {
                 fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
 
             fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") {
-                Name     = file.Name,
-                FileName = file.FileName
+                Name     = $"\"{file.Name}\"",
+                FileName = $"\"{file.FileName}\""
             };
             mpContent.Add(fileContent, file.Name, file.FileName);
         }
@@ -132,7 +132,7 @@ class RequestContent : IDisposable {
             // here we must use multipart form data
             var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
             var ct        = bodyContent.Headers.ContentType?.MediaType;
-            var name      = bodyParameter!.Name.IsEmpty() ? ct : bodyParameter!.Name;
+            var name      = bodyParameter!.Name.IsEmpty() ? ct : bodyParameter.Name;
 
             if (name.IsEmpty())
                 mpContent.Add(bodyContent);
