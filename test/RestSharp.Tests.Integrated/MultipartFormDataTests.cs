@@ -84,16 +84,9 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         AddParameters(request);
 
-        string boundary = null;
-
-        request.OnBeforeRequest = http => {
-            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
-            return default;
-        };
-
         var response = await _client.ExecuteAsync(request);
 
-        var expected = string.Format(Expected, boundary);
+        var expected = string.Format(Expected, request.FormBoundary);
 
         _output.WriteLine($"Expected: {expected}");
         _output.WriteLine($"Actual: {response.Content}");
@@ -110,14 +103,9 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
-        string boundary = null;
-
-        request.OnBeforeRequest = http => {
-            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
-            return default;
-        };
-
         var response = await _client.ExecuteAsync(request);
+
+        var boundary = request.FormBoundary;
 
         var expectedFileAndBodyRequestContent   = string.Format(ExpectedFileAndBodyRequestContent, boundary);
         var expectedDefaultMultipartContentType = string.Format(ExpectedDefaultMultipartContentType, boundary);
@@ -140,14 +128,8 @@ public sealed class MultipartFormDataTests : IDisposable {
         request.AddFile("fileName", path);
         request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
-        string boundary = null;
-
-        request.OnBeforeRequest = http => {
-            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
-            return default;
-        };
-
         var response = await _client.ExecuteAsync(request);
+        var boundary = request.FormBoundary;
 
         var expectedFileAndBodyRequestContent  = string.Format(ExpectedFileAndBodyRequestContent, boundary);
         var expectedCustomMultipartContentType = string.Format(ExpectedCustomMultipartContentType, boundary);
@@ -167,42 +149,12 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
 
-        string boundary = null;
-
-        request.OnBeforeRequest = http => {
-            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
-            return default;
-        };
-
         var response = await _client.ExecuteAsync(request);
+        var boundary = request.FormBoundary;
 
         var expectedFileAndBodyRequestContent = string.Format(ExpectedFileAndBodyRequestContent, boundary);
 
         response.Content.Should().Be(expectedFileAndBodyRequestContent);
-    }
-
-    [Fact]
-    public async Task MultipartFormDataWithBoundaryOverride() {
-        var request = new RestRequest("/", Method.Post) {
-            AlwaysMultipartFormData    = true,
-            FormatMultipartContentType = (ct, b) => $"{ct}; boundary=--------{b}"
-        };
-
-        AddParameters(request);
-
-        HttpContent content  = null;
-        var         boundary = "";
-
-        request.OnBeforeRequest = http => {
-            content  = http.Content;
-            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
-            return default;
-        };
-
-        await _client.ExecuteAsync(request);
-
-        var contentType = content.Headers.ContentType!.ToString();
-        contentType.Should().Be($"multipart/form-data; boundary=--------{boundary}");
     }
 
     [Fact]
@@ -211,14 +163,9 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         AddParameters(request);
 
-        string boundary = null;
-
-        request.OnBeforeRequest = http => {
-            boundary = ((MultipartFormDataContent)http.Content)!.GetFormBoundary();
-            return default;
-        };
-
         var response = await _client.ExecuteAsync(request);
+
+        var boundary = request.FormBoundary;
         var expected = string.Format(Expected, boundary);
 
         response.Content.Should().Be(expected);

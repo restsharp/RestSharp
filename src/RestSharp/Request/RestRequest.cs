@@ -17,8 +17,6 @@ using RestSharp.Extensions;
 
 namespace RestSharp;
 
-public delegate string FormatContentTypeHeader(string contentType, string formBoundary);
-
 /// <summary>
 /// Container for data used to make requests
 /// </summary>
@@ -69,6 +67,8 @@ public class RestRequest {
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
+    
+    public string? FormBoundary { get; set; }
 
     /// <summary>
     /// Container of all HTTP parameters to be passed with the request.
@@ -146,11 +146,6 @@ public class RestRequest {
     /// Completion option for <seealso cref="HttpClient"/>
     /// </summary>
     public HttpCompletionOption CompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
-
-    /// <summary>
-    /// Function that formats the content type header for multipart form fata
-    /// </summary>
-    public FormatContentTypeHeader? FormatMultipartContentType { get; set; }
 
     /// <summary>
     /// Set this to write response to Stream rather than reading into memory.

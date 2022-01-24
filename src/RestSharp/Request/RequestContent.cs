@@ -44,11 +44,6 @@ class RequestContent : IDisposable {
         var postParameters = _request.Parameters.GetContentParameters(_request.Method);
         AddBody(!postParameters.IsEmpty());
         AddPostParameters(postParameters);
-
-        if (Content is MultipartFormDataContent && _request.FormatMultipartContentType != null) {
-            ReplaceHeader(ContentType, GetContentTypeHeader(Content.Headers.ContentType!.MediaType!));
-        }
-
         AddHeaders();
 
         return Content!;
@@ -57,7 +52,7 @@ class RequestContent : IDisposable {
     void AddFiles() {
         if (!_request.HasFiles() && !_request.AlwaysMultipartFormData) return;
 
-        var mpContent = new MultipartFormDataContent();
+        var mpContent = new MultipartFormDataContent(GetOrSetFormBoundary());
 
         foreach (var file in _request.Files) {
             var stream = file.GetFile();
@@ -122,6 +117,8 @@ class RequestContent : IDisposable {
         return bodyParameter.Name.IsNotEmpty() && bodyParameter.Name != bodyContentType;
     }
 
+    string GetOrSetFormBoundary() => _request.FormBoundary ?? (_request.FormBoundary = Guid.NewGuid().ToString());
+
     void AddBody(bool hasPostParameters) {
         if (!_request.TryGetBodyParameter(out var bodyParameter)) return;
 
@@ -130,7 +127,7 @@ class RequestContent : IDisposable {
         // we need to send the body
         if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!) || _request.AlwaysMultipartFormData) {
             // here we must use multipart form data
-            var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent();
+            var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent(GetOrSetFormBoundary());
             var ct        = bodyContent.Headers.ContentType?.MediaType;
             var name      = bodyParameter!.Name.IsEmpty() ? ct : bodyParameter.Name;
 
@@ -167,7 +164,7 @@ class RequestContent : IDisposable {
             var formContent = new FormUrlEncodedContent(
                 _request.Parameters
                     .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))
             );
             Content = formContent;
         }
@@ -195,21 +192,16 @@ class RequestContent : IDisposable {
             var pName = Ensure.NotNull(parameter.Name, nameof(parameter.Name));
             ReplaceHeader(pName, value);
         }
+
+        string GetContentTypeHeader(string contentType)
+            => Content is MultipartFormDataContent
+                ? $"{contentType}; boundary=\"{GetOrSetFormBoundary()}\""
+                : contentType;
     }
 
     void ReplaceHeader(string name, string? value) {
         Content!.Headers.Remove(name);
         Content!.Headers.TryAddWithoutValidation(name, value);
-    }
-
-    static readonly FormatContentTypeHeader DefaultContentTypeHeader = (contentType, boundary) => $"{contentType}; boundary=\"{boundary}\"";
-
-    string GetContentTypeHeader(string contentType) {
-        return Content is MultipartFormDataContent mpContent
-            ? ContentTypeValue()(contentType, mpContent.GetFormBoundary())
-            : contentType;
-
-        FormatContentTypeHeader ContentTypeValue() => _request.FormatMultipartContentType ?? DefaultContentTypeHeader;
     }
 
     public void Dispose() {
