@@ -399,4 +399,4 @@ And then use it:
 }
 ```
 
-In this case, the call will be made to a WebAPI server hosted at `http://localhost:5104/weather`. Remember that if this server is not hosting the webassembly itself, it needs to have a CORS policy configure to allow the webassembly host URL to access the API endpoint in the browser.
+In this case, the call will be made to a WebAPI server hosted at `http://localhost:5104/weather`. Remember that if the WebAPI server is not hosting the webassembly itself, it needs to have a CORS policy configured to allow the webassembly origin to access the API endpoint from the browser.
