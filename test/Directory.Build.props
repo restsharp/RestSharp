@@ -15,7 +15,7 @@
     <ItemGroup>
         <PackageReference Include="xunit" Version="2.4.1"/>
         <PackageReference Include="AutoFixture" Version="4.17.0"/>
-        <PackageReference Include="FluentAssertions" Version="6.3.0"/>
+        <PackageReference Include="FluentAssertions" Version="6.4.0"/>
     </ItemGroup>
 
     <ItemGroup>
