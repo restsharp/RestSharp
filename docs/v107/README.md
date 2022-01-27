@@ -97,9 +97,9 @@ The `Utf8` serializer package is deprecated as the package is not being updated.
 For XML requests and responses RestSharp uses `DotNetXmlSerializer` and `DotNetXmlDeserializer`.
 Previously used default `XmlSerializer`, `XmlDeserializer`, and `XmlAttrobuteDeserializer` are moved to a separate package `RestSharp.Serializers.Xml`.
 
-### NTML authentication
+### NTLM authentication
 
-The `NtmlAuthenticator` is deprecated.
+The `NtlmAuthenticator` is deprecated.
 
 NTLM authenticator was doing nothing more than telling `WebRequest` to use certain credentials. Now with RestSharp, the preferred way would be to set the `Credentials` or `UseDefaultCredentials` property in `RestClientOptions`.
 
