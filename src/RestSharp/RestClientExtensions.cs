@@ -12,6 +12,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
+using System.Runtime.CompilerServices;
+
 namespace RestSharp;
 
 [PublicAPI]
@@ -290,6 +292,39 @@ public static partial class RestClientExtensions {
         var response = await client.ExecuteAsync(request, Method.Delete, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
+    }
+
+    /// <summary>
+    /// Reads a stream returned by the specified endpoint, deserializes each line to JSON and returns each object asynchronously.
+    /// It is required for each JSON object to be returned in a single line.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="resource"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    [PublicAPI]
+    public static async IAsyncEnumerable<T> StreamJsonAsync<T>(
+        this RestClient                            client,
+        string                                     resource,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    ) {
+        var request = new RestRequest(resource) { CompletionOption = HttpCompletionOption.ResponseHeadersRead };
+
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken);
+        if (stream == null) yield break;
+
+        var serializer = client.Serializers[DataFormat.Json].GetSerializer();
+
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested) {
+            var line = await reader.ReadLineAsync();
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            var response = new RestResponse { Content = line };
+            yield return serializer.Deserializer.Deserialize<T>(response)!;
+        }
     }
 
     /// <summary>

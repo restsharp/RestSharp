@@ -1,5 +1,13 @@
 ﻿using RestSharp.InteractiveTests;
 
+var client = new TwitterClient("apikey", "apisecret");
+
+await foreach (var tweet in client.SearchStream()) {
+    Console.WriteLine(tweet);
+}
+
+return;
+
 var keys = new AuthenticationTests.TwitterKeys {
     ConsumerKey    = Prompt("Consumer key"),
     ConsumerSecret = Prompt("Consumer secret"),
