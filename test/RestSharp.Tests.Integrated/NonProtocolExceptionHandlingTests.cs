@@ -34,11 +34,17 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
     }
 
-    /// <summary>
-    /// Tests that RestSharp properly handles a non-protocol error.
-    /// Simulates a server timeout, then verifies that the ErrorException
-    /// property is correctly populated.
-    /// </summary>
+    [Fact]
+    public async Task Handles_HttpClient_Timeout_Error() {
+        var client = new RestClient(new HttpClient {Timeout = TimeSpan.FromMilliseconds(500)});
+
+        var request = new RestRequest($"{_server.Url}/404");
+        var response = await client.ExecuteAsync(request);
+
+        response.ErrorException.Should().BeOfType<TaskCanceledException>();
+        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut);
+    }
+
     [Fact]
     public async Task Handles_Server_Timeout_Error() {
         var client = new RestClient(_server.Url);
@@ -46,26 +52,19 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var request = new RestRequest("404") { Timeout = 500 };
         var response = await client.ExecuteAsync(request);
 
-        Assert.NotNull(response.ErrorException);
-        Assert.IsType<TaskCanceledException>(response.ErrorException);
-        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+        response.ErrorException.Should().BeOfType<TaskCanceledException>();
+        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut);
     }
 
-    /// <summary>
-    /// Tests that RestSharp properly handles a non-protocol error.
-    /// Simulates a server timeout, then verifies that the ErrorException
-    /// property is correctly populated.
-    /// </summary>
     [Fact]
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
         var client   = new RestClient(_server.Url);
         var request  = new RestRequest("404") { Timeout = 500 };
         var response = await client.ExecuteAsync<TestResponse>(request);
 
-        Assert.Null(response.Data);
-        Assert.NotNull(response.ErrorException);
-        Assert.IsType<TaskCanceledException>(response.ErrorException);
-        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+        response.Data.Should().BeNull();
+        response.ErrorException.Should().BeOfType<TaskCanceledException>();
+        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut);
     }
 
     [Fact]

@@ -70,8 +70,8 @@ public class StatusCodeTests : IDisposable {
 
         var response = await _client.ExecuteAsync<TestResponse>(request);
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("Not found!", response.Data.Message);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Data.Message.Should().Be("Not found!");
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class StatusCodeTests : IDisposable {
         var request  = new RestRequest("404");
         var response = await _client.ExecuteAsync(request);
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class StatusCodeTests : IDisposable {
         var request  = new RestRequest("100");
         var response = await _client.ExecuteAsync(request);
 
-        Assert.False(response.IsSuccessful);
+        response.IsSuccessful.Should().BeFalse();
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class StatusCodeTests : IDisposable {
         var request  = new RestRequest("204");
         var response = await _client.ExecuteAsync(request);
 
-        Assert.True(response.IsSuccessful);
+        response.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class StatusCodeTests : IDisposable {
         var request  = new RestRequest("301");
         var response = await _client.ExecuteAsync(request);
 
-        Assert.False(response.IsSuccessful);
+        response.IsSuccessful.Should().BeFalse();
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class StatusCodeTests : IDisposable {
         var request  = new RestRequest("404");
         var response = await _client.ExecuteAsync(request);
 
-        Assert.False(response.IsSuccessful);
+        response.IsSuccessful.Should().BeFalse();
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class StatusCodeTests : IDisposable {
         var request  = new RestRequest("503");
         var response = await _client.ExecuteAsync(request);
 
-        Assert.False(response.IsSuccessful);
+        response.IsSuccessful.Should().BeFalse();
     }
 }
 

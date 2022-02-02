@@ -125,13 +125,15 @@ public partial class RestClient {
 
     static RestResponse AddError(RestResponse response, Exception exception, CancellationToken timeoutToken) {
         response.ResponseStatus = exception is OperationCanceledException
-            ? timeoutToken.IsCancellationRequested ? ResponseStatus.TimedOut : ResponseStatus.Aborted
+            ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
             : ResponseStatus.Error;
 
         response.ErrorMessage   = exception.Message;
         response.ErrorException = exception;
 
         return response;
+
+        bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
     }
 
     internal static RestResponse ThrowIfError(RestResponse response) {
