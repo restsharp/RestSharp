@@ -13,6 +13,7 @@
 //   limitations under the License. 
 
 using System.Runtime.CompilerServices;
+using RestSharp.Extensions;
 
 namespace RestSharp;
 
@@ -295,6 +296,23 @@ public static partial class RestClientExtensions {
     }
 
     /// <summary>
+    /// A specialized method to download files.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">Pre-configured request instance.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The downloaded file.</returns>
+    [PublicAPI]
+    public static async Task<byte[]?> DownloadDataAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+#if NETSTANDARD
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#else
+        await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#endif
+        return stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Reads a stream returned by the specified endpoint, deserializes each line to JSON and returns each object asynchronously.
     /// It is required for each JSON object to be returned in a single line.
     /// </summary>
@@ -311,7 +329,11 @@ public static partial class RestClientExtensions {
     ) {
         var request = new RestRequest(resource) { CompletionOption = HttpCompletionOption.ResponseHeadersRead };
 
-        using var stream = await client.DownloadStreamAsync(request, cancellationToken);
+#if NETSTANDARD
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#else
+        await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#endif
         if (stream == null) yield break;
 
         var serializer = client.Serializers[DataFormat.Json].GetSerializer();
@@ -319,7 +341,7 @@ public static partial class RestClientExtensions {
         using var reader = new StreamReader(stream);
 
         while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested) {
-            var line = await reader.ReadLineAsync();
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(line)) continue;
 
             var response = new RestResponse { Content = line };

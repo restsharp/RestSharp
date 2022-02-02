@@ -360,6 +360,34 @@ var statusCode = client.PostJsonAsync("orders", request, cancellationToken);
 
 The same two extensions also exist for `PUT` requests (`PutJsonAsync`);
 
+### JSON streaming APIs
+
+For HTTP API endpoints that stream the response data (like [Twitter search stream](https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream)) you can use RestSharp with `StreamJsonAsync<T>`, which returns an `IAsyncEnumerable<T>`:
+
+```csharp
+public async IAsyncEnumerable<SearchResponse> SearchStream(
+    [EnumeratorCancellation] CancellationToken cancellationToken = default
+) {
+    var response = _client.StreamJsonAsync<TwitterSingleObject<SearchResponse>>(
+        "tweets/search/stream", cancellationToken
+    );
+
+    await foreach (var item in response.WithCancellation(cancellationToken)) {
+        yield return item.Data;
+    }
+}
+```
+
+The main limitation of this function is that it expects each JSON object to be returned as a single line. It is unable to parse the response by combining multiple lines into a JSON string.
+
+### Downloading binary data
+
+There are two functions that allow you to download binary data from the remote API.
+
+First, there's `DownloadDataAsync`, which returns `Task<byte[]`. It will read the binary response to the end, and return the whole binary content as a byte array. It works well for downloading smaller files.
+
+For larger responses, you can use `DownloadStreamAsync` that returns `Task<Stream>`. This function allows you to open a stream reader and asynchronously stream large responses to memory or disk.
+
 ## Blazor support
 
 Inside a Blazor webassembly app, you can make requests to external API endpoints. Microsoft examples show how to do it with `HttpClient`, and it's also possible to use RestSharp for the same purpose.
