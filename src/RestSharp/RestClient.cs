@@ -85,6 +85,9 @@ public partial class RestClient : IDisposable {
         Options            = options ?? new RestClientOptions();
         CookieContainer    = new CookieContainer();
         _disposeHttpClient = disposeHttpClient;
+        if (httpClient.BaseAddress != null && Options.BaseUrl == null) {
+            Options.BaseUrl = httpClient.BaseAddress;
+        }
 
         ConfigureHttpClient(HttpClient);
     }
