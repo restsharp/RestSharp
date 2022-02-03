@@ -70,7 +70,7 @@ var response = await client.PostAsync<MyResponse>(request, cancellationToken);
 
 All the synchronous methods are gone. If you absolutely must call without using `async` and `await`, use `GetAwaiter().GetResult()` blocking call.
 
-The `IRestResponse` interface is deprecated. You get an instance of `RestRequest` or `RestRequest<T>` in return.
+The `IRestResponse` interface is deprecated. You get an instance of `RestResponse` or `RestResponse<T>` in return.
 
 You can also use a simplified API for making POST and PUT requests:
 
@@ -97,9 +97,9 @@ The `Utf8` serializer package is deprecated as the package is not being updated.
 For XML requests and responses RestSharp uses `DotNetXmlSerializer` and `DotNetXmlDeserializer`.
 Previously used default `XmlSerializer`, `XmlDeserializer`, and `XmlAttrobuteDeserializer` are moved to a separate package `RestSharp.Serializers.Xml`.
 
-### NTML authentication
+### NTLM authentication
 
-The `NtmlAuthenticator` is deprecated.
+The `NtlmAuthenticator` is deprecated.
 
 NTLM authenticator was doing nothing more than telling `WebRequest` to use certain credentials. Now with RestSharp, the preferred way would be to set the `Credentials` or `UseDefaultCredentials` property in `RestClientOptions`.
 
