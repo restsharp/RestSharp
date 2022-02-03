@@ -380,6 +380,31 @@ public async IAsyncEnumerable<SearchResponse> SearchStream(
 
 The main limitation of this function is that it expects each JSON object to be returned as a single line. It is unable to parse the response by combining multiple lines into a JSON string.
 
+### Uploading files
+
+To add a file to the request you can use the `RestRequest` function called `AddFile`. The main function accepts the `FileParameter` argument:
+
+```csharp
+request.AddFile(fileParameter);
+```
+
+You can instantiate the file parameter using `FileParameter.Create` that accepts a bytes array, or `FileParameter.FromFile`, which will load the file from disk.
+
+There are also extension functions that wrap the creation of `FileParameter` inside:
+
+```csharp
+// Adds a file from disk
+AddFile(parameterName, filePath, contentType);
+
+// Adds an array of bytes
+AddFile(parameterName, bytes, fileName, contentType);
+
+// Adds a stream returned by the getFile function
+AddFile(parameterName, getFile, fileName, contentType);
+```
+
+Remember that `AddFile` will set all the necessary headers, so please don't try to set content headers manually.
+
 ### Downloading binary data
 
 There are two functions that allow you to download binary data from the remote API.
