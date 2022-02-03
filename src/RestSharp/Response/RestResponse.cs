@@ -70,8 +70,12 @@ public class RestResponse : RestResponseBase {
         return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse().ConfigureAwait(false);
 
         async Task<RestResponse> GetDefaultResponse() {
-            var       readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
-            using var stream   = await readTask.ConfigureAwait(false);
+            var readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
+#if NETSTANDARD
+            using var stream = await readTask.ConfigureAwait(false);
+#else
+            await using var stream = await readTask.ConfigureAwait(false);
+#endif
 
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
             var content = bytes == null ? null : httpResponse.GetResponseString(bytes, encoding);
@@ -109,7 +113,11 @@ public class RestResponse : RestResponseBase {
             Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
 
             async Task<Stream?> ReadAndConvertResponse() {
+#if NETSTANDARD
                 using var original = await ReadResponse().ConfigureAwait(false);
+#else
+                await using var original = await ReadResponse().ConfigureAwait(false);
+#endif
                 return request.ResponseWriter!(original!);
             }
         }

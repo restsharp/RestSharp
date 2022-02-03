@@ -12,6 +12,9 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
+using System.Runtime.CompilerServices;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 [PublicAPI]
@@ -290,6 +293,60 @@ public static partial class RestClientExtensions {
         var response = await client.ExecuteAsync(request, Method.Delete, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
+    }
+
+    /// <summary>
+    /// A specialized method to download files.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">Pre-configured request instance.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The downloaded file.</returns>
+    [PublicAPI]
+    public static async Task<byte[]?> DownloadDataAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+#if NETSTANDARD
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#else
+        await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#endif
+        return stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Reads a stream returned by the specified endpoint, deserializes each line to JSON and returns each object asynchronously.
+    /// It is required for each JSON object to be returned in a single line.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="resource"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    [PublicAPI]
+    public static async IAsyncEnumerable<T> StreamJsonAsync<T>(
+        this RestClient                            client,
+        string                                     resource,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    ) {
+        var request = new RestRequest(resource) { CompletionOption = HttpCompletionOption.ResponseHeadersRead };
+
+#if NETSTANDARD
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#else
+        await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#endif
+        if (stream == null) yield break;
+
+        var serializer = client.Serializers[DataFormat.Json].GetSerializer();
+
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested) {
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            var response = new RestResponse { Content = line };
+            yield return serializer.Deserializer.Deserialize<T>(response)!;
+        }
     }
 
     /// <summary>

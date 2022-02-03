@@ -37,11 +37,10 @@ public partial class RestClient {
                 )
                 .ConfigureAwait(false)
             : AddError(response, internalResponse.Exception, internalResponse.TimeoutToken);
-        
 
         response.Request = request;
         response.Request.IncreaseNumAttempts();
-        
+
         return Options.ThrowOnAnyError ? ThrowIfError(response) : response;
     }
 
@@ -104,34 +103,28 @@ public partial class RestClient {
         if (response.ResponseMessage == null) return null;
 
         if (request.ResponseWriter != null) {
+#if NETSTANDARD
             using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+#else
+            await using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+#endif
             return request.ResponseWriter(stream!);
         }
 
         return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// A specialized method to download files.
-    /// </summary>
-    /// <param name="request">Pre-configured request instance.</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The downloaded file.</returns>
-    [PublicAPI]
-    public async Task<byte[]?> DownloadDataAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        using var stream = await DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
-        return stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-    }
-
     static RestResponse AddError(RestResponse response, Exception exception, CancellationToken timeoutToken) {
         response.ResponseStatus = exception is OperationCanceledException
-            ? timeoutToken.IsCancellationRequested ? ResponseStatus.TimedOut : ResponseStatus.Aborted
+            ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
             : ResponseStatus.Error;
 
         response.ErrorMessage   = exception.Message;
         response.ErrorException = exception;
 
         return response;
+
+        bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
     }
 
     internal static RestResponse ThrowIfError(RestResponse response) {
@@ -140,7 +133,7 @@ public partial class RestClient {
 
         return response;
     }
-    
+
     static HttpMethod AsHttpMethod(Method method)
         => method switch {
             Method.Get     => HttpMethod.Get,
