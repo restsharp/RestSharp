@@ -153,7 +153,7 @@ The next RestSharp version presumably solves the following issues:
 - HTTP/2 support
 - Intermediate certificate issue
 - Uploading large files (use file parameters with `Stream`)
-- Downloading large files (use `DownloadFileStreanAsync`)
+- Downloading large files (use `DownloadFileStreamAsync`)
 
 ## Deprecated interfaces
 
