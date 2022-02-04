@@ -49,10 +49,12 @@ public static partial class RestClientExtensions {
     /// <param name="client"></param>
     /// <param name="name">Cookie name</param>
     /// <param name="value">Cookie value</param>
+    /// <param name="path">Cookie path</param>
+    /// <param name="domain">Cookie domain, must not be an empty string</param>
     /// <returns></returns>
-    public static RestClient AddCookie(this RestClient client, string name, string value) {
+    public static RestClient AddCookie(this RestClient client, string name, string value, string path, string domain) {
         lock (client.CookieContainer) {
-            client.CookieContainer.Add(new Cookie(name, value));
+            client.CookieContainer.Add(new Cookie(name, value, path, domain));
         }
 
         return client;
