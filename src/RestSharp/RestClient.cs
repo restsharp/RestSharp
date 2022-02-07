@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
@@ -38,7 +39,7 @@ public partial class RestClient : IDisposable {
 
     internal RestClientOptions Options { get; }
 
-    public RestClient(RestClientOptions options) {
+    public RestClient(RestClientOptions options, Action<HttpRequestHeaders>? configureDefaultHeaders = null) {
         UseDefaultSerializers();
 
         Options            = options;
@@ -51,8 +52,8 @@ public partial class RestClient : IDisposable {
         var finalHandler = Options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
 
         HttpClient = new HttpClient(finalHandler);
-
         ConfigureHttpClient(HttpClient);
+        configureDefaultHeaders?.Invoke(HttpClient.DefaultRequestHeaders);
     }
 
     /// <summary>
@@ -85,6 +86,7 @@ public partial class RestClient : IDisposable {
         Options            = options ?? new RestClientOptions();
         CookieContainer    = new CookieContainer();
         _disposeHttpClient = disposeHttpClient;
+
         if (httpClient.BaseAddress != null && Options.BaseUrl == null) {
             Options.BaseUrl = httpClient.BaseAddress;
         }
