@@ -27,9 +27,17 @@ class RequestContent : IDisposable {
     readonly List<Stream> _streams = new();
 
     internal static readonly string[] ContentHeaders = {
-        Allow, Expires,
-        ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
-        LastModified
+        Allow.ToLower(),
+        Expires.ToLower(),
+        ContentDisposition.ToLower(),
+        ContentEncoding.ToLower(),
+        ContentLanguage.ToLower(),
+        ContentLength.ToLower(),
+        ContentLocation.ToLower(),
+        ContentRange.ToLower(),
+        ContentType.ToLower(),
+        ContentMD5.ToLower(),
+        LastModified.ToLower(),
     };
 
     HttpContent? Content { get; set; }
@@ -172,7 +180,7 @@ class RequestContent : IDisposable {
 
     void AddHeaders() {
         var contentHeaders = _request.Parameters
-            .Where(x => x.Type == ParameterType.HttpHeader && ContentHeaders.Contains(x.Name))
+            .Where(x => x.Type == ParameterType.HttpHeader && ContentHeaders.Contains(x.Name?.ToLower()))
             .ToArray();
 
         if (contentHeaders.Length > 0 && Content == null) {
