@@ -1,6 +1,7 @@
 using System.Text.Json;
 using RestSharp.Tests.Integrated.Fixtures;
-using static RestSharp.Tests.Integrated.Fixtures.HttpServer;
+using RestSharp.Tests.Integrated.Server;
+using static RestSharp.Tests.Integrated.Server.HttpServer;
 
 namespace RestSharp.Tests.Integrated; 
 
@@ -49,4 +50,4 @@ public class PutTests {
     
 }
 
-record TestRequest(string Data, int Number);
+public record TestRequest(string Data, int Number);

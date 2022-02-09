@@ -1,5 +1,6 @@
 using System.Net;
 using RestSharp.Tests.Integrated.Fixtures;
+using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated;
 
