@@ -26,11 +26,7 @@ class RequestContent : IDisposable {
     readonly RestRequest  _request;
     readonly List<Stream> _streams = new();
 
-    internal static readonly string[] ContentHeaders = {
-        Allow, Expires,
-        ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
-        LastModified
-    };
+    
 
     HttpContent? Content { get; set; }
 
@@ -164,7 +160,7 @@ class RequestContent : IDisposable {
             var formContent = new FormUrlEncodedContent(
                 _request.Parameters
                     .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))
             );
             Content = formContent;
         }
@@ -172,7 +168,7 @@ class RequestContent : IDisposable {
 
     void AddHeaders() {
         var contentHeaders = _request.Parameters
-            .Where(x => x.Type == ParameterType.HttpHeader && ContentHeaders.Contains(x.Name))
+            .Where(x => x.Type == ParameterType.HttpHeader && IsContentHeader(x.Name!))
             .ToArray();
 
         if (contentHeaders.Length > 0 && Content == null) {
