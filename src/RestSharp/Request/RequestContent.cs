@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
 using static RestSharp.KnownHeaders;
+// ReSharper disable InvertIf
 
 // ReSharper disable SuggestBaseTypeForParameter
 
@@ -149,9 +150,10 @@ class RequestContent : IDisposable {
         if (Content is MultipartFormDataContent mpContent) {
             // we got the multipart form already instantiated, just add parameters to it
             foreach (var postParameter in postParameters!) {
+                var parameterName = postParameter.Name!;
                 mpContent.Add(
                     new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
-                    postParameter.Name!
+                    _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
                 );
             }
         }
