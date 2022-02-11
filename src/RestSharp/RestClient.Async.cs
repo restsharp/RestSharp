@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using RestSharp.Extensions;
-
 namespace RestSharp;
 
 public partial class RestClient {
@@ -33,6 +31,7 @@ public partial class RestClient {
                     request,
                     Options.Encoding,
                     CookieContainer.GetCookies(internalResponse.Url),
+                    CalculateResponseStatus,
                     cancellationToken
                 )
                 .ConfigureAwait(false)

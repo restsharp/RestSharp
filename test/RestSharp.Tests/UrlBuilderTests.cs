@@ -357,4 +357,15 @@ public class UrlBuilderTests {
 
         Assert.Equal(expected, output);
     }
+
+    [Fact]
+    public void Should_use_ipv6_address() {
+        var baseUrl = new Uri("https://[fe80::290:e8ff:fe8b:2537%en10]:8443");
+        var client  = new RestClient(baseUrl);
+        var request = new RestRequest("api/v1/auth");
+        var actual  = client.BuildUri(request);
+
+        actual.HostNameType.Should().Be(UriHostNameType.IPv6);
+        actual.AbsoluteUri.Should().Be("https://[fe80::290:e8ff:fe8b:2537]:8443/api/v1/auth");
+    }
 }
