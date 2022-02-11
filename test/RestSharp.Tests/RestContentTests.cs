@@ -1,18 +1,15 @@
-﻿using System.Net;
-
-namespace RestSharp.Tests;
+﻿namespace RestSharp.Tests;
 
 public class RestContentTests {
     [Fact]
     public void RestContent_CaseInsensitiveHeaders() {
-        var myContentType = "application/x-custom";
-        var request = new RestRequest("resource");
-        request.AddHeader("coNteNt-TypE", myContentType);
-        var client = new RestClient();
-        var content = new RequestContent(client, request);
+        const string myContentType = "application/x-custom";
+
+        var request = new RestRequest("resource").AddHeader("coNteNt-TypE", myContentType);
+        var content = new RequestContent(new RestClient(), request);
 
         var httpContent = content.BuildContent();
 
-        Assert.Equal(myContentType, httpContent.Headers.ContentType.MediaType);
+        httpContent.Headers.ContentType!.MediaType.Should().Be(myContentType);
     }
 }

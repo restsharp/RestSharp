@@ -13,6 +13,7 @@
 // limitations under the License.
 // 
 
+// ReSharper disable InvertIf
 namespace RestSharp; 
 
 class RequestHeaders {
