@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
 using static RestSharp.KnownHeaders;
+// ReSharper disable InvertIf
 
 // ReSharper disable SuggestBaseTypeForParameter
 
@@ -26,11 +27,7 @@ class RequestContent : IDisposable {
     readonly RestRequest  _request;
     readonly List<Stream> _streams = new();
 
-    internal static readonly string[] ContentHeaders = {
-        Allow, Expires,
-        ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
-        LastModified
-    };
+    
 
     HttpContent? Content { get; set; }
 
@@ -153,9 +150,10 @@ class RequestContent : IDisposable {
         if (Content is MultipartFormDataContent mpContent) {
             // we got the multipart form already instantiated, just add parameters to it
             foreach (var postParameter in postParameters!) {
+                var parameterName = postParameter.Name!;
                 mpContent.Add(
                     new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
-                    postParameter.Name!
+                    _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
                 );
             }
         }
@@ -164,7 +162,7 @@ class RequestContent : IDisposable {
             var formContent = new FormUrlEncodedContent(
                 _request.Parameters
                     .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))
             );
             Content = formContent;
         }
@@ -172,7 +170,7 @@ class RequestContent : IDisposable {
 
     void AddHeaders() {
         var contentHeaders = _request.Parameters
-            .Where(x => x.Type == ParameterType.HttpHeader && ContentHeaders.Contains(x.Name))
+            .Where(x => x.Type == ParameterType.HttpHeader && IsContentHeader(x.Name!))
             .ToArray();
 
         if (contentHeaders.Length > 0 && Content == null) {

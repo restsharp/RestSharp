@@ -61,11 +61,12 @@ public class RestResponse<T> : RestResponse {
 [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
 public class RestResponse : RestResponseBase {
     internal static async Task<RestResponse> FromHttpResponse(
-        HttpResponseMessage httpResponse,
-        RestRequest         request,
-        Encoding            encoding,
-        CookieCollection    cookieCollection,
-        CancellationToken   cancellationToken
+        HttpResponseMessage     httpResponse,
+        RestRequest             request,
+        Encoding                encoding,
+        CookieCollection        cookieCollection,
+        CalculateResponseStatus calculateResponseStatus,
+        CancellationToken       cancellationToken
     ) {
         return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse().ConfigureAwait(false);
 
@@ -78,7 +79,7 @@ public class RestResponse : RestResponseBase {
 #endif
 
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-            var content = bytes == null ? null : httpResponse.GetResponseString(bytes, encoding);
+            var content = bytes  == null ? null : httpResponse.GetResponseString(bytes, encoding);
 
             return new RestResponse {
                 Content           = content,
@@ -87,7 +88,7 @@ public class RestResponse : RestResponseBase {
                 Version           = httpResponse.RequestMessage?.Version,
                 ContentLength     = httpResponse.Content.Headers.ContentLength,
                 ContentType       = httpResponse.Content.Headers.ContentType?.MediaType,
-                ResponseStatus    = httpResponse.IsSuccessStatusCode ? ResponseStatus.Completed : ResponseStatus.Error,
+                ResponseStatus    = calculateResponseStatus(httpResponse),
                 ErrorException    = MaybeException(),
                 ResponseUri       = httpResponse.RequestMessage!.RequestUri,
                 Server            = httpResponse.Headers.Server.ToString(),
@@ -123,3 +124,5 @@ public class RestResponse : RestResponseBase {
         }
     }
 }
+
+public delegate ResponseStatus CalculateResponseStatus(HttpResponseMessage httpResponse);

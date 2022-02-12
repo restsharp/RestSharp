@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using RestSharp.Tests.Integrated.Fixtures;
+using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated;
 
@@ -23,7 +24,7 @@ public class AsyncTests {
 
         var request = new RestRequest("success");
 
-        request.OnBeforeDeserialization += r => throw new Exception(exceptionMessage);
+        request.OnBeforeDeserialization += _ => throw new Exception(exceptionMessage);
 
         var response = await _client.ExecuteAsync<Response>(request);
 

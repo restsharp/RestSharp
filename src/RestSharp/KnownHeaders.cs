@@ -14,6 +14,7 @@
 // 
 
 // ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace RestSharp;
 
@@ -32,4 +33,13 @@ public static class KnownHeaders {
     public const string LastModified       = "Last-Modified";
     public const string ContentMD5         = "Content-MD5";
     public const string Host               = "Host";
+
+    internal static readonly string[] ContentHeaders = {
+        Allow, Expires, ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
+        LastModified
+    };
+
+    static readonly HashSet<string> ContentHeadersHash = new(ContentHeaders.Select(x => x.ToLower()));
+
+    internal static bool IsContentHeader(string key) => ContentHeadersHash.Contains(key.ToLower());
 }

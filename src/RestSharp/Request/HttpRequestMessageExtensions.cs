@@ -20,7 +20,7 @@ namespace RestSharp;
 
 static class HttpRequestMessageExtensions {
     public static void AddHeaders(this HttpRequestMessage message, RequestHeaders headers) {
-        var headerParameters = headers.Parameters.Where(x => !RequestContent.ContentHeaders.Contains(x.Name));
+        var headerParameters = headers.Parameters.Where(x => !KnownHeaders.IsContentHeader(x.Name!));
 
         headerParameters.ForEach(x => AddHeader(x, message.Headers));
 

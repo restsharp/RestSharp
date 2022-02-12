@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
@@ -34,11 +35,19 @@ public partial class RestClient : IDisposable {
     /// </summary>
     public string[] AcceptedContentTypes { get; set; } = null!;
 
+    /// <summary>
+    /// Function to calculate the response status. By default, the status will be Completed if it was successful, or NotFound.
+    /// </summary>
+    public CalculateResponseStatus CalculateResponseStatus { get; set; } = httpResponse
+        => httpResponse.IsSuccessStatusCode || httpResponse.StatusCode == HttpStatusCode.NotFound
+            ? ResponseStatus.Completed
+            : ResponseStatus.Error;
+
     HttpClient HttpClient { get; }
 
     internal RestClientOptions Options { get; }
 
-    public RestClient(RestClientOptions options) {
+    public RestClient(RestClientOptions options, Action<HttpRequestHeaders>? configureDefaultHeaders = null) {
         UseDefaultSerializers();
 
         Options            = options;
@@ -51,8 +60,8 @@ public partial class RestClient : IDisposable {
         var finalHandler = Options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
 
         HttpClient = new HttpClient(finalHandler);
-
         ConfigureHttpClient(HttpClient);
+        configureDefaultHeaders?.Invoke(HttpClient.DefaultRequestHeaders);
     }
 
     /// <summary>
@@ -85,6 +94,7 @@ public partial class RestClient : IDisposable {
         Options            = options ?? new RestClientOptions();
         CookieContainer    = new CookieContainer();
         _disposeHttpClient = disposeHttpClient;
+
         if (httpClient.BaseAddress != null && Options.BaseUrl == null) {
             Options.BaseUrl = httpClient.BaseAddress;
         }
@@ -101,8 +111,7 @@ public partial class RestClient : IDisposable {
     public RestClient(HttpMessageHandler handler, bool disposeHandler = true) : this(new HttpClient(handler, disposeHandler), null, true) { }
 
     void ConfigureHttpClient(HttpClient httpClient) {
-        if (Options.Timeout > 0)
-            httpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
+        if (Options.Timeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
     }
 
@@ -124,8 +133,7 @@ public partial class RestClient : IDisposable {
             handler.ClientCertificateOptions = ClientCertificateOption.Manual;
         }
 
-        if (Options.MaxRedirects.HasValue)
-            handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
+        if (Options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = Options.MaxRedirects.Value;
     }
 
     internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
@@ -151,7 +159,7 @@ public partial class RestClient : IDisposable {
             );
 
         if (!Options.AllowMultipleDefaultParametersWithSameName &&
-            !MultiParameterTypes.Contains(parameter.Type) &&
+            !MultiParameterTypes.Contains(parameter.Type)       &&
             DefaultParameters.Any(x => x.Name == parameter.Name)) {
             throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
         }

@@ -2,24 +2,12 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RestSharp.Extensions;
 using RestSharp.Tests.Shared.Extensions;
 
-namespace RestSharp.Tests.Integrated.Fixtures;
-
-public class TestServerFixture : IAsyncLifetime {
-    public HttpServer Server { get; } = new();
-
-    public Task InitializeAsync() => Server.Start();
-
-    public Task DisposeAsync() => Server.Stop();
-}
-
-[CollectionDefinition(nameof(TestServerCollection))]
-public class TestServerCollection : ICollectionFixture<TestServerFixture> { }
+namespace RestSharp.Tests.Integrated.Server;
 
 public sealed class HttpServer {
     readonly WebApplication _app;
@@ -34,11 +22,9 @@ public sealed class HttpServer {
 
         if (output != null)
             builder.WebHost.ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Information).AddXunit(output, LogLevel.Debug));
-
+        
         builder.WebHost.UseUrls(Address);
         _app = builder.Build();
-
-        var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
         // GET
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
@@ -64,6 +50,9 @@ public sealed class HttpServer {
         var assetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
 
         _app.MapPost("/upload", HandleUpload);
+        
+        // POST
+        _app.MapPost("/post/json", (TestRequest request) => new TestResponse { Message = request.Data });
 
         IResult HandleHeaders(HttpContext ctx) {
             var response = ctx.Request.Headers.Select(x => new TestServerResponse(x.Key, x.Value));
@@ -100,11 +89,3 @@ public sealed class HttpServer {
         await _app.DisposeAsync();
     }
 }
-
-record TestServerResponse(string Name, string Value);
-
-record UploadRequest(string Filename, IFormFile File);
-
-record UploadResponse(string FileName, long Length, bool Equal);
-
-record ContentResponse(string Content);
