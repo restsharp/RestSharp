@@ -191,6 +191,30 @@ Content-Disposition: form-data; name="parameterName"
 ParameterValue
 ```
 
+#### AddObject
+
+You can avoid calling `AddParameter` multiple times if you collect all the parameters in an object, and then use `AddObject`.
+For example, this code:
+
+```csharp
+var params = new {
+    status = 1,
+    priority = "high",
+    ids = new [] { "123", "456" }
+};
+request.AddObject(params);
+```
+
+is equivalent to:
+
+```csharp
+request.AddParameter("status", 1);
+request.AddParameter("priority", "high");
+request.AddParameter("ids", "123,456");
+```
+
+Remember that `AddObject` only works if your properties have primitive types. It also works with collections of primitive types as shown above.
+
 ### Url Segment
 
 Unlike `GetOrPost`, this `ParameterType` replaces placeholder values in the `RequestUrl`:
