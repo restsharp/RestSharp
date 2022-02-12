@@ -265,13 +265,18 @@ var response = await client.GetAsync<SearchResponse>(request);
 
 It will send a `GET` request to `https://search.me/search?foo=bar")`.
 
-You can also specify the query string parameter type explicitly:
+For `POST`-style requests you need to add the query string parameter explicitly:
 
 ```csharp
-request.AddParameter("foo", "bar", ParameterType.QueryString);
+request.AddQueryParameter("foo", "bar");
 ```
 
-In some cases, you might need to prevent RestSharp from encoding the query string parameter. To do so, use the `QueryStringWithoutEncode` parameter type.
+In some cases, you might need to prevent RestSharp from encoding the query string parameter. 
+To do so, set the `encode` argument to `false` when adding the parameter:
+
+```csharp
+request.AddQueryParameter("foo", "bar/fox", false);
+```
 
 ## Making a call
 
