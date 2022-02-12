@@ -11,6 +11,12 @@ property of the response. Read more about it in the [Error Handling](error-handl
 
 The default JSON serializer uses `System.Text.Json`, which is a part of .NET since .NET 6. For earlier versions, it is added as a dependency. There are also a few serializers provided as additional packages.
 
+By default, RestSharp will use `JsonSerializerDefaults.Web` configuration. If necessary, you can specify your own options:
+
+```csharp
+client.UseSystemTextJson(new JsonSerializerOptions {...});
+```
+
 ## XML
 
 The default XML serializer is `DotNetXmlSerializer`, which uses `System.Xml.Serialization` library from .NET.
