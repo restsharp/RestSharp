@@ -39,6 +39,35 @@ var client = new RestClient(options);
 
 You can still change serializers and add default parameters to the client.
 
+### RestClient lifecycle
+
+Do not instantiate `RestClient` for each HTTP call. RestSharp creates a new instance of `HttpClient` internally, and you will get lots of hanging connections, and eventually exhaust the connection pool.
+
+If you use a dependency-injection container, register your API client as a singleton.
+
+### Body parameters
+
+Beware that most of the code generators, like Postman C# code gen, generate code for RestSharp before v107, and that code is broken. Such code worked mostly due to obscurity of previous RestSharp versions API. For example, Postman-generated code tells you to add the content-type header, and the accept header, which in many cases is an anti-pattern. It also posts JSON payload as string, where RestSharp provides you with serialization and deserialization of JSON out of the box.
+
+Therefore, please read the [Usage](../usage.md) page and follow our guidelines when using RestSharp v107+.
+
+Some of the points to be aware of:
+- `AddParameter("application/json", ..., ParameterType.RequestBody)` won't work, use `AddBody` instead, or better, `AddJsonBody`.
+- `AddJsonBody("{ foo: 'bar' }")` won't work (and it never worked), use `AddStringBody`. `AddJsonBody` is for serializable objects, not for strings.
+- If your `AddParameter(something, something, ParameterType.RequestBody)` doesn't work, try `AddBody` as it will do its best to figure out what kind of body you're adding.
+
+### Headers
+
+Lots of code out there that uses RestSharp has lines like:
+
+```csharp
+request.AddHeader("Content-Type", "application/json");
+request.AddHeader("Accept", "application/json");
+```
+
+This is completely unnecessary, and often harmful. The `Content-Type` header is the content header, not the request header. It might be different per individual part of the body when using multipart-form data, for example. RestSharp sets the correct content-type header automatically, based on your body format, so don't override it.
+The `Accept` header is set by RestSharp automatically based on registered serializers. By default, both XML and JSON are supported. Only change the `Accept` header if you need something else, like binary streams, or plain text.
+
 ### Making requests
 
 The `IRestRequest` interface is deprecated. You will be using the `RestRequest` class instance.
@@ -142,6 +171,8 @@ public class GitHubClient {
 ```
 
 Do not use one instance of `RestClient` across different API clients.
+
+This documentation contains the complete example of a [Twitter API client](../usage.md), which you can use as a reference.
 
 ## Presumably solved issues
 
