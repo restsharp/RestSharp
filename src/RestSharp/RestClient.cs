@@ -45,7 +45,7 @@ public partial class RestClient : IDisposable {
 
     HttpClient HttpClient { get; }
 
-    internal RestClientOptions Options { get; }
+    public RestClientOptions Options { get; }
 
     public RestClient(RestClientOptions options, Action<HttpRequestHeaders>? configureDefaultHeaders = null) {
         UseDefaultSerializers();
@@ -83,19 +83,32 @@ public partial class RestClient : IDisposable {
     /// <param name="baseUrl"></param>
     public RestClient(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
-    public RestClient(HttpClient httpClient, RestClientOptions? options = null, bool disposeHttpClient = false) {
-        if (options?.CookieContainer != null) {
+    public RestClient(HttpClient httpClient, bool disposeHttpClient = false) {
+        UseDefaultSerializers();
+
+        HttpClient         = httpClient;
+        CookieContainer    = new CookieContainer();
+        Options            = new RestClientOptions();
+        _disposeHttpClient = disposeHttpClient;
+
+        if (httpClient.BaseAddress != null) {
+            Options.BaseUrl = httpClient.BaseAddress;
+        }
+    }
+
+    public RestClient(HttpClient httpClient, RestClientOptions options, bool disposeHttpClient = false) {
+        if (options.CookieContainer != null) {
             throw new ArgumentException("Custom cookie container cannot be added to the HttpClient instance", nameof(options.CookieContainer));
         }
 
         UseDefaultSerializers();
 
         HttpClient         = httpClient;
-        Options            = options ?? new RestClientOptions();
         CookieContainer    = new CookieContainer();
+        Options            = options;
         _disposeHttpClient = disposeHttpClient;
 
-        if (httpClient.BaseAddress != null && Options.BaseUrl == null) {
+        if (httpClient.BaseAddress != null && options.BaseUrl == null) {
             Options.BaseUrl = httpClient.BaseAddress;
         }
 
@@ -159,7 +172,7 @@ public partial class RestClient : IDisposable {
             );
 
         if (!Options.AllowMultipleDefaultParametersWithSameName &&
-            !MultiParameterTypes.Contains(parameter.Type)       &&
+            !MultiParameterTypes.Contains(parameter.Type) &&
             DefaultParameters.Any(x => x.Name == parameter.Name)) {
             throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
         }
