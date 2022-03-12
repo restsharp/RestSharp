@@ -21,7 +21,9 @@ static class ResponseHandling {
     public static string GetResponseString(this HttpResponseMessage response, byte[] bytes, Encoding clientEncoding) {
         var encodingString = response.Content.Headers.ContentType?.CharSet;
         var encoding       = encodingString != null ? TryGetEncoding(encodingString) : clientEncoding;
-        return encoding.GetString(bytes);
+
+        using var reader = new StreamReader(new MemoryStream(bytes), encoding);
+        return reader.ReadToEnd();
 
         Encoding TryGetEncoding(string es) {
             try {
