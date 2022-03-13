@@ -1,17 +1,17 @@
 //  Copyright © 2009-2021 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
+//
 
 using System.Net;
 using System.Net.Http.Headers;
@@ -34,13 +34,13 @@ public class RestClientOptions {
     public RestClientOptions(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
     /// <summary>
-    /// Explicit Host header value to use in requests independent from the request URI.
-    /// If null, default host value extracted from URI is used.
+    /// Base URI for all requests base with the RestClient. This cannot be changed after the client has been
+    /// constructed.
     /// </summary>
-    public Uri? BaseUrl { get; set; }
-    
+    public Uri? BaseUrl { get; internal set; }
+
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
-    
+
     /// <summary>
     /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
     /// </summary>
@@ -51,9 +51,9 @@ public class RestClientOptions {
     /// running) will be sent along to the server. The default is false.
     /// </summary>
     public bool UseDefaultCredentials { get; set; }
-    
+
     /// <summary>
-    /// Set to true if you need the Content-Type not to have the charset 
+    /// Set to true if you need the Content-Type not to have the charset
     /// </summary>
     public bool DisableCharset { get; set; }
 
@@ -109,6 +109,10 @@ public class RestClientOptions {
     /// </summary>
     public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
+    /// <summary>
+    /// Explicit Host header value to use in requests independent from the request URI.
+    /// If null, default host value extracted from BaseUrl is used.
+    /// </summary>
     public string? BaseHost { get; set; }
 
     /// <summary>
