@@ -1,11 +1,11 @@
 ﻿//  Copyright © 2009-2021 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@ namespace RestSharp;
 /// Container for data used to make requests
 /// </summary>
 public class RestRequest {
-    readonly Func<HttpResponseMessage, RestResponse>? _advancedResponseHandler;
-    readonly Func<Stream, Stream?>?                   _responseWriter;
+    Func<HttpResponseMessage, RestResponse>? _advancedResponseHandler;
+    Func<Stream, Stream?>?                   _responseWriter;
 
     /// <summary>
     /// Default constructor
@@ -67,14 +67,14 @@ public class RestRequest {
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
-    
+
     /// <summary>
     /// When set to true, parameters in a multipart form data requests will be enclosed in
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
-    /// to be in quotes (for example, FreshDesk API). 
+    /// to be in quotes (for example, FreshDesk API).
     /// </summary>
     public bool MultipartFormQuoteParameters { get; set; }
-    
+
     public string? FormBoundary { get; set; }
 
     /// <summary>
@@ -159,7 +159,7 @@ public class RestRequest {
     /// </summary>
     public Func<Stream, Stream?>? ResponseWriter {
         get => _responseWriter;
-        init {
+        set {
             if (AdvancedResponseWriter != null)
                 throw new ArgumentException(
                     "AdvancedResponseWriter is not null. Only one response writer can be used."
@@ -174,7 +174,7 @@ public class RestRequest {
     /// </summary>
     public Func<HttpResponseMessage, RestResponse>? AdvancedResponseWriter {
         get => _advancedResponseHandler;
-        init {
+        set {
             if (ResponseWriter != null)
                 throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
 
