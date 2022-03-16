@@ -34,10 +34,10 @@ public class RestClientOptions {
     public RestClientOptions(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
     /// <summary>
-    /// Explicit Host header value to use in requests independent from the request URI.
-    /// If null, default host value extracted from URI is used.
+    /// Base URI for all requests base with the RestClient. This cannot be changed after the client has been
+    /// constructed.
     /// </summary>
-    public Uri? BaseUrl { get; set; }
+    public Uri? BaseUrl { get; internal set; }
     
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
     
@@ -109,6 +109,10 @@ public class RestClientOptions {
     /// </summary>
     public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
+    /// <summary>
+    /// Explicit Host header value to use in requests independent from the request URI.
+    /// If null, default host value extracted from BaseUrl is used.
+    /// </summary>
     public string? BaseHost { get; set; }
 
     /// <summary>
