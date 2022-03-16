@@ -14,7 +14,10 @@
 // 
 
 // ReSharper disable InvertIf
-namespace RestSharp; 
+
+using System.Net;
+
+namespace RestSharp;
 
 class RequestHeaders {
     public ParametersCollection Parameters { get; } = new();
@@ -31,6 +34,15 @@ class RequestHeaders {
             Parameters.AddParameter(new HeaderParameter(KnownHeaders.Accept, accepts));
         }
 
+        return this;
+    }
+
+    // Add Cookie header from the cookie container
+    public RequestHeaders AddCookieHeaders(CookieContainer cookieContainer, Uri uri) {
+        var cookies = cookieContainer.GetCookieHeader(uri);
+        if (cookies.Length > 0) {
+            Parameters.AddParameter(new HeaderParameter(KnownHeaders.Cookie, cookies));
+        }
         return this;
     }
 }

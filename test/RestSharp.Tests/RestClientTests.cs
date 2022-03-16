@@ -30,6 +30,22 @@ public class RestClientTests {
     }
 
     [Fact]
+    public void BaseUrl_Returns_Url_From_Options() {
+        var options = new RestClientOptions(BaseUrl);
+        var client  = new RestClient(options);
+        Assert.Equal(options.BaseUrl, client.BaseUrl);
+    }
+
+    [Fact]
+    public void BaseHost_Returns_Host_From_Options() {
+        var options = new RestClientOptions {
+            BaseHost = "baseHost"
+        };
+        var client  = new RestClient(options);
+        Assert.Equal(options.BaseHost, client.BaseHost);
+    }
+
+    [Fact]
     public void BuildUri_should_build_with_passing_link_as_Uri() {
         // arrange
         var relative    = new Uri("/foo/bar/baz", UriKind.Relative);

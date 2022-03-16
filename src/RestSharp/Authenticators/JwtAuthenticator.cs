@@ -21,13 +21,6 @@ namespace RestSharp.Authenticators;
 public class JwtAuthenticator : AuthenticatorBase {
     public JwtAuthenticator(string accessToken) : base(GetToken(accessToken)) { }
 
-    /// <summary>
-    /// Set the new bearer token so the request gets the new header value
-    /// </summary>
-    /// <param name="accessToken"></param>
-    [PublicAPI]
-    public void SetBearerToken(string accessToken) => Token = GetToken(accessToken);
-
     static string GetToken(string accessToken) => $"Bearer {Ensure.NotEmpty(accessToken, nameof(accessToken))}";
 
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)

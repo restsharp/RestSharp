@@ -33,10 +33,10 @@ public class OAuth1Tests {
 
         var baseUrl = new Uri("http://api.netflix.com");
 
-        var client = new RestClient(baseUrl) {
+        var client = new RestClient(baseUrl);
+        var request  = new RestRequest("oauth/request_token") {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
-        var request  = new RestRequest("oauth/request_token");
         var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
@@ -66,7 +66,7 @@ public class OAuth1Tests {
 
         request = new RestRequest("oauth/access_token"); // <-- Breakpoint here, login to netflix
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
+        request.Authenticator = OAuth1Authenticator.ForAccessToken(
             consumerKey,
             consumerSecret,
             oauthToken,
@@ -87,7 +87,7 @@ public class OAuth1Tests {
         Assert.NotNull(oauthTokenSecret);
         Assert.NotNull(userId);
 
-        client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+        request.Authenticator = OAuth1Authenticator.ForProtectedResource(
             consumerKey,
             consumerSecret,
             oauthToken,
@@ -111,14 +111,14 @@ public class OAuth1Tests {
         const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
 
         // request token
-        var client = new RestClient("https://api.linkedin.com/uas/oauth") {
+        var client = new RestClient("https://api.linkedin.com/uas/oauth");
+        var requestTokenRequest  = new RestRequest("requestToken") {
             Authenticator = OAuth1Authenticator.ForRequestToken(
                 consumerKey,
                 consumerSecret,
                 "http://localhost"
             )
-        };
-        var requestTokenRequest  = new RestRequest("requestToken");
+        };;
         var requestTokenResponse = await client.ExecuteAsync(requestTokenRequest);
 
         Assert.NotNull(requestTokenResponse);
@@ -150,15 +150,15 @@ public class OAuth1Tests {
         var requestTokenQueryParameters = new Uri(requestUrl).ParseQuery();
         var requestVerifier             = requestTokenQueryParameters["oauth_verifier"];
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
-            consumerKey,
-            consumerSecret,
-            requestToken,
-            requestSecret,
-            requestVerifier
-        );
-
-        var requestAccessTokenRequest  = new RestRequest("accessToken");
+        var requestAccessTokenRequest  = new RestRequest("accessToken") {
+            Authenticator = OAuth1Authenticator.ForAccessToken(
+                consumerKey,
+                consumerSecret,
+                requestToken,
+                requestSecret,
+                requestVerifier
+            )
+        };
         var requestActionTokenResponse = await client.ExecuteAsync(requestAccessTokenRequest);
 
         Assert.NotNull(requestActionTokenResponse);
@@ -208,7 +208,9 @@ public class OAuth1Tests {
             AccessSecret   = ""
         };
 
-        var client = new RestClient("https://api.twitter.com/1.1") {
+        var client = new RestClient("https://api.twitter.com/1.1");
+
+        var request = new RestRequest("account/verify_credentials.json") {
             Authenticator = OAuth1Authenticator.ForProtectedResource(
                 config.ConsumerKey,
                 config.ConsumerSecret,
@@ -216,8 +218,6 @@ public class OAuth1Tests {
                 config.AccessSecret
             )
         };
-
-        var request = new RestRequest("account/verify_credentials.json");
 
         request.AddParameter("include_entities", "true", ParameterType.QueryString);
 
@@ -234,10 +234,10 @@ public class OAuth1Tests {
 
         var baseUrl = new Uri("https://api.twitter.com");
 
-        var client = new RestClient(baseUrl) {
+        var client = new RestClient(baseUrl);
+        var request  = new RestRequest("oauth/request_token", Method.Post) {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
-        var request  = new RestRequest("oauth/request_token", Method.Post);
         var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
@@ -261,7 +261,7 @@ public class OAuth1Tests {
 
         request = new RestRequest("oauth/access_token", Method.Post);
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
+        request.Authenticator = OAuth1Authenticator.ForAccessToken(
             consumerKey,
             consumerSecret,
             oauthToken,
@@ -282,7 +282,7 @@ public class OAuth1Tests {
 
         request = new RestRequest("/1.1/account/verify_credentials.json");
 
-        client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+        request.Authenticator = OAuth1Authenticator.ForProtectedResource(
             consumerKey,
             consumerSecret,
             oauthToken,
@@ -301,10 +301,10 @@ public class OAuth1Tests {
         const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
 
         // arrange
-        var client = new RestClient("http://vimeo.com/api/rest/v2") {
+        var client = new RestClient("http://vimeo.com/api/rest/v2");
+        var request = new RestRequest() {
             Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
         };
-        var request = new RestRequest();
 
         request.AddParameter("format", "json");
         request.AddParameter("method", "vimeo.videos.search");
@@ -332,7 +332,8 @@ public class OAuth1Tests {
         const string accessSecret   = "TODO_ACCES_SECRET_HERE";
 
         // arrange
-        var client = new RestClient("http://api.linkedin.com/v1") {
+        var client = new RestClient("http://api.linkedin.com/v1");
+        var request = new RestRequest("people/~:(id,first-name,last-name)") {
             Authenticator = OAuth1Authenticator.ForProtectedResource(
                 consumerKey,
                 consumerSecret,
@@ -340,7 +341,6 @@ public class OAuth1Tests {
                 accessSecret
             )
         };
-        var request = new RestRequest("people/~:(id,first-name,last-name)");
 
         // act
         var response = await client.ExecuteAsync<LinkedInMemberProfile>(request);

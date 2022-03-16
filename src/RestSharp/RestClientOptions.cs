@@ -73,7 +73,6 @@ public class RestClientOptions {
     public IWebProxy?               Proxy           { get; set; }
     public CacheControlHeaderValue? CachePolicy     { get; set; }
     public bool                     FollowRedirects { get; set; } = true;
-    public CookieContainer?         CookieContainer { get; set; }
     public string                   UserAgent       { get; set; } = DefaultUserAgent;
     public int                      Timeout         { get; set; }
     public Encoding                 Encoding        { get; set; } = Encoding.UTF8;

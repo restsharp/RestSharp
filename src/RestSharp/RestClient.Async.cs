@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Net;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 public partial class RestClient {
@@ -30,7 +33,7 @@ public partial class RestClient {
                     internalResponse.ResponseMessage!,
                     request,
                     Options.Encoding,
-                    CookieContainer.GetCookies(internalResponse.Url),
+                    request.CookieContainer!.GetCookies(internalResponse.Url),
                     CalculateResponseStatus,
                     cancellationToken
                 )
@@ -48,8 +51,8 @@ public partial class RestClient {
 
         using var requestContent = new RequestContent(this, request);
 
-        if (Authenticator != null)
-            await Authenticator.Authenticate(this, request).ConfigureAwait(false);
+        if (request.Authenticator != null)
+            await request.Authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = BuildUri(request);
@@ -62,16 +65,26 @@ public partial class RestClient {
         var       ct         = cts.Token;
 
         try {
+            // Make sure we have a cookie container if not provided in the request
+            var cookieContainer = request.CookieContainer ??= new CookieContainer();
             var headers = new RequestHeaders()
                 .AddHeaders(request.Parameters)
                 .AddHeaders(DefaultParameters)
-                .AddAcceptHeader(AcceptedContentTypes);
+                .AddAcceptHeader(AcceptedContentTypes)
+                .AddCookieHeaders(cookieContainer, url);
             message.AddHeaders(headers);
 
             if (request.OnBeforeRequest != null)
                 await request.OnBeforeRequest(message).ConfigureAwait(false);
 
             var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
+
+            // Parse all the cookies from the response and update the cookie jar with cookies
+            if (responseMessage.Headers.TryGetValues("Set-Cookie", out var cookiesHeader)) {
+                foreach (var header in cookiesHeader) {
+                    cookieContainer.SetCookies(url, header);
+                }
+            }
 
             if (request.OnAfterRequest != null)
                 await request.OnAfterRequest(responseMessage).ConfigureAwait(false);

@@ -64,7 +64,7 @@ public class RestResponse : RestResponseBase {
         HttpResponseMessage     httpResponse,
         RestRequest             request,
         Encoding                encoding,
-        CookieCollection        cookieCollection,
+        CookieCollection?       cookieCollection,
         CalculateResponseStatus calculateResponseStatus,
         CancellationToken       cancellationToken
     ) {

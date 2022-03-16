@@ -15,14 +15,13 @@ public class AuthenticationTests {
 
         var baseUrl = new Uri("https://api.twitter.com");
 
-        var client = new RestClient(baseUrl) {
+        var client = new RestClient(baseUrl);
+        var request  = new RestRequest("oauth/request_token") {
             Authenticator = OAuth1Authenticator.ForRequestToken(
                 twitterKeys.ConsumerKey!,
                 twitterKeys.ConsumerSecret,
-                "https://restsharp.dev"
-            )
+                "https://restsharp.dev")
         };
-        var request  = new RestRequest("oauth/request_token");
         var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
@@ -44,15 +43,15 @@ public class AuthenticationTests {
         Console.Write("Enter the verifier: ");
         var verifier = Console.ReadLine();
 
-        request = new RestRequest("oauth/access_token");
+        request = new RestRequest("oauth/access_token") {
+            Authenticator = OAuth1Authenticator.ForAccessToken(
+                twitterKeys.ConsumerKey!,
+                twitterKeys.ConsumerSecret,
+                oauthToken!,
+                oauthTokenSecret!,
+                verifier!)
+        };
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
-            twitterKeys.ConsumerKey!,
-            twitterKeys.ConsumerSecret,
-            oauthToken!,
-            oauthTokenSecret!,
-            verifier!
-        );
         response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
@@ -65,14 +64,14 @@ public class AuthenticationTests {
         Assert.NotNull(oauthToken);
         Assert.NotNull(oauthTokenSecret);
 
-        request = new RestRequest("1.1/account/verify_credentials.json");
+        request = new RestRequest("1.1/account/verify_credentials.json") {
+            Authenticator = OAuth1Authenticator.ForProtectedResource(
+                twitterKeys.ConsumerKey!,
+                twitterKeys.ConsumerSecret,
+                oauthToken!,
+                oauthTokenSecret!)
+        };
 
-        client.Authenticator = OAuth1Authenticator.ForProtectedResource(
-            twitterKeys.ConsumerKey!,
-            twitterKeys.ConsumerSecret,
-            oauthToken!,
-            oauthTokenSecret!
-        );
         response = await client.ExecuteAsync(request);
 
         Console.WriteLine($"Code: {response.StatusCode}, response: {response.Content}");
