@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -170,6 +171,16 @@ public class RestRequest {
     /// Completion option for <seealso cref="HttpClient"/>
     /// </summary>
     public HttpCompletionOption CompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
+
+    /// <summary>
+    /// Explicit Host header value to use in requests independent from the request URI.
+    /// </summary>
+    public string? BaseHost { get; set; }
+
+    /// <summary>
+    /// Sets the cache policy to use for this request
+    /// </summary>
+    public CacheControlHeaderValue? CachePolicy { get; set; }
 
     /// <summary>
     /// Authenticator that will be used to populate request with necessary authentication data

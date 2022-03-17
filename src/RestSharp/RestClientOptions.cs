@@ -71,7 +71,6 @@ public class RestClientOptions {
     public X509CertificateCollection? ClientCertificates { get; set; }
 
     public IWebProxy?               Proxy           { get; set; }
-    public CacheControlHeaderValue? CachePolicy     { get; set; }
     public bool                     FollowRedirects { get; set; } = true;
     public string                   UserAgent       { get; set; } = DefaultUserAgent;
     public int                      Timeout         { get; set; }
@@ -107,12 +106,6 @@ public class RestClientOptions {
     /// overriding certificate errors in the scope of a request.
     /// </summary>
     public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
-
-    /// <summary>
-    /// Explicit Host header value to use in requests independent from the request URI.
-    /// If null, default host value extracted from BaseUrl is used.
-    /// </summary>
-    public string? BaseHost { get; set; }
 
     /// <summary>
     /// By default, RestSharp doesn't allow multiple parameters to have the same name.

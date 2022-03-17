@@ -127,11 +127,6 @@ public partial class RestClient : IDisposable {
     /// </summary>
     public Uri BaseUrl => Options.BaseUrl!;
 
-    /// <summary>
-    /// Returns the currently configured BaseHost for this RestClient instance
-    /// </summary>
-    public string BaseHost => Options.BaseHost!;
-
     void ConfigureHttpClient(HttpClient httpClient) {
         if (Options.Timeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(Options.Timeout);
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
