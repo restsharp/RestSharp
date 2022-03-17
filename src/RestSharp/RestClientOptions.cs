@@ -15,16 +15,12 @@
 
 using System.Net;
 using System.Net.Security;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace RestSharp;
 
 public class RestClientOptions {
-    static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
-    static readonly string DefaultUserAgent = $"RestSharp/{Version}";
-
     /// <summary>
     /// Default constructor for default RestClientOptions
     /// </summary>
@@ -100,13 +96,8 @@ public class RestClientOptions {
     public bool FollowRedirects { get; set; } = true;
 
     /// <summary>
-    /// Sets the user agent string to be used for all requests from this client. Defaults to a RestSharp string if not provided.
-    /// </summary>
-    public string UserAgent { get; set; } = DefaultUserAgent;
-
-    /// <summary>
     /// Sets the timeout in milliseconds for all requests using this client. You can also set a timeout value on a per
-    /// request basis, but beard in mind the shorter of the two values is what will end up being used. So if you need long
+    /// request basis, but bear in mind the shorter of the two values is what will end up being used. So if you need long
     /// timeouts at the request level, you will want to set this to a larger value than the maximum you need per request.
     /// </summary>
     public int Timeout { get; set; }

@@ -14,6 +14,7 @@
 
 using System.Net;
 using System.Net.Http.Headers;
+using System.Reflection;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -26,6 +27,8 @@ namespace RestSharp;
 public class RestRequest {
     Func<HttpResponseMessage, RestResponse>? _advancedResponseHandler;
     Func<Stream, Stream?>?                   _responseWriter;
+    static readonly Version                  Version          = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
+    static readonly string                   DefaultUserAgent = $"RestSharp/{Version}";
 
     /// <summary>
     /// Default constructor
@@ -113,7 +116,11 @@ public class RestRequest {
     public Method Method { get; set; }
 
     /// <summary>
-    /// Custom request timeout
+    /// Sets the timeout in milliseconds for this requests using this client. Note that there is also a timeout
+    /// set on the base client, and the the shorter of the two values is what will end up being used. So if you need long
+    /// timeouts at the request level, you will want to set the value on the client to to a larger value than the maximum
+    /// you need per request, or set the client to infinite. If this value is 0, an infinite timeout is used (basically
+    /// it then times out using whatever was configured at the client level).
     /// </summary>
     public int Timeout { get; set; }
 
@@ -176,6 +183,11 @@ public class RestRequest {
     /// Explicit Host header value to use in requests independent from the request URI.
     /// </summary>
     public string? BaseHost { get; set; }
+
+    /// <summary>
+    /// Sets the user agent string to be used for this requests. Defaults to a RestSharp string if not provided.
+    /// </summary>
+    public string UserAgent { get; set; } = DefaultUserAgent;
 
     /// <summary>
     /// Sets the cache policy to use for this request
