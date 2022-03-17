@@ -96,9 +96,16 @@ public class RestClientOptions {
     public bool FollowRedirects { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a Boolean value that determines whether 100-Continue behavior is used. Default is true.
+    /// </summary>
+    public bool Expect100Continue { get; set; } = true;
+
+    /// <summary>
     /// Sets the timeout in milliseconds for all requests using this client. You can also set a timeout value on a per
     /// request basis, but bear in mind the shorter of the two values is what will end up being used. So if you need long
     /// timeouts at the request level, you will want to set this to a larger value than the maximum you need per request.
+    ///
+    /// If this value is left at the default of 0, the build in default HttpClient timeout of 100 seconds is used.
     /// </summary>
     public int Timeout { get; set; }
 
