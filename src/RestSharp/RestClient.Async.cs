@@ -12,9 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 public partial class RestClient {
+    /// <summary>
+    /// Executes the request synchronously, authenticating if needed
+    /// </summary>
+    /// <param name="request">Request to be executed</param>
+    public RestResponse Execute(RestRequest request) => AsyncHelpers.RunSync(() => ExecuteAsync(request));
+
     /// <summary>
     /// Executes the request asynchronously, authenticating if needed
     /// </summary>
@@ -84,6 +92,14 @@ public partial class RestClient {
     }
 
     record InternalResponse(HttpResponseMessage? ResponseMessage, Uri Url, Exception? Exception, CancellationToken TimeoutToken);
+
+    /// <summary>
+    /// A specialized method to download files as streams.
+    /// </summary>
+    /// <param name="request">Pre-configured request instance.</param>
+    /// <returns>The downloaded stream.</returns>
+    [PublicAPI]
+    public Stream? DownloadStream(RestRequest request) => AsyncHelpers.RunSync(() => DownloadStreamAsync(request));
 
     /// <summary>
     /// A specialized method to download files as streams.
