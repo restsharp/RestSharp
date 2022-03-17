@@ -25,6 +25,20 @@ public static partial class RestClientExtensions {
     /// </summary>
     /// <param name="client">RestClient instance</param>
     /// <param name="resource">Resource URL</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
+    /// <typeparam name="TResponse">Response object type</typeparam>
+    /// <returns>Deserialized response object</returns>
+    public static TResponse? GetJson<TResponse>(
+        this RestClient   client,
+        string            resource,
+        IAuthenticator?   authenticator = null)
+        => AsyncHelpers.RunSync(() => client.GetJsonAsync<TResponse>(resource, authenticator: authenticator));
+
+    /// <summary>
+    /// Calls the URL specified in the <code>resource</code> parameter, expecting a JSON response back. Deserializes and returns the response.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="resource">Resource URL</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
@@ -40,6 +54,22 @@ public static partial class RestClientExtensions {
         };
         return client.GetAsync<TResponse>(request, cancellationToken);
     }
+
+    /// <summary>
+    /// Calls the URL specified in the <code>resource</code> parameter, expecting a JSON response back. Deserializes and returns the response.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="parameters">Parameters to pass to the request</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
+    /// <typeparam name="TResponse">Response object type</typeparam>
+    /// <returns>Deserialized response object</returns>
+    public static TResponse? GetJson<TResponse>(
+        this RestClient   client,
+        string            resource,
+        object            parameters,
+        IAuthenticator?   authenticator = null)
+        => AsyncHelpers.RunSync(() => client.GetJsonAsync<TResponse>(resource, parameters, authenticator: authenticator));
 
     /// <summary>
     /// Calls the URL specified in the <code>resource</code> parameter, expecting a JSON response back. Deserializes and returns the response.
@@ -78,6 +108,25 @@ public static partial class RestClientExtensions {
     /// <param name="client">RestClient instance</param>
     /// <param name="resource">Resource URL</param>
     /// <param name="request">Request object, must be serializable to JSON</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
+    /// <typeparam name="TRequest">Request object type</typeparam>
+    /// <typeparam name="TResponse">Response object type</typeparam>
+    /// <returns>Deserialized response object</returns>
+    public static TResponse? PostJson<TRequest, TResponse>(
+        this RestClient   client,
+        string            resource,
+        TRequest          request,
+        IAuthenticator?   authenticator     = null
+    ) where TRequest : class
+        => AsyncHelpers.RunSync(() => client.PostJsonAsync<TRequest, TResponse>(resource, request, authenticator: authenticator));
+
+    /// <summary>
+    /// Serializes the <code>request</code> object to JSON and makes a POST call to the resource specified in the <code>resource</code> parameter.
+    /// Expects a JSON response back, deserializes it to <code>TResponse</code> type and returns it.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="request">Request object, must be serializable to JSON</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TRequest">Request object type</typeparam>
@@ -95,6 +144,24 @@ public static partial class RestClientExtensions {
         }.AddJsonBody(request);
         return client.PostAsync<TResponse>(restRequest, cancellationToken);
     }
+
+    /// <summary>
+    /// Serializes the <code>request</code> object to JSON and makes a POST call to the resource specified in the <code>resource</code> parameter.
+    /// Expects no response back, just the status code.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="request">Request object, must be serializable to JSON</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
+    /// <typeparam name="TRequest">Request object type</typeparam>
+    /// <returns>Response status code</returns>
+    public static HttpStatusCode PostJson<TRequest>(
+        this RestClient client,
+        string          resource,
+        TRequest        request,
+        IAuthenticator? authenticator = null
+    ) where TRequest : class
+        => AsyncHelpers.RunSync(() => client.PostJsonAsync(resource, request, authenticator: authenticator));
 
     /// <summary>
     /// Serializes the <code>request</code> object to JSON and makes a POST call to the resource specified in the <code>resource</code> parameter.
@@ -128,6 +195,25 @@ public static partial class RestClientExtensions {
     /// <param name="client">RestClient instance</param>
     /// <param name="resource">Resource URL</param>
     /// <param name="request">Request object, must be serializable to JSON</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
+    /// <typeparam name="TRequest">Request object type</typeparam>
+    /// <typeparam name="TResponse">Response object type</typeparam>
+    /// <returns>Deserialized response object</returns>
+    public static TResponse? PutJson<TRequest, TResponse>(
+        this RestClient   client,
+        string            resource,
+        TRequest          request,
+        IAuthenticator?   authenticator     = null
+    ) where TRequest : class
+        => AsyncHelpers.RunSync(() => client.PutJsonAsync<TRequest, TResponse>(resource, request, authenticator: authenticator));
+
+    /// <summary>
+    /// Serializes the <code>request</code> object to JSON and makes a PUT call to the resource specified in the <code>resource</code> parameter.
+    /// Expects a JSON response back, deserializes it to <code>TResponse</code> type and returns it.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="request">Request object, must be serializable to JSON</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TRequest">Request object type</typeparam>
@@ -145,6 +231,24 @@ public static partial class RestClientExtensions {
         }.AddJsonBody(request);
         return client.PutAsync<TResponse>(restRequest, cancellationToken);
     }
+
+    /// <summary>
+    /// Serializes the <code>request</code> object to JSON and makes a PUT call to the resource specified in the <code>resource</code> parameter.
+    /// Expects no response back, just the status code.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="request">Request object, must be serializable to JSON</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
+    /// <typeparam name="TRequest">Request object type</typeparam>
+    /// <returns>Response status code</returns>
+    public static HttpStatusCode PutJson<TRequest>(
+        this RestClient client,
+        string          resource,
+        TRequest        request,
+        IAuthenticator? authenticator = null
+    ) where TRequest : class
+        => AsyncHelpers.RunSync(() => client.PutJsonAsync(resource, request, authenticator: authenticator));
 
     /// <summary>
     /// Serializes the <code>request</code> object to JSON and makes a PUT call to the resource specified in the <code>resource</code> parameter.
