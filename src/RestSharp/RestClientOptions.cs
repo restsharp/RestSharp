@@ -14,7 +14,6 @@
 // 
 
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -24,13 +23,23 @@ namespace RestSharp;
 
 public class RestClientOptions {
     static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
-
     static readonly string DefaultUserAgent = $"RestSharp/{Version}";
 
+    /// <summary>
+    /// Default constructor for default RestClientOptions
+    /// </summary>
     public RestClientOptions() { }
 
+    /// <summary>
+    /// Constructor for RestClientOptions using a specific base URL pass in the Uri format.
+    /// </summary>
+    /// <param name="baseUrl">Base URL to use in Uri format</param>
     public RestClientOptions(Uri baseUrl) => BaseUrl = baseUrl;
 
+    /// <summary>
+    /// Constructor for RestClientOptions using a specific base URL pass as a string.
+    /// </summary>
+    /// <param name="baseUrl">Base URL to use in string format</param>
     public RestClientOptions(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
     /// <summary>
@@ -38,7 +47,10 @@ public class RestClientOptions {
     /// constructed.
     /// </summary>
     public Uri? BaseUrl { get; internal set; }
-    
+
+    /// <summary>
+    /// Optional callback to allow you to configure the underlying HttpMessageHandler for this client when it is created.
+    /// </summary>
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
     
     /// <summary>
@@ -57,12 +69,19 @@ public class RestClientOptions {
     /// </summary>
     public bool DisableCharset { get; set; }
 
+    /// <summary>
+    /// Option to enable automatic decompression of responses. Defaults to GZip or higher where possible.
+    /// </summary>
 #if NETSTANDARD
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;
 #else
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.All;
 #endif
 
+    /// <summary>
+    /// Option to control the maximum number of redirects the client will follow before giving up. If not
+    /// provided the HttpClient default value of 50 is used.
+    /// </summary>
     public int? MaxRedirects { get; set; }
 
     /// <summary>
@@ -70,11 +89,32 @@ public class RestClientOptions {
     /// </summary>
     public X509CertificateCollection? ClientCertificates { get; set; }
 
-    public IWebProxy?               Proxy           { get; set; }
-    public bool                     FollowRedirects { get; set; } = true;
-    public string                   UserAgent       { get; set; } = DefaultUserAgent;
-    public int                      Timeout         { get; set; }
-    public Encoding                 Encoding        { get; set; } = Encoding.UTF8;
+    /// <summary>
+    /// Define the optional web proxy to use for all requests via this client instance
+    /// </summary>
+    public IWebProxy? Proxy { get; set; }
+
+    /// <summary>
+    /// Indicates whether the client will follow redirects or not. Defaults to true.
+    /// </summary>
+    public bool FollowRedirects { get; set; } = true;
+
+    /// <summary>
+    /// Sets the user agent string to be used for all requests from this client. Defaults to a RestSharp string if not provided.
+    /// </summary>
+    public string UserAgent { get; set; } = DefaultUserAgent;
+
+    /// <summary>
+    /// Sets the timeout in milliseconds for all requests using this client. You can also set a timeout value on a per
+    /// request basis, but beard in mind the shorter of the two values is what will end up being used. So if you need long
+    /// timeouts at the request level, you will want to set this to a larger value than the maximum you need per request.
+    /// </summary>
+    public int Timeout { get; set; }
+
+    /// <summary>
+    /// Set the encoding to use for encoding encoding query strings. By default it uses UTF8.
+    /// </summary>
+    public Encoding Encoding { get; set; } = Encoding.UTF8;
 
     /// <summary>
     /// Flag to send authorisation header with the HttpWebRequest
