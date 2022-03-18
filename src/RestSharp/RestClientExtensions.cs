@@ -14,6 +14,7 @@
 
 using System.Runtime.CompilerServices;
 using RestSharp.Extensions;
+using RestSharp.Serializers;
 
 namespace RestSharp;
 
@@ -352,8 +353,8 @@ public static partial class RestClientExtensions {
     /// <summary>
     /// Sets the <see cref="RestClient"/> to only use JSON
     /// </summary>
-    /// <param name="client">The client instance</param>
-    /// <returns></returns>
+    /// <param name="client">Client instance to work with</param>
+    /// <returns>Reference to the client instance</returns>
     public static RestClient UseJson(this RestClient client) {
         client.Serializers.Remove(DataFormat.Xml);
         client.AssignAcceptedContentTypes();
@@ -363,11 +364,23 @@ public static partial class RestClientExtensions {
     /// <summary>
     /// Sets the <see cref="RestClient"/> to only use XML
     /// </summary>
-    /// <param name="client"></param>
-    /// <returns></returns>
+    /// <param name="client">Client instance to work with</param>
+    /// <returns>Reference to the client instance</returns>
     public static RestClient UseXml(this RestClient client) {
         client.Serializers.Remove(DataFormat.Json);
         client.AssignAcceptedContentTypes();
+        return client;
+    }
+
+    /// <summary>
+    /// Sets the <see cref="RestClient"/> to only use the passed in custom serializer
+    /// </summary>
+    /// <param name="client">Client instance to work with</param>
+    /// <param name="serializerFactory">Function that returns the serializer instance</param>
+    /// <returns>Reference to the client instance</returns>
+    public static RestClient UseOnlySerializer(this RestClient client, Func<IRestSerializer> serializerFactory) {
+        client.Serializers.Clear();
+        client.UseSerializer(serializerFactory);
         return client;
     }
 }

@@ -1,4 +1,6 @@
-namespace RestSharp.Tests; 
+using RestSharp.Serializers.Json;
+
+namespace RestSharp.Tests;
 
 public class RestClientTests {
     const string BaseUrl = "http://localhost:8888/";
@@ -57,5 +59,47 @@ public class RestClientTests {
 
         // assert
         new Uri(baseUrl, relative).Should().Be(builtUri);
+    }
+
+    [Fact]
+    public void UseJson_leaves_only_json_serializer() {
+        // arrange
+        var baseUrl  = new Uri(BaseUrl);
+
+        // act
+        var client   = new RestClient(baseUrl);
+        client.UseJson();
+
+        // assert
+        Assert.Single(client.Serializers);
+        Assert.True(client.Serializers.ContainsKey(DataFormat.Json));
+    }
+
+    [Fact]
+    public void UseXml_leaves_only_json_serializer() {
+        // arrange
+        var baseUrl = new Uri(BaseUrl);
+
+        // act
+        var client = new RestClient(baseUrl);
+        client.UseXml();
+
+        // assert
+        Assert.Single(client.Serializers);
+        Assert.True(client.Serializers.ContainsKey(DataFormat.Xml));
+    }
+
+    [Fact]
+    public void UseOnlySerializer_leaves_only_custom_serializer() {
+        // arrange
+        var baseUrl = new Uri(BaseUrl);
+
+        // act
+        var client = new RestClient(baseUrl);
+        client.UseOnlySerializer(() => new SystemTextJsonSerializer());
+
+        // assert
+        Assert.Single(client.Serializers);
+        Assert.True(client.Serializers.ContainsKey(DataFormat.Json));
     }
 }
