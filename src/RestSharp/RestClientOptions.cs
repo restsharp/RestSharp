@@ -14,31 +14,39 @@
 // 
 
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Security;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace RestSharp;
 
 public class RestClientOptions {
-    static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
-
-    static readonly string DefaultUserAgent = $"RestSharp/{Version}";
-
+    /// <summary>
+    /// Default constructor for default RestClientOptions
+    /// </summary>
     public RestClientOptions() { }
 
+    /// <summary>
+    /// Constructor for RestClientOptions using a specific base URL pass in the Uri format.
+    /// </summary>
+    /// <param name="baseUrl">Base URL to use in Uri format</param>
     public RestClientOptions(Uri baseUrl) => BaseUrl = baseUrl;
 
+    /// <summary>
+    /// Constructor for RestClientOptions using a specific base URL pass as a string.
+    /// </summary>
+    /// <param name="baseUrl">Base URL to use in string format</param>
     public RestClientOptions(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
     /// <summary>
-    /// Explicit Host header value to use in requests independent from the request URI.
-    /// If null, default host value extracted from URI is used.
+    /// Base URI for all requests base with the RestClient. This cannot be changed after the client has been
+    /// constructed.
     /// </summary>
-    public Uri? BaseUrl { get; set; }
+    public Uri? BaseUrl { get; internal set; }
 
+    /// <summary>
+    /// Optional callback to allow you to configure the underlying HttpMessageHandler for this client when it is created.
+    /// </summary>
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
 
     /// <summary>
@@ -57,12 +65,19 @@ public class RestClientOptions {
     /// </summary>
     public bool DisableCharset { get; set; }
 
+    /// <summary>
+    /// Option to enable automatic decompression of responses. Defaults to GZip or higher where possible.
+    /// </summary>
 #if NETSTANDARD
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;
 #else
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.All;
 #endif
 
+    /// <summary>
+    /// Option to control the maximum number of redirects the client will follow before giving up. If not
+    /// provided the HttpClient default value of 50 is used.
+    /// </summary>
     public int? MaxRedirects { get; set; }
 
     /// <summary>
@@ -70,12 +85,22 @@ public class RestClientOptions {
     /// </summary>
     public X509CertificateCollection? ClientCertificates { get; set; }
 
-    public IWebProxy?               Proxy             { get; set; }
-    public CacheControlHeaderValue? CachePolicy       { get; set; }
-    public bool                     FollowRedirects   { get; set; } = true;
-    public bool?                    Expect100Continue { get; set; } = null;
-    public CookieContainer?         CookieContainer   { get; set; }
-    public string                   UserAgent         { get; set; } = DefaultUserAgent;
+    /// <summary>
+    /// Define the optional web proxy to use for all requests via this client instance
+    /// </summary>
+    public IWebProxy? Proxy { get; set; }
+
+    /// <summary>
+    /// Indicates whether the client will follow redirects or not. Defaults to true.
+    /// </summary>
+    public bool FollowRedirects { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a Boolean value that determines whether 100-Continue behavior is used. Default is null.
+    /// </summary>
+    public bool? Expect100Continue { get; set; } = null;
+
+    public CookieContainer?         CookieContainer { get; set; }
 
     /// <summary>
     /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
@@ -83,6 +108,9 @@ public class RestClientOptions {
     /// </summary>
     public int MaxTimeout { get; set; }
 
+    /// <summary>
+    /// Set the encoding to use for encoding encoding query strings. By default it uses UTF8.
+    /// </summary>
     public Encoding Encoding { get; set; } = Encoding.UTF8;
 
     [Obsolete("Use MaxTimeout instead")]
@@ -121,8 +149,6 @@ public class RestClientOptions {
     /// overriding certificate errors in the scope of a request.
     /// </summary>
     public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
-
-    public string? BaseHost { get; set; }
 
     /// <summary>
     /// By default, RestSharp doesn't allow multiple parameters to have the same name.

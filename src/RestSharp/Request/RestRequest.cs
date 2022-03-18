@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Net;
+using System.Net.Http.Headers;
+using System.Reflection;
+using RestSharp.Authenticators;
 using RestSharp.Extensions;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -21,14 +25,21 @@ namespace RestSharp;
 /// Container for data used to make requests
 /// </summary>
 public class RestRequest {
-    readonly Func<HttpResponseMessage, RestResponse>? _advancedResponseHandler;
-    readonly Func<Stream, Stream?>?                   _responseWriter;
+    Func<HttpResponseMessage, RestResponse>? _advancedResponseHandler;
+    Func<Stream, Stream?>?                   _responseWriter;
+    static readonly Version                  Version          = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
+    static readonly string                   DefaultUserAgent = $"RestSharp/{Version}";
 
     /// <summary>
     /// Default constructor
     /// </summary>
     public RestRequest() => Method = Method.Get;
 
+    /// <summary>
+    /// Constructor for a rest request to a relative resource URL and optional method
+    /// </summary>
+    /// <param name="resource">Resource to use</param>
+    /// <param name="method">Method to use (defaults to Method.Get></param>
     public RestRequest(string? resource, Method method = Method.Get) : this() {
         Resource = resource ?? "";
         Method   = method;
@@ -58,6 +69,11 @@ public class RestRequest {
                 );
     }
 
+    /// <summary>
+    /// Constructor for a rest request to a specific resource Uri and optional method
+    /// </summary>
+    /// <param name="resource">Resource Uri to use</param>
+    /// <param name="method">Method to use (defaults to Method.Get></param>
     public RestRequest(Uri resource, Method method = Method.Get)
         : this(resource.IsAbsoluteUri ? resource.AbsoluteUri : resource.OriginalString, method) { }
 
@@ -95,7 +111,11 @@ public class RestRequest {
     public Method Method { get; set; }
 
     /// <summary>
-    /// Custom request timeout
+    /// Sets the timeout in milliseconds for this requests using this client. Note that there is also a timeout
+    /// set on the base client, and the the shorter of the two values is what will end up being used. So if you need long
+    /// timeouts at the request level, you will want to set the value on the client to to a larger value than the maximum
+    /// you need per request, or set the client to infinite. If this value is 0, an infinite timeout is used (basically
+    /// it then times out using whatever was configured at the client level).
     /// </summary>
     public int Timeout { get; set; }
 
@@ -155,11 +175,26 @@ public class RestRequest {
     public HttpCompletionOption CompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
 
     /// <summary>
+    /// Explicit Host header value to use in requests independent from the request URI.
+    /// </summary>
+    public string? BaseHost { get; set; }
+
+    /// <summary>
+    /// Sets the user agent string to be used for this requests. Defaults to a RestSharp string if not provided.
+    /// </summary>
+    public string UserAgent { get; set; } = DefaultUserAgent;
+
+    /// <summary>
+    /// Sets the cache policy to use for this request
+    /// </summary>
+    public CacheControlHeaderValue? CachePolicy { get; set; }
+
+    /// <summary>
     /// Set this to write response to Stream rather than reading into memory.
     /// </summary>
     public Func<Stream, Stream?>? ResponseWriter {
         get => _responseWriter;
-        init {
+        set {
             if (AdvancedResponseWriter != null)
                 throw new ArgumentException(
                     "AdvancedResponseWriter is not null. Only one response writer can be used."
@@ -174,7 +209,7 @@ public class RestRequest {
     /// </summary>
     public Func<HttpResponseMessage, RestResponse>? AdvancedResponseWriter {
         get => _advancedResponseHandler;
-        init {
+        set {
             if (ResponseWriter != null)
                 throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
 

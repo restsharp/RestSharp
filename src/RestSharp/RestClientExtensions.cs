@@ -320,16 +320,16 @@ public static partial class RestClientExtensions {
     /// Reads a stream returned by the specified endpoint, deserializes each line to JSON and returns each object asynchronously.
     /// It is required for each JSON object to be returned in a single line.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="resource"></param>
-    /// <param name="cancellationToken"></param>
+    /// <param name="client">Rest client</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     [PublicAPI]
     public static async IAsyncEnumerable<T> StreamJsonAsync<T>(
         this RestClient                            client,
         string                                     resource,
-        [EnumeratorCancellation] CancellationToken cancellationToken
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
     ) {
         var request = new RestRequest(resource) { CompletionOption = HttpCompletionOption.ResponseHeadersRead };
 
