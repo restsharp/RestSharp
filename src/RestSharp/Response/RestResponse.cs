@@ -30,7 +30,7 @@ public class RestResponse<T> : RestResponse {
     /// <summary>
     /// Deserialized entity data
     /// </summary>
-    public T? Data { get; internal set; }
+    public T? Data { get; set; }
 
     public static RestResponse<T> FromResponse(RestResponse response)
         => new() {

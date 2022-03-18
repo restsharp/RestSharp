@@ -38,67 +38,67 @@ public abstract class RestResponseBase {
     /// <summary>
     /// MIME content type of response
     /// </summary>
-    public string? ContentType { get; init; }
+    public string? ContentType { get; set; }
 
     /// <summary>
     /// Length in bytes of the response content
     /// </summary>
-    public long? ContentLength { get; init; }
+    public long? ContentLength { get; set; }
 
     /// <summary>
     /// Encoding of the response content
     /// </summary>
-    public ICollection<string> ContentEncoding { get; init; } = new List<string>();
+    public ICollection<string> ContentEncoding { get; set; } = new List<string>();
 
     /// <summary>
     /// String representation of response content
     /// </summary>
-    public string? Content { get; init; }
+    public string? Content { get; set; }
 
     /// <summary>
     /// HTTP response status code
     /// </summary>
-    public HttpStatusCode StatusCode { get; init; }
+    public HttpStatusCode StatusCode { get; set; }
 
     /// <summary>
     /// Whether or not the response status code indicates success
     /// </summary>
-    public bool IsSuccessful { get; init; }
+    public bool IsSuccessful { get; set; }
 
     /// <summary>
     /// Description of HTTP status returned
     /// </summary>
-    public string? StatusDescription { get; init; }
+    public string? StatusDescription { get; set; }
 
     /// <summary>
     /// Response content
     /// </summary>
-    public byte[]? RawBytes { get; init; }
+    public byte[]? RawBytes { get; set; }
 
     /// <summary>
     /// The URL that actually responded to the content (different from request if redirected)
     /// </summary>
-    public Uri? ResponseUri { get; init; }
+    public Uri? ResponseUri { get; set; }
 
     /// <summary>
     /// HttpWebResponse.Server
     /// </summary>
-    public string? Server { get; init; }
+    public string? Server { get; set; }
 
     /// <summary>
     /// Cookies returned by server with the response
     /// </summary>
-    public CookieCollection? Cookies { get; init; }
+    public CookieCollection? Cookies { get; set; }
 
     /// <summary>
     /// Response headers returned by server with the response
     /// </summary>
-    public IReadOnlyCollection<HeaderParameter>? Headers { get; init; }
+    public IReadOnlyCollection<HeaderParameter>? Headers { get; set; }
 
     /// <summary>
     /// Content headers returned by server with the response
     /// </summary>
-    public IReadOnlyCollection<HeaderParameter>? ContentHeaders { get; init; }
+    public IReadOnlyCollection<HeaderParameter>? ContentHeaders { get; set; }
 
     /// <summary>
     /// Status of the request. Will return Error for transport errors.
