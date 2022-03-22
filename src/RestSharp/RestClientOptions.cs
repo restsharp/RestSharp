@@ -75,7 +75,7 @@ public class RestClientOptions {
     public bool                     FollowRedirects { get; set; } = true;
     public CookieContainer?         CookieContainer { get; set; }
     public string                   UserAgent       { get; set; } = DefaultUserAgent;
-    public int                      Timeout         { get; set; }
+    public int                      MaxTimeout      { get; set; }
     public Encoding                 Encoding        { get; set; } = Encoding.UTF8;
 
     /// <summary>
