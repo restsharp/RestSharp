@@ -38,9 +38,9 @@ public class RestClientOptions {
     /// If null, default host value extracted from URI is used.
     /// </summary>
     public Uri? BaseUrl { get; set; }
-    
+
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
-    
+
     /// <summary>
     /// In general you would not need to set this directly. Used by the NtlmAuthenticator.
     /// </summary>
@@ -51,7 +51,7 @@ public class RestClientOptions {
     /// running) will be sent along to the server. The default is false.
     /// </summary>
     public bool UseDefaultCredentials { get; set; }
-    
+
     /// <summary>
     /// Set to true if you need the Content-Type not to have the charset 
     /// </summary>
@@ -75,8 +75,20 @@ public class RestClientOptions {
     public bool                     FollowRedirects { get; set; } = true;
     public CookieContainer?         CookieContainer { get; set; }
     public string                   UserAgent       { get; set; } = DefaultUserAgent;
-    public int                      Timeout         { get; set; }
+    
+    /// <summary>
+    /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
+    /// the lowest value between the client timeout and request timeout will be used.
+    /// </summary>
+    public int                      MaxTimeout      { get; set; }
+    
     public Encoding                 Encoding        { get; set; } = Encoding.UTF8;
+
+    [Obsolete("Use MaxTimeout instead")]
+    public int Timeout {
+        get => MaxTimeout;
+        set => MaxTimeout = value;
+    }
 
     /// <summary>
     /// Flag to send authorisation header with the HttpWebRequest
