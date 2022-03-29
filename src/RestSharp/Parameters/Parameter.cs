@@ -34,7 +34,7 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
             ParameterType.GetOrPost   => new GetOrPostParameter(name!, value?.ToString(), encode),
             ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value?.ToString()!, encode),
             ParameterType.HttpHeader  => new HeaderParameter(name, value?.ToString()),
-            ParameterType.RequestBody => new BodyParameter(name, value!, Serializers.ContentType.Plain),
+            ParameterType.RequestBody => new BodyParameter("", value!, string.IsNullOrEmpty(name) ? Serializers.ContentType.Plain : name!),
             ParameterType.QueryString => new QueryParameter(name!, value?.ToString(), encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };

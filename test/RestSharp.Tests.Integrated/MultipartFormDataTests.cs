@@ -69,7 +69,7 @@ public sealed class MultipartFormDataTests : IDisposable {
             Method                  = Method.Post
         };
 
-        request.AddParameter("title", "test", ParameterType.RequestBody);
+        request.AddParameter("", "test", ParameterType.RequestBody);
 
         var response = await _client.ExecuteAsync(request);
 
