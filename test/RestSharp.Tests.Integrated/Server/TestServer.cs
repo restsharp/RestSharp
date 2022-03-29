@@ -53,6 +53,7 @@ public sealed class HttpServer {
         
         // POST
         _app.MapPost("/post/json", (TestRequest request) => new TestResponse { Message = request.Data });
+        _app.MapPost("/post/form", (HttpContext context) => new TestResponse { Message               = $"Works! Length: {context.Request.Form["big_string"].ToString().Length}" });
 
         IResult HandleHeaders(HttpContext ctx) {
             var response = ctx.Request.Headers.Select(x => new TestServerResponse(x.Key, x.Value));
