@@ -70,20 +70,20 @@ public class RestClientOptions {
     /// </summary>
     public X509CertificateCollection? ClientCertificates { get; set; }
 
-    public IWebProxy?               Proxy           { get; set; }
-    public CacheControlHeaderValue? CachePolicy     { get; set; }
-    public bool                     FollowRedirects { get; set; } = true;
+    public IWebProxy?               Proxy             { get; set; }
+    public CacheControlHeaderValue? CachePolicy       { get; set; }
+    public bool                     FollowRedirects   { get; set; } = true;
     public bool?                    Expect100Continue { get; set; } = null;
-    public CookieContainer?         CookieContainer { get; set; }
-    public string                   UserAgent       { get; set; } = DefaultUserAgent;
-    
+    public CookieContainer?         CookieContainer   { get; set; }
+    public string                   UserAgent         { get; set; } = DefaultUserAgent;
+
     /// <summary>
     /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
     /// the lowest value between the client timeout and request timeout will be used.
     /// </summary>
-    public int                      MaxTimeout      { get; set; }
-    
-    public Encoding                 Encoding        { get; set; } = Encoding.UTF8;
+    public int MaxTimeout { get; set; }
+
+    public Encoding Encoding { get; set; } = Encoding.UTF8;
 
     [Obsolete("Use MaxTimeout instead")]
     public int Timeout {
