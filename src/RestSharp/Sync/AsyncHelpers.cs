@@ -17,8 +17,8 @@
 using System.Collections.Concurrent;
 using System.Runtime.ExceptionServices;
 
-namespace RestSharp.Extensions {
-    public static class AsyncHelpers {
+namespace RestSharp {
+    static class AsyncHelpers {
         /// <summary>
         /// Executes a task synchronously on the calling thread by installing a temporary synchronization context that queues continuations
         /// </summary>

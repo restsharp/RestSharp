@@ -17,7 +17,6 @@ using System.Runtime.Serialization;
 using RestSharp.Extensions;
 using static RestSharp.KnownHeaders;
 // ReSharper disable InvertIf
-
 // ReSharper disable SuggestBaseTypeForParameter
 
 namespace RestSharp;
