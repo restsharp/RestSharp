@@ -21,6 +21,17 @@ namespace RestSharp;
 [PublicAPI]
 public static partial class RestClientExtensions {
     /// <summary>
+    /// Executes a GET-style request synchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <returns>Deserialized response content</returns>
+    public static RestResponse<T> ExecuteGet<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync<T>(request, Method.Get));
+
+    /// <summary>
     /// Executes a GET-style request asynchronously, authenticating if needed.
     /// The response content then gets deserialized to T.
     /// </summary>
@@ -33,6 +44,14 @@ public static partial class RestClientExtensions {
         => client.ExecuteAsync<T>(request, Method.Get, cancellationToken);
 
     /// <summary>
+    /// Executes a GET-style synchronously, authenticating if needed
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    public static RestResponse ExecuteGet(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync(request, Method.Get));
+
+    /// <summary>
     /// Executes a GET-style asynchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
@@ -40,6 +59,20 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     public static Task<RestResponse> ExecuteGetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync(request, Method.Get, cancellationToken);
+
+    /// <summary>
+    /// Executes a POST-style request synchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <returns>Deserialized response content</returns>
+    public static RestResponse<T> ExecutePost<T>(
+        this RestClient   client,
+        RestRequest       request
+    )
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync<T>(request, Method.Post));
 
     /// <summary>
     /// Executes a POST-style request asynchronously, authenticating if needed.
@@ -58,6 +91,14 @@ public static partial class RestClientExtensions {
         => client.ExecuteAsync<T>(request, Method.Post, cancellationToken);
 
     /// <summary>
+    /// Executes a POST-style synchronously, authenticating if needed
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    public static RestResponse ExecutePost(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync(request, Method.Post));
+
+    /// <summary>
     /// Executes a POST-style asynchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
@@ -65,6 +106,20 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     public static Task<RestResponse> ExecutePostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync(request, Method.Post, cancellationToken);
+
+    /// <summary>
+    /// Executes a PUT-style request synchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <returns>Deserialized response content</returns>
+    public static RestResponse<T> ExecutePut<T>(
+        this RestClient   client,
+        RestRequest       request
+    )
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync<T>(request, Method.Put));
 
     /// <summary>
     /// Executes a PUT-style request asynchronously, authenticating if needed.
@@ -83,6 +138,14 @@ public static partial class RestClientExtensions {
         => client.ExecuteAsync<T>(request, Method.Put, cancellationToken);
 
     /// <summary>
+    /// Executes a PUP-style synchronously, authenticating if needed
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    public static RestResponse ExecutePut(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync(request, Method.Put));
+
+    /// <summary>
     /// Executes a PUP-style asynchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
@@ -90,6 +153,18 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     public static Task<RestResponse> ExecutePutAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync(request, Method.Put, cancellationToken);
+
+    /// <summary>
+    /// Executes the request synchronously, authenticating if needed
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    public static RestResponse<T> Execute<T>(
+        this RestClient client,
+        RestRequest     request
+    )
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync<T>(request));
 
     /// <summary>
     /// Executes the request asynchronously, authenticating if needed
@@ -111,6 +186,19 @@ public static partial class RestClientExtensions {
     }
 
     /// <summary>
+    /// Executes the request synchronously, authenticating if needed
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="httpMethod">Override the request method</param>
+    public static RestResponse Execute(
+        this RestClient   client,
+        RestRequest       request,
+        Method            httpMethod
+    )
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync(request, httpMethod));
+
+    /// <summary>
     /// Executes the request asynchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
@@ -128,6 +216,20 @@ public static partial class RestClientExtensions {
         request.Method = httpMethod;
         return client.ExecuteAsync(request, cancellationToken);
     }
+
+    /// <summary>
+    /// Executes the request synchronously, authenticating if needed
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="httpMethod">Override the request method</param>
+    public static RestResponse<T> Execute<T>(
+        this RestClient   client,
+        RestRequest       request,
+        Method            httpMethod
+    )
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync<T>(request, httpMethod));
 
     /// <summary>
     /// Executes the request asynchronously, authenticating if needed
@@ -155,6 +257,17 @@ public static partial class RestClientExtensions {
     /// </summary>
     /// <param name="client">RestClient instance</param>
     /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Get<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.GetAsync<T>(request));
+
+    /// <summary>
+    /// Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
@@ -164,11 +277,25 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Get(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.GetAsync(request));
+
     public static async Task<RestResponse> GetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteGetAsync(request, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Post<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PostAsync<T>(request));
 
     /// <summary>
     /// Execute the request using POST HTTP method. Exception will be thrown if the request does not succeed.
@@ -185,11 +312,25 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Post(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PostAsync(request));
+
     public static async Task<RestResponse> PostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecutePostAsync(request, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Put<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PutAsync<T>(request));
 
     /// <summary>
     /// Execute the request using PUT HTTP method. Exception will be thrown if the request does not succeed.
@@ -206,11 +347,25 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Put(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PutAsync(request));
+
     public static async Task<RestResponse> PutAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Put, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Head<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.HeadAsync<T>(request));
 
     /// <summary>
     /// Execute the request using HEAD HTTP method. Exception will be thrown if the request does not succeed.
@@ -227,11 +382,25 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Head(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.HeadAsync(request));
+
     public static async Task<RestResponse> HeadAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Head, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Options<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.OptionsAsync<T>(request));
 
     /// <summary>
     /// Execute the request using OPTIONS HTTP method. Exception will be thrown if the request does not succeed.
@@ -248,11 +417,25 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Options(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.OptionsAsync(request));
+
     public static async Task<RestResponse> OptionsAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Options, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Patch<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PatchAsync<T>(request));
 
     /// <summary>
     /// Execute the request using PATCH HTTP method. Exception will be thrown if the request does not succeed.
@@ -269,11 +452,25 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Patch(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PatchAsync(request));
+
     public static async Task<RestResponse> PatchAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Patch, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
+    /// The response data is deserialized to the Data property of the returned response object.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">The request</param>
+    /// <typeparam name="T">Expected result type</typeparam>
+    /// <returns></returns>
+    public static T? Delete<T>(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.DeleteAsync<T>(request));
 
     /// <summary>
     /// Execute the request using DELETE HTTP method. Exception will be thrown if the request does not succeed.
@@ -290,11 +487,24 @@ public static partial class RestClientExtensions {
         return response.Data;
     }
 
+    public static RestResponse Delete(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.DeleteAsync(request));
+
     public static async Task<RestResponse> DeleteAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Delete, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
         return response;
     }
+
+    /// <summary>
+    /// A specialized method to download files.
+    /// </summary>
+    /// <param name="client">RestClient instance</param>
+    /// <param name="request">Pre-configured request instance.</param>
+    /// <returns>The downloaded file.</returns>
+    [PublicAPI]
+    public static byte[]? DownloadData(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.DownloadDataAsync(request));
 
     /// <summary>
     /// A specialized method to download files.
