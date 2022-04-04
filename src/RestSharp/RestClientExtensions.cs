@@ -163,7 +163,7 @@ public static partial class RestClientExtensions {
         RestClient.ThrowIfError(response);
         return response.Data;
     }
-
+    
     public static async Task<RestResponse> GetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteGetAsync(request, cancellationToken).ConfigureAwait(false);
         RestClient.ThrowIfError(response);
@@ -184,6 +184,9 @@ public static partial class RestClientExtensions {
         RestClient.ThrowIfError(response);
         return response.Data;
     }
+
+    public static RestResponse Post(this RestClient client, RestRequest request)
+        => AsyncHelpers.RunSync(() => client.PostAsync(request));
 
     public static async Task<RestResponse> PostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecutePostAsync(request, cancellationToken).ConfigureAwait(false);

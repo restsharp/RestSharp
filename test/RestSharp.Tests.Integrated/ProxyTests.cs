@@ -4,7 +4,6 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.Tests.Integrated; 
 
 public class ProxyTests {
-    // [Fact(Skip = "Behaves strangely on Windows")]
     [Fact]
     public async Task Set_Invalid_Proxy_Fails() {
         using var server = HttpServerFixture.StartServer((_, __) => { });

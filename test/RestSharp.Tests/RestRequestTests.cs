@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace RestSharp.Tests;
+﻿namespace RestSharp.Tests;
 
 public class RestRequestTests {
     [Fact]
