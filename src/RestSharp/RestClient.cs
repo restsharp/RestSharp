@@ -126,6 +126,7 @@ public partial class RestClient : IDisposable {
     void ConfigureHttpClient(HttpClient httpClient) {
         if (Options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(Options.MaxTimeout);
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+        httpClient.DefaultRequestHeaders.ExpectContinue = Options.Expect100Continue;
     }
 
     void ConfigureHttpMessageHandler(HttpClientHandler handler) {
