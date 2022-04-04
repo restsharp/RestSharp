@@ -13,7 +13,6 @@
 // limitations under the License.
 // 
 
-using System.Net;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
@@ -42,23 +41,6 @@ public static partial class RestClientExtensions {
     /// <returns></returns>
     public static RestClient UseQueryEncoder(this RestClient client, Func<string, Encoding, string> queryEncoder)
         => client.With(x => x.EncodeQuery = queryEncoder);
-
-    /// <summary>
-    /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
-    /// </summary>
-    /// <param name="client"></param>
-    /// <param name="name">Cookie name</param>
-    /// <param name="value">Cookie value</param>
-    /// <param name="path">Cookie path</param>
-    /// <param name="domain">Cookie domain, must not be an empty string</param>
-    /// <returns></returns>
-    public static RestClient AddCookie(this RestClient client, string name, string value, string path, string domain) {
-        lock (client.CookieContainer) {
-            client.CookieContainer.Add(new Cookie(name, value, path, domain));
-        }
-
-        return client;
-    }
 
     public static RestClient UseAuthenticator(this RestClient client, IAuthenticator authenticator)
         => client.With(x => x.Authenticator = authenticator);

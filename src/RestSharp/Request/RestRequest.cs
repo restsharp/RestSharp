@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Net;
+using RestSharp.Authenticators;
 using RestSharp.Extensions;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -29,6 +31,11 @@ public class RestRequest {
     /// </summary>
     public RestRequest() => Method = Method.Get;
 
+    /// <summary>
+    /// Constructor for a rest request to a relative resource URL and optional method
+    /// </summary>
+    /// <param name="resource">Resource to use</param>
+    /// <param name="method">Method to use (defaults to Method.Get></param>
     public RestRequest(string? resource, Method method = Method.Get) : this() {
         Resource = resource ?? "";
         Method   = method;
@@ -58,6 +65,11 @@ public class RestRequest {
                 );
     }
 
+    /// <summary>
+    /// Constructor for a rest request to a specific resource Uri and optional method
+    /// </summary>
+    /// <param name="resource">Resource Uri to use</param>
+    /// <param name="method">Method to use (defaults to Method.Get></param>
     public RestRequest(Uri resource, Method method = Method.Get)
         : this(resource.IsAbsoluteUri ? resource.AbsoluteUri : resource.OriginalString, method) { }
 
@@ -82,6 +94,11 @@ public class RestRequest {
     /// See AddParameter() for explanation of the types of parameters that can be passed
     /// </summary>
     public ParametersCollection Parameters { get; } = new();
+
+    /// <summary>
+    /// Optional cookie container to use for the request. If not set, cookies are not passed.
+    /// </summary>
+    public CookieContainer? CookieContainer { get; set; }
 
     /// <summary>
     /// Container of all the files to be uploaded with the request.

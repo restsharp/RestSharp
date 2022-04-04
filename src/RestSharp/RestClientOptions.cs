@@ -74,7 +74,6 @@ public class RestClientOptions {
     public CacheControlHeaderValue? CachePolicy       { get; set; }
     public bool                     FollowRedirects   { get; set; } = true;
     public bool?                    Expect100Continue { get; set; } = null;
-    public CookieContainer?         CookieContainer   { get; set; }
     public string                   UserAgent         { get; set; } = DefaultUserAgent;
 
     /// <summary>
