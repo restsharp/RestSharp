@@ -78,7 +78,7 @@ You can still create a request as before:
 var request = new RestRequest();
 ```
 
-Adding parameters hasn't change much, except you cannot add cookie parameters to the request. It's because cookies are added to the `HttpMessageHandler` cookie container, which is not accessible inside the request class.
+Adding parameters hasn't changed much, except you cannot add cookie parameters to the request. It's because cookies are added to the `HttpMessageHandler` cookie container, which is not accessible inside the request class.
 
 ```csharp
 var request = new RestRequest()
