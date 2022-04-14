@@ -28,7 +28,7 @@ Check [v107 docs](https://restsharp.dev/v107) for more information.
 | | |
 |-|-|
 | downloads | ![](https://img.shields.io/nuget/dt/RestSharp) |
-| stable | ![](https://img.shields.io/nuget/v/RestSharp) |
+| stable | [![](https://img.shields.io/nuget/v/RestSharp)](https://www.nuget.org/packages/RestSharp) |
 | preview | ![](https://img.shields.io/nuget/vpre/RestSharp) |
 
 ### Support
