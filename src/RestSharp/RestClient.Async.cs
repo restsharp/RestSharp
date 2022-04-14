@@ -95,6 +95,8 @@ public partial class RestClient {
     /// <returns>The downloaded stream.</returns>
     [PublicAPI]
     public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
+        // Make sure we only read the headers so we can stream the content body efficiently
+        request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
         var response = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
 
         if (response.Exception != null) {

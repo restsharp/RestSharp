@@ -331,7 +331,7 @@ public static partial class RestClientExtensions {
         string                                     resource,
         [EnumeratorCancellation] CancellationToken cancellationToken
     ) {
-        var request = new RestRequest(resource) { CompletionOption = HttpCompletionOption.ResponseHeadersRead };
+        var request = new RestRequest(resource);
 
 #if NETSTANDARD
         using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
