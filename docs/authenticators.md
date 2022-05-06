@@ -65,7 +65,7 @@ For example:
 
 ```csharp
 client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(
-    "Bearer", token
+    token, "Bearer"
 );
 ```
 
