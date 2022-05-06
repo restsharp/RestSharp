@@ -12,6 +12,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   nuget:
     runs-on: ubuntu-latest
