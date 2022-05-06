@@ -208,7 +208,7 @@ Mocking an infrastructure component like RestSharp (or HttpClient) is not the be
 
 The best way to test HTTP calls is to make some, using the actual service you call. However, you might still want to check if your API client forms requests in a certain way. You might also be sure about what the remote server responds to your calls with, so you can build a set of JSON (or XML) responses, so you can simulate remote calls.
 
-It is perfectly doable without using interfaces. As RestSharp uses `HttpClient` internally, it certainly uses `HttpMessageHandler`. Features like delegating handlers allow you to intersect the request pipeline, inspect the request, and substitute the response. You can do it yourself, or use a library like [MockHttp](https://github.com/richardszalay/mockhttp). They have an example provided in the repository README, so we have changed it for RestClient here:
+It is perfectly doable without using interfaces. As RestSharp uses `HttpClient` internally, it certainly uses `HttpMessageHandler`. Features like delegating handlers allow you to intercept the request pipeline, inspect the request, and substitute the response. You can do it yourself, or use a library like [MockHttp](https://github.com/richardszalay/mockhttp). They have an example provided in the repository README, so we have changed it for RestClient here:
 
 ```csharp
 var mockHttp = new MockHttpMessageHandler();
