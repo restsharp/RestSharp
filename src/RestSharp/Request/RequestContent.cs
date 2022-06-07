@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
@@ -157,13 +158,16 @@ class RequestContent : IDisposable {
             }
         }
         else {
-            // we should not have anything else except the parameters, so we send them as form URL encoded
-            var formContent = new FormUrlEncodedContent(
-                _request.Parameters
-                    .Where(x => x.Type == ParameterType.GetOrPost)
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
-            );
-            Content = formContent;
+            // we should not have anything else except the parameters, so we send them as form URL encoded. However due
+            // to bugs in HttpClient FormUrlEncodedContent (see https://github.com/restsharp/RestSharp/issues/1814) we
+            // do the encoding ourselves using WebUtility.UrlEncode instead.
+            var formData = _request.Parameters
+                .Where(x => x.Type == ParameterType.GetOrPost)
+                .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!;
+            var encodedItems   = formData.Select(i => $"{WebUtility.UrlEncode(i.Key)}={WebUtility.UrlEncode(i.Value)}"/*.Replace("%20", "+")*/);
+            var encodedContent = new StringContent(string.Join("&", encodedItems), null, "application/x-www-form-urlencoded");
+
+            Content = encodedContent;
         }
     }
 
