@@ -2,7 +2,7 @@ Follow these guidelines, in no particular order, to improve your chances of havi
 
 ### Before you do anything else
 
- * DO: Read about [getting help](https://restsharp.dev/get-help/) in the docs.
+ * DO: Read about [getting help](https://restsharp.dev/support/#get-help) in the docs.
  * DO: Follow the guidelines below when contributing.  
  * DO: Discuss bigger change in the issue before implementing it.  
  * DO NOT: Use issues to ask questions about using the library.
