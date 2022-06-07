@@ -30,11 +30,11 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
     public override string ToString() => $"{Name}={Value}";
 
     public static Parameter CreateParameter(string? name, object? value, ParameterType type, bool encode = true)
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         => type switch {
             ParameterType.GetOrPost   => new GetOrPostParameter(name!, value?.ToString(), encode),
             ParameterType.UrlSegment  => new UrlSegmentParameter(name!, value?.ToString()!, encode),
             ParameterType.HttpHeader  => new HeaderParameter(name, value?.ToString()),
-            ParameterType.RequestBody => new BodyParameter(name, value!, Serializers.ContentType.Plain),
             ParameterType.QueryString => new QueryParameter(name!, value?.ToString(), encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };

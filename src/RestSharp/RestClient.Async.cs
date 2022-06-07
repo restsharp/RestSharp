@@ -42,7 +42,7 @@ public partial class RestClient {
         response.Request = request;
         response.Request.IncreaseNumAttempts();
 
-        return Options.ThrowOnAnyError ? ThrowIfError(response) : response;
+        return Options.ThrowOnAnyError ? response.ThrowIfError() : response;
     }
 
     async Task<InternalResponse> ExecuteInternal(RestRequest request, CancellationToken cancellationToken) {
@@ -130,13 +130,6 @@ public partial class RestClient {
         bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
     }
 
-    internal static RestResponse ThrowIfError(RestResponse response) {
-        var exception = response.GetException();
-        if (exception != null) throw exception;
-
-        return response;
-    }
-
     static HttpMethod AsHttpMethod(Method method)
         => method switch {
             Method.Get     => HttpMethod.Get,
@@ -155,4 +148,20 @@ public partial class RestClient {
             Method.Search => new HttpMethod("SEARCH"),
             _             => throw new ArgumentOutOfRangeException()
         };
+}
+
+public static class ResponseThrowExtension {
+    public static RestResponse ThrowIfError(this RestResponse response) {
+        var exception = response.GetException();
+        if (exception != null) throw exception;
+
+        return response;
+    }
+    
+    public static RestResponse<T> ThrowIfError<T>(this RestResponse<T> response) {
+        var exception = response.GetException();
+        if (exception != null) throw exception;
+
+        return response;
+    }
 }

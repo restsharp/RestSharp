@@ -193,7 +193,10 @@ public class RestRequest {
     /// Removes a parameter object from the request parameters
     /// </summary>
     /// <param name="parameter">Parameter to remove</param>
-    public void RemoveParameter(Parameter parameter) => Parameters.RemoveParameter(parameter);
+    public RestRequest RemoveParameter(Parameter parameter) {
+        Parameters.RemoveParameter(parameter);
+        return this;
+    }
 
     internal RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
 }
