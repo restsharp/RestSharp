@@ -17,6 +17,7 @@ using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using RestSharp.Extensions;
 using static RestSharp.KnownHeaders;
+
 // ReSharper disable InvertIf
 // ReSharper disable SuggestBaseTypeForParameter
 
@@ -26,8 +27,6 @@ class RequestContent : IDisposable {
     readonly RestClient   _client;
     readonly RestRequest  _request;
     readonly List<Stream> _streams = new();
-
-    
 
     HttpContent? Content { get; set; }
 
@@ -56,8 +55,7 @@ class RequestContent : IDisposable {
             _streams.Add(stream);
             var fileContent = new StreamContent(stream);
 
-            if (file.ContentType != null)
-                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
+            if (file.ContentType != null) fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
 
             fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") {
                 Name     = $"\"{file.Name}\"",
@@ -98,8 +96,7 @@ class RequestContent : IDisposable {
 
             var content = serializer.Serialize(body);
 
-            if (content == null)
-                throw new SerializationException("Request body serialized to null");
+            if (content == null) throw new SerializationException("Request body serialized to null");
 
             return new StringContent(
                 content,
@@ -151,6 +148,7 @@ class RequestContent : IDisposable {
             // we got the multipart form already instantiated, just add parameters to it
             foreach (var postParameter in postParameters!) {
                 var parameterName = postParameter.Name!;
+
                 mpContent.Add(
                     new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
                     _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
@@ -158,16 +156,25 @@ class RequestContent : IDisposable {
             }
         }
         else {
-            // we should not have anything else except the parameters, so we send them as form URL encoded. However due
-            // to bugs in HttpClient FormUrlEncodedContent (see https://github.com/restsharp/RestSharp/issues/1814) we
+#if NETCORE
+            // We should not have anything else except the parameters, so we send them as form URL encoded.
+            var formContent = new FormUrlEncodedContent(
+                _request.Parameters
+                    .Where(x => x.Type == ParameterType.GetOrPost)
+                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!
+            );
+            Content = formContent;
+#else
+            // However due to bugs in HttpClient FormUrlEncodedContent (see https://github.com/restsharp/RestSharp/issues/1814) we
             // do the encoding ourselves using WebUtility.UrlEncode instead.
             var formData = _request.Parameters
                 .Where(x => x.Type == ParameterType.GetOrPost)
                 .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!;
-            var encodedItems   = formData.Select(i => $"{WebUtility.UrlEncode(i.Key)}={WebUtility.UrlEncode(i.Value)}"/*.Replace("%20", "+")*/);
+            var encodedItems   = formData.Select(i => $"{WebUtility.UrlEncode(i.Key)}={WebUtility.UrlEncode(i.Value)}" /*.Replace("%20", "+")*/);
             var encodedContent = new StringContent(string.Join("&", encodedItems), null, "application/x-www-form-urlencoded");
-
+            
             Content = encodedContent;
+#endif
         }
     }
 

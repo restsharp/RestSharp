@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Nullable>disable</Nullable>
+        <TargetFrameworks>net6</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
