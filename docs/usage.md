@@ -215,6 +215,21 @@ request.AddParameter("ids", "123,456");
 
 Remember that `AddObject` only works if your properties have primitive types. It also works with collections of primitive types as shown above.
 
+If you need to override the property name or format, you can do it using the `RequestProperty` attribute. For example:
+
+```csharp
+public class RequestModel {
+    // override the name and the format
+    [RequestAttribute(Name = "from_date", Format = "d")]
+    public DateTime FromDate { get; set; }
+}
+
+// add it to the request
+request.AddObject(new RequestModel { FromDate = DateTime.Now });
+```
+
+In this case, the request will get a GET or POST parameter named `from_date` and its value would be the current date in short date format.
+
 ### Url Segment
 
 Unlike `GetOrPost`, this `ParameterType` replaces placeholder values in the `RequestUrl`:
