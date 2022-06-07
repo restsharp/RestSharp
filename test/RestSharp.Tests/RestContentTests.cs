@@ -12,4 +12,17 @@ public class RestContentTests {
 
         httpContent.Headers.ContentType!.MediaType.Should().Be(myContentType);
     }
+    
+    [Fact]
+    public void RestContent_supports_manual_json_body() {
+        const string myContentType = "application/json";
+        const string myJsonString  = "[]";
+
+        var request = new RestRequest("resource").AddParameter(myContentType, myJsonString, ParameterType.RequestBody);
+        var content = new RequestContent(new RestClient(), request);
+
+        var httpContent = content.BuildContent();
+
+        httpContent.Headers.ContentType!.MediaType.Should().Be(myContentType);
+    }
 }
