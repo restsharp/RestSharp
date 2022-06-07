@@ -19,7 +19,8 @@ public class ObjectParserTests {
         parsed["some_data"].Should().Be(request.SomeData);
         parsed["SomeDate"].Should().Be(request.SomeDate.ToString("d"));
         parsed["Plain"].Should().Be(request.Plain.ToString());
-        parsed["PlainArray"].Should().Be(string.Join(",", dates.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+        parsed["PlainArray"].Should().Be(string.Join(",", dates.Select(x => x.ToString())));
         parsed["dates"].Should().Be(string.Join(",", dates.Select(x => x.ToString("d"))));
     }
 
