@@ -2,6 +2,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <IsTestProject>false</IsTestProject>
+        <TargetFrameworks>net6</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />

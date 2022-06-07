@@ -3,14 +3,24 @@ using System.Xml.Linq;
 using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Serializers.Xml.SampleClasses;
 
-namespace RestSharp.Tests.Serializers.Xml; 
+namespace RestSharp.Tests.Serializers.Xml;
 
 public class XmlAttributeDeserializerTests {
+    readonly ITestOutputHelper _output;
+
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
+    #if NETCORE
     readonly string _sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
+    #else
+    readonly string _sampleDataPath = Path.Combine(Directory.GetCurrentDirectory(), "SampleData");
+    #endif
 
     string PathFor(string sampleFile) => Path.Combine(_sampleDataPath, sampleFile);
+
+    public XmlAttributeDeserializerTests(ITestOutputHelper output) {
+        _output = output;
+    }
 
     [Fact]
     public void Can_Deserialize_Lists_of_Simple_Types() {
@@ -24,7 +34,7 @@ public class XmlAttributeDeserializerTests {
 
         Assert.NotEmpty(output.Numbers);
         Assert.False(output.Names[0].Length == 0);
-        Assert.False(output.Numbers.Sum() == 0);
+        Assert.False(output.Numbers.Sum()   == 0);
     }
 
     [Fact]
@@ -572,7 +582,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"             + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
@@ -621,7 +631,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"             + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
@@ -670,7 +680,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"             + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
@@ -738,7 +748,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"           + i),
                     new XElement("Since", DateTime.Now.Year - i)
                 )
             );
