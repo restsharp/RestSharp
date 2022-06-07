@@ -17,7 +17,7 @@ namespace RestSharp.Extensions;
 /// <summary>
 /// Extension method overload!
 /// </summary>
-static class MiscExtensions {
+static class StreamExtensions {
     /// <summary>
     /// Read a stream into a byte array
     /// </summary>
@@ -38,41 +38,5 @@ static class MiscExtensions {
             ms.Write(buffer, 0, read);
 
         return ms.ToArray();
-    }
-
-    internal static IEnumerable<(string Name, string? Value)> GetProperties(this object obj, params string[] includedProperties) {
-        // automatically create parameters from object props
-        var type  = obj.GetType();
-        var props = type.GetProperties();
-
-        foreach (var prop in props) {
-            if (!IsAllowedProperty(prop.Name))
-                continue;
-
-            var val = prop.GetValue(obj, null);
-
-            if (val == null)
-                continue;
-
-            var propType = prop.PropertyType;
-
-            if (propType.IsArray) {
-                var elementType = propType.GetElementType();
-                var array       = (Array)val;
-
-                if (array.Length > 0 && elementType != null) {
-                    // convert the array to an array of strings
-                    var values = array.Cast<object>().Select(item => item.ToString());
-                    yield return (prop.Name, string.Join(",", values));
-
-                    continue;
-                }
-            }
-
-            yield return (prop.Name, val.ToString());
-        }
-
-        bool IsAllowedProperty(string propertyName)
-            => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
     }
 }
