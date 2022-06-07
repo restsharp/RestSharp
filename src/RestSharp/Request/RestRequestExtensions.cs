@@ -205,8 +205,13 @@ public static class RestRequestExtensions {
     /// <returns></returns>
     public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
         => type == ParameterType.RequestBody
-            ? request.AddBody(value, name)
+            ? request.AddBodyParameter(name, value)
             : request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
+
+    static RestRequest AddBodyParameter(this RestRequest request, string? name, object value)
+        => name != null && name.Contains("/")
+            ? request.AddBody(value, name)
+            : request.AddParameter(new BodyParameter(name, value, ContentType.Plain));
 
     /// <summary>
     /// Adds or updates request parameter of a given type. It will create a typed parameter instance based on the type argument.
@@ -222,8 +227,9 @@ public static class RestRequestExtensions {
     /// <returns></returns>
     public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true) {
         request.RemoveParameter(name, type);
+
         return type == ParameterType.RequestBody
-            ? request.AddBody(value, name)
+            ? request.AddBodyParameter(name, value)
             : request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
     }
 
@@ -234,7 +240,7 @@ public static class RestRequestExtensions {
     /// <param name="request">Request instance</param>
     /// <param name="parameter">Parameter instance</param>
     /// <returns></returns>
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter) 
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter)
         => request.RemoveParameter(parameter.Name, parameter.Type).AddParameter(parameter);
 
     static RestRequest RemoveParameter(this RestRequest request, string? name, ParameterType type) {
