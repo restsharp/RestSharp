@@ -7,6 +7,7 @@ public class ObjectParserTests {
     public void ShouldUseRequestProperty() {
         var now   = DateTime.Now;
         var dates = new[] { now, now.AddDays(1), now.AddDays(2) };
+
         var request = new TestObject {
             SomeData   = "test",
             SomeDate   = now,
@@ -24,17 +25,33 @@ public class ObjectParserTests {
         parsed["dates"].Should().Be(string.Join(",", dates.Select(x => x.ToString("d"))));
     }
 
+    [Fact]
+    public void ShouldProduceMultipleParametersForArray() {
+        var request = new AnotherTestObject {
+            SomeIds = new[] { 1, 2, 3 }
+        };
+        var expected = request.SomeIds.Select(x => ("ids[]", x.ToString()));
+        var parsed   = request.GetProperties();
+
+        parsed.Should().BeEquivalentTo(expected);
+    }
+
+    class AnotherTestObject {
+        [RequestProperty(Name = "ids", ArrayQueryType = RequestArrayQueryType.ArrayParameters)]
+        public int[] SomeIds { get; set; }
+    }
+
     class TestObject {
         [RequestProperty(Name = "some_data")]
         public string SomeData { get; set; }
 
         [RequestProperty(Format = "d")]
         public DateTime SomeDate { get; set; }
-        
+
         [RequestProperty(Name = "dates", Format = "d")]
         public DateTime[] DatesArray { get; set; }
 
-        public int      Plain      { get; set; }
+        public int        Plain      { get; set; }
         public DateTime[] PlainArray { get; set; }
     }
 }

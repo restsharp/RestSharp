@@ -23,34 +23,45 @@ static class ObjectParser {
         var type  = obj.GetType();
         var props = type.GetProperties();
 
+        var properties = new List<(string Name, string? Value)>();
+
         foreach (var prop in props.Where(x => IsAllowedProperty(x.Name))) {
             var val = prop.GetValue(obj, null);
 
             if (val == null) continue;
 
-            yield return prop.PropertyType.IsArray
-                ? GetArray(prop, val)
-                : GetValue(prop, val);
+            if (prop.PropertyType.IsArray)
+                properties.AddRange(GetArray(prop, val));
+            else
+                properties.Add(GetValue(prop, val));
         }
 
         string? ParseValue(string? format, object? value) => format == null ? value?.ToString() : string.Format($"{{0:{format}}}", value);
 
-        (string, string?) GetArray(PropertyInfo propertyInfo, object? value) {
+        IEnumerable<(string, string?)> GetArray(PropertyInfo propertyInfo, object? value) {
             var elementType = propertyInfo.PropertyType.GetElementType();
             var array       = (Array)value!;
 
             var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
             var name      = attribute?.Name ?? propertyInfo.Name;
 
+            var queryType = attribute?.ArrayQueryType ?? RequestArrayQueryType.CommaSeparated;
+
             if (array.Length > 0 && elementType != null) {
                 // convert the array to an array of strings
                 var values = array
                     .Cast<object>()
                     .Select(item => ParseValue(attribute?.Format, item));
-                return (name, string.Join(",", values));
+
+                return queryType switch {
+                    RequestArrayQueryType.CommaSeparated  => new (string, string?)[] { (name, string.Join(",", values)) },
+                    RequestArrayQueryType.ArrayParameters => values.Select(x => ($"{name}[]", x)),
+                    _                                     => throw new ArgumentOutOfRangeException()
+                };
+                    
             }
 
-            return (name, null);
+            return new (string, string?)[] { (name, null) };
         }
 
         (string, string?) GetValue(PropertyInfo propertyInfo, object? value) {
@@ -62,12 +73,16 @@ static class ObjectParser {
 
         bool IsAllowedProperty(string propertyName)
             => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
+
+        return properties;
     }
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public class RequestPropertyAttribute : Attribute {
-    public string? Name { get; set; }
-
-    public string? Format { get; set; }
+    public string?               Name           { get; set; }
+    public string?               Format         { get; set; }
+    public RequestArrayQueryType ArrayQueryType { get; set; } = RequestArrayQueryType.CommaSeparated;
 }
+
+public enum RequestArrayQueryType { CommaSeparated, ArrayParameters }
