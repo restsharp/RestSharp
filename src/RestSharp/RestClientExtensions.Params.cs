@@ -40,8 +40,10 @@ public static partial class RestClientExtensions {
     /// <param name="value">Value of the parameter</param>
     /// <param name="type">The type of parameter to add</param>
     /// <returns>This request</returns>
-    public static RestClient AddDefaultParameter(this RestClient client, string name, object value, ParameterType type)
-        => client.AddDefaultParameter(Parameter.CreateParameter(name, value, type));
+    public static RestClient AddDefaultParameter(this RestClient client, string name, object value, ParameterType type) {
+        if (type == ParameterType.RequestBody) throw new ArgumentException("Default parameter cannot be Body", nameof(type));
+        return client.AddDefaultParameter(Parameter.CreateParameter(name, value, type));
+    }
 
     /// <summary>
     /// Adds a default header to the RestClient. Used on every request made by this client instance.

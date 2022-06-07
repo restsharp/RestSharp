@@ -204,7 +204,14 @@ public static class RestRequestExtensions {
     /// <param name="encode">Encode the value or not, default true</param>
     /// <returns></returns>
     public static RestRequest AddParameter(this RestRequest request, string? name, object value, ParameterType type, bool encode = true)
-        => request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
+        => type == ParameterType.RequestBody
+            ? request.AddBodyParameter(name, value)
+            : request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
+
+    static RestRequest AddBodyParameter(this RestRequest request, string? name, object value)
+        => name != null && name.Contains("/")
+            ? request.AddBody(value, name)
+            : request.AddParameter(new BodyParameter(name, value, ContentType.Plain));
 
     /// <summary>
     /// Adds or updates request parameter of a given type. It will create a typed parameter instance based on the type argument.
@@ -218,8 +225,13 @@ public static class RestRequestExtensions {
     /// <param name="type">Enum value specifying what kind of parameter is being added</param>
     /// <param name="encode">Encode the value or not, default true</param>
     /// <returns></returns>
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true)
-        => request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, string name, object value, ParameterType type, bool encode = true) {
+        request.RemoveParameter(name, type);
+
+        return type == ParameterType.RequestBody
+            ? request.AddBodyParameter(name, value)
+            : request.AddOrUpdateParameter(Parameter.CreateParameter(name, value, type, encode));
+    }
 
     /// <summary>
     /// Adds or updates request parameter, given the parameter instance, for example <see cref="QueryParameter"/> or <see cref="UrlSegmentParameter"/>.
@@ -228,13 +240,12 @@ public static class RestRequestExtensions {
     /// <param name="request">Request instance</param>
     /// <param name="parameter">Parameter instance</param>
     /// <returns></returns>
-    public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter) {
-        var p = request.Parameters.FirstOrDefault(x => x.Name == parameter.Name && x.Type == parameter.Type);
+    public static RestRequest AddOrUpdateParameter(this RestRequest request, Parameter parameter)
+        => request.RemoveParameter(parameter.Name, parameter.Type).AddParameter(parameter);
 
-        if (p != null) request.RemoveParameter(p);
-
-        request.AddParameter(parameter);
-        return request;
+    static RestRequest RemoveParameter(this RestRequest request, string? name, ParameterType type) {
+        var p = request.Parameters.FirstOrDefault(x => x.Name == name && x.Type == type);
+        return p != null ? request.RemoveParameter(p) : request;
     }
 
     /// <summary>
@@ -245,8 +256,7 @@ public static class RestRequestExtensions {
     /// <param name="parameters">Collection of parameter instances</param>
     /// <returns></returns>
     public static RestRequest AddOrUpdateParameters(this RestRequest request, IEnumerable<Parameter> parameters) {
-        foreach (var parameter in parameters)
-            request.AddOrUpdateParameter(parameter);
+        foreach (var parameter in parameters) request.AddOrUpdateParameter(parameter);
 
         return request;
     }
@@ -304,15 +314,15 @@ public static class RestRequestExtensions {
     public static RestRequest AddBody(this RestRequest request, object obj, string? contentType = null) {
         if (contentType == null) {
             return request.RequestFormat switch {
-                DataFormat.Json   => request.AddJsonBody(obj, contentType ?? ContentType.Json),
-                DataFormat.Xml    => request.AddXmlBody(obj, contentType ?? ContentType.Xml),
-                DataFormat.Binary => request.AddParameter(new BodyParameter("", obj, contentType ?? ContentType.Binary)),
-                _                 => request.AddParameter(new BodyParameter("", obj.ToString()!, contentType ?? ContentType.Plain))
+                DataFormat.Json   => request.AddJsonBody(obj),
+                DataFormat.Xml    => request.AddXmlBody(obj),
+                DataFormat.Binary => request.AddParameter(new BodyParameter("", obj, ContentType.Binary)),
+                _                 => request.AddParameter(new BodyParameter("", obj.ToString()!, ContentType.Plain))
             };
         }
 
         return
-            obj is string str            ? request.AddParameter(new BodyParameter("", str, contentType)) :
+            obj is string str            ? request.AddStringBody(str, contentType) :
             obj is byte[] bytes          ? request.AddParameter(new BodyParameter("", bytes, contentType, DataFormat.Binary)) :
             contentType.Contains("xml")  ? request.AddXmlBody(obj, contentType) :
             contentType.Contains("json") ? request.AddJsonBody(obj, contentType) :
@@ -352,7 +362,7 @@ public static class RestRequestExtensions {
     /// <returns></returns>
     public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, string contentType = ContentType.Json) where T : class {
         request.RequestFormat = DataFormat.Json;
-        return request.AddParameter(new JsonParameter("", obj, contentType));
+        return obj is string str ? request.AddStringBody(str, DataFormat.Json) : request.AddParameter(new JsonParameter("", obj, contentType));
     }
 
     /// <summary>
@@ -366,8 +376,10 @@ public static class RestRequestExtensions {
     public static RestRequest AddXmlBody<T>(this RestRequest request, T obj, string contentType = ContentType.Xml, string xmlNamespace = "")
         where T : class {
         request.RequestFormat = DataFormat.Xml;
-        request.AddParameter(new XmlParameter("", obj, xmlNamespace, contentType));
-        return request;
+
+        return obj is string str
+            ? request.AddStringBody(str, DataFormat.Xml)
+            : request.AddParameter(new XmlParameter("", obj, xmlNamespace, contentType));
     }
 
     /// <summary>
@@ -401,7 +413,6 @@ public static class RestRequestExtensions {
             .Select(group => group.Key)
             .ToList();
 
-        if (duplicateKeys.Any())
-            throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+        if (duplicateKeys.Any()) throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
     }
 }
