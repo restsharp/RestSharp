@@ -8,7 +8,7 @@
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Assets\KoalaÄÖäö.jpg" CopyToOutputDirectory="PreserveNewest" />
         <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
     <ItemGroup>

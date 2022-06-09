@@ -16,8 +16,8 @@ public static class Handlers {
     public static Action<HttpListenerContext> EchoValue(string value) => ctx => ctx.Response.OutputStream.WriteStringUtf8(value);
 
     /// <summary>
-    /// Response to a request like this:  http://localhost:8888/assets/koala.jpg
-    /// by streaming the file located at "assets\koala.jpg" back to the client.
+    /// Response to a request like this:  http://localhost:8888/assets/KoalaÄÖäö.jpg
+    /// by streaming the file located at "assets\KoalaÄÖäö.jpg" back to the client.
     /// </summary>
     public static void FileHandler(HttpListenerContext context, string path) {
         var pathToFile = Path.Combine(

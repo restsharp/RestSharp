@@ -34,7 +34,7 @@ public sealed class MultipartFormDataTests : IDisposable {
     const string ExpectedFileAndBodyRequestContent =
         "--{0}" +
         $"{LineBreak}{KnownHeaders.ContentType}: application/octet-stream" +
-        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" +
+        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=fileName; filename=TestFile.txt; filename*=utf-8''TestFile.txt" +
         $"{LineBreak}{LineBreak}This is a test file for RestSharp.{LineBreak}" +
         $"--{{0}}{LineBreak}{KnownHeaders.ContentType}: application/json; {CharsetString}" +
         $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=controlName" +
@@ -118,7 +118,7 @@ public sealed class MultipartFormDataTests : IDisposable {
     }
 
     [Fact]
-    public async Task MultipartFormData_WithCustomContentType() {
+    public async Task MultipartFormData_WithCustomContentType() { 
         var request = new RestRequest("/", Method.Post);
 
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");

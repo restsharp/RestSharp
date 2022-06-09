@@ -6,7 +6,7 @@ namespace RestSharp.Tests.Integrated;
 
 public sealed class DownloadFileTests : IDisposable {
     public DownloadFileTests() {
-        _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
+        _server = HttpServerFixture.StartServer("Assets/KoalaÄÖäö.jpg", FileHandler);
         _client = new RestClient(_server.Url);
     }
 
@@ -33,7 +33,7 @@ public sealed class DownloadFileTests : IDisposable {
     public async Task AdvancedResponseWriter_without_ResponseWriter_reads_stream() {
         var tag = string.Empty;
 
-        var rr = new RestRequest("Assets/Koala.jpg") {
+        var rr = new RestRequest("Assets/KoalaÄÖäö.jpg") {
             AdvancedResponseWriter = response => {
                 var buf = new byte[16];
                 response.Content.ReadAsStream().Read(buf, 0, buf.Length);
@@ -48,9 +48,9 @@ public sealed class DownloadFileTests : IDisposable {
 
     [Fact]
     public async Task Handles_Binary_File_Download() {
-        var request  = new RestRequest("Assets/Koala.jpg");
+        var request  = new RestRequest("Assets/KoalaÄÖäö.jpg");
         var response = await _client.DownloadDataAsync(request);
-        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "Koala.jpg"));
+        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "KoalaÄÖäö.jpg"));
 
         Assert.Equal(expected, response);
     }
@@ -59,7 +59,7 @@ public sealed class DownloadFileTests : IDisposable {
     public async Task Writes_Response_To_Stream() {
         var tempFile = Path.GetTempFileName();
 
-        var request = new RestRequest("Assets/Koala.jpg") {
+        var request = new RestRequest("Assets/KoalaÄÖäö.jpg") {
             ResponseWriter = responseStream => {
                 using var writer = File.OpenWrite(tempFile);
 
@@ -72,7 +72,7 @@ public sealed class DownloadFileTests : IDisposable {
         Assert.Null(response);
 
         var fromTemp = await File.ReadAllBytesAsync(tempFile);
-        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "Koala.jpg"));
+        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "KoalaÄÖäö.jpg"));
 
         Assert.Equal(expected, fromTemp);
     }

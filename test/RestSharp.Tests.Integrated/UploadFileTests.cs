@@ -12,7 +12,7 @@ public class UploadFileTests {
 
     [Fact]
     public async Task Should_upload_from_file() {
-        const string filename = "Koala.jpg";
+        const string filename = "KoalaÄÖäö.jpg";
 
         var path = Path.Combine(_path, "Assets", filename);
 
@@ -26,7 +26,7 @@ public class UploadFileTests {
 
     [Fact]
     public async Task Should_upload_from_bytes() {
-        const string filename = "Koala.jpg";
+        const string filename = "KoalaÄÖäö.jpg";
 
         var path  = Path.Combine(_path, "Assets", filename);
         var bytes = await File.ReadAllBytesAsync(path);
@@ -41,7 +41,7 @@ public class UploadFileTests {
 
     [Fact]
     public async Task Should_upload_from_stream() {
-        const string filename = "Koala.jpg";
+        const string filename = "KoalaÄÖäö.jpg";
 
         var path = Path.Combine(_path, "Assets", filename);
 
