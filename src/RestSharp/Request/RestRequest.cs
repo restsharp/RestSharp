@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Net;
 using System.Net.Http.Headers;
-using System.Reflection;
-using RestSharp.Authenticators;
 using RestSharp.Extensions;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -27,8 +24,6 @@ namespace RestSharp;
 public class RestRequest {
     Func<HttpResponseMessage, RestResponse>? _advancedResponseHandler;
     Func<Stream, Stream?>?                   _responseWriter;
-    static readonly Version                  Version          = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
-    static readonly string                   DefaultUserAgent = $"RestSharp/{Version}";
 
     /// <summary>
     /// Default constructor
@@ -180,9 +175,9 @@ public class RestRequest {
     public string? BaseHost { get; set; }
 
     /// <summary>
-    /// Sets the user agent string to be used for this requests. Defaults to a RestSharp string if not provided.
+    /// Sets the user agent string to be used for this requests. Defaults to a the client default if not provided.
     /// </summary>
-    public string UserAgent { get; set; } = DefaultUserAgent;
+    public string? UserAgent { get; set; }
 
     /// <summary>
     /// Sets the cache policy to use for this request

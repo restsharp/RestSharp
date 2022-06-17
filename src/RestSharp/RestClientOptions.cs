@@ -15,15 +15,17 @@
 
 using System.Net;
 using System.Net.Security;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace RestSharp;
 
 public class RestClientOptions {
-    /// <summary>
-    /// Default constructor for default RestClientOptions
-    /// </summary>
+    static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
+
+    static readonly string DefaultUserAgent = $"RestSharp/{Version}";
+
     public RestClientOptions() { }
 
     /// <summary>
@@ -100,7 +102,12 @@ public class RestClientOptions {
     /// </summary>
     public bool? Expect100Continue { get; set; } = null;
 
-    public CookieContainer?         CookieContainer { get; set; }
+    public CookieContainer? CookieContainer { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default user agent to use for all requests from this client
+    /// </summary>
+    public string UserAgent { get; set; } = DefaultUserAgent;
 
     /// <summary>
     /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
