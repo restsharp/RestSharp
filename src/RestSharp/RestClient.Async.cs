@@ -58,9 +58,7 @@ public partial class RestClient {
         var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
         message.Headers.Host         = request.BaseHost;
         message.Headers.CacheControl = request.CachePolicy;
-        if (HttpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != "RestSharp")) {
-        	message.Headers.UserAgent.ParseAdd(request.UserAgent ?? Options.UserAgent);
-        }
+        message.Headers.UserAgent.ParseAdd(request.UserAgent ?? Options.UserAgent);
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
