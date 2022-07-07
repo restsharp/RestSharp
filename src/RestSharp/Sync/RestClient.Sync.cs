@@ -20,13 +20,17 @@ public partial class RestClient {
     /// Executes the request synchronously, authenticating if needed
     /// </summary>
     /// <param name="request">Request to be executed</param>
-    public RestResponse Execute(RestRequest request) => AsyncHelpers.RunSync(() => ExecuteAsync(request));
+    /// <param name="cancellationToken">The cancellation token</param>
+    public RestResponse Execute(RestRequest request, CancellationToken cancellationToken = default)
+        => AsyncHelpers.RunSync(() => ExecuteAsync(request, cancellationToken));
 
     /// <summary>
     /// A specialized method to download files as streams.
     /// </summary>
     /// <param name="request">Pre-configured request instance.</param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>The downloaded stream.</returns>
     [PublicAPI]
-    public Stream? DownloadStream(RestRequest request) => AsyncHelpers.RunSync(() => DownloadStreamAsync(request));
+    public Stream? DownloadStream(RestRequest request, CancellationToken cancellationToken = default)
+        => AsyncHelpers.RunSync(() => DownloadStreamAsync(request, cancellationToken));
 }
