@@ -57,11 +57,16 @@ class RequestContent : IDisposable {
 
             if (file.ContentType != null) fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
 
-            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") {
-                Name     = $"\"{file.Name}\"",
-                FileName = $"\"{file.FileName}\""
-            };
-            mpContent.Add(fileContent, file.Name, file.FileName);
+            var dispositionHeader = file.Options.DisableFilenameEncoding
+                ? ContentDispositionHeaderValue.Parse($"form-data; name=\"{file.Name}\"; filename=\"{file.FileName}\"")
+                : new ContentDispositionHeaderValue("form-data") {
+                    Name     = $"\"{file.Name}\"",
+                    FileName = $"\"{file.FileName}\""
+                };
+            if (!file.Options.DisableFileNameStar) dispositionHeader.FileNameStar = file.FileName;
+            fileContent.Headers.ContentDisposition = dispositionHeader;
+
+            mpContent.Add(fileContent);
         }
 
         Content = mpContent;
@@ -172,7 +177,7 @@ class RequestContent : IDisposable {
                 .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value!.ToString()!))!;
             var encodedItems   = formData.Select(i => $"{WebUtility.UrlEncode(i.Key)}={WebUtility.UrlEncode(i.Value)}" /*.Replace("%20", "+")*/);
             var encodedContent = new StringContent(string.Join("&", encodedItems), null, "application/x-www-form-urlencoded");
-            
+
             Content = encodedContent;
 #endif
         }

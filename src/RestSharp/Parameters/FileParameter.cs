@@ -20,9 +20,9 @@ namespace RestSharp;
 [PublicAPI]
 public record FileParameter {
     /// <summary>
-    /// Provides raw data for file
+    /// Name of the parameter
     /// </summary>
-    public Func<Stream> GetFile { get; }
+    public string Name { get; }
 
     /// <summary>
     /// Name of the file to use when uploading
@@ -35,15 +35,18 @@ public record FileParameter {
     public string? ContentType { get; }
 
     /// <summary>
-    /// Name of the parameter
+    /// Provides raw data for file
     /// </summary>
-    public string Name { get; }
+    public Func<Stream> GetFile { get; }
 
-    FileParameter(string name, string fileName, Func<Stream> getFile, string? contentType = null) {
-        Name          = name;
-        FileName      = fileName;
-        GetFile       = getFile;
-        ContentType   = contentType ?? Serializers.ContentType.Binary;
+    public FileParameterOptions Options { get; }
+
+    FileParameter(string name, string fileName, Func<Stream> getFile, string? contentType, FileParameterOptions options) {
+        Name        = name;
+        FileName    = fileName;
+        GetFile     = getFile;
+        Options     = options;
+        ContentType = contentType ?? Serializers.ContentType.Binary;
     }
 
     /// <summary>
@@ -53,9 +56,10 @@ public record FileParameter {
     /// <param name="data">The data to use as the file's contents.</param>
     /// <param name="filename">The filename to use in the request.</param>
     /// <param name="contentType">The content type to use in the request.</param>
+    /// <param name="options">File parameter options</param>
     /// <returns>The <see cref="FileParameter" /></returns>
-    public static FileParameter Create(string name, byte[] data, string filename, string? contentType = null) {
-        return new FileParameter(name, filename, GetFile, contentType);
+    public static FileParameter Create(string name, byte[] data, string filename, string? contentType = null, FileParameterOptions? options = null) {
+        return new FileParameter(name, filename, GetFile, contentType, options ?? new FileParameterOptions());
 
         Stream GetFile() {
             var stream = new MemoryStream();
@@ -73,24 +77,31 @@ public record FileParameter {
     /// <param name="getFile">Delegate that will be called with the request stream so you can write to it..</param>
     /// <param name="fileName">The filename to use in the request.</param>
     /// <param name="contentType">Optional: parameter content type, default is "application/g-zip"</param>
+    /// <param name="options">File parameter options</param>
     /// <returns>The <see cref="FileParameter" /> using the default content type.</returns>
     public static FileParameter Create(
-        string       name,
-        Func<Stream> getFile,
-        string       fileName,
-        string?      contentType = null
+        string                name,
+        Func<Stream>          getFile,
+        string                fileName,
+        string?               contentType = null,
+        FileParameterOptions? options     = null
     )
-        => new(name, fileName, getFile, contentType ?? Serializers.ContentType.Binary);
+        => new(name, fileName, getFile, contentType ?? Serializers.ContentType.Binary, options ?? new FileParameterOptions());
 
-    public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null) {
-        if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath))))
-            throw new FileNotFoundException("File not found", fullPath);
+    public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null, FileParameterOptions? options = null) {
+        if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath)))) throw new FileNotFoundException("File not found", fullPath);
 
-        var fileName = Path.GetFileName(fullPath);
+        var fileName      = Path.GetFileName(fullPath);
         var parameterName = name ?? fileName;
-        
-        return new FileParameter(parameterName, fileName, GetFile, contentType);
+
+        return new FileParameter(parameterName, fileName, GetFile, contentType, options ?? new FileParameterOptions());
 
         Stream GetFile() => File.OpenRead(fullPath);
     }
+}
+
+[PublicAPI]
+public class FileParameterOptions {
+    public bool DisableFileNameStar     { get; set; } = true;
+    public bool DisableFilenameEncoding { get; set; }
 }
