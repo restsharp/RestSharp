@@ -198,5 +198,5 @@ public class RestRequest {
         return this;
     }
 
-    internal RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
+    public RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
 }
