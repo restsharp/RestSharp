@@ -27,7 +27,7 @@
         <Using Include="JetBrains.Annotations"/>
     </ItemGroup>
     <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
-        <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="All"/>
+        <PackageReference Include="IsExternalInit" Version="1.0.3" PrivateAssets="All"/>
     </ItemGroup>
     <Target Name="CustomVersion" AfterTargets="MinVer">
         <PropertyGroup>
