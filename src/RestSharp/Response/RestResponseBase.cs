@@ -61,9 +61,14 @@ public abstract class RestResponseBase {
     public HttpStatusCode StatusCode { get; set; }
 
     /// <summary>
-    /// Whether or not the response status code indicates success
+    /// Whether or not the HTTP response status code indicates success
     /// </summary>
-    public bool IsSuccessful { get; set; }
+    public bool IsSuccessStatusCode { get; set; }
+
+    /// <summary>
+    /// Whether or not the HTTP response status code indicates success and no other error occurred (deserialization, timeout, ...)
+    /// </summary>
+    public bool IsSuccessful { get => IsSuccessStatusCode && ResponseStatus == ResponseStatus.Completed; }
 
     /// <summary>
     /// Description of HTTP status returned
