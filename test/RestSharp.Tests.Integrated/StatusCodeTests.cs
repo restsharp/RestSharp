@@ -37,6 +37,7 @@ public class StatusCodeTests : IDisposable {
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.IsSuccessful.Should().BeTrue();
+        response.IsSuccessStatusCode.Should().BeTrue();
     }
 
     [Fact]
@@ -88,6 +89,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync(request);
 
         response.IsSuccessful.Should().BeFalse();
+        response.IsSuccessStatusCode.Should().BeFalse();
     }
 
     [Fact]
@@ -96,6 +98,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync(request);
 
         response.IsSuccessful.Should().BeTrue();
+        response.IsSuccessStatusCode.Should().BeTrue();
     }
 
     [Fact]
@@ -104,6 +107,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync(request);
 
         response.IsSuccessful.Should().BeFalse();
+        response.IsSuccessStatusCode.Should().BeFalse();
     }
 
     [Fact]
@@ -112,6 +116,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync(request);
 
         response.IsSuccessful.Should().BeFalse();
+        response.IsSuccessStatusCode.Should().BeFalse();
     }
 
     [Fact]
@@ -120,6 +125,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync(request);
 
         response.IsSuccessful.Should().BeFalse();
+        response.IsSuccessStatusCode.Should().BeFalse();
     }
 }
 
