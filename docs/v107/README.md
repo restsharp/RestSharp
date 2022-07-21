@@ -94,7 +94,7 @@ When you got a request instance, you can make a call:
 var request = new RestRequest()
     .AddQueryParameter("foo", "bar")
     .AddJsonBody(someObject);
-var response = await client.PostAsync<MyResponse>(request, cancellationToken);
+var response = await client.PostJsonAsync<MyResponse>("path/to/endpoint",request, cancellationToken);
 ```
 
 All the synchronous methods are gone. If you absolutely must call without using `async` and `await`, use `GetAwaiter().GetResult()` blocking call.
@@ -166,7 +166,7 @@ public class GitHubClient {
     }
 
     public Task<GitHubRepo[]> GetRepos()
-        => _client.GetAsync<GitHubRepo[]>("users/aspnet/repos");
+        => _client.GetJsonAsync<GitHubRepo[]>("users/aspnet/repos");
 }
 ```
 
