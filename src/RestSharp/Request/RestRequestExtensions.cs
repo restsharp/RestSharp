@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text.RegularExpressions;
-using RestSharp.Extensions;
 using RestSharp.Serializers;
 
 namespace RestSharp;
@@ -207,6 +209,25 @@ public static class RestRequestExtensions {
         => type == ParameterType.RequestBody
             ? request.AddBodyParameter(name, value)
             : request.AddParameter(Parameter.CreateParameter(name, value, type, encode));
+
+    /// <summary>
+    /// Adds the provided parameters container to the request.
+    /// </summary>
+    /// <remarks>
+    /// The provided <paramref name="params"/> model has its public properties interpreted as parameters of the provided <paramref name="type"/>.
+    /// </remarks>
+    /// <param name="request">Request instance</param>
+    /// <param name="params">An arbitrary model containing public properties that should be interpreted as parameters of the provided type</param>
+    /// <param name="type">Enum value specifying what kind of parameters are being added</param>
+    /// <param name="encode">Encode the value or not, default true</param>
+    /// <typeparam name="TParams">The type of the arbitrary model being provided as a parameters container. This information is needed in order to
+    /// cache properties based on their static type, for performance reasons.</typeparam>
+    /// <returns>The provided <paramref name="request"/> instance updated.</returns>
+    public static RestRequest AddParameters<TParams>(this RestRequest request, TParams @params, ParameterType type, bool encode = true)
+        where TParams : class {
+        request.Parameters.AddParameters(Parameterizer<TParams>.GetParameters(@params, type, encode));
+        return request;
+    }
 
     static RestRequest AddBodyParameter(this RestRequest request, string? name, object value)
         => name != null && name.Contains("/")
@@ -431,5 +452,99 @@ public static class RestRequestExtensions {
             .ToList();
 
         if (duplicateKeys.Any()) throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+    }
+
+    static class Parameterizer<TParams> where TParams : class {
+        static readonly IReadOnlyCollection<ParameterizedProperty> Properties =
+            typeof(TParams).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(ParameterizedProperty.GetParameterizedPublicInstanceProperty)
+                .ToArray();
+
+        /// <summary>
+        /// Instantiates and gets a new <see cref="ParametersCollection"/> instance containing the values of the public properties of the provided
+        /// <paramref name="params"/> as its underlying parameters.
+        /// </summary>
+        /// <param name="params">An arbitrary model containing public properties that should be interpreted as parameters of the provided type</param>
+        /// <param name="type">Enum value specifying what kind of parameter is being added</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns>A new parameters collection containing the values of the public properties of the provided model as its underlying
+        /// parameters</returns>
+        internal static ParametersCollection GetParameters(TParams @params, ParameterType type, bool encode = true) {
+            var parameters = Properties.Select(
+                param => Parameter.CreateParameter(
+                    param.Name,
+                    param.GetPropertyValue(@params),
+                    type,
+                    encode
+                )
+            );
+            return new ParametersCollection(parameters);
+        }
+
+        sealed record ParameterizedProperty {
+            /// <summary>
+            /// Gets the <see cref="MemberInfo.Name"/> of the property from which this
+            /// instance was created.
+            /// </summary>
+            internal string Name { get; }
+            readonly Func<TParams, string> _getPropertyValue;
+
+            ParameterizedProperty(string name, Func<TParams, string> getPropertyValue) {
+                Name              = name;
+                _getPropertyValue = getPropertyValue;
+            }
+
+            /// <summary>
+            /// Gets the value of the property this instance represents for the provided <paramref name="params"/> model.
+            /// </summary>
+            /// <param name="params">The parameters container from which to get the value of the property this instance represents.</param>
+            /// <returns>The value of the property this instance represents for the specified parameters container.</returns>
+            internal string GetPropertyValue(TParams @params) => _getPropertyValue(@params);
+
+            /// <summary>
+            /// Returns a new <see cref="ParameterizedProperty"/> instance from the provided <paramref name="property"/>.
+            /// otherwise returns null.
+            /// </summary>
+            /// <remarks>
+            /// The provided <see cref="PropertyInfo"/> getter must be known not to be null before calling this method. It must also be an instance
+            /// property, as opposed to a static one.
+            /// </remarks>
+            /// <param name="property">The property from which to try creating a new parameterized property.</param>
+            /// <returns>A new parameterized property caching the information of the provided <see cref="PropertyInfo"/> instance.</returns>
+            internal static ParameterizedProperty GetParameterizedPublicInstanceProperty(PropertyInfo property)
+                => new ParameterizedProperty(property.Name, MakeGetPropertyValue(property.GetGetMethod()));
+
+            static Func<TParams, string> MakeGetPropertyValue(MethodInfo getter) {
+                var paramsParam = Expression.Parameter(typeof(TParams));
+
+                Expression callGetter                = Expression.Call(paramsParam, getter);
+                var        convertToStringExpression = GetConvertToStringExpression();
+
+                Expression GetConvertToStringExpression() {
+                    var getterReturnType = getter.ReturnType;
+
+                    if (getterReturnType == typeof(string)) {
+                        return callGetter;
+                    }
+
+                    var toStringConverter = TypeDescriptor.GetConverter(getterReturnType);
+
+                    var convertToStringMethod = typeof(TypeConverter).GetMethod(
+                        nameof(TypeConverter.ConvertToInvariantString),
+                        new[] { getterReturnType }
+                    )!;
+
+                    var convertToStringMethodFirstParamType = convertToStringMethod.GetParameters().First().ParameterType;
+
+                    if (getterReturnType.IsValueType && !convertToStringMethodFirstParamType.IsValueType) {
+                        callGetter = Expression.Convert(callGetter, convertToStringMethodFirstParamType);
+                    }
+
+                    return Expression.Call(Expression.Constant(toStringConverter), convertToStringMethod, callGetter);
+                }
+
+                return Expression.Lambda<Func<TParams, string>>(convertToStringExpression, paramsParam).Compile();
+            }
+        }
     }
 }
