@@ -78,7 +78,7 @@ public class RestResponse : RestResponseBase {
             await using var stream = await readTask.ConfigureAwait(false);
 #endif
 
-            var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
+            var bytes   = request.ResponseWriter != null || stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
             var content = bytes  == null ? null : httpResponse.GetResponseString(bytes, encoding);
 
             return new RestResponse {
