@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoFixture" Version="4.17.0" />
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
