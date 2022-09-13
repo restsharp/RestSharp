@@ -97,8 +97,6 @@ var request = new RestRequest()
 var response = await client.PostAsync<MyResponse>(request, cancellationToken);
 ```
 
-All the synchronous methods are gone. If you absolutely must call without using `async` and `await`, use `GetAwaiter().GetResult()` blocking call.
-
 The `IRestResponse` interface is deprecated. You get an instance of `RestResponse` or `RestResponse<T>` in return.
 
 You can also use a simplified API for making POST and PUT requests:
@@ -166,7 +164,7 @@ public class GitHubClient {
     }
 
     public Task<GitHubRepo[]> GetRepos()
-        => _client.GetAsync<GitHubRepo[]>("users/aspnet/repos");
+        => _client.GetJsonAsync<GitHubRepo[]>("users/aspnet/repos");
 }
 ```
 
