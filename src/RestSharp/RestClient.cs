@@ -139,7 +139,11 @@ public partial class RestClient : IDisposable {
         handler.AutomaticDecompression = Options.AutomaticDecompression;
         handler.PreAuthenticate        = Options.PreAuthenticate;
         handler.AllowAutoRedirect      = Options.FollowRedirects;
-        handler.Proxy                  = Options.Proxy;
+        
+        if (handler.SupportsProxy)
+        {
+            handler.Proxy = Options.Proxy;
+        }
 
         if (Options.RemoteCertificateValidationCallback != null)
             handler.ServerCertificateCustomValidationCallback =
