@@ -141,9 +141,7 @@ public partial class RestClient : IDisposable {
         handler.AllowAutoRedirect      = Options.FollowRedirects;
         
         if (handler.SupportsProxy)
-        {
             handler.Proxy = Options.Proxy;
-        }
 
         if (Options.RemoteCertificateValidationCallback != null)
             handler.ServerCertificateCustomValidationCallback =
