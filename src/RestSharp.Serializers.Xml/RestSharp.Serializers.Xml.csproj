@@ -1,11 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <RootNamespace>RestSharp.Serializers.Xml</RootNamespace>
     </PropertyGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="..\RestSharp\RestSharp.csproj"/>
     </ItemGroup>
-
 </Project>

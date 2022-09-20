@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="[12.0.1,)" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RestSharp\RestSharp.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Using Include="Newtonsoft.Json" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.1"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\RestSharp\RestSharp.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Using Include="Newtonsoft.Json"/>
+    </ItemGroup>
 </Project>
