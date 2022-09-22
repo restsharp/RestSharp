@@ -19,9 +19,11 @@ features:
   details: Send objects as the request body in JSON or XML, or as a form. Upload and download files as bytes or as streams.
 - title: Parameters
   details: Add query, URL segment, body, form or header parameter using an easy and fluent API
-footer: Apache 2.0 Licensed | Copyright © 2009-2022 John Sheehan, Andrew Young, Alexey Zimarev and RestSharp community.
+footer: Apache 2.0 Licensed | Copyright (c) .NET Foundation and Contributors
 ---
 
 RestSharp is probably the most popular HTTP client library for .NET. Featuring automatic serialization and deserialization, request and response type detection, variety of authentications and other useful features, it is being used by hundreds of thousands of projects.
 
 RestSharp passed over 32 million downloads on NuGet, with average daily download count of 10,000. It's being used by many popular OSS projects, including Roslyn and Swagger.
+
+Supported by the [.NET Foundation](https://dotnetfoundation.org).
