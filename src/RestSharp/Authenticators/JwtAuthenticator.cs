@@ -28,7 +28,7 @@ public class JwtAuthenticator : AuthenticatorBase {
     [PublicAPI]
     public void SetBearerToken(string accessToken) => Token = GetToken(accessToken);
 
-    static string GetToken(string accessToken) => $"Bearer {Ensure.NotEmpty(accessToken, nameof(accessToken))}";
+    static string GetToken(string accessToken) => Ensure.NotEmpty(accessToken, nameof(accessToken)).StartsWith("Bearer ") ? accessToken : $"Bearer {accessToken}";
 
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
         => new(new HeaderParameter(KnownHeaders.Authorization, accessToken));
