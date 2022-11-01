@@ -25,6 +25,15 @@ public partial class RestClient {
         => AsyncHelpers.RunSync(() => ExecuteAsync(request, cancellationToken));
 
     /// <summary>
+    /// Executes the request synchronously, without processing to common model
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public InternalResponse ExecuteAsInternal(RestRequest request, CancellationToken cancellationToken = default)
+        => AsyncHelpers.RunSync(() => ExecuteAsInternalAsync(request, cancellationToken));
+    
+    /// <summary>
     /// A specialized method to download files as streams.
     /// </summary>
     /// <param name="request">Pre-configured request instance.</param>

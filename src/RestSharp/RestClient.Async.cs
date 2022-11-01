@@ -23,7 +23,7 @@ public partial class RestClient {
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        var internalResponse = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
+        var internalResponse = await ExecuteAsInternalAsync(request, cancellationToken).ConfigureAwait(false);
 
         var response = new RestResponse();
 
@@ -45,7 +45,12 @@ public partial class RestClient {
         return Options.ThrowOnAnyError ? response.ThrowIfError() : response;
     }
 
-    async Task<InternalResponse> ExecuteInternal(RestRequest request, CancellationToken cancellationToken) {
+    /// <summary>
+    /// A specialized method for executes the request asynchronously, without processing to common model
+    /// </summary>
+    /// <param name="request">Pre-configured request instance</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public async Task<InternalResponse> ExecuteAsInternalAsync(RestRequest request, CancellationToken cancellationToken) {
         Ensure.NotNull(request, nameof(request));
 
         using var requestContent = new RequestContent(this, request);
@@ -85,7 +90,7 @@ public partial class RestClient {
         }
     }
 
-    record InternalResponse(HttpResponseMessage? ResponseMessage, Uri Url, Exception? Exception, CancellationToken TimeoutToken);
+    public record InternalResponse(HttpResponseMessage? ResponseMessage, Uri Url, Exception? Exception, CancellationToken TimeoutToken);
 
     /// <summary>
     /// A specialized method to download files as streams.
@@ -97,7 +102,7 @@ public partial class RestClient {
     public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
         // Make sure we only read the headers so we can stream the content body efficiently
         request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
-        var response = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
+        var response = await ExecuteAsInternalAsync(request, cancellationToken).ConfigureAwait(false);
 
         if (response.Exception != null) {
             return Options.ThrowOnAnyError ? throw response.Exception : null;
