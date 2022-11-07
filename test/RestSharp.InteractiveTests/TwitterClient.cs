@@ -88,6 +88,7 @@ class TwitterAuthenticator : AuthenticatorBase {
 
     protected override async ValueTask<Parameter> GetAuthenticationParameter(string accessToken) {
         var token = string.IsNullOrEmpty(Token) ? await GetToken() : Token;
+        Token = token;
         return new HeaderParameter(KnownHeaders.Authorization, token);
     }
 
