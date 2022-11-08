@@ -21,15 +21,19 @@ public record BodyParameter : Parameter {
         if (dataFormat == DataFormat.Binary && value is not byte[]) {
             throw new ArgumentException("Binary data format needs a byte array as value");
         }
+
         ContentType = contentType;
         DataFormat  = dataFormat;
     }
+
+    public BodyParameter(object value, string contentType, DataFormat dataFormat = DataFormat.None)
+        : this("", value, contentType, dataFormat) { }
 
     /// <summary>
     /// Body parameter data type
     /// </summary>
     public DataFormat DataFormat { get; init; } = DataFormat.None;
-    
+
     /// <summary>
     /// Custom content encoding
     /// </summary>
@@ -41,10 +45,16 @@ public record XmlParameter : BodyParameter {
         : base(name, value, contentType, DataFormat.Xml)
         => XmlNamespace = xmlNamespace;
 
+    public XmlParameter(object value, string? xmlNamespace = null, string contentType = Serializers.ContentType.Xml)
+        : this("", value, xmlNamespace, contentType) { }
+
     public string? XmlNamespace { get; }
 }
 
 public record JsonParameter : BodyParameter {
-    public JsonParameter(string name, object value, string contentType = Serializers.ContentType.Json) 
+    public JsonParameter(string name, object value, string contentType = Serializers.ContentType.Json)
         : base(name, value, contentType, DataFormat.Json) { }
+
+    public JsonParameter(object value, string contentType = Serializers.ContentType.Json)
+        : this("", value, contentType) { }
 }

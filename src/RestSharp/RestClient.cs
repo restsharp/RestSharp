@@ -125,11 +125,12 @@ public partial class RestClient : IDisposable {
 
     void ConfigureHttpClient(HttpClient httpClient) {
         if (Options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(Options.MaxTimeout);
-        if (httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product.Name != "RestSharp")) {
+
+        if (Options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != Options.UserAgent)) {
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
         }
-        if (Options.Expect100Continue != null)
-            httpClient.DefaultRequestHeaders.ExpectContinue = Options.Expect100Continue;
+
+        if (Options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = Options.Expect100Continue;
     }
 
     void ConfigureHttpMessageHandler(HttpClientHandler handler) {
@@ -139,9 +140,8 @@ public partial class RestClient : IDisposable {
         handler.AutomaticDecompression = Options.AutomaticDecompression;
         handler.PreAuthenticate        = Options.PreAuthenticate;
         handler.AllowAutoRedirect      = Options.FollowRedirects;
-        
-        if (handler.SupportsProxy)
-            handler.Proxy = Options.Proxy;
+
+        if (handler.SupportsProxy) handler.Proxy = Options.Proxy;
 
         if (Options.RemoteCertificateValidationCallback != null)
             handler.ServerCertificateCustomValidationCallback =
@@ -178,7 +178,7 @@ public partial class RestClient : IDisposable {
             );
 
         if (!Options.AllowMultipleDefaultParametersWithSameName &&
-            !MultiParameterTypes.Contains(parameter.Type) &&
+            !MultiParameterTypes.Contains(parameter.Type)       &&
             DefaultParameters.Any(x => x.Name == parameter.Name)) {
             throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
         }

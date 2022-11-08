@@ -261,6 +261,35 @@ public static class RestRequestExtensions {
         return request;
     }
 
+    // TODO: Three methods below added for binary compatibility with v108. Remove for the next major release.
+    // In addition, both contentType and options parameters should get default values.
+
+    public static RestRequest AddFile(
+        this RestRequest request,
+        string           name,
+        string           path,
+        string?          contentType = null
+    )
+        => request.AddFile(FileParameter.FromFile(path, name, contentType));
+
+    public static RestRequest AddFile(
+        this RestRequest request,
+        string           name,
+        byte[]           bytes,
+        string           filename,
+        string?          contentType = null
+    )
+        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType));
+
+    public static RestRequest AddFile(
+        this RestRequest      request,
+        string                name,
+        Func<Stream>          getFile,
+        string                fileName,
+        string?               contentType = null
+    )
+        => request.AddFile(FileParameter.Create(name, getFile, fileName, contentType));
+
     /// <summary>
     /// Adds a file parameter to the request body. The file will be read from disk as a stream.
     /// </summary>
@@ -274,8 +303,8 @@ public static class RestRequestExtensions {
         this RestRequest      request,
         string                name,
         string                path,
-        string?               contentType = null,
-        FileParameterOptions? options     = null
+        string?               contentType,
+        FileParameterOptions? options
     )
         => request.AddFile(FileParameter.FromFile(path, name, contentType, options));
 
@@ -294,8 +323,8 @@ public static class RestRequestExtensions {
         string                name,
         byte[]                bytes,
         string                filename,
-        string?               contentType = null,
-        FileParameterOptions? options     = null
+        string?               contentType,
+        FileParameterOptions? options
     )
         => request.AddFile(FileParameter.Create(name, bytes, filename, contentType, options));
 
@@ -314,8 +343,8 @@ public static class RestRequestExtensions {
         string                name,
         Func<Stream>          getFile,
         string                fileName,
-        string?               contentType = null,
-        FileParameterOptions? options     = null
+        string?               contentType,
+        FileParameterOptions? options
     )
         => request.AddFile(FileParameter.Create(name, getFile, fileName, contentType, options));
 
@@ -368,7 +397,7 @@ public static class RestRequestExtensions {
     /// <param name="contentType">Content type of the body</param>
     /// <returns></returns>
     public static RestRequest AddStringBody(this RestRequest request, string body, string contentType)
-        => request.AddParameter(new BodyParameter("", body, Ensure.NotEmpty(contentType, nameof(contentType))));
+        => request.AddParameter(new BodyParameter(body, Ensure.NotEmpty(contentType, nameof(contentType))));
 
     /// <summary>
     /// Adds a JSON body parameter to the request
@@ -379,7 +408,7 @@ public static class RestRequestExtensions {
     /// <returns></returns>
     public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, string contentType = ContentType.Json) where T : class {
         request.RequestFormat = DataFormat.Json;
-        return obj is string str ? request.AddStringBody(str, DataFormat.Json) : request.AddParameter(new JsonParameter("", obj, contentType));
+        return obj is string str ? request.AddStringBody(str, DataFormat.Json) : request.AddParameter(new JsonParameter(obj, contentType));
     }
 
     /// <summary>
@@ -396,7 +425,7 @@ public static class RestRequestExtensions {
 
         return obj is string str
             ? request.AddStringBody(str, DataFormat.Xml)
-            : request.AddParameter(new XmlParameter("", obj, xmlNamespace, contentType));
+            : request.AddParameter(new XmlParameter(obj, xmlNamespace, contentType));
     }
 
     /// <summary>

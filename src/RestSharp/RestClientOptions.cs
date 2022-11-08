@@ -75,7 +75,7 @@ public class RestClientOptions {
     public bool                     FollowRedirects   { get; set; } = true;
     public bool?                    Expect100Continue { get; set; } = null;
     public CookieContainer?         CookieContainer   { get; set; }
-    public string                   UserAgent         { get; set; } = DefaultUserAgent;
+    public string?                  UserAgent         { get; set; } = DefaultUserAgent;
 
     /// <summary>
     /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
