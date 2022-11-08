@@ -24,20 +24,21 @@ public interface ITwitterClient {
 }
 
 public class TwitterClient : ITwitterClient, IDisposable {
-    readonly RestClient _client;
+    readonly RestClient     _client;
+    readonly IAuthenticator _authenticator;
 
     public TwitterClient(string apiKey, string apiKeySecret) {
         var options = new RestClientOptions("https://api.twitter.com/2");
 
-        _client = new RestClient(options) {
-            Authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret)
-        };
+        _client        = new RestClient(options);
+        _authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret);
     }
 
     public async Task<TwitterUser> GetUser(string user) {
         var response = await _client.GetJsonAsync<TwitterSingleObject<TwitterUser>>(
             "users/by/username/{user}",
-            new { user }
+            new { user },
+            authenticator: _authenticator
         );
         return response!.Data;
     }
@@ -45,18 +46,24 @@ public class TwitterClient : ITwitterClient, IDisposable {
     public async Task<SearchRulesResponse[]> AddSearchRules(params AddStreamSearchRule[] rules) {
         var response = await _client.PostJsonAsync<AddSearchRulesRequest, TwitterCollectionObject<SearchRulesResponse>>(
             "tweets/search/stream/rules",
-            new AddSearchRulesRequest(rules)
+            new AddSearchRulesRequest(rules),
+            authenticator: _authenticator
         );
         return response?.Data;
     }
 
     public async Task<SearchRulesResponse[]> GetSearchRules() {
-        var response = await _client.GetJsonAsync<TwitterCollectionObject<SearchRulesResponse>>("tweets/search/stream/rules");
+        var response = await _client.GetJsonAsync<TwitterCollectionObject<SearchRulesResponse>>(
+            "tweets/search/stream/rules",
+            authenticator: _authenticator);
         return response?.Data;
     }
 
     public async IAsyncEnumerable<SearchResponse> SearchStream([EnumeratorCancellation] CancellationToken cancellationToken = default) {
-        var response = _client.StreamJsonAsync<TwitterSingleObject<SearchResponse>>("tweets/search/stream", cancellationToken);
+        var response = _client.StreamJsonAsync<TwitterSingleObject<SearchResponse>>(
+            "tweets/search/stream",
+            cancellationToken,
+            _authenticator);
 
         await foreach (var item in response.WithCancellation(cancellationToken)) {
             yield return item.Data;
@@ -95,12 +102,11 @@ class TwitterAuthenticator : AuthenticatorBase {
     async Task<string> GetToken() {
         var options = new RestClientOptions(_baseUrl);
 
-        using var client = new RestClient(options) {
-            Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
-        };
+        using var client = new RestClient(options);
 
-        var request = new RestRequest("oauth2/token")
-            .AddParameter("grant_type", "client_credentials");
+        var request = new RestRequest("oauth2/token") {
+            Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
+        }.AddParameter("grant_type", "client_credentials");
         var response = await client.PostAsync<TokenResponse>(request);
         return $"{response!.TokenType} {response!.AccessToken}";
     }

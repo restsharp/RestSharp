@@ -14,7 +14,6 @@
 // 
 
 using System.Text;
-using RestSharp.Authenticators;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -41,7 +40,4 @@ public static partial class RestClientExtensions {
     /// <returns></returns>
     public static RestClient UseQueryEncoder(this RestClient client, Func<string, Encoding, string> queryEncoder)
         => client.With(x => x.EncodeQuery = queryEncoder);
-
-    public static RestClient UseAuthenticator(this RestClient client, IAuthenticator authenticator)
-        => client.With(x => x.Authenticator = authenticator);
 }

@@ -15,7 +15,6 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using RestSharp.Authenticators;
 using RestSharp.Extensions;
 
 // ReSharper disable VirtualMemberCallInConstructor
@@ -125,6 +124,11 @@ public partial class RestClient : IDisposable {
     /// <param name="disposeHandler">Dispose the handler when disposing RestClient, true by default</param>
     public RestClient(HttpMessageHandler handler, bool disposeHandler = true) : this(new HttpClient(handler, disposeHandler), true) { }
 
+    /// <summary>
+    /// Returns the currently configured BaseUrl for this RestClient instance
+    /// </summary>
+    public Uri? BaseUrl => Options.BaseUrl;
+
     void ConfigureHttpClient(HttpClient httpClient) {
         if (Options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(Options.MaxTimeout);
 
@@ -160,11 +164,6 @@ public partial class RestClient : IDisposable {
     internal Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
     internal Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
-
-    /// <summary>
-    /// Authenticator that will be used to populate request with necessary authentication data
-    /// </summary>
-    public IAuthenticator? Authenticator { get; set; }
 
     public ParametersCollection DefaultParameters { get; } = new();
 

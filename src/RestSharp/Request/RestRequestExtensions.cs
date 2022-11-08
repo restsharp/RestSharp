@@ -14,6 +14,7 @@
 
 using System.Net;
 using System.Text.RegularExpressions;
+using RestSharp.Authenticators;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
 
@@ -460,6 +461,15 @@ public static class RestRequestExtensions {
         request.CookieContainer.Add(new Cookie(name, value, path, domain));
         return request;
     }
+
+    /// <summary>
+    /// Enable request authentication for this request using the passed in authenticator
+    /// </summary>
+    /// <param name="request">Request to attach the authenticator to</param>
+    /// <param name="authenticator">Authenticator to use</param>
+    /// <returns></returns>
+    public static RestRequest UseAuthenticator(this RestRequest request, IAuthenticator authenticator)
+        => request.With(x => x.Authenticator = authenticator);
 
     static void CheckAndThrowsForInvalidHost(string name, string value) {
         static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;

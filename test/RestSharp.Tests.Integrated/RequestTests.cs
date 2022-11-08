@@ -56,8 +56,8 @@ public class AsyncTests {
         var request = new RestRequest("get-cookies") {
             CookieContainer = new CookieContainer()
         };
-        request.CookieContainer.Add(new Cookie("cookie", "value", null, _client.Options.BaseUrl.Host));
-        request.CookieContainer.Add(new Cookie("cookie2", "value2", null, _client.Options.BaseUrl.Host));
+        request.CookieContainer.Add(new Cookie("cookie", "value", null, _client.BaseUrl.Host));
+        request.CookieContainer.Add(new Cookie("cookie2", "value2", null, _client.BaseUrl.Host));
         var response = await _client.ExecuteAsync(request);
         response.Content.Should().Be("[\"cookie=value\",\"cookie2=value2\"]");
     }
@@ -69,7 +69,7 @@ public class AsyncTests {
         response.Content.Should().Be("success");
 
         // Check we got all our cookies
-        var domain = _client.Options.BaseUrl.Host;
+        var domain = _client.BaseUrl.Host;
         var cookie = response.Cookies!.First(p => p.Name == "cookie1");
         Assert.Equal("value1", cookie.Value);
         Assert.Equal("/", cookie.Path);

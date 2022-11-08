@@ -13,6 +13,7 @@
 //   limitations under the License. 
 
 using System.Runtime.CompilerServices;
+using RestSharp.Authenticators;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
 
@@ -306,18 +307,20 @@ public static partial class RestClientExtensions {
     /// Reads a stream returned by the specified endpoint, deserializes each line to JSON and returns each object asynchronously.
     /// It is required for each JSON object to be returned in a single line.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="resource"></param>
-    /// <param name="cancellationToken"></param>
+    /// <param name="client">Rest client</param>
+    /// <param name="resource">Resource URL</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     [PublicAPI]
     public static async IAsyncEnumerable<T> StreamJsonAsync<T>(
         this RestClient                            client,
         string                                     resource,
-        [EnumeratorCancellation] CancellationToken cancellationToken
+        [EnumeratorCancellation] CancellationToken cancellationToken,
+        IAuthenticator?                            authenticator = null
     ) {
-        var request = new RestRequest(resource);
+        var request = new RestRequest(resource) { Authenticator = authenticator };
 
 #if NETSTANDARD
         using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);

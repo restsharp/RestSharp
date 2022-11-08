@@ -14,6 +14,7 @@
 // 
 
 using System.Net;
+using RestSharp.Authenticators;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -25,10 +26,18 @@ public static partial class RestClientExtensions {
     /// <param name="client">RestClient instance</param>
     /// <param name="resource">Resource URL</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
-    /// <returns></returns>
-    public static Task<TResponse?> GetJsonAsync<TResponse>(this RestClient client, string resource, CancellationToken cancellationToken = default) {
-        var request = new RestRequest(resource);
+    /// <returns>Deserialized response object</returns>
+    public static Task<TResponse?> GetJsonAsync<TResponse>(
+        this RestClient   client,
+        string            resource,
+        CancellationToken cancellationToken = default,
+        IAuthenticator?   authenticator     = null
+    ) {
+        var request = new RestRequest(resource) {
+            Authenticator = authenticator
+        };
         return client.GetAsync<TResponse>(request, cancellationToken);
     }
 
@@ -39,16 +48,20 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Resource URL</param>
     /// <param name="parameters">Parameters to pass to the request</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns>Deserialized response object</returns>
     public static Task<TResponse?> GetJsonAsync<TResponse>(
         this RestClient   client,
         string            resource,
         object            parameters,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        IAuthenticator?   authenticator = null
     ) {
         var props = parameters.GetProperties();
-        var request = new RestRequest(resource);
+        var request = new RestRequest(resource) {
+            Authenticator = authenticator
+        };
 
         foreach (var (name, value) in props) {
             Parameter parameter = resource.Contains($"{name}") ? new UrlSegmentParameter(name, value!) : new QueryParameter(name, value);
@@ -66,6 +79,7 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Resource URL</param>
     /// <param name="request">Request object, must be serializable to JSON</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TRequest">Request object type</typeparam>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns>Deserialized response object</returns>
@@ -73,9 +87,12 @@ public static partial class RestClientExtensions {
         this RestClient   client,
         string            resource,
         TRequest          request,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        IAuthenticator?   authenticator     = null
     ) where TRequest : class {
-        var restRequest = new RestRequest(resource).AddJsonBody(request);
+        var restRequest = new RestRequest(resource) {
+            Authenticator = authenticator
+        }.AddJsonBody(request);
         return client.PostAsync<TResponse>(restRequest, cancellationToken);
     }
 
@@ -87,15 +104,19 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Resource URL</param>
     /// <param name="request">Request object, must be serializable to JSON</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TRequest">Request object type</typeparam>
     /// <returns>Response status code</returns>
     public static async Task<HttpStatusCode> PostJsonAsync<TRequest>(
         this RestClient   client,
         string            resource,
         TRequest          request,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        IAuthenticator?   authenticator     = null
     ) where TRequest : class {
-        var restRequest = new RestRequest(resource).AddJsonBody(request);
+        var restRequest = new RestRequest(resource) {
+            Authenticator = authenticator
+        }.AddJsonBody(request);
         var response    = await client.PostAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
@@ -108,6 +129,7 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Resource URL</param>
     /// <param name="request">Request object, must be serializable to JSON</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TRequest">Request object type</typeparam>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns>Deserialized response object</returns>
@@ -115,9 +137,12 @@ public static partial class RestClientExtensions {
         this RestClient   client,
         string            resource,
         TRequest          request,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        IAuthenticator?   authenticator     = null
     ) where TRequest : class {
-        var restRequest = new RestRequest(resource).AddJsonBody(request);
+        var restRequest = new RestRequest(resource) {
+            Authenticator = authenticator
+        }.AddJsonBody(request);
         return client.PutAsync<TResponse>(restRequest, cancellationToken);
     }
 
@@ -129,15 +154,19 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Resource URL</param>
     /// <param name="request">Request object, must be serializable to JSON</param>
     /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="authenticator">Optional authenticator to use for the request</param>
     /// <typeparam name="TRequest">Request object type</typeparam>
     /// <returns>Response status code</returns>
     public static async Task<HttpStatusCode> PutJsonAsync<TRequest>(
         this RestClient   client,
         string            resource,
         TRequest          request,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        IAuthenticator?   authenticator     = null
     ) where TRequest : class {
-        var restRequest = new RestRequest(resource).AddJsonBody(request);
+        var restRequest = new RestRequest(resource) {
+            Authenticator = authenticator
+        }.AddJsonBody(request);
         var response    = await client.PutAsync(restRequest, cancellationToken).ConfigureAwait(false);
         return response.StatusCode;
     }
