@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <ItemGroup Condition="$(TargetFramework) != 'net6.0'">
+    <ItemGroup Condition="$(TargetFramework) != 'net6.0' And $(TargetFramework) != 'net7.0'">
         <PackageReference Include="System.Text.Json" Version="5.0.1" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="RestSharp.csproj.DotSettings" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Web" />
     </ItemGroup>
 </Project>

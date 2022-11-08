@@ -57,7 +57,7 @@ public class RestClientOptions {
     /// </summary>
     public bool DisableCharset { get; set; }
 
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;
 #else
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.All;

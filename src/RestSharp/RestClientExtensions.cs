@@ -294,7 +294,7 @@ public static partial class RestClientExtensions {
     /// <returns>The downloaded file.</returns>
     [PublicAPI]
     public static async Task<byte[]?> DownloadDataAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
         using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
 #else
         await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
@@ -319,7 +319,7 @@ public static partial class RestClientExtensions {
     ) {
         var request = new RestRequest(resource);
 
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
         using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
 #else
         await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);

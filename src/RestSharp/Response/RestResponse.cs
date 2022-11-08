@@ -58,7 +58,7 @@ public class RestResponse<T> : RestResponse {
 /// <summary>
 /// Container for data sent back from API
 /// </summary>
-[DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
 public class RestResponse : RestResponseBase {
     internal static async Task<RestResponse> FromHttpResponse(
         HttpResponseMessage     httpResponse,
@@ -72,7 +72,7 @@ public class RestResponse : RestResponseBase {
 
         async Task<RestResponse> GetDefaultResponse() {
             var readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
             using var stream = await readTask.ConfigureAwait(false);
 #else
             await using var stream = await readTask.ConfigureAwait(false);
@@ -105,7 +105,7 @@ public class RestResponse : RestResponseBase {
             Exception? MaybeException()
                 => httpResponse.IsSuccessStatusCode
                     ? null
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
                     : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
 #else
                     : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}", null, httpResponse.StatusCode);
@@ -114,7 +114,7 @@ public class RestResponse : RestResponseBase {
             Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
 
             async Task<Stream?> ReadAndConvertResponse() {
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
                 using var original = await ReadResponse().ConfigureAwait(false);
 #else
                 await using var original = await ReadResponse().ConfigureAwait(false);

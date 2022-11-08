@@ -106,7 +106,7 @@ public partial class RestClient {
         if (response.ResponseMessage == null) return null;
 
         if (request.ResponseWriter != null) {
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
             using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
 #else
             await using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
@@ -138,7 +138,7 @@ public partial class RestClient {
             Method.Delete  => HttpMethod.Delete,
             Method.Head    => HttpMethod.Head,
             Method.Options => HttpMethod.Options,
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
             Method.Patch => new HttpMethod("PATCH"),
 #else
             Method.Patch   => HttpMethod.Patch,

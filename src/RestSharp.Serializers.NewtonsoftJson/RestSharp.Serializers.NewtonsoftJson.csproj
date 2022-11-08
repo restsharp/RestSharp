@@ -7,5 +7,6 @@
     </ItemGroup>
     <ItemGroup>
         <Using Include="Newtonsoft.Json"/>
+        <Using Remove="System.Net.Http"/>
     </ItemGroup>
 </Project>
