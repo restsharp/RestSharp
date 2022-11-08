@@ -34,6 +34,20 @@ public class JwtAuthTests {
         Assert.True(authParam.Type == ParameterType.HttpHeader);
         Assert.Equal(_expectedAuthHeaderContent, authParam.Value);
     }
+    
+    [Fact]
+    public async Task Can_Set_ValidFormat_Auth_Header_With_Bearer_Prefix() {
+        var client  = new RestClient { Authenticator = new JwtAuthenticator($"Bearer {_testJwt}") };
+        var request = new RestRequest();
+
+        //In real case client.Execute(request) will invoke Authenticate method
+        await client.Authenticator.Authenticate(client, request);
+
+        var authParam = request.Parameters.Single(p => p.Name.Equals(KnownHeaders.Authorization, StringComparison.OrdinalIgnoreCase));
+
+        Assert.True(authParam.Type == ParameterType.HttpHeader);
+        Assert.Equal(_expectedAuthHeaderContent, authParam.Value);
+    }
 
     [Fact]
     public async Task Check_Only_Header_Authorization() {
