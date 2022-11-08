@@ -7,7 +7,8 @@ namespace RestSharp.Tests.Integrated;
 public sealed class DownloadFileTests : IDisposable {
     public DownloadFileTests() {
         _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
-        _client = new RestClient(_server.Url);
+        var options = new RestClientOptions(_server.Url) { ThrowOnAnyError = true };
+        _client = new RestClient(options);
     }
 
     public void Dispose() => _server.Dispose();
@@ -44,6 +45,13 @@ public sealed class DownloadFileTests : IDisposable {
 
         await _client.ExecuteAsync(rr);
         Assert.True(string.Compare("JFIF", tag, StringComparison.Ordinal) == 0);
+    }
+
+    [Fact]
+    public async Task Handles_File_Download_Failure() {
+        var request = new RestRequest("Assets/Koala1.jpg");
+        var task = () => _client.DownloadDataAsync(request);
+        await task.Should().ThrowAsync<HttpRequestException>().WithMessage("Request failed with status code NotFound");
     }
 
     [Fact]
