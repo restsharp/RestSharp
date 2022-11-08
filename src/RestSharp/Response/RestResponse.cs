@@ -89,7 +89,7 @@ public class RestResponse : RestResponseBase {
                 ContentLength       = httpResponse.Content.Headers.ContentLength,
                 ContentType         = httpResponse.Content.Headers.ContentType?.MediaType,
                 ResponseStatus      = calculateResponseStatus(httpResponse),
-                ErrorException      = MaybeException(),
+                ErrorException      = httpResponse.MaybeException(),
                 ResponseUri         = httpResponse.RequestMessage!.RequestUri,
                 Server              = httpResponse.Headers.Server.ToString(),
                 StatusCode          = httpResponse.StatusCode,
@@ -101,15 +101,6 @@ public class RestResponse : RestResponseBase {
                 Cookies             = cookieCollection,
                 RootElement         = request.RootElement
             };
-
-            Exception? MaybeException()
-                => httpResponse.IsSuccessStatusCode
-                    ? null
-#if NETSTANDARD
-                    : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
-#else
-                    : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}", null, httpResponse.StatusCode);
-#endif
 
             Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
 
