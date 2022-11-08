@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Net;
 using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 using RestSharp.Serializers;
@@ -442,6 +443,21 @@ public static class RestRequestExtensions {
             request.AddParameter(name, value);
         }
 
+        return request;
+    }
+
+    /// <summary>
+    /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
+    /// </summary>
+    /// <param name="request">RestRequest to add the cookies to</param>
+    /// <param name="name">Cookie name</param>
+    /// <param name="value">Cookie value</param>
+    /// <param name="path">Cookie path</param>
+    /// <param name="domain">Cookie domain, must not be an empty string</param>
+    /// <returns></returns>
+    public static RestRequest AddCookie(this RestRequest request, string name, string value, string path, string domain) {
+        request.CookieContainer ??= new CookieContainer();
+        request.CookieContainer.Add(new Cookie(name, value, path, domain));
         return request;
     }
 
