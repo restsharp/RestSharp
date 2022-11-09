@@ -37,6 +37,10 @@ public sealed class HttpServer {
         _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
 
+        // Cookies
+        _app.MapGet("get-cookies", HandleCookies);
+        _app.MapGet("set-cookies", HandleSetCookies);
+
         // PUT
         _app.MapPut(
             ContentResource,
@@ -58,6 +62,34 @@ public sealed class HttpServer {
         IResult HandleHeaders(HttpContext ctx) {
             var response = ctx.Request.Headers.Select(x => new TestServerResponse(x.Key, x.Value));
             return Results.Ok(response);
+        }
+
+        IResult HandleCookies(HttpContext ctx) {
+            var results = new List<string>();
+            foreach (var (key, value) in ctx.Request.Cookies) {
+                results.Add($"{key}={value}");
+            }
+            return Results.Ok(results);
+        }
+
+        IResult HandleSetCookies(HttpContext ctx) {
+            ctx.Response.Cookies.Append("cookie1", "value1");
+            ctx.Response.Cookies.Append("cookie2", "value2", new CookieOptions {
+                Path = "/path_extra"
+            });
+            ctx.Response.Cookies.Append("cookie3", "value3", new CookieOptions {
+                Expires = DateTimeOffset.Now.AddDays(2)
+            });
+            ctx.Response.Cookies.Append("cookie4", "value4", new CookieOptions {
+                MaxAge = TimeSpan.FromSeconds(100)
+            });
+            ctx.Response.Cookies.Append("cookie5", "value5", new CookieOptions {
+                Secure = true
+            });
+            ctx.Response.Cookies.Append("cookie6", "value6", new CookieOptions {
+                HttpOnly = true
+            });
+            return Results.Content("success");
         }
 
         async Task<IResult> HandleUpload(HttpRequest req) {
