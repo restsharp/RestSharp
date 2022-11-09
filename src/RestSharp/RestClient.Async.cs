@@ -111,7 +111,7 @@ public partial class RestClient {
         var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
 
         if (exception != null) {
-            return Options.ThrowOnAnyError ? throw exception : null;
+            throw exception;
         }
 
         if (response.ResponseMessage == null) return null;
