@@ -15,6 +15,7 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
