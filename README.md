@@ -10,6 +10,8 @@ What RestSharp adds to `HttpClient`:
 
 **RestSharp is supported by [AWS](https://aws.amazon.com/developer/language/net/solutions/).**
 
+[![AWS Logo](https://restsharp.dev/aws_logo.png)](https://aws.amazon.com)
+
 ## RestSharp vNext (v107+)
 
 Finally, RestSharp has moved to `HttpClient`. We also deprecated the following:
