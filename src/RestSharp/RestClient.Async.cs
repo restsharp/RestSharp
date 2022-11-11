@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Net;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -32,7 +33,7 @@ public partial class RestClient {
                     internalResponse.ResponseMessage!,
                     request,
                     Options.Encoding,
-                    CookieContainer.GetCookies(internalResponse.Url),
+                    request.CookieContainer!.GetCookies(internalResponse.Url),
                     CalculateResponseStatus,
                     cancellationToken
                 )
@@ -50,8 +51,7 @@ public partial class RestClient {
 
         using var requestContent = new RequestContent(this, request);
 
-        if (Authenticator != null)
-            await Authenticator.Authenticate(this, request).ConfigureAwait(false);
+        if (Authenticator != null) await Authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = BuildUri(request);
@@ -61,22 +61,31 @@ public partial class RestClient {
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
-        var       ct         = cts.Token;
+
+        var ct = cts.Token;
 
         try {
+            // Make sure we have a cookie container if not provided in the request
+            var cookieContainer = request.CookieContainer ??= new CookieContainer();
             var headers = new RequestHeaders()
                 .AddHeaders(request.Parameters)
                 .AddHeaders(DefaultParameters)
-                .AddAcceptHeader(AcceptedContentTypes);
+                .AddAcceptHeader(AcceptedContentTypes)
+                .AddCookieHeaders(cookieContainer, url);
             message.AddHeaders(headers);
 
-            if (request.OnBeforeRequest != null)
-                await request.OnBeforeRequest(message).ConfigureAwait(false);
+            if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
 
             var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
 
-            if (request.OnAfterRequest != null)
-                await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+            // Parse all the cookies from the response and update the cookie jar with cookies
+            if (responseMessage.Headers.TryGetValues("Set-Cookie", out var cookiesHeader)) {
+                foreach (var header in cookiesHeader) {
+                    cookieContainer.SetCookies(url, header);
+                }
+            }
+
+            if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 
             return new InternalResponse(responseMessage, url, null, timeoutCts.Token);
         }
@@ -99,8 +108,10 @@ public partial class RestClient {
         request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
         var response = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
 
-        if (response.Exception != null) {
-            return Options.ThrowOnAnyError ? throw response.Exception : null;
+        var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
+
+        if (exception != null) {
+            return Options.ThrowOnAnyError ? throw exception : null;
         }
 
         if (response.ResponseMessage == null) return null;
@@ -141,7 +152,7 @@ public partial class RestClient {
 #if NETSTANDARD || NETFRAMEWORK
             Method.Patch => new HttpMethod("PATCH"),
 #else
-            Method.Patch   => HttpMethod.Patch,
+            Method.Patch => HttpMethod.Patch,
 #endif
             Method.Merge  => new HttpMethod("MERGE"),
             Method.Copy   => new HttpMethod("COPY"),
@@ -157,7 +168,7 @@ public static class ResponseThrowExtension {
 
         return response;
     }
-    
+
     public static RestResponse<T> ThrowIfError<T>(this RestResponse<T> response) {
         var exception = response.GetException();
         if (exception != null) throw exception;
