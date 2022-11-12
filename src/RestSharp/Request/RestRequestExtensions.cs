@@ -1,11 +1,11 @@
 //  Copyright (c) .NET Foundation and Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@ using RestSharp.Serializers;
 namespace RestSharp;
 
 [PublicAPI]
-public static class RestRequestExtensions {
+public static partial class RestRequestExtensions {
     static readonly Regex PortSplitRegex = new(@":\d+");
 
     /// <summary>
@@ -44,6 +44,11 @@ public static class RestRequestExtensions {
     /// <returns>This request</returns>
     public static RestRequest AddParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
         => request.AddParameter(name, value.ToString(), encode);
+
+    static RestRequest AddParameters(this RestRequest request, IEnumerable<Parameter> parameters) {
+        request.Parameters.AddParameters(parameters);
+        return request;
+    }
 
     /// <summary>
     /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
@@ -330,7 +335,7 @@ public static class RestRequestExtensions {
         => request.AddFile(FileParameter.Create(name, bytes, filename, contentType, options));
 
     /// <summary>
-    /// Adds a file attachment to the request, where the file content will be retrieved from a given stream 
+    /// Adds a file attachment to the request, where the file content will be retrieved from a given stream
     /// </summary>
     /// <param name="request">Request instance</param>
     /// <param name="name">Parameter name</param>
@@ -446,16 +451,22 @@ public static class RestRequestExtensions {
         return request;
     }
 
-    /// <summary>
-    /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
-    /// </summary>
-    /// <param name="request">RestRequest to add the cookies to</param>
-    /// <param name="name">Cookie name</param>
-    /// <param name="value">Cookie value</param>
-    /// <param name="path">Cookie path</param>
-    /// <param name="domain">Cookie domain, must not be an empty string</param>
-    /// <returns></returns>
-    public static RestRequest AddCookie(this RestRequest request, string name, string value, string path, string domain) {
+    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class =>
+        request.AddParameters(TypeCache<T>.GetParameters(obj, includedProperties));
+
+    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj) where T : class =>
+        request.AddParameters(TypeCache<T>.GetParameters(obj));
+
+        /// <summary>
+        /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
+        /// </summary>
+        /// <param name="request">RestRequest to add the cookies to</param>
+        /// <param name="name">Cookie name</param>
+        /// <param name="value">Cookie value</param>
+        /// <param name="path">Cookie path</param>
+        /// <param name="domain">Cookie domain, must not be an empty string</param>
+        /// <returns></returns>
+        public static RestRequest AddCookie(this RestRequest request, string name, string value, string path, string domain) {
         request.CookieContainer ??= new CookieContainer();
         request.CookieContainer.Add(new Cookie(name, value, path, domain));
         return request;
