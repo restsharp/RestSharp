@@ -151,11 +151,11 @@ class RequestContent : IDisposable {
 
         if (Content is MultipartFormDataContent mpContent) {
             // we got the multipart form already instantiated, just add parameters to it
-            foreach (var postParameter in postParameters!) {
+            foreach (var postParameter in postParameters) {
                 var parameterName = postParameter.Name!;
 
                 mpContent.Add(
-                    new StringContent(postParameter.Value!.ToString()!, _client.Options.Encoding, postParameter.ContentType),
+                    new StringContent(postParameter.Value?.ToString() ?? "", _client.Options.Encoding, postParameter.ContentType),
                     _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
                 );
             }
