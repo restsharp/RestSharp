@@ -162,7 +162,11 @@ public static partial class RestRequestExtensions {
 
 
             static void PopulateCsv<V>(IEnumerable<V> enumerable, Func<V, string?> toString, RequestProperty requestProperty, ICollection<Parameter> parameters) where V : class {
+#if NETCOREAPP2_0_OR_GREATER
+                const char csvSeparator = ',';
+#else
                 const string csvSeparator = ",";
+#endif
                 var formattedStrings = enumerable.Select(toString);
                 var csv = string.Join(csvSeparator, formattedStrings);
                 Populate(csv, requestProperty, parameters);
