@@ -129,7 +129,7 @@ public partial class RestClient : IDisposable {
         if (Options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(Options.MaxTimeout);
 
         if (Options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != Options.UserAgent)) {
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Options.UserAgent);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Options.UserAgent);
         }
 
         if (Options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = Options.Expect100Continue;
