@@ -21,6 +21,9 @@ public static partial class RestRequestExtensions {
         static readonly IReadOnlyCollection<Populator> Populators =
             typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                // We need to ensure the property does not return a ref struct
+                // since reflection and LINQ expressions do not play well with
+                // them. All bets are off, so let's just ignore them.
 #if NETCOREAPP2_1_OR_GREATER
                 .Where(property => !property.PropertyType.IsByRefLike)
 #else
@@ -29,6 +32,12 @@ public static partial class RestRequestExtensions {
                 .Select(Populator.From)
                 .ToArray();
 
+        /// <summary>
+        /// Gets parameters from the provided object
+        /// </summary>
+        /// <param name="entity">The object from which to get the parameters</param>
+        /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
+        /// <returns></returns>
         internal static IEnumerable<Parameter> GetParameters(T entity, params string[] includedProperties) {
             if (includedProperties.Length == 0) {
                 return GetParameters(entity);
@@ -36,15 +45,26 @@ public static partial class RestRequestExtensions {
 
             Array.Sort(includedProperties); // Otherwise binary search is unsafe.
 
+            // Get only populators found in `includedProperties`.
+
             var populators = Populators.Where(populator => Array.BinarySearch(includedProperties, populator.PropertyName) >= 0);
             return GetParameters(entity, populators);
         }
+
+        /// <summary>
+        /// Gets parameters from the provided object
+        /// </summary>
+        /// <param name="entity">The object from which to get the parameters</param>
+        /// <returns></returns>
         internal static IEnumerable<Parameter> GetParameters(T entity) => GetParameters(entity, Populators);
 
         static IEnumerable<Parameter> GetParameters(T entity, IEnumerable<Populator> populators) {
             var parameters = new List<Parameter>(capacity: Populators.Count);
 
             foreach (var populator in populators) {
+                // Each populator may return one or more parameters,
+                // so they take temporary ownership of the list in order
+                // to populate it with its own set of parameters.
                 populator.Populate(entity, parameters);
             }
 
