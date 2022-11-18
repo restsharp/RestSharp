@@ -452,10 +452,10 @@ public static partial class RestRequestExtensions {
     }
 
     public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class =>
-        request.AddParameters(TypeCache<T>.GetParameters(obj, includedProperties));
+        request.AddParameters(PropertyCache<T>.GetParameters(obj, includedProperties));
 
     public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj) where T : class =>
-        request.AddParameters(TypeCache<T>.GetParameters(obj));
+        request.AddParameters(PropertyCache<T>.GetParameters(obj));
 
         /// <summary>
         /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
