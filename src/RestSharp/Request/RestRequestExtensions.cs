@@ -14,7 +14,6 @@
 
 using System.Net;
 using System.Text.RegularExpressions;
-using RestSharp.Extensions;
 using RestSharp.Serializers;
 
 namespace RestSharp;

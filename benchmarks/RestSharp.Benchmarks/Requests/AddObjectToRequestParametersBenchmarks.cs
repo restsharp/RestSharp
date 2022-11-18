@@ -1,11 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using System.Globalization;
 
 namespace RestSharp.Benchmarks.Requests {
     [MemoryDiagnoser, RankColumn, Orderer(SummaryOrderPolicy.FastestToSlowest)]
     public partial class AddObjectToRequestParametersBenchmarks {
         Data _data;
-        string[] _fields;
 
         [GlobalSetup]
         public void GlobalSetup() {
@@ -16,8 +16,10 @@ namespace RestSharp.Benchmarks.Requests {
             var ints = new int[arraySize];
             Array.Fill(ints, int.MaxValue);
 
-            _data = new Data(@string, int.MaxValue, strings, ints);
-            _fields = new[] { nameof(Data.String), nameof(Data.Int32), nameof(Data.Strings), nameof(Data.Ints) };
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            var dateTime = DateTime.Parse("01/01/2013 03:03:12");
+
+            _data = new Data(@string, int.MaxValue, strings, ints, dateTime, strings);
         }
 
         [Benchmark(Baseline = true)]
@@ -26,10 +28,5 @@ namespace RestSharp.Benchmarks.Requests {
         [Benchmark]
         public void AddObjectStatic() => new RestRequest().AddObjectStatic(_data);
 
-        [Benchmark]
-        public void AddObject_Filtered() => new RestRequest().AddObject(_data, _fields);
-
-        [Benchmark]
-        public void AddObjectStatic_Filtered() => new RestRequest().AddObjectStatic(_data, _fields);
     }
 }

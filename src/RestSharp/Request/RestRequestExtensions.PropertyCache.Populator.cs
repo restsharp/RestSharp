@@ -113,9 +113,6 @@ public static partial class RestRequestExtensions {
             static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable<IConvertible>> getConvertibles, RequestProperty requestProperty) =>
                 GetPopulateArray(getConvertibles, GetStringValue, requestProperty);
 
-            static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable<object>> getObjects, RequestProperty requestProperty) =>
-                GetPopulateArray(getObjects, @object => GetUnknownStringValue(@object, requestProperty), requestProperty);
-
             static Action<T, ICollection<Parameter>> GetPopulateArray<V>(Func<T, IEnumerable<V>> getEnumerable, Func<V, string?> toString, RequestProperty requestProperty) where V : class {
                 var newRequestProperty = requestProperty with { Name = $"{requestProperty.Name}[]" };
                 return (entity, parameters) => PopulateArray(getEnumerable(entity), toString, newRequestProperty, parameters);
