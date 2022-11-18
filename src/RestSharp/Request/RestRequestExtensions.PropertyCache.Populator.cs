@@ -37,7 +37,10 @@ public static partial class RestRequestExtensions {
                 var entity = Expression.Parameter(typeof(T));
                 var callGetter = Expression.Call(entity, property.GetGetMethod()!);
 
-                var convertGetterReturnToObject = Expression.Convert(callGetter, typeof(object));
+                Expression convertGetterReturnToObject =
+                    property.PropertyType.IsValueType ?
+                    Expression.Convert(callGetter, typeof(object)) :
+                    callGetter;
 
                 var getObject = Expression.Lambda<Func<T, object>>(convertGetterReturnToObject, entity).Compile();
 
@@ -62,9 +65,9 @@ public static partial class RestRequestExtensions {
                 _ => (_, _) => { }
             };
 
-            static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IEnumerable<object>> getObjects, RequestProperty requestProperty) => requestProperty.ArrayQueryType switch {
-                RequestArrayQueryType.CommaSeparated => (entity, parameters) => PopulateCsv(getObjects(entity), requestProperty, parameters),
-                RequestArrayQueryType.ArrayParameters => GetPopulateArray(getObjects, requestProperty),
+            static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty) => requestProperty.ArrayQueryType switch {
+                RequestArrayQueryType.CommaSeparated => (entity, parameters) => PopulateCsv(getEnumerable(entity), requestProperty, parameters),
+                RequestArrayQueryType.ArrayParameters => GetPopulateArray(getEnumerable, requestProperty),
                 _ => (_, _) => { }
             };
 
@@ -92,9 +95,9 @@ public static partial class RestRequestExtensions {
                 }
 
                 return enumeratedType switch {
-                    var formattableEnumeratedType when typeof(IFormattable).IsAssignableFrom(formattableEnumeratedType) => GetPopulate(BoxInto<IFormattable>(getEnumerable, formattableEnumeratedType), requestProperty),
-                    var convertibleEnumeratedType when typeof(IConvertible).IsAssignableFrom(convertibleEnumeratedType) => GetPopulate(BoxInto<IConvertible>(getEnumerable, convertibleEnumeratedType), requestProperty),
-                    var otherEnumeratedType => GetPopulate(BoxInto<object>(getEnumerable, otherEnumeratedType), requestProperty)
+                    var formattableEnumeratedType when typeof(IFormattable).IsAssignableFrom(formattableEnumeratedType) => GetPopulate(GetEnumerableOf<IFormattable>(getEnumerable, formattableEnumeratedType), requestProperty),
+                    var convertibleEnumeratedType when typeof(IConvertible).IsAssignableFrom(convertibleEnumeratedType) => GetPopulate(GetEnumerableOf<IConvertible>(getEnumerable, convertibleEnumeratedType), requestProperty),
+                    var otherEnumeratedType => GetPopulate(getEnumerable, requestProperty)
                 };
             }
 
@@ -118,8 +121,10 @@ public static partial class RestRequestExtensions {
                 return (entity, parameters) => PopulateArray(getEnumerable(entity), toString, newRequestProperty, parameters);
             }
 
-            static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty) =>
-                GetPopulateArray((entity) => getEnumerable(entity).Cast<object>(), requestProperty);
+            static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty) {
+                var newRequestProperty = requestProperty with { Name = $"{requestProperty.Name}[]" };
+                return (entity, parameters) => PopulateArray(getEnumerable(entity), newRequestProperty, parameters);
+            }
 
             static void Populate(IFormattable formattable, RequestProperty requestProperty, ICollection<Parameter> parameters) => Populate(GetStringValue(formattable, requestProperty), requestProperty, parameters);
 
@@ -141,6 +146,24 @@ public static partial class RestRequestExtensions {
             static void PopulateCsv(IEnumerable<object> objects, RequestProperty requestProperty, ICollection<Parameter> parameters) =>
                 PopulateCsv(objects, @object => GetUnknownStringValue(@object, requestProperty), requestProperty, parameters);
 
+            static void PopulateCsv(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) {
+                switch (enumerable) {
+                    case IEnumerable<IFormattable> formattables:
+                        PopulateCsv(formattables, requestProperty, parameters);
+                        break;
+                    case IEnumerable<IConvertible> convertibles:
+                        PopulateCsv(convertibles, requestProperty, parameters);
+                        break;
+                    case IEnumerable<object> objects:
+                        PopulateCsv(objects, requestProperty, parameters);
+                        break;
+                    default:
+                        PopulateCsvUnknown(enumerable, requestProperty, parameters);
+                        break;
+                }
+            }
+
+
             static void PopulateCsv<V>(IEnumerable<V> enumerable, Func<V, string?> toString, RequestProperty requestProperty, ICollection<Parameter> parameters) where V : class {
                 const string csvSeparator = ",";
                 var formattedStrings = enumerable.Select(toString);
@@ -156,26 +179,14 @@ public static partial class RestRequestExtensions {
                     case IConvertible convertible:
                         Populate(convertible, requestProperty, parameters);
                         break;
-                    case IEnumerable<IFormattable> formattables:
-                        PopulateCsv(formattables, requestProperty, parameters);
-                        break;
-                    case IEnumerable<IConvertible> convertibles:
-                        PopulateCsv(convertibles, requestProperty, parameters);
-                        break;
-                    case IEnumerable<object> objects:
-                        PopulateCsv(objects, requestProperty, parameters);
-                        break;
                     case IEnumerable enumerable:
-                        PopulateCsvUnknown(enumerable, requestProperty, parameters);
+                        PopulateCsv(enumerable, requestProperty, parameters);
                         break;
                     default:
                         Populate(@object, requestProperty, parameters);
                         break;
                 }
             }
-
-            static void PopulateCsvKnown(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) =>
-                PopulateCsv(enumerable.Cast<object>(), requestProperty, parameters);
 
             static void PopulateCsvUnknown(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) {
 
@@ -197,6 +208,8 @@ public static partial class RestRequestExtensions {
                 }
             }
 
+            static void PopulateCsvKnown(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) => PopulateCsv(enumerable.Cast<object>(), requestProperty, parameters);
+
             static void PopulateArray(IEnumerable<IFormattable> formattables, RequestProperty requestProperty, ICollection<Parameter> parameters) =>
                 PopulateArray(formattables, formattable => GetStringValue(formattable, requestProperty), requestProperty, parameters);
 
@@ -205,6 +218,24 @@ public static partial class RestRequestExtensions {
 
             static void PopulateArray(IEnumerable<object> objects, RequestProperty requestProperty, ICollection<Parameter> parameters) =>
                 PopulateArray(objects, @object => GetUnknownStringValue(@object, requestProperty), requestProperty, parameters);
+
+            static void PopulateArray(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) {
+                switch (enumerable) {
+                    case IEnumerable<IFormattable> formattables:
+                        PopulateArray(formattables, requestProperty, parameters);
+                        break;
+                    case IEnumerable<IConvertible> convertibles:
+                        PopulateArray(convertibles, requestProperty, parameters);
+                        break;
+                    case IEnumerable<object> objects:
+                        PopulateArray(objects, requestProperty, parameters);
+                        break;
+                    default:
+                        PopulateArrayUnknown(enumerable, requestProperty, parameters);
+                        break;
+                }
+            }
+
 
             static void PopulateArray<V>(IEnumerable<V> enumerable, Func<V, string?> toString, RequestProperty requestProperty, ICollection<Parameter> parameters) where V : class {
                 var values = enumerable.Select(toString);
@@ -224,29 +255,13 @@ public static partial class RestRequestExtensions {
                         break;
                     case IEnumerable enumerable:
                         requestProperty = requestProperty with { Name = $"{requestProperty.Name}[]" };
-                        switch (enumerable) {
-                            case IEnumerable<IFormattable> formattables:
-                                PopulateArray(formattables, requestProperty, parameters);
-                                break;
-                            case IEnumerable<IConvertible> convertibles:
-                                PopulateArray(convertibles, requestProperty, parameters);
-                                break;
-                            case IEnumerable<object> objects:
-                                PopulateArray(objects, requestProperty, parameters);
-                                break;
-                            default:
-                                PopulateArrayUnknown(enumerable, requestProperty, parameters);
-                                break;
-                        }
+                        PopulateArray(enumerable, requestProperty, parameters);
                         break;
                     default:
                         Populate(@object, requestProperty, parameters);
                         break;
                 }
             }
-
-            static void PopulateArrayKnown(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) =>
-                PopulateArray(enumerable.Cast<object>(), requestProperty, parameters);
 
             static void PopulateArrayUnknown(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) {
 
@@ -268,16 +283,21 @@ public static partial class RestRequestExtensions {
                 }
             }
 
+            static void PopulateArrayKnown(IEnumerable enumerable, RequestProperty requestProperty, ICollection<Parameter> parameters) => PopulateArray(enumerable.Cast<object>(), requestProperty, parameters);
+
             static string GetStringValue(IFormattable formattable, RequestProperty requestProperty) => formattable.ToString(requestProperty.Format, null);
+
             static string GetStringValue(IConvertible convertible) => convertible.ToString(null);
+
             static string? GetKnownStringValue(object @object) => TypeDescriptor.GetConverter(@object).ConvertToString(@object);
+
             static string? GetUnknownStringValue(object @object, RequestProperty requestProperty) => @object switch {
                 IFormattable formattable => GetStringValue(formattable, requestProperty),
                 IConvertible convertible => GetStringValue(convertible),
                 _ => GetKnownStringValue(@object)
             };
 
-            static Func<T, IEnumerable<V>> BoxInto<V>(Func<T, IEnumerable> getEnumerable, Type enumeratedType) where V : class =>
+            static Func<T, IEnumerable<V>> GetEnumerableOf<V>(Func<T, IEnumerable> getEnumerable, Type enumeratedType) where V : class =>
                 enumeratedType.IsValueType ?
                 entity => getEnumerable(entity).Cast<V>() :
                 entity => Unsafe.As<IEnumerable<V>>(getEnumerable(entity))!;
