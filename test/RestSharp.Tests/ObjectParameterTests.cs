@@ -698,4 +698,22 @@ public partial class ObjectParameterTests {
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", ".NET"),
             });
     }
+
+    [Fact]
+    public void RefStructs_are_ignored() {
+        const string value = "Hello world";
+        var stringValue = new StringValue(value);
+        var request = new RestRequest().AddObjectStatic(stringValue);
+        request
+            .Parameters
+            .Should()
+            .ContainSingle()
+            .Which
+            .Should()
+            .BeEquivalentTo(new GetOrPostParameter(nameof(StringValue.Value), value));
+    }
+
+    public sealed record StringValue(string Value) {
+        public ReadOnlySpan<char> AsSpan => Value.AsSpan();
+    }
 }

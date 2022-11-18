@@ -21,6 +21,11 @@ public static partial class RestRequestExtensions {
         static readonly IReadOnlyCollection<Populator> Populators =
             typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+#if NETCOREAPP2_1_OR_GREATER
+                .Where(property => !property.PropertyType.IsByRefLike)
+#else
+                .Where(property => !property.PropertyType.IsDefined(Type.GetType("System.Runtime.CompilerServices.IsByRefLikeAttribute")))
+#endif
                 .Select(Populator.From)
                 .ToArray();
 
