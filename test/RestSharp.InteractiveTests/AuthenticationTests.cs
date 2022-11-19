@@ -2,11 +2,11 @@
 using System.Web;
 using RestSharp.Authenticators;
 
-namespace RestSharp.InteractiveTests; 
+namespace RestSharp.InteractiveTests;
 
 public class AuthenticationTests {
     public class TwitterKeys {
-        public string ConsumerKey { get; set; }
+        public string ConsumerKey    { get; set; }
         public string ConsumerSecret { get; set; }
     }
 
@@ -15,13 +15,15 @@ public class AuthenticationTests {
 
         var baseUrl = new Uri("https://api.twitter.com");
 
-        var client = new RestClient(baseUrl) {
-            Authenticator = OAuth1Authenticator.ForRequestToken(
-                twitterKeys.ConsumerKey!,
-                twitterKeys.ConsumerSecret,
-                "https://restsharp.dev"
-            )
-        };
+        var client = new RestClient(
+            baseUrl,
+            options =>
+                options.Authenticator = OAuth1Authenticator.ForRequestToken(
+                    twitterKeys.ConsumerKey!,
+                    twitterKeys.ConsumerSecret,
+                    "https://restsharp.dev"
+                )
+        );
         var request  = new RestRequest("oauth/request_token");
         var response = await client.ExecuteAsync(request);
 
@@ -46,7 +48,7 @@ public class AuthenticationTests {
 
         request = new RestRequest("oauth/access_token");
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
+        client.Options.Authenticator = OAuth1Authenticator.ForAccessToken(
             twitterKeys.ConsumerKey!,
             twitterKeys.ConsumerSecret,
             oauthToken!,
@@ -67,7 +69,7 @@ public class AuthenticationTests {
 
         request = new RestRequest("1.1/account/verify_credentials.json");
 
-        client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+        client.Options.Authenticator = OAuth1Authenticator.ForProtectedResource(
             twitterKeys.ConsumerKey!,
             twitterKeys.ConsumerSecret,
             oauthToken!,

@@ -21,7 +21,8 @@ namespace RestSharp;
 
 public static partial class RestClientExtensions {
     [PublicAPI]
-    public static RestResponse<T> Deserialize<T>(this RestClient client, RestResponse response) => client.Deserialize<T>(response.Request!, response);
+    public static RestResponse<T> Deserialize<T>(this IRestClient client, RestResponse response)
+        => client.Serializers.Deserialize<T>(response.Request!, response, client.Options);
 
     /// <summary>
     /// Allows to use a custom way to encode URL parameters
@@ -30,7 +31,8 @@ public static partial class RestClientExtensions {
     /// <param name="encoder">A delegate to encode URL parameters</param>
     /// <example>client.UseUrlEncoder(s => HttpUtility.UrlEncode(s));</example>
     /// <returns></returns>
-    public static RestClient UseUrlEncoder(this RestClient client, Func<string, string> encoder) => client.With(x => x.Encode = encoder);
+    [Obsolete("Set the RestClientOptions.Encode property instead")]
+    public static RestClient UseUrlEncoder(this RestClient client, Func<string, string> encoder) => client.With(x => x.Options.Encode = encoder);
 
     /// <summary>
     /// Allows to use a custom way to encode query parameters
@@ -39,9 +41,11 @@ public static partial class RestClientExtensions {
     /// <param name="queryEncoder">A delegate to encode query parameters</param>
     /// <example>client.UseUrlEncoder((s, encoding) => HttpUtility.UrlEncode(s, encoding));</example>
     /// <returns></returns>
+    [Obsolete("Set the RestClientOptions.EncodeQuery property instead")]
     public static RestClient UseQueryEncoder(this RestClient client, Func<string, Encoding, string> queryEncoder)
-        => client.With(x => x.EncodeQuery = queryEncoder);
+        => client.With(x => x.Options.EncodeQuery = queryEncoder);
 
+    [Obsolete("Set the RestClientOptions.Authenticator property instead")]
     public static RestClient UseAuthenticator(this RestClient client, IAuthenticator authenticator)
-        => client.With(x => x.Authenticator = authenticator);
+        => client.With(x => x.Options.Authenticator = authenticator);
 }

@@ -19,16 +19,16 @@ public static class RestClientExtensions {
     /// <summary>
     /// Use Newtonsoft.Json serializer with default settings
     /// </summary>
-    /// <param name="client"></param>
+    /// <param name="config"></param>
     /// <returns></returns>
-    public static RestClient UseNewtonsoftJson(this RestClient client) => client.UseSerializer(() => new JsonNetSerializer());
+    public static SerializerConfig UseNewtonsoftJson(this SerializerConfig config) => config.UseSerializer(() => new JsonNetSerializer());
 
     /// <summary>
     /// Use Newtonsoft.Json serializer with custom settings
     /// </summary>
-    /// <param name="client"></param>
+    /// <param name="config"></param>
     /// <param name="settings">Newtonsoft.Json serializer settings</param>
     /// <returns></returns>
-    public static RestClient UseNewtonsoftJson(this RestClient client, JsonSerializerSettings settings)
-        => client.UseSerializer(() => new JsonNetSerializer(settings));
+    public static SerializerConfig UseNewtonsoftJson(this SerializerConfig config, JsonSerializerSettings settings)
+        => config.UseSerializer(() => new JsonNetSerializer(settings));
 }

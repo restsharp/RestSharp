@@ -42,6 +42,7 @@ public static partial class RestClientExtensions {
     /// <returns>This request</returns>
     public static RestClient AddDefaultParameter(this RestClient client, string name, object value, ParameterType type) {
         if (type == ParameterType.RequestBody) throw new ArgumentException("Default parameter cannot be Body", nameof(type));
+
         return client.AddDefaultParameter(Parameter.CreateParameter(name, value, type));
     }
 
@@ -62,8 +63,7 @@ public static partial class RestClientExtensions {
     /// <param name="headers">Dictionary containing the Names and Values of the headers to add</param>
     /// <returns></returns>
     public static RestClient AddDefaultHeaders(this RestClient client, Dictionary<string, string> headers) {
-        foreach (var header in headers)
-            client.AddDefaultParameter(new HeaderParameter(header.Key, header.Value));
+        foreach (var header in headers) client.AddDefaultParameter(new HeaderParameter(header.Key, header.Value));
 
         return client;
     }

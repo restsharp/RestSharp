@@ -92,14 +92,8 @@ class RequestContent : IDisposable {
         }
 
         HttpContent GetSerialized() {
-            if (!_client.Serializers.TryGetValue(body.DataFormat, out var serializerRecord))
-                throw new InvalidDataContractException(
-                    $"Can't find serializer for content type {body.DataFormat}"
-                );
-
-            var serializer = serializerRecord.GetSerializer();
-
-            var content = serializer.Serialize(body);
+            var serializer = _client.Serializers.GetSerializer(body.DataFormat);
+            var content    = serializer.Serialize(body);
 
             if (content == null) throw new SerializationException("Request body serialized to null");
 

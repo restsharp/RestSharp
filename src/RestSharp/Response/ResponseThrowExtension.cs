@@ -11,17 +11,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+// 
 
 namespace RestSharp;
 
-static class Ensure {
-    public static T NotNull<T>(T? value, [InvokerParameterName] string name) => value ?? throw new ArgumentNullException(name);
+public static class ResponseThrowExtension {
+    public static RestResponse ThrowIfError(this RestResponse response) {
+        var exception = response.GetException();
+        if (exception != null) throw exception;
 
-    public static string NotEmpty(string? value, [InvokerParameterName] string name)
-        => string.IsNullOrWhiteSpace(value) ? throw new ArgumentNullException(name) : value!;
+        return response;
+    }
 
-    public static string NotEmptyString(object? value, [InvokerParameterName] string name) {
-        var s = value as string ?? value?.ToString();
-        return string.IsNullOrWhiteSpace(s) ? throw new ArgumentNullException(name) : s!;
+    public static RestResponse<T> ThrowIfError<T>(this RestResponse<T> response) {
+        var exception = response.GetException();
+        if (exception != null) throw exception;
+
+        return response;
     }
 }

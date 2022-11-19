@@ -10,7 +10,7 @@ public class RootElementTests {
     public async Task Copy_RootElement_From_Request_To_IWithRootElement_Deserializer() {
         using var server = HttpServerFixture.StartServer("success", Handle);
 
-        var client = new RestClient(server.Url).UseXmlSerializer();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseXmlSerializer());
 
         var request = new RestRequest("success") { RootElement = "Success" };
 

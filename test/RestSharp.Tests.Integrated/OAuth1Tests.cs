@@ -31,18 +31,19 @@ public class OAuth1Tests {
         const string consumerKey    = "";
         const string consumerSecret = "";
 
-        var baseUrl = new Uri("http://api.netflix.com");
+        var baseUrl = new Uri("https://api.netflix.com");
 
-        var client = new RestClient(baseUrl) {
-            Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
-        };
+        var client = new RestClient(
+            baseUrl,
+            configureRestClient: options => options.Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
+        );
         var request  = new RestRequest("oauth/request_token");
         var response = await client.ExecuteAsync(request);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
-        var qs               = new Uri(response.Content).ParseQuery();
+
+        var qs               = new Uri(response.Content!).ParseQuery();
         var oauthToken       = qs["oauth_token"];
         var oauthTokenSecret = qs["oauth_token_secret"];
         var applicationName  = qs["application_name"];
@@ -66,7 +67,7 @@ public class OAuth1Tests {
 
         request = new RestRequest("oauth/access_token"); // <-- Breakpoint here, login to netflix
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
+        client.Options.Authenticator = OAuth1Authenticator.ForAccessToken(
             consumerKey,
             consumerSecret,
             oauthToken,
@@ -77,7 +78,7 @@ public class OAuth1Tests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        qs               = new Uri(response.Content).ParseQuery();
+        qs               = new Uri(response.Content!).ParseQuery();
         oauthToken       = qs["oauth_token"];
         oauthTokenSecret = qs["oauth_token_secret"];
 
@@ -87,7 +88,7 @@ public class OAuth1Tests {
         Assert.NotNull(oauthTokenSecret);
         Assert.NotNull(userId);
 
-        client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+        client.Options.Authenticator = OAuth1Authenticator.ForProtectedResource(
             consumerKey,
             consumerSecret,
             oauthToken,
@@ -111,20 +112,22 @@ public class OAuth1Tests {
         const string consumerSecret = "TODO_CONSUMER_SECRET_HERE";
 
         // request token
-        var client = new RestClient("https://api.linkedin.com/uas/oauth") {
-            Authenticator = OAuth1Authenticator.ForRequestToken(
-                consumerKey,
-                consumerSecret,
-                "http://localhost"
-            )
-        };
+        var client = new RestClient(
+            "https://api.linkedin.com/uas/oauth",
+            options =>
+                options.Authenticator = OAuth1Authenticator.ForRequestToken(
+                    consumerKey,
+                    consumerSecret,
+                    "http://localhost"
+                )
+        );
         var requestTokenRequest  = new RestRequest("requestToken");
         var requestTokenResponse = await client.ExecuteAsync(requestTokenRequest);
 
         Assert.NotNull(requestTokenResponse);
         Assert.Equal(HttpStatusCode.OK, requestTokenResponse.StatusCode);
 
-        var requestTokenResponseParameters = new Uri(requestTokenResponse.Content).ParseQuery();
+        var requestTokenResponseParameters = new Uri(requestTokenResponse.Content!).ParseQuery();
         var requestToken                   = requestTokenResponseParameters["oauth_token"];
         var requestSecret                  = requestTokenResponseParameters["oauth_token_secret"];
 
@@ -141,8 +144,7 @@ public class OAuth1Tests {
         const string requestUrl = "TODO: put browser URL here";
         // replace this via the debugger with the return url from LinkedIN. Simply copy it from the opened browser
 
-        if (!Debugger.IsAttached)
-            Debugger.Launch();
+        if (!Debugger.IsAttached) Debugger.Launch();
 
         Debugger.Break();
 
@@ -150,7 +152,7 @@ public class OAuth1Tests {
         var requestTokenQueryParameters = new Uri(requestUrl).ParseQuery();
         var requestVerifier             = requestTokenQueryParameters["oauth_verifier"];
 
-        client.Authenticator = OAuth1Authenticator.ForAccessToken(
+        client.Options.Authenticator = OAuth1Authenticator.ForAccessToken(
             consumerKey,
             consumerSecret,
             requestToken,
@@ -164,7 +166,7 @@ public class OAuth1Tests {
         Assert.NotNull(requestActionTokenResponse);
         Assert.Equal(HttpStatusCode.OK, requestActionTokenResponse.StatusCode);
 
-        var requestActionTokenResponseParameters = new Uri(requestActionTokenResponse.Content).ParseQuery();
+        var requestActionTokenResponseParameters = new Uri(requestActionTokenResponse.Content!).ParseQuery();
         var accessToken                          = requestActionTokenResponseParameters["oauth_token"];
         var accessSecret                         = requestActionTokenResponseParameters["oauth_token_secret"];
 
@@ -322,8 +324,9 @@ public class OAuth1Tests {
         response.Content.Should().Contain("\"stat\":\"ok\"");
     }
 
-    [Fact(Skip =
-        "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test"
+    [Fact(
+        Skip =
+            "Provide your own consumer key/secret/accessToken/accessSecret before running. You can retrieve the access token/secret by running the LinkedIN oAuth test"
     )]
     public async Task Can_Retrieve_Member_Profile_Field_Field_Selector_From_LinkedIN() {
         const string consumerKey    = "TODO_CONSUMER_KEY_HERE";
