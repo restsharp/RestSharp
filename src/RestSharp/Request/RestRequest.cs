@@ -14,6 +14,7 @@
 
 using System.Net;
 using RestSharp.Extensions;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace RestSharp;
@@ -47,19 +48,18 @@ public class RestRequest {
             var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
             Resource = Resource.Substring(0, queryStringStart);
 
-            foreach (var param in queryParams)
-                this.AddQueryParameter(param.Key, param.Value, false);
+            foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
         }
 
-        static IEnumerable<KeyValuePair<string, string>> ParseQuery(string query)
+        static IEnumerable<KeyValuePair<string, string?>> ParseQuery(string query)
             => query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(
                     x => {
                         var position = x.IndexOf('=');
 
                         return position > 0
-                            ? new KeyValuePair<string, string>(x.Substring(0, position), x.Substring(position + 1))
-                            : new KeyValuePair<string, string>(x, string.Empty);
+                            ? new KeyValuePair<string, string?>(x.Substring(0, position), x.Substring(position + 1))
+                            : new KeyValuePair<string, string?>(x, null);
                     }
                 );
     }
@@ -78,14 +78,14 @@ public class RestRequest {
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
-    
+
     /// <summary>
     /// When set to true, parameters in a multipart form data requests will be enclosed in
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
     /// to be in quotes (for example, FreshDesk API). 
     /// </summary>
     public bool MultipartFormQuoteParameters { get; set; }
-    
+
     public string? FormBoundary { get; set; }
 
     /// <summary>
@@ -191,8 +191,7 @@ public class RestRequest {
     public Func<HttpResponseMessage, RestResponse>? AdvancedResponseWriter {
         get => _advancedResponseHandler;
         init {
-            if (ResponseWriter != null)
-                throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
+            if (ResponseWriter != null) throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
 
             _advancedResponseHandler = value;
         }

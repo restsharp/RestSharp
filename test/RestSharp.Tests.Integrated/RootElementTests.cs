@@ -21,7 +21,7 @@ public class RootElementTests {
 
         static void Handle(HttpListenerRequest req, HttpListenerResponse response) {
             response.StatusCode = 200;
-            response.Headers.Add(KnownHeaders.ContentType, Serializers.ContentType.Xml);
+            response.Headers.Add(KnownHeaders.ContentType, ContentType.Xml);
 
             response.OutputStream.WriteStringUtf8(
                 @"<?xml version=""1.0"" encoding=""utf-8"" ?>

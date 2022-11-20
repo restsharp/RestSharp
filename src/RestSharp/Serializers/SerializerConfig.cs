@@ -110,14 +110,14 @@ public class RestSerializers {
     }
 
     IDeserializer? GetContentDeserializer(RestResponseBase response, DataFormat requestFormat) {
-        var contentType = response.ContentType ?? DetectContentType();
+        var contentType = response.ContentType ?? DetectContentType()?.Value;
         if (contentType == null) return null;
 
         var serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(contentType));
         var factory    = serializer ?? (Serializers.ContainsKey(requestFormat) ? Serializers[requestFormat] : null);
         return factory?.GetSerializer().Deserializer;
 
-        string? DetectContentType()
+        ContentType? DetectContentType()
             => response.Content!.StartsWith("<")                                       ? ContentType.Xml
                 : response.Content.StartsWith("{") || response.Content.StartsWith("[") ? ContentType.Json : null;
     }

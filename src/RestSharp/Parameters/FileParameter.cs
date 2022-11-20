@@ -32,7 +32,7 @@ public record FileParameter {
     /// <summary>
     /// MIME content type of file
     /// </summary>
-    public string? ContentType { get; }
+    public ContentType ContentType { get; }
 
     /// <summary>
     /// Provides raw data for file
@@ -41,12 +41,12 @@ public record FileParameter {
 
     public FileParameterOptions Options { get; }
 
-    FileParameter(string name, string fileName, Func<Stream> getFile, string? contentType, FileParameterOptions options) {
+    FileParameter(string name, string fileName, Func<Stream> getFile, ContentType? contentType, FileParameterOptions options) {
         Name        = name;
         FileName    = fileName;
         GetFile     = getFile;
         Options     = options;
-        ContentType = contentType ?? Serializers.ContentType.Binary;
+        ContentType = contentType ?? ContentType.Binary;
     }
 
     /// <summary>
@@ -58,7 +58,13 @@ public record FileParameter {
     /// <param name="contentType">The content type to use in the request.</param>
     /// <param name="options">File parameter options</param>
     /// <returns>The <see cref="FileParameter" /></returns>
-    public static FileParameter Create(string name, byte[] data, string filename, string? contentType = null, FileParameterOptions? options = null) {
+    public static FileParameter Create(
+        string                name,
+        byte[]                data,
+        string                filename,
+        ContentType?          contentType = null,
+        FileParameterOptions? options     = null
+    ) {
         return new FileParameter(name, filename, GetFile, contentType, options ?? new FileParameterOptions());
 
         Stream GetFile() {
@@ -83,12 +89,17 @@ public record FileParameter {
         string                name,
         Func<Stream>          getFile,
         string                fileName,
-        string?               contentType = null,
+        ContentType?          contentType = null,
         FileParameterOptions? options     = null
     )
-        => new(name, fileName, getFile, contentType ?? Serializers.ContentType.Binary, options ?? new FileParameterOptions());
+        => new(name, fileName, getFile, contentType, options ?? new FileParameterOptions());
 
-    public static FileParameter FromFile(string fullPath, string? name = null, string? contentType = null, FileParameterOptions? options = null) {
+    public static FileParameter FromFile(
+        string                fullPath,
+        string?               name        = null,
+        ContentType?          contentType = null,
+        FileParameterOptions? options     = null
+    ) {
         if (!File.Exists(Ensure.NotEmptyString(fullPath, nameof(fullPath)))) throw new FileNotFoundException("File not found", fullPath);
 
         var fileName      = Path.GetFileName(fullPath);

@@ -36,11 +36,11 @@ public class SystemTextJsonSerializer : IRestSerializer, ISerializer, IDeseriali
 
     public T? Deserialize<T>(RestResponse response) => JsonSerializer.Deserialize<T>(response.Content!, _options);
 
-    public string ContentType { get; set; } = "application/json";
+    public ContentType ContentType { get; set; } = ContentType.Json;
 
-    public ISerializer         Serializer           => this;
-    public IDeserializer       Deserializer         => this;
-    public DataFormat          DataFormat           => DataFormat.Json;
-    public string[]            AcceptedContentTypes => Serializers.ContentType.JsonAccept;
-    public SupportsContentType SupportsContentType  => contentType => contentType.EndsWith("json", StringComparison.InvariantCultureIgnoreCase);
+    public ISerializer   Serializer           => this;
+    public IDeserializer Deserializer         => this;
+    public DataFormat    DataFormat           => DataFormat.Json;
+    public string[]      AcceptedContentTypes => ContentType.JsonAccept;
+    public SupportsContentType SupportsContentType  => contentType => contentType.Value.EndsWith("json", StringComparison.InvariantCultureIgnoreCase);
 }

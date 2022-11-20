@@ -21,7 +21,7 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
     /// <summary>
     /// MIME content type of the parameter
     /// </summary>
-    public string ContentType { get; protected init; } = "text/plain";
+    public ContentType ContentType { get; protected init; } = ContentType.Undefined;
 
     /// <summary>
     /// Return a human-readable representation of this parameter

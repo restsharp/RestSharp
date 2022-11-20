@@ -34,7 +34,7 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
         ConstructorHandling  = ConstructorHandling.AllowNonPublicDefaultConstructor
     };
 
-    [ThreadStatic] static WriterBuffer? _writerBuffer;
+    [ThreadStatic] static WriterBuffer? writerBuffer;
 
     readonly JsonSerializer _serializer;
 
@@ -52,7 +52,7 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     public string? Serialize(object? obj) {
         if (obj == null) return null;
 
-        using var writerBuffer = _writerBuffer ??= new WriterBuffer(_serializer);
+        using var writerBuffer = JsonNetSerializer.writerBuffer ??= new WriterBuffer(_serializer);
 
         _serializer.Serialize(writerBuffer.GetJsonTextWriter(), obj, obj.GetType());
 
@@ -73,11 +73,11 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     public ISerializer   Serializer   => this;
     public IDeserializer Deserializer => this;
 
-    public string[] AcceptedContentTypes => Serializers.ContentType.JsonAccept;
+    public string[] AcceptedContentTypes => RestSharp.ContentType.JsonAccept;
 
-    public string ContentType { get; set; } = "application/json";
+    public ContentType ContentType { get; set; } = ContentType.Json;
 
-    public SupportsContentType SupportsContentType => contentType => contentType.Contains("json");
+    public SupportsContentType SupportsContentType => contentType => contentType.Value.Contains("json");
 
     public DataFormat DataFormat => DataFormat.Json;
 }

@@ -49,21 +49,7 @@ public class ParametersCollection : IReadOnlyCollection<Parameter> {
 
     public ParametersCollection GetParameters(ParameterType parameterType) => new(_parameters.Where(x => x.Type == parameterType));
 
-    public ParametersCollection GetParameters<T>() => new(_parameters.Where(x => x is T));
-
-    internal ParametersCollection GetQueryParameters(Method method) {
-        Func<Parameter, bool> condition =
-            !IsPost(method)
-                ? p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                : p => p.Type is ParameterType.QueryString;
-
-        return new ParametersCollection(_parameters.Where(p => condition(p)));
-    }
-
-    internal ParametersCollection? GetContentParameters(Method method)
-        => IsPost(method) ? new ParametersCollection(GetParameters<GetOrPostParameter>()) : null;
-
-    static bool IsPost(Method method) => method is Method.Post or Method.Put or Method.Patch;
+    public IEnumerable<T> GetParameters<T>() where T : class => _parameters.OfType<T>();
 
     public IEnumerator<Parameter> GetEnumerator() => _parameters.GetEnumerator();
 
