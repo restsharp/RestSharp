@@ -33,7 +33,7 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
 
             using var stringReader = new StringReader(response.Content);
 
-            using var csvReader = new CsvReader(stringReader, CultureInfo.CurrentCulture);
+            using var csvReader = new CsvReader(stringReader, _configuration);
 
             var @interface = typeof(T).GetInterface("IEnumerable`1");
 

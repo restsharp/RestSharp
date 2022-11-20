@@ -161,8 +161,8 @@ public partial class RestClient : IRestClient {
     static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
         if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
 
-        if (options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != options.UserAgent)) {
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(options.UserAgent);
+        if (Options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != Options.UserAgent)) {
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Options.UserAgent);
         }
 
         if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
