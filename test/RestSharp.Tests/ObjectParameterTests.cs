@@ -713,6 +713,20 @@ public partial class ObjectParameterTests {
             .BeEquivalentTo(new GetOrPostParameter(nameof(StringValue.Value), value));
     }
 
+    [Fact]
+    public void Properties_are_filtered() {
+        var @object = new { Name = "Hello world", Age = 12, Guid = Guid.Parse("72df165c-0cef-4654-987f-cd844f1e5ce9"), Ignore = "Ignored" };
+        var request = new RestRequest().AddObjectStatic(@object, nameof(@object.Name), nameof(@object.Age), nameof(@object.Guid));
+        request
+            .Parameters
+            .Should()
+            .BeEquivalentTo(new[] {
+                new GetOrPostParameter(nameof(@object.Name), "Hello world"),
+                new GetOrPostParameter(nameof(@object.Age), "12"),
+                new GetOrPostParameter(nameof(@object.Guid), "72df165c-0cef-4654-987f-cd844f1e5ce9")
+            });
+    }
+
     public sealed record StringValue(string Value) {
         public ReadOnlySpan<char> AsSpan => Value.AsSpan();
     }
