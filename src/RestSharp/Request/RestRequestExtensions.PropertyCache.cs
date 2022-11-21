@@ -27,7 +27,10 @@ public static partial class RestRequestExtensions {
 #if NETCOREAPP2_1_OR_GREATER
                 .Where(property => !property.PropertyType.IsByRefLike)
 #else
-                .Where(property => !property.PropertyType.IsDefined(Type.GetType("System.Runtime.CompilerServices.IsByRefLikeAttribute")))
+                // Since `IsByRefLikeAttribute` is generated at compile time, each assembly
+                // may have its own definition of the attribute, so we must compare by full name
+                // instead of type.
+                .Where(property => !property.PropertyType.GetCustomAttributes().Select(attribute => attribute.GetType().FullName).Any(attributeName => attributeName == "System.Runtime.CompilerServices.IsByRefLikeAttribute"))
 #endif
                 .Select(Populator.From)
                 .ToArray();
