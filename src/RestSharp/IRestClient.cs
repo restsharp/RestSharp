@@ -18,8 +18,14 @@ using RestSharp.Serializers;
 namespace RestSharp;
 
 public interface IRestClient : IDisposable {
+    /// <summary>
+    /// Client options that aren't used for configuring HttpClient
+    /// </summary>
     IRestClientOptions Options { get; }
 
+    /// <summary>
+    /// Client-level serializers
+    /// </summary>
     RestSerializers Serializers { get; }
 
     /// <summary>

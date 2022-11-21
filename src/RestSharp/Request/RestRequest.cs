@@ -15,6 +15,7 @@
 using System.Net;
 using RestSharp.Extensions;
 
+// ReSharper disable ReplaceSubstringWithRangeIndexer
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace RestSharp;

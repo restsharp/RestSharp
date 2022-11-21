@@ -39,8 +39,11 @@ public partial class RestClient : IRestClient {
 
     HttpClient HttpClient { get; }
 
-    public IRestClientOptions Options     { get; }
-    public RestSerializers    Serializers { get; }
+    /// <inheritdoc />>
+    public IRestClientOptions Options { get; }
+
+    /// <inheritdoc />>
+    public RestSerializers Serializers { get; }
 
     [Obsolete("Use RestClientOptions.Authenticator instead")]
     public IAuthenticator? Authenticator {
@@ -48,6 +51,12 @@ public partial class RestClient : IRestClient {
         set => Options.Authenticator = value;
     }
 
+    /// <summary>
+    /// Creates an instance of RestClient using the provided <see cref="RestClientOptions"/>
+    /// </summary>
+    /// <param name="options">Client options</param>
+    /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
+    /// <param name="configureSerialization">Delegate to configure serialization</param>
     public RestClient(
         RestClientOptions       options,
         ConfigureHeaders?       configureDefaultHeaders = null,
@@ -77,9 +86,14 @@ public partial class RestClient : IRestClient {
     /// Creates an instance of RestClient using the default <see cref="RestClientOptions"/>
     /// </summary>
     /// <param name="configureRestClient">Delegate to configure the client options</param>
+    /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
     /// <param name="configureSerialization">Delegate to configure serialization</param>
-    public RestClient(ConfigureRestClient? configureRestClient = null, ConfigureSerialization? configureSerialization = null)
-        : this(ConfigureOptions(new RestClientOptions(), configureRestClient), configureSerialization: configureSerialization) { }
+    public RestClient(
+        ConfigureRestClient?    configureRestClient     = null,
+        ConfigureHeaders?       configureDefaultHeaders = null,
+        ConfigureSerialization? configureSerialization  = null
+    )
+        : this(ConfigureOptions(new RestClientOptions(), configureRestClient), configureDefaultHeaders, configureSerialization) { }
 
     /// <inheritdoc />
     /// <summary>
@@ -87,18 +101,34 @@ public partial class RestClient : IRestClient {
     /// </summary>
     /// <param name="baseUrl">Base URI for the new client</param>
     /// <param name="configureRestClient">Delegate to configure the client options</param>
+    /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
     /// <param name="configureSerialization">Delegate to configure serialization</param>
-    public RestClient(Uri baseUrl, ConfigureRestClient? configureRestClient = null, ConfigureSerialization? configureSerialization = null)
-        : this(ConfigureOptions(new RestClientOptions { BaseUrl = baseUrl }, configureRestClient), configureSerialization: configureSerialization) { }
+    public RestClient(
+        Uri                     baseUrl,
+        ConfigureRestClient?    configureRestClient     = null,
+        ConfigureHeaders?       configureDefaultHeaders = null,
+        ConfigureSerialization? configureSerialization  = null
+    )
+        : this(
+            ConfigureOptions(new RestClientOptions { BaseUrl = baseUrl }, configureRestClient),
+            configureDefaultHeaders,
+            configureSerialization
+        ) { }
 
     /// <summary>
     /// Creates an instance of RestClient using a specific BaseUrl for requests made by this client instance
     /// </summary>
     /// <param name="baseUrl">Base URI for this new client as a string</param>
     /// <param name="configureRestClient">Delegate to configure the client options</param>
+    /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
     /// <param name="configureSerialization">Delegate to configure serialization</param>
-    public RestClient(string baseUrl, ConfigureRestClient? configureRestClient = null, ConfigureSerialization? configureSerialization = null)
-        : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl))), configureRestClient, configureSerialization) { }
+    public RestClient(
+        string                  baseUrl,
+        ConfigureRestClient?    configureRestClient     = null,
+        ConfigureHeaders?       configureDefaultHeaders = null,
+        ConfigureSerialization? configureSerialization  = null
+    )
+        : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl))), configureRestClient, configureDefaultHeaders, configureSerialization) { }
 
     /// <summary>
     /// Creates an instance of RestClient using a shared HttpClient and specific RestClientOptions and does not allocate one internally.
