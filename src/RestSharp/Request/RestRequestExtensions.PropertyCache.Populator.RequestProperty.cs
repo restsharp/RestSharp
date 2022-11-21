@@ -20,9 +20,24 @@ public static partial class RestRequestExtensions {
     static partial class PropertyCache<T> where T : class {
         sealed partial class Populator {
             sealed record RequestProperty {
+                /// <summary>
+                /// Gets or sets the <see cref="RequestPropertyAttribute.Name"/> associated
+                /// with the property this object represents
+                /// </summary>
                 internal string Name { get; init; }
+                /// <summary>
+                /// Gets the <see cref="RequestPropertyAttribute.Format"/> associated with
+                /// the property this object represents
+                /// </summary>
                 internal string? Format { get; }
+                /// <summary>
+                /// Gets the <see cref="RequestPropertyAttribute.ArrayQueryType"/> associated
+                /// with the property this object represents
+                /// </summary>
                 internal RequestArrayQueryType ArrayQueryType { get; }
+                /// <summary>
+                /// Gets the return type of the property this object represents
+                /// </summary>
                 internal Type Type { get; }
 
                 private RequestProperty(string name, string? format, RequestArrayQueryType arrayQueryType, Type type) {
@@ -32,6 +47,11 @@ public static partial class RestRequestExtensions {
                     Type = type;
                 }
 
+                /// <summary>
+                /// Creates a new request property representation of the provided property
+                /// </summary>
+                /// <param name="property">The property to turn into a request property</param>
+                /// <returns></returns>
                 internal static RequestProperty From(PropertyInfo property) {
                     var requestPropertyAttribute =
                         property.GetCustomAttribute<RequestPropertyAttribute>() ??
