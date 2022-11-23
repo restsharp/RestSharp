@@ -216,7 +216,7 @@ mockHttp.When("http://localhost/api/user/*")
         .Respond("application/json", "{'name' : 'Test McGee'}"); // Respond with JSON
 
 // Instantiate the client normally, but replace the message handler
-var client = new RestClient(...) { ConfigureMessageHandler = _ => mockHttp };
+var client = new RestClient(new RestClientOptions { ConfigureMessageHandler = _ => mockHttp });
 
 var request = new RestRequest("http://localhost/api/user/1234");
 var response = await client.GetAsync(request);
