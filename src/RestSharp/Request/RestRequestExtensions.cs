@@ -277,10 +277,10 @@ public static class RestRequestExtensions {
         this RestRequest request,
         string           name,
         byte[]           bytes,
-        string           filename,
+        string           fileName,
         string?          contentType = null
     )
-        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType));
+        => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType));
 
     public static RestRequest AddFile(
         this RestRequest      request,
@@ -315,7 +315,7 @@ public static class RestRequestExtensions {
     /// <param name="request">Request instance</param>
     /// <param name="name">Parameter name</param>
     /// <param name="bytes">File content as bytes</param>
-    /// <param name="filename">File name</param>
+    /// <param name="fileName">File name</param>
     /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
     /// <param name="options">File parameter header options</param>
     /// <returns></returns>
@@ -323,11 +323,11 @@ public static class RestRequestExtensions {
         this RestRequest      request,
         string                name,
         byte[]                bytes,
-        string                filename,
+        string                fileName,
         string?               contentType,
         FileParameterOptions? options
     )
-        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType, options));
+        => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType, options));
 
     /// <summary>
     /// Adds a file attachment to the request, where the file content will be retrieved from a given stream 
