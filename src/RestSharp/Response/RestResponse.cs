@@ -90,7 +90,7 @@ public class RestResponse : RestResponseBase {
                 ContentType         = httpResponse.Content.Headers.ContentType?.MediaType,
                 ResponseStatus      = calculateResponseStatus(httpResponse),
                 ErrorException      = httpResponse.MaybeException(),
-                ResponseUri         = httpResponse.RequestMessage!.RequestUri,
+                ResponseUri         = httpResponse.RequestMessage?.RequestUri,
                 Server              = httpResponse.Headers.Server.ToString(),
                 StatusCode          = httpResponse.StatusCode,
                 StatusDescription   = httpResponse.ReasonPhrase,
