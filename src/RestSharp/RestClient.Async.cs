@@ -49,6 +49,11 @@ public partial class RestClient {
     async Task<InternalResponse> ExecuteInternal(RestRequest request, CancellationToken cancellationToken) {
         Ensure.NotNull(request, nameof(request));
 
+        // Make sure we are not disposed of when someone tries to call us!
+        if (_disposed) {
+            throw new ObjectDisposedException(nameof(RestClient));
+        }
+
         using var requestContent = new RequestContent(this, request);
 
         if (Authenticator != null) await Authenticator.Authenticate(this, request).ConfigureAwait(false);
