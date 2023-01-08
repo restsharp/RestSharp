@@ -18,12 +18,12 @@ using System.Reflection;
 namespace RestSharp;
 
 static class ObjectParser {
-    public static IEnumerable<(string Name, string? Value)> GetProperties(this object obj, params string[] includedProperties) {
+    public static IEnumerable<ParsedParameter> GetProperties(this object obj, params string[] includedProperties) {
         // automatically create parameters from object props
         var type  = obj.GetType();
         var props = type.GetProperties();
 
-        var properties = new List<(string Name, string? Value)>();
+        var properties = new List<ParsedParameter>();
 
         foreach (var prop in props.Where(x => IsAllowedProperty(x.Name))) {
             var val = prop.GetValue(obj, null);
@@ -38,14 +38,14 @@ static class ObjectParser {
 
         string? ParseValue(string? format, object? value) => format == null ? value?.ToString() : string.Format($"{{0:{format}}}", value);
 
-        IEnumerable<(string, string?)> GetArray(PropertyInfo propertyInfo, object? value) {
+        IEnumerable<ParsedParameter> GetArray(PropertyInfo propertyInfo, object? value) {
             var elementType = propertyInfo.PropertyType.GetElementType();
             var array       = (Array)value!;
 
             var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
-            var name      = attribute?.Name ?? propertyInfo.Name;
-
+            var name      = attribute?.Name           ?? propertyInfo.Name;
             var queryType = attribute?.ArrayQueryType ?? RequestArrayQueryType.CommaSeparated;
+            var encode    = attribute?.Encode         ?? true;
 
             if (array.Length > 0 && elementType != null) {
                 // convert the array to an array of strings
@@ -54,21 +54,20 @@ static class ObjectParser {
                     .Select(item => ParseValue(attribute?.Format, item));
 
                 return queryType switch {
-                    RequestArrayQueryType.CommaSeparated  => new (string, string?)[] { (name, string.Join(",", values)) },
-                    RequestArrayQueryType.ArrayParameters => values.Select(x => ($"{name}[]", x)),
+                    RequestArrayQueryType.CommaSeparated  => new[] { new ParsedParameter(name, string.Join(",", values), encode) },
+                    RequestArrayQueryType.ArrayParameters => values.Select(x => new ParsedParameter($"{name}[]", x, encode)),
                     _                                     => throw new ArgumentOutOfRangeException()
                 };
-                    
             }
 
-            return new (string, string?)[] { (name, null) };
+            return new ParsedParameter[] { new(name, null, encode) };
         }
 
-        (string, string?) GetValue(PropertyInfo propertyInfo, object? value) {
+        ParsedParameter GetValue(PropertyInfo propertyInfo, object? value) {
             var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
             var name      = attribute?.Name ?? propertyInfo.Name;
             var val       = ParseValue(attribute?.Format, value);
-            return (name, val);
+            return new ParsedParameter(name, val, attribute?.Encode ?? true);
         }
 
         bool IsAllowedProperty(string propertyName)
@@ -78,11 +77,14 @@ static class ObjectParser {
     }
 }
 
+record ParsedParameter(string Name, string? Value, bool Encode);
+
 [AttributeUsage(AttributeTargets.Property)]
 public class RequestPropertyAttribute : Attribute {
     public string?               Name           { get; set; }
     public string?               Format         { get; set; }
     public RequestArrayQueryType ArrayQueryType { get; set; } = RequestArrayQueryType.CommaSeparated;
+    public bool                  Encode         { get; set; } = true;
 }
 
 public enum RequestArrayQueryType { CommaSeparated, ArrayParameters }

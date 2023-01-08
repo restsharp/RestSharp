@@ -439,8 +439,8 @@ public static class RestRequestExtensions {
     public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
         var props = obj.GetProperties(includedProperties);
 
-        foreach (var (name, value) in props) {
-            request.AddParameter(name, value);
+        foreach (var prop in props) {
+            request.AddParameter(prop.Name, prop.Value, prop.Encode);
         }
 
         return request;
