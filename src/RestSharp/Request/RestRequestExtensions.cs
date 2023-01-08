@@ -284,7 +284,7 @@ public static class RestRequestExtensions {
     /// <param name="request">Request instance</param>
     /// <param name="name">Parameter name</param>
     /// <param name="bytes">File content as bytes</param>
-    /// <param name="filename">File name</param>
+    /// <param name="fileName">File name</param>
     /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
     /// <param name="options">File parameter header options</param>
     /// <returns></returns>
@@ -296,7 +296,7 @@ public static class RestRequestExtensions {
         ContentType?          contentType = null,
         FileParameterOptions? options     = null
     )
-        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType, options));
+        => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType, options));
 
     /// <summary>
     /// Adds a file attachment to the request, where the file content will be retrieved from a given stream 
@@ -318,132 +318,3 @@ public static class RestRequestExtensions {
     )
         => request.AddFile(FileParameter.Create(name, getFile, fileName, contentType, options));
 
-    /// <summary>
-    /// Adds a body parameter to the request
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="obj">Object to be used as the request body, or string for plain content</param>
-    /// <param name="contentType">Optional: content type</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException">Thrown if request body type cannot be resolved</exception>
-    /// <remarks>This method will try to figure out the right content type based on the request data format and the provided content type</remarks>
-    public static RestRequest AddBody(this RestRequest request, object obj, ContentType? contentType = null) {
-        if (contentType == null) {
-            return request.RequestFormat switch {
-                DataFormat.Json   => request.AddJsonBody(obj, contentType),
-                DataFormat.Xml    => request.AddXmlBody(obj, contentType),
-                DataFormat.Binary => request.AddParameter(new BodyParameter("", obj, ContentType.Binary)),
-                _                 => request.AddParameter(new BodyParameter("", obj.ToString()!, ContentType.Plain))
-            };
-        }
-
-        return
-            obj is string str                  ? request.AddStringBody(str, contentType) :
-            obj is byte[] bytes                ? request.AddParameter(new BodyParameter("", bytes, contentType, DataFormat.Binary)) :
-            contentType.Value.Contains("xml")  ? request.AddXmlBody(obj, contentType) :
-            contentType.Value.Contains("json") ? request.AddJsonBody(obj, contentType) :
-                                                 throw new ArgumentException("Non-string body found with unsupported content type", nameof(obj));
-    }
-
-    /// <summary>
-    /// Adds a string body and figures out the content type from the data format specified. You can, for example, add a JSON string
-    /// using this method as request body, using DataFormat.Json/>
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="body">String body</param>
-    /// <param name="dataFormat"><see cref="DataFormat"/> for the content</param>
-    /// <returns></returns>
-    public static RestRequest AddStringBody(this RestRequest request, string body, DataFormat dataFormat) {
-        var contentType = ContentType.FromDataFormat(dataFormat);
-        request.RequestFormat = dataFormat;
-        return request.AddParameter(new BodyParameter("", body, contentType));
-    }
-
-    /// <summary>
-    /// Adds a string body to the request using the specified content type.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="body">String body</param>
-    /// <param name="contentType">Content type of the body</param>
-    /// <returns></returns>
-    public static RestRequest AddStringBody(this RestRequest request, string body, ContentType contentType)
-        => request.AddParameter(new BodyParameter(body, Ensure.NotNull(contentType, nameof(contentType))));
-
-    /// <summary>
-    /// Adds a JSON body parameter to the request
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="obj">Object that will be serialized to JSON</param>
-    /// <param name="contentType">Optional: content type. Default is "application/json"</param>
-    /// <returns></returns>
-    public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, ContentType? contentType = null) where T : class {
-        request.RequestFormat = DataFormat.Json;
-        return obj is string str ? request.AddStringBody(str, DataFormat.Json) : request.AddParameter(new JsonParameter(obj, contentType));
-    }
-
-    /// <summary>
-    /// Adds an XML body parameter to the request
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="obj">Object that will be serialized to XML</param>
-    /// <param name="contentType">Optional: content type. Default is "application/xml"</param>
-    /// <param name="xmlNamespace">Optional: XML namespace</param>
-    /// <returns></returns>
-    public static RestRequest AddXmlBody<T>(this RestRequest request, T obj, ContentType? contentType = null, string xmlNamespace = "")
-        where T : class {
-        request.RequestFormat = DataFormat.Xml;
-
-        return obj is string str
-            ? request.AddStringBody(str, DataFormat.Xml)
-            : request.AddParameter(new XmlParameter(obj, xmlNamespace, contentType));
-    }
-
-    /// <summary>
-    /// Gets object properties and adds each property as a form data parameter
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="obj">Object to add as form data</param>
-    /// <param name="includedProperties">Properties to include, or nothing to include everything</param>
-    /// <returns></returns>
-    public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
-        var props = obj.GetProperties(includedProperties);
-
-        foreach (var (name, value) in props) {
-            request.AddParameter(name, value);
-        }
-
-        return request;
-    }
-
-    /// <summary>
-    /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
-    /// </summary>
-    /// <param name="request">RestRequest to add the cookies to</param>
-    /// <param name="name">Cookie name</param>
-    /// <param name="value">Cookie value</param>
-    /// <param name="path">Cookie path</param>
-    /// <param name="domain">Cookie domain, must not be an empty string</param>
-    /// <returns></returns>
-    public static RestRequest AddCookie(this RestRequest request, string name, string value, string path, string domain) {
-        request.CookieContainer ??= new CookieContainer();
-        request.CookieContainer.Add(new Cookie(name, value, path, domain));
-        return request;
-    }
-
-    static void CheckAndThrowsForInvalidHost(string name, string value) {
-        static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
-
-        if (name == KnownHeaders.Host && InvalidHost(value))
-            throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
-    }
-
-    static void CheckAndThrowsDuplicateKeys(ICollection<KeyValuePair<string, string>> headers) {
-        var duplicateKeys = headers
-            .GroupBy(pair => pair.Key.ToUpperInvariant())
-            .Where(group => group.Count() > 1)
-            .Select(group => group.Key)
-            .ToList();
-
-        if (duplicateKeys.Any()) throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
-    }
-}
