@@ -85,6 +85,11 @@ public partial class RestClient {
     async Task<HttpResponse> ExecuteRequestAsync(RestRequest request, CancellationToken cancellationToken) {
         Ensure.NotNull(request, nameof(request));
 
+        // Make sure we are not disposed of when someone tries to call us!
+        if (_disposed) {
+            throw new ObjectDisposedException(nameof(RestClient));
+        }
+
         using var requestContent = new RequestContent(this, request);
 
         if (Options.Authenticator != null) await Options.Authenticator.Authenticate(this, request).ConfigureAwait(false);
