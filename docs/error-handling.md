@@ -36,9 +36,8 @@ Below you can find how different extensions deal with errors. Note that function
 | `ExecuteGetAsync`     | No               |
 | `ExecuteGetAsync<T>`  | No               |
 | `ExecutePostAsync`    | No               |
-| `ExecutePutAsync`     | No               |
-| `ExecuteGetAsync<T>`  | No               |
 | `ExecutePostAsync<T>` | No               |
+| `ExecutePutAsync`     | No               |
 | `ExecutePutAsync<T>`  | No               |
 | `GetAsync`            | Yes              |
 | `GetAsync<T>`         | Yes              |
