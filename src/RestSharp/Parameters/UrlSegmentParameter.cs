@@ -16,7 +16,7 @@ namespace RestSharp;
 
 public record UrlSegmentParameter : NamedParameter {
     /// <summary>
-    /// Instantiates a new query parameter instance that will be added to the request URL part of the query string.
+    /// Instantiates a new query parameter instance that will be added to the request URL by replacing part of the absolute path.
     /// The request resource should have a placeholder {name} that will be replaced with the parameter value when the request is made.
     /// </summary>
     /// <param name="name">Parameter name</param>
