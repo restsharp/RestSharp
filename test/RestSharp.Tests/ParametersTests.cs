@@ -38,12 +38,13 @@ public class ParametersTests {
     [Fact]
     public void AddUrlSegmentModifiesUrlSegmentWithInt() {
         const string name = "foo";
-        var path = $"/{{{name}}}/resource";
+        var pathTemplate = "/{0}/resource";
+        var path = String.Format(pathTemplate, "{" + name + "}");
         var urlSegmentValue = 1;
 
         var request = new RestRequest(path).AddUrlSegment(name, urlSegmentValue);
 
-        var expected = GetFormattedUrlSegmentString(path, request.Parameters);
+        var expected = String.Format(pathTemplate, urlSegmentValue);
 
         var client = new RestClient(BaseUrl);
 
@@ -56,12 +57,13 @@ public class ParametersTests {
     [Fact]
     public void AddUrlSegmentModifiesUrlSegmentWithString() {
         const string name = "foo";
-        var path = $"/{{{name}}}/resource";
+        var pathTemplate = "/{0}/resource";
+        var path = String.Format(pathTemplate, "{" + name + "}");
         var urlSegmentValue = "bar";
 
         var request = new RestRequest(path).AddUrlSegment(name, urlSegmentValue);
 
-        var expected = GetFormattedUrlSegmentString(path, request.Parameters);
+        var expected = String.Format(pathTemplate, urlSegmentValue);
 
         var client = new RestClient(BaseUrl);
 
@@ -69,13 +71,5 @@ public class ParametersTests {
 
         expected.Should().BeEquivalentTo(actual);
 
-    }
-
-    private string GetFormattedUrlSegmentString(string str, ParametersCollection parametersCollection) {
-        var parameters = parametersCollection
-            .Where(x => x.Type == ParameterType.UrlSegment)
-            .ToDictionary(x => "{" + x.Name + "}", x => x.Value);
-
-        return parameters.Aggregate(str, (current, parameter) => current.Replace(parameter.Key, parameter.Value.ToString()));
     }
 }
