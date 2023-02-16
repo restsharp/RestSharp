@@ -29,7 +29,7 @@ public partial class RestClient {
                     internalResponse.ResponseMessage!,
                     request,
                     Options.Encoding,
-                    request.CookieContainer!.GetCookies(internalResponse.Url),
+                    request.CookieContainer?.GetCookies(internalResponse.Url),
                     Options.CalculateResponseStatus,
                     cancellationToken
                 )
@@ -87,7 +87,8 @@ public partial class RestClient {
 
         using var requestContent = new RequestContent(this, request);
 
-        if (Options.Authenticator != null) await Options.Authenticator.Authenticate(this, request).ConfigureAwait(false);
+        var authenticator = request.Authenticator ?? Options.Authenticator;
+        if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = BuildUri(request);

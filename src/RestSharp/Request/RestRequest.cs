@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using RestSharp.Authenticators;
 using RestSharp.Extensions;
 
 // ReSharper disable ReplaceSubstringWithRangeIndexer
@@ -99,6 +100,11 @@ public class RestRequest {
     /// Optional cookie container to use for the request. If not set, cookies are not passed.
     /// </summary>
     public CookieContainer? CookieContainer { get; set; }
+
+    /// <summary>
+    /// Request-level authenticator. It will be used if set, otherwise RestClient.Authenticator will be used.
+    /// </summary>
+    public IAuthenticator? Authenticator { get; set; }
 
     /// <summary>
     /// Container of all the files to be uploaded with the request.

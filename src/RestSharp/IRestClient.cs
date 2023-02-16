@@ -21,7 +21,7 @@ public interface IRestClient : IDisposable {
     /// <summary>
     /// Client options that aren't used for configuring HttpClient
     /// </summary>
-    IRestClientOptions Options { get; }
+    ReadOnlyRestClientOptions Options { get; }
 
     /// <summary>
     /// Client-level serializers

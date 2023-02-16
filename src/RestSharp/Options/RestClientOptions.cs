@@ -21,89 +21,12 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
+using SourceGenerator;
 
 namespace RestSharp;
 
-public interface IRestClientOptions {
-    /// <summary>
-    /// Explicit Host header value to use in requests independent from the request URI.
-    /// If null, default host value extracted from URI is used.
-    /// </summary>
-    Uri? BaseUrl { get; }
-
-    /// <summary>
-    /// Function to calculate the response status. By default, the status will be Completed if it was successful, or NotFound.
-    /// </summary>
-    CalculateResponseStatus CalculateResponseStatus { get; }
-
-    /// <summary>
-    /// Authenticator that will be used to populate request with necessary authentication data
-    /// </summary>
-    IAuthenticator? Authenticator { get; set; }
-
-    /// <summary>
-    /// Set to true if you need the Content-Type not to have the charset
-    /// </summary>
-    bool DisableCharset { get; }
-
-    /// <summary>
-    /// Sets the cache control header for all the requests made by the client
-    /// </summary>
-    CacheControlHeaderValue? CachePolicy { get; }
-
-    Encoding Encoding { get; }
-
-    /// <summary>
-    /// Modifies the default behavior of RestSharp to swallow exceptions.
-    /// When set to <code>true</code>, a <see cref="DeserializationException"/> will be thrown
-    /// in case RestSharp fails to deserialize the response.
-    /// </summary>
-    bool ThrowOnDeserializationError { get; }
-
-    /// <summary>
-    /// Modifies the default behavior of RestSharp to swallow exceptions.
-    /// When set to <code>true</code>, RestSharp will consider the request as unsuccessful
-    /// in case it fails to deserialize the response.
-    /// </summary>
-    bool FailOnDeserializationError { get; }
-
-    /// <summary>
-    /// Modifies the default behavior of RestSharp to swallow exceptions.
-    /// When set to <code>true</code>, exceptions will be re-thrown.
-    /// </summary>
-    bool ThrowOnAnyError { get; }
-
-    /// <summary>
-    /// Sets the base host header for all the requests made by the client
-    /// </summary>
-    string? BaseHost { get; }
-
-    /// <summary>
-    /// By default, RestSharp doesn't allow multiple parameters to have the same name.
-    /// This properly allows to override the default behavior.
-    /// </summary>
-    bool AllowMultipleDefaultParametersWithSameName { get; }
-
-    /// <summary>
-    /// Function used to encode parameters
-    /// </summary>
-    Func<string, string> Encode {
-        get;
-        [Obsolete("Don't change this options at runtime")]
-        set;
-    }
-
-    /// <summary>
-    /// Function used to encode query parameters
-    /// </summary>
-    Func<string, Encoding, string> EncodeQuery {
-        get;
-        [Obsolete("Don't change this options at runtime")]
-        set;
-    }
-}
-
-public class RestClientOptions : IRestClientOptions {
+[GenerateImmutable]
+public class RestClientOptions {
     static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
 
     static readonly string DefaultUserAgent = $"RestSharp/{Version}";

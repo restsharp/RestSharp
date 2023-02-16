@@ -40,17 +40,15 @@ public partial class RestClient : IRestClient {
     HttpClient HttpClient { get; }
 
     /// <inheritdoc />>
-    public IRestClientOptions Options { get; }
+    public ReadOnlyRestClientOptions Options { get; }
 
     /// <inheritdoc />>
     public RestSerializers Serializers { get; }
 
     [Obsolete("Use RestClientOptions.Authenticator instead")]
-    public IAuthenticator? Authenticator {
-        get => Options.Authenticator;
-        set => Options.Authenticator = value;
-    }
+    public IAuthenticator? Authenticator => Options.Authenticator;
 
+    // set => Options.Authenticator = value;
     /// <summary>
     /// Creates an instance of RestClient using the provided <see cref="RestClientOptions"/>
     /// </summary>
@@ -64,16 +62,16 @@ public partial class RestClient : IRestClient {
     ) {
         Serializers = new RestSerializers(ConfigureSerializers(configureSerialization));
 
-        Options            = options;
+        Options            = new ReadOnlyRestClientOptions(options);
         _disposeHttpClient = true;
 
         var handler = new HttpClientHandler();
-        ConfigureHttpMessageHandler(handler, options);
+        ConfigureHttpMessageHandler(handler, Options);
 
         var finalHandler = options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
 
         HttpClient = new HttpClient(finalHandler);
-        ConfigureHttpClient(HttpClient, options);
+        ConfigureHttpClient();
         configureDefaultHeaders?.Invoke(HttpClient.DefaultRequestHeaders);
     }
 
@@ -152,9 +150,10 @@ public partial class RestClient : IRestClient {
             options.BaseUrl = httpClient.BaseAddress;
         }
 
-        Options = options ?? new RestClientOptions();
+        var opt = options ?? new RestClientOptions();
+        Options = new ReadOnlyRestClientOptions(opt);
 
-        if (options != null) ConfigureHttpClient(HttpClient, options);
+        if (options != null) ConfigureHttpClient();
     }
 
     /// <summary>
@@ -188,17 +187,17 @@ public partial class RestClient : IRestClient {
     )
         : this(new HttpClient(handler, disposeHandler), true, configureRestClient, configureSerialization) { }
 
-    static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
-        if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
+    void ConfigureHttpClient() {
+        if (Options.MaxTimeout > 0) HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.MaxTimeout);
 
-        if (options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != options.UserAgent)) {
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, options.UserAgent);
+        if (Options.UserAgent != null && HttpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != Options.UserAgent)) {
+            HttpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, Options.UserAgent);
         }
 
-        if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
+        if (Options.Expect100Continue != null) HttpClient.DefaultRequestHeaders.ExpectContinue = Options.Expect100Continue;
     }
 
-    static void ConfigureHttpMessageHandler(HttpClientHandler handler, RestClientOptions options) {
+    static void ConfigureHttpMessageHandler(HttpClientHandler handler, ReadOnlyRestClientOptions options) {
         handler.UseCookies             = false;
         handler.Credentials            = options.Credentials;
         handler.UseDefaultCredentials  = options.UseDefaultCredentials;
