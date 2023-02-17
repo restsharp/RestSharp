@@ -21,7 +21,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
-using SourceGenerator;
 
 namespace RestSharp;
 
