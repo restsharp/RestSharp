@@ -102,4 +102,19 @@ public class RestClientTests {
         Assert.Single(client.Serializers);
         Assert.True(client.Serializers.ContainsKey(DataFormat.Json));
     }
+
+    [Fact]
+    public void ConfigureHttpClient_does_not_duplicate_user_agent_for_same_client() {
+        // arrange
+        var httpClient = new HttpClient();
+        var clientOptions = new RestClientOptions();
+
+        // act
+        var restClient1 = new RestClient(httpClient, clientOptions);
+        var restClient2 = new RestClient(httpClient, clientOptions);
+
+        // assert
+        Assert.Contains(httpClient.DefaultRequestHeaders.UserAgent, agent => $"{agent.Product.Name}/{agent.Product.Version}" == clientOptions.UserAgent);
+        Assert.Single(httpClient.DefaultRequestHeaders.UserAgent);
+    }
 }
