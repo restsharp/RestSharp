@@ -28,7 +28,7 @@ public enum ParameterType {
     GetOrPost,
 
     /// <summary>
-    /// A <see cref="Parameter"/> that will be added to part of the url by replacing a {placeholder} within the absolute path.
+    /// A <see cref="Parameter"/> that will be added to part of the url by replacing a <c>{placeholder}</c> within the absolute path.
     /// </summary>
     /// <remarks>
     /// See <see cref="UrlSegmentParameter"/>.
