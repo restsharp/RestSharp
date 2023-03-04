@@ -33,7 +33,7 @@ record TokenResponse {
 
 Next, we create the authenticator itself. It needs the API key and API key secret to call the token endpoint using basic HTTP authentication. In addition, we can extend the list of parameters with the base URL to convert it to a more generic OAuth2 authenticator.
 
-The easiest way to create an authenticator is to inherit from the `AuthanticatorBase` base class:
+The easiest way to create an authenticator is to inherit from the `AuthenticatorBase` base class:
 
 ```csharp
 public class TwitterAuthenticator : AuthenticatorBase {

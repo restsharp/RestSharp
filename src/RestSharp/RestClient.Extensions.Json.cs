@@ -47,11 +47,13 @@ public static partial class RestClientExtensions {
         object            parameters,
         CancellationToken cancellationToken = default
     ) {
-        var props = parameters.GetProperties();
+        var props   = parameters.GetProperties();
         var request = new RestRequest(resource);
 
-        foreach (var (name, value) in props) {
-            Parameter parameter = resource.Contains($"{name}") ? new UrlSegmentParameter(name, value!) : new QueryParameter(name, value);
+        foreach (var prop in props) {
+            Parameter parameter = resource.Contains($"{prop.Name}")
+                ? new UrlSegmentParameter(prop.Name, prop.Value!, prop.Encode)
+                : new QueryParameter(prop.Name, prop.Value, prop.Encode);
             request.AddParameter(parameter);
         }
 

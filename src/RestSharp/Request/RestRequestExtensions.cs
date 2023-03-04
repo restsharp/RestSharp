@@ -284,7 +284,7 @@ public static class RestRequestExtensions {
     /// <param name="request">Request instance</param>
     /// <param name="name">Parameter name</param>
     /// <param name="bytes">File content as bytes</param>
-    /// <param name="filename">File name</param>
+    /// <param name="fileName">File name</param>
     /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
     /// <param name="options">File parameter header options</param>
     /// <returns></returns>
@@ -292,11 +292,11 @@ public static class RestRequestExtensions {
         this RestRequest      request,
         string                name,
         byte[]                bytes,
-        string                filename,
+        string                fileName,
         ContentType?          contentType = null,
         FileParameterOptions? options     = null
     )
-        => request.AddFile(FileParameter.Create(name, bytes, filename, contentType, options));
+        => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType, options));
 
     /// <summary>
     /// Adds a file attachment to the request, where the file content will be retrieved from a given stream 
@@ -408,8 +408,8 @@ public static class RestRequestExtensions {
     public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
         var props = obj.GetProperties(includedProperties);
 
-        foreach (var (name, value) in props) {
-            request.AddParameter(name, value);
+        foreach (var prop in props) {
+            request.AddParameter(prop.Name, prop.Value, prop.Encode);
         }
 
         return request;
