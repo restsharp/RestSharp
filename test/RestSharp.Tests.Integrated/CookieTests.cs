@@ -48,4 +48,21 @@ public class CookieTests {
             c.HttpOnly.Should().Be(httpOnly);
         }
     }
+
+    [Fact]
+    public async Task GET_Async_With_Response_Cookies_Should_Not_Fail_With_Cookie_With_Empty_Domain() {
+        var request  = new RestRequest("set-cookies");
+        var response = await _client.ExecuteAsync(request);
+        response.Content.Should().Be("success");
+
+        Cookie? notFoundCookie = FindCookie("cookie_empty_domain");
+        notFoundCookie.Should().BeNull();
+
+        HeaderParameter? emptyDomainCookieHeader = response.Headers!
+            .SingleOrDefault(h => h.Name == KnownHeaders.SetCookie && ((string)h.Value!).StartsWith("cookie_empty_domain"));
+        emptyDomainCookieHeader.Should().NotBeNull();
+        ((string)emptyDomainCookieHeader!.Value!).Should().Contain("domain=;");
+        
+        Cookie? FindCookie(string name) => response!.Cookies!.FirstOrDefault(p => p.Name == name);
+    }
 }
