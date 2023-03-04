@@ -55,6 +55,16 @@ public static class CookieHandlers {
                 HttpOnly = true
             }
         );
+        
+        ctx.Response.Cookies.Append(
+            "cookie_empty_domain",
+            "value_empty_domain",
+            new CookieOptions {
+                HttpOnly = true,
+                Domain = string.Empty
+            }
+        );
+        
         return Results.Content("success");
     }
 }

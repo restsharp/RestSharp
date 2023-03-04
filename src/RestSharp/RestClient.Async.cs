@@ -119,7 +119,12 @@ public partial class RestClient {
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
                 foreach (var header in cookiesHeader) {
-                    cookieContainer.SetCookies(url, header);
+                    try {
+                        cookieContainer.SetCookies(url, header);
+                    }
+                    catch (CookieException) {
+                        // Do not fail request if we cannot parse a cookie
+                    }
                 }
             }
 
