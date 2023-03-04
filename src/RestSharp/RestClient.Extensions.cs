@@ -338,7 +338,7 @@ public static partial class RestClientExtensions {
 #endif
             if (string.IsNullOrWhiteSpace(line)) continue;
 
-            var response = new RestResponse { Content = line };
+            var response = new RestResponse(request) { Content = line };
             yield return serializer.Deserializer.Deserialize<T>(response)!;
         }
     }

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RestSharp.Tests.Integrated.Server.Handlers;
 using RestSharp.Tests.Shared.Extensions;
+// ReSharper disable ConvertClosureToMethodGroup
 
 namespace RestSharp.Tests.Integrated.Server;
 
@@ -20,8 +22,11 @@ public sealed class HttpServer {
 
         if (output != null) builder.WebHost.ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Information).AddXunit(output, LogLevel.Debug));
 
+        builder.Services.AddControllers().AddApplicationPart(typeof(UploadController).Assembly);
         builder.WebHost.UseUrls(Address);
         _app = builder.Build();
+
+        _app.MapControllers();
 
         _app.MapGet("success", () => new TestResponse { Message = "Works!" });
         _app.MapGet("echo", (string msg) => msg);
@@ -46,9 +51,8 @@ public sealed class HttpServer {
         );
 
         // Upload file
-        var assetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
-
-        _app.MapPost("/upload", ctx => FileHandlers.HandleUpload(assetPath, ctx.Request));
+        // var assetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
+        // _app.MapPost("/upload", ctx => FileHandlers.HandleUpload(assetPath, ctx.Request));
 
         // POST
         _app.MapPost("/post/json", (TestRequest request) => new TestResponse { Message = request.Data });

@@ -22,9 +22,7 @@ public partial class RestClient {
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
         var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var response = new RestResponse();
-
-        response = internalResponse.Exception == null
+        var response = internalResponse.Exception == null
             ? await RestResponse.FromHttpResponse(
                     internalResponse.ResponseMessage!,
                     request,
@@ -34,10 +32,7 @@ public partial class RestClient {
                     cancellationToken
                 )
                 .ConfigureAwait(false)
-            : AddError(response, internalResponse.Exception, internalResponse.TimeoutToken);
-
-        response.Request = request;
-        response.Request.IncreaseNumAttempts();
+            : GetErrorResponse(request, internalResponse.Exception, internalResponse.TimeoutToken);
 
         return Options.ThrowOnAnyError ? response.ThrowIfError() : response;
     }
@@ -69,13 +64,14 @@ public partial class RestClient {
         return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
     }
 
-    static RestResponse AddError(RestResponse response, Exception exception, CancellationToken timeoutToken) {
-        response.ResponseStatus = exception is OperationCanceledException
-            ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
-            : ResponseStatus.Error;
-
-        response.ErrorMessage   = exception.Message;
-        response.ErrorException = exception;
+    static RestResponse GetErrorResponse(RestRequest request, Exception exception, CancellationToken timeoutToken) {
+        var response = new RestResponse(request) {
+            ResponseStatus = exception is OperationCanceledException
+                ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
+                : ResponseStatus.Error,
+            ErrorMessage   = exception.Message,
+            ErrorException = exception
+        };
 
         return response;
 
@@ -155,6 +151,6 @@ public partial class RestClient {
             Method.Merge  => new HttpMethod("MERGE"),
             Method.Copy   => new HttpMethod("COPY"),
             Method.Search => new HttpMethod("SEARCH"),
-            _             => throw new ArgumentOutOfRangeException()
+            _             => throw new ArgumentOutOfRangeException(nameof(method))
         };
 }

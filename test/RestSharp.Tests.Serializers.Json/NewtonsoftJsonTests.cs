@@ -71,7 +71,7 @@ public class NewtonsoftJsonTests {
 
         await client.PostAsync(request);
 
-        var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body! });
+        var actual = serializer.Deserialize<TestClass>(new RestResponse(request) { Content = _body! });
 
         actual.Should().BeEquivalentTo(testData);
     }
