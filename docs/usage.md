@@ -243,9 +243,14 @@ When the request executes, RestSharp will try to match any `{placeholder}` with 
 
 ### Request Body
 
-If this parameter is set, its value will be sent as the body of the request.
+RestSharp supports multiple ways to add a request body:
+- `AddJsonBody` for JSON payloads
+- `AddXmlBody` for XML payloads
+- `AddStringBody` for pre-serialized payloads
 
 We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
+
+When you make a `POST`, `PUT` or `PATCH` request and added `GetOrPost` [parameters](#get-or-post), RestSharp will send them as a URL-encoded form request body by default. When a request also has files, it will send a `multipart/form-data` request. You can also instruct RestSharp to send the body as `multipart/form-data` by setting the `AlwaysMultipartFormData` property to `true`. 
 
 #### AddStringBody
 
