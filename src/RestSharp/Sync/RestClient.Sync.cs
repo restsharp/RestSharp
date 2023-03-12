@@ -15,22 +15,24 @@
 
 namespace RestSharp; 
 
-public partial class RestClient {
+public static partial class RestClientExtensions {
     /// <summary>
     /// Executes the request synchronously, authenticating if needed
     /// </summary>
+    /// <param name="client"></param>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">The cancellation token</param>
-    public RestResponse Execute(RestRequest request, CancellationToken cancellationToken = default)
-        => AsyncHelpers.RunSync(() => ExecuteAsync(request, cancellationToken));
+    public static RestResponse Execute(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+        => AsyncHelpers.RunSync(() => client.ExecuteAsync(request, cancellationToken));
 
     /// <summary>
     /// A specialized method to download files as streams.
     /// </summary>
+    /// <param name="client"></param>
     /// <param name="request">Pre-configured request instance.</param>
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>The downloaded stream.</returns>
     [PublicAPI]
-    public Stream? DownloadStream(RestRequest request, CancellationToken cancellationToken = default)
-        => AsyncHelpers.RunSync(() => DownloadStreamAsync(request, cancellationToken));
+    public static Stream? DownloadStream(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+        => AsyncHelpers.RunSync(() => client.DownloadStreamAsync(request, cancellationToken));
 }

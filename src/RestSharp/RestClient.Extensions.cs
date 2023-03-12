@@ -29,7 +29,7 @@ public static partial class RestClientExtensions {
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Deserialized response content</returns>
-    public static Task<RestResponse<T>> ExecuteGetAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+    public static Task<RestResponse<T>> ExecuteGetAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync<T>(request, Method.Get, cancellationToken);
 
     /// <summary>
@@ -38,7 +38,7 @@ public static partial class RestClientExtensions {
     /// <param name="client"></param>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public static Task<RestResponse> ExecuteGetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+    public static Task<RestResponse> ExecuteGetAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync(request, Method.Get, cancellationToken);
 
     /// <summary>
@@ -51,7 +51,7 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>Deserialized response content</returns>
     public static Task<RestResponse<T>> ExecutePostAsync<T>(
-        this RestClient   client,
+        this IRestClient  client,
         RestRequest       request,
         CancellationToken cancellationToken = default
     )
@@ -63,7 +63,7 @@ public static partial class RestClientExtensions {
     /// <param name="client"></param>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public static Task<RestResponse> ExecutePostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+    public static Task<RestResponse> ExecutePostAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync(request, Method.Post, cancellationToken);
 
     /// <summary>
@@ -76,7 +76,7 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>Deserialized response content</returns>
     public static Task<RestResponse<T>> ExecutePutAsync<T>(
-        this RestClient   client,
+        this IRestClient  client,
         RestRequest       request,
         CancellationToken cancellationToken = default
     )
@@ -88,7 +88,7 @@ public static partial class RestClientExtensions {
     /// <param name="client"></param>
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public static Task<RestResponse> ExecutePutAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+    public static Task<RestResponse> ExecutePutAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => client.ExecuteAsync(request, Method.Put, cancellationToken);
 
     /// <summary>
@@ -99,7 +99,7 @@ public static partial class RestClientExtensions {
     /// <param name="request">Request to be executed</param>
     /// <param name="cancellationToken">Cancellation token</param>
     public static async Task<RestResponse<T>> ExecuteAsync<T>(
-        this RestClient   client,
+        this IRestClient  client,
         RestRequest       request,
         CancellationToken cancellationToken = default
     ) {
@@ -107,7 +107,7 @@ public static partial class RestClientExtensions {
             throw new ArgumentNullException(nameof(request));
 
         var response = await client.ExecuteAsync(request, cancellationToken).ConfigureAwait(false);
-        return client.Deserialize<T>(request, response);
+        return client.Serializers.Deserialize<T>(request, response, client.Options);
     }
 
     /// <summary>
@@ -118,7 +118,7 @@ public static partial class RestClientExtensions {
     /// <param name="httpMethod">Override the request method</param>
     /// <param name="cancellationToken">Cancellation token</param>
     public static Task<RestResponse> ExecuteAsync(
-        this RestClient   client,
+        this IRestClient  client,
         RestRequest       request,
         Method            httpMethod,
         CancellationToken cancellationToken = default
@@ -138,7 +138,7 @@ public static partial class RestClientExtensions {
     /// <param name="httpMethod">Override the request method</param>
     /// <param name="cancellationToken">Cancellation token</param>
     public static Task<RestResponse<T>> ExecuteAsync<T>(
-        this RestClient   client,
+        this IRestClient  client,
         RestRequest       request,
         Method            httpMethod,
         CancellationToken cancellationToken = default
@@ -158,12 +158,12 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> GetAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> GetAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteGetAsync<T>(request, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
     
-    public static async Task<RestResponse> GetAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> GetAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteGetAsync(request, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -177,15 +177,15 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> PostAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> PostAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecutePostAsync<T>(request, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
-    public static RestResponse Post(this RestClient client, RestRequest request)
+    public static RestResponse Post(this IRestClient client, RestRequest request)
         => AsyncHelpers.RunSync(() => client.PostAsync(request));
 
-    public static async Task<RestResponse> PostAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> PostAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecutePostAsync(request, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -199,12 +199,12 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> PutAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> PutAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync<T>(request, Method.Put, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
-    public static async Task<RestResponse> PutAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> PutAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Put, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -218,12 +218,12 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> HeadAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> HeadAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync<T>(request, Method.Head, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
-    public static async Task<RestResponse> HeadAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> HeadAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Head, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -237,12 +237,12 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> OptionsAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> OptionsAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync<T>(request, Method.Options, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
-    public static async Task<RestResponse> OptionsAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> OptionsAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Options, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -256,12 +256,12 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> PatchAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> PatchAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync<T>(request, Method.Patch, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
-    public static async Task<RestResponse> PatchAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> PatchAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Patch, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -275,12 +275,12 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
-    public static async Task<T?> DeleteAsync<T>(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<T?> DeleteAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync<T>(request, Method.Delete, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
-    public static async Task<RestResponse> DeleteAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+    public static async Task<RestResponse> DeleteAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var response = await client.ExecuteAsync(request, Method.Delete, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
@@ -293,8 +293,8 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken"></param>
     /// <returns>The downloaded file.</returns>
     [PublicAPI]
-    public static async Task<byte[]?> DownloadDataAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default) {
-#if NETSTANDARD
+    public static async Task<byte[]?> DownloadDataAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+#if NETSTANDARD || NETFRAMEWORK
         using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
 #else
         await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
@@ -313,63 +313,34 @@ public static partial class RestClientExtensions {
     /// <returns></returns>
     [PublicAPI]
     public static async IAsyncEnumerable<T> StreamJsonAsync<T>(
-        this RestClient                            client,
+        this IRestClient                           client,
         string                                     resource,
         [EnumeratorCancellation] CancellationToken cancellationToken
     ) {
         var request = new RestRequest(resource);
 
-#if NETSTANDARD
-        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
-#else
+#if NET
         await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#else
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
 #endif
         if (stream == null) yield break;
 
-        var serializer = client.Serializers[DataFormat.Json].GetSerializer();
+        var serializer = client.Serializers.GetSerializer(DataFormat.Json);
 
         using var reader = new StreamReader(stream);
 
         while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested) {
+#if NET7_0
+            var line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
+#else
             var line = await reader.ReadLineAsync().ConfigureAwait(false);
+#endif
             if (string.IsNullOrWhiteSpace(line)) continue;
 
-            var response = new RestResponse { Content = line };
+            var response = new RestResponse(request) { Content = line };
             yield return serializer.Deserializer.Deserialize<T>(response)!;
         }
     }
 
-    /// <summary>
-    /// Sets the <see cref="RestClient"/> to only use JSON
-    /// </summary>
-    /// <param name="client">Client instance to work with</param>
-    /// <returns>Reference to the client instance</returns>
-    public static RestClient UseJson(this RestClient client) {
-        client.Serializers.Remove(DataFormat.Xml);
-        client.AssignAcceptedContentTypes();
-        return client;
-    }
-
-    /// <summary>
-    /// Sets the <see cref="RestClient"/> to only use XML
-    /// </summary>
-    /// <param name="client">Client instance to work with</param>
-    /// <returns>Reference to the client instance</returns>
-    public static RestClient UseXml(this RestClient client) {
-        client.Serializers.Remove(DataFormat.Json);
-        client.AssignAcceptedContentTypes();
-        return client;
-    }
-
-    /// <summary>
-    /// Sets the <see cref="RestClient"/> to only use the passed in custom serializer
-    /// </summary>
-    /// <param name="client">Client instance to work with</param>
-    /// <param name="serializerFactory">Function that returns the serializer instance</param>
-    /// <returns>Reference to the client instance</returns>
-    public static RestClient UseOnlySerializer(this RestClient client, Func<IRestSerializer> serializerFactory) {
-        client.Serializers.Clear();
-        client.UseSerializer(serializerFactory);
-        return client;
-    }
 }

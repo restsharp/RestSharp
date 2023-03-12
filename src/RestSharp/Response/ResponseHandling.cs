@@ -36,7 +36,7 @@ static class ResponseHandling {
     }
 
     public static Task<Stream?> ReadResponse(this HttpResponseMessage response, CancellationToken cancellationToken) {
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
         return response.Content.ReadAsStreamAsync();
 # else
         return response.Content.ReadAsStreamAsync(cancellationToken)!;

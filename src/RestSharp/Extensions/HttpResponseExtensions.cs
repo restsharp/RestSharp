@@ -19,7 +19,7 @@ public static class HttpResponseExtensions {
     internal static Exception? MaybeException(this HttpResponseMessage httpResponse)
         => httpResponse.IsSuccessStatusCode
             ? null
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
             : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
 #else
             : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}", null, httpResponse.StatusCode);

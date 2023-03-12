@@ -1,8 +1,7 @@
 using RestSharp.Authenticators.OAuth2;
-using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Integrated.Server;
 
-namespace RestSharp.Tests.Integrated.Authentication; 
+namespace RestSharp.Tests.Integrated.Authentication;
 
 [Collection(nameof(TestServerCollection))]
 public class OAuth2Tests {
@@ -12,9 +11,8 @@ public class OAuth2Tests {
 
     [Fact]
     public async Task ShouldHaveProperHeader() {
-        var client = new RestClient(_fixture.Server.Url);
         var auth   = new OAuth2AuthorizationRequestHeaderAuthenticator("token", "Bearer");
-        client.Authenticator = auth;
+        var client = new RestClient(_fixture.Server.Url, o => o.Authenticator = auth);
 
         var response   = await client.GetJsonAsync<TestServerResponse[]>("headers");
         var authHeader = response!.FirstOrDefault(x => x.Name == KnownHeaders.Authorization);

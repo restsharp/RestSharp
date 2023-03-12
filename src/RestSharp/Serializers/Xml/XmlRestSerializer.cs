@@ -28,7 +28,7 @@ public class XmlRestSerializer : IRestSerializer {
     public ISerializer         Serializer           => _xmlSerializer;
     public IDeserializer       Deserializer         => _xmlDeserializer;
     public string[]            AcceptedContentTypes => ContentType.XmlAccept;
-    public SupportsContentType SupportsContentType  => contentType => contentType.EndsWith("xml", StringComparison.InvariantCultureIgnoreCase);
+    public SupportsContentType SupportsContentType  => contentType => contentType.Value.EndsWith("xml", StringComparison.InvariantCultureIgnoreCase);
 
     public DataFormat DataFormat => DataFormat.Xml;
 

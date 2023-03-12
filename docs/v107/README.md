@@ -1,10 +1,10 @@
 ---
-title: RestSharp Next (v107)
+title: RestSharp Next (v107+)
 ---
 
-## RestSharp v107
+## RestSharp v107+
 
-The latest version of RestSharp is v107. It's a major upgrade, which contains quite a few breaking changes.
+RestSharp got a major upgrade in v107, which contains quite a few breaking changes.
 
 The most important change is that RestSharp stop using the legacy `HttpWebRequest` class, and uses well-known 'HttpClient' instead.
 This move solves lots of issues, like hanging connections due to improper `HttpClient` instance cache, updated protocols support, and many other problems.
@@ -17,7 +17,7 @@ Finally, most of the interfaces are now gone.
 
 ### RestClient and options
 
-The `IRestClient` interface is deprecated. You will be using the `RestClient` class instance.
+The `IRestClient` interface is deprecated in v107, but brought back in v109. The new interface, however, has a much smaller API compared to previous versions. You will be using the `RestClient` class instance.
 
 Most of the client options are moved to `RestClientOptions`. If you can't find the option you used to set on `IRestClient`, check the options, it's probably there.
 
@@ -187,22 +187,15 @@ The next RestSharp version presumably solves the following issues:
 ## Deprecated interfaces
 
 The following interfaces are removed from RestSharp:
-- `IRestClient`
 - `IRestRequest`
 - `IRestResponse`
 - `IHttp`
 
-### Motivation
-
-All the deprecated interfaces had only one implementation in RestSharp, so those interfaces were abstracting nothing. It is now unclear what was the purpose for adding those interfaces initially.
-
-What about mocking it, you might ask? The answer is: what would you do if you use a plain `HttpClient` instance? It doesn't implement any interface for the same reason - there's nothing to abstract, and there's only one implementation. We don't recommend mocking `RestClient` in your tests when you are testing against APIs that are controlled by you or people in your organisation. Test your clients against the real thing, as REST calls are I/O-bound. Mocking REST calls is like mocking database calls, and lead to a lot of issues in production even if all your tests pass against mocks.
-
-As mentioned in [Recommended usage](#recommended-usage), we advise against using `RestClient` in the application code, and advocate wrapping it inside particular API client classes. Those classes would be under your control, and you are totally free to use interfaces there. If you absolutely must mock, you can mock your interfaces instead.
-
 ### Mocking
 
 Mocking an infrastructure component like RestSharp (or HttpClient) is not the best idea. Even if you check that all the parameters are added correctly to the request, your "unit test" will only give you a false sense of safety that your code actually works. But, you have no guarantee that the remote server will accept your request, or if you can handle the actual response correctly.
+
+However, since v109 you can still mock the `IRestClient` interface, but you only need to implement the `ExecuteAsync` method. The `ExecuteAsync` method is the only one that actually makes a call to the remote server. All other methods are just wrappers around it.
 
 The best way to test HTTP calls is to make some, using the actual service you call. However, you might still want to check if your API client forms requests in a certain way. You might also be sure about what the remote server responds to your calls with, so you can build a set of JSON (or XML) responses, so you can simulate remote calls.
 

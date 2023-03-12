@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System.Web;
 using RestSharp.Authenticators;
-using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated.Authentication;
@@ -21,9 +20,10 @@ public class AuthenticationTests {
         const string userName = "testuser";
         const string password = "testpassword";
 
-        var client = new RestClient(_fixture.Server.Url) {
-            Authenticator = new HttpBasicAuthenticator(userName, password)
-        };
+        var client = new RestClient(
+            _fixture.Server.Url,
+            o => o.Authenticator = new HttpBasicAuthenticator(userName, password)
+        );
         var request  = new RestRequest("headers");
         var response = await client.GetAsync<TestServerResponse[]>(request);
 

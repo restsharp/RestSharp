@@ -3,7 +3,7 @@ using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Serializers.Xml.SampleClasses;
 using RestSharp.Tests.Serializers.Xml.SampleClasses.DeserializeAsTest;
 
-namespace RestSharp.Tests.Serializers.Xml; 
+namespace RestSharp.Tests.Serializers.Xml;
 
 public class NamespacedXmlTests {
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
@@ -25,22 +25,22 @@ public class NamespacedXmlTests {
         var ns   = XNamespace.Get("http://restsharp.org");
         var root = new XElement(ns + "Person");
 
-        root.Add(new XElement(ns + "Name", "John Sheehan"));
-        root.Add(new XElement(ns + "Start_Date", new DateTime(2009, 9, 25, 0, 6, 1)));
+        root.Add(new XElement(ns   + "Name", "John Sheehan"));
+        root.Add(new XElement(ns   + "Start_Date", new DateTime(2009, 9, 25, 0, 6, 1)));
         root.Add(new XAttribute(ns + "Age", 28));
-        root.Add(new XElement(ns + "Percent", 99.9999m));
-        root.Add(new XElement(ns + "Big_Number", long.MaxValue));
+        root.Add(new XElement(ns   + "Percent", 99.9999m));
+        root.Add(new XElement(ns   + "Big_Number", long.MaxValue));
         root.Add(new XAttribute(ns + "Is_Cool", false));
-        root.Add(new XElement(ns + "Ignore", "dummy"));
+        root.Add(new XElement(ns   + "Ignore", "dummy"));
         root.Add(new XAttribute(ns + "Read_Only", "dummy"));
         root.Add(new XAttribute(ns + "Unique_Id", new Guid(GuidString)));
-        root.Add(new XElement(ns + "Url", "http://example.com"));
-        root.Add(new XElement(ns + "Url_Path", "/foo/bar"));
+        root.Add(new XElement(ns   + "Url", "http://example.com"));
+        root.Add(new XElement(ns   + "Url_Path", "/foo/bar"));
 
         root.Add(
             new XElement(
                 ns + "Best_Friend",
-                new XElement(ns + "Name", "The Fonz"),
+                new XElement(ns   + "Name", "The Fonz"),
                 new XAttribute(ns + "Since", 1952)
             )
         );
@@ -51,7 +51,7 @@ public class NamespacedXmlTests {
             friends.Add(
                 new XElement(
                     ns + "Friend",
-                    new XElement(ns + "Name", "Friend" + i),
+                    new XElement(ns   + "Name", "Friend"           + i),
                     new XAttribute(ns + "Since", DateTime.Now.Year - i)
                 )
             );
@@ -101,7 +101,7 @@ public class NamespacedXmlTests {
             friends.Add(
                 new XElement(
                     ns + "Friend",
-                    new XElement(ns + "Name", "Friend" + i),
+                    new XElement(ns + "Name", "Friend"           + i),
                     new XElement(ns + "Since", DateTime.Now.Year - i)
                 )
             );
@@ -153,7 +153,8 @@ public class NamespacedXmlTests {
     [Fact]
     public void Can_Deserialize_Attribute_Using_Exact_Name_Defined_In_DeserializeAs_Attribute() {
         const string @namespace = "http://restsharp.org";
-        var          ns         = XNamespace.Get(@namespace);
+
+        var ns = XNamespace.Get(@namespace);
 
         var doc = new XDocument(
             new XElement(
@@ -168,7 +169,7 @@ public class NamespacedXmlTests {
         };
 
         var xml    = new XmlDeserializer { Namespace = @namespace };
-        var output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse { Content = doc.ToString() });
+        var output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse() { Content = doc.ToString() });
 
         Assert.Equal(expected.AttributeValue, output.AttributeValue);
     }

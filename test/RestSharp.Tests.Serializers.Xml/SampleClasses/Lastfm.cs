@@ -1,4 +1,6 @@
-﻿namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
+﻿// ReSharper disable InconsistentNaming
+#pragma warning disable CS8981
+namespace RestSharp.Tests.Serializers.Xml.SampleClasses;
 
 public class Event : LastfmBase {
     public string id { get; set; }

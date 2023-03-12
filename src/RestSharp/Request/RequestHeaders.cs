@@ -16,6 +16,7 @@
 // ReSharper disable InvertIf
 
 using System.Net;
+using RestSharp.Extensions;
 
 namespace RestSharp;
 
@@ -30,7 +31,7 @@ class RequestHeaders {
     // Add Accept header based on registered deserializers if none has been set by the caller.
     public RequestHeaders AddAcceptHeader(string[] acceptedContentTypes) {
         if (Parameters.TryFind(KnownHeaders.Accept) == null) {
-            var accepts = string.Join(", ", acceptedContentTypes);
+            var accepts = acceptedContentTypes.JoinToString(", ");
             Parameters.AddParameter(new HeaderParameter(KnownHeaders.Accept, accepts));
         }
 
@@ -40,9 +41,11 @@ class RequestHeaders {
     // Add Cookie header from the cookie container
     public RequestHeaders AddCookieHeaders(CookieContainer cookieContainer, Uri uri) {
         var cookies = cookieContainer.GetCookieHeader(uri);
+
         if (cookies.Length > 0) {
             Parameters.AddParameter(new HeaderParameter(KnownHeaders.Cookie, cookies));
         }
+
         return this;
     }
 }

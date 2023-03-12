@@ -30,7 +30,7 @@ static class StreamExtensions {
         using var ms = new MemoryStream();
 
         int read;
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
         while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
 #else
         while ((read = await input.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)

@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Nullable>disable</Nullable>
-        <TargetFrameworks>net6</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj"/>
-        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj"/>
-        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
+        <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
+        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest"/>
-        <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest"/>
-        <None Update="Assets\KoalaÄÖäö.jpg" CopyToOutputDirectory="PreserveNewest"/>
-        <None Update="Assets\Teståæ.txt" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Assets\KoalaÄÖäö.jpg" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Assets\Teståæ.txt" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="HttpTracer" Version="2.1.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.9"/>
-        <PackageReference Include="Polly" Version="7.2.3"/>
-        <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0"/>
+        <PackageReference Include="HttpTracer" Version="2.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.9" />
+        <PackageReference Include="Polly" Version="7.2.3" />
+        <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
     </ItemGroup>
     <ItemGroup>
-        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>

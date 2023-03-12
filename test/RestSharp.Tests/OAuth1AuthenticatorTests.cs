@@ -70,81 +70,25 @@ public class OAuth1AuthenticatorTests {
 
         // Assert
         var parameters = request.Parameters;
+        ParameterShouldBe("x_auth_username", "ClientUsername");
+        ParameterShouldBe("x_auth_password", "ClientPassword");
+        ParameterShouldBe("x_auth_mode", "client_auth");
+        ParameterShouldBe("oauth_consumer_key", "ConsumerKey");
+        ParameterShouldHaveValue("oauth_signature");
+        ParameterShouldBe("oauth_signature_method", "PLAINTEXT");
+        ParameterShouldBe("oauth_version", "Version");
+        ParameterShouldHaveValue("oauth_nonce");
+        ParameterShouldHaveValue("oauth_timestamp");
 
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "x_auth_username" &&
-                    (string)x.Value == "ClientUsername" &&
-                    x.ContentType == null
-            )
-        );
+        void ParameterShould(string name, Func<Parameter, bool> check) {
+            var parameter = parameters.FirstOrDefault(x => x.Type == ParameterType.GetOrPost && x.Name == name);
+            parameter.Should().NotBeNull();
+            check(parameter).Should().BeTrue();
+        }
 
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "x_auth_password" &&
-                    (string)x.Value == "ClientPassword" &&
-                    x.ContentType == null
-            )
-        );
+        void ParameterShouldBe(string name, string value) => ParameterShould(name, x => (string)x.Value == value);
 
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost && x.Name == "x_auth_mode" && (string)x.Value == "client_auth" && x.ContentType == null
-            )
-        );
-
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "oauth_consumer_key" &&
-                    (string)x.Value == "ConsumerKey" &&
-                    x.ContentType == null
-            )
-        );
-
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "oauth_signature" &&
-                    !string.IsNullOrWhiteSpace((string)x.Value) &&
-                    x.ContentType == null
-            )
-        );
-
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "oauth_signature_method" &&
-                    (string)x.Value == "PLAINTEXT" &&
-                    x.ContentType == null
-            )
-        );
-
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost && x.Name == "oauth_version" && (string)x.Value == "Version" && x.ContentType == null
-            )
-        );
-
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "oauth_nonce" &&
-                    !string.IsNullOrWhiteSpace((string)x.Value) &&
-                    x.ContentType == null
-            )
-        );
-
-        Assert.NotNull(
-            parameters.FirstOrDefault(
-                x => x.Type == ParameterType.GetOrPost &&
-                    x.Name == "oauth_timestamp" &&
-                    !string.IsNullOrWhiteSpace((string)x.Value) &&
-                    x.ContentType == null
-            )
-        );
+        void ParameterShouldHaveValue(string name) => ParameterShould(name, x => !string.IsNullOrWhiteSpace((string)x.Value));
     }
 
     [Theory]

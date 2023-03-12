@@ -16,7 +16,7 @@
 namespace RestSharp;
 
 public record BodyParameter : Parameter {
-    public BodyParameter(string? name, object value, string contentType, DataFormat dataFormat = DataFormat.None)
+    public BodyParameter(string? name, object value, ContentType contentType, DataFormat dataFormat = DataFormat.None)
         : base(name, Ensure.NotNull(value, nameof(value)), ParameterType.RequestBody, false) {
         if (dataFormat == DataFormat.Binary && value is not byte[]) {
             throw new ArgumentException("Binary data format needs a byte array as value");
@@ -26,7 +26,7 @@ public record BodyParameter : Parameter {
         DataFormat  = dataFormat;
     }
 
-    public BodyParameter(object value, string contentType, DataFormat dataFormat = DataFormat.None)
+    public BodyParameter(object value, ContentType contentType, DataFormat dataFormat = DataFormat.None)
         : this("", value, contentType, dataFormat) { }
 
     /// <summary>
@@ -41,20 +41,20 @@ public record BodyParameter : Parameter {
 }
 
 public record XmlParameter : BodyParameter {
-    public XmlParameter(string name, object value, string? xmlNamespace = null, string contentType = Serializers.ContentType.Xml)
-        : base(name, value, contentType, DataFormat.Xml)
+    public XmlParameter(string name, object value, string? xmlNamespace = null, ContentType? contentType = null)
+        : base(name, value, contentType ?? ContentType.Xml, DataFormat.Xml)
         => XmlNamespace = xmlNamespace;
 
-    public XmlParameter(object value, string? xmlNamespace = null, string contentType = Serializers.ContentType.Xml)
+    public XmlParameter(object value, string? xmlNamespace = null, ContentType? contentType = null)
         : this("", value, xmlNamespace, contentType) { }
 
     public string? XmlNamespace { get; }
 }
 
 public record JsonParameter : BodyParameter {
-    public JsonParameter(string name, object value, string contentType = Serializers.ContentType.Json)
-        : base(name, value, contentType, DataFormat.Json) { }
+    public JsonParameter(string name, object value, ContentType? contentType = null)
+        : base(name, value, contentType ?? ContentType.Json, DataFormat.Json) { }
 
-    public JsonParameter(object value, string contentType = Serializers.ContentType.Json)
+    public JsonParameter(object value, ContentType? contentType = null)
         : this("", value, contentType) { }
 }

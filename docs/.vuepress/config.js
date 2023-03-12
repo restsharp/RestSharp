@@ -11,7 +11,7 @@ module.exports = {
     themeConfig: {
         logo: "/restsharp.png",
         navbar: [
-            {text: "Migration to v107", link: "/v107/"},
+            {text: "Migration from legacy", link: "/v107/"},
             {text: "Documentation", link: "/intro.html"},
             {text: "Get help", link: "/support/"},
             {text: "NuGet", link: "https://nuget.org/packages/RestSharp"}
@@ -34,7 +34,7 @@ module.exports = {
             "/v107/": [
                 {
                     text: "",
-                    header: "Migration to v107",
+                    header: "Migration from legacy",
                     children: [
                         "/v107/README.md"
                     ]

@@ -4,7 +4,7 @@ using RestSharp.Serializers.Json;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.Tests.Serializers.Json; 
+namespace RestSharp.Tests.Serializers.Json;
 
 public class SystemTextJsonTests {
     static readonly Fixture Fixture = new();
@@ -24,7 +24,7 @@ public class SystemTextJsonTests {
 
         await client.PostAsync(request);
 
-        var actual = serializer.Deserialize<TestClass>(new RestResponse { Content = _body });
+        var actual = serializer.Deserialize<TestClass>(new RestResponse(request) { Content = _body });
 
         actual.Should().BeEquivalentTo(testData);
 
@@ -45,7 +45,7 @@ public class SystemTextJsonTests {
             }
         );
 
-        var client = new RestClient(server.Url).UseSystemTextJson();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseSystemTextJson());
 
         var actual = await client.GetAsync<TestClass>(new RestRequest());
 
@@ -53,17 +53,17 @@ public class SystemTextJsonTests {
     }
 
     [Fact]
-    public async Task DeserilizationFails_IsSuccessfull_Should_BeFalse() {
+    public async Task DeserilizationFails_IsSuccessful_Should_BeFalse() {
         using var server = HttpServerFixture.StartServer(
             (_, response) => {
-                response.StatusCode = (int)HttpStatusCode.OK;
-                response.ContentType = "application/json";
+                response.StatusCode      = (int)HttpStatusCode.OK;
+                response.ContentType     = "application/json";
                 response.ContentEncoding = Encoding.UTF8;
                 response.OutputStream.WriteStringUtf8("invalid json");
             }
         );
 
-        var client = new RestClient(server.Url).UseSystemTextJson();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseSystemTextJson());
 
         var response = await client.ExecuteAsync<TestClass>(new RestRequest());
 
@@ -72,21 +72,21 @@ public class SystemTextJsonTests {
     }
 
     [Fact]
-    public async Task DeserilizationSucceeds_IsSuccessfull_Should_BeTrue() {
+    public async Task DeserilizationSucceeds_IsSuccessful_Should_BeTrue() {
         var item = Fixture.Create<TestClass>();
 
         using var server = HttpServerFixture.StartServer(
             (_, response) => {
                 var serializer = new SystemTextJsonSerializer();
 
-                response.StatusCode = (int)HttpStatusCode.OK;
-                response.ContentType = "application/json";
+                response.StatusCode      = (int)HttpStatusCode.OK;
+                response.ContentType     = "application/json";
                 response.ContentEncoding = Encoding.UTF8;
                 response.OutputStream.WriteStringUtf8(serializer.Serialize(item)!);
             }
         );
 
-        var client = new RestClient(server.Url).UseSystemTextJson();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseSystemTextJson());
 
         var response = await client.ExecuteAsync<TestClass>(new RestRequest());
 

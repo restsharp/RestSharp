@@ -25,7 +25,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
     /// Default constructor, does not specify namespace
     /// </summary>
     public DotNetXmlSerializer() {
-        ContentType = Serializers.ContentType.Xml;
+        ContentType = RestSharp.ContentType.Xml;
         Encoding    = Encoding.UTF8;
     }
 
@@ -79,7 +79,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
     /// <summary>
     /// Content type for serialized content
     /// </summary>
-    public string ContentType { get; set; }
+    public ContentType ContentType { get; set; }
 
     class EncodingStringWriter : StringWriter {
         // Need to subclass StringWriter in order to override Encoding
