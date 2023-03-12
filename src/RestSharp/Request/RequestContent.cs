@@ -155,7 +155,7 @@ class RequestContent : IDisposable {
 
                 mpContent.Add(
                     new StringContent(postParameter.Value?.ToString() ?? "", _client.Options.Encoding, postParameter.ContentType.Value),
-                    _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
+                    GetBoundary(parameterName, _request.MultipartFormQuoteParameters)
                 );
             }
         }
@@ -176,6 +176,8 @@ class RequestContent : IDisposable {
 #endif
         }
     }
+
+    static string GetBoundary(string boundary, bool quite) => quite ? $"\"{boundary}\"" : boundary;
 
     void AddHeaders() {
         var contentHeaders = _request.Parameters
@@ -203,7 +205,7 @@ class RequestContent : IDisposable {
 
         string GetContentTypeHeader(string contentType)
             => Content is MultipartFormDataContent
-                ? $"{contentType}; boundary=\"{GetOrSetFormBoundary()}\""
+                ? $"{contentType}; boundary={GetBoundary(GetOrSetFormBoundary(), _request.MultipartFormQuoteParameters)}"
                 : contentType;
     }
 
