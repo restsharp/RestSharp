@@ -210,7 +210,7 @@ public partial class RestClient : IRestClient {
     static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
         if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
 
-        if (options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != options.UserAgent)) {
+        if (options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => $"{x.Product?.Name}/{x.Product?.Version}" != Options.UserAgent)) {
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, options.UserAgent);
         }
 
