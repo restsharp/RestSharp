@@ -3,14 +3,16 @@ using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.Tests.Integrated; 
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace RestSharp.Tests.Integrated;
 
 public class StructuredSyntaxSuffixTests : IDisposable {
     readonly TestHttpServer _server;
     readonly string         _url;
 
     class Person {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public int Age { get; set; }
     }
@@ -41,8 +43,8 @@ public class StructuredSyntaxSuffixTests : IDisposable {
 
         var response = await client.ExecuteAsync<Person>(request);
 
-        Assert.Equal("Bob", response.Data.Name);
-        Assert.Equal(50, response.Data.Age);
+        response.Data!.Name.Should().Be("Bob");
+        response.Data.Age.Should().Be(50);
     }
 
     [Fact]
@@ -61,21 +63,21 @@ public class StructuredSyntaxSuffixTests : IDisposable {
 
     [Fact]
     public async Task By_default_content_types_with_XML_structured_syntax_suffix_should_deserialize_as_XML() {
-        var client = new RestClient(_url).UseXmlSerializer();
+        var client = new RestClient(_url, configureSerialization: cfg => cfg.UseXmlSerializer());
 
         var request = new RestRequest()
             .AddParameter("ct", "application/vnd.somebody.something+xml")
             .AddParameter("c", XmlContent);
 
         var response = await client.ExecuteAsync<Person>(request);
-        
+
         response.Data!.Name.Should().Be("Bob");
         response.Data.Age.Should().Be(50);
     }
 
     [Fact]
     public async Task By_default_text_xml_content_type_should_deserialize_as_XML() {
-        var client = new RestClient(_url).UseXmlSerializer();
+        var client = new RestClient(_url, configureSerialization: cfg => cfg.UseXmlSerializer());
 
         var request = new RestRequest()
             .AddParameter("ct", "text/xml")
@@ -83,7 +85,7 @@ public class StructuredSyntaxSuffixTests : IDisposable {
 
         var response = await client.ExecuteAsync<Person>(request);
 
-        Assert.Equal("Bob", response.Data.Name);
+        Assert.Equal("Bob", response.Data!.Name);
         Assert.Equal(50, response.Data.Age);
     }
 }

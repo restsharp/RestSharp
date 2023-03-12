@@ -1,3 +1,4 @@
+using RestSharp.Serializers;
 using RestSharp.Serializers.Json;
 
 namespace RestSharp.Tests;
@@ -24,11 +25,11 @@ public class RestClientTests {
     }
 
     [Fact]
-    public void ConfigureHttp_will_set_proxy_to_null_with_no_exceptions_When_no_proxy_can_be_found() {
+    public async Task ConfigureHttp_will_set_proxy_to_null_with_no_exceptions_When_no_proxy_can_be_found() {
         var req    = new RestRequest();
         var client = new RestClient(new RestClientOptions(BaseUrl) { Proxy = null });
 
-        client.ExecuteAsync(req);
+        await client.ExecuteAsync(req);
     }
 
     [Fact]
@@ -64,15 +65,14 @@ public class RestClientTests {
     [Fact]
     public void UseJson_leaves_only_json_serializer() {
         // arrange
-        var baseUrl  = new Uri(BaseUrl);
+        var baseUrl = new Uri(BaseUrl);
 
         // act
-        var client   = new RestClient(baseUrl);
-        client.UseJson();
+        var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseJson());
 
         // assert
-        Assert.Single(client.Serializers);
-        Assert.True(client.Serializers.ContainsKey(DataFormat.Json));
+        client.Serializers.Serializers.Should().HaveCount(1);
+        client.Serializers.GetSerializer(DataFormat.Json).Should().NotBeNull();
     }
 
     [Fact]
@@ -81,12 +81,11 @@ public class RestClientTests {
         var baseUrl = new Uri(BaseUrl);
 
         // act
-        var client = new RestClient(baseUrl);
-        client.UseXml();
+        var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseXml());
 
         // assert
-        Assert.Single(client.Serializers);
-        Assert.True(client.Serializers.ContainsKey(DataFormat.Xml));
+        client.Serializers.Serializers.Should().HaveCount(1);
+        client.Serializers.GetSerializer(DataFormat.Xml).Should().NotBeNull();
     }
 
     [Fact]
@@ -95,12 +94,27 @@ public class RestClientTests {
         var baseUrl = new Uri(BaseUrl);
 
         // act
-        var client = new RestClient(baseUrl);
-        client.UseOnlySerializer(() => new SystemTextJsonSerializer());
+        var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseOnlySerializer(() => new SystemTextJsonSerializer()));
 
         // assert
-        Assert.Single(client.Serializers);
-        Assert.True(client.Serializers.ContainsKey(DataFormat.Json));
+        client.Serializers.Serializers.Should().HaveCount(1);
+        client.Serializers.GetSerializer(DataFormat.Json).Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Should_reuse_httpClient_instance() {
+        var client1 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
+        var client2 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
+
+        client1.HttpClient.Should().BeSameAs(client2.HttpClient);
+    }
+
+    [Fact]
+    public void Should_use_new_httpClient_instance() {
+        var client1 = new RestClient(new Uri("https://fake.api"));
+        var client2 = new RestClient(new Uri("https://fake.api"));
+
+        client1.HttpClient.Should().NotBeSameAs(client2.HttpClient);
     }
 
     [Fact]

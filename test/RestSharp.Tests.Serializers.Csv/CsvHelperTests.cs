@@ -35,7 +35,7 @@ public class CsvHelperTests {
             }
         );
 
-        var client = new RestClient(server.Url).UseCsvHelper();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseCsvHelper());
 
         var actual = await client.GetAsync<TestObject>(new RestRequest());
 
@@ -72,7 +72,7 @@ public class CsvHelperTests {
             }
         );
 
-        var client = new RestClient(server.Url).UseCsvHelper();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseCsvHelper());
 
         var actual = await client.GetAsync<List<TestObject>>(new RestRequest());
 
@@ -90,7 +90,7 @@ public class CsvHelperTests {
             }
         );
 
-        var client = new RestClient(server.Url).UseCsvHelper();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseCsvHelper());
 
         var response = await client.ExecuteAsync<TestObject>(new RestRequest());
 
@@ -99,7 +99,7 @@ public class CsvHelperTests {
     }
 
     [Fact]
-    public async Task DeserilizationSucceeds_IsSuccessfull_Should_BeTrue() {
+    public async Task DeserilizationSucceeds_IsSuccessful_Should_BeTrue() {
         var item = Fixture.Create<TestObject>();
 
         using var server = HttpServerFixture.StartServer(
@@ -113,7 +113,7 @@ public class CsvHelperTests {
             }
         );
 
-        var client = new RestClient(server.Url).UseSystemTextJson();
+        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseSystemTextJson());
 
         var response = await client.ExecuteAsync<TestObject>(new RestRequest());
 

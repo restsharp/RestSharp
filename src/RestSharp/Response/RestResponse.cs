@@ -33,7 +33,7 @@ public class RestResponse<T> : RestResponse {
     public T? Data { get; set; }
 
     public static RestResponse<T> FromResponse(RestResponse response)
-        => new() {
+        => new(response.Request) {
             Content             = response.Content,
             RawBytes            = response.RawBytes,
             ContentEncoding     = response.ContentEncoding,
@@ -50,15 +50,16 @@ public class RestResponse<T> : RestResponse {
             Server              = response.Server,
             StatusCode          = response.StatusCode,
             StatusDescription   = response.StatusDescription,
-            Request             = response.Request,
             RootElement         = response.RootElement
         };
+
+    public RestResponse(RestRequest request) : base(request) { }
 }
 
 /// <summary>
 /// Container for data sent back from API
 /// </summary>
-[DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
 public class RestResponse : RestResponseBase {
     internal static async Task<RestResponse> FromHttpResponse(
         HttpResponseMessage     httpResponse,
@@ -68,11 +69,11 @@ public class RestResponse : RestResponseBase {
         CalculateResponseStatus calculateResponseStatus,
         CancellationToken       cancellationToken
     ) {
-        return request.AdvancedResponseWriter?.Invoke(httpResponse) ?? await GetDefaultResponse().ConfigureAwait(false);
+        return request.AdvancedResponseWriter?.Invoke(httpResponse, request) ?? await GetDefaultResponse().ConfigureAwait(false);
 
         async Task<RestResponse> GetDefaultResponse() {
             var readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
             using var stream = await readTask.ConfigureAwait(false);
 #else
             await using var stream = await readTask.ConfigureAwait(false);
@@ -81,7 +82,7 @@ public class RestResponse : RestResponseBase {
             var bytes   = request.ResponseWriter != null || stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
             var content = bytes  == null ? null : httpResponse.GetResponseString(bytes, encoding);
 
-            return new RestResponse {
+            return new RestResponse(request) {
                 Content             = content,
                 RawBytes            = bytes,
                 ContentEncoding     = httpResponse.Content.Headers.ContentEncoding,
@@ -95,7 +96,6 @@ public class RestResponse : RestResponseBase {
                 StatusCode          = httpResponse.StatusCode,
                 StatusDescription   = httpResponse.ReasonPhrase,
                 IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
-                Request             = request,
                 Headers             = httpResponse.Headers.GetHeaderParameters(),
                 ContentHeaders      = httpResponse.Content.Headers.GetHeaderParameters(),
                 Cookies             = cookieCollection,
@@ -105,7 +105,7 @@ public class RestResponse : RestResponseBase {
             Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
 
             async Task<Stream?> ReadAndConvertResponse() {
-#if NETSTANDARD
+#if NETSTANDARD || NETFRAMEWORK
                 using var original = await ReadResponse().ConfigureAwait(false);
 #else
                 await using var original = await ReadResponse().ConfigureAwait(false);
@@ -114,6 +114,10 @@ public class RestResponse : RestResponseBase {
             }
         }
     }
+
+    public RestResponse(RestRequest request) : base(request) { }
+
+    public RestResponse() : base(new RestRequest()) { }
 }
 
 public delegate ResponseStatus CalculateResponseStatus(HttpResponseMessage httpResponse);

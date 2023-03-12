@@ -1,30 +1,30 @@
 //  Copyright (c) .NET Foundation and Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+
+using System.Collections.Concurrent;
 
 namespace RestSharp;
 
-[PublicAPI]
-public class NameValuePair {
-    public static NameValuePair Empty = new(null, null);
+static class SimpleClientFactory {
+    static readonly ConcurrentDictionary<string, HttpClient> CachedClients = new();
 
-    public NameValuePair(string? name, string? value) {
-        Name  = name;
-        Value = value;
+    public static HttpClient GetClient(Uri baseUrl, Func<HttpClient> getClient) {
+        var key = baseUrl.ToString();
+        if (CachedClients.TryGetValue(key, out var client)) return client;
+        client = getClient();
+        CachedClients.TryAdd(key, client);
+        return client;
     }
-
-    public string? Name  { get; }
-    public string? Value { get; }
-
-    public bool IsEmpty => Name == null;
 }

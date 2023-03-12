@@ -263,7 +263,7 @@ public class OAuth1Authenticator : IAuthenticator {
             if (!Realm.IsEmpty())
                 oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm!)}\"");
 
-            return "OAuth " + string.Join(",", oathParameters);
+            return $"OAuth {string.Join(",", oathParameters)}";
         }
     }
 }

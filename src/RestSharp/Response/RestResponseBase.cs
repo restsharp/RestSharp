@@ -25,7 +25,11 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Default constructor
     /// </summary>
-    protected RestResponseBase() => ResponseStatus = ResponseStatus.None;
+    protected RestResponseBase(RestRequest request) {
+        ResponseStatus = ResponseStatus.None;
+        Request        = request;
+        Request.IncreaseNumAttempts();
+    }
 
     /// <summary>
     /// The RestRequest that was made to get this RestResponse
@@ -33,7 +37,7 @@ public abstract class RestResponseBase {
     /// <remarks>
     /// Mainly for debugging if ResponseStatus is not OK
     /// </remarks>
-    public RestRequest? Request { get; set; }
+    public RestRequest Request { get; set; }
 
     /// <summary>
     /// MIME content type of response
@@ -125,7 +129,7 @@ public abstract class RestResponseBase {
     /// HTTP protocol version of the request
     /// </summary>
     public Version? Version { get; set; }
-    
+
     /// <summary>
     /// Root element of the serialized response content, only works if deserializer supports it 
     /// </summary>
@@ -146,4 +150,9 @@ public abstract class RestResponseBase {
             ResponseStatus.Completed => null,
             _                        => throw ErrorException ?? new ArgumentOutOfRangeException(nameof(ResponseStatus))
         };
+
+    internal void AddException(Exception exception) {
+        ErrorException = exception;
+        ErrorMessage   = exception.Message;
+    }
 }

@@ -3,12 +3,12 @@
     <PropertyGroup>
         <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
-        <TargetFrameworks>net472;net6.0</TargetFrameworks>
+        <TargetFrameworks>net472;net6.0;net7.0</TargetFrameworks>
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup Condition="$(IsTestProject) == 'true'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="All"/>
         <PackageReference Include="coverlet.collector" Version="3.2.0"/>
     </ItemGroup>

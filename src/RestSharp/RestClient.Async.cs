@@ -18,35 +18,67 @@ using RestSharp.Extensions;
 namespace RestSharp;
 
 public partial class RestClient {
-    /// <summary>
-    /// Executes the request asynchronously, authenticating if needed
-    /// </summary>
-    /// <param name="request">Request to be executed</param>
-    /// <param name="cancellationToken">Cancellation token</param>
+    /// <inheritdoc />
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        var internalResponse = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
+        var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var response = new RestResponse();
-
-        response = internalResponse.Exception == null
+        var response = internalResponse.Exception == null
             ? await RestResponse.FromHttpResponse(
                     internalResponse.ResponseMessage!,
                     request,
                     Options.Encoding,
-                    request.CookieContainer!.GetCookies(internalResponse.Url),
-                    CalculateResponseStatus,
+                    internalResponse.CookieContainer?.GetCookies(internalResponse.Url),
+                    Options.CalculateResponseStatus,
                     cancellationToken
                 )
                 .ConfigureAwait(false)
-            : AddError(response, internalResponse.Exception, internalResponse.TimeoutToken);
-
-        response.Request = request;
-        response.Request.IncreaseNumAttempts();
+            : GetErrorResponse(request, internalResponse.Exception, internalResponse.TimeoutToken);
 
         return Options.ThrowOnAnyError ? response.ThrowIfError() : response;
     }
 
-    async Task<InternalResponse> ExecuteInternal(RestRequest request, CancellationToken cancellationToken) {
+    /// <inheritdoc />
+    [PublicAPI]
+    public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
+        // Make sure we only read the headers so we can stream the content body efficiently
+        request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
+        var response = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+
+        var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
+
+        if (exception != null) {
+            return Options.ThrowOnAnyError ? throw exception : null;
+        }
+
+        if (response.ResponseMessage == null) return null;
+
+        if (request.ResponseWriter != null) {
+#if NETSTANDARD || NETFRAMEWORK
+            using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+#else
+            await using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+#endif
+            return request.ResponseWriter(stream!);
+        }
+
+        return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+    }
+
+    static RestResponse GetErrorResponse(RestRequest request, Exception exception, CancellationToken timeoutToken) {
+        var response = new RestResponse(request) {
+            ResponseStatus = exception is OperationCanceledException
+                ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
+                : ResponseStatus.Error,
+            ErrorMessage   = exception.Message,
+            ErrorException = exception
+        };
+
+        return response;
+
+        bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
+    }
+
+    async Task<HttpResponse> ExecuteRequestAsync(RestRequest request, CancellationToken cancellationToken) {
         Ensure.NotNull(request, nameof(request));
 
         // Make sure we are not disposed of when someone tries to call us!
@@ -56,7 +88,8 @@ public partial class RestClient {
 
         using var requestContent = new RequestContent(this, request);
 
-        if (Authenticator != null) await Authenticator.Authenticate(this, request).ConfigureAwait(false);
+        var authenticator = request.Authenticator ?? Options.Authenticator;
+        if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = BuildUri(request);
@@ -72,6 +105,7 @@ public partial class RestClient {
         try {
             // Make sure we have a cookie container if not provided in the request
             var cookieContainer = request.CookieContainer ??= new CookieContainer();
+
             var headers = new RequestHeaders()
                 .AddHeaders(request.Parameters)
                 .AddHeaders(DefaultParameters)
@@ -84,67 +118,33 @@ public partial class RestClient {
             var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
 
             // Parse all the cookies from the response and update the cookie jar with cookies
-            if (responseMessage.Headers.TryGetValues("Set-Cookie", out var cookiesHeader)) {
+            if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
                 foreach (var header in cookiesHeader) {
-                    cookieContainer.SetCookies(url, header);
+                    try {
+                        cookieContainer.SetCookies(url, header);
+                    }
+                    catch (CookieException) {
+                        // Do not fail request if we cannot parse a cookie
+                    }
                 }
             }
 
             if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 
-            return new InternalResponse(responseMessage, url, null, timeoutCts.Token);
+            return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         }
         catch (Exception ex) {
-            return new InternalResponse(null, url, ex, timeoutCts.Token);
+            return new HttpResponse(null, url, null, ex, timeoutCts.Token);
         }
     }
 
-    record InternalResponse(HttpResponseMessage? ResponseMessage, Uri Url, Exception? Exception, CancellationToken TimeoutToken);
-
-    /// <summary>
-    /// A specialized method to download files as streams.
-    /// </summary>
-    /// <param name="request">Pre-configured request instance.</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The downloaded stream.</returns>
-    [PublicAPI]
-    public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        // Make sure we only read the headers so we can stream the content body efficiently
-        request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
-        var response = await ExecuteInternal(request, cancellationToken).ConfigureAwait(false);
-
-        var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
-
-        if (exception != null) {
-            return Options.ThrowOnAnyError ? throw exception : null;
-        }
-
-        if (response.ResponseMessage == null) return null;
-
-        if (request.ResponseWriter != null) {
-#if NETSTANDARD
-            using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-#else
-            await using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-#endif
-            return request.ResponseWriter(stream!);
-        }
-
-        return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-    }
-
-    static RestResponse AddError(RestResponse response, Exception exception, CancellationToken timeoutToken) {
-        response.ResponseStatus = exception is OperationCanceledException
-            ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
-            : ResponseStatus.Error;
-
-        response.ErrorMessage   = exception.Message;
-        response.ErrorException = exception;
-
-        return response;
-
-        bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
-    }
+    record HttpResponse(
+        HttpResponseMessage? ResponseMessage,
+        Uri                  Url,
+        CookieContainer?     CookieContainer,
+        Exception?           Exception,
+        CancellationToken    TimeoutToken
+    );
 
     static HttpMethod AsHttpMethod(Method method)
         => method switch {
@@ -154,30 +154,14 @@ public partial class RestClient {
             Method.Delete  => HttpMethod.Delete,
             Method.Head    => HttpMethod.Head,
             Method.Options => HttpMethod.Options,
-#if NETSTANDARD
-            Method.Patch => new HttpMethod("PATCH"),
-#else
+#if NET
             Method.Patch => HttpMethod.Patch,
+#else
+            Method.Patch => new HttpMethod("PATCH"),
 #endif
             Method.Merge  => new HttpMethod("MERGE"),
             Method.Copy   => new HttpMethod("COPY"),
             Method.Search => new HttpMethod("SEARCH"),
-            _             => throw new ArgumentOutOfRangeException()
+            _             => throw new ArgumentOutOfRangeException(nameof(method))
         };
-}
-
-public static class ResponseThrowExtension {
-    public static RestResponse ThrowIfError(this RestResponse response) {
-        var exception = response.GetException();
-        if (exception != null) throw exception;
-
-        return response;
-    }
-
-    public static RestResponse<T> ThrowIfError<T>(this RestResponse<T> response) {
-        var exception = response.GetException();
-        if (exception != null) throw exception;
-
-        return response;
-    }
 }

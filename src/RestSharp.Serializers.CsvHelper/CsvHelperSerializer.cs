@@ -16,11 +16,11 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
 
     public string[] AcceptedContentTypes => new[] { TextCsvContentType, "application/x-download" };
 
-    public SupportsContentType SupportsContentType => x => Array.IndexOf(AcceptedContentTypes, x) != -1 || x.Contains("csv");
+    public SupportsContentType SupportsContentType => x => Array.IndexOf(AcceptedContentTypes, x) != -1 || x.Value.Contains("csv");
 
     public DataFormat DataFormat => DataFormat.None;
 
-    public string ContentType { get; set; } = TextCsvContentType;
+    public ContentType ContentType { get; set; } = TextCsvContentType;
 
     public CsvHelperSerializer() => _configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
 

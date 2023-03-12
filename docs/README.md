@@ -5,7 +5,7 @@ heroText: RestSharp
 tagline: Probably, the most popular REST API client library for .NET
 actions:
 - text: Get Started →
-  link: /v107/
+  link: /intro.html
 features:
 - title: Serialization
   details: JSON, XML and custom serialization and deserialization
@@ -24,7 +24,7 @@ footer: Apache 2.0 Licensed | Copyright (c) .NET Foundation and Contributors
 
 RestSharp is probably the most popular HTTP client library for .NET. Featuring automatic serialization and deserialization, request and response type detection, variety of authentications and other useful features, it is being used by hundreds of thousands of projects.
 
-RestSharp passed over 165 million downloads on NuGet, with average daily download count close to 42,000. It's being used by many popular OSS projects, including Roslyn and Swagger.
+RestSharp passed over 190 million downloads on NuGet, with average daily download count over 43,000. It's being used by many popular OSS projects, including Roslyn and Swagger.
 
 Supported by [AWS](https://aws.amazon.com/developer/language/net/solutions/).
 <div style="text-align: center;"><a href="https://aws.amazon.com"><img src="/aws_logo.png" alt="AWS logo"></a></div>

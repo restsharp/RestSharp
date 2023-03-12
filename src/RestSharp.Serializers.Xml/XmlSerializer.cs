@@ -27,13 +27,13 @@ public class XmlSerializer : IXmlSerializer, IWithRootElement, IWithDateFormat {
     /// <summary>
     /// Default constructor, does not specify namespace
     /// </summary>
-    public XmlSerializer() => ContentType = Serializers.ContentType.Xml;
+    public XmlSerializer() { }
 
     /// <summary>
     /// Specify the namespaced to be used when serializing
     /// </summary>
     /// <param name="namespace">XML namespace</param>
-    public XmlSerializer(string @namespace) : this() => Namespace = @namespace;
+    public XmlSerializer(string @namespace) => Namespace = @namespace;
 
     /// <summary>
     /// Serialize the object as XML
@@ -103,7 +103,7 @@ public class XmlSerializer : IXmlSerializer, IWithRootElement, IWithDateFormat {
     /// <summary>
     /// Content type for serialized content
     /// </summary>
-    public string ContentType { get; set; }
+    public ContentType ContentType { get; set; } = ContentType.Xml;
 
     void Map(XContainer root, object obj) {
         var objType = obj.GetType();

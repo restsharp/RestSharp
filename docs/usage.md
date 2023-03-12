@@ -243,9 +243,14 @@ When the request executes, RestSharp will try to match any `{placeholder}` with 
 
 ### Request Body
 
-If this parameter is set, its value will be sent as the body of the request.
+RestSharp supports multiple ways to add a request body:
+- `AddJsonBody` for JSON payloads
+- `AddXmlBody` for XML payloads
+- `AddStringBody` for pre-serialized payloads
 
 We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
+
+When you make a `POST`, `PUT` or `PATCH` request and added `GetOrPost` [parameters](#get-or-post), RestSharp will send them as a URL-encoded form request body by default. When a request also has files, it will send a `multipart/form-data` request. You can also instruct RestSharp to send the body as `multipart/form-data` by setting the `AlwaysMultipartFormData` property to `true`. 
 
 #### AddStringBody
 
@@ -456,6 +461,28 @@ There are two functions that allow you to download binary data from the remote A
 First, there's `DownloadDataAsync`, which returns `Task<byte[]`. It will read the binary response to the end, and return the whole binary content as a byte array. It works well for downloading smaller files.
 
 For larger responses, you can use `DownloadStreamAsync` that returns `Task<Stream>`. This function allows you to open a stream reader and asynchronously stream large responses to memory or disk.
+
+
+## Reusing HttpClient
+
+RestSharp uses `HttpClient` internally to make HTTP requests. It's possible to reuse the same `HttpClient` instance for multiple `RestClient` instances. This is useful when you want to share the same connection pool between multiple `RestClient` instances.
+
+One way of doing it is to use `RestClient` constructors that accept an instance of `HttpClient` or `HttpMessageHandler` as an argument. Note that in that case not all the options provided via `RestClientOptions` will be used. Here is the list of options that will work:
+
+- `BaseAddress` will be used to set the base address of the `HttpClient` instance if base address is not set there already.
+- `MaxTimeout`
+- `UserAgent` will be set if the `User-Agent` header is not set on the `HttpClient` instance already.
+- `Expect100Continue`
+
+Another option is to use a simple HTTP client factory. It is a static factory, which holds previously instantiated `HttpClient` instances. It can be used to create `RestClient` instances that share the same `HttpClient` instance. The cache key is the `BaseUrl` provided in the options. When you opt-in to use the factory and don't set `BaseUrl`, the `RestClient` constructor will crash.
+
+```csharp
+var client = new RestClient(new Uri("https://example.org/api"), useClientFactory: true);
+```
+
+::: warning
+Note that the `RestClient` constructor will not reconfigure the `HttpClient` instance if it's already in the cache. Therefore, you should not try using the factory when providing different options for the same base URL.
+:::
 
 ## Blazor support
 

@@ -47,20 +47,21 @@ static class UriExtensions {
         if (parameters.Count == 0) return mergedUri;
 
         var uri       = mergedUri.AbsoluteUri;
-        var separator = uri.Contains("?") ? "&" : "?";
+        var separator = uri.Contains('?') ? "&" : "?";
 
         return new Uri(string.Concat(uri, separator, EncodeParameters()));
 
         string EncodeParameters() => string.Join("&", parameters.Select(EncodeParameter).ToArray());
 
-        string EncodeParameter(Parameter parameter) {
-            return
-                !parameter.Encode
-                    ? $"{parameter.Name}={StringOrEmpty(parameter.Value)}"
-                    : $"{encodeQuery(parameter.Name!, encoding)}={encodeQuery(StringOrEmpty(parameter.Value), encoding)}";
-
-            static string StringOrEmpty(object? value) => value == null ? "" : value.ToString()!;
+        string GetString(string name, string? value, Func<string, string>? encode) {
+            var val = encode != null && value != null ? encode(value) : value;
+            return val == null ? name : $"{name}={val}";
         }
+
+        string EncodeParameter(Parameter parameter)
+            => !parameter.Encode
+                ? GetString(parameter.Name!, parameter.Value?.ToString(), null)
+                : GetString(encodeQuery(parameter.Name!, encoding), parameter.Value?.ToString(), x => encodeQuery(x, encoding));
     }
 
     public static UrlSegmentParamsValues GetUrlSegmentParamsValues(

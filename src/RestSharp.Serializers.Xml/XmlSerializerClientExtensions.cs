@@ -16,11 +16,11 @@ namespace RestSharp.Serializers.Xml;
 
 [PublicAPI]
 public static class XmlSerializerClientExtensions {
-    public static RestClient UseXmlSerializer(
-        this RestClient restClient,
-        string?         xmlNamespace             = null,
-        string?         rootElement              = null,
-        bool            useAttributeDeserializer = false
+    public static SerializerConfig UseXmlSerializer(
+        this SerializerConfig config,
+        string?               xmlNamespace             = null,
+        string?               rootElement              = null,
+        bool                  useAttributeDeserializer = false
     ) {
         var xmlSerializer = new XmlSerializer {
             Namespace   = xmlNamespace,
@@ -33,6 +33,6 @@ public static class XmlSerializerClientExtensions {
             .WithXmlSerializer(xmlSerializer)
             .WithXmlDeserializer(xmlDeserializer);
 
-        return restClient.UseSerializer(() => serializer);
+        return config.UseSerializer(() => serializer);
     }
 }

@@ -14,18 +14,18 @@
 
 using System.Text;
 
-namespace RestSharp.Serializers.Xml; 
+namespace RestSharp.Serializers.Xml;
 
 [PublicAPI]
 public static class DotNetXmlSerializerClientExtensions {
-    public static RestClient UseDotNetXmlSerializer(
-        this RestClient restClient,
-        string?          xmlNamespace = null,
-        Encoding?        encoding     = null
+    public static SerializerConfig UseDotNetXmlSerializer(
+        this SerializerConfig serializerConfig,
+        string?               xmlNamespace = null,
+        Encoding?             encoding     = null
     ) {
         var xmlSerializer                                 = new DotNetXmlSerializer();
         if (xmlNamespace != null) xmlSerializer.Namespace = xmlNamespace;
-        if (encoding != null) xmlSerializer.Encoding      = encoding;
+        if (encoding     != null) xmlSerializer.Encoding  = encoding;
 
         var xmlDeserializer                            = new DotNetXmlDeserializer();
         if (encoding != null) xmlDeserializer.Encoding = encoding;
@@ -34,6 +34,6 @@ public static class DotNetXmlSerializerClientExtensions {
             .WithXmlSerializer(xmlSerializer)
             .WithXmlDeserializer(xmlDeserializer);
 
-        return restClient.UseSerializer(() => serializer);
+        return serializerConfig.UseSerializer(() => serializer);
     }
 }

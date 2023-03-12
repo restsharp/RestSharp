@@ -17,7 +17,7 @@ public sealed class DownloadFileTests : IDisposable {
         var pathToFile = Path.Combine(
             _path,
             Path.Combine(
-                request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
+                request.Url!.Segments.Select(s => s.Replace("/", "")).ToArray()
             )
         );
 
@@ -35,11 +35,11 @@ public sealed class DownloadFileTests : IDisposable {
         var tag = string.Empty;
 
         var rr = new RestRequest("Assets/Koala.jpg") {
-            AdvancedResponseWriter = response => {
+            AdvancedResponseWriter = (response, request) => {
                 var buf = new byte[16];
                 response.Content.ReadAsStream().Read(buf, 0, buf.Length);
                 tag = Encoding.ASCII.GetString(buf, 6, 4);
-                return new RestResponse();
+                return new RestResponse(request);
             }
         };
 

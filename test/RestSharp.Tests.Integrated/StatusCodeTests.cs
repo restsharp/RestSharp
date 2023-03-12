@@ -4,13 +4,15 @@ using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
+// ReSharper disable UnusedMember.Local
+// ReSharper disable InconsistentNaming
+
 namespace RestSharp.Tests.Integrated;
 
 public class StatusCodeTests : IDisposable {
     public StatusCodeTests() {
         _server = SimpleServer.Create(UrlToStatusCodeHandler);
-        _client = new RestClient(_server.Url);
-        _client.UseXmlSerializer();
+        _client = new RestClient(_server.Url, configureSerialization: cfg => cfg.UseXmlSerializer());
     }
 
     public void Dispose() => _server.Dispose();
@@ -18,7 +20,7 @@ public class StatusCodeTests : IDisposable {
     readonly SimpleServer _server;
     readonly RestClient   _client;
 
-    static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url.Segments.Last());
+    static void UrlToStatusCodeHandler(HttpListenerContext obj) => obj.Response.StatusCode = int.Parse(obj.Request.Url!.Segments.Last());
 
     [Fact]
     public async Task ContentType_Additional_Information() {
@@ -63,7 +65,7 @@ public class StatusCodeTests : IDisposable {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
         var request = new RestRequest("error") {
-            RootElement             = "Success",
+            RootElement = "Success",
             OnBeforeDeserialization = resp => {
                 if (resp.StatusCode == HttpStatusCode.BadRequest) resp.RootElement = "Error";
             }
