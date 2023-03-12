@@ -79,9 +79,12 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=advisor/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Advisors/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=formattable/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=instagram/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Migrator/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Mongo/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Populator/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=populators/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=repcodes/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Serilog/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=upsert/@EntryIndexedValue">True</s:Boolean>
