@@ -61,6 +61,8 @@ public sealed class HttpServer {
             "/post/form",
             (HttpContext context) => new TestResponse { Message = $"Works! Length: {context.Request.Form["big_string"].ToString().Length}" }
         );
+
+        _app.MapPost("/post/data", FormRequestHandler.HandleForm);
     }
 
     public Uri Url => new(Address);

@@ -1,8 +1,11 @@
 ﻿using RestSharp.Serializers;
+// ReSharper disable InconsistentNaming
 
 namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
 
+#pragma warning disable CS8981
 public class status {
+#pragma warning restore CS8981
     public bool truncated { get; set; }
 
     public string created_at { get; set; }
