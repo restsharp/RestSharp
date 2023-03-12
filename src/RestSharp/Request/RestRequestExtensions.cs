@@ -43,6 +43,11 @@ public static class RestRequestExtensions {
     public static RestRequest AddParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
         => request.AddParameter(name, value.ToString(), encode);
 
+    static RestRequest AddParameters(this RestRequest request, IEnumerable<Parameter> parameters) {
+        request.Parameters.AddParameters(parameters);
+        return request;
+    }
+
     /// <summary>
     /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
     /// </summary>
@@ -299,7 +304,7 @@ public static class RestRequestExtensions {
         => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType, options));
 
     /// <summary>
-    /// Adds a file attachment to the request, where the file content will be retrieved from a given stream 
+    /// Adds a file attachment to the request, where the file content will be retrieved from a given stream
     /// </summary>
     /// <param name="request">Request instance</param>
     /// <param name="name">Parameter name</param>
@@ -403,7 +408,7 @@ public static class RestRequestExtensions {
     /// </summary>
     /// <param name="request">Request instance</param>
     /// <param name="obj">Object to add as form data</param>
-    /// <param name="includedProperties">Properties to include, or nothing to include everything</param>
+    /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
     /// <returns></returns>
     public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
         var props = obj.GetProperties(includedProperties);
@@ -414,6 +419,37 @@ public static class RestRequestExtensions {
 
         return request;
     }
+
+    /// <summary>
+    /// Gets object properties and adds each property as a form data parameter
+    /// </summary>
+    /// <remarks>
+    /// This method gets public instance properties from the provided <typeparamref name="T"/> type
+    /// rather than from <paramref name="obj"/> itself, which allows for caching of properties and
+    /// other optimizations. If you don't know the type at runtime, or wish to use properties not
+    /// available from the provided type parameter, consider using <see cref="AddObject{T}(RestRequest, T, string[])"/>
+    /// </remarks>
+    /// <param name="request">Request instance</param>
+    /// <param name="obj">Object to add as form data</param>
+    /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
+    /// <returns></returns>
+    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class =>
+        request.AddParameters(PropertyCache<T>.GetParameters(obj, includedProperties));
+
+    /// <summary>
+    /// Gets object properties and adds each property as a form data parameter
+    /// </summary>
+    /// <remarks>
+    /// This method gets public instance properties from the provided <typeparamref name="T"/> type
+    /// rather than from <paramref name="obj"/> itself, which allows for caching of properties and
+    /// other optimizations. If you don't know the type at runtime, or wish to use properties not
+    /// available from the provided type parameter, consider using <see cref="AddObject{T}(RestRequest, T, string[])"/>
+    /// </remarks>
+    /// <param name="request">Request instance</param>
+    /// <param name="obj">Object to add as form data</param>
+    /// <returns></returns>
+    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj) where T : class =>
+        request.AddParameters(PropertyCache<T>.GetParameters(obj));
 
     /// <summary>
     /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.

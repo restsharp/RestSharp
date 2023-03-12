@@ -29,6 +29,12 @@
         <Compile Update="RestClient.Async.cs">
             <DependentUpon>RestClient.cs</DependentUpon>
         </Compile>
+        <Compile Update="Request\PropertyCache.Populator.cs">
+          <DependentUpon>PropertyCache.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Request\PropertyCache.Populator.RequestProperty.cs">
+          <DependentUpon>PropertyCache.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
