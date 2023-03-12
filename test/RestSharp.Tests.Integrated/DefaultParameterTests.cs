@@ -1,12 +1,11 @@
 using System.Net;
-using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Integrated.Server;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
 [Collection(nameof(TestServerCollection))]
-public class DefaultParameterTests : IDisposable {
+public sealed class DefaultParameterTests : IDisposable {
     readonly TestServerFixture _fixture;
     readonly ITestOutputHelper _testOutputHelper;
     readonly SimpleServer      _server;
@@ -26,7 +25,7 @@ public class DefaultParameterTests : IDisposable {
 
         await client.GetAsync(request);
 
-        var query = RequestHandler.Url.Query;
+        var query = RequestHandler.Url!.Query;
         query.Should().Contain("foo=bar");
         query.Should().Contain("foo1=bar1");
     }
@@ -38,7 +37,7 @@ public class DefaultParameterTests : IDisposable {
 
         await client.GetAsync(request);
 
-        RequestHandler.Url.Segments.Should().BeEquivalentTo("/", "bar/", "bar1");
+        RequestHandler.Url!.Segments.Should().BeEquivalentTo("/", "bar/", "bar1");
     }
 
     [Fact]
@@ -50,7 +49,7 @@ public class DefaultParameterTests : IDisposable {
     }
 
     static class RequestHandler {
-        public static Uri Url { get; private set; }
+        public static Uri? Url { get; private set; }
 
         public static void Handle(HttpListenerContext context) {
             Url = context.Request.Url;

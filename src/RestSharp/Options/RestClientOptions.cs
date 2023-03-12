@@ -36,9 +36,14 @@ public class RestClientOptions {
 
     public RestClientOptions(string baseUrl) : this(new Uri(Ensure.NotEmptyString(baseUrl, nameof(baseUrl)))) { }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Base URL for all requests made with this client instance
+    /// </summary>
     public Uri? BaseUrl { get; set; }
 
+    /// <summary>
+    /// Custom configuration for the underlying <seealso cref="HttpMessageHandler"/>
+    /// </summary>
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
 
     /// <summary>
@@ -49,15 +54,10 @@ public class RestClientOptions {
             ? ResponseStatus.Completed
             : ResponseStatus.Error;
 
-    volatile IAuthenticator? _authenticator;
-
     /// <summary>
     /// Authenticator that will be used to populate request with necessary authentication data
     /// </summary>
-    public IAuthenticator? Authenticator {
-        get => _authenticator;
-        set => _authenticator = value;
-    }
+    public IAuthenticator? Authenticator { get; set; }
 
     /// <summary>
     /// Passed to <see cref="HttpMessageHandler"/> <code>Credentials</code> property
@@ -76,12 +76,18 @@ public class RestClientOptions {
     /// </summary>
     public bool DisableCharset { get; set; }
 
+    /// <summary>
+    /// Set the decompression method to use when making requests
+    /// </summary>
 #if NET
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.All;
 #else
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;
 #endif
 
+    /// <summary>
+    /// Set the maximum number of redirects to follow
+    /// </summary>
     public int? MaxRedirects { get; set; }
 
     /// <summary>
@@ -89,14 +95,33 @@ public class RestClientOptions {
     /// </summary>
     public X509CertificateCollection? ClientCertificates { get; set; }
 
-    public IWebProxy?               Proxy             { get; set; }
-    public CacheControlHeaderValue? CachePolicy       { get; set; }
-    public bool                     FollowRedirects   { get; set; } = true;
-    public bool?                    Expect100Continue { get; set; } = null;
-    public string?                  UserAgent         { get; set; } = DefaultUserAgent;
+    /// <summary>
+    /// Set the proxy to use when making requests. Default is null, which will use the default system proxy if one is set.
+    /// </summary>
+    public IWebProxy? Proxy { get; set; }
 
     /// <summary>
-    /// Passed to <see cref="HttpMessageHandler"/> <code>PreAuthenticate</code> property
+    /// Cache policy to be used for requests using <seealso cref="CacheControlHeaderValue"/>
+    /// </summary>
+    public CacheControlHeaderValue? CachePolicy { get; set; }
+
+    /// <summary>
+    /// Instruct the client to follow redirects. Default is true.
+    /// </summary>
+    public bool FollowRedirects { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value that indicates if the <see langword="Expect" /> header for an HTTP request contains Continue.
+    /// </summary>
+    public bool? Expect100Continue { get; set; } = null;
+
+    /// <summary>
+    /// Value of the User-Agent header to be sent with requests. Default is "RestSharp/{version}"
+    /// </summary>
+    public string? UserAgent { get; set; } = DefaultUserAgent;
+
+    /// <summary>
+    /// Passed to <see cref="HttpMessageHandler"/> <see langword="PreAuthenticate"/> property
     /// </summary>
     public bool PreAuthenticate { get; set; }
 
@@ -106,6 +131,9 @@ public class RestClientOptions {
     /// </summary>
     public RemoteCertificateValidationCallback? RemoteCertificateValidationCallback { get; set; }
 
+    /// <summary>
+    /// Sets the value of the Host header to be sent with requests.
+    /// </summary>
     public string? BaseHost { get; set; }
 
     /// <summary>
@@ -114,23 +142,40 @@ public class RestClientOptions {
     /// </summary>
     public int MaxTimeout { get; set; }
 
+    /// <summary>
+    /// Default encoding to use when no encoding is specified in the content type header.
+    /// </summary>
     public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-    /// <inheritdoc />>
+    /// <summary>
+    /// Set to true to throw an exception when a deserialization error occurs. Default is false.
+    /// </summary>
     public bool ThrowOnDeserializationError { get; set; }
 
-    /// <inheritdoc />>
+    /// <summary>
+    /// When set to true, the response status will be set to <see cref="ResponseStatus.Error"/>
+    /// when a deserialization error occurs. Default is true.
+    /// </summary>
     public bool FailOnDeserializationError { get; set; } = true;
 
-    /// <inheritdoc />>
+    /// <summary>
+    /// Set to true to throw an exception when <seealso cref="HttpClient"/> throws an exception when making a request.
+    /// Default is false.
+    /// </summary>
     public bool ThrowOnAnyError { get; set; }
 
-    /// <inheritdoc />>
+    /// <summary>
+    /// Set to true to allow multiple default parameters with the same name. Default is false.
+    /// </summary>
     public bool AllowMultipleDefaultParametersWithSameName { get; set; }
 
-    /// <inheritdoc />>
+    /// <summary>
+    /// Custom function to encode a string for use in a URL.
+    /// </summary>
     public Func<string, string> Encode { get; set; } = s => s.UrlEncode();
 
-    /// <inheritdoc />>
+    /// <summary>
+    /// Custom function to encode a string for use in a URL query.
+    /// </summary>
     public Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
 }

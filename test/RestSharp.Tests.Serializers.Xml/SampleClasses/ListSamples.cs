@@ -1,4 +1,6 @@
-﻿namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
+﻿// ReSharper disable InconsistentNaming
+#pragma warning disable CS8981
+namespace RestSharp.Tests.Serializers.Xml.SampleClasses;
 
 public class SimpleTypesListSample {
     public List<string> Names { get; set; }

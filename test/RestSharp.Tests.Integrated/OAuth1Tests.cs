@@ -2,6 +2,7 @@
 using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Tests.Shared.Extensions;
+#pragma warning disable CS8618
 
 namespace RestSharp.Tests.Integrated;
 

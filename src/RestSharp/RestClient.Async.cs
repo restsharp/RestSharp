@@ -27,7 +27,7 @@ public partial class RestClient {
                     internalResponse.ResponseMessage!,
                     request,
                     Options.Encoding,
-                    request.CookieContainer?.GetCookies(internalResponse.Url),
+                    internalResponse.CookieContainer?.GetCookies(internalResponse.Url),
                     Options.CalculateResponseStatus,
                     cancellationToken
                 )
@@ -131,14 +131,20 @@ public partial class RestClient {
 
             if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 
-            return new HttpResponse(responseMessage, url, null, timeoutCts.Token);
+            return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         }
         catch (Exception ex) {
-            return new HttpResponse(null, url, ex, timeoutCts.Token);
+            return new HttpResponse(null, url, null, ex, timeoutCts.Token);
         }
     }
 
-    record HttpResponse(HttpResponseMessage? ResponseMessage, Uri Url, Exception? Exception, CancellationToken TimeoutToken);
+    record HttpResponse(
+        HttpResponseMessage? ResponseMessage,
+        Uri                  Url,
+        CookieContainer?     CookieContainer,
+        Exception?           Exception,
+        CancellationToken    TimeoutToken
+    );
 
     static HttpMethod AsHttpMethod(Method method)
         => method switch {

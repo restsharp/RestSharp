@@ -11,7 +11,7 @@ public class CaptureFixture
     {
         public const string Resource = "Capture";
 
-        public static NameValueCollection CapturedHeaders { get; set; }
+        public static NameValueCollection? CapturedHeaders { get; set; }
 
         public static void Initialize() => CapturedHeaders = null;
 

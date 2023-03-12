@@ -93,7 +93,7 @@ public class RestSerializers {
         return factory?.GetSerializer().Deserializer;
 
         ContentType? DetectContentType()
-            => response.Content[0] switch {
+            => response.Content![0] switch {
                 '<'        => ContentType.Xml,
                 '{' or '[' => ContentType.Json,
                 _          => null

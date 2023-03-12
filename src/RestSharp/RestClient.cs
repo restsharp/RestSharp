@@ -37,7 +37,7 @@ public partial class RestClient : IRestClient {
     /// </summary>
     public string[] AcceptedContentTypes { get; set; } = null!;
 
-    HttpClient HttpClient { get; }
+    internal HttpClient HttpClient { get; }
 
     /// <inheritdoc />>
     public ReadOnlyRestClientOptions Options { get; }
@@ -55,24 +55,39 @@ public partial class RestClient : IRestClient {
     /// <param name="options">Client options</param>
     /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
     /// <param name="configureSerialization">Delegate to configure serialization</param>
+    /// <param name="useClientFactory">Set to true if you wish to reuse the <seealso cref="HttpClient"/> instance</param>
     public RestClient(
         RestClientOptions       options,
         ConfigureHeaders?       configureDefaultHeaders = null,
-        ConfigureSerialization? configureSerialization  = null
+        ConfigureSerialization? configureSerialization  = null,
+        bool                    useClientFactory        = false
     ) {
+        if (useClientFactory && options.BaseUrl == null) {
+            throw new ArgumentException("BaseUrl must be set when using a client factory");
+        }
+
         Serializers = new RestSerializers(ConfigureSerializers(configureSerialization));
+        Options     = new ReadOnlyRestClientOptions(options);
 
-        Options            = new ReadOnlyRestClientOptions(options);
-        _disposeHttpClient = true;
+        if (useClientFactory) {
+            _disposeHttpClient = false;
+            HttpClient         = SimpleClientFactory.GetClient(options.BaseUrl!, GetClient);
+        }
+        else {
+            _disposeHttpClient = true;
+            HttpClient         = GetClient();
+        }
 
-        var handler = new HttpClientHandler();
-        ConfigureHttpMessageHandler(handler, Options);
+        HttpClient GetClient() {
+            var handler = new HttpClientHandler();
+            ConfigureHttpMessageHandler(handler, Options);
+            var finalHandler = options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
 
-        var finalHandler = options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
-
-        HttpClient = new HttpClient(finalHandler);
-        ConfigureHttpClient();
-        configureDefaultHeaders?.Invoke(HttpClient.DefaultRequestHeaders);
+            var httpClient = new HttpClient(finalHandler);
+            ConfigureHttpClient(httpClient, options);
+            configureDefaultHeaders?.Invoke(httpClient.DefaultRequestHeaders);
+            return httpClient;
+        }
     }
 
     static RestClientOptions ConfigureOptions(RestClientOptions options, ConfigureRestClient? configureRestClient) {
@@ -86,12 +101,14 @@ public partial class RestClient : IRestClient {
     /// <param name="configureRestClient">Delegate to configure the client options</param>
     /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
     /// <param name="configureSerialization">Delegate to configure serialization</param>
+    /// <param name="useClientFactory">Set to true if you wish to reuse the <seealso cref="HttpClient"/> instance</param>
     public RestClient(
         ConfigureRestClient?    configureRestClient     = null,
         ConfigureHeaders?       configureDefaultHeaders = null,
-        ConfigureSerialization? configureSerialization  = null
+        ConfigureSerialization? configureSerialization  = null,
+        bool                    useClientFactory        = false
     )
-        : this(ConfigureOptions(new RestClientOptions(), configureRestClient), configureDefaultHeaders, configureSerialization) { }
+        : this(ConfigureOptions(new RestClientOptions(), configureRestClient), configureDefaultHeaders, configureSerialization, useClientFactory) { }
 
     /// <inheritdoc />
     /// <summary>
@@ -101,16 +118,19 @@ public partial class RestClient : IRestClient {
     /// <param name="configureRestClient">Delegate to configure the client options</param>
     /// <param name="configureDefaultHeaders">Delegate to add default headers to the wrapped HttpClient instance</param>
     /// <param name="configureSerialization">Delegate to configure serialization</param>
+    /// <param name="useClientFactory">Set to true if you wish to reuse the <seealso cref="HttpClient"/> instance</param>
     public RestClient(
         Uri                     baseUrl,
         ConfigureRestClient?    configureRestClient     = null,
         ConfigureHeaders?       configureDefaultHeaders = null,
-        ConfigureSerialization? configureSerialization  = null
+        ConfigureSerialization? configureSerialization  = null,
+        bool                    useClientFactory        = false
     )
         : this(
             ConfigureOptions(new RestClientOptions { BaseUrl = baseUrl }, configureRestClient),
             configureDefaultHeaders,
-            configureSerialization
+            configureSerialization,
+            useClientFactory
         ) { }
 
     /// <summary>
@@ -153,7 +173,7 @@ public partial class RestClient : IRestClient {
         var opt = options ?? new RestClientOptions();
         Options = new ReadOnlyRestClientOptions(opt);
 
-        if (options != null) ConfigureHttpClient();
+        if (options != null) ConfigureHttpClient(httpClient, options);
     }
 
     /// <summary>
@@ -187,14 +207,14 @@ public partial class RestClient : IRestClient {
     )
         : this(new HttpClient(handler, disposeHandler), true, configureRestClient, configureSerialization) { }
 
-    void ConfigureHttpClient() {
-        if (Options.MaxTimeout > 0) HttpClient.Timeout = TimeSpan.FromMilliseconds(Options.MaxTimeout);
+    static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
+        if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
 
-        if (Options.UserAgent != null && HttpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != Options.UserAgent)) {
-            HttpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, Options.UserAgent);
+        if (options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => x.Product?.Name != options.UserAgent)) {
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, options.UserAgent);
         }
 
-        if (Options.Expect100Continue != null) HttpClient.DefaultRequestHeaders.ExpectContinue = Options.Expect100Continue;
+        if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
     }
 
     static void ConfigureHttpMessageHandler(HttpClientHandler handler, ReadOnlyRestClientOptions options) {

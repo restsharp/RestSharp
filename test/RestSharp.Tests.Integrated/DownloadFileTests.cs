@@ -17,7 +17,7 @@ public sealed class DownloadFileTests : IDisposable {
         var pathToFile = Path.Combine(
             _path,
             Path.Combine(
-                request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
+                request.Url!.Segments.Select(s => s.Replace("/", "")).ToArray()
             )
         );
 

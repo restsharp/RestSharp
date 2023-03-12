@@ -100,4 +100,20 @@ public class RestClientTests {
         client.Serializers.Serializers.Should().HaveCount(1);
         client.Serializers.GetSerializer(DataFormat.Json).Should().NotBeNull();
     }
+
+    [Fact]
+    public void Should_reuse_httpClient_instance() {
+        var client1 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
+        var client2 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
+
+        client1.HttpClient.Should().BeSameAs(client2.HttpClient);
+    }
+
+    [Fact]
+    public void Should_use_new_httpClient_instance() {
+        var client1 = new RestClient(new Uri("https://fake.api"));
+        var client2 = new RestClient(new Uri("https://fake.api"));
+
+        client1.HttpClient.Should().NotBeSameAs(client2.HttpClient);
+    }
 }

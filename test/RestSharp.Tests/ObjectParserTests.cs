@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace RestSharp.Tests;
 
 public class ObjectParserTests {

@@ -28,9 +28,8 @@
 | `UseSerializer(Func<IRestSerializer> serializerFactory)`                                        | `RestClient`                       |
 | `UseSerializer<T>()`                                                                            | `RestClient`                       |
 | `Deserialize<T>(IRestResponse response)`                                                        | `RestClient`                       |
-| `BuildUri(IRestRequest request)`                                                                | `RestClient`                       |
-| `UseUrlEncoder(Func<string, string> encoder)`                                                   | Extension                          |
-| `UseQueryEncoder(Func<string, Encoding, string> queryEncoder)`                                  | Extension                          |
+| `UseUrlEncoder(Func<string, string> encoder)`                                                   | `RestClientOptions.Encode`         |
+| `UseQueryEncoder(Func<string, Encoding, string> queryEncoder)`                                  | `RestClientOptions.EncodeQuery`    |
 | `ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                    | `RestClient`                       |
 | `ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)` | Extension                          |
 | `ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)`    | Extension                          |
