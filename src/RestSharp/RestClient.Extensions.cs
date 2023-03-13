@@ -83,6 +83,56 @@ public static partial class RestClientExtensions {
         => client.ExecuteAsync<T>(request, Method.Put, cancellationToken);
 
     /// <summary>
+    /// Executes a PATCH-style request asynchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns>Deserialized response content</returns>
+    public static Task<RestResponse<T>> ExecutePatchAsync<T>(
+        this RestClient client,
+        RestRequest request,
+        CancellationToken cancellationToken = default
+    )
+        => client.ExecuteAsync<T>(request, Method.Patch, cancellationToken);
+
+    /// <summary>
+    /// Executes a PATCH-style asynchronously, authenticating if needed
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public static Task<RestResponse> ExecutePatchAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+        => client.ExecuteAsync(request, Method.Patch, cancellationToken);
+
+    /// <summary>
+    /// Executes a DELETE-style asynchronously, authenticating if needed
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public static Task<RestResponse> ExecuteDeleteAsync(this RestClient client, RestRequest request, CancellationToken cancellationToken = default)
+        => client.ExecuteAsync(request, Method.Delete, cancellationToken);
+
+    /// <summary>
+    /// Executes a DELETE-style request asynchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns>Deserialized response content</returns>
+    public static Task<RestResponse<T>> ExecuteDeleteAsync<T>(
+        this RestClient client,
+        RestRequest request,
+        CancellationToken cancellationToken = default
+    )
+        => client.ExecuteAsync<T>(request, Method.Delete, cancellationToken);
+
+    /// <summary>
     /// Executes a PUP-style asynchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
