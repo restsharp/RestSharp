@@ -7,6 +7,15 @@ The default behavior of RestSharp is to swallow deserialization errors and retur
 property of the response. Read more about it in the [Error Handling](error-handling.md).
 :::
 
+You can tell RestSharp to use a custom serializer by using the `configureSerialization` constructor parameter:
+
+```csharp
+var client = new RestClient(
+    options, 
+    configureSerialization: s => s.UseSerializer(() => new CustomSerializer());
+);
+```
+
 ## JSON
 
 The default JSON serializer uses `System.Text.Json`, which is a part of .NET since .NET 6. For earlier versions, it is added as a dependency. There are also a few serializers provided as additional packages.
@@ -14,7 +23,10 @@ The default JSON serializer uses `System.Text.Json`, which is a part of .NET sin
 By default, RestSharp will use `JsonSerializerDefaults.Web` configuration. If necessary, you can specify your own options:
 
 ```csharp
-client.UseSystemTextJson(new JsonSerializerOptions {...});
+var client = new RestClient(
+    options, 
+    configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions {...})
+);
 ```
 
 ## XML
@@ -43,7 +55,10 @@ Please note that `RestSharp.Newtonsoft.Json` package is not provided by RestShar
 Use the extension method provided by the package to configure the client:
 
 ```csharp
-client.UseNewtonsoftJson();
+var client = new RestClient(
+    options, 
+    configureSerialization: s => s.UseNewtonsoftJson()
+);
 ```
 
 The serializer configures some options by default:
