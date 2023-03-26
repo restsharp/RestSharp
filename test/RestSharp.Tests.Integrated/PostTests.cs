@@ -47,7 +47,32 @@ public class PostTests {
         response.Data!.Message.Should().Be($"Works! Length: {length}");
     }
 
+    [Fact]
+    public async Task Should_post_both_default_and_request_parameters() {
+        var defParam = new PostParameter("default", "default");
+        var reqParam = new PostParameter("request", "request");
+
+        _client.AddDefaultParameter(defParam.Name, defParam.Value);
+
+        var request = new RestRequest("post/data")
+            .AddParameter(reqParam.Name, reqParam.Value);
+
+        var response = await _client.ExecutePostAsync<TestServerResponse[]>(request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        CheckResponse(defParam);
+        CheckResponse(reqParam);
+
+        void CheckResponse(PostParameter parameter) {
+            var p = response.Data!.FirstOrDefault(x => x.Name == parameter.Name);
+            p.Should().NotBeNull();
+            p.Value.Should().Be(parameter.Value);
+        }
+    }
+
     class Response {
         public string Message { get; set; }
     }
+
+    record PostParameter(string Name, string Value);
 }

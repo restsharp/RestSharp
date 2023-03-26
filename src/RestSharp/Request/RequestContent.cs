@@ -23,20 +23,22 @@ using static RestSharp.KnownHeaders;
 namespace RestSharp;
 
 class RequestContent : IDisposable {
-    readonly RestClient   _client;
-    readonly RestRequest  _request;
-    readonly List<Stream> _streams = new();
+    readonly RestClient           _client;
+    readonly RestRequest          _request;
+    readonly List<Stream>         _streams = new();
+    readonly ParametersCollection _parameters;
 
     HttpContent? Content { get; set; }
 
     public RequestContent(RestClient client, RestRequest request) {
-        _client  = client;
-        _request = request;
+        _client     = client;
+        _request    = request;
+        _parameters = new ParametersCollection(_request.Parameters.Union(_client.DefaultParameters));
     }
 
     public HttpContent BuildContent() {
         AddFiles();
-        var postParameters = _request.Parameters.GetContentParameters(_request.Method).ToArray();
+        var postParameters = _parameters.GetContentParameters(_request.Method).ToArray();
         AddBody(postParameters.Length > 0);
         AddPostParameters(postParameters);
         AddHeaders();
@@ -170,7 +172,7 @@ class RequestContent : IDisposable {
 #else
             // However due to bugs in HttpClient FormUrlEncodedContent (see https://github.com/restsharp/RestSharp/issues/1814) we
             // do the encoding ourselves using WebUtility.UrlEncode instead.
-            var encodedItems = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()?.UrlEncode() ?? string.Empty}");
+            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()?.UrlEncode() ?? string.Empty}");
             var encodedContent = new StringContent(encodedItems.JoinToString("&"), null, ContentType.FormUrlEncoded.Value);
             Content = encodedContent;
 #endif
@@ -178,7 +180,7 @@ class RequestContent : IDisposable {
     }
 
     void AddHeaders() {
-        var contentHeaders = _request.Parameters
+        var contentHeaders = _parameters
             .GetParameters<HeaderParameter>()
             .Where(x => IsContentHeader(x.Name!))
             .ToArray();

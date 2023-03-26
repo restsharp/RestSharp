@@ -54,7 +54,7 @@ public class RequestHeadTests : CaptureFixture {
         response.StatusCode.ToString().Should().BeOneOf(HttpStatusCode.OK.ToString(),HttpStatusCode.Unauthorized.ToString());
         RequestHeadCapturer.CapturedHeaders.Should().NotBeNull();
 
-        var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
+        var keys = RequestHeadCapturer.CapturedHeaders!.Keys.Cast<string>().ToArray();
 
         keys.Should()
             .Contain(
