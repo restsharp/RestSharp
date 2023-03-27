@@ -16,16 +16,12 @@ What RestSharp adds to `HttpClient`:
 
 Finally, RestSharp has moved to `HttpClient`. We also deprecated the following:
 - SimpleJson in favour of `System.Text.Json.JsonSerialzer`
-- `IRestClient`, `IRestRequest`, and `IRestResponse` in favour of implementing classes
+- `IRestRequest`, and `IRestResponse` in favour of implementing classes
 - Everything `Http` and `IHttp` as those are just wrappers
 
 Most of the client and some of the request options are now in `RestClientOptions`.
 
 Check [v107+ docs](https://restsharp.dev/v107) for more information.
-
-| :boom:  Interfaces rage!   |
-|:---------------------------|
-| Before you start to rage in public about interfaces that are useful for unit-testing HTTP calls,<br>please read [this page](https://restsharp.dev/v107/#mocking). |
 
 ## Packages
 
