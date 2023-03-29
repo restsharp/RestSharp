@@ -15,6 +15,7 @@
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Extensions;
 using System.Web;
+// ReSharper disable NotResolvedInText
 
 // ReSharper disable CheckNamespace
 
@@ -38,7 +39,7 @@ public class OAuth1Authenticator : IAuthenticator {
     public virtual string?                 ClientUsername     { get; set; }
     public virtual string?                 ClientPassword     { get; set; }
 
-    public ValueTask Authenticate(RestClient client, RestRequest request) {
+    public ValueTask Authenticate(IRestClient client, RestRequest request) {
         var workflow = new OAuthWorkflow {
             ConsumerKey        = ConsumerKey,
             ConsumerSecret     = ConsumerSecret,
@@ -190,7 +191,7 @@ public class OAuth1Authenticator : IAuthenticator {
             TokenSecret        = accessTokenSecret
         };
 
-    void AddOAuthData(RestClient client, RestRequest request, OAuthWorkflow workflow) {
+    void AddOAuthData(IRestClient client, RestRequest request, OAuthWorkflow workflow) {
         var requestUrl = client.BuildUriWithoutQueryParameters(request).AbsoluteUri;
 
         if (requestUrl.Contains('?'))

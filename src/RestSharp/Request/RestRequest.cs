@@ -94,7 +94,7 @@ public class RestRequest {
     /// Container of all HTTP parameters to be passed with the request.
     /// See AddParameter() for explanation of the types of parameters that can be passed
     /// </summary>
-    public ParametersCollection Parameters { get; } = new();
+    public RequestParameters Parameters { get; } = new();
 
     /// <summary>
     /// Optional cookie container to use for the request. If not set, cookies are not passed.
