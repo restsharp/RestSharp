@@ -35,33 +35,13 @@ static class UriExtensions {
         return assembled != null ? new Uri(usingBaseUri, assembled) : baseUrl;
     }
 
-    public static Uri ApplyQueryStringParamsValuesToUri(
-        this Uri                       mergedUri,
-        Method                         method,
-        Encoding                       encoding,
-        Func<string, Encoding, string> encodeQuery,
-        params ParametersCollection[]  parametersCollections
-    ) {
-        var parameters = parametersCollections.SelectMany(x => x.GetQueryParameters(method)).ToList();
+    public static Uri AddQueryString(this Uri uri, string? query) {
+        if (query == null) return uri;
 
-        if (parameters.Count == 0) return mergedUri;
+        var absoluteUri       = uri.AbsoluteUri;
+        var separator = absoluteUri.Contains('?') ? "&" : "?";
 
-        var uri       = mergedUri.AbsoluteUri;
-        var separator = uri.Contains('?') ? "&" : "?";
-
-        return new Uri(string.Concat(uri, separator, EncodeParameters()));
-
-        string EncodeParameters() => string.Join("&", parameters.Select(EncodeParameter).ToArray());
-
-        string GetString(string name, string? value, Func<string, string>? encode) {
-            var val = encode != null && value != null ? encode(value) : value;
-            return val == null ? name : $"{name}={val}";
-        }
-
-        string EncodeParameter(Parameter parameter)
-            => !parameter.Encode
-                ? GetString(parameter.Name!, parameter.Value?.ToString(), null)
-                : GetString(encodeQuery(parameter.Name!, encoding), parameter.Value?.ToString(), x => encodeQuery(x, encoding));
+        return new Uri($"{absoluteUri}{separator}{query}");
     }
 
     public static UrlSegmentParamsValues GetUrlSegmentParamsValues(

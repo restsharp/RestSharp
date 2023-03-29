@@ -27,7 +27,7 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
     /// Return a human-readable representation of this parameter
     /// </summary>
     /// <returns>String</returns>
-    public override string ToString() => $"{Name}={Value}";
+    public sealed override string ToString() => Value == null ? $"{Name}" : $"{Name}={Value}";
 
     public static Parameter CreateParameter(string? name, object? value, ParameterType type, bool encode = true)
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
