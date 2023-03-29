@@ -177,7 +177,7 @@ class RequestContent : IDisposable {
         }
     }
 
-    static string GetBoundary(string boundary, bool quite) => quite ? $"\"{boundary}\"" : boundary;
+    static string GetBoundary(string boundary, bool quote) => quote ? $"\"{boundary}\"" : boundary;
 
     void AddHeaders() {
         var contentHeaders = _request.Parameters
