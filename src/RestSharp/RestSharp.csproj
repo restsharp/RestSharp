@@ -2,7 +2,7 @@
     <PropertyGroup>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
-    <ItemGroup Condition="$(TargetFramework) != 'net6.0' And $(TargetFramework) != 'net7.0'">
+    <ItemGroup>
         <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
     <ItemGroup>
