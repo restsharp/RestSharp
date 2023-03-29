@@ -88,6 +88,9 @@ public class RestRequest {
     /// </summary>
     public bool MultipartFormQuoteParameters { get; set; }
 
+    /// <summary>
+    /// Overrides the default (random) form boundary
+    /// </summary>
     public string? FormBoundary { get; set; }
 
     /// <summary>

@@ -45,5 +45,5 @@ public class UploadController : ControllerBase {
 }
 
 public class FormFile {
-    public IFormFile File { get; set; }
+    public IFormFile File { get; set; } = null!;
 }

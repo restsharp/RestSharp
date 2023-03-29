@@ -23,6 +23,7 @@ public sealed class ResourceStringParametersTests : IDisposable {
         query.Should().Be(parameters);
     }
 
+    #nullable disable
     static class RequestHandler {
         public static Uri Url { get; private set; }
 
@@ -31,4 +32,5 @@ public sealed class ResourceStringParametersTests : IDisposable {
             Handlers.Echo(context);
         }
     }
+    #nullable enable
 }

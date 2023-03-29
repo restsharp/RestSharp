@@ -20,7 +20,7 @@ public sealed class HttpServer {
     public HttpServer(ITestOutputHelper? output = null) {
         var builder = WebApplication.CreateBuilder();
 
-        if (output != null) builder.WebHost.ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Information).AddXunit(output, LogLevel.Debug));
+        if (output != null) builder.Logging.AddXunit(output, LogLevel.Debug);
 
         builder.Services.AddControllers().AddApplicationPart(typeof(UploadController).Assembly);
         builder.WebHost.UseUrls(Address);

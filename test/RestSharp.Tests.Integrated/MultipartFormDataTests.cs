@@ -2,6 +2,8 @@
 using HttpTracer;
 using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
+#pragma warning disable CS8618
+#pragma warning disable CS8601
 
 namespace RestSharp.Tests.Integrated;
 

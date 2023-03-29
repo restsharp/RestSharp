@@ -1,5 +1,6 @@
 ﻿using RestSharp.Serializers;
 // ReSharper disable InconsistentNaming
+#pragma warning disable CS8981
 
 namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
 

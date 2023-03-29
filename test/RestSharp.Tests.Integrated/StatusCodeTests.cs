@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using RestSharp.Serializers;
 using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
@@ -57,7 +56,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync<TestResponse>(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        response.Data.Message.Should().Be("Works!");
+        response.Data!.Message.Should().Be("Works!");
     }
 
     [Fact]
@@ -74,7 +73,7 @@ public class StatusCodeTests : IDisposable {
         var response = await _client.ExecuteAsync<TestResponse>(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        response.Data.Message.Should().Be("Not found!");
+        response.Data!.Message.Should().Be("Not found!");
     }
 
     [Fact]
@@ -178,5 +177,5 @@ public class ResponseHandler {
 }
 
 public class TestResponse {
-    public string Message { get; set; }
+    public string Message { get; set; } = null!;
 }
