@@ -83,7 +83,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         var request = new RestRequest("/", Method.Post) { AlwaysMultipartFormData = true };
 
         AddParameters(request);
-        request.MultipartFormQuoteParameters = false;
+        request.MultipartFormQuoteBoundary = false;
 
         var response = await _client.ExecuteAsync(request);
 
