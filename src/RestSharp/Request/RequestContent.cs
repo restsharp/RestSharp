@@ -116,7 +116,7 @@ class RequestContent : IDisposable {
         var boundary    = GetOrSetFormBoundary();
         var mpContent   = new MultipartFormDataContent(boundary);
         var contentType = new MediaTypeHeaderValue("multipart/form-data");
-        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, _request.MultipartFormQuoteParameters)));
+        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, _request.MultipartFormQuoteBoundary)));
         mpContent.Headers.ContentType = contentType;
         return mpContent;
     }
