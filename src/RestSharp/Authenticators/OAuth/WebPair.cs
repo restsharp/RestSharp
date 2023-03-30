@@ -26,8 +26,8 @@ class WebPair {
     string?        WebValue { get; }
 
     public string  GetQueryParameter(bool web) {
-        var value = web ? WebValue : Value;
-        return value == null ? Name : $"{Name}=\"{value}\"";
+        var value = web ? $"\"{WebValue}\"" : Value;
+        return value == null ? Name : $"{Name}={value}";
     }
 
     internal static WebPairComparer Comparer { get; } = new();
