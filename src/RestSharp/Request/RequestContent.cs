@@ -49,7 +49,7 @@ class RequestContent : IDisposable {
     void AddFiles() {
         if (!_request.HasFiles() && !_request.AlwaysMultipartFormData) return;
 
-        var mpContent = new MultipartFormDataContent(GetOrSetFormBoundary());
+        var mpContent = CreateMultipartFormDataContent();
 
         foreach (var file in _request.Files) {
             var stream = file.GetFile();
@@ -60,10 +60,7 @@ class RequestContent : IDisposable {
 
             var dispositionHeader = file.Options.DisableFilenameEncoding
                 ? ContentDispositionHeaderValue.Parse($"form-data; name=\"{file.Name}\"; filename=\"{file.FileName}\"")
-                : new ContentDispositionHeaderValue("form-data") {
-                    Name     = $"\"{file.Name}\"",
-                    FileName = $"\"{file.FileName}\""
-                };
+                : new ContentDispositionHeaderValue("form-data") { Name = $"\"{file.Name}\"", FileName = $"\"{file.FileName}\"" };
             if (!file.Options.DisableFileNameStar) dispositionHeader.FileNameStar = file.FileName;
             fileContent.Headers.ContentDisposition = dispositionHeader;
 
@@ -104,11 +101,7 @@ class RequestContent : IDisposable {
 
             var contentType = body.ContentType.Or(serializer.Serializer.ContentType);
 
-            return new StringContent(
-                content,
-                _client.Options.Encoding,
-                contentType.Value
-            );
+            return new StringContent(content, _client.Options.Encoding, contentType.Value);
         }
     }
 
@@ -119,6 +112,15 @@ class RequestContent : IDisposable {
 
     string GetOrSetFormBoundary() => _request.FormBoundary ?? (_request.FormBoundary = Guid.NewGuid().ToString());
 
+    MultipartFormDataContent CreateMultipartFormDataContent() {
+        var boundary    = GetOrSetFormBoundary();
+        var mpContent   = new MultipartFormDataContent(boundary);
+        var contentType = new MediaTypeHeaderValue("multipart/form-data");
+        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, _request.MultipartFormQuoteParameters)));
+        mpContent.Headers.ContentType = contentType;
+        return mpContent;
+    }
+
     void AddBody(bool hasPostParameters) {
         if (!_request.TryGetBodyParameter(out var bodyParameter)) return;
 
@@ -127,7 +129,7 @@ class RequestContent : IDisposable {
         // we need to send the body
         if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!) || _request.AlwaysMultipartFormData) {
             // here we must use multipart form data
-            var mpContent = Content as MultipartFormDataContent ?? new MultipartFormDataContent(GetOrSetFormBoundary());
+            var mpContent = Content as MultipartFormDataContent ?? CreateMultipartFormDataContent();
             var ct        = bodyContent.Headers.ContentType?.MediaType;
             var name      = bodyParameter!.Name.IsEmpty() ? ct : bodyParameter.Name;
 
@@ -157,7 +159,7 @@ class RequestContent : IDisposable {
 
                 mpContent.Add(
                     new StringContent(postParameter.Value?.ToString() ?? "", _client.Options.Encoding, postParameter.ContentType.Value),
-                    _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
+                    parameterName
                 );
             }
         }
@@ -178,6 +180,8 @@ class RequestContent : IDisposable {
 #endif
         }
     }
+
+    static string GetBoundary(string boundary, bool quote) => quote ? $"\"{boundary}\"" : boundary;
 
     void AddHeaders() {
         var contentHeaders = _parameters
@@ -205,7 +209,7 @@ class RequestContent : IDisposable {
 
         string GetContentTypeHeader(string contentType)
             => Content is MultipartFormDataContent
-                ? $"{contentType}; boundary=\"{GetOrSetFormBoundary()}\""
+                ? $"{contentType}; boundary={GetBoundary(GetOrSetFormBoundary(), _request.MultipartFormQuoteParameters)}"
                 : contentType;
     }
 

@@ -86,7 +86,7 @@ public class RestRequest {
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
     /// to be in quotes (for example, FreshDesk API). 
     /// </summary>
-    public bool MultipartFormQuoteParameters { get; set; }
+    public bool MultipartFormQuoteParameters { get; set; } = true;
 
     public string? FormBoundary { get; set; }
 
