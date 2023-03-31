@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Serializers;
@@ -35,7 +36,7 @@ public partial class RestClient : IRestClient {
     /// Content types that will be sent in the Accept header. The list is populated from the known serializers.
     /// If you need to send something else by default, set this property to a different value.
     /// </summary>
-    public string[] AcceptedContentTypes { get; set; } = null!;
+    public string[] AcceptedContentTypes { get; set; }
 
     internal HttpClient HttpClient { get; }
 
@@ -43,7 +44,7 @@ public partial class RestClient : IRestClient {
     public ReadOnlyRestClientOptions Options { get; }
 
     /// <inheritdoc />>
-    public RestSerializers Serializers { get; }
+    public RestSerializers Serializers { get; private set; }
 
     /// <inheritdoc/>
     public DefaultParameters DefaultParameters { get; }
@@ -70,9 +71,8 @@ public partial class RestClient : IRestClient {
             throw new ArgumentException("BaseUrl must be set when using a client factory");
         }
 
-        Serializers          = new RestSerializers(ConfigureSerializers(configureSerialization));
-        AcceptedContentTypes = Serializers.GetAcceptedContentTypes();
-        Options              = new ReadOnlyRestClientOptions(options);
+        ConfigureSerializers(configureSerialization);
+        Options = new ReadOnlyRestClientOptions(options);
 
         if (useClientFactory) {
             _disposeHttpClient = false;
@@ -168,7 +168,7 @@ public partial class RestClient : IRestClient {
         bool                    disposeHttpClient      = false,
         ConfigureSerialization? configureSerialization = null
     ) {
-        Serializers = new RestSerializers(ConfigureSerializers(configureSerialization));
+        ConfigureSerializers(configureSerialization);
 
         HttpClient         = httpClient;
         _disposeHttpClient = disposeHttpClient;
@@ -248,11 +248,14 @@ public partial class RestClient : IRestClient {
         if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
     }
 
-    static SerializerConfig ConfigureSerializers(ConfigureSerialization? configureSerialization) {
+    [MemberNotNull(nameof(Serializers))]
+    [MemberNotNull(nameof(AcceptedContentTypes))]
+    void ConfigureSerializers(ConfigureSerialization? configureSerialization) {
         var serializerConfig = new SerializerConfig();
         serializerConfig.UseDefaultSerializers();
         configureSerialization?.Invoke(serializerConfig);
-        return serializerConfig;
+        Serializers          = new RestSerializers(serializerConfig);
+        AcceptedContentTypes = Serializers.GetAcceptedContentTypes();
     }
 
     readonly bool _disposeHttpClient;
