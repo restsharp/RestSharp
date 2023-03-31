@@ -2,6 +2,8 @@
 using HttpTracer;
 using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
+#pragma warning disable CS8618
+#pragma warning disable CS8601
 
 namespace RestSharp.Tests.Integrated;
 
@@ -81,7 +83,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         var request = new RestRequest("/", Method.Post) { AlwaysMultipartFormData = true };
 
         AddParameters(request);
-        request.MultipartFormQuoteParameters = false;
+        request.MultipartFormQuoteBoundary = false;
 
         var response = await _client.ExecuteAsync(request);
 

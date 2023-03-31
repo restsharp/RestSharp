@@ -92,7 +92,7 @@ public partial class RestClient {
         if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
-        var url        = BuildUri(request);
+        var url        = this.BuildUri(request);
         var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = Options.CachePolicy;
@@ -106,11 +106,11 @@ public partial class RestClient {
             // Make sure we have a cookie container if not provided in the request
             var cookieContainer = request.CookieContainer ??= new CookieContainer();
 
-            var headers = new RequestHeaders()
-                .AddHeaders(request.Parameters)
-                .AddHeaders(DefaultParameters)
-                .AddAcceptHeader(AcceptedContentTypes)
-                .AddCookieHeaders(cookieContainer, url);
+            var headers = new RequestHeaders();
+                headers.AddHeaders(request.Parameters);
+                headers.AddHeaders(DefaultParameters);
+                headers.AddAcceptHeader(AcceptedContentTypes);
+                headers.AddCookieHeaders(cookieContainer, url);
             message.AddHeaders(headers);
 
             if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);

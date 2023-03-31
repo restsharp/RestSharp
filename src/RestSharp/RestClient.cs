@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Serializers;
@@ -35,7 +36,7 @@ public partial class RestClient : IRestClient {
     /// Content types that will be sent in the Accept header. The list is populated from the known serializers.
     /// If you need to send something else by default, set this property to a different value.
     /// </summary>
-    public string[] AcceptedContentTypes { get; set; } = null!;
+    public string[] AcceptedContentTypes { get; set; }
 
     internal HttpClient HttpClient { get; }
 
@@ -43,12 +44,16 @@ public partial class RestClient : IRestClient {
     public ReadOnlyRestClientOptions Options { get; }
 
     /// <inheritdoc />>
-    public RestSerializers Serializers { get; }
+    public RestSerializers Serializers { get; private set; }
+
+    /// <inheritdoc/>
+    public DefaultParameters DefaultParameters { get; }
 
     [Obsolete("Use RestClientOptions.Authenticator instead")]
     public IAuthenticator? Authenticator => Options.Authenticator;
 
     // set => Options.Authenticator = value;
+
     /// <summary>
     /// Creates an instance of RestClient using the provided <see cref="RestClientOptions"/>
     /// </summary>
@@ -66,8 +71,8 @@ public partial class RestClient : IRestClient {
             throw new ArgumentException("BaseUrl must be set when using a client factory");
         }
 
-        Serializers = new RestSerializers(ConfigureSerializers(configureSerialization));
-        Options     = new ReadOnlyRestClientOptions(options);
+        ConfigureSerializers(configureSerialization);
+        Options = new ReadOnlyRestClientOptions(options);
 
         if (useClientFactory) {
             _disposeHttpClient = false;
@@ -77,6 +82,8 @@ public partial class RestClient : IRestClient {
             _disposeHttpClient = true;
             HttpClient         = GetClient();
         }
+
+        DefaultParameters = new DefaultParameters(Options);
 
         HttpClient GetClient() {
             var handler = new HttpClientHandler();
@@ -161,7 +168,7 @@ public partial class RestClient : IRestClient {
         bool                    disposeHttpClient      = false,
         ConfigureSerialization? configureSerialization = null
     ) {
-        Serializers = new RestSerializers(ConfigureSerializers(configureSerialization));
+        ConfigureSerializers(configureSerialization);
 
         HttpClient         = httpClient;
         _disposeHttpClient = disposeHttpClient;
@@ -171,7 +178,8 @@ public partial class RestClient : IRestClient {
         }
 
         var opt = options ?? new RestClientOptions();
-        Options = new ReadOnlyRestClientOptions(opt);
+        Options           = new ReadOnlyRestClientOptions(opt);
+        DefaultParameters = new DefaultParameters(Options);
 
         if (options != null) ConfigureHttpClient(httpClient, options);
     }
@@ -210,7 +218,8 @@ public partial class RestClient : IRestClient {
     static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
         if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
 
-        if (options.UserAgent != null && httpClient.DefaultRequestHeaders.UserAgent.All(x => $"{x.Product?.Name}/{x.Product?.Version}" != options.UserAgent)) {
+        if (options.UserAgent != null &&
+            httpClient.DefaultRequestHeaders.UserAgent.All(x => $"{x.Product?.Name}/{x.Product?.Version}" != options.UserAgent)) {
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, options.UserAgent);
         }
 
@@ -239,77 +248,19 @@ public partial class RestClient : IRestClient {
         if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
     }
 
-    public ParametersCollection DefaultParameters { get; } = new();
-
-    readonly object _lock = new();
-
-    /// <summary>
-    /// Add a parameter to use on every request made with this client instance
-    /// </summary>
-    /// <param name="parameter">Parameter to add</param>
-    /// <returns></returns>
-    public RestClient AddDefaultParameter(Parameter parameter) {
-        lock (_lock) {
-            if (parameter.Type == ParameterType.RequestBody)
-                throw new NotSupportedException(
-                    "Cannot set request body using default parameters. Use Request.AddBody() instead."
-                );
-
-            if (!Options.AllowMultipleDefaultParametersWithSameName &&
-                !MultiParameterTypes.Contains(parameter.Type)       &&
-                DefaultParameters.Any(x => x.Name == parameter.Name)) {
-                throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
-            }
-
-            DefaultParameters.AddParameter(parameter);
-        }
-
-        return this;
-    }
-
-    static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
-
-    internal Uri BuildUri(RestRequest request) {
-        DoBuildUriValidations(request);
-
-        var (uri, resource) = Options.BaseUrl.GetUrlSegmentParamsValues(request.Resource, Options.Encode, request.Parameters, DefaultParameters);
-        var mergedUri = uri.MergeBaseUrlAndResource(resource);
-
-        var finalUri = mergedUri.ApplyQueryStringParamsValuesToUri(
-            request.Method,
-            Options.Encoding,
-            Options.EncodeQuery,
-            request.Parameters,
-            DefaultParameters
-        );
-        return finalUri;
-    }
-
-    internal Uri BuildUriWithoutQueryParameters(RestRequest request) {
-        DoBuildUriValidations(request);
-        var (uri, resource) = Options.BaseUrl.GetUrlSegmentParamsValues(request.Resource, Options.Encode, request.Parameters, DefaultParameters);
-        return uri.MergeBaseUrlAndResource(resource);
-    }
-
-    internal void AssignAcceptedContentTypes(SerializerConfig serializerConfig) => AcceptedContentTypes = serializerConfig.GetAcceptedContentTypes();
-
-    void DoBuildUriValidations(RestRequest request) {
-        if (Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
-            throw new ArgumentOutOfRangeException(
-                nameof(request),
-                "Request resource doesn't contain a valid scheme for an empty base URL of the client"
-            );
-    }
-
-    SerializerConfig ConfigureSerializers(ConfigureSerialization? configureSerialization) {
-        var serializerConfig = new SerializerConfig(this);
+    [MemberNotNull(nameof(Serializers))]
+    [MemberNotNull(nameof(AcceptedContentTypes))]
+    void ConfigureSerializers(ConfigureSerialization? configureSerialization) {
+        var serializerConfig = new SerializerConfig();
         serializerConfig.UseDefaultSerializers();
         configureSerialization?.Invoke(serializerConfig);
-        return serializerConfig;
+        Serializers          = new RestSerializers(serializerConfig);
+        AcceptedContentTypes = Serializers.GetAcceptedContentTypes();
     }
 
     readonly bool _disposeHttpClient;
-    bool          _disposed;
+
+    bool _disposed;
 
     protected virtual void Dispose(bool disposing) {
         if (disposing && !_disposed) {

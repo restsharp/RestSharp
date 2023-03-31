@@ -33,7 +33,7 @@ class RequestContent : IDisposable {
     public RequestContent(RestClient client, RestRequest request) {
         _client     = client;
         _request    = request;
-        _parameters = new ParametersCollection(_request.Parameters.Union(_client.DefaultParameters));
+        _parameters = new RequestParameters(_request.Parameters.Union(_client.DefaultParameters));
     }
 
     public HttpContent BuildContent() {
@@ -116,7 +116,7 @@ class RequestContent : IDisposable {
         var boundary    = GetOrSetFormBoundary();
         var mpContent   = new MultipartFormDataContent(boundary);
         var contentType = new MediaTypeHeaderValue("multipart/form-data");
-        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, _request.MultipartFormQuoteParameters)));
+        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, _request.MultipartFormQuoteBoundary)));
         mpContent.Headers.ContentType = contentType;
         return mpContent;
     }
@@ -158,26 +158,20 @@ class RequestContent : IDisposable {
                 var parameterName = postParameter.Name!;
 
                 mpContent.Add(
-                    new StringContent(postParameter.Value?.ToString() ?? "", _client.Options.Encoding, postParameter.ContentType.Value),
-                    parameterName
+                    new StringContent(postParameter.Value?.ToString() ?? string.Empty, _client.Options.Encoding, postParameter.ContentType.Value),
+                    _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
                 );
             }
         }
         else {
-#if NET
-            // We should not have anything else except the parameters, so we send them as form URL encoded.
-            var formContent = new FormUrlEncodedContent(
-                postParameters
-                    .Select(x => new KeyValuePair<string, string>(x.Name!, x.Value?.ToString() ?? string.Empty))!
-            );
-            Content = formContent;
-#else
-            // However due to bugs in HttpClient FormUrlEncodedContent (see https://github.com/restsharp/RestSharp/issues/1814) we
-            // do the encoding ourselves using WebUtility.UrlEncode instead.
             var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()?.UrlEncode() ?? string.Empty}");
-            var encodedContent = new StringContent(encodedItems.JoinToString("&"), null, ContentType.FormUrlEncoded.Value);
+            var encodedContent = new StringContent(encodedItems.JoinToString("&"), _client.Options.Encoding, ContentType.FormUrlEncoded.Value);
+
+            if (_client.Options.DisableCharset) {
+                encodedContent.Headers.ContentType!.CharSet = "";
+            }
+
             Content = encodedContent;
-#endif
         }
     }
 
@@ -209,7 +203,7 @@ class RequestContent : IDisposable {
 
         string GetContentTypeHeader(string contentType)
             => Content is MultipartFormDataContent
-                ? $"{contentType}; boundary={GetBoundary(GetOrSetFormBoundary(), _request.MultipartFormQuoteParameters)}"
+                ? $"{contentType}; boundary={GetBoundary(GetOrSetFormBoundary(), _request.MultipartFormQuoteBoundary)}"
                 : contentType;
     }
 

@@ -13,7 +13,7 @@ public class ParsedRequest {
         QueryString = request.QueryString;
 
         QueryParameters = request.Query
-            .SelectMany(x => x.Value.Select(y => new KeyValuePair<string, string>(x.Key, y)))
+            .SelectMany(x => x.Value.Select(y => new KeyValuePair<string, string>(x.Key, y!)))
             .ToArray();
     }
 
