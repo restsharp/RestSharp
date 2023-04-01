@@ -106,11 +106,15 @@ public partial class RestClient {
             // Make sure we have a cookie container if not provided in the request
             var cookieContainer = request.CookieContainer ??= new CookieContainer();
 
-            var headers = new RequestHeaders();
-                headers.AddHeaders(request.Parameters);
-                headers.AddHeaders(DefaultParameters);
-                headers.AddAcceptHeader(AcceptedContentTypes);
-                headers.AddCookieHeaders(cookieContainer, url);
+            if (Options.CookieContainer != null) {
+                cookieContainer.Add(Options.CookieContainer.GetCookies(url));
+            }
+
+            var headers = new RequestHeaders()
+                .AddHeaders(request.Parameters)
+                .AddHeaders(DefaultParameters)
+                .AddAcceptHeader(AcceptedContentTypes)
+                .AddCookieHeaders(cookieContainer, url);
             message.AddHeaders(headers);
 
             if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);

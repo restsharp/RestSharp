@@ -13,14 +13,17 @@
 // limitations under the License.
 // 
 
+using System.Net;
+using System.Text;
+
 namespace RestSharp;
 
 public static partial class RestClientExtensions {
     /// <summary>
     /// Add a parameter to use on every request made with this client instance
     /// </summary>
-    /// <param name="client">RestClient instance</param>
-    /// <param name="parameter">Parameter to add</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
+    /// <param name="parameter"><see cref="Parameter"/> to add</param>
     /// <returns></returns>
     public static IRestClient AddDefaultParameter(this IRestClient client, Parameter parameter) {
         client.DefaultParameters.AddParameter(parameter);
@@ -31,7 +34,7 @@ public static partial class RestClientExtensions {
     /// Adds a default HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
     /// Used on every request made by this client instance
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
     /// <returns>This request</returns>
@@ -46,7 +49,7 @@ public static partial class RestClientExtensions {
     /// - RequestBody: Used by AddBody() (not recommended to use directly)
     /// Used on every request made by this client instance
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
     /// <param name="type">The type of parameter to add</param>
@@ -57,7 +60,7 @@ public static partial class RestClientExtensions {
     /// <summary>
     /// Adds a default header to the RestClient. Used on every request made by this client instance.
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the header to add</param>
     /// <param name="value">Value of the header to add</param>
     /// <returns></returns>
@@ -79,7 +82,7 @@ public static partial class RestClientExtensions {
     /// <summary>
     /// Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the segment to add</param>
     /// <param name="value">Value of the segment to add</param>
     /// <returns></returns>
@@ -89,7 +92,7 @@ public static partial class RestClientExtensions {
     /// <summary>
     /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the query parameter to add</param>
     /// <param name="value">Value of the query parameter to add</param>
     /// <returns></returns>
