@@ -137,6 +137,12 @@ public class RestClientOptions {
     public string? BaseHost { get; set; }
 
     /// <summary>
+    /// Custom cookie container to be used for requests. RestSharp will not assign the container to the message handler,
+    /// but will fetch cookies from it and set them on the request.
+    /// </summary>
+    public CookieContainer? CookieContainer { get; set; }
+
+    /// <summary>
     /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
     /// the lowest value between the client timeout and request timeout will be used.
     /// </summary>

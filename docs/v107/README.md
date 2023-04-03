@@ -224,12 +224,12 @@ Below, you can find members of `IRestClient` and `IRestRequest` with their corre
 
 | `IRestClient` member                                                                            | Where is it now?                   |
 |:------------------------------------------------------------------------------------------------|:-----------------------------------|
-| `CookieContainer`                                                                               | `RestClient`                       |
+| `CookieContainer`                                                                               | `RestClientOptions`                |
 | `AutomaticDecompression`                                                                        | `RestClientOptions`, changed type  |
 | `MaxRedirects`                                                                                  | `RestClientOptions`                |
 | `UserAgent`                                                                                     | `RestClientOptions`                |
 | `Timeout`                                                                                       | `RestClientOptions`, `RestRequest` |
-| `Authenticator`                                                                                 | `RestClient`                       |
+| `Authenticator`                                                                                 | `RestClientOptions`                |
 | `BaseUrl`                                                                                       | `RestClientOptions`                |
 | `Encoding`                                                                                      | `RestClientOptions`                |
 | `ThrowOnDeserializationError`                                                                   | `RestClientOptions`                |
@@ -249,12 +249,8 @@ Below, you can find members of `IRestClient` and `IRestRequest` with their corre
 | `ReadWriteTimeout`                                                                              | Not supported                      |
 | `UseSynchronizationContext`                                                                     | Not supported                      |
 | `DefaultParameters`                                                                             | `RestClient`                       |
-| `UseSerializer(Func<IRestSerializer> serializerFactory)`                                        | `RestClient`                       |
-| `UseSerializer<T>()`                                                                            | `RestClient`                       |
-| `Deserialize<T>(IRestResponse response)`                                                        | `RestClient`                       |
-| `BuildUri(IRestRequest request)`                                                                | `RestClient`                       |
-| `UseUrlEncoder(Func<string, string> encoder)`                                                   | Extension                          |
-| `UseQueryEncoder(Func<string, Encoding, string> queryEncoder)`                                  | Extension                          |
+| `Deserialize<T>(IRestResponse response)`                                                        | `RestSerializers`                  |
+| `BuildUri(IRestRequest request)`                                                                | Extension                          |
 | `ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                    | `RestClient`                       |
 | `ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)` | Extension                          |
 | `ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)`    | Extension                          |
@@ -272,7 +268,7 @@ Below, you can find members of `IRestClient` and `IRestRequest` with their corre
 | `ExecuteAsPost(IRestRequest request, string httpMethod)`                                        | Deprecated                         |
 | `ExecuteAsGet<T>(IRestRequest request, string httpMethod)`                                      | Deprecated                         |
 | `ExecuteAsPost<T>(IRestRequest request, string httpMethod)`                                     | Deprecated                         |
-| `BuildUriWithoutQueryParameters(IRestRequest request)`                                          | Removed                            |
+| `BuildUriWithoutQueryParameters(IRestRequest request)`                                          | Extension                          |
 | `ConfigureWebRequest(Action<HttpWebRequest> configurator)`                                      | Removed                            |
 | `AddHandler(string contentType, Func<IDeserializer> deserializerFactory)`                       | Removed                            |
 | `RemoveHandler(string contentType)`                                                             | Removed                            |
