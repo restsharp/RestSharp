@@ -39,8 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGen", "SourceGen", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "gen\SourceGenerator\SourceGenerator.csproj", "{FE778406-ADCF-45A1-B775-A054B55BFC50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.ConsoleTest", "RestSharp.ConsoleTest\RestSharp.ConsoleTest.csproj", "{5E8D472F-5A12-4CD8-8DBE-E3F6E0F76798}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug.Appveyor|Any CPU = Debug.Appveyor|Any CPU
