@@ -40,4 +40,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
+    </ItemGroup>
 </Project>

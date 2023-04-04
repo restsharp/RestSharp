@@ -14,7 +14,6 @@
 
 using System.Runtime.CompilerServices;
 using RestSharp.Extensions;
-using RestSharp.Serializers;
 
 namespace RestSharp;
 
