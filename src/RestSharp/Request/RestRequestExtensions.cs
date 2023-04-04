@@ -375,6 +375,22 @@ public static class RestRequestExtensions {
         => request.AddParameter(new BodyParameter(body, Ensure.NotNull(contentType, nameof(contentType))));
 
     /// <summary>
+    /// Adds a JSON body parameter to the request from a string
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="forceSerialize">Force serialize the top-level string</param>
+    /// <param name="contentType">Optional: content type. Default is "application/json"</param>
+    /// <param name="jsonString">JSON string to be used as a body</param>
+    /// <returns></returns>
+    public static RestRequest AddJsonBody(this RestRequest request, string jsonString, bool forceSerialize, ContentType? contentType = null) {
+        request.RequestFormat = DataFormat.Json;
+
+        return !forceSerialize
+            ? request.AddStringBody(jsonString, DataFormat.Json)
+            : request.AddParameter(new JsonParameter(jsonString, contentType));
+    }
+
+    /// <summary>
     /// Adds a JSON body parameter to the request
     /// </summary>
     /// <param name="request">Request instance</param>
@@ -384,7 +400,7 @@ public static class RestRequestExtensions {
     public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, ContentType? contentType = null) where T : class {
         request.RequestFormat = DataFormat.Json;
 
-        return obj is string str && (str[0] == '{' || str[0] == '[')
+        return obj is string str
             ? request.AddStringBody(str, DataFormat.Json)
             : request.AddParameter(new JsonParameter(obj, contentType));
     }

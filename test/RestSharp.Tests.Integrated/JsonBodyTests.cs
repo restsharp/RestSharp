@@ -42,10 +42,19 @@ public class JsonBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public async Task Add_JSON_body_string() {
-        const string payload = @"""requestBody"": { ""content"": { ""application/json"": { ""schema"": { ""type"": ""string"" } } } },";
+        const string payload = @"
+""requestBody"": { 
+    ""content"": { 
+        ""application/json"": { 
+            ""schema"": { 
+                ""type"": ""string"" 
+            } 
+        } 
+    } 
+},";
 
         var expected = JsonSerializer.Serialize(payload);
-        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post).AddJsonBody(payload);
+        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post).AddJsonBody(payload, true);
 
         await _client.ExecuteAsync(request);
 
