@@ -150,6 +150,30 @@ services.AddSingleton<ITwitterClient>(
 );
 ```
 
+### Simple factory
+
+Another way to create the client instance is to use a simple client factory. The factory will use the `BaseUrl` property of the client options to cache `HttpClient` instances. Every distinct base URL will get its own `HttpClient` instance. Other options don't affect the caching. Therefore, if you use different options for the same base URL, you'll get the same `HttpClient` instance, which will not be configured with the new options. Options that aren't applied _after_ the first client instance is created are:
+
+* `Credentials`
+* `UseDefaultCredentials`
+* `AutomaticDecompression`
+* `PreAuthenticate`
+* `FollowRedirects`
+* `RemoteCertificateValidationCallback`
+* `ClientCertificates`
+* `MaxRedirects`
+* `MaxTimeout`
+* `UserAgent`
+* `Expect100Continue`
+
+Constructor parameters to configure the `HttpMessageHandler` and default `HttpClient` headers configuration are also ignored for the cached instance as the factory only configures the handler once.
+
+You need to set the `useClientFactory` parameter to `true` in the `RestClient` constructor to enable the factory.
+
+```csharp
+var client = new RestClient("https://api.twitter.com/2", true);
+```
+
 ## Create a request
 
 Before making a request using `RestClient`, you need to create a request instance:
@@ -166,9 +190,23 @@ var request = new RestRequest(resource, Method.Post);
 
 After you've created a `RestRequest`, you can add parameters to it. Below, you can find all the parameter types supported by RestSharp.
 
-### Http Header
+### Headers
 
-Adds the parameter as an HTTP header that is sent along with the request. The header name is the parameter's name and the header value is the value.
+Adds the header parameter as an HTTP header that is sent along with the request. The header name is the parameter's name and the header value is the value.
+
+You can use one of the following request methods to add a header parameter:
+
+```csharp
+AddHeader(string name, string value);
+AddHeader<T>(string name, T value);           // value will be converted to string
+AddOrUpdateHeader(string name, string value); // replaces the header if it already exists
+```
+
+You can also add header parameters to the client, and they will be added to every request made by the client. This is useful for adding authentication headers, for example.
+
+```csharp
+client.AddDefaultHeader(string name, string value);
+```
 
 ::: warning Content-Type
 RestSharp will use the correct content type by default. Avoid adding the `Content-Type` header manually to your requests unless you are absolutely sure it is required. You can add a custom content type to the [body parameter](#request-body) itself.
@@ -190,6 +228,14 @@ Content-Disposition: form-data; name="parameterName"
 
 ParameterValue
 ```
+
+You can also add `GetOrPost` parameter as a default parameter to the client. This will add the parameter to every request made by the client.
+
+```csharp
+client.AddDefaultParameter("foo", "bar");
+```
+
+It will work the same way as request parameters, except that it will be added to every request.
 
 #### AddObject
 
@@ -241,6 +287,26 @@ var request = new RestRequest("health/{entity}/status")
 
 When the request executes, RestSharp will try to match any `{placeholder}` with a parameter of that name (without the `{}`) and replace it with the value. So the above code results in `health/s2/status` being the url.
 
+You can also add `UrlSegment` parameter as a default parameter to the client. This will add the parameter to every request made by the client.
+
+```csharp
+client.AddDefaultUrlSegment("foo", "bar");
+```
+
+### Cookies
+
+You can add cookies to a request using the `AddCookie` method:
+
+```csharp
+request.AddCookie("foo", "bar");
+```
+
+RestSharp will add cookies from the request as cookie headers and then extract the matching cookies from the response. You can observe and extract response cookies using the `RestResponse.Cookies` properties, which has the `CookieCollection` type.
+
+However, the usage of a default URL segment parameter is questionable as you can just include the parameter value to the base URL of the client. There is, however, a `CookieContainer` instance on the request level. You can either assign the pre-populated container to `request.CookieContainer`, or let the container be created by the request when you call `AddCookie`. Still, the container is only used to extract all the cookies from it and create cookie headers for the request instead of using the container directly. It's because the cookie container is normally configured on the `HttpClientHandler` level and cookies are shared between requests made by the same client. In most of the cases this behaviour can be harmful.
+
+If your use case requires sharing cookies between requests made by the client instance, you can use the client-level `CookieContainer`, which you must provide as the options' property. You can add cookies to the container using the container API. No response cookies, however, would be auto-added to the container, but you can do it in code by getting cookies from the `Cookes` property of the response and adding them to the client-level container available via `IRestClient.Options.CookieContainer` property.
+
 ### Request Body
 
 RestSharp supports multiple ways to add a request body:
@@ -251,6 +317,8 @@ RestSharp supports multiple ways to add a request body:
 We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
 
 When you make a `POST`, `PUT` or `PATCH` request and added `GetOrPost` [parameters](#get-or-post), RestSharp will send them as a URL-encoded form request body by default. When a request also has files, it will send a `multipart/form-data` request. You can also instruct RestSharp to send the body as `multipart/form-data` by setting the `AlwaysMultipartFormData` property to `true`. 
+
+It is not possible to add client-level default body parameters.
 
 #### AddStringBody
 
@@ -322,6 +390,14 @@ To do so, set the `encode` argument to `false` when adding the parameter:
 request.AddQueryParameter("foo", "bar/fox", false);
 ```
 
+You can also add a query string parameter as a default parameter to the client. This will add the parameter to every request made by the client.
+
+```csharp
+client.AddDefaultQueryParameter("foo", "bar");
+```
+
+The line above will result in all the requests made by that client instance to have `foo=bar` in the query string for all the requests made by that client.
+
 ## Making a call
 
 Once you've added all the parameters to your `RestRequest`, you are ready to make a request.
@@ -354,7 +430,7 @@ Task<RestResponse<T>> ExecutePostAsync<T>(RestRequest request, CancellationToken
 Task<RestResponse<T>> ExecutePutAsync<T>(RestRequest request, CancellationToken cancellationToken)
 ```
 
-All the overloads that return `RestResponse` or `RestResponse<T>` don't throw an exception if the server returns an error. Read more about it [here](error-handling.md).
+All the overloads with names starting with `Execute` don't throw an exception if the server returns an error. Read more about it [here](error-handling.md).
 
 If you just need a deserialized response, you can use one of the extensions:
 
@@ -368,6 +444,17 @@ Task<T> DeleteAsync<T>(RestRequest request, CancellationToken cancellationToken)
 ```
 
 Those extensions will throw an exception if the server returns an error, as there's no other way to float the error back to the caller.
+
+The `IRestClient` interface also has extensions for making requests without deserialization, which throw an exception if the server returns an error even if the client is configured to not throw exceptions.
+
+```csharp
+Task<RestResponse> GetAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> PostAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> PutAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> HeadAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> PatchAsync(RestRequest request, CancellationToken cancellationToken)
+Task<RestResponse> DeleteAsync(RestRequest request, CancellationToken cancellationToken)
+``` 
 
 ### JSON requests
 
@@ -474,15 +561,7 @@ One way of doing it is to use `RestClient` constructors that accept an instance 
 - `UserAgent` will be set if the `User-Agent` header is not set on the `HttpClient` instance already.
 - `Expect100Continue`
 
-Another option is to use a simple HTTP client factory. It is a static factory, which holds previously instantiated `HttpClient` instances. It can be used to create `RestClient` instances that share the same `HttpClient` instance. The cache key is the `BaseUrl` provided in the options. When you opt-in to use the factory and don't set `BaseUrl`, the `RestClient` constructor will crash.
-
-```csharp
-var client = new RestClient(new Uri("https://example.org/api"), useClientFactory: true);
-```
-
-::: warning
-Note that the `RestClient` constructor will not reconfigure the `HttpClient` instance if it's already in the cache. Therefore, you should not try using the factory when providing different options for the same base URL.
-:::
+Another option is to use a simple HTTP client factory as described [above](#simple-factory). 
 
 ## Blazor support
 

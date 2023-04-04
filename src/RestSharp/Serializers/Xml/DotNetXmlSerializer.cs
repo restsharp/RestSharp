@@ -25,7 +25,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
     /// Default constructor, does not specify namespace
     /// </summary>
     public DotNetXmlSerializer() {
-        ContentType = RestSharp.ContentType.Xml;
+        ContentType = ContentType.Xml;
         Encoding    = Encoding.UTF8;
     }
 
@@ -34,6 +34,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
     /// Specify the namespaced to be used when serializing
     /// </summary>
     /// <param name="namespace">XML namespace</param>
+    [PublicAPI]
     public DotNetXmlSerializer(string @namespace) : this() => Namespace = @namespace;
 
     /// <summary>
@@ -53,7 +54,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
 
         var root = RootElement == null ? null : new XmlRootAttribute(RootElement);
 
-        var serializer = new XmlSerializer(obj.GetType(), root);
+        var serializer = GetXmlSerializer(obj.GetType(), RootElement);
         var writer     = new EncodingStringWriter(Encoding);
 
         serializer.Serialize(writer, obj, ns);
@@ -72,14 +73,52 @@ public class DotNetXmlSerializer : IXmlSerializer {
     public string? Namespace { get; set; }
 
     /// <summary>
-    /// Format string to use when serializing dates
-    /// </summary>
-    public string? DateFormat { get; set; }
-
-    /// <summary>
     /// Content type for serialized content
     /// </summary>
     public ContentType ContentType { get; set; }
+
+    static readonly Dictionary<(Type, string?), XmlSerializer> Cache     = new();
+    static readonly ReaderWriterLockSlim                       CacheLock = new();
+
+    static XmlSerializer GetXmlSerializer(Type type, string? rootElement) {
+        XmlSerializer? serializer = null;
+
+        var key = (type, rootElement);
+
+        CacheLock.EnterReadLock();
+
+        try {
+            if (Cache.ContainsKey(key)) {
+                serializer = Cache[key];
+            }
+        }
+        finally {
+            CacheLock.ExitReadLock();
+        }
+
+        if (serializer != null) {
+            return serializer;
+        }
+
+        CacheLock.EnterWriteLock();
+
+        try {
+            // check again for a cached instance, because between the EnterWriteLock
+            // and the last check, some other thread could have added an instance
+            if (!Cache.ContainsKey(key)) {
+                var root = rootElement == null ? null : new XmlRootAttribute(rootElement);
+
+                Cache[key] = new XmlSerializer(type, root);
+            }
+
+            serializer = Cache[key];
+        }
+        finally {
+            CacheLock.ExitWriteLock();
+        }
+
+        return serializer;
+    }
 
     class EncodingStringWriter : StringWriter {
         // Need to subclass StringWriter in order to override Encoding

@@ -29,6 +29,11 @@ public interface IRestClient : IDisposable {
     RestSerializers Serializers { get; }
 
     /// <summary>
+    /// Default parameters to use on every request made with this client instance.
+    /// </summary>
+    DefaultParameters DefaultParameters { get; }
+
+    /// <summary>
     /// Executes the request asynchronously, authenticating if needed
     /// </summary>
     /// <param name="request">Request to be executed</param>

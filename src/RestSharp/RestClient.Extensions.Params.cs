@@ -13,18 +13,32 @@
 // limitations under the License.
 // 
 
+using System.Net;
+using System.Text;
+
 namespace RestSharp;
 
 public static partial class RestClientExtensions {
     /// <summary>
+    /// Add a parameter to use on every request made with this client instance
+    /// </summary>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
+    /// <param name="parameter"><see cref="Parameter"/> to add</param>
+    /// <returns></returns>
+    public static IRestClient AddDefaultParameter(this IRestClient client, Parameter parameter) {
+        client.DefaultParameters.AddParameter(parameter);
+        return client;
+    }
+
+    /// <summary>
     /// Adds a default HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
     /// Used on every request made by this client instance
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
     /// <returns>This request</returns>
-    public static RestClient AddDefaultParameter(this RestClient client, string name, string value)
+    public static IRestClient AddDefaultParameter(this IRestClient client, string name, string value)
         => client.AddDefaultParameter(new GetOrPostParameter(name, value));
 
     /// <summary>
@@ -35,25 +49,22 @@ public static partial class RestClientExtensions {
     /// - RequestBody: Used by AddBody() (not recommended to use directly)
     /// Used on every request made by this client instance
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the parameter</param>
     /// <param name="value">Value of the parameter</param>
     /// <param name="type">The type of parameter to add</param>
     /// <returns>This request</returns>
-    public static RestClient AddDefaultParameter(this RestClient client, string name, object value, ParameterType type) {
-        if (type == ParameterType.RequestBody) throw new ArgumentException("Default parameter cannot be Body", nameof(type));
-
-        return client.AddDefaultParameter(Parameter.CreateParameter(name, value, type));
-    }
+    public static IRestClient AddDefaultParameter(this IRestClient client, string name, object value, ParameterType type)
+        => client.AddDefaultParameter(Parameter.CreateParameter(name, value, type));
 
     /// <summary>
     /// Adds a default header to the RestClient. Used on every request made by this client instance.
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the header to add</param>
     /// <param name="value">Value of the header to add</param>
     /// <returns></returns>
-    public static RestClient AddDefaultHeader(this RestClient client, string name, string value)
+    public static IRestClient AddDefaultHeader(this IRestClient client, string name, string value)
         => client.AddDefaultParameter(new HeaderParameter(name, value));
 
     /// <summary>
@@ -62,7 +73,7 @@ public static partial class RestClientExtensions {
     /// <param name="client"><see cref="RestClientOptions"/> instance</param>
     /// <param name="headers">Dictionary containing the Names and Values of the headers to add</param>
     /// <returns></returns>
-    public static RestClient AddDefaultHeaders(this RestClient client, Dictionary<string, string> headers) {
+    public static IRestClient AddDefaultHeaders(this IRestClient client, Dictionary<string, string> headers) {
         foreach (var header in headers) client.AddDefaultParameter(new HeaderParameter(header.Key, header.Value));
 
         return client;
@@ -71,20 +82,20 @@ public static partial class RestClientExtensions {
     /// <summary>
     /// Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the segment to add</param>
     /// <param name="value">Value of the segment to add</param>
     /// <returns></returns>
-    public static RestClient AddDefaultUrlSegment(this RestClient client, string name, string value)
+    public static IRestClient AddDefaultUrlSegment(this IRestClient client, string name, string value)
         => client.AddDefaultParameter(new UrlSegmentParameter(name, value));
 
     /// <summary>
     /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
     /// </summary>
-    /// <param name="client"><see cref="RestClientOptions"/> instance</param>
+    /// <param name="client"><see cref="RestClient"/> instance</param>
     /// <param name="name">Name of the query parameter to add</param>
     /// <param name="value">Value of the query parameter to add</param>
     /// <returns></returns>
-    public static RestClient AddDefaultQueryParameter(this RestClient client, string name, string value)
+    public static IRestClient AddDefaultQueryParameter(this IRestClient client, string name, string value)
         => client.AddDefaultParameter(new QueryParameter(name, value));
 }

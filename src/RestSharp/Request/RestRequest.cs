@@ -82,19 +82,28 @@ public class RestRequest {
     public bool AlwaysMultipartFormData { get; set; }
 
     /// <summary>
-    /// When set to true, parameters in a multipart form data requests will be enclosed in
+    /// When set to true, parameter values in a multipart form data requests will be enclosed in
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
     /// to be in quotes (for example, FreshDesk API). 
     /// </summary>
     public bool MultipartFormQuoteParameters { get; set; }
 
+    /// <summary>
+    /// When set to true, the form boundary part of the content type will be enclosed in
+    /// quotation marks. Default is true.
+    /// </summary>
+    public bool MultipartFormQuoteBoundary { get; set; } = true;
+
+    /// <summary>
+    /// Overrides the default (random) form boundary
+    /// </summary>
     public string? FormBoundary { get; set; }
 
     /// <summary>
     /// Container of all HTTP parameters to be passed with the request.
     /// See AddParameter() for explanation of the types of parameters that can be passed
     /// </summary>
-    public ParametersCollection Parameters { get; } = new();
+    public RequestParameters Parameters { get; } = new();
 
     /// <summary>
     /// Optional cookie container to use for the request. If not set, cookies are not passed.

@@ -16,6 +16,7 @@ using RestSharp.Authenticators.OAuth;
 using RestSharp.Extensions;
 using System.Web;
 
+// ReSharper disable NotResolvedInText
 // ReSharper disable CheckNamespace
 
 namespace RestSharp.Authenticators;
@@ -38,7 +39,7 @@ public class OAuth1Authenticator : IAuthenticator {
     public virtual string?                 ClientUsername     { get; set; }
     public virtual string?                 ClientPassword     { get; set; }
 
-    public ValueTask Authenticate(RestClient client, RestRequest request) {
+    public ValueTask Authenticate(IRestClient client, RestRequest request) {
         var workflow = new OAuthWorkflow {
             ConsumerKey        = ConsumerKey,
             ConsumerSecret     = ConsumerSecret,
@@ -64,8 +65,8 @@ public class OAuth1Authenticator : IAuthenticator {
         string               consumerKey,
         string?              consumerSecret,
         OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1
-    ) {
-        var authenticator = new OAuth1Authenticator {
+    )
+        => new() {
             ParameterHandling  = OAuthParameterHandling.HttpAuthorizationHeader,
             SignatureMethod    = signatureMethod,
             SignatureTreatment = OAuthSignatureTreatment.Escaped,
@@ -74,10 +75,6 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.RequestToken
         };
 
-        return authenticator;
-    }
-
-    [PublicAPI]
     public static OAuth1Authenticator ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
         var authenticator = ForRequestToken(consumerKey, consumerSecret);
 
@@ -105,7 +102,6 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.AccessToken
         };
 
-    [PublicAPI]
     public static OAuth1Authenticator ForAccessToken(
         string  consumerKey,
         string? consumerSecret,
@@ -171,7 +167,6 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.ClientAuthentication
         };
 
-    [PublicAPI]
     public static OAuth1Authenticator ForProtectedResource(
         string               consumerKey,
         string?              consumerSecret,
@@ -190,7 +185,7 @@ public class OAuth1Authenticator : IAuthenticator {
             TokenSecret        = accessTokenSecret
         };
 
-    void AddOAuthData(RestClient client, RestRequest request, OAuthWorkflow workflow) {
+    void AddOAuthData(IRestClient client, RestRequest request, OAuthWorkflow workflow) {
         var requestUrl = client.BuildUriWithoutQueryParameters(request).AbsoluteUri;
 
         if (requestUrl.Contains('?'))
@@ -201,11 +196,9 @@ public class OAuth1Authenticator : IAuthenticator {
         var url              = client.BuildUri(request).ToString();
         var queryStringStart = url.IndexOf('?');
 
-        if (queryStringStart != -1)
-            url = url.Substring(0, queryStringStart);
+        if (queryStringStart != -1) url = url.Substring(0, queryStringStart);
 
-        var method = request.Method.ToString().ToUpperInvariant();
-
+        var method     = request.Method.ToString().ToUpperInvariant();
         var parameters = new WebPairCollection();
 
         // include all GET and POST parameters before generating the signature
@@ -247,21 +240,18 @@ public class OAuth1Authenticator : IAuthenticator {
 
         request.AddOrUpdateParameters(oauthParameters);
 
-        IEnumerable<Parameter> CreateHeaderParameters()
-            => new[] { new HeaderParameter(KnownHeaders.Authorization, GetAuthorizationHeader()) };
+        IEnumerable<Parameter> CreateHeaderParameters() => new[] { new HeaderParameter(KnownHeaders.Authorization, GetAuthorizationHeader()) };
 
-        IEnumerable<Parameter> CreateUrlParameters()
-            => oauth.Parameters.Select(p => new GetOrPostParameter(p.Name, HttpUtility.UrlDecode(p.Value)));
+        IEnumerable<Parameter> CreateUrlParameters() => oauth.Parameters.Select(p => new GetOrPostParameter(p.Name, HttpUtility.UrlDecode(p.Value)));
 
         string GetAuthorizationHeader() {
             var oathParameters =
                 oauth.Parameters
                     .OrderBy(x => x, WebPair.Comparer)
-                    .Select(x => $"{x.Name}=\"{x.WebValue}\"")
+                    .Select(x => x.GetQueryParameter(true))
                     .ToList();
 
-            if (!Realm.IsEmpty())
-                oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm!)}\"");
+            if (!Realm.IsEmpty()) oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
 
             return $"OAuth {string.Join(",", oathParameters)}";
         }
@@ -270,5 +260,5 @@ public class OAuth1Authenticator : IAuthenticator {
 
 static class ParametersExtensions {
     internal static IEnumerable<WebPair> ToWebParameters(this IEnumerable<Parameter> p)
-        => p.Select(x => new WebPair(Ensure.NotNull(x.Name, "Parameter name"), Ensure.NotNull(x.Value, "Parameter value").ToString()!));
+        => p.Select(x => new WebPair(Ensure.NotNull(x.Name, "Parameter name"), x.Value?.ToString()));
 }

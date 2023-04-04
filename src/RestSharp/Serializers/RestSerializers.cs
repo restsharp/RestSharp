@@ -32,6 +32,8 @@ public class RestSerializers {
             ? value.GetSerializer()
             : throw new InvalidOperationException($"Unable to find a serializer for {dataFormat}");
 
+    internal string[] GetAcceptedContentTypes() => Serializers.SelectMany(x => x.Value.AcceptedContentTypes).Distinct().ToArray();
+
     internal RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw, ReadOnlyRestClientOptions options) {
         var response = RestResponse<T>.FromResponse(raw);
 

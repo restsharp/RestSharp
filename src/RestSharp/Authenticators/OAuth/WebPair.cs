@@ -15,17 +15,20 @@
 namespace RestSharp.Authenticators.OAuth;
 
 class WebPair {
-    public WebPair(string name, string value, bool encode = false) {
+    public WebPair(string name, string? value, bool encode = false) {
         Name     = name;
         Value    = value;
         WebValue = encode ? OAuthTools.UrlEncodeRelaxed(value) : value;
-        Encode   = encode;
     }
 
-    public string Name     { get; }
-    public string Value    { get; }
-    public string WebValue { get; }
-    public bool   Encode   { get; }
+    public string  Name     { get; }
+    public string? Value    { get; }
+    string?        WebValue { get; }
+
+    public string  GetQueryParameter(bool web) {
+        var value = web ? $"\"{WebValue}\"" : Value;
+        return value == null ? Name : $"{Name}={value}";
+    }
 
     internal static WebPairComparer Comparer { get; } = new();
 
