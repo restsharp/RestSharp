@@ -226,26 +226,38 @@ public partial class RestClient : IRestClient {
         if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
     }
 
+    // ReSharper disable once CognitiveComplexity
     static void ConfigureHttpMessageHandler(HttpClientHandler handler, ReadOnlyRestClientOptions options) {
-        handler.UseCookies             = false;
-        handler.Credentials            = options.Credentials;
-        handler.UseDefaultCredentials  = options.UseDefaultCredentials;
-        handler.AutomaticDecompression = options.AutomaticDecompression;
-        handler.PreAuthenticate        = options.PreAuthenticate;
-        handler.AllowAutoRedirect      = options.FollowRedirects;
+#if NET
+        if (!OperatingSystem.IsBrowser()) {
+#endif
+            handler.UseCookies             = false;
+            handler.Credentials            = options.Credentials;
+            handler.UseDefaultCredentials  = options.UseDefaultCredentials;
+            handler.AutomaticDecompression = options.AutomaticDecompression;
+            handler.PreAuthenticate        = options.PreAuthenticate;
+            if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
 
-        if (handler.SupportsProxy) handler.Proxy = options.Proxy;
+            if (options.RemoteCertificateValidationCallback != null)
+                handler.ServerCertificateCustomValidationCallback =
+                    (request, cert, chain, errors) => options.RemoteCertificateValidationCallback(request, cert, chain, errors);
 
-        if (options.RemoteCertificateValidationCallback != null)
-            handler.ServerCertificateCustomValidationCallback =
-                (request, cert, chain, errors) => options.RemoteCertificateValidationCallback(request, cert, chain, errors);
-
-        if (options.ClientCertificates != null) {
-            handler.ClientCertificates.AddRange(options.ClientCertificates);
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            if (options.ClientCertificates != null) {
+                handler.ClientCertificates.AddRange(options.ClientCertificates);
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            }
+#if NET
         }
+#endif
+        handler.AllowAutoRedirect = options.FollowRedirects;
 
-        if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
+#if NET
+        if (!OperatingSystem.IsBrowser() && !OperatingSystem.IsIOS() && !OperatingSystem.IsTvOS()) {
+#endif
+            if (handler.SupportsProxy) handler.Proxy = options.Proxy;
+#if NET
+        }
+#endif
     }
 
     [MemberNotNull(nameof(Serializers))]
