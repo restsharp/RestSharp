@@ -156,7 +156,7 @@ public partial class RestClient {
         }
     }
     /// <summary>
-    /// Will be calld before the Request will be sent
+    /// Will be called before the Request will be sent
     /// </summary>
     /// <param name="requestMessage">HttpRequestMessage ready to be sent</param>
     async Task OnBeforeRequest(HttpRequestMessage requestMessage) {
