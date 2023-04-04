@@ -339,15 +339,35 @@ When you call `AddJsonBody`, it does the following for you:
 - Sets the content type to `application/json`
 - Sets the internal data type of the request body to `DataType.Json`
 
-::: warning
-Do not send JSON string or some sort of `JObject` instance to `AddJsonBody`; it won't work! Use `AddStringBody` instead.
-:::
-
 Here is the example:
 
 ```csharp
 var param = new MyClass { IntData = 1, StringData = "test123" };
 request.AddJsonBody(param);
+```
+
+It is possible to override the default content type by supplying the `contentType` argument. For example:
+
+```csharp
+request.AddJsonBody(param, "text/x-json");
+```
+
+If you use a pre-serialized string with `AddJsonBody`, it will be sent as-is. The `AddJsonBody` will detect if the parameter is a string and will add it as a string body with JSON content type.
+Essentially, it means that top-level strings won't be serialized as JSON when you use `AddJsonBody`. To overcome this issue, you can use an overload of `AddJsonBody`, which allows you to tell RestSharp to serialize the string as JSON:
+
+```csharp
+const string payload = @"
+""requestBody"": { 
+    ""content"": { 
+        ""application/json"": { 
+            ""schema"": { 
+                ""type"": ""string"" 
+            } 
+        } 
+    } 
+},";
+request.AddJsonBody(payload, forceSerialize: true); // the string will be serialized
+request.AddJsonBody(payload);       // the string will NOT be serialized and will be sent as-is
 ```
 
 #### AddXmlBody

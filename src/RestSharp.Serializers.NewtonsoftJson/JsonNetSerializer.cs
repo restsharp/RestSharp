@@ -73,7 +73,7 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     public ISerializer   Serializer   => this;
     public IDeserializer Deserializer => this;
 
-    public string[] AcceptedContentTypes => RestSharp.ContentType.JsonAccept;
+    public string[] AcceptedContentTypes => ContentType.JsonAccept;
 
     public ContentType ContentType { get; set; } = ContentType.Json;
 
