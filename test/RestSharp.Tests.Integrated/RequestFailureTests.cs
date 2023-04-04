@@ -73,6 +73,6 @@ public class RequestFailureTests {
     }
 
     class Response {
-        public string Message { get; set; }
+        public string Message { get; set; } = null!;
     }
 }

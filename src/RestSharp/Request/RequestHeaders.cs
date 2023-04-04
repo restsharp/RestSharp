@@ -21,7 +21,7 @@ using RestSharp.Extensions;
 namespace RestSharp;
 
 class RequestHeaders {
-    public ParametersCollection Parameters { get; } = new();
+    public RequestParameters Parameters { get; } = new();
 
     public RequestHeaders AddHeaders(ParametersCollection parameters) {
         Parameters.AddParameters(parameters.GetParameters<HeaderParameter>());
