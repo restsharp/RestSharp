@@ -72,11 +72,7 @@ class RequestContent : IDisposable {
 
     HttpContent Serialize(BodyParameter body) {
         return body.DataFormat switch {
-            DataFormat.None => new StringContent(
-                body.Value!.ToString()!,
-                _client.Options.Encoding,
-                body.ContentType.Value
-            ),
+            DataFormat.None   => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType.Value),
             DataFormat.Binary => GetBinary(),
             _                 => GetSerialized()
         };
@@ -124,19 +120,19 @@ class RequestContent : IDisposable {
     void AddBody(bool hasPostParameters) {
         if (!_request.TryGetBodyParameter(out var bodyParameter)) return;
 
-        var bodyContent = Serialize(bodyParameter!);
+        var bodyContent = Serialize(bodyParameter);
 
         // we need to send the body
         if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!) || _request.AlwaysMultipartFormData) {
             // here we must use multipart form data
             var mpContent = Content as MultipartFormDataContent ?? CreateMultipartFormDataContent();
             var ct        = bodyContent.Headers.ContentType?.MediaType;
-            var name      = bodyParameter!.Name.IsEmpty() ? ct : bodyParameter.Name;
+            var name      = bodyParameter.Name.IsEmpty() ? ct : bodyParameter.Name;
 
             if (name.IsEmpty())
                 mpContent.Add(bodyContent);
             else
-                mpContent.Add(bodyContent, name!);
+                mpContent.Add(bodyContent, name);
             Content = mpContent;
         }
         else {

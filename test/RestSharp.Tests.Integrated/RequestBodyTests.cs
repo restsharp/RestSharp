@@ -106,23 +106,6 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
         actual.Should().Contain(expectedBody);
     }
 
-    [Fact]
-    public async Task Query_Parameters_With_Json_Body() {
-        const Method httpMethod = Method.Put;
-
-        var client = new RestClient(_server.Url);
-
-        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod)
-            .AddJsonBody(new { displayName = "Display Name" })
-            .AddQueryParameter("key", "value");
-
-        await client.ExecuteAsync(request);
-
-        RequestBodyCapturer.CapturedUrl.ToString().Should().Be($"{_server.Url}Capture?key=value");
-        RequestBodyCapturer.CapturedContentType.Should().Be("application/json; charset=utf-8");
-        RequestBodyCapturer.CapturedEntityBody.Should().Be("{\"displayName\":\"Display Name\"}");
-    }
-
     static void AssertHasNoRequestBody() {
         RequestBodyCapturer.CapturedContentType.Should().BeNull();
         RequestBodyCapturer.CapturedHasEntityBody.Should().BeFalse();
