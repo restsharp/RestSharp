@@ -89,7 +89,10 @@ public partial class RestClient {
         using var requestContent = new RequestContent(this, request);
 
         var authenticator = request.Authenticator ?? Options.Authenticator;
-        if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
+
+        if (authenticator != null) {
+            await authenticator.Authenticate(this, request).ConfigureAwait(false);
+        }
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
@@ -124,14 +127,7 @@ public partial class RestClient {
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
-                foreach (var header in cookiesHeader) {
-                    try {
-                        cookieContainer.SetCookies(url, header);
-                    }
-                    catch (CookieException) {
-                        // Do not fail request if we cannot parse a cookie
-                    }
-                }
+                cookieContainer.AddCookies(url, cookiesHeader);
             }
 
             if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
