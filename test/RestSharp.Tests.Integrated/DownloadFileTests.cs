@@ -34,13 +34,15 @@ public sealed class DownloadFileTests : IDisposable {
     public async Task AdvancedResponseWriter_without_ResponseWriter_reads_stream() {
         var tag = string.Empty;
 
-        var rr = new RestRequest("Assets/Koala.jpg") {
-            AdvancedResponseWriter = (response, request) => {
-                var buf = new byte[16];
-                response.Content.ReadAsStream().Read(buf, 0, buf.Length);
-                tag = Encoding.ASCII.GetString(buf, 6, 4);
-                return new RestResponse(request);
-            }
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        var rr = new RestRequest("Assets/Koala.jpg");
+
+        rr.AdvancedResponseWriter = (response, request) => {
+            var buf = new byte[16];
+            // ReSharper disable once MustUseReturnValue
+            response.Content.ReadAsStream().Read(buf, 0, buf.Length);
+            tag = Encoding.ASCII.GetString(buf, 6, 4);
+            return new RestResponse(request);
         };
 
         await _client.ExecuteAsync(rr);
@@ -50,7 +52,7 @@ public sealed class DownloadFileTests : IDisposable {
     [Fact]
     public async Task Handles_File_Download_Failure() {
         var request = new RestRequest("Assets/Koala1.jpg");
-        var task = () => _client.DownloadDataAsync(request);
+        var task    = () => _client.DownloadDataAsync(request);
         await task.Should().ThrowAsync<HttpRequestException>().WithMessage("Request failed with status code NotFound");
     }
 
@@ -67,13 +69,14 @@ public sealed class DownloadFileTests : IDisposable {
     public async Task Writes_Response_To_Stream() {
         var tempFile = Path.GetTempFileName();
 
-        var request = new RestRequest("Assets/Koala.jpg") {
-            ResponseWriter = responseStream => {
-                using var writer = File.OpenWrite(tempFile);
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        var request = new RestRequest("Assets/Koala.jpg");
 
-                responseStream.CopyTo(writer);
-                return null;
-            }
+        request.ResponseWriter = responseStream => {
+            using var writer = File.OpenWrite(tempFile);
+
+            responseStream.CopyTo(writer);
+            return null;
         };
         var response = await _client.DownloadDataAsync(request);
 

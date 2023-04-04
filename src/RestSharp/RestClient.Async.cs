@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using System.Net.Http.Headers;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -52,16 +53,7 @@ public partial class RestClient {
 
         if (response.ResponseMessage == null) return null;
 
-        if (request.ResponseWriter != null) {
-#if NETSTANDARD || NETFRAMEWORK
-            using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-#else
-            await using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-#endif
-            return request.ResponseWriter(stream!);
-        }
-
-        return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+        return await response.ResponseMessage.ReadResponseStream(request.ResponseWriter, cancellationToken).ConfigureAwait(false);
     }
 
     static RestResponse GetErrorResponse(RestRequest request, Exception exception, CancellationToken timeoutToken) {
@@ -95,7 +87,7 @@ public partial class RestClient {
         var url        = this.BuildUri(request);
         var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
         message.Headers.Host         = Options.BaseHost;
-        message.Headers.CacheControl = Options.CachePolicy;
+        message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);

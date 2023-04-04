@@ -1,4 +1,4 @@
-#if NETSTANDARD || NETFRAMEWORK
+#if !NET
 using System.ComponentModel;
 
 // ReSharper disable once CheckNamespace
