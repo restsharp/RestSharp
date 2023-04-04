@@ -19,19 +19,19 @@ namespace RestSharp.Interceptors;
 /// Base Interceptor
 /// </summary>
 public class BaseInterceptor : IInterceptor {
-    public ValueTask InterceptBeforeSerialization(RestRequest request) {
+    public virtual ValueTask InterceptBeforeSerialization(RestRequest request) {
         return new();
     }
 
-    public ValueTask InterceptBeforeRequest(HttpRequestMessage req) {
+    public virtual ValueTask InterceptBeforeRequest(HttpRequestMessage req) {
         return new();
     }
 
-    public ValueTask InterceptAfterRequest(HttpResponseMessage responseMessage) {
+    public virtual ValueTask InterceptAfterRequest(HttpResponseMessage responseMessage) {
         return new();
     }
 
-    public ValueTask InterceptBeforeDeserialize(RestResponse request) {
+    public virtual ValueTask InterceptBeforeDeserialize(RestResponse request) {
         return new();
     }
 }
