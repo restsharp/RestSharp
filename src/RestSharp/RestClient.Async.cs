@@ -86,16 +86,11 @@ public partial class RestClient {
             throw new ObjectDisposedException(nameof(RestClient));
         }
 
-        using var requestContent = new RequestContent(this, request);
-
         var authenticator = request.Authenticator ?? Options.Authenticator;
         if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
-        var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
-        message.Headers.Host         = Options.BaseHost;
-        message.Headers.CacheControl = Options.CachePolicy;
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
@@ -116,11 +111,50 @@ public partial class RestClient {
                 headers.AddCookieHeaders(Options.CookieContainer, url);
             }
 
-            message.AddHeaders(headers);
+            HttpResponseMessage? responseMessage;
 
-            if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+            while (true) {
+                using var requestContent = new RequestContent(this, request);
+                using var message        = PrepareRequestMessage(httpMethod, url, requestContent, headers);
 
-            var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
+                if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+
+                responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
+
+                if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+
+                if (!IsRedirect(responseMessage)) {
+                    // || !Options.FollowRedirects) {
+                    break;
+                }
+
+                var location = responseMessage.Headers.Location;
+
+                if (location == null) {
+                    break;
+                }
+
+                if (!location.IsAbsoluteUri) {
+                    location = new Uri(url, location);
+                }
+
+                if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod) {
+                    httpMethod = HttpMethod.Get;
+                }
+
+                url = location;
+
+                if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var ch)) {
+                    foreach (var header in ch) {
+                        try {
+                            cookieContainer.SetCookies(url, header);
+                        }
+                        catch (CookieException) {
+                            // Do not fail request if we cannot parse a cookie
+                        }
+                    }
+                }
+            }
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
@@ -134,14 +168,33 @@ public partial class RestClient {
                 }
             }
 
-            if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
-
             return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         }
         catch (Exception ex) {
             return new HttpResponse(null, url, null, ex, timeoutCts.Token);
         }
     }
+
+    HttpRequestMessage PrepareRequestMessage(HttpMethod httpMethod, Uri url, RequestContent requestContent, RequestHeaders headers) {
+        var message = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
+        message.Headers.Host         = Options.BaseHost;
+        message.Headers.CacheControl = Options.CachePolicy;
+        message.AddHeaders(headers);
+
+        return message;
+    }
+
+    static bool IsRedirect(HttpResponseMessage responseMessage)
+        => responseMessage.StatusCode switch {
+            HttpStatusCode.MovedPermanently  => true,
+            HttpStatusCode.SeeOther          => true,
+            HttpStatusCode.TemporaryRedirect => true,
+            HttpStatusCode.Redirect          => true,
+#if NET
+            HttpStatusCode.PermanentRedirect => true,
+#endif
+            _ => false
+        };
 
     record HttpResponse(
         HttpResponseMessage? ResponseMessage,
