@@ -16,7 +16,18 @@ in favour of giving you the error as a property.
 | `ThrowOnDeserializationError` | Changes the default behavior when failed deserialization results in empty `Data` property of the response. Setting this property to `true` will tell RestSharp to throw when deserialization fails.                                                                                              |
 | `ThrowOnAnyError`             | Setting this property to `true` changes the default behavior and forces RestSharp to throw if any errors occurs when making a request or during deserialization.                                                                                                                                 |
 
-Those properties are available for the `RestClient` instance and will be used for all request made with that instance.
+Those properties are available for the `RestClientOptions` and will be used for all request made with the client instance.
+
+For example, you can configure the client to throw an exception if any error occurs when making a request, or when a request returns a non-successful HTTP status code:
+
+```csharp
+var options = new RestClientOptions(url) {
+    ThrowOnAnyError = true
+};
+var client = new RestClient(options);
+var request = new RestRequest("resource/{id}").AddUrlSegment("id", 123);
+var response = await client.ExecuteGetAsync<ResponseModel>(request); // will throw if the request fails
+```
 
 ::: warning
 Please be aware that deserialization failures will only work if the serializer throws an exception when deserializing the response.
