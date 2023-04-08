@@ -78,7 +78,7 @@ Read [here](usage.md#json-requests) about making JSON calls without preparing a 
 
 ### Content type
 
-RestSharp supports sending XML or JSON body as part of the request. To add a body to the request, simply call `AddJsonBody` or `AddXmlBody` method of the `IRestRequest` instance.
+RestSharp supports sending XML or JSON body as part of the request. To add a body to the request, simply call `AddJsonBody` or `AddXmlBody` method of the `RestRequest` instance.
 
 There is no need to set the `Content-Type` or add the `DataFormat` parameter to the request when using those methods, RestSharp will do it for you.
 

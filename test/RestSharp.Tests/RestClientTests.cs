@@ -15,7 +15,7 @@ public class RestClientTests {
     [InlineData(Method.Patch, Method.Put)]
     [InlineData(Method.Post, Method.Put)]
     [InlineData(Method.Get, Method.Delete)]
-    public async Task Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
+    public async Task Execute_with_RestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
         var req    = new RestRequest("", reqMethod);
         var client = new RestClient(BaseUrl);
 
