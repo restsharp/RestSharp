@@ -86,10 +86,10 @@ public partial class RestClient {
             throw new ObjectDisposedException(nameof(RestClient));
         }
 
-        using var requestContent = new RequestContent(this, request);
-
         var authenticator = request.Authenticator ?? Options.Authenticator;
         if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
+
+        using var requestContent = new RequestContent(this, request);
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
