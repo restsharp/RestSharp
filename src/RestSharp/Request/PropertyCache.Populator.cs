@@ -133,7 +133,7 @@ static partial class PropertyCache<T> where T : class {
                 // and use its type converter. Even though the property itself returns an object,
                 // the object returned itself may need to be treated in a special way, so we check
                 // it as we go.
-                var otherType => GetPopulate(getObject, requestProperty)
+                _ => GetPopulate(getObject, requestProperty)
             };
         }
 
@@ -146,8 +146,8 @@ static partial class PropertyCache<T> where T : class {
             }
 
             return enumeratedType switch {
-                var formattableEnumeratedType when typeof(IFormattable).IsAssignableFrom(formattableEnumeratedType) => GetPopulate(
-                    GetEnumerableOf<IFormattable>(getEnumerable, formattableEnumeratedType),
+                _ when typeof(IFormattable).IsAssignableFrom(enumeratedType) => GetPopulate(
+                    GetEnumerableOf<IFormattable>(getEnumerable, enumeratedType),
                     requestProperty
                 ),
                 _ when typeof(IConvertible).IsAssignableFrom(enumeratedType) => GetPopulate(

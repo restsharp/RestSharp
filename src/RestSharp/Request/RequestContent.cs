@@ -123,7 +123,7 @@ class RequestContent : IDisposable {
         var bodyContent = Serialize(bodyParameter);
 
         // we need to send the body
-        if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter!) || _request.AlwaysMultipartFormData) {
+        if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter) || _request.AlwaysMultipartFormData) {
             // here we must use multipart form data
             var mpContent = Content as MultipartFormDataContent ?? CreateMultipartFormDataContent();
             var ct        = bodyContent.Headers.ContentType?.MediaType;
@@ -160,7 +160,7 @@ class RequestContent : IDisposable {
             }
         }
         else {
-            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()?.UrlEncode() ?? string.Empty}");
+            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()!.UrlEncode() ?? string.Empty}");
             var encodedContent = new StringContent(encodedItems.JoinToString("&"), _client.Options.Encoding, ContentType.FormUrlEncoded.Value);
 
             if (_client.Options.DisableCharset) {

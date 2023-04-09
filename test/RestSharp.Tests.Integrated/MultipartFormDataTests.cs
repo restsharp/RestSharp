@@ -187,20 +187,4 @@ public sealed class MultipartFormDataTests : IDisposable {
         response.Content.Should().Be(expected);
     }
 
-    [Fact]
-    public async Task ShouldHaveJsonContentType() {
-        var jsonData = new {
-            Company = "Microsoft",
-            ZipCode = "LS339",
-            Country = "USA"
-        };
-
-        var request = new RestRequest {
-            Method                  = Method.Post,
-            AlwaysMultipartFormData = true
-        };
-        request.AddJsonBody(jsonData);
-
-        var response = await _client.ExecuteAsync(request);
-    }
 }

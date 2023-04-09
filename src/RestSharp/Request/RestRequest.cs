@@ -93,6 +93,7 @@ public class RestRequest {
     /// When set to true, the form boundary part of the content type will be enclosed in
     /// quotation marks. Default is true.
     /// </summary>
+    [PublicAPI]
     public bool MultipartFormQuoteBoundary { get; set; } = true;
 
     /// <summary>
@@ -144,6 +145,7 @@ public class RestRequest {
     /// request.Resource = "Products/{ProductId}";
     /// request.AddParameter("ProductId", 123, ParameterType.UrlSegment);
     /// </example>
+    [PublicAPI]
     public string Resource { get; set; } = "";
 
     /// <summary>
@@ -180,6 +182,7 @@ public class RestRequest {
     /// <remarks>
     /// This number is incremented each time the RestClient sends the request.
     /// </remarks>
+    [PublicAPI]
     public int Attempts { get; private set; }
 
     /// <summary>

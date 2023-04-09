@@ -28,6 +28,7 @@ public class DotNetXmlDeserializer : IXmlDeserializer {
     /// <summary>
     /// Name of the root element to use when serializing
     /// </summary>
+    [Obsolete("DotnetXmlDeserializer does not support RootElement.")]
     public string? RootElement { get; set; }
 
     /// <summary>
@@ -35,6 +36,7 @@ public class DotNetXmlDeserializer : IXmlDeserializer {
     /// </summary>
     public string? Namespace { get; set; }
 
+    [Obsolete("DotnetXmlDeserializer does not support DateFormat.")]
     public string? DateFormat { get; set; }
 
     public T? Deserialize<T>(RestResponse response) {

@@ -1,5 +1,6 @@
 ﻿using RestSharp.Serializers;
 // ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 #pragma warning disable CS8981
 
 namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
@@ -88,8 +89,6 @@ public class user {
     public int utc_offset { get; set; }
 }
 
-public class StatusList : List<status> { }
-
 public class complexStatus {
     public bool truncated { get; set; }
 
@@ -114,5 +113,3 @@ public class complexStatus {
 
     public string text { get; set; }
 }
-
-public class StatusComplexList : List<complexStatus> { }

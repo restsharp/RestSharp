@@ -97,7 +97,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_multiple_instances_of_same_key() {
-        var request = new RestRequest("v1/people/~/network/updates", Method.Get);
+        var request = new RestRequest("v1/people/~/network/updates");
 
         request.AddParameter("type", "STAT");
         request.AddParameter("type", "PICT");

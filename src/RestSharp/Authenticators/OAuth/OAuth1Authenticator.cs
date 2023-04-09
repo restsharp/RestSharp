@@ -75,6 +75,7 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.RequestToken
         };
 
+    [PublicAPI]
     public static OAuth1Authenticator ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
         var authenticator = ForRequestToken(consumerKey, consumerSecret);
 
@@ -102,6 +103,7 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.AccessToken
         };
 
+    [PublicAPI]
     public static OAuth1Authenticator ForAccessToken(
         string  consumerKey,
         string? consumerSecret,
@@ -167,6 +169,7 @@ public class OAuth1Authenticator : IAuthenticator {
             Type               = OAuthType.ClientAuthentication
         };
 
+    [PublicAPI]
     public static OAuth1Authenticator ForProtectedResource(
         string               consumerKey,
         string?              consumerSecret,

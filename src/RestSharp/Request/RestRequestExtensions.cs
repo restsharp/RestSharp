@@ -338,7 +338,7 @@ public static class RestRequestExtensions {
                 DataFormat.Json   => request.AddJsonBody(obj, contentType),
                 DataFormat.Xml    => request.AddXmlBody(obj, contentType),
                 DataFormat.Binary => request.AddParameter(new BodyParameter("", obj, ContentType.Binary)),
-                _                 => request.AddParameter(new BodyParameter("", obj.ToString(), ContentType.Plain))
+                _                 => request.AddParameter(new BodyParameter("", obj.ToString()!, ContentType.Plain))
             };
         }
 

@@ -20,6 +20,7 @@ namespace RestSharp.Authenticators.OAuth2;
 /// <remarks>
 /// Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.1
 /// </remarks>
+[PublicAPI]
 public class OAuth2AuthorizationRequestHeaderAuthenticator : AuthenticatorBase {
     readonly string _tokenType;
 

@@ -1,4 +1,5 @@
-namespace RestSharp.Tests.Serializers.Json; 
+// ReSharper disable UnusedMember.Global
+namespace RestSharp.Tests.Serializers.Json;
 
 public class TestClass {
     public string SimpleString { get; set; }

@@ -2,10 +2,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace RestSharp.Tests.Integrated.Server.Handlers;
 
-public static class RequestHandlers {
-    public static IResult ParseRequest(HttpContext ctx) => Results.Ok(new ParsedRequest(ctx.Request));
-}
-
 public class ParsedRequest {
     public ParsedRequest(HttpRequest request) {
         Method      = request.Method;

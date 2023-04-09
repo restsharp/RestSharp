@@ -21,19 +21,19 @@ namespace RestSharp.Authenticators.OAuth;
 /// A class to encapsulate OAuth authentication flow.
 /// </summary>
 sealed class OAuthWorkflow {
-    public string?                 Version            { get; set; }
-    public string?                 ConsumerKey        { get; set; }
-    public string?                 ConsumerSecret     { get; set; }
-    public string?                 Token              { get; set; }
-    public string?                 TokenSecret        { get; set; }
-    public string?                 CallbackUrl        { get; set; }
-    public string?                 Verifier           { get; set; }
-    public string?                 SessionHandle      { get; set; }
-    public OAuthSignatureMethod    SignatureMethod    { get; set; }
-    public OAuthSignatureTreatment SignatureTreatment { get; set; }
+    public string?                 Version            { get; init; }
+    public string?                 ConsumerKey        { get; init; }
+    public string?                 ConsumerSecret     { get; init; }
+    public string?                 Token              { get; init; }
+    public string?                 TokenSecret        { get; init; }
+    public string?                 CallbackUrl        { get; init; }
+    public string?                 Verifier           { get; init; }
+    public string?                 SessionHandle      { get; init; }
+    public OAuthSignatureMethod    SignatureMethod    { get; init; }
+    public OAuthSignatureTreatment SignatureTreatment { get; init; }
     public OAuthParameterHandling  ParameterHandling  { get; set; }
-    public string?                 ClientUsername     { get; set; }
-    public string?                 ClientPassword     { get; set; }
+    public string?                 ClientUsername     { get; init; }
+    public string?                 ClientPassword     { get; init; }
     public string?                 RequestTokenUrl    { get; set; }
     public string?                 AccessTokenUrl     { get; set; }
 
@@ -164,9 +164,7 @@ sealed class OAuthWorkflow {
         Ensure.NotEmpty(ClientUsername, nameof(ClientUsername));
     }
 
-    void ValidateProtectedResourceState() {
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-    }
+    void ValidateProtectedResourceState() => Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
 
     WebPairCollection GenerateAuthParameters(string timestamp, string nonce)
         => new WebPairCollection {
@@ -181,7 +179,7 @@ sealed class OAuthWorkflow {
             .AddNotEmpty("oauth_session_handle", SessionHandle!);
 
     WebPairCollection GenerateXAuthParameters(string timestamp, string nonce)
-        => new WebPairCollection {
+        => new() {
             new("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
             new("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
             new("x_auth_mode", "client_auth"),

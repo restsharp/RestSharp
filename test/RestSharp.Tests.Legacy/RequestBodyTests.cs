@@ -11,6 +11,6 @@ public class RequestBodyTests {
 
         var request = new RestRequest("resource");
         request.AddHeader("Content-Type", "application/force-download");
-        var response = await client.GetAsync(request);
+        await client.GetAsync(request);
     }
 }

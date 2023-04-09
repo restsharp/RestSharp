@@ -57,8 +57,6 @@ public static class ReflectionExtensions {
         return false;
     }
 
-    internal static object ChangeType(this object source, Type newType, IFormatProvider provider) => Convert.ChangeType(source, newType, provider);
-
     internal static object? ChangeType(this object? source, Type newType) => Convert.ChangeType(source, newType);
 
     /// <summary>

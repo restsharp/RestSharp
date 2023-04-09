@@ -18,7 +18,7 @@ public class AuthenticatorTests {
             .Respond(HttpStatusCode.OK);
 
         var options = new RestClientOptions(url) {
-            ConfigureMessageHandler = h => mockHttp,
+            ConfigureMessageHandler = _ => mockHttp,
             Authenticator           = new TestAuthenticator(ParameterType.HttpHeader, KnownHeaders.Authorization, auth)
         };
         var client   = new RestClient(options);
@@ -39,7 +39,7 @@ public class AuthenticatorTests {
             .Respond(HttpStatusCode.OK);
 
         var options = new RestClientOptions(url) {
-            ConfigureMessageHandler = h => mockHttp,
+            ConfigureMessageHandler = _ => mockHttp,
             Authenticator           = new TestAuthenticator(ParameterType.GetOrPost, "token", auth)
         };
         var client   = new RestClient(options);

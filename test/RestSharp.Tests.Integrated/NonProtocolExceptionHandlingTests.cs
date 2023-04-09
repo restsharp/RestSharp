@@ -6,6 +6,7 @@ namespace RestSharp.Tests.Integrated;
 public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     // ReSharper disable once ClassNeverInstantiated.Local
     class StupidClass {
+        // ReSharper disable once UnusedMember.Local
         public string Property { get; set; } = null!;
     }
 

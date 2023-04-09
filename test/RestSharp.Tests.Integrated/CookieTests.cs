@@ -73,14 +73,14 @@ public class CookieTests {
         var response = await _client.ExecuteAsync(request);
         response.Content.Should().Be("success");
 
-        Cookie? notFoundCookie = FindCookie("cookie_empty_domain");
+        var notFoundCookie = FindCookie("cookie_empty_domain");
         notFoundCookie.Should().BeNull();
 
-        HeaderParameter? emptyDomainCookieHeader = response.Headers!
+        var emptyDomainCookieHeader = response.Headers!
             .SingleOrDefault(h => h.Name == KnownHeaders.SetCookie && ((string)h.Value!).StartsWith("cookie_empty_domain"));
         emptyDomainCookieHeader.Should().NotBeNull();
         ((string)emptyDomainCookieHeader!.Value!).Should().Contain("domain=;");
 
-        Cookie? FindCookie(string name) => response!.Cookies!.FirstOrDefault(p => p.Name == name);
+        Cookie? FindCookie(string name) => response.Cookies!.FirstOrDefault(p => p.Name == name);
     }
 }

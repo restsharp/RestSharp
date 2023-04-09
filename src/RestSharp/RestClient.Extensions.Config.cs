@@ -15,14 +15,13 @@
 
 using System.Text;
 using RestSharp.Authenticators;
-using RestSharp.Extensions;
 
 namespace RestSharp;
 
 public static partial class RestClientExtensions {
     [PublicAPI]
     public static RestResponse<T> Deserialize<T>(this IRestClient client, RestResponse response)
-        => client.Serializers.Deserialize<T>(response.Request!, response, client.Options);
+        => client.Serializers.Deserialize<T>(response.Request, response, client.Options);
 
     [Obsolete("Set the RestClientOptions.Encode property instead")]
     public static RestClient UseUrlEncoder(this RestClient client, Func<string, string> encoder)

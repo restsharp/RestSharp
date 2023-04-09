@@ -52,8 +52,6 @@ public class DotNetXmlSerializer : IXmlSerializer {
 
         ns.Add(string.Empty, Namespace);
 
-        var root = RootElement == null ? null : new XmlRootAttribute(RootElement);
-
         var serializer = GetXmlSerializer(obj.GetType(), RootElement);
         var writer     = new EncodingStringWriter(Encoding);
 
