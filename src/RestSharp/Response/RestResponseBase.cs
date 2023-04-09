@@ -52,7 +52,7 @@ public abstract class RestResponseBase {
     /// <summary>
     /// Encoding of the response content
     /// </summary>
-    public ICollection<string> ContentEncoding { get; set; } = new List<string>();
+    public ICollection<string> ContentEncoding { get; set; } = Array.Empty<string>();
 
     /// <summary>
     /// String representation of response content
