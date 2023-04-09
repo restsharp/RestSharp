@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 
@@ -25,8 +26,8 @@ namespace RestSharp;
 /// Container for data used to make requests
 /// </summary>
 public class RestRequest {
-    readonly Func<HttpResponseMessage, RestRequest, RestResponse>? _advancedResponseHandler;
-    readonly Func<Stream, Stream?>?                                _responseWriter;
+    Func<HttpResponseMessage, RestRequest, RestResponse>? _advancedResponseHandler;
+    Func<Stream, Stream?>?                                _responseWriter;
 
     /// <summary>
     /// Default constructor
@@ -187,11 +188,16 @@ public class RestRequest {
     public HttpCompletionOption CompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
 
     /// <summary>
+    /// Cache policy to be used for requests using <seealso cref="CacheControlHeaderValue"/>
+    /// </summary>
+    public CacheControlHeaderValue? CachePolicy { get; set; }
+
+    /// <summary>
     /// Set this to write response to Stream rather than reading into memory.
     /// </summary>
     public Func<Stream, Stream?>? ResponseWriter {
         get => _responseWriter;
-        init {
+        set {
             if (AdvancedResponseWriter != null)
                 throw new ArgumentException(
                     "AdvancedResponseWriter is not null. Only one response writer can be used."
@@ -206,7 +212,7 @@ public class RestRequest {
     /// </summary>
     public Func<HttpResponseMessage, RestRequest, RestResponse>? AdvancedResponseWriter {
         get => _advancedResponseHandler;
-        init {
+        set {
             if (ResponseWriter != null) throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
 
             _advancedResponseHandler = value;
