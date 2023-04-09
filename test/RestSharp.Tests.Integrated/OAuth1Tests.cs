@@ -25,7 +25,7 @@ public class OAuth1Tests {
     }
 
     [Fact]
-    public void Can_Authenticate_OAuth1_With_Querystring_Parameters() {
+    public async Task Can_Authenticate_OAuth1_With_Querystring_Parameters() {
         const string consumerKey    = "enterConsumerKeyHere";
         const string consumerSecret = "enterConsumerSecretHere";
         const string baseUrl        = "http://restsharp.org";
@@ -43,7 +43,7 @@ public class OAuth1Tests {
         var request       = new RestRequest();
         var authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
         authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
-        authenticator.Authenticate(client, request);
+        await authenticator.Authenticate(client, request);
 
         var requestUri = client.BuildUri(request);
         var actual     = requestUri.ParseQuery().Select(x => x.Key).ToList();

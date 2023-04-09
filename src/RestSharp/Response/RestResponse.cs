@@ -84,10 +84,10 @@ public class RestResponse : RestResponseBase {
             return new RestResponse(request) {
                 Content             = content,
                 RawBytes            = bytes,
-                ContentEncoding     = httpResponse.Content.Headers.ContentEncoding,
+                ContentEncoding     = httpResponse.Content?.Headers.ContentEncoding ?? Array.Empty<string>(),
                 Version             = httpResponse.RequestMessage?.Version,
-                ContentLength       = httpResponse.Content.Headers.ContentLength,
-                ContentType         = httpResponse.Content.Headers.ContentType?.MediaType,
+                ContentLength       = httpResponse.Content?.Headers.ContentLength,
+                ContentType         = httpResponse.Content?.Headers.ContentType?.MediaType,
                 ResponseStatus      = calculateResponseStatus(httpResponse),
                 ErrorException      = httpResponse.MaybeException(),
                 ResponseUri         = httpResponse.RequestMessage?.RequestUri,
@@ -96,7 +96,7 @@ public class RestResponse : RestResponseBase {
                 StatusDescription   = httpResponse.ReasonPhrase,
                 IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
                 Headers             = httpResponse.Headers.GetHeaderParameters(),
-                ContentHeaders      = httpResponse.Content.Headers.GetHeaderParameters(),
+                ContentHeaders      = httpResponse.Content?.Headers.GetHeaderParameters(),
                 Cookies             = cookieCollection,
                 RootElement         = request.RootElement
             };

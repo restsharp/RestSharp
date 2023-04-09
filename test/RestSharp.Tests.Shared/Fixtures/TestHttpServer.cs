@@ -20,11 +20,7 @@ public class TestHttpServer : IDisposable {
     )
         : this(port, new List<TestRequestHandler> { new(url, handlerAction) }, hostName) { }
 
-    public TestHttpServer(
-        int                      port,
-        List<TestRequestHandler> handlers,
-        string                   hostName = "localhost"
-    ) {
+    public TestHttpServer(int port, List<TestRequestHandler> handlers, string hostName = "localhost") {
         _requestHandlers = handlers;
 
         Port = port > 0 ? port : GetRandomUnusedPort();
@@ -79,7 +75,7 @@ public class TestHttpServer : IDisposable {
                     }
                     else {
                         context.Response.ContentType("text/plain").StatusCode(404);
-                        responseString = "No handler provided for URL: " + context.Request.RawUrl;
+                        responseString = $"No handler provided for URL: {context.Request.RawUrl}";
                     }
 
                     context.Request.ClearContent();
@@ -88,7 +84,7 @@ public class TestHttpServer : IDisposable {
                     if (responseString != null) {
                         var buffer = Encoding.UTF8.GetBytes(responseString);
                         context.Response.ContentLength64 += buffer.Length;
-                        context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                        await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
                     }
                 }
                 finally {
@@ -99,8 +95,7 @@ public class TestHttpServer : IDisposable {
         }
         catch (HttpListenerException ex) {
             //when the listener is stopped, it will throw an exception for being cancelled, so just ignore it
-            if (ex.Message != "The I/O operation has been aborted because of either a thread exit or an application request")
-                throw;
+            if (ex.Message != "The I/O operation has been aborted because of either a thread exit or an application request") throw;
         }
     }
 

@@ -93,7 +93,7 @@ class TwitterAuthenticator : AuthenticatorBase {
 
     async Task<string> GetToken() {
         var options = new RestClientOptions(_baseUrl) {
-            Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
+            Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret)
         };
 
         using var client = new RestClient(options);

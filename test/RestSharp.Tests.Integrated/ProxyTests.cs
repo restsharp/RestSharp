@@ -6,7 +6,7 @@ namespace RestSharp.Tests.Integrated;
 public class ProxyTests {
     [Fact]
     public async Task Set_Invalid_Proxy_Fails() {
-        using var server = HttpServerFixture.StartServer((_, __) => { });
+        using var server = HttpServerFixture.StartServer((_, _) => { });
 
         var client  = new RestClient(new RestClientOptions(server.Url) { Proxy = new WebProxy("non_existent_proxy", false) });
         var request = new RestRequest();

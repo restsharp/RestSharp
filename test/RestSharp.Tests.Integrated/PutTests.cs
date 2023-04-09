@@ -1,5 +1,4 @@
 using System.Text.Json;
-using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Integrated.Server;
 using static RestSharp.Tests.Integrated.Server.HttpServer;
 
@@ -25,7 +24,7 @@ public class PutTests {
         var response = await _client.PutAsync(request);
 
         var expected = JsonSerializer.Serialize(body, Options);
-        response!.Content.Should().Be(expected);
+        response.Content.Should().Be(expected);
     }
 
     [Fact]

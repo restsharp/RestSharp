@@ -16,23 +16,6 @@ public static class Handlers {
     public static Action<HttpListenerContext> EchoValue(string value) => ctx => ctx.Response.OutputStream.WriteStringUtf8(value);
 
     /// <summary>
-    /// Response to a request like this:  http://localhost:8888/assets/koala.jpg
-    /// by streaming the file located at "assets\koala.jpg" back to the client.
-    /// </summary>
-    public static void FileHandler(HttpListenerContext context, string path) {
-        var pathToFile = Path.Combine(
-            path,
-            Path.Combine(
-                context.Request.Url.Segments.Select(s => s.Replace("/", "")).ToArray()
-            )
-        );
-
-        using var reader = new StreamReader(pathToFile);
-
-        reader.BaseStream.CopyTo(context.Response.OutputStream);
-    }
-
-    /// <summary>
     /// T should be a class that implements methods whose names match the urls being called, and take one parameter, an
     /// HttpListenerContext.
     /// e.g.

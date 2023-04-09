@@ -30,7 +30,7 @@ public static class XmlExtensions {
     public static XName? AsNamespaced(this string? name, string? @namespace) {
         XName? xName = name;
 
-        if (name != null && @namespace.IsNotEmpty()) xName = XName.Get(name, @namespace!);
+        if (name != null && @namespace.IsNotEmpty()) xName = XName.Get(name, @namespace);
 
         return xName;
     }

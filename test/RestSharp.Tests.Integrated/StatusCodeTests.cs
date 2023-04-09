@@ -8,7 +8,7 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class StatusCodeTests : IDisposable {
+public sealed class StatusCodeTests : IDisposable {
     public StatusCodeTests() {
         _server = SimpleServer.Create(UrlToStatusCodeHandler);
         _client = new RestClient(_server.Url, configureSerialization: cfg => cfg.UseXmlSerializer());

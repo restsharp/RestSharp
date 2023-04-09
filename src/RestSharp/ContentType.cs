@@ -44,9 +44,9 @@ public class ContentType : IEquatable<ContentType> {
 
     public static implicit operator string(ContentType contentType) => contentType.Value;
 
-    public ContentType Or(ContentType? contentType) => Equals(Undefined) ? (contentType ?? Plain) : this;
+    public ContentType Or(ContentType? contentType) => Equals(Undefined) ? contentType ?? Plain : this;
 
-    public string OrValue(string? contentType) => Equals(Undefined) ? (contentType ?? Plain.Value) : Value;
+    public string OrValue(string? contentType) => Equals(Undefined) ? contentType ?? Plain.Value : Value;
 
     public MediaTypeHeaderValue AsMediaTypeHeaderValue => MediaTypeHeaderValue.Parse(Value);
 
@@ -78,7 +78,7 @@ public class ContentType : IEquatable<ContentType> {
     public override bool Equals(object? obj) {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
 
         return Equals((ContentType)obj);
     }

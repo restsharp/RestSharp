@@ -22,7 +22,7 @@ namespace RestSharp.Tests.Integrated;
 public class RedirectTests {
     readonly RestClient _client;
 
-    public RedirectTests(TestServerFixture fixture, ITestOutputHelper output) {
+    public RedirectTests(TestServerFixture fixture) {
         var options = new RestClientOptions(fixture.Server.Url) {
             FollowRedirects = true
         };

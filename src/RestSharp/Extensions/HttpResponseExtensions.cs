@@ -49,24 +49,24 @@ static class HttpResponseExtensions {
         Func<Stream, Stream?>?   writer,
         CancellationToken        cancellationToken = default
     ) {
-        var readTask = writer == null ? ReadResponse() : ReadAndConvertResponse();
+        var readTask = writer == null ? ReadResponse() : ReadAndConvertResponse(writer);
         return readTask;
 
         Task<Stream?> ReadResponse() {
 #if NET
             return httpResponse.Content.ReadAsStreamAsync(cancellationToken)!;
 # else
-            return httpResponse.Content.ReadAsStreamAsync();
+            return httpResponse.Content == null ? Task.FromResult((Stream?)null) : httpResponse.Content.ReadAsStreamAsync();
 #endif
         }
 
-        async Task<Stream?> ReadAndConvertResponse() {
+        async Task<Stream?> ReadAndConvertResponse(Func<Stream, Stream?> streamWriter) {
 #if NET
             await using var original = await ReadResponse().ConfigureAwait(false);
 #else
             using var original = await ReadResponse().ConfigureAwait(false);
 #endif
-            return writer!(original!);
+            return original == null ? null : streamWriter(original);
         }
     }
 }

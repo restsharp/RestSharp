@@ -21,7 +21,7 @@ public class XmlSerializerTests {
                     Age       = 50,
                     Price     = 19.95m,
                     StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item> { new() { Name = "One", Value = 1 }, }
+                    Items = new List<Item> { new() { Name = "One", Value = 1 } }
                 },
                 new Item { Name = "Two", Value   = 2 },
                 new Item { Name = "Three", Value = 3 }

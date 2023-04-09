@@ -9,7 +9,7 @@ public class OptionsTests {
         value.Should().BeTrue();
 
         HttpMessageHandler Configure(HttpMessageHandler handler) {
-            value = ((handler as HttpClientHandler)!).AllowAutoRedirect;
+            value = (handler as HttpClientHandler)!.AllowAutoRedirect;
             return handler;
         }
     }

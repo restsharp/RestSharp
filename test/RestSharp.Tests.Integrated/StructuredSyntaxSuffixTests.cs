@@ -7,7 +7,7 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class StructuredSyntaxSuffixTests : IDisposable {
+public sealed class StructuredSyntaxSuffixTests : IDisposable {
     readonly TestHttpServer _server;
     readonly string         _url;
 

@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMember.Global
 namespace RestSharp.Benchmarks.Serializers;
 
 public class TestClass {
