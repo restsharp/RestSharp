@@ -40,6 +40,7 @@ public sealed class HttpServer {
         // Cookies
         _app.MapGet("get-cookies", CookieHandlers.HandleCookies);
         _app.MapGet("set-cookies", CookieHandlers.HandleSetCookies);
+        _app.MapGet("redirect", () => Results.Redirect("/success", false, true));
 
         // PUT
         _app.MapPut(

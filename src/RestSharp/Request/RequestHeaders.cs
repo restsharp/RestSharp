@@ -39,13 +39,24 @@ class RequestHeaders {
     }
 
     // Add Cookie header from the cookie container
-    public RequestHeaders AddCookieHeaders(CookieContainer cookieContainer, Uri uri) {
+    public RequestHeaders AddCookieHeaders(Uri uri, CookieContainer? cookieContainer) {
+        if (cookieContainer == null) return this;
+
         var cookies = cookieContainer.GetCookieHeader(uri);
 
-        if (cookies.Length > 0) {
-            Parameters.AddParameter(new HeaderParameter(KnownHeaders.Cookie, cookies));
+        if (string.IsNullOrWhiteSpace(cookies)) return this;
+
+        var newCookies = SplitHeader(cookies);
+        var existing   = Parameters.GetParameters<HeaderParameter>().FirstOrDefault(x => x.Name == KnownHeaders.Cookie);
+
+        if (existing?.Value != null) {
+            newCookies = newCookies.Union(SplitHeader(existing.Value.ToString()!));
         }
 
+        Parameters.AddParameter(new HeaderParameter(KnownHeaders.Cookie, string.Join("; ", newCookies)));
+
         return this;
+
+        IEnumerable<string> SplitHeader(string header) => header.Split(';').Select(x => x.Trim());
     }
 }
