@@ -5,7 +5,7 @@
     <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+    <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest" />

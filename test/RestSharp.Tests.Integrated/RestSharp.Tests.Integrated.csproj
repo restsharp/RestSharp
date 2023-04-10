@@ -4,8 +4,8 @@
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
-        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>

@@ -1,7 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
-        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="NewtonsoftJson\IntegratedTests.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <PackageReference Include="rest-mock-core" Version="0.7.12" />
+        <Compile Include="NewtonsoftJson\IntegratedTests.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="rest-mock-core" Version="0.7.12" />
+        <Compile Include="NewtonsoftJson\IntegratedTests.cs" />
     </ItemGroup>
 </Project>

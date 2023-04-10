@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\RestSharp.Serializers.CsvHelper\RestSharp.Serializers.CsvHelper.csproj" />
-    <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
-  </ItemGroup>
-
+    <ItemGroup>
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.CsvHelper\RestSharp.Serializers.CsvHelper.csproj"/>
+        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
+    </ItemGroup>
 </Project>

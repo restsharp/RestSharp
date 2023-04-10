@@ -4,7 +4,8 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class JsonBodyTests : IClassFixture<RequestBodyFixture> {
+#pragma warning disable xUnit1033
+public sealed class JsonBodyTests : IClassFixture<RequestBodyFixture> {
     readonly SimpleServer      _server;
     readonly ITestOutputHelper _output;
     readonly RestClient        _client;
