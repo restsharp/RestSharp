@@ -77,6 +77,13 @@ public partial class RestClient {
             throw new ObjectDisposedException(nameof(RestClient));
         }
 
+<<<<<<< HEAD
+=======
+        await OnBeforeSerialization(request);
+
+        using var requestContent = new RequestContent(this, request);
+
+>>>>>>> dev
         var authenticator = request.Authenticator ?? Options.Authenticator;
         if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
 
@@ -106,8 +113,8 @@ public partial class RestClient {
                 .AddCookieHeaders(url, Options.CookieContainer);
 
             message.AddHeaders(headers);
-
             if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+            await OnBeforeRequest(message);
 
             var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
 
@@ -120,11 +127,40 @@ public partial class RestClient {
             }
 
             if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+            await OnAfterRequest(responseMessage);
 
             return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         }
         catch (Exception ex) {
             return new HttpResponse(null, url, null, ex, timeoutCts.Token);
+        }
+    }
+
+    /// <summary>
+    /// Will be called before the Request becomes Serialized
+    /// </summary>
+    /// <param name="request">RestRequest before it will be serialized</param>
+    async Task OnBeforeSerialization(RestRequest request) {
+        foreach (var interceptor in Options.Interceptors) {
+            await interceptor.InterceptBeforeSerialization(request); //.ThrowExceptionIfAvailable();
+        }
+    }
+    /// <summary>
+    /// Will be called before the Request will be sent
+    /// </summary>
+    /// <param name="requestMessage">HttpRequestMessage ready to be sent</param>
+    async Task OnBeforeRequest(HttpRequestMessage requestMessage) {
+        foreach (var interceptor in Options.Interceptors) {
+            await interceptor.InterceptBeforeRequest(requestMessage);
+        }
+    }
+    /// <summary>
+    /// Will be called after the Response has been received from Server
+    /// </summary>
+    /// <param name="responseMessage">HttpResponseMessage as received from server</param>
+    async Task OnAfterRequest(HttpResponseMessage responseMessage) {
+        foreach (var interceptor in Options.Interceptors) {
+            await interceptor.InterceptAfterRequest(responseMessage);
         }
     }
 
