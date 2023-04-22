@@ -38,6 +38,9 @@ class RequestContent : IDisposable {
 
     public HttpContent BuildContent() 
     {
+     if (_request.AlwaysMultipartFormData && _request.AlwaysSingleFileAsContent) 
+        throw new ArgumentException("Failed to put file as content because flag AlwaysMultipartFormData enabled");
+                
         var postParameters       = _parameters.GetContentParameters(_request.Method).ToArray();
         var postParametersExists = postParameters.Length > 0;
         var bodyParametersExists = _request.TryGetBodyParameter(out var bodyParameter);
@@ -57,24 +60,27 @@ class RequestContent : IDisposable {
         return Content!;
     }
     
-    void AddFiles(bool postParametersExists, bool bodyParametersExists) 
-    {
-        // File uploading without multipart/form-data
-        if (!postParametersExists && !bodyParametersExists && _request.Files.Count == 1 && !_request.AlwaysMultipartFormData)
-        {
-            var fileParameter = _request.Files.First();
-            Content = ToStreamContent(fileParameter);
-            return;
-        }
-        
-        var mpContent = new MultipartFormDataContent(GetOrSetFormBoundary());
+     void AddFiles(bool postParametersExists, bool bodyParametersExists) 
+     {
+         // File uploading without multipart/form-data
+         if (_request.AlwaysSingleFileAsContent && _request.Files.Count == 1)
+         {
+             if (postParametersExists) throw new ArgumentException("Failed to put file as content because added post parameters");
+             if (bodyParametersExists) throw new ArgumentException("Failed to put file as content because added body parameters");
 
-        foreach (var fileParameter in _request.Files) 
-            mpContent.Add(ToStreamContent(fileParameter));
-            
-        Content = mpContent; 
-    }
-
+             var fileParameter = _request.Files.First();
+             Content = ToStreamContent(fileParameter);
+             return;
+         }
+         
+         var mpContent = new MultipartFormDataContent(GetOrSetFormBoundary());
+ 
+         foreach (var fileParameter in _request.Files) 
+             mpContent.Add(ToStreamContent(fileParameter));
+             
+         Content = mpContent; 
+     }
+    
     StreamContent ToStreamContent(FileParameter fileParameter)
     {
         var stream = fileParameter.GetFile();
