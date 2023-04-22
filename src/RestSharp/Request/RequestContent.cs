@@ -36,38 +36,60 @@ class RequestContent : IDisposable {
         _parameters = new RequestParameters(_request.Parameters.Union(_client.DefaultParameters));
     }
 
-    public HttpContent BuildContent() {
-        AddFiles();
-        var postParameters = _parameters.GetContentParameters(_request.Method).ToArray();
-        AddBody(postParameters.Length > 0);
-        AddPostParameters(postParameters);
+    public HttpContent BuildContent() 
+    {
+        var postParameters       = _parameters.GetContentParameters(_request.Method).ToArray();
+        var postParametersExists = postParameters.Length > 0;
+        var bodyParametersExists = _request.TryGetBodyParameter(out var bodyParameter);
+        var filesExists          = _request.Files.Any();
+        
+        if (filesExists)
+            AddFiles(postParametersExists, bodyParametersExists);
+        
+        if (bodyParametersExists)
+            AddBody(postParametersExists, bodyParameter!);
+        
+        if (postParametersExists)
+            AddPostParameters(postParameters);
+     
         AddHeaders();
 
         return Content!;
     }
-
-    void AddFiles() {
-        if (!_request.HasFiles() && !_request.AlwaysMultipartFormData) return;
-
-        var mpContent = CreateMultipartFormDataContent();
-
-        foreach (var file in _request.Files) {
-            var stream = file.GetFile();
-            _streams.Add(stream);
-            var fileContent = new StreamContent(stream);
-
-            fileContent.Headers.ContentType = file.ContentType.AsMediaTypeHeaderValue;
-
-            var dispositionHeader = file.Options.DisableFilenameEncoding
-                ? ContentDispositionHeaderValue.Parse($"form-data; name=\"{file.Name}\"; filename=\"{file.FileName}\"")
-                : new ContentDispositionHeaderValue("form-data") { Name = $"\"{file.Name}\"", FileName = $"\"{file.FileName}\"" };
-            if (!file.Options.DisableFileNameStar) dispositionHeader.FileNameStar = file.FileName;
-            fileContent.Headers.ContentDisposition = dispositionHeader;
-
-            mpContent.Add(fileContent);
+    
+    void AddFiles(bool postParametersExists, bool bodyParametersExists) 
+    {
+        // File uploading without multipart/form-data
+        if (!postParametersExists && !bodyParametersExists && _request.Files.Count == 1 && !_request.AlwaysMultipartFormData)
+        {
+            var fileParameter = _request.Files.First();
+            Content = ToStreamContent(fileParameter);
+            return;
         }
+        
+        var mpContent = new MultipartFormDataContent(GetOrSetFormBoundary());
 
-        Content = mpContent;
+        foreach (var fileParameter in _request.Files) 
+            mpContent.Add(ToStreamContent(fileParameter));
+            
+        Content = mpContent; 
+    }
+
+    StreamContent ToStreamContent(FileParameter fileParameter)
+    {
+        var stream = fileParameter.GetFile();
+        _streams.Add(stream);
+        var streamContent = new StreamContent(stream);
+
+        streamContent.Headers.ContentType = fileParameter.ContentType.AsMediaTypeHeaderValue;
+
+        var dispositionHeader = fileParameter.Options.DisableFilenameEncoding
+            ? ContentDispositionHeaderValue.Parse($"form-data; name=\"{fileParameter.Name}\"; filename=\"{fileParameter.FileName}\"")
+            : new ContentDispositionHeaderValue("form-data") { Name = $"\"{fileParameter.Name}\"", FileName = $"\"{fileParameter.FileName}\"" };
+        if (!fileParameter.Options.DisableFileNameStar) dispositionHeader.FileNameStar = fileParameter.FileName;
+        streamContent.Headers.ContentDisposition = dispositionHeader;
+
+        return streamContent;
     }
 
     HttpContent Serialize(BodyParameter body) {
@@ -117,9 +139,8 @@ class RequestContent : IDisposable {
         return mpContent;
     }
 
-    void AddBody(bool hasPostParameters) {
-        if (!_request.TryGetBodyParameter(out var bodyParameter)) return;
-
+    void AddBody(bool hasPostParameters, BodyParameter bodyParameter) 
+    {
         var bodyContent = Serialize(bodyParameter);
 
         // we need to send the body
