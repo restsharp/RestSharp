@@ -10,7 +10,7 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
 namespace RestSharp.Authenticators.OAuth;
 
@@ -27,7 +27,7 @@ class WebPair {
 
     public string  GetQueryParameter(bool web) {
         var value = web ? $"\"{WebValue}\"" : Value;
-        return value == null ? Name : $"{Name}={value}";
+        return $"{Name}={value}";
     }
 
     internal static WebPairComparer Comparer { get; } = new();
