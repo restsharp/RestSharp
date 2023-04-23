@@ -38,36 +38,30 @@ class RequestContent : IDisposable {
 
     public HttpContent BuildContent() 
     {
-     if (_request.AlwaysMultipartFormData && _request.AlwaysSingleFileAsContent) 
-        throw new ArgumentException("Failed to put file as content because flag AlwaysMultipartFormData enabled");
-                
-        var postParameters       = _parameters.GetContentParameters(_request.Method).ToArray();
+        var postParameters = _parameters.GetContentParameters(_request.Method).ToArray();
         var postParametersExists = postParameters.Length > 0;
         var bodyParametersExists = _request.TryGetBodyParameter(out var bodyParameter);
-        var filesExists          = _request.Files.Any();
-        
+        var filesExists = _request.Files.Any();
+
         if (filesExists)
-            AddFiles(postParametersExists, bodyParametersExists);
-        
+            AddFiles();
+
         if (bodyParametersExists)
             AddBody(postParametersExists, bodyParameter!);
-        
+
         if (postParametersExists)
             AddPostParameters(postParameters);
-     
+
         AddHeaders();
 
         return Content!;
     }
     
-     void AddFiles(bool postParametersExists, bool bodyParametersExists) 
+     void AddFiles() 
      {
          // File uploading without multipart/form-data
          if (_request.AlwaysSingleFileAsContent && _request.Files.Count == 1)
          {
-             if (postParametersExists) throw new ArgumentException("Failed to put file as content because added post parameters");
-             if (bodyParametersExists) throw new ArgumentException("Failed to put file as content because added body parameters");
-
              var fileParameter = _request.Files.First();
              Content = ToStreamContent(fileParameter);
              return;
