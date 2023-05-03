@@ -501,4 +501,21 @@ public static class RestRequestExtensions {
 
         if (duplicateKeys.Any()) throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
     }
+
+    public static void ValidateParameters(this RestRequest request) {
+
+        if (request.AlwaysSingleFileAsContent) {
+            var postParametersExists = request.Parameters.GetContentParameters(request.Method).Any();
+            var bodyParametersExists = request.Parameters.Any(p => p.Type == ParameterType.RequestBody);
+
+            if (request.AlwaysMultipartFormData) 
+                throw new ArgumentException("Failed to put file as content because flag AlwaysMultipartFormData enabled");
+            
+            if (postParametersExists) 
+                throw new ArgumentException("Failed to put file as content because added post parameters");
+        
+            if (bodyParametersExists) 
+                throw new ArgumentException("Failed to put file as content because added body parameters"); 
+        }
+    }
 }

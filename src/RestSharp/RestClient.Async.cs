@@ -77,6 +77,7 @@ public partial class RestClient {
             throw new ObjectDisposedException(nameof(RestClient));
         }
 
+        request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
         if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
 
