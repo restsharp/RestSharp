@@ -81,7 +81,12 @@ public class RestRequest {
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
-
+    
+    /// <summary>
+    /// Always send a file as request content without multipart/form-data request - even when the request contains only one file parameter
+    /// </summary>
+    public bool AlwaysSingleFileAsContent { get; set; }
+    
     /// <summary>
     /// When set to true, parameter values in a multipart form data requests will be enclosed in
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
