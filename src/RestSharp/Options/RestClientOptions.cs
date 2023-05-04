@@ -65,7 +65,7 @@ public class RestClientOptions {
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
 
-    public List<IInterceptor> Interceptors { get; set; } = new();
+    public List<Interceptor> Interceptors { get; set; } = new();
 
     /// <summary>
     /// Passed to <see cref="HttpMessageHandler"/> <code>Credentials</code> property
