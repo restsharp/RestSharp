@@ -216,7 +216,9 @@ public partial class RestClient : IRestClient {
         : this(new HttpClient(handler, disposeHandler), true, configureRestClient, configureSerialization) { }
 
     static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
-        if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
+        
+        // We will use Options.Timeout in ExecuteAsInternalAsync method
+        httpClient.Timeout = Timeout.InfiniteTimeSpan;
 
         if (options.UserAgent != null &&
             httpClient.DefaultRequestHeaders.UserAgent.All(x => $"{x.Product?.Name}/{x.Product?.Version}" != options.UserAgent)) {
