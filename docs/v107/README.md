@@ -65,7 +65,7 @@ request.AddHeader("Content-Type", "application/json");
 request.AddHeader("Accept", "application/json");
 ```
 
-This is completely unnecessary, and often harmful. The `Content-Type` header is the content header, not the request header. It might be different per individual part of the body when using multipart-form data, for example. RestSharp sets the correct content-type header automatically, based on your body format, so don't override it.
+This is **completely unnecessary**, and often harmful. The `Content-Type` header is the content header, not the request header. It might be different per individual part of the body when using multipart-form data, for example. RestSharp sets the correct content-type header automatically, based on your body format, so don't override it.
 The `Accept` header is set by RestSharp automatically based on registered serializers. By default, both XML and JSON are supported. Only change the `Accept` header if you need something else, like binary streams, or plain text.
 
 ### Making requests

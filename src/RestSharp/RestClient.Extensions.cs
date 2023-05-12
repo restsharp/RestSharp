@@ -102,9 +102,6 @@ public static partial class RestClientExtensions {
         RestRequest       request,
         CancellationToken cancellationToken = default
     ) {
-        if (request == null)
-            throw new ArgumentNullException(nameof(request));
-
         var response = await client.ExecuteAsync(request, cancellationToken).ConfigureAwait(false);
         return client.Serializers.Deserialize<T>(request, response, client.Options);
     }
