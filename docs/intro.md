@@ -59,7 +59,7 @@ var request = new RestRequest("statuses/home_timeline.json");
 var timeline = await client.GetAsync<HomeTimeline>(request, cancellationToken);
 ```
 
-Both snippets about use the `GetAsync` extension, which is a wrapper about `ExecuteGetAsync`, which, in turn, is a wrapper around `ExecuteAsync`.
+Both snippets above use the `GetAsync` extension, which is a wrapper about `ExecuteGetAsync`, which, in turn, is a wrapper around `ExecuteAsync`.
 All `ExecuteAsync` overloads and return the `RestResponse` or `RestResponse<T>`.
 
 The most important difference is that async methods that are named after HTTP methods return the `Task<T>` instead of `Task<RestResponse<T>>`. Because it means that you won't get an error response if the request fails, those methods
