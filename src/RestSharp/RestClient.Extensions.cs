@@ -103,7 +103,19 @@ public static partial class RestClientExtensions {
         CancellationToken cancellationToken = default
     ) {
         var response = await client.ExecuteAsync(request, cancellationToken).ConfigureAwait(false);
+        await OnBeforeDeserialization(response, client.Options).ConfigureAwait(false);
         return client.Serializers.Deserialize<T>(request, response, client.Options);
+    }
+    
+    /// <summary>
+    /// Will be called before the Data will be serialized
+    /// </summary>
+    /// <param name="raw">RestResponse with Data still in Content</param>
+    /// <param name="options">RestClient options but readonly</param>
+    static async Task OnBeforeDeserialization(RestResponse raw, ReadOnlyRestClientOptions options) {
+        foreach (var interceptor in options.Interceptors) {
+            await interceptor.InterceptBeforeDeserialize(raw);
+        }
     }
 
     /// <summary>

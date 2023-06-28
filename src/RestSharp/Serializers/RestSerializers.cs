@@ -39,7 +39,6 @@ public class RestSerializers {
 
         try {
             request.OnBeforeDeserialization?.Invoke(raw);
-            OnBeforeDeserialization(raw, options).ConfigureAwait(true);
             response.Data = DeserializeContent<T>(raw);
         }
         catch (Exception ex) {
@@ -54,16 +53,7 @@ public class RestSerializers {
 
         return response;
     }
-    /// <summary>
-    /// Will be called before the Data will be serialized
-    /// </summary>
-    /// <param name="raw">RestResponse with Data still in Content</param>
-    /// <param name="options">RestClient options but readonly</param>
-    async Task OnBeforeDeserialization(RestResponse raw, ReadOnlyRestClientOptions options) {
-        foreach (var interceptor in options.Interceptors) {
-            await interceptor.InterceptBeforeDeserialize(raw); //.ThrowExceptionIfAvailable();
-        }
-    }
+   
 
     /// <summary>
     /// Deserialize the response content into the specified type
