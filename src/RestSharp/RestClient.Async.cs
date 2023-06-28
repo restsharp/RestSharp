@@ -76,7 +76,8 @@ public partial class RestClient {
         if (_disposed) {
             throw new ObjectDisposedException(nameof(RestClient));
         }
-        await OnBeforeSerialization(request);    
+
+        await OnBeforeSerialization(request).ConfigureAwait(false);   
         request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
         if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
@@ -109,7 +110,7 @@ public partial class RestClient {
 
         message.AddHeaders(headers);
         if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
-        await OnBeforeRequest(message);
+        await OnBeforeRequest(message).ConfigureAwait(false);
         
         try {
             responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
@@ -125,7 +126,7 @@ public partial class RestClient {
             return new HttpResponse(null, url, null, ex, timeoutCts.Token);
         }
         if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
-        await OnAfterRequest(responseMessage);
+        await OnAfterRequest(responseMessage).ConfigureAwait(false);
         return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         
     }
