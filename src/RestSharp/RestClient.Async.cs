@@ -95,23 +95,24 @@ public partial class RestClient {
 
         var ct = cts.Token;
 
+        
+        HttpResponseMessage? responseMessage;
+        // Make sure we have a cookie container if not provided in the request
+        CookieContainer cookieContainer = request.CookieContainer ??= new CookieContainer();
+        
+        var headers = new RequestHeaders()
+            .AddHeaders(request.Parameters)
+            .AddHeaders(DefaultParameters)
+            .AddAcceptHeader(AcceptedContentTypes)
+            .AddCookieHeaders(url, cookieContainer)
+            .AddCookieHeaders(url, Options.CookieContainer);
+
+        message.AddHeaders(headers);
+        if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+        await OnBeforeRequest(message);
+        
         try {
-            // Make sure we have a cookie container if not provided in the request
-            var cookieContainer = request.CookieContainer ??= new CookieContainer();
-
-            var headers = new RequestHeaders()
-                .AddHeaders(request.Parameters)
-                .AddHeaders(DefaultParameters)
-                .AddAcceptHeader(AcceptedContentTypes)
-                .AddCookieHeaders(url, cookieContainer)
-                .AddCookieHeaders(url, Options.CookieContainer);
-
-            message.AddHeaders(headers);
-            if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
-            await OnBeforeRequest(message);
-
-            var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
-
+            responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
                 // ReSharper disable once PossibleMultipleEnumeration
@@ -119,15 +120,14 @@ public partial class RestClient {
                 // ReSharper disable once PossibleMultipleEnumeration
                 Options.CookieContainer?.AddCookies(url, cookiesHeader);
             }
-
-            if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
-            await OnAfterRequest(responseMessage);
-
-            return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         }
         catch (Exception ex) {
             return new HttpResponse(null, url, null, ex, timeoutCts.Token);
         }
+        if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+        await OnAfterRequest(responseMessage);
+        return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
+        
     }
 
     /// <summary>
