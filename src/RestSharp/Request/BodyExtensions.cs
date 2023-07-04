@@ -13,17 +13,15 @@
 // limitations under the License.
 // 
 
-namespace RestSharp; 
+namespace RestSharp;
 
 using System.Diagnostics.CodeAnalysis;
 
 static class BodyExtensions {
-    public static bool TryGetBodyParameter(this RestRequest request, out BodyParameter? bodyParameter) {
+    public static bool TryGetBodyParameter(this RestRequest request, [NotNullWhen(true)] out BodyParameter? bodyParameter) {
         bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody) as BodyParameter;
         return bodyParameter != null;
     }
 
     public static bool HasFiles(this RestRequest request) => request.Files.Count > 0;
-
-    public static bool IsEmpty([NotNullWhen(false)]this ParametersCollection? parameters) => parameters == null || parameters.Count == 0;
 }

@@ -139,7 +139,7 @@ static class OAuthTools {
     /// </summary>
     /// <param name="parameters">A collection of parameters to sort</param>
     /// <returns>A sorted parameter collection</returns>
-    public static IEnumerable<string> SortParametersExcludingSignature(WebPairCollection parameters)
+    internal static IEnumerable<string> SortParametersExcludingSignature(WebPairCollection parameters)
         => parameters
             .Where(x => !x.Name.EqualsIgnoreCase("oauth_signature"))
             .Select(x => new WebPair(UrlEncodeStrict(x.Name), UrlEncodeStrict(x.Value)))
@@ -231,9 +231,9 @@ static class OAuthTools {
         if (tokenSecret.IsEmpty()) tokenSecret       = string.Empty;
         if (consumerSecret.IsEmpty()) consumerSecret = string.Empty;
 
-        var unencodedConsumerSecret = consumerSecret!;
-        consumerSecret = Uri.EscapeDataString(consumerSecret!);
-        tokenSecret    = Uri.EscapeDataString(tokenSecret!);
+        var unencodedConsumerSecret = consumerSecret;
+        consumerSecret = Uri.EscapeDataString(consumerSecret);
+        tokenSecret    = Uri.EscapeDataString(tokenSecret);
 
         var signature = signatureMethod switch {
             HmacSha1   => GetHmacSignature(new HMACSHA1(), consumerSecret, tokenSecret, signatureBase),
@@ -254,9 +254,12 @@ static class OAuthTools {
 
             provider.FromXmlString(unencodedConsumerSecret);
 
+#if NET
+            var hash = SHA1.HashData(Encoding.GetBytes(signatureBase));
+#else
             var hasher = SHA1.Create();
-            var hash   = hasher.ComputeHash(Encoding.GetBytes(signatureBase));
-
+            var hash = hasher.ComputeHash(Encoding.GetBytes(signatureBase));
+#endif
             return Convert.ToBase64String(provider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1")));
         }
     }

@@ -47,7 +47,7 @@ public class NamespacedXmlTests {
 
         var friends = new XElement(ns + "Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     ns + "Friend",
@@ -55,6 +55,7 @@ public class NamespacedXmlTests {
                     new XAttribute(ns + "Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -97,7 +98,7 @@ public class NamespacedXmlTests {
 
         var friends = new XElement(ns + "Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     ns + "Friend",
@@ -105,6 +106,7 @@ public class NamespacedXmlTests {
                     new XElement(ns + "Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -169,7 +171,7 @@ public class NamespacedXmlTests {
         };
 
         var xml    = new XmlDeserializer { Namespace = @namespace };
-        var output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse() { Content = doc.ToString() });
+        var output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse { Content = doc.ToString() });
 
         Assert.Equal(expected.AttributeValue, output.AttributeValue);
     }

@@ -15,7 +15,7 @@ public class RestClientTests {
     [InlineData(Method.Patch, Method.Put)]
     [InlineData(Method.Post, Method.Put)]
     [InlineData(Method.Get, Method.Delete)]
-    public async Task Execute_with_IRestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
+    public async Task Execute_with_RestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
         var req    = new RestRequest("", reqMethod);
         var client = new RestClient(BaseUrl);
 
@@ -120,15 +120,18 @@ public class RestClientTests {
     [Fact]
     public void ConfigureHttpClient_does_not_duplicate_user_agent_for_same_client() {
         // arrange
-        var httpClient = new HttpClient();
+        var httpClient    = new HttpClient();
         var clientOptions = new RestClientOptions();
 
         // act
-        var restClient1 = new RestClient(httpClient, clientOptions);
-        var restClient2 = new RestClient(httpClient, clientOptions);
+        var unused = new RestClient(httpClient, clientOptions);
+        var dummy  = new RestClient(httpClient, clientOptions);
 
         // assert
-        Assert.Contains(httpClient.DefaultRequestHeaders.UserAgent, agent => $"{agent.Product.Name}/{agent.Product.Version}" == clientOptions.UserAgent);
+        Assert.Contains(
+            httpClient.DefaultRequestHeaders.UserAgent,
+            agent => $"{agent.Product.Name}/{agent.Product.Version}" == clientOptions.UserAgent
+        );
         Assert.Single(httpClient.DefaultRequestHeaders.UserAgent);
     }
 }

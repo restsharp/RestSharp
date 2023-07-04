@@ -65,7 +65,7 @@ request.AddHeader("Content-Type", "application/json");
 request.AddHeader("Accept", "application/json");
 ```
 
-This is completely unnecessary, and often harmful. The `Content-Type` header is the content header, not the request header. It might be different per individual part of the body when using multipart-form data, for example. RestSharp sets the correct content-type header automatically, based on your body format, so don't override it.
+This is **completely unnecessary**, and often harmful. The `Content-Type` header is the content header, not the request header. It might be different per individual part of the body when using multipart-form data, for example. RestSharp sets the correct content-type header automatically, based on your body format, so don't override it.
 The `Accept` header is set by RestSharp automatically based on registered serializers. By default, both XML and JSON are supported. Only change the `Accept` header if you need something else, like binary streams, or plain text.
 
 ### Making requests
@@ -222,57 +222,57 @@ Console.Write(response.Content); // {'name' : 'Test McGee'}
 
 Below, you can find members of `IRestClient` and `IRestRequest` with their corresponding status and location in the new API.
 
-| `IRestClient` member                                                                            | Where is it now?                   |
-|:------------------------------------------------------------------------------------------------|:-----------------------------------|
-| `CookieContainer`                                                                               | `RestClientOptions`                |
-| `AutomaticDecompression`                                                                        | `RestClientOptions`, changed type  |
-| `MaxRedirects`                                                                                  | `RestClientOptions`                |
-| `UserAgent`                                                                                     | `RestClientOptions`                |
-| `Timeout`                                                                                       | `RestClientOptions`, `RestRequest` |
-| `Authenticator`                                                                                 | `RestClientOptions`                |
-| `BaseUrl`                                                                                       | `RestClientOptions`                |
-| `Encoding`                                                                                      | `RestClientOptions`                |
-| `ThrowOnDeserializationError`                                                                   | `RestClientOptions`                |
-| `FailOnDeserializationError`                                                                    | `RestClientOptions`                |
-| `ThrowOnAnyError`                                                                               | `RestClientOptions`                |
-| `PreAuthenticate`                                                                               | `RestClientOptions`                |
-| `BaseHost`                                                                                      | `RestClientOptions`                |
-| `AllowMultipleDefaultParametersWithSameName`                                                    | `RestClientOptions`                |
-| `ClientCertificates`                                                                            | `RestClientOptions`                |
-| `Proxy`                                                                                         | `RestClientOptions`                |
-| `CachePolicy`                                                                                   | `RestClientOptions`, changed type  |
-| `FollowRedirects`                                                                               | `RestClientOptions`                |
-| `RemoteCertificateValidationCallback`                                                           | `RestClientOptions`                |
-| `Pipelined`                                                                                     | Not supported                      |
-| `UnsafeAuthenticatedConnectionSharing`                                                          | Not supported                      |
-| `ConnectionGroupName`                                                                           | Not supported                      |
-| `ReadWriteTimeout`                                                                              | Not supported                      |
-| `UseSynchronizationContext`                                                                     | Not supported                      |
-| `DefaultParameters`                                                                             | `RestClient`                       |
-| `Deserialize<T>(IRestResponse response)`                                                        | `RestSerializers`                  |
-| `BuildUri(IRestRequest request)`                                                                | Extension                          |
-| `ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                    | `RestClient`                       |
-| `ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)` | Extension                          |
-| `ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)`    | Extension                          |
-| `ExecuteAsync(IRestRequest request, CancellationToken cancellationToken)`                       | Extension                          |
-| `ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                 | Extension                          |
-| `ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                | Extension                          |
-| `ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken)`                    | Extension                          |
-| `ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken)`                   | Extension                          |
-| `Execute(IRestRequest request)`                                                                 | Deprecated                         |
-| `Execute(IRestRequest request, Method httpMethod)`                                              | Deprecated                         |
-| `Execute<T>(IRestRequest request)`                                                              | Deprecated                         |
-| `Execute<T>(IRestRequest request, Method httpMethod)`                                           | Deprecated                         |
-| `DownloadData(IRestRequest request)`                                                            | Deprecated                         |
-| `ExecuteAsGet(IRestRequest request, string httpMethod)`                                         | Deprecated                         |
-| `ExecuteAsPost(IRestRequest request, string httpMethod)`                                        | Deprecated                         |
-| `ExecuteAsGet<T>(IRestRequest request, string httpMethod)`                                      | Deprecated                         |
-| `ExecuteAsPost<T>(IRestRequest request, string httpMethod)`                                     | Deprecated                         |
-| `BuildUriWithoutQueryParameters(IRestRequest request)`                                          | Extension                          |
-| `ConfigureWebRequest(Action<HttpWebRequest> configurator)`                                      | Removed                            |
-| `AddHandler(string contentType, Func<IDeserializer> deserializerFactory)`                       | Removed                            |
-| `RemoveHandler(string contentType)`                                                             | Removed                            |
-| `ClearHandlers()`                                                                               | Removed                            |
+| `IRestClient` member                                                                            | Where is it now?                        |
+|:------------------------------------------------------------------------------------------------|:----------------------------------------|
+| `CookieContainer`                                                                               | `RestClientOptions`, `RestRequest`      |
+| `AutomaticDecompression`                                                                        | `RestClientOptions`, changed type       |
+| `MaxRedirects`                                                                                  | `RestClientOptions`                     |
+| `UserAgent`                                                                                     | `RestClientOptions`                     |
+| `Timeout`                                                                                       | `RestClientOptions`, `RestRequest`      |
+| `Authenticator`                                                                                 | `RestClientOptions`, `RestRequest`      |
+| `BaseUrl`                                                                                       | `RestClientOptions`                     |
+| `Encoding`                                                                                      | `RestClientOptions`                     |
+| `ThrowOnDeserializationError`                                                                   | `RestClientOptions`                     |
+| `FailOnDeserializationError`                                                                    | `RestClientOptions`                     |
+| `ThrowOnAnyError`                                                                               | `RestClientOptions`                     |
+| `PreAuthenticate`                                                                               | `RestClientOptions`                     |
+| `BaseHost`                                                                                      | `RestClientOptions`                     |
+| `AllowMultipleDefaultParametersWithSameName`                                                    | `RestClientOptions`                     |
+| `ClientCertificates`                                                                            | `RestClientOptions`                     |
+| `Proxy`                                                                                         | `RestClientOptions`                     |
+| `CachePolicy`                                                                                   | `RestClientOptions`, changed type       |
+| `FollowRedirects`                                                                               | `RestClientOptions`                     |
+| `RemoteCertificateValidationCallback`                                                           | `RestClientOptions`                     |
+| `Pipelined`                                                                                     | Not supported                           |
+| `UnsafeAuthenticatedConnectionSharing`                                                          | Not supported                           |
+| `ConnectionGroupName`                                                                           | Not supported                           |
+| `ReadWriteTimeout`                                                                              | Not supported                           |
+| `UseSynchronizationContext`                                                                     | Not supported                           |
+| `DefaultParameters`                                                                             | `RestClient`                            |
+| `Deserialize<T>(IRestResponse response)`                                                        | `RestSerializers`                       |
+| `BuildUri(IRestRequest request)`                                                                | Extension                               |
+| `ExecuteAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                    | `RestClient`                            |
+| `ExecuteAsync<T>(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)` | Extension                               |
+| `ExecuteAsync(IRestRequest request, Method httpMethod, CancellationToken cancellationToken)`    | Extension                               |
+| `ExecuteAsync(IRestRequest request, CancellationToken cancellationToken)`                       | Extension                               |
+| `ExecuteGetAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                 | Extension                               |
+| `ExecutePostAsync<T>(IRestRequest request, CancellationToken cancellationToken)`                | Extension                               |
+| `ExecuteGetAsync(IRestRequest request, CancellationToken cancellationToken)`                    | Extension                               |
+| `ExecutePostAsync(IRestRequest request, CancellationToken cancellationToken)`                   | Extension                               |
+| `Execute(IRestRequest request)`                                                                 | Extension (since v108)                  |
+| `Execute(IRestRequest request, Method httpMethod)`                                              | Extension (since v108)                  |
+| `Execute<T>(IRestRequest request)`                                                              | Extension (since v108)                  |
+| `Execute<T>(IRestRequest request, Method httpMethod)`                                           | Extension (since v108)                  |
+| `DownloadData(IRestRequest request)`                                                            | Extension (since v108)                  |
+| `ExecuteAsGet(IRestRequest request, string httpMethod)`                                         | Extension `ExecuteGetA` (since v108)    |
+| `ExecuteAsPost(IRestRequest request, string httpMethod)`                                        | Extension `ExecutePost` (since v108)    |
+| `ExecuteAsGet<T>(IRestRequest request, string httpMethod)`                                      | Extension `ExecuteGet<T>` (since v108)  |
+| `ExecuteAsPost<T>(IRestRequest request, string httpMethod)`                                     | Extension `ExecutePost<T>` (since v108) |
+| `BuildUriWithoutQueryParameters(IRestRequest request)`                                          | Extension                               |
+| `ConfigureWebRequest(Action<HttpWebRequest> configurator)`                                      | Removed                                 |
+| `AddHandler(string contentType, Func<IDeserializer> deserializerFactory)`                       | Removed                                 |
+| `RemoveHandler(string contentType)`                                                             | Removed                                 |
+| `ClearHandlers()`                                                                               | Removed                                 |
 
 | `IRestRequest` member                                                                                  | Where is it now?                 |
 |:-------------------------------------------------------------------------------------------------------|:---------------------------------|

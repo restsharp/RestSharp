@@ -4,7 +4,7 @@ using RestSharp.Serializers.Json;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.Tests.Serializers.Json;
+namespace RestSharp.Tests.Serializers.Json.SystemTextJson;
 
 public class SystemTextJsonTests {
     static readonly Fixture Fixture = new();

@@ -4,9 +4,7 @@ using System.Globalization;
 namespace RestSharp.Tests;
 
 public partial class ObjectParameterTests {
-    public ObjectParameterTests() {
-        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-    }
+    public ObjectParameterTests() => Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
     [Fact]
     public void Can_Add_Object_with_IntegerArray_property() {
@@ -78,7 +76,7 @@ public partial class ObjectParameterTests {
 
     [Fact]
     public void Can_Add_Object_Static_with_IntegerArray_as_Object_property() {
-        var items = new int[] { 1, 2, 3 };
+        var items   = new[] { 1, 2, 3 };
         var @object = new { Items = (object)items };
         var request = new RestRequest().AddObjectStatic(@object);
 
@@ -644,7 +642,7 @@ public partial class ObjectParameterTests {
                 new GetOrPostParameter($"{nameof(ArrayData<string[]>.Array)}[]", "Hello"),
                 new GetOrPostParameter($"{nameof(ArrayData<string[]>.Array)}[]", "world"),
                 new GetOrPostParameter($"{nameof(ArrayData<string[]>.Array)}[]", "from"),
-                new GetOrPostParameter($"{nameof(ArrayData<string[]>.Array)}[]", ".NET"),
+                new GetOrPostParameter($"{nameof(ArrayData<string[]>.Array)}[]", ".NET")
             });
     }
 
@@ -661,7 +659,7 @@ public partial class ObjectParameterTests {
                 new GetOrPostParameter($"{nameof(ArrayData<object[]>.Array)}[]", "Hello"),
                 new GetOrPostParameter($"{nameof(ArrayData<object[]>.Array)}[]", "world"),
                 new GetOrPostParameter($"{nameof(ArrayData<object[]>.Array)}[]", "from"),
-                new GetOrPostParameter($"{nameof(ArrayData<object[]>.Array)}[]", ".NET"),
+                new GetOrPostParameter($"{nameof(ArrayData<object[]>.Array)}[]", ".NET")
             });
     }
 
@@ -678,7 +676,7 @@ public partial class ObjectParameterTests {
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", "Hello"),
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", "world"),
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", "from"),
-                new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", ".NET"),
+                new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", ".NET")
             });
     }
 
@@ -695,7 +693,7 @@ public partial class ObjectParameterTests {
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", "Hello"),
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", "world"),
                 new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", "from"),
-                new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", ".NET"),
+                new GetOrPostParameter($"{nameof(ArrayData<object>.Array)}[]", ".NET")
             });
     }
 
@@ -728,6 +726,7 @@ public partial class ObjectParameterTests {
     }
 
     public sealed record StringValue(string Value) {
+        // ReSharper disable once UnusedMember.Global
         public ReadOnlySpan<char> AsSpan => Value.AsSpan();
     }
 }

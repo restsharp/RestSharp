@@ -13,7 +13,6 @@
 // limitations under the License.
 // 
 
-using System.Text;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -22,11 +21,11 @@ static class UriExtensions {
     public static Uri MergeBaseUrlAndResource(this Uri? baseUrl, string? resource) {
         var assembled = resource;
 
-        if (assembled.IsNotEmpty() && assembled!.StartsWith("/")) assembled = assembled.Substring(1);
+        if (assembled.IsNotEmpty() && assembled.StartsWith("/")) assembled = assembled.Substring(1);
 
         if (baseUrl == null || baseUrl.AbsoluteUri.IsEmpty()) {
             return assembled.IsNotEmpty()
-                ? new Uri(assembled!)
+                ? new Uri(assembled)
                 : throw new ArgumentException("Both BaseUrl and Resource are empty", nameof(resource));
         }
 
@@ -55,13 +54,14 @@ static class UriExtensions {
 
         var hasResource = !assembled.IsEmpty();
 
-        var parameters = parametersCollections.SelectMany(x => x.GetParameters(ParameterType.UrlSegment));
+        var parameters = parametersCollections.SelectMany(x => x.GetParameters<UrlSegmentParameter>());
 
         var builder = new UriBuilder(baseUrl);
 
         foreach (var parameter in parameters) {
             var paramPlaceHolder = $"{{{parameter.Name}}}";
-            var paramValue       = parameter.Encode ? encode(parameter.Value!.ToString()!) : parameter.Value!.ToString();
+            var value            = Ensure.NotNull(parameter.Value!.ToString(), $"URL segment parameter {parameter.Name} value");
+            var paramValue       = parameter.Encode ? encode(value) : value;
 
             if (hasResource) assembled = assembled.Replace(paramPlaceHolder, paramValue);
 

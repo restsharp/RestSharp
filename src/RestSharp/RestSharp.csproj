@@ -55,6 +55,6 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="$(RepoRoot)\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 </Project>

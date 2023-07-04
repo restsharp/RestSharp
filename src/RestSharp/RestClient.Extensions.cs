@@ -117,10 +117,10 @@ public static partial class RestClientExtensions {
     /// <returns>The downloaded file.</returns>
     [PublicAPI]
     public static async Task<byte[]?> DownloadDataAsync(this IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
-#if NETSTANDARD || NETFRAMEWORK
-        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
-#else
+#if NET
         await using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
+#else
+        using var stream = await client.DownloadStreamAsync(request, cancellationToken).ConfigureAwait(false);
 #endif
         return stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
     }

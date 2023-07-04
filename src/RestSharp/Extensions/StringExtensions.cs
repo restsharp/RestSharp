@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -144,12 +145,9 @@ static class StringExtensions {
         yield return name.AddSpaces().ToLower(culture);
     }
 
-    internal static bool IsEmpty(this string? value) => string.IsNullOrWhiteSpace(value);
+    internal static bool IsEmpty([NotNullWhen(false)] this string? value) => string.IsNullOrWhiteSpace(value);
 
-    internal static bool IsNotEmpty(this string? value) => !string.IsNullOrWhiteSpace(value);
-
-    internal static string JoinToString<T>(this IEnumerable<T> collection, string separator, Func<T, string> getString)
-        => JoinToString(collection.Select(getString), separator);
+    internal static bool IsNotEmpty([NotNullWhen(true)] this string? value) => !string.IsNullOrWhiteSpace(value);
 
     internal static string JoinToString(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
 

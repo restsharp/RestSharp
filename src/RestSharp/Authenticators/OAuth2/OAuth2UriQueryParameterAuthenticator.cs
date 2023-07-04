@@ -20,6 +20,7 @@ namespace RestSharp.Authenticators.OAuth2;
 /// <remarks>
 /// Based on http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-5.1.2
 /// </remarks>
+[PublicAPI]
 public class OAuth2UriQueryParameterAuthenticator : AuthenticatorBase {
     /// <summary>
     /// Initializes a new instance of the <see cref="OAuth2UriQueryParameterAuthenticator" /> class.

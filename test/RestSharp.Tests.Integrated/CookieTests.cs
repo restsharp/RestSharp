@@ -9,7 +9,10 @@ public class CookieTests {
     readonly string     _host;
 
     public CookieTests(TestServerFixture fixture) {
-        _client = new RestClient(fixture.Server.Url);
+        var options = new RestClientOptions(fixture.Server.Url) {
+            CookieContainer = new CookieContainer()
+        };
+        _client = new RestClient(options);
         _host   = _client.Options.BaseUrl!.Host;
     }
 
@@ -25,6 +28,21 @@ public class CookieTests {
     }
 
     [Fact]
+    public async Task Can_Perform_GET_Async_With_Request_And_Client_Cookies() {
+        _client.Options.CookieContainer!.Add(new Cookie("clientCookie", "clientCookieValue", null, _host));
+
+        var request = new RestRequest("get-cookies") {
+            CookieContainer = new CookieContainer()
+        };
+        request.CookieContainer.Add(new Cookie("cookie", "value", null, _host));
+        request.CookieContainer.Add(new Cookie("cookie2", "value2", null, _host));
+        var response = await _client.ExecuteAsync<string[]>(request);
+
+        var expected = new[] { "cookie=value", "cookie2=value2", "clientCookie=clientCookieValue" };
+        response.Data.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public async Task Can_Perform_GET_Async_With_Response_Cookies() {
         var request  = new RestRequest("set-cookies");
         var response = await _client.ExecuteAsync(request);
@@ -37,7 +55,7 @@ public class CookieTests {
         FindCookie("cookie5").Should().BeNull("Cookie 5 should vanish as the request is not SSL");
         AssertCookie("cookie6", "value6", x => x == DateTime.MinValue, true);
 
-        Cookie? FindCookie(string name) =>response!.Cookies!.FirstOrDefault(p => p.Name == name);
+        Cookie? FindCookie(string name) => response.Cookies!.FirstOrDefault(p => p.Name == name);
 
         void AssertCookie(string name, string value, Func<DateTime, bool> checkExpiration, bool httpOnly = false) {
             var c = FindCookie(name)!;
@@ -55,14 +73,14 @@ public class CookieTests {
         var response = await _client.ExecuteAsync(request);
         response.Content.Should().Be("success");
 
-        Cookie? notFoundCookie = FindCookie("cookie_empty_domain");
+        var notFoundCookie = FindCookie("cookie_empty_domain");
         notFoundCookie.Should().BeNull();
 
-        HeaderParameter? emptyDomainCookieHeader = response.Headers!
+        var emptyDomainCookieHeader = response.Headers!
             .SingleOrDefault(h => h.Name == KnownHeaders.SetCookie && ((string)h.Value!).StartsWith("cookie_empty_domain"));
         emptyDomainCookieHeader.Should().NotBeNull();
         ((string)emptyDomainCookieHeader!.Value!).Should().Contain("domain=;");
-        
-        Cookie? FindCookie(string name) => response!.Cookies!.FirstOrDefault(p => p.Name == name);
+
+        Cookie? FindCookie(string name) => response.Cookies!.FirstOrDefault(p => p.Name == name);
     }
 }

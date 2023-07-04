@@ -3,8 +3,8 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
-        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Update="SampleData\boolean_from_number.xml" CopyToOutputDirectory="PreserveNewest" />

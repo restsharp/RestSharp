@@ -1,6 +1,3 @@
-using System.Collections;
-using System.IO;
-
 namespace RestSharp.Tests;
 
 public class ParametersTests {
@@ -27,49 +24,47 @@ public class ParametersTests {
     public void AddUrlSegmentWithInt() {
         const string name = "foo";
 
-
         var request  = new RestRequest().AddUrlSegment(name, 1);
         var actual   = request.Parameters.FirstOrDefault(x => x.Name == name);
         var expected = new UrlSegmentParameter(name, "1");
-        
+
         expected.Should().BeEquivalentTo(actual);
     }
 
     [Fact]
     public void AddUrlSegmentModifiesUrlSegmentWithInt() {
-        const string name = "foo";
-        var pathTemplate = "/{0}/resource";
-        var path = String.Format(pathTemplate, "{" + name + "}");
-        var urlSegmentValue = 1;
+        const string name            = "foo";
+        const string pathTemplate    = "/{0}/resource";
+        const int    urlSegmentValue = 1;
+
+        var path = string.Format(pathTemplate, $"{{{name}}}");
 
         var request = new RestRequest(path).AddUrlSegment(name, urlSegmentValue);
 
-        var expected = String.Format(pathTemplate, urlSegmentValue);
+        var expected = string.Format(pathTemplate, urlSegmentValue);
 
         var client = new RestClient(BaseUrl);
 
         var actual = client.BuildUri(request).AbsolutePath;
-        
 
         expected.Should().BeEquivalentTo(actual);
     }
 
     [Fact]
     public void AddUrlSegmentModifiesUrlSegmentWithString() {
-        const string name = "foo";
-        var pathTemplate = "/{0}/resource";
-        var path = String.Format(pathTemplate, "{" + name + "}");
-        var urlSegmentValue = "bar";
+        const string name            = "foo";
+        const string pathTemplate    = "/{0}/resource";
+        const string urlSegmentValue = "bar";
 
+        var path    = string.Format(pathTemplate, $"{{{name}}}");
         var request = new RestRequest(path).AddUrlSegment(name, urlSegmentValue);
 
-        var expected = String.Format(pathTemplate, urlSegmentValue);
+        var expected = string.Format(pathTemplate, urlSegmentValue);
 
         var client = new RestClient(BaseUrl);
 
         var actual = client.BuildUri(request).AbsolutePath;
 
         expected.Should().BeEquivalentTo(actual);
-
     }
 }

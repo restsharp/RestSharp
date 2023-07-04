@@ -2,10 +2,10 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <IsTestProject>false</IsTestProject>
-        <TargetFrameworks>net6</TargetFrameworks>
+        <TargetFramework>net6</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RestSharp\RestSharp.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
 </Project>

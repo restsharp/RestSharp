@@ -1,5 +1,6 @@
 using System.Net;
 using RestSharp.Tests.Integrated.Server;
+// ReSharper disable ClassNeverInstantiated.Local
 
 namespace RestSharp.Tests.Integrated;
 
@@ -73,6 +74,7 @@ public class RequestFailureTests {
     }
 
     class Response {
+        // ReSharper disable once UnusedMember.Local
         public string Message { get; set; } = null!;
     }
 }

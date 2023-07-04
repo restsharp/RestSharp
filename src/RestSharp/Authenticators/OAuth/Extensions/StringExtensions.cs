@@ -21,7 +21,7 @@ static class StringExtensions {
 
     public static string Then(this string input, string value) => string.Concat(input, value);
 
-    public static Uri AsUri(this string value) => new Uri(value);
+    public static Uri AsUri(this string value) => new(value);
 
     public static byte[] GetBytes(this string input) => Encoding.UTF8.GetBytes(input);
 

@@ -23,13 +23,13 @@ static partial class PropertyCache<T> where T : class {
             // We need to ensure the property does not return a ref struct
             // since reflection and LINQ expressions do not play well with
             // them. All bets are off, so let's just ignore them.
-#if NETCOREAPP2_1_OR_GREATER
+#if NET
             .Where(property => !property.PropertyType.IsByRefLike)
 #else
                 // Since `IsByRefLikeAttribute` is generated at compile time, each assembly
                 // may have its own definition of the attribute, so we must compare by full name
                 // instead of type.
-                .Where(property => !property.PropertyType.GetCustomAttributes().Select(attribute => attribute.GetType().FullName).Any(attributeName => attributeName == "System.Runtime.CompilerServices.IsByRefLikeAttribute"))
+                .Where(property => property.PropertyType.GetCustomAttributes().Select(attribute => attribute.GetType().FullName).All(attributeName => attributeName != "System.Runtime.CompilerServices.IsByRefLikeAttribute"))
 #endif
             .Select(Populator.From)
             .ToArray();

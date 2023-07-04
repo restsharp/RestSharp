@@ -4,7 +4,7 @@ public class AddRangeTests {
     [Fact]
     public async Task ShouldParseOutLongRangeSpecifier() {
         var        restClient = new RestClient("http://localhost");
-        var        req        = new RestRequest("bob", Method.Get);
+        var        req        = new RestRequest("bob");
         const long start      = (long)int.MaxValue + 1;
         const long end        = start + 1;
 
@@ -15,7 +15,7 @@ public class AddRangeTests {
     [Fact]
     public async Task ShouldParseOutRangeSpecifier() {
         var restClient = new RestClient("http://localhost");
-        var req        = new RestRequest("bob", Method.Get);
+        var req        = new RestRequest("bob");
 
         req.AddHeader("Range", "pages=1-2");
         await restClient.ExecuteAsync(req);

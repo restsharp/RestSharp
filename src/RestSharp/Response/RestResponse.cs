@@ -72,23 +72,22 @@ public class RestResponse : RestResponseBase {
         return request.AdvancedResponseWriter?.Invoke(httpResponse, request) ?? await GetDefaultResponse().ConfigureAwait(false);
 
         async Task<RestResponse> GetDefaultResponse() {
-            var readTask = request.ResponseWriter == null ? ReadResponse() : ReadAndConvertResponse();
-#if NETSTANDARD || NETFRAMEWORK
-            using var stream = await readTask.ConfigureAwait(false);
+#if NET
+            await using var stream = await httpResponse.ReadResponseStream(request.ResponseWriter, cancellationToken).ConfigureAwait(false);
 #else
-            await using var stream = await readTask.ConfigureAwait(false);
+            using var stream = await httpResponse.ReadResponseStream(request.ResponseWriter, cancellationToken).ConfigureAwait(false);
 #endif
 
-            var bytes   = request.ResponseWriter != null || stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
+            var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
             var content = bytes  == null ? null : httpResponse.GetResponseString(bytes, encoding);
 
             return new RestResponse(request) {
                 Content             = content,
                 RawBytes            = bytes,
-                ContentEncoding     = httpResponse.Content.Headers.ContentEncoding,
+                ContentEncoding     = httpResponse.Content?.Headers.ContentEncoding ?? Array.Empty<string>(),
                 Version             = httpResponse.RequestMessage?.Version,
-                ContentLength       = httpResponse.Content.Headers.ContentLength,
-                ContentType         = httpResponse.Content.Headers.ContentType?.MediaType,
+                ContentLength       = httpResponse.Content?.Headers.ContentLength,
+                ContentType         = httpResponse.Content?.Headers.ContentType?.MediaType,
                 ResponseStatus      = calculateResponseStatus(httpResponse),
                 ErrorException      = httpResponse.MaybeException(),
                 ResponseUri         = httpResponse.RequestMessage?.RequestUri,
@@ -97,21 +96,10 @@ public class RestResponse : RestResponseBase {
                 StatusDescription   = httpResponse.ReasonPhrase,
                 IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
                 Headers             = httpResponse.Headers.GetHeaderParameters(),
-                ContentHeaders      = httpResponse.Content.Headers.GetHeaderParameters(),
+                ContentHeaders      = httpResponse.Content?.Headers.GetHeaderParameters(),
                 Cookies             = cookieCollection,
                 RootElement         = request.RootElement
             };
-
-            Task<Stream?> ReadResponse() => httpResponse.ReadResponse(cancellationToken);
-
-            async Task<Stream?> ReadAndConvertResponse() {
-#if NETSTANDARD || NETFRAMEWORK
-                using var original = await ReadResponse().ConfigureAwait(false);
-#else
-                await using var original = await ReadResponse().ConfigureAwait(false);
-#endif
-                return request.ResponseWriter!(original!);
-            }
         }
     }
 

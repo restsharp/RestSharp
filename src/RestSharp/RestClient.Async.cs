@@ -20,7 +20,7 @@ namespace RestSharp;
 public partial class RestClient {
     /// <inheritdoc />
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+        using var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
         var response = internalResponse.Exception == null
             ? await RestResponse.FromHttpResponse(
@@ -52,16 +52,7 @@ public partial class RestClient {
 
         if (response.ResponseMessage == null) return null;
 
-        if (request.ResponseWriter != null) {
-#if NETSTANDARD || NETFRAMEWORK
-            using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-#else
-            await using var stream = await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
-#endif
-            return request.ResponseWriter(stream!);
-        }
-
-        return await response.ResponseMessage.ReadResponse(cancellationToken).ConfigureAwait(false);
+        return await response.ResponseMessage.ReadResponseStream(request.ResponseWriter, cancellationToken).ConfigureAwait(false);
     }
 
     static RestResponse GetErrorResponse(RestRequest request, Exception exception, CancellationToken timeoutToken) {
@@ -86,19 +77,21 @@ public partial class RestClient {
             throw new ObjectDisposedException(nameof(RestClient));
         }
 
-        using var requestContent = new RequestContent(this, request);
-
+        request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
 
         if (authenticator != null) {
             await authenticator.Authenticate(this, request).ConfigureAwait(false);
         }
 
+        using var requestContent = new RequestContent(this, request);
+
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
-        var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
+
+        using var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
         message.Headers.Host         = Options.BaseHost;
-        message.Headers.CacheControl = Options.CachePolicy;
+        message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
@@ -113,11 +106,8 @@ public partial class RestClient {
                 .AddHeaders(request.Parameters)
                 .AddHeaders(DefaultParameters)
                 .AddAcceptHeader(AcceptedContentTypes)
-                .AddCookieHeaders(cookieContainer, url);
-
-            if (Options.CookieContainer != null) {
-                headers.AddCookieHeaders(Options.CookieContainer, url);
-            }
+                .AddCookieHeaders(url, cookieContainer)
+                .AddCookieHeaders(url, Options.CookieContainer);
 
             message.AddHeaders(headers);
 
@@ -127,7 +117,10 @@ public partial class RestClient {
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
+                // ReSharper disable once PossibleMultipleEnumeration
                 cookieContainer.AddCookies(url, cookiesHeader);
+                // ReSharper disable once PossibleMultipleEnumeration
+                Options.CookieContainer?.AddCookies(url, cookiesHeader);
             }
 
             if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
@@ -145,7 +138,9 @@ public partial class RestClient {
         CookieContainer?     CookieContainer,
         Exception?           Exception,
         CancellationToken    TimeoutToken
-    );
+    ) : IDisposable {
+        public void Dispose() => ResponseMessage?.Dispose();
+    }
 
     static HttpMethod AsHttpMethod(Method method)
         => method switch {

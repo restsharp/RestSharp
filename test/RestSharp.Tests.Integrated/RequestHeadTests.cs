@@ -7,13 +7,11 @@ namespace RestSharp.Tests.Integrated;
 public class RequestHeadTests : CaptureFixture {
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate() {
-        const Method httpMethod = Method.Get;
-
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>());
 
         var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
 
-        var request = new RestRequest(RequestHeadCapturer.Resource, httpMethod);
+        var request = new RestRequest(RequestHeadCapturer.Resource);
 
         await client.ExecuteAsync(request);
 
@@ -29,29 +27,27 @@ public class RequestHeadTests : CaptureFixture {
 
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False() {
-        const Method httpMethod = Method.Get;
-
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 
         var client   = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = false });
-        var request  = new RestRequest(RequestHeadCapturer.Resource, httpMethod);
+        var request  = new RestRequest(RequestHeadCapturer.Resource);
         var response = await client.ExecuteAsync(request);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.Null(RequestHeadCapturer.CapturedHeaders);
     }
 
-    [Fact(Skip = "Doesn't work on Linux")]
+    [Fact]
     public async Task Passes_Default_Credentials_When_UseDefaultCredentials_Is_True() {
-        const Method httpMethod = Method.Get;
+        if (!OperatingSystem.IsWindows()) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 
         var client   = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
-        var request  = new RestRequest(RequestHeadCapturer.Resource, httpMethod);
+        var request  = new RestRequest(RequestHeadCapturer.Resource);
         var response = await client.ExecuteAsync(request);
 
-        response.StatusCode.ToString().Should().BeOneOf(HttpStatusCode.OK.ToString(),HttpStatusCode.Unauthorized.ToString());
+        response.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.Unauthorized);
         RequestHeadCapturer.CapturedHeaders.Should().NotBeNull();
 
         var keys = RequestHeadCapturer.CapturedHeaders!.Keys.Cast<string>().ToArray();

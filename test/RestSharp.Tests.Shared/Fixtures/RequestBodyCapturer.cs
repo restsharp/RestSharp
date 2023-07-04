@@ -11,6 +11,7 @@ public class RequestBodyCapturer {
     public static string CapturedEntityBody    { get; set; }
     public static Uri    CapturedUrl           { get; set; }
 
+    // ReSharper disable once UnusedMember.Global
     public static void Capture(HttpListenerContext context) {
         var request = context.Request;
 

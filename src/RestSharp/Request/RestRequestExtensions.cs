@@ -375,6 +375,22 @@ public static class RestRequestExtensions {
         => request.AddParameter(new BodyParameter(body, Ensure.NotNull(contentType, nameof(contentType))));
 
     /// <summary>
+    /// Adds a JSON body parameter to the request from a string
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="forceSerialize">Force serialize the top-level string</param>
+    /// <param name="contentType">Optional: content type. Default is "application/json"</param>
+    /// <param name="jsonString">JSON string to be used as a body</param>
+    /// <returns></returns>
+    public static RestRequest AddJsonBody(this RestRequest request, string jsonString, bool forceSerialize, ContentType? contentType = null) {
+        request.RequestFormat = DataFormat.Json;
+
+        return !forceSerialize
+            ? request.AddStringBody(jsonString, DataFormat.Json)
+            : request.AddParameter(new JsonParameter(jsonString, contentType));
+    }
+
+    /// <summary>
     /// Adds a JSON body parameter to the request
     /// </summary>
     /// <param name="request">Request instance</param>
@@ -383,7 +399,10 @@ public static class RestRequestExtensions {
     /// <returns></returns>
     public static RestRequest AddJsonBody<T>(this RestRequest request, T obj, ContentType? contentType = null) where T : class {
         request.RequestFormat = DataFormat.Json;
-        return obj is string str ? request.AddStringBody(str, DataFormat.Json) : request.AddParameter(new JsonParameter(obj, contentType));
+
+        return obj is string str
+            ? request.AddStringBody(str, DataFormat.Json)
+            : request.AddParameter(new JsonParameter(obj, contentType));
     }
 
     /// <summary>
@@ -433,8 +452,8 @@ public static class RestRequestExtensions {
     /// <param name="obj">Object to add as form data</param>
     /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
     /// <returns></returns>
-    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class =>
-        request.AddParameters(PropertyCache<T>.GetParameters(obj, includedProperties));
+    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class
+        => request.AddParameters(PropertyCache<T>.GetParameters(obj, includedProperties));
 
     /// <summary>
     /// Gets object properties and adds each property as a form data parameter
@@ -448,8 +467,8 @@ public static class RestRequestExtensions {
     /// <param name="request">Request instance</param>
     /// <param name="obj">Object to add as form data</param>
     /// <returns></returns>
-    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj) where T : class =>
-        request.AddParameters(PropertyCache<T>.GetParameters(obj));
+    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj) where T : class
+        => request.AddParameters(PropertyCache<T>.GetParameters(obj));
 
     /// <summary>
     /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
@@ -481,5 +500,22 @@ public static class RestRequestExtensions {
             .ToList();
 
         if (duplicateKeys.Any()) throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+    }
+
+    public static void ValidateParameters(this RestRequest request) {
+
+        if (request.AlwaysSingleFileAsContent) {
+            var postParametersExists = request.Parameters.GetContentParameters(request.Method).Any();
+            var bodyParametersExists = request.Parameters.Any(p => p.Type == ParameterType.RequestBody);
+
+            if (request.AlwaysMultipartFormData) 
+                throw new ArgumentException("Failed to put file as content because flag AlwaysMultipartFormData enabled");
+            
+            if (postParametersExists) 
+                throw new ArgumentException("Failed to put file as content because added post parameters");
+        
+            if (bodyParametersExists) 
+                throw new ArgumentException("Failed to put file as content because added body parameters"); 
+        }
     }
 }

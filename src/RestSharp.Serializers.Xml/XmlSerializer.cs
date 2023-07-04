@@ -110,7 +110,7 @@ public class XmlSerializer : IXmlSerializer, IWithRootElement, IWithDateFormat {
 
         var props = objType.GetProperties()
             .Select(p => new { p, indexAttribute = p.GetAttribute<SerializeAsAttribute>() })
-            .Where(t => t.p.CanRead && t.p.CanWrite)
+            .Where(t => t.p is { CanRead: true, CanWrite: true })
             .OrderBy(t => t.indexAttribute?.Index ?? int.MaxValue)
             .Select(t => t.p);
         var globalOptions                   = objType.GetAttribute<SerializeAsAttribute>();
@@ -177,7 +177,7 @@ public class XmlSerializer : IXmlSerializer, IWithRootElement, IWithDateFormat {
                         ? setting.Name
                         : type.Name;
 
-                    var instance = new XElement(itemTypeName!.AsNamespaced(Namespace)!);
+                    var instance = new XElement(itemTypeName.AsNamespaced(Namespace)!);
 
                     Map(instance, item);
 
@@ -228,17 +228,17 @@ public class XmlSerializer : IXmlSerializer, IWithRootElement, IWithDateFormat {
     /// </summary>
     static bool IsNumeric(object value)
         => value switch {
-            sbyte _   => true,
-            byte _    => true,
-            short _   => true,
-            ushort _  => true,
-            int _     => true,
-            uint _    => true,
-            long _    => true,
-            ulong _   => true,
-            float _   => true,
-            double _  => true,
-            decimal _ => true,
-            _         => false
+            sbyte   => true,
+            byte    => true,
+            short   => true,
+            ushort  => true,
+            int     => true,
+            uint    => true,
+            long    => true,
+            ulong   => true,
+            float   => true,
+            double  => true,
+            decimal => true,
+            _       => false
         };
 }

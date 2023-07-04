@@ -15,7 +15,7 @@ public class PostTests {
         var request  = new RestRequest("post/json").AddJsonBody(body);
         var response = await _client.ExecutePostAsync<TestResponse>(request);
 
-        response!.Data!.Message.Should().Be(body.Data);
+        response.Data!.Message.Should().Be(body.Data);
     }
 
     [Fact]

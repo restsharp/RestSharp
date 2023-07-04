@@ -18,9 +18,7 @@ public class XmlAttributeDeserializerTests {
 
     string PathFor(string sampleFile) => Path.Combine(_sampleDataPath, sampleFile);
 
-    public XmlAttributeDeserializerTests(ITestOutputHelper output) {
-        _output = output;
-    }
+    public XmlAttributeDeserializerTests(ITestOutputHelper output) => _output = output;
 
     [Fact]
     public void Can_Deserialize_Lists_of_Simple_Types() {
@@ -578,7 +576,7 @@ public class XmlAttributeDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
@@ -586,6 +584,7 @@ public class XmlAttributeDeserializerTests {
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -627,7 +626,7 @@ public class XmlAttributeDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
@@ -635,6 +634,7 @@ public class XmlAttributeDeserializerTests {
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -676,7 +676,7 @@ public class XmlAttributeDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
@@ -684,6 +684,7 @@ public class XmlAttributeDeserializerTests {
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -744,7 +745,7 @@ public class XmlAttributeDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
@@ -752,6 +753,7 @@ public class XmlAttributeDeserializerTests {
                     new XElement("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 

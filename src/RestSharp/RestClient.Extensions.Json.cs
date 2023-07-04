@@ -14,7 +14,6 @@
 // 
 
 using System.Net;
-using RestSharp.Extensions;
 
 namespace RestSharp;
 

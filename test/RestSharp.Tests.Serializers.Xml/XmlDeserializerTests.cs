@@ -9,11 +9,11 @@ namespace RestSharp.Tests.Serializers.Xml;
 public class XmlDeserializerTests {
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-    #if NETCORE
+#if NETCORE
     readonly string _sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
-    #else
+#else
     readonly string _sampleDataPath = Path.Combine(Directory.GetCurrentDirectory(), "SampleData");
-    #endif
+#endif
 
     string PathFor(string sampleFile) => Path.Combine(_sampleDataPath, sampleFile);
 
@@ -43,14 +43,15 @@ public class XmlDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"             + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -92,14 +93,15 @@ public class XmlDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"             + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -141,14 +143,15 @@ public class XmlDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"             + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
 
@@ -206,14 +209,15 @@ public class XmlDeserializerTests {
 
         var friends = new XElement("Friends");
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++) {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend" + i),
+                    new XElement("Name", "Friend"           + i),
                     new XElement("Since", DateTime.Now.Year - i)
                 )
             );
+        }
 
         root.Add(friends);
         doc.Add(root);
@@ -644,23 +648,20 @@ public class XmlDeserializerTests {
 
     [Fact]
     public void Can_throw_format_exception_xml() {
-        var xmlpath  = PathFor("GoodreadsFormatError.xml");
-        var doc      = XDocument.Load(xmlpath);
+        var xmlPath  = PathFor("GoodreadsFormatError.xml");
+        var doc      = XDocument.Load(xmlPath);
         var response = new RestResponse { Content = doc.ToString() };
         var d        = new XmlDeserializer();
 
         Assert.Throws<FormatException>(
-            () => {
-                var note    = d.Deserialize<GoodReadsReviewCollection>(response);
-                var message = note;
-            }
+            () => d.Deserialize<GoodReadsReviewCollection>(response)
         );
     }
 
     [Fact]
     public void Can_Deserialize_Google_Weather_Xml() {
-        var xmlpath  = PathFor("GoogleWeather.xml");
-        var doc      = XDocument.Load(xmlpath);
+        var xmlPath  = PathFor("GoogleWeather.xml");
+        var doc      = XDocument.Load(xmlPath);
         var response = new RestResponse { Content = doc.ToString() };
         var d        = new XmlDeserializer();
         var output   = d.Deserialize<xml_api_reply>(response)!;
@@ -682,8 +683,9 @@ public class XmlDeserializerTests {
     [Fact]
     public void Can_Deserialize_Into_Struct() {
         const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
-        var          xml     = new XmlDeserializer();
-        var          output  = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+
+        var xml    = new XmlDeserializer();
+        var output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
 
         Assert.Equal("oneOneOne", output.One);
         Assert.Equal("twoTwoTwo", output.Two);
@@ -692,8 +694,8 @@ public class XmlDeserializerTests {
 
     [Fact]
     public void Can_Deserialize_Lastfm_Xml() {
-        var xmlpath  = PathFor("Lastfm.xml");
-        var doc      = XDocument.Load(xmlpath);
+        var xmlPath  = PathFor("Lastfm.xml");
+        var doc      = XDocument.Load(xmlPath);
         var response = new RestResponse { Content = doc.ToString() };
         var d        = new XmlDeserializer();
         var output   = d.Deserialize<Event>(response)!;
@@ -707,8 +709,8 @@ public class XmlDeserializerTests {
 
     [Fact]
     public void Can_Deserialize_Lists_of_Simple_Types() {
-        var xmlpath = PathFor("xmllists.xml");
-        var doc     = XDocument.Load(xmlpath);
+        var xmlPath = PathFor("xmllists.xml");
+        var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlDeserializer();
 
         var output = xml.Deserialize<SimpleTypesListSample>(
@@ -716,7 +718,7 @@ public class XmlDeserializerTests {
         )!;
 
         Assert.False(output.Names[0].Length == 0);
-        Assert.False(output.Numbers.Sum() == 0);
+        Assert.False(output.Numbers.Sum()   == 0);
     }
 
     [Fact]

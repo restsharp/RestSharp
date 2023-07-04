@@ -28,10 +28,12 @@ If you only have a few number of one-off requests to make to an API, you can use
 using RestSharp;
 using RestSharp.Authenticators;
 
-var client = new RestClient("https://api.twitter.com/1.1") {
+var options = new RestClientOptions("https://api.twitter.com/1.1") {
     Authenticator = new HttpBasicAuthenticator("username", "password")
 };
+var client = new RestClient(options);
 var request = new RestRequest("statuses/home_timeline.json");
+// The cancellation token comes from the caller. You can still make a call without it.
 var response = await client.GetAsync(request, cancellationToken);
 ```
 
@@ -46,24 +48,37 @@ For example:
 using RestSharp;
 using RestSharp.Authenticators;
 
-var client = new RestClient("https://api.twitter.com/1.1");
-client.Authenticator = new HttpBasicAuthenticator("username", "password");
+var options = new RestClientOptions("https://api.twitter.com/1.1") {
+    Authenticator = new HttpBasicAuthenticator("username", "password")
+};
+var client = new RestClient(options);
 
-var request = new RestRequest("statuses/home_timeline.json", DataFormat.Json);
+var request = new RestRequest("statuses/home_timeline.json");
 
+// The cancellation token comes from the caller. You can still make a call without it.
 var timeline = await client.GetAsync<HomeTimeline>(request, cancellationToken);
 ```
 
-The most important difference, however, that async methods that are named after HTTP methods return the `Task<T>` instead of `Task<IRestResponse<T>>`. Because it means that you won't get an error response if the request fails, those methods
-throw an exception.
+Both snippets above use the `GetAsync` extension, which is a wrapper about `ExecuteGetAsync`, which, in turn, is a wrapper around `ExecuteAsync`.
+All `ExecuteAsync` overloads and return the `RestResponse` or `RestResponse<T>`.
 
-All `ExecuteAsync` overloads, however, behave in the same way as `Execute` and return the `IRestResponse` or `IRestResponse<T>`.
+The most important difference is that async methods that are named after HTTP methods return the `Task<T>` instead of `Task<RestResponse<T>>`. Because it means that you won't get an error response if the request fails, those methods
+throw an exception. For keeping the API consistent, non-generic functions like `GetAsync` or `PostAsync` also throw an exception if the request fails, although they return the `Task<RestResponse>`.
 
 Read [here](error-handling.md) about how RestSharp handles exceptions.
 
+RestSharp also offers even simpler way to make JSON calls. You can use the `GetJsonAsync` and `PostJsonAsync` extension methods, which will automatically serialize the request body to JSON and deserialize the response to the specified type.
+
+```csharp
+var client = new RestClient(options);
+var timeline = await client.GetJsonAsync<HomeTimeline>("statuses/home_timeline.json", cancellationToken);
+```
+
+Read [here](usage.md#json-requests) about making JSON calls without preparing a request object.
+
 ### Content type
 
-RestSharp supports sending XML or JSON body as part of the request. To add a body to the request, simply call `AddJsonBody` or `AddXmlBody` method of the `IRestRequest` instance.
+RestSharp supports sending XML or JSON body as part of the request. To add a body to the request, simply call `AddJsonBody` or `AddXmlBody` method of the `RestRequest` instance.
 
 There is no need to set the `Content-Type` or add the `DataFormat` parameter to the request when using those methods, RestSharp will do it for you.
 

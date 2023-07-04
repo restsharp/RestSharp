@@ -13,15 +13,60 @@
 // limitations under the License.
 //
 
+using System.Text;
+
 namespace RestSharp.Extensions;
 
-public static class HttpResponseExtensions {
-    internal static Exception? MaybeException(this HttpResponseMessage httpResponse)
+static class HttpResponseExtensions {
+    public static Exception? MaybeException(this HttpResponseMessage httpResponse)
         => httpResponse.IsSuccessStatusCode
             ? null
-#if NETSTANDARD || NETFRAMEWORK
-            : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
-#else
+#if NET
             : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}", null, httpResponse.StatusCode);
+#else
+            : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
 #endif
+
+    public static string GetResponseString(this HttpResponseMessage response, byte[] bytes, Encoding clientEncoding) {
+        var encodingString = response.Content.Headers.ContentType?.CharSet;
+        var encoding       = encodingString != null ? TryGetEncoding(encodingString) : clientEncoding;
+
+        using var reader = new StreamReader(new MemoryStream(bytes), encoding);
+        return reader.ReadToEnd();
+
+        Encoding TryGetEncoding(string es) {
+            try {
+                return Encoding.GetEncoding(es);
+            }
+            catch {
+                return Encoding.Default;
+            }
+        }
+    }
+
+    public static Task<Stream?> ReadResponseStream(
+        this HttpResponseMessage httpResponse,
+        Func<Stream, Stream?>?   writer,
+        CancellationToken        cancellationToken = default
+    ) {
+        var readTask = writer == null ? ReadResponse() : ReadAndConvertResponse(writer);
+        return readTask;
+
+        Task<Stream?> ReadResponse() {
+#if NET
+            return httpResponse.Content.ReadAsStreamAsync(cancellationToken)!;
+# else
+            return httpResponse.Content == null ? Task.FromResult((Stream?)null) : httpResponse.Content.ReadAsStreamAsync();
+#endif
+        }
+
+        async Task<Stream?> ReadAndConvertResponse(Func<Stream, Stream?> streamWriter) {
+#if NET
+            await using var original = await ReadResponse().ConfigureAwait(false);
+#else
+            using var original = await ReadResponse().ConfigureAwait(false);
+#endif
+            return original == null ? null : streamWriter(original);
+        }
+    }
 }
