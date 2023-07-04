@@ -36,47 +36,44 @@ class RequestContent : IDisposable {
         _parameters = new RequestParameters(_request.Parameters.Union(_client.DefaultParameters));
     }
 
-    public HttpContent BuildContent() 
-    {
-        var postParameters = _parameters.GetContentParameters(_request.Method).ToArray();
+    public HttpContent BuildContent() {
+        var postParameters       = _parameters.GetContentParameters(_request.Method).ToArray();
         var postParametersExists = postParameters.Length > 0;
         var bodyParametersExists = _request.TryGetBodyParameter(out var bodyParameter);
-        var filesExists = _request.Files.Any();
+        var filesExists          = _request.Files.Any();
 
-        if (filesExists)
-            AddFiles();
+        if (_request.HasFiles()                      ||
+            BodyShouldBeMultipartForm(bodyParameter) ||
+            filesExists                              ||
+            _request.AlwaysMultipartFormData) {
+            Content = CreateMultipartFormDataContent();
+        }
 
-        if (bodyParametersExists)
-            AddBody(postParametersExists, bodyParameter!);
+        if (filesExists) AddFiles();
 
-        if (postParametersExists)
-            AddPostParameters(postParameters);
+        if (bodyParametersExists) AddBody(postParametersExists, bodyParameter!);
+
+        if (postParametersExists) AddPostParameters(postParameters);
 
         AddHeaders();
 
         return Content!;
     }
-    
-     void AddFiles() 
-     {
-         // File uploading without multipart/form-data
-         if (_request.AlwaysSingleFileAsContent && _request.Files.Count == 1)
-         {
-             var fileParameter = _request.Files.First();
-             Content = ToStreamContent(fileParameter);
-             return;
-         }
-         
-         var mpContent = new MultipartFormDataContent(GetOrSetFormBoundary());
- 
-         foreach (var fileParameter in _request.Files) 
-             mpContent.Add(ToStreamContent(fileParameter));
-             
-         Content = mpContent; 
-     }
-    
-    StreamContent ToStreamContent(FileParameter fileParameter)
-    {
+
+    void AddFiles() {
+        // File uploading without multipart/form-data
+        if (_request is { AlwaysSingleFileAsContent: true, Files.Count: 1 }) {
+            var fileParameter = _request.Files.First();
+            Content?.Dispose();
+            Content = ToStreamContent(fileParameter);
+            return;
+        }
+
+        var mpContent = Content as MultipartFormDataContent;
+        foreach (var fileParameter in _request.Files) mpContent!.Add(ToStreamContent(fileParameter));
+    }
+
+    StreamContent ToStreamContent(FileParameter fileParameter) {
         var stream = fileParameter.GetFile();
         _streams.Add(stream);
         var streamContent = new StreamContent(stream);
@@ -123,7 +120,9 @@ class RequestContent : IDisposable {
         }
     }
 
-    static bool BodyShouldBeMultipartForm(BodyParameter bodyParameter) {
+    static bool BodyShouldBeMultipartForm(BodyParameter? bodyParameter) {
+        if (bodyParameter == null) return false;
+
         var bodyContentType = bodyParameter.ContentType.OrValue(bodyParameter.Name);
         return bodyParameter.Name.IsNotEmpty() && bodyParameter.Name != bodyContentType;
     }
@@ -139,8 +138,7 @@ class RequestContent : IDisposable {
         return mpContent;
     }
 
-    void AddBody(bool hasPostParameters, BodyParameter bodyParameter) 
-    {
+    void AddBody(bool hasPostParameters, BodyParameter bodyParameter) {
         var bodyContent = Serialize(bodyParameter);
 
         // we need to send the body

@@ -79,7 +79,10 @@ public partial class RestClient {
 
         request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
-        if (authenticator != null) await authenticator.Authenticate(this, request).ConfigureAwait(false);
+
+        if (authenticator != null) {
+            await authenticator.Authenticate(this, request).ConfigureAwait(false);
+        }
 
         using var requestContent = new RequestContent(this, request);
 
