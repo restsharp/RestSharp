@@ -3,7 +3,7 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="7.0.2" />
+        <PackageReference Include="System.Text.Json" Version="7.0.3" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="RestSharp.csproj.DotSettings" />

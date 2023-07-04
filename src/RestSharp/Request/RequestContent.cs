@@ -42,8 +42,7 @@ class RequestContent : IDisposable {
         var bodyParametersExists = _request.TryGetBodyParameter(out var bodyParameter);
         var filesExists          = _request.Files.Any();
 
-        if (postParametersExists                     ||
-            _request.HasFiles()                      ||
+        if (_request.HasFiles()                      ||
             BodyShouldBeMultipartForm(bodyParameter) ||
             filesExists                              ||
             _request.AlwaysMultipartFormData) {
