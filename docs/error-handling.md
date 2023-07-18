@@ -63,4 +63,4 @@ Below you can find how different extensions deal with errors. Note that function
 | `HeadAsync`           | Yes              |
 | `HeadAsync<T>`        | Yes              |
 
-In addition, all the functions for JSON requests, like `GetJsonAsync` and `PostJsonAsyn` throw an exception if the HTTP call fails.
+In addition, all the functions for JSON requests, like `GetJsonAsync` and `PostJsonAsync` throw an exception if the HTTP call fails.
