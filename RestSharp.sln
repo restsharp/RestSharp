@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharp.Tests.Serializers
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGen", "SourceGen", "{55B8F371-B2BA-4DEE-AB98-5BAB8A21B1C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "gen\SourceGenerator\SourceGenerator.csproj", "{FE778406-ADCF-45A1-B775-A054B55BFC50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenerator", "gen\SourceGenerator\SourceGenerator.csproj", "{FE778406-ADCF-45A1-B775-A054B55BFC50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
