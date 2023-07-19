@@ -23,7 +23,7 @@ public class status {
     public string in_reply_to_screen_name { get; set; }
 
     // ignore contributors for now
-    public User user { get; set; }
+    public user user { get; set; }
 
     // ignore geo
     public long id { get; set; }
@@ -31,7 +31,7 @@ public class status {
     public string text { get; set; }
 }
 
-public class User {
+public class user {
     public string url { get; set; }
 
     public string description { get; set; }
@@ -105,7 +105,7 @@ public class complexStatus {
     public string in_reply_to_screen_name { get; set; }
 
     // ignore contributors for now
-    [DeserializeAs(Name = "User.following")]
+    [DeserializeAs(Name = "user.following")]
     public bool follow { get; set; }
 
     // ignore geo
