@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="7.0.2" />
+        <PackageReference Include="System.Text.Json" Version="7.0.3" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="RestSharp.csproj.DotSettings" />
@@ -17,12 +17,6 @@
         <PackageReference Include="Nullable" Version="1.3.1" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Update="RestClient.Extensions.Config.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Json.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
         <Compile Update="RestClient.Extensions.Params.cs">
             <DependentUpon>RestClient.Extensions.cs</DependentUpon>
         </Compile>
@@ -34,6 +28,27 @@
         </Compile>
         <Compile Update="Request\PropertyCache.Populator.RequestProperty.cs">
           <DependentUpon>PropertyCache.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Get.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Post.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Put.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Patch.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Head.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Delete.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="RestClient.Extensions.Options.cs">
+          <DependentUpon>RestClient.Extensions.cs</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
