@@ -53,6 +53,21 @@ public class RedirectTests {
         response.Content.Should().Be("[\"cookie=value\",\"cookie2=value2\"]");
     }
 
+    [Fact]
+    public async Task Can_Perform_POST_Async_With_RedirectionResponse_Cookies() {
+        var request = new RestRequest("/post/set-cookie-redirect") {
+            Method = Method.Post,
+        };
+
+        var response = await _client.ExecuteAsync(request);
+        // Verify the cookie exists from the POST:
+        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies[0].Name.Should().Be("redirectCookie");
+        response.Cookies[0].Value.Should().Be("value1");
+        // Make sure the redirected location spits out the correct content:
+        response.Content.Should().Be("[\"redirectCookie=value1\"]", "was successfully redirected to get-cookies");
+    }
+
     class Response {
         public string? Message { get; set; }
     }
