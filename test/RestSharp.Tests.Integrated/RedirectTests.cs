@@ -43,14 +43,14 @@ public class RedirectTests {
     }
 
     [Fact]
-    public async Task Can_Perform_GET_Async_With_Request_Cookies() {
+    public async Task Can_Perform_GET_Async_With_Request_Cookies_And_RedirectCookie() {
         var request = new RestRequest("get-cookies-redirect") {
             CookieContainer = new CookieContainer(),
         };
         request.CookieContainer.Add(new Cookie("cookie", "value", null, _host));
         request.CookieContainer.Add(new Cookie("cookie2", "value2", null, _host));
         var response = await _client.ExecuteAsync(request);
-        response.Content.Should().Be("[\"cookie=value\",\"cookie2=value2\"]");
+        response.Content.Should().Be("[\"redirectCookie=value1\",\"cookie=value\",\"cookie2=value2\"]");
     }
 
     [Fact]
