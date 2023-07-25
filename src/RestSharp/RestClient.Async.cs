@@ -89,6 +89,7 @@ public partial class RestClient {
 
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
+        var originalUrl = url;
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
@@ -122,11 +123,19 @@ public partial class RestClient {
                 .AddCookieHeaders(url, cookieContainer)
                 .AddCookieHeaders(url, Options.CookieContainer);
 
-            HttpResponseMessage? responseMessage;
+            bool foundCookies = false;
+            HttpResponseMessage? responseMessage = null;
 
-            while (true) {
+            do {
                 using var requestContent = new RequestContent(this, request);
-                using var message        = PrepareRequestMessage(httpMethod, url, requestContent, headers);
+                using var content = requestContent.BuildContent();
+
+                // If we found coookies during a redirect,
+                // we need to update the Cookie headers:
+                if (foundCookies) {
+                    headers.AddCookieHeaders(cookieContainer, url);
+                }
+                using var message = PrepareRequestMessage(httpMethod, url, content, headers);
 
                 if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
 
@@ -149,19 +158,61 @@ public partial class RestClient {
                     location = new Uri(url, location);
                 }
 
+                // Mirror HttpClient redirection behavior as of 07/25/2023:
+                // Per https://tools.ietf.org/html/rfc7231#section-7.1.2, a redirect location without a
+                // fragment should inherit the fragment from the original URI.
+                string requestFragment = originalUrl.Fragment;
+                if (!string.IsNullOrEmpty(requestFragment)) {
+                    string redirectFragment = location.Fragment;
+                    if (string.IsNullOrEmpty(redirectFragment)) {
+                        location = new UriBuilder(location) { Fragment = requestFragment }.Uri;
+                    }
+                }
+
+                // Disallow automatic redirection from secure to non-secure schemes
+                // From HttpClient's RedirectHandler:
+                //if (HttpUtilities.IsSupportedSecureScheme(requestUri.Scheme) && !HttpUtilities.IsSupportedSecureScheme(location.Scheme)) {
+                //    if (NetEventSource.Log.IsEnabled()) {
+                //        TraceError($"Insecure https to http redirect from '{requestUri}' to '{location}' blocked.", response.RequestMessage!.GetHashCode());
+                //    }
+                //    break;
+                //}
+
                 if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod) {
                     httpMethod = HttpMethod.Get;
+                }
+                // Based on Wikipedia https://en.wikipedia.org/wiki/HTTP_302:
+                //  Many web browsers implemented this code in a manner that violated this standard, changing
+                //  the request type of the new request to GET, regardless of the type employed in the original request
+                //  (e.g. POST). For this reason, HTTP/1.1 (RFC 2616) added the new status codes 303 and 307 to disambiguate
+                //  between the two behaviours, with 303 mandating the change of request type to GET, and 307 preserving the
+                //  request type as originally sent. Despite the greater clarity provided by this disambiguation, the 302 code
+                //  is still employed in web frameworks to preserve compatibility with browsers that do not implement the HTTP/1.1
+                //  specification.
+
+                // NOTE: Given the above, it is not surprising that HttpClient when AllowRedirect = true
+                // solves this problem by a helper method:
+                if (RedirectRequestRequiresForceGet(responseMessage.StatusCode, httpMethod)) {
+                    httpMethod = HttpMethod.Get;
+                    // HttpClient sets request.Content to null here:
+                    // TODO: However... should we be allowed to modify Request like that here?
+                    message.Content = null;
+                    // HttpClient Redirect handler also does this:
+                    //if (message.Headers.TansferEncodingChunked == true) {
+                    //    request.Headers.TransferEncodingChunked = false;
+                    //}
                 }
 
                 url = location;
 
                 if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
+                    foundCookies = true;
                     // ReSharper disable once PossibleMultipleEnumeration
                     cookieContainer.AddCookies(url, cookiesHeader);
                     // ReSharper disable once PossibleMultipleEnumeration
                     Options.CookieContainer?.AddCookies(url, cookiesHeader);
                 }
-            }
+            } while (true);
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
@@ -208,8 +259,25 @@ public partial class RestClient {
         }
     }
 
-    HttpRequestMessage PrepareRequestMessage(HttpMethod httpMethod, Uri url, RequestContent requestContent, RequestHeaders headers) {
-        var message = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
+    /// <summary>
+    /// Based on .net core RedirectHandler class: 
+    /// https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/RedirectHandler.cs
+    /// </summary>
+    /// <param name="statusCode"></param>
+    /// <param name="httpMethod"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    private bool RedirectRequestRequiresForceGet(HttpStatusCode statusCode, HttpMethod httpMethod) {
+        return statusCode switch {
+            HttpStatusCode.Moved or HttpStatusCode.Found or HttpStatusCode.MultipleChoices 
+                => httpMethod == HttpMethod.Post,
+            HttpStatusCode.SeeOther => httpMethod != HttpMethod.Get && httpMethod != HttpMethod.Head,
+            _ => false,
+        };
+    }
+
+    HttpRequestMessage PrepareRequestMessage(HttpMethod httpMethod, Uri url, HttpContent content, RequestHeaders headers) {
+        var message = new HttpRequestMessage(httpMethod, url) { Content = content };
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = Options.CachePolicy;
         message.AddHeaders(headers);
