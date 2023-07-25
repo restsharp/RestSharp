@@ -52,6 +52,13 @@ public sealed class HttpServer {
             }
         );
 
+        _app.MapPost(
+            "/post/set-cookie-redirect",
+            (HttpContext ctx) => {
+                ctx.Response.Cookies.Append("redirectCookie", "value1");
+                return Results.Redirect("/get-cookies", permanent: false, preserveMethod: false);
+            });
+
         // PUT
         _app.MapPut(
             ContentResource,
