@@ -83,7 +83,7 @@ class RequestContent : IDisposable {
         var dispositionHeader = fileParameter.Options.DisableFilenameEncoding
             ? ContentDispositionHeaderValue.Parse($"form-data; name=\"{fileParameter.Name}\"; filename=\"{fileParameter.FileName}\"")
             : new ContentDispositionHeaderValue("form-data") { Name = $"\"{fileParameter.Name}\"", FileName = $"\"{fileParameter.FileName}\"" };
-        if (!fileParameter.Options.DisableFileNameStar) dispositionHeader.FileNameStar = fileParameter.FileName;
+        if (!fileParameter.Options.DisableFileNameStar) dispositionHeader.FileNameStar = Uri.EscapeDataString(fileParameter.FileName);
         streamContent.Headers.ContentDisposition = dispositionHeader;
 
         return streamContent;
