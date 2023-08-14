@@ -561,6 +561,22 @@ AddFile(parameterName, getFile, fileName, contentType);
 
 Remember that `AddFile` will set all the necessary headers, so please don't try to set content headers manually.
 
+You can also provide file upload options to the `AddFile` call. The options are:
+- `DisableFilenameEncoding` (default `false`): if set to `true`, RestSharp will not encode the file name in the `Content-Disposition` header
+- `DisableFilenameStar` (default `true`): if set to `true`, RestSharp will not add the `filename*` parameter to the `Content-Disposition` header
+
+Example of using the options:
+
+```csharp
+var options = new FileParameterOptions {
+    DisableFilenameEncoding = true,
+    DisableFilenameStar = false
+};
+request.AddFile("file", filePath, options: options);
+```
+
+The options specified in the snippet above usually help when you upload files with non-ASCII characters in their names.
+
 ### Downloading binary data
 
 There are two functions that allow you to download binary data from the remote API.

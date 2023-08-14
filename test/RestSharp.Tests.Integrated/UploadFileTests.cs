@@ -54,7 +54,7 @@ public class UploadFileTests {
 
     [Fact]
     public async Task Should_upload_from_stream_non_ascii() {
-        const string nonAsciiFilename = "Präsentation_Export.zip"; //Koala -ü.jpg";
+        const string nonAsciiFilename = "Präsentation_Export.zip";
 
         var options = new FileParameterOptions { DisableFilenameEncoding = true, DisableFileNameStar = false};
 
