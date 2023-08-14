@@ -56,7 +56,7 @@ public class UploadFileTests {
     public async Task Should_upload_from_stream_non_ascii() {
         const string nonAsciiFilename = "Präsentation_Export.zip";
 
-        var options = new FileParameterOptions { DisableFilenameEncoding = true, DisableFileNameStar = false};
+        var options = new FileParameterOptions { DisableFilenameEncoding = true, DisableFilenameStar = false};
 
         var request = new RestRequest("upload")
             .AddFile("file", () => File.OpenRead(_path), nonAsciiFilename, options: options)
