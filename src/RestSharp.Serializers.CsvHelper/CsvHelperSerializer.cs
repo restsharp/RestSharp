@@ -84,19 +84,7 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
         using var csvWriter = new CsvWriter(stringWriter, _configuration);
 
         if (obj is IEnumerable records) {
-            // ReSharper disable once PossibleMultipleEnumeration
-            var enumerator = records.GetEnumerator();
-
-            if (enumerator.MoveNext() && enumerator.Current != null) {
-                csvWriter.WriteHeader(enumerator.Current.GetType());
-                csvWriter.NextRecord();
-                // ReSharper disable once PossibleMultipleEnumeration
-                csvWriter.WriteRecords(records);
-            }
-
-            if (enumerator is IDisposable disposable) {
-                disposable.Dispose();
-            }
+            csvWriter.WriteRecords(records);
         }
         else {
             csvWriter.WriteHeader(obj.GetType());

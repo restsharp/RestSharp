@@ -10,17 +10,27 @@ public class UploadController : ControllerBase {
     [HttpPost]
     [Route("upload")]
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
-    public async Task<UploadResponse> Upload([FromForm] FormFile formFile) {
+    public async Task<IActionResult> Upload([FromForm] FormFile formFile, [FromQuery] bool checkFile = true) {
+        var file = formFile.File;
+
+        if (!checkFile) {
+            return Ok(new UploadResponse(file.FileName, file.Length, true));
+        }
+
         var assetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
-        var file      = formFile.File;
 
         await using var stream = file.OpenReadStream();
 
         var received = await stream.ReadAsBytes(default);
-        var expected = await System.IO.File.ReadAllBytesAsync(Path.Combine(assetPath, file.FileName));
 
-        var response = new UploadResponse(file.FileName, file.Length, received.SequenceEqual(expected));
-        return response;
+        try {
+            var expected = await System.IO.File.ReadAllBytesAsync(Path.Combine(assetPath, file.FileName));
+            var response = new UploadResponse(file.FileName, file.Length, received.SequenceEqual(expected));
+            return Ok(response);
+        }
+        catch (Exception e) {
+            return BadRequest(new { Message = e.Message, Filename = file.FileName });
+        }
     }
 }
 
