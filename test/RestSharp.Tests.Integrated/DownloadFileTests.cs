@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using RestSharp.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
@@ -9,6 +10,7 @@ public sealed class DownloadFileTests : IDisposable {
         _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
         var options = new RestClientOptions(_server.Url) { ThrowOnAnyError = true };
         _client = new RestClient(options);
+        _clientNoThrow = new RestClient(_server.Url);
     }
 
     public void Dispose() => _server.Dispose();
@@ -28,6 +30,7 @@ public sealed class DownloadFileTests : IDisposable {
 
     readonly HttpServerFixture _server;
     readonly RestClient        _client;
+    readonly RestClient        _clientNoThrow;
     readonly string            _path = AppDomain.CurrentDomain.BaseDirectory;
 
     [Fact]
@@ -63,6 +66,52 @@ public sealed class DownloadFileTests : IDisposable {
         var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "Koala.jpg"));
 
         Assert.Equal(expected, response);
+    }
+
+    [Fact]
+    public async Task Runs_ErrorHandler_On_Download_Request_Failure() {
+        var client = new RestClient("http://localhost:12345");
+        var request = new RestRequest("nonexisting");
+        RestResponse? errorResponse = null;
+        var stream = await client.DownloadStreamAsync(request, (r) => {
+            errorResponse = r;
+        });
+
+        Assert.Null(stream);
+        Assert.NotNull(errorResponse);
+        Assert.Equal(ResponseStatus.Error, errorResponse.ResponseStatus);
+    }
+
+    [Fact]
+    public async Task Runs_ErrorHandler_On_Download_Response_StatusCode_Not_Successful() {
+        var request = new RestRequest("Assets/Koala1.jpg");
+        RestResponse? errorResponse = null;
+        var stream = await _clientNoThrow.DownloadStreamAsync(request, (r) => {
+            errorResponse = r;
+        });
+
+        Assert.Null(stream);
+        Assert.NotNull(errorResponse);
+        Assert.Equal(ResponseStatus.Completed, errorResponse.ResponseStatus);
+        Assert.False(errorResponse.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, errorResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Doesnt_Run_ErrorHandler_On_Download_Success() {
+        var request = new RestRequest("Assets/Koala.jpg");
+        RestResponse? errorResponse = null;
+        var stream = await _clientNoThrow.DownloadStreamAsync(request, (r) => {
+            errorResponse = r;
+        });
+
+        Assert.NotNull(stream);
+        Assert.Null(errorResponse);
+
+        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "Koala.jpg"));
+        var bytes = await stream.ReadAsBytes(CancellationToken.None);
+
+        Assert.Equal(expected, bytes);
     }
 
     [Fact]
