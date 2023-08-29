@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RestSharp.Tests.Integrated.Server.Handlers;
 using RestSharp.Tests.Shared.Extensions;
+using System.Net;
 
 // ReSharper disable ConvertClosureToMethodGroup
 
@@ -41,6 +42,11 @@ public sealed class HttpServer {
 
         // Cookies
         _app.MapGet("get-cookies", CookieHandlers.HandleCookies);
+        _app.MapPut("get-cookies",
+            (HttpContext cxt) => {
+                // Make sure we get the status code we expect:
+                return Results.StatusCode(405);
+            });
         _app.MapGet("set-cookies", CookieHandlers.HandleSetCookies);
         _app.MapGet("redirect", () => Results.Redirect("/success", false, true));
 
@@ -56,6 +62,18 @@ public sealed class HttpServer {
             "/post/set-cookie-redirect",
             (HttpContext ctx) => {
                 ctx.Response.Cookies.Append("redirectCookie", "value1");
+                return Results.Redirect("/get-cookies", permanent: false, preserveMethod: false);
+            });
+        _app.MapPost(
+            "/post/set-cookie-seeother",
+            (HttpContext ctx) => {
+                ctx.Response.Cookies.Append("redirectCookie", "seeOtherValue1");
+                return new RedirectWithStatusCodeResult((int)HttpStatusCode.SeeOther, "/get-cookies");
+            });
+        _app.MapPut(
+            "/put/set-cookie-redirect",
+            (HttpContext ctx) => {
+                ctx.Response.Cookies.Append("redirectCookie", "putCookieValue1");
                 return Results.Redirect("/get-cookies", permanent: false, preserveMethod: false);
             });
 
