@@ -68,6 +68,37 @@ public class RedirectTests {
         response.Content.Should().Be("[\"redirectCookie=value1\"]", "was successfully redirected to get-cookies");
     }
 
+    [Fact]
+    public async Task Can_Perform_POST_Async_With_SeeOtherRedirectionResponse_Cookies() {
+        var request = new RestRequest("/post/set-cookie-seeother") {
+            Method = Method.Post,
+        };
+
+        var response = await _client.ExecuteAsync(request);
+        // Verify the cookie exists from the POST:
+        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies[0].Name.Should().Be("redirectCookie");
+        response.Cookies[0].Value.Should().Be("seeOtherValue1");
+        // Make sure the redirected location spits out the correct content:
+        response.Content.Should().Be("[\"redirectCookie=seeOtherValue1\"]", "was successfully redirected to get-cookies");
+    }
+
+    [Fact]
+    public async Task Can_Perform_PUT_Async_With_RedirectionResponse_Cookies() {
+        var request = new RestRequest("/put/set-cookie-redirect") {
+            Method = Method.Put,
+        };
+
+        var response = await _client.ExecuteAsync(request);
+        // Verify the cookie exists from the PUT:
+        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies[0].Name.Should().Be("redirectCookie");
+        response.Cookies[0].Value.Should().Be("putCookieValue1");
+        // However, the redirection location should have been a 404:
+        // Make sure the redirected location spits out the correct content from PUT /get-cookies:
+        response.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
+    }
+
     class Response {
         public string? Message { get; set; }
     }
