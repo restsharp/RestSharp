@@ -60,7 +60,7 @@ public class RestClientOptions {
             ? ResponseStatus.Completed
             : ResponseStatus.Error;
 
-    /// <summary>
+    /// <summary>s
     /// Authenticator that will be used to populate request with necessary authentication data
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
@@ -132,9 +132,21 @@ public class RestClientOptions {
     public CacheControlHeaderValue? CachePolicy { get; set; }
 
     /// <summary>
+    /// Policy settings for redirect processing
+    /// </summary>
+    public RestClientRedirectionOptions RedirectOptions { get; set; } = new RestClientRedirectionOptions();
+
+    /// <summary>
     /// Instruct the client to follow redirects. Default is true.
     /// </summary>
-    public bool FollowRedirects { get; set; } = true;
+    public bool FollowRedirects {
+        get {
+            return RedirectOptions.FollowRedirects;
+        }
+        set {
+            RedirectOptions.FollowRedirects = value;
+        }
+    }
 
     /// <summary>
     /// Gets or sets a value that indicates if the <see langword="Expect" /> header for an HTTP request contains Continue.
