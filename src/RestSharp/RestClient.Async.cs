@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Net;
+using System.Web;
 using RestSharp.Extensions;
 
 namespace RestSharp;
@@ -141,8 +142,7 @@ public partial class RestClient {
 
                 if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 
-                if (!IsRedirect(responseMessage)) {
-                    // || !Options.FollowRedirects) {
+                if (!IsRedirect(Options.RedirectOptions, responseMessage)) {
                     break;
                 }
 
@@ -159,26 +159,30 @@ public partial class RestClient {
                 // Mirror HttpClient redirection behavior as of 07/25/2023:
                 // Per https://tools.ietf.org/html/rfc7231#section-7.1.2, a redirect location without a
                 // fragment should inherit the fragment from the original URI.
-                string requestFragment = originalUrl.Fragment;
-                if (!string.IsNullOrEmpty(requestFragment)) {
-                    string redirectFragment = location.Fragment;
-                    if (string.IsNullOrEmpty(redirectFragment)) {
-                        location = new UriBuilder(location) { Fragment = requestFragment }.Uri;
+                if (Options.RedirectOptions.ForwardFragment) {
+                    string requestFragment = originalUrl.Fragment;
+                    if (!string.IsNullOrEmpty(requestFragment)) {
+                        string redirectFragment = location.Fragment;
+                        if (string.IsNullOrEmpty(redirectFragment)) {
+                            location = new UriBuilder(location) { Fragment = requestFragment }.Uri;
+                        }
                     }
                 }
 
                 // Disallow automatic redirection from secure to non-secure schemes
-                // From HttpClient's RedirectHandler:
-                //if (HttpUtilities.IsSupportedSecureScheme(requestUri.Scheme) && !HttpUtilities.IsSupportedSecureScheme(location.Scheme)) {
-                //    if (NetEventSource.Log.IsEnabled()) {
-                //        TraceError($"Insecure https to http redirect from '{requestUri}' to '{location}' blocked.", response.RequestMessage!.GetHashCode());
-                //    }
-                //    break;
-                //}
+                // based on the option setting:
+                if (HttpUtilities.IsSupportedSecureScheme(requestUri.Scheme) 
+                    && !HttpUtilities.IsSupportedSecureScheme(location.Scheme)
+                    && !Options.RedirectOptions.FollowRedirectsToInsecure) {
+                    // TODO: Log here...
+                    break;
+                }
 
                 if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod) {
+                    // TODO: Add RedirectionOptions property for this decision:
                     httpMethod = HttpMethod.Get;
                 }
+
                 // Based on Wikipedia https://en.wikipedia.org/wiki/HTTP_302:
                 //  Many web browsers implemented this code in a manner that violated this standard, changing
                 //  the request type of the new request to GET, regardless of the type employed in the original request
@@ -192,13 +196,20 @@ public partial class RestClient {
                 // solves this problem by a helper method:
                 if (RedirectRequestRequiresForceGet(responseMessage.StatusCode, httpMethod)) {
                     httpMethod = HttpMethod.Get;
-                    // HttpClient sets request.Content to null here:
-                    // TODO: However... should we be allowed to modify Request like that here?
-                    message.Content = null;
-                    // HttpClient Redirect handler also does this:
-                    //if (message.Headers.TansferEncodingChunked == true) {
-                    //    request.Headers.TransferEncodingChunked = false;
-                    //}
+                    if (!Options.RedirectOptions.ForceForwardBody) {
+                        // HttpClient RedirectHandler sets request.Content to null here:
+                        message.Content = null;
+                        // HttpClient Redirect handler also does this:
+                        //if (message.Headers.TansferEncodingChunked == true) {
+                        //    request.Headers.TransferEncodingChunked = false;
+                        //}
+                        Parameter? transferEncoding = request.Parameters.TryFind(KnownHeaders.TransferEncoding);
+                        if (transferEncoding != null
+                            && transferEncoding.Type == ParameterType.HttpHeader
+                            && string.Equals((string)transferEncoding.Value!, "chunked", StringComparison.OrdinalIgnoreCase)) {
+                            message.Headers.Remove(KnownHeaders.TransferEncoding);
+                        }
+                    }
                 }
 
                 url = location;
@@ -258,6 +269,35 @@ public partial class RestClient {
     }
 
     /// <summary>
+    /// From https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/HttpUtilities.cs
+    /// </summary>
+    private static class HttpUtilities {
+        internal static bool IsSupportedScheme(string scheme) =>
+            IsSupportedNonSecureScheme(scheme) ||
+            IsSupportedSecureScheme(scheme);
+
+        internal static bool IsSupportedNonSecureScheme(string scheme) =>
+            string.Equals(scheme, "http", StringComparison.OrdinalIgnoreCase) || IsNonSecureWebSocketScheme(scheme);
+
+        internal static bool IsSupportedSecureScheme(string scheme) =>
+            string.Equals(scheme, "https", StringComparison.OrdinalIgnoreCase) || IsSecureWebSocketScheme(scheme);
+
+        internal static bool IsNonSecureWebSocketScheme(string scheme) =>
+            string.Equals(scheme, "ws", StringComparison.OrdinalIgnoreCase);
+
+        internal static bool IsSecureWebSocketScheme(string scheme) =>
+            string.Equals(scheme, "wss", StringComparison.OrdinalIgnoreCase);
+
+        internal static bool IsSupportedProxyScheme(string scheme) =>
+            string.Equals(scheme, "http", StringComparison.OrdinalIgnoreCase) || string.Equals(scheme, "https", StringComparison.OrdinalIgnoreCase) || IsSocksScheme(scheme);
+
+        internal static bool IsSocksScheme(string scheme) =>
+            string.Equals(scheme, "socks5", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(scheme, "socks4a", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(scheme, "socks4", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Based on .net core RedirectHandler class: 
     /// https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/RedirectHandler.cs
     /// </summary>
@@ -283,17 +323,10 @@ public partial class RestClient {
         return message;
     }
 
-    static bool IsRedirect(HttpResponseMessage responseMessage)
-        => responseMessage.StatusCode switch {
-            HttpStatusCode.MovedPermanently  => true,
-            HttpStatusCode.SeeOther          => true,
-            HttpStatusCode.TemporaryRedirect => true,
-            HttpStatusCode.Redirect          => true,
-#if NET
-            HttpStatusCode.PermanentRedirect => true,
-#endif
-            _ => false
-        };
+    static bool IsRedirect(RestClientRedirectionOptions options, HttpResponseMessage responseMessage)
+    {
+        return options.RedirectStatusCodes.Contains(responseMessage.StatusCode);
+    }
 
     record HttpResponse(
         HttpResponseMessage? ResponseMessage,
