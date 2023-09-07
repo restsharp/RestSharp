@@ -323,8 +323,7 @@ public partial class RestClient {
         return message;
     }
 
-    static bool IsRedirect(RestClientRedirectionOptions options, HttpResponseMessage responseMessage)
-    {
+    static bool IsRedirect(RestClientRedirectionOptions options, HttpResponseMessage responseMessage) {
         return options.RedirectStatusCodes.Contains(responseMessage.StatusCode);
     }
 
