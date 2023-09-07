@@ -8,6 +8,14 @@
     <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.Net">
+      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web">
+      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Web.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="SampleData\bearertoken.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="SampleData\datetimes.json" CopyToOutputDirectory="PreserveNewest" />

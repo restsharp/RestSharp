@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text;
 using System.Web;
 using RestSharp.Authenticators;
 
@@ -30,7 +31,7 @@ public class AuthenticationTests {
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var qs               = HttpUtility.ParseQueryString(response.Content);
+        var qs               = HttpUtility.ParseQueryString(response.Content, Encoding.UTF8);
         var oauthToken       = qs["oauth_token"];
         var oauthTokenSecret = qs["oauth_token_secret"];
 

@@ -85,8 +85,6 @@ public partial class RestClient {
             await authenticator.Authenticate(this, request).ConfigureAwait(false);
         }
 
-        using var requestContent = new RequestContent(this, request);
-
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
         var originalUrl = url;
@@ -133,7 +131,7 @@ public partial class RestClient {
                 // If we found coookies during a redirect,
                 // we need to update the Cookie headers:
                 if (foundCookies) {
-                    headers.AddCookieHeaders(cookieContainer, url);
+                    headers.AddCookieHeaders(url, cookieContainer);
                 }
                 using var message = PrepareRequestMessage(httpMethod, url, content, headers);
 
@@ -205,21 +203,21 @@ public partial class RestClient {
 
                 url = location;
 
-                if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
+                if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader1)) {
                     foundCookies = true;
                     // ReSharper disable once PossibleMultipleEnumeration
-                    cookieContainer.AddCookies(url, cookiesHeader);
+                    cookieContainer.AddCookies(url, cookiesHeader1);
                     // ReSharper disable once PossibleMultipleEnumeration
-                    Options.CookieContainer?.AddCookies(url, cookiesHeader);
+                    Options.CookieContainer?.AddCookies(url, cookiesHeader1);
                 }
             } while (true);
 
             // Parse all the cookies from the response and update the cookie jar with cookies
-            if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
+            if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader2)) {
                 // ReSharper disable once PossibleMultipleEnumeration
-                cookieContainer.AddCookies(url, cookiesHeader);
+                cookieContainer.AddCookies(url, cookiesHeader2);
                 // ReSharper disable once PossibleMultipleEnumeration
-                Options.CookieContainer?.AddCookies(url, cookiesHeader);
+                Options.CookieContainer?.AddCookies(url, cookiesHeader2);
             }
         }
         catch (Exception ex) {
