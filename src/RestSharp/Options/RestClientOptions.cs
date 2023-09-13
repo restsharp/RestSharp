@@ -22,6 +22,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
+using RestSharp.Interceptors;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
@@ -63,6 +64,8 @@ public class RestClientOptions {
     /// Authenticator that will be used to populate request with necessary authentication data
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
+
+    public List<Interceptor> Interceptors { get; set; } = new();
 
     /// <summary>
     /// Passed to <see cref="HttpMessageHandler"/> <code>Credentials</code> property

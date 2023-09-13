@@ -1,4 +1,6 @@
-packages
+packages/
+nuget.config
+
 
 #ignore thumbnails created by windows
 Thumbs.db
