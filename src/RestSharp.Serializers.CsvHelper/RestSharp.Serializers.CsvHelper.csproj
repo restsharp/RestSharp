@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <PackageReference Include="CsvHelper" Version="28.0.1"/>
+        <PackageReference Include="CsvHelper" Version="30.0.1" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RestSharp\RestSharp.csproj"/>

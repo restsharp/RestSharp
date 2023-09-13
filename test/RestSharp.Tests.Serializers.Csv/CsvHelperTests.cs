@@ -137,11 +137,12 @@ public class CsvHelperTests {
             DateTimeValue = new DateTime(2024, 1, 20)
         };
 
-        serializer.Serialize(item)
-            .Should()
-            .Be(
-                "StringValue,Int32Value,DecimalValue,DoubleValue,SingleValue,DateTimeValue,TimeSpanValue;hello,32,0,0,16.5,01/20/2024 00:00:00,00:10:00;"
-            );
+        var actual = serializer.Serialize(item);
+
+        const string expected =
+            "StringValue,Int32Value,DecimalValue,DoubleValue,SingleValue,DateTimeValue,TimeSpanValue;hello,32,0,0,16.5,01/20/2024 00:00:00,00:10:00;";
+
+        actual.Should().Be(expected);
     }
 
     [Fact]
