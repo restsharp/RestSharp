@@ -58,16 +58,21 @@ public class ImmutableGenerator : ISourceGenerator {
         var mutableProperties = props
             .Select(prop => $"        {prop.Identifier.Text} = {argName}.{prop.Identifier.Text};");
 
-        var constructor = $@"    public ReadOnly{className}({className} {argName}) {{
-{string.Join("\n", mutableProperties)}
-    }}";
+        var constructor = $$"""
+                                public ReadOnly{{className}}({{className}} {{argName}}) {
+                            {{string.Join("\n", mutableProperties)}}
+                                    CopyAdditionalProperties({{argName}});
+                                }
+                            """;
 
         const string template = @"{Usings}
 
 namespace {Namespace};
 
-public class ReadOnly{ClassName} {
+public partial class ReadOnly{ClassName} {
 {Constructor}
+
+    partial void CopyAdditionalProperties({ClassName} {ArgName}); 
 
 {Properties}
 }";
@@ -77,6 +82,7 @@ public class ReadOnly{ClassName} {
             .Replace("{Namespace}", namespaceName)
             .Replace("{ClassName}", className)
             .Replace("{Constructor}", constructor)
+            .Replace("{ArgName}", argName)
             .Replace("{Properties}", string.Join("\n", properties));
 
         return code;
@@ -86,7 +92,7 @@ public class ReadOnly{ClassName} {
                 .OfType<PropertyDeclarationSyntax>()
                 .Where(
                     prop =>
-                        prop.AccessorList!.Accessors.Any(accessor => accessor.Keyword.IsKind(kind))
+                        prop.AccessorList!.Accessors.Any(accessor => accessor.Keyword.IsKind(kind)) && prop.AttributeLists.All(list => list.Attributes.All(attr => attr.Name.ToString() != "Exclude"))
                 );
     }
 }

@@ -16,6 +16,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
+using RestSharp.Interceptors;
 
 // ReSharper disable ReplaceSubstringWithRangeIndexer
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -167,16 +168,19 @@ public class RestRequest {
     /// <summary>
     /// When supplied, the function will be called before calling the deserializer
     /// </summary>
+    [Obsolete("Use Interceptors instead")]
     public Action<RestResponse>? OnBeforeDeserialization { get; set; }
 
     /// <summary>
     /// When supplied, the function will be called before making a request
     /// </summary>
+    [Obsolete("Use Interceptors instead")]
     public Func<HttpRequestMessage, ValueTask>? OnBeforeRequest { get; set; }
 
     /// <summary>
     /// When supplied, the function will be called after the request is complete
     /// </summary>
+    [Obsolete("Use Interceptors instead")]
     public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
     internal void IncreaseNumAttempts() => Attempts++;
@@ -226,6 +230,11 @@ public class RestRequest {
             _advancedResponseHandler = value;
         }
     }
+    
+    /// <summary>
+    /// Request-level interceptors. Will be combined with client-level interceptors if set.
+    /// </summary>
+    public List<Interceptor>? Interceptors { get; set; }
 
     /// <summary>
     /// Adds a parameter object to the request parameters

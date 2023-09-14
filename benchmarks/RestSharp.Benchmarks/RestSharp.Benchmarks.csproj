@@ -1,24 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <IsPackable>false</IsPackable>
-        <LangVersion>10</LangVersion>
+        <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RepoRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'RestSharp.sln'))</RepoRoot>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoFixture" Version="4.18.0" />
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.7" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" />
+        <PackageReference Include="AutoFixture"/>
+        <PackageReference Include="BenchmarkDotNet"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj" />
-        <ProjectReference Include="..\..\test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.NewtonsoftJson\RestSharp.Serializers.NewtonsoftJson.csproj"/>
+        <ProjectReference Include="$(RepoRoot)\test\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Remove="BenchmarkDotNet.Artifacts\**" />
-        <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
-        <None Remove="BenchmarkDotNet.Artifacts\**" />
+        <Compile Remove="BenchmarkDotNet.Artifacts\**"/>
+        <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**"/>
+        <None Remove="BenchmarkDotNet.Artifacts\**"/>
     </ItemGroup>
 </Project>

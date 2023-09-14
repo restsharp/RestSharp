@@ -65,7 +65,7 @@ public class IntegratedSimpleTests {
 
         var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseNewtonsoftJson());
 
-        var response = await client.ExecuteAsync<TestClass>(new RestRequest());
+        var response = await client.ExecuteAsync<TestClass>(new RestRequest(), default);
 
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeFalse();
@@ -88,7 +88,7 @@ public class IntegratedSimpleTests {
 
         var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseNewtonsoftJson());
 
-        var response = await client.ExecuteAsync<TestClass>(new RestRequest());
+        var response = await client.ExecuteAsync<TestClass>(new RestRequest(), default);
 
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeTrue();

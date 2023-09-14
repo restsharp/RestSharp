@@ -1,7 +1,7 @@
 <Project>
     <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'RestSharp.sln'))\props\Common.props"/>
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net471;net6.0;net7.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net471;net6.0;net7.0;net8.0</TargetFrameworks>
         <PackageIcon>restsharp.png</PackageIcon>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://restsharp.dev</PackageProjectUrl>
@@ -15,13 +15,12 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
-        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
-        <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="All"/>
-        <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+        <PackageReference Include="MinVer" PrivateAssets="All"/>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="All"/>
     </ItemGroup>
     <ItemGroup>
         <None Include="$(RepoRoot)\restsharp.png" Pack="true" PackagePath="\"/>

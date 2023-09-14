@@ -4,24 +4,23 @@
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj" />
-        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
-        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj"/>
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj"/>
+        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest" />
-        <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest" />
-        <None Update="Assets\KoalaÄÖäö.jpg" CopyToOutputDirectory="PreserveNewest" />
-        <None Update="Assets\Teståæ.txt" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Assets\Koala.jpg" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="Assets\TestFile.txt" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="Assets\KoalaÄÖäö.jpg" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="Assets\Teståæ.txt" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="HttpTracer" Version="2.1.1" />
-        <PackageReference Include="Moq" Version="4.18.4" />
-        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.21" />
-        <PackageReference Include="Polly" Version="7.2.4" />
-        <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
+        <PackageReference Include="HttpTracer"/>
+        <PackageReference Include="Microsoft.AspNetCore.TestHost"/>
+        <PackageReference Include="Polly"/>
+        <PackageReference Include="Xunit.Extensions.Logging"/>
     </ItemGroup>
     <ItemGroup>
-        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
 </Project>

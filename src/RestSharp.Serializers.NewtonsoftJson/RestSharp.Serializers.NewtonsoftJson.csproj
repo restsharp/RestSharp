@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Newtonsoft.Json"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RestSharp\RestSharp.csproj"/>
