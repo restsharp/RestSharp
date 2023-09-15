@@ -5,16 +5,10 @@ using static RestSharp.Tests.Integrated.Server.HttpServer;
 namespace RestSharp.Tests.Integrated; 
 
 [Collection(nameof(TestServerCollection))]
-public class PutTests {
-    readonly ITestOutputHelper _output;
-    readonly RestClient        _client;
+public class PutTests(TestServerFixture fixture) {
+    readonly RestClient _client = new(fixture.Server.Url);
 
     static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
-
-    public PutTests(TestServerFixture fixture, ITestOutputHelper output) {
-        _output  = output;
-        _client  = new RestClient(fixture.Server.Url);
-    }
 
     [Fact]
     public async Task Should_put_json_body() {

@@ -4,16 +4,8 @@ using RestSharp.Tests.Integrated.Server;
 namespace RestSharp.Tests.Integrated;
 
 [Collection(nameof(TestServerCollection))]
-public class AsyncTests {
-    readonly ITestOutputHelper _output;
-    readonly RestClient        _client;
-    readonly string            _host;
-
-    public AsyncTests(TestServerFixture fixture, ITestOutputHelper output) {
-        _output = output;
-        _client = new RestClient(fixture.Server.Url);
-        _host   = _client.Options.BaseUrl!.Host;
-    }
+public class AsyncTests(TestServerFixture fixture) {
+    readonly RestClient _client = new(fixture.Server.Url);
 
     class Response {
         public string Message { get; set; } = null!;

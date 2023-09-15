@@ -4,10 +4,8 @@ using RestSharp.Tests.Integrated.Server;
 namespace RestSharp.Tests.Integrated;
 
 [Collection(nameof(TestServerCollection))]
-public class PostTests {
-    readonly RestClient _client;
-
-    public PostTests(TestServerFixture fixture) => _client = new RestClient(fixture.Server.Url);
+public class PostTests(TestServerFixture fixture) {
+    readonly RestClient _client = new(fixture.Server.Url);
 
     [Fact]
     public async Task Should_post_json() {

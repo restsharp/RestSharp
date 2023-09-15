@@ -1,19 +1,16 @@
 using System.Net;
 using RestSharp.Tests.Integrated.Server;
 
-namespace RestSharp.Tests.Integrated; 
+namespace RestSharp.Tests.Integrated;
 
 [Collection(nameof(TestServerCollection))]
-public class HttpClientTests {
-    readonly TestServerFixture _fixture;
-
-    public HttpClientTests(TestServerFixture fixture) => _fixture = fixture;
-
+public class HttpClientTests(TestServerFixture fixture) {
     [Fact]
     public async Task ShouldUseBaseAddress() {
-        using var httpClient = new HttpClient { BaseAddress = _fixture.Server.Url };
-        using var client     = new RestClient(httpClient);
-        
+        using var httpClient = new HttpClient();
+        httpClient.BaseAddress = fixture.Server.Url;
+        using var client = new RestClient(httpClient);
+
         var request  = new RestRequest("success");
         var response = await client.ExecuteAsync<Response>(request);
 

@@ -1,18 +1,13 @@
 using System.Net;
 using RestSharp.Tests.Integrated.Server;
+
 // ReSharper disable ClassNeverInstantiated.Local
 
 namespace RestSharp.Tests.Integrated;
 
 [Collection(nameof(TestServerCollection))]
-public class RequestFailureTests {
-    readonly RestClient        _client;
-    readonly TestServerFixture _fixture;
-
-    public RequestFailureTests(TestServerFixture fixture) {
-        _client  = new RestClient(fixture.Server.Url);
-        _fixture = fixture;
-    }
+public class RequestFailureTests(TestServerFixture fixture) {
+    readonly RestClient _client = new(fixture.Server.Url);
 
     [Fact]
     public async Task Handles_GET_Request_Errors() {
@@ -33,7 +28,7 @@ public class RequestFailureTests {
 
     [Fact]
     public async Task Throws_on_unsuccessful_call() {
-        var client  = new RestClient(new RestClientOptions(_fixture.Server.Url) { ThrowOnAnyError = true });
+        var client  = new RestClient(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = true });
         var request = new RestRequest("status?code=500");
 
         var task = () => client.ExecuteAsync<Response>(request);

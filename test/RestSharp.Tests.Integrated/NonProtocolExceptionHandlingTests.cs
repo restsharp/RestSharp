@@ -16,11 +16,9 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     /// <param name="context"></param>
     static void TimeoutHandler(HttpListenerContext context) => Thread.Sleep(101000);
 
-    public NonProtocolExceptionHandlingTests() => _server = SimpleServer.Create(TimeoutHandler);
-
     public void Dispose() => _server.Dispose();
 
-    readonly SimpleServer _server;
+    readonly SimpleServer _server = SimpleServer.Create(TimeoutHandler);
 
     /// <summary>
     /// Success of this test is based largely on the behavior of your current DNS.

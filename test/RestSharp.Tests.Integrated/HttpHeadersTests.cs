@@ -4,14 +4,8 @@ using RestSharp.Tests.Integrated.Server;
 namespace RestSharp.Tests.Integrated; 
 
 [Collection(nameof(TestServerCollection))]
-public class HttpHeadersTests {
-    readonly ITestOutputHelper _output;
-    readonly RestClient        _client;
-
-    public HttpHeadersTests(TestServerFixture fixture, ITestOutputHelper output) {
-        _output = output;
-        _client = new RestClient(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = true });
-    }
+public class HttpHeadersTests(TestServerFixture fixture) {
+    readonly RestClient _client = new(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = true });
 
     [Fact]
     public async Task Ensure_headers_correctly_set_in_the_hook() {

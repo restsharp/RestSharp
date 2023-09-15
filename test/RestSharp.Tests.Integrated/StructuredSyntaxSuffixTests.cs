@@ -23,6 +23,7 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
     public StructuredSyntaxSuffixTests() {
         _server = new TestHttpServer(0, "", HandleRequest);
         _url    = $"http://localhost:{_server.Port}";
+        return;
 
         static void HandleRequest(HttpListenerRequest request, HttpListenerResponse response, Dictionary<string, string> p) {
             response.ContentType = request.QueryString["ct"];
