@@ -33,7 +33,6 @@
         <PackageVersion Include="System.Text.Json" Version="7.0.3"/>
         <PackageVersion Include="BenchmarkDotNet" Version="0.13.8"/>
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4"/>
     </ItemGroup>
 </Project>
