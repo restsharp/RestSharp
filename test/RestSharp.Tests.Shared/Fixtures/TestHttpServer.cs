@@ -4,6 +4,8 @@ using System.Text;
 
 namespace RestSharp.Tests.Shared.Fixtures;
 
+public delegate void HandlerAction(HttpListenerRequest request, HttpListenerResponse response, Dictionary<string, string> urlMap);
+
 public class TestHttpServer : IDisposable {
     readonly HttpListener             _listener;
     readonly List<TestRequestHandler> _requestHandlers;
@@ -12,12 +14,7 @@ public class TestHttpServer : IDisposable {
 
     public int Port { get; }
 
-    public TestHttpServer(
-        int                                                                           port,
-        string                                                                        url,
-        Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction,
-        string                                                                        hostName = "localhost"
-    )
+    public TestHttpServer(int port, string url, HandlerAction handlerAction, string hostName = "localhost")
         : this(port, new List<TestRequestHandler> { new(url, handlerAction) }, hostName) { }
 
     public TestHttpServer(int port, List<TestRequestHandler> handlers, string hostName = "localhost") {

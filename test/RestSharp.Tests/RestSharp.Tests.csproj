@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <PackageReference Include="Moq" Version="4.20.69" />
-    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\bearertoken.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\datetimes.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\GenericWithList.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\iso8601datetimes.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsonarray.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsondictionary.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsondictionary_KeysType.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsondictionary_null.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsonenums.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsonenumtypes.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\jsonlists.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\newdatetimes.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\objectproperty.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\person.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\sojson.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\timespans.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Moq"/>
+        <PackageReference Include="RichardSzalay.MockHttp"/>
+        <PackageReference Include="System.Net.Http.Json"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\bearertoken.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\datetimes.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\GenericWithList.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\iso8601datetimes.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsonarray.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsondictionary.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsondictionary_KeysType.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsondictionary_null.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsonenums.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsonenumtypes.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\jsonlists.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\newdatetimes.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\objectproperty.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\person.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\sojson.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\timespans.json" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
 </Project>

@@ -34,5 +34,9 @@
         <PackageVersion Include="BenchmarkDotNet" Version="0.13.8"/>
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0"/>
         <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4"/>
+        <PackageVersion Include="Moq" Version="4.20.69"/>
+        <PackageVersion Include="RichardSzalay.MockHttp" Version="6.0.0"/>
+        <PackageVersion Include="System.Net.Http.Json" Version="7.0.1"/>
+        <PackageVersion Include="rest-mock-core" Version="0.7.12"/>
     </ItemGroup>
 </Project>

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace RestSharp.Tests.Shared.Fixtures;
@@ -8,11 +7,7 @@ public class TestRequestHandler {
 
     readonly List<string> _urlParameterNames = new();
 
-    public TestRequestHandler(
-        string                                                                        url,
-        string                                                                        httpMethod,
-        Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction
-    ) {
+    public TestRequestHandler(string url, string httpMethod, HandlerAction handlerAction) {
         Url           = url;
         HttpMethod    = httpMethod;
         HandlerAction = handlerAction;
@@ -20,12 +15,11 @@ public class TestRequestHandler {
         _comparisonRegex = CreateComparisonRegex(url);
     }
 
-    public TestRequestHandler(string url, Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> handlerAction)
-        : this(url, null, handlerAction) { }
+    public TestRequestHandler(string url, HandlerAction handlerAction) : this(url, null, handlerAction) { }
 
-    string                                                                                 Url           { get; }
-    string                                                                                 HttpMethod    { get; }
-    internal Action<HttpListenerRequest, HttpListenerResponse, Dictionary<string, string>> HandlerAction { get; }
+    string                 Url           { get; }
+    string                 HttpMethod    { get; }
+    internal HandlerAction HandlerAction { get; }
 
     Regex CreateComparisonRegex(string url) {
         var regexString = Regex.Escape(url).Replace(@"\{", "{");
@@ -57,8 +51,7 @@ public class TestRequestHandler {
 
         parameters = new Dictionary<string, string>();
 
-        for (var i = 0; i < _urlParameterNames.Count; i++)
-            parameters[_urlParameterNames[i]] = match.Groups[i + 1].Value;
+        for (var i = 0; i < _urlParameterNames.Count; i++) parameters[_urlParameterNames[i]] = match.Groups[i + 1].Value;
         return true;
     }
 }
