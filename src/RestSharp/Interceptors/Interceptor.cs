@@ -38,7 +38,7 @@ public abstract class Interceptor {
     }
 
     /// <summary>
-    /// Intercepts the request before being sent
+    /// Intercepts the response received from Server
     /// </summary>
     /// <param name="responseMessage">HttpResponseMessage as received from Server</param>
     /// <returns>Value Tags</returns>
@@ -47,9 +47,9 @@ public abstract class Interceptor {
     }
 
     /// <summary>
-    /// Intercepts the request before deserialization
+    /// Intercepts the response before deserialization
     /// </summary>
-    /// <param name="response">HttpResponseMessage as received from Server</param>
+    /// <param name="response">RestResponse before deserialization</param>
     /// <returns>Value Tags</returns>
     public virtual ValueTask InterceptBeforeDeserialize(RestResponse response) {
         return new();
