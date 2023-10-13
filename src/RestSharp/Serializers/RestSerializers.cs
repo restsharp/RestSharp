@@ -87,13 +87,24 @@ public class RestSerializers {
         if (string.IsNullOrWhiteSpace(response.Content)) return null;
 
         var contentType = response.ContentType ?? DetectContentType()?.Value;
-        if (contentType == null) return null;
+
+        if (contentType == null) {
+            Serializers.TryGetValue(response.Request.RequestFormat, out var serializerByRequestFormat);
+            return serializerByRequestFormat?.GetSerializer().Deserializer;
+        }
 
         var serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(contentType));
 
-        var factory = serializer ??
-            (Serializers.ContainsKey(response.Request.RequestFormat) ? Serializers[response.Request.RequestFormat] : null);
-        return factory?.GetSerializer().Deserializer;
+        if (serializer == null) {
+            var detectedType = DetectContentType()?.Value;
+
+            if (detectedType != null && detectedType != contentType)
+            {
+                serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(detectedType));
+            }
+        }
+
+        return serializer?.GetSerializer().Deserializer;
 
         ContentType? DetectContentType()
             => response.Content![0] switch {
