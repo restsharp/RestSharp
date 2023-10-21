@@ -60,10 +60,10 @@ Now, we need to implement the `GetToken` function in the class:
 
 ```csharp
 async Task<string> GetToken() {
-    var options = new RestClientOptions(_baseUrl);
-    using var client = new RestClient(options) {
+    var options = new RestClientOptions(_baseUrl){
         Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
     };
+    using var client = new RestClient(options);
 
     var request = new RestRequest("oauth2/token")
         .AddParameter("grant_type", "client_credentials");
