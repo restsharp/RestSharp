@@ -107,11 +107,11 @@ public class TwitterClient : ITwitterClient, IDisposable {
     readonly RestClient _client;
 
     public TwitterClient(string apiKey, string apiKeySecret) {
-        var options = new RestClientOptions("https://api.twitter.com/2");
-
-        _client = new RestClient(options) {
+        var options = new RestClientOptions("https://api.twitter.com/2"){
             Authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret)
         };
+
+        _client = new RestClient(options);
     }
 
     public async Task<TwitterUser> GetUser(string user) {
