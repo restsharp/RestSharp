@@ -96,7 +96,6 @@ public partial class RestClient : IRestClient {
             var handler = new HttpClientHandler();
             ConfigureHttpMessageHandler(handler, options);
             var finalHandler = options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
-
             var httpClient = new HttpClient(finalHandler);
             ConfigureHttpClient(httpClient, options);
             configureDefaultHeaders?.Invoke(httpClient.DefaultRequestHeaders);

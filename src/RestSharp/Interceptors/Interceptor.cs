@@ -30,7 +30,6 @@ public abstract class Interceptor {
     /// </summary>
     /// <param name="request">RestRequest before composing the request message</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Value Tags</returns>
     public virtual ValueTask BeforeRequest(RestRequest request, CancellationToken cancellationToken) => Completed;
 
     /// <summary>
@@ -38,7 +37,6 @@ public abstract class Interceptor {
     /// </summary>
     /// <param name="requestMessage">HttpRequestMessage before being sent</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Value Tags</returns>
     public virtual ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken) => Completed;
 
     /// <summary>
@@ -46,7 +44,6 @@ public abstract class Interceptor {
     /// </summary>
     /// <param name="responseMessage">HttpResponseMessage as received from the remote server</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Value Tags</returns>
     public virtual ValueTask AfterHttpRequest(HttpResponseMessage responseMessage, CancellationToken cancellationToken) => Completed;
 
     /// <summary>
@@ -54,7 +51,6 @@ public abstract class Interceptor {
     /// </summary>
     /// <param name="response">HttpResponseMessage as received from the remote server</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Value Tags</returns>
     public virtual ValueTask AfterRequest(RestResponse response, CancellationToken cancellationToken) => Completed;
     
     /// <summary>
