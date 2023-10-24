@@ -1,127 +1,162 @@
-﻿//  Copyright (c) .NET Foundation and Contributors
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-// http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-// 
+﻿using RestSharp.Tests.Integrated.Server;
 
-using Moq;
-using RestSharp.Tests.Integrated.Server;
-
-namespace RestSharp.Tests.Integrated.Interceptor; 
+namespace RestSharp.Tests.Integrated.Interceptor;
 
 [Collection(nameof(TestServerCollection))]
-public class InterceptorTests {
-    readonly RestClient _client;
+public class InterceptorTests(TestServerFixture fixture) {
+    [Fact]
+    public async Task Should_call_client_interceptor() {
+        // Arrange
+        var request = CreateRequest();
 
-    public InterceptorTests(TestServerFixture fixture) => _client = new RestClient(fixture.Server.Url);
+        var (client, interceptor) = SetupClient(
+            test => test.BeforeRequestAction = req => req.AddHeader("foo", "bar")
+        );
+
+        //Act
+        var response = await client.ExecutePostAsync<TestResponse>(request);
+
+        //Assert
+        response.Request.Parameters.Should().Contain(x => x.Name == "foo" && (string)x.Value! == "bar");
+        interceptor.BeforeRequestCalled.Should().BeTrue();
+        interceptor.BeforeHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterRequestCalled.Should().BeTrue();
+        interceptor.BeforeDeserializationCalled.Should().BeTrue();
+
+        client.Dispose();
+    }
 
     [Fact]
-    public async Task AddInterceptor_ShouldBeUsed() {
-        //Arrange
-        var body            = new TestRequest("foo", 100);
-        var request         = new RestRequest("post/json").AddJsonBody(body);
-        
-        var mockInterceptor = new Mock<Interceptors.Interceptor>();
-        var interceptor     = mockInterceptor.Object;
-        var options         = _client.Options;
-        options.Interceptors.Add(interceptor);
+    public async Task Should_call_request_interceptor() {
+        // Arrange
+        var request = CreateRequest();
+
+        var client      = new RestClient(fixture.Server.Url);
+        var interceptor = new TestInterceptor();
+        request.Interceptors = new List<Interceptors.Interceptor> { interceptor };
+
         //Act
-        var response = await _client.ExecutePostAsync<TestResponse>(request);
+        await client.ExecutePostAsync<TestResponse>(request);
+
         //Assert
-        mockInterceptor.Verify(m => m.InterceptBeforeSerialization(It.IsAny<RestRequest>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeRequest(It.IsAny<HttpRequestMessage>()));
-        mockInterceptor.Verify(m => m.InterceptAfterRequest(It.IsAny<HttpResponseMessage>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeDeserialize(It.IsAny<RestResponse>()));
+        interceptor.ShouldHaveCalledAll();
+
+        client.Dispose();
     }
+
     [Fact]
-    public async Task ThrowExceptionIn_InterceptBeforeSerialization_ShouldBeCatchedInTest() {
-        //Arrange
-        var body    = new TestRequest("foo", 100);
-        var request = new RestRequest("post/json").AddJsonBody(body);
-        
-        var mockInterceptor = new Mock<Interceptors.Interceptor>();
-        mockInterceptor.Setup(m => m.InterceptBeforeSerialization(It.IsAny<RestRequest>())).Throws<Exception>(() => throw new Exception("DummyException"));
-        var interceptor     = mockInterceptor.Object;
-        var options         = _client.Options;
-        options.Interceptors.Add(interceptor);
+    public async Task Should_call_both_client_and_request_interceptors() {
+        // Arrange
+        var request = CreateRequest();
+        var (client, interceptor) = SetupClient();
+        var requestInterceptor = new TestInterceptor();
+        request.Interceptors = new List<Interceptors.Interceptor> { requestInterceptor };
+
         //Act
-        var action = () => _client.ExecutePostAsync<TestResponse>(request);
+        await client.ExecutePostAsync<TestResponse>(request);
+
+        //Assert
+        interceptor.ShouldHaveCalledAll();
+        requestInterceptor.ShouldHaveCalledAll();
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public async Task ThrowExceptionIn_InterceptBeforeRequest() {
+        //Arrange
+        var request = CreateRequest();
+        var (client, interceptor) = SetupClient(test => test.BeforeRequestAction = req => throw new Exception("DummyException"));
+
+        //Act
+        var action = () => client.ExecutePostAsync<TestResponse>(request);
+
         //Assert
         await action.Should().ThrowAsync<Exception>().WithMessage("DummyException");
-        mockInterceptor.Verify(m => m.InterceptBeforeSerialization(It.IsAny<RestRequest>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeRequest(It.IsAny<HttpRequestMessage>()),Times.Never);
-        mockInterceptor.Verify(m => m.InterceptAfterRequest(It.IsAny<HttpResponseMessage>()),Times.Never);
-        mockInterceptor.Verify(m => m.InterceptBeforeDeserialize(It.IsAny<RestResponse>()),Times.Never);
+        interceptor.BeforeRequestCalled.Should().BeTrue();
+        interceptor.BeforeHttpRequestCalled.Should().BeFalse();
+        interceptor.AfterHttpRequestCalled.Should().BeFalse();
+        interceptor.AfterRequestCalled.Should().BeFalse();
+        interceptor.BeforeDeserializationCalled.Should().BeFalse();
     }
+
     [Fact]
-    public async Task ThrowExceptionIn_InterceptBeforeRequest_ShouldBeCatchableInTest() {
-        //Arrange
-        var body    = new TestRequest("foo", 100);
-        var request = new RestRequest("post/json").AddJsonBody(body);
-        
-        var mockInterceptor = new Mock<Interceptors.Interceptor>();
-        mockInterceptor.Setup(m => m.InterceptBeforeRequest(It.IsAny<HttpRequestMessage>())).Throws<Exception>(() => throw new Exception("DummyException"));
-        var interceptor = mockInterceptor.Object;
-        var options     = _client.Options;
-        options.Interceptors.Add(interceptor);
+    public async Task ThrowExceptionIn_InterceptBeforeHttpRequest() {
+        // Arrange
+        var request = CreateRequest();
+        var (client, interceptor) = SetupClient(test => test.BeforeHttpRequestAction = req => throw new Exception("DummyException"));
+
         //Act
-        var action = () => _client.ExecutePostAsync<TestResponse>(request);
+        var action = () => client.ExecutePostAsync<TestResponse>(request);
+
         //Assert
         await action.Should().ThrowAsync<Exception>().WithMessage("DummyException");
-        mockInterceptor.Verify(m => m.InterceptBeforeSerialization(It.IsAny<RestRequest>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeRequest(It.IsAny<HttpRequestMessage>()));
-        mockInterceptor.Verify(m => m.InterceptAfterRequest(It.IsAny<HttpResponseMessage>()),Times.Never);
-        mockInterceptor.Verify(m => m.InterceptBeforeDeserialize(It.IsAny<RestResponse>()),Times.Never);
+        interceptor.BeforeRequestCalled.Should().BeTrue();
+        interceptor.BeforeHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterHttpRequestCalled.Should().BeFalse();
+        interceptor.AfterRequestCalled.Should().BeFalse();
+        interceptor.BeforeDeserializationCalled.Should().BeFalse();
     }
+
     [Fact]
-    public async Task ThrowExceptionIn_InterceptAfterRequest_ShouldBeCatchableInTest() {
-        //Arrange
-        var body    = new TestRequest("foo", 100);
-        var request = new RestRequest("post/json").AddJsonBody(body);
-        
-        var mockInterceptor = new Mock<Interceptors.Interceptor>();
-        mockInterceptor.Setup(m => m.InterceptAfterRequest(It.IsAny<HttpResponseMessage>())).Throws<Exception>(() => throw new Exception("DummyException"));
-        var interceptor = mockInterceptor.Object;
-        var options     = _client.Options;
-        options.Interceptors.Add(interceptor);
+    public async Task ThrowException_InInterceptAfterHttpRequest() {
+        // Arrange
+        var request = CreateRequest();
+        var (client, interceptor) = SetupClient(test => test.AfterHttpRequestAction = req => throw new Exception("DummyException"));
+
         //Act
-        var action = () => _client.ExecutePostAsync<TestResponse>(request);
+        var action = () => client.ExecutePostAsync<TestResponse>(request);
+
         //Assert
         await action.Should().ThrowAsync<Exception>().WithMessage("DummyException");
-        mockInterceptor.Verify(m => m.InterceptBeforeSerialization(It.IsAny<RestRequest>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeRequest(It.IsAny<HttpRequestMessage>()));
-        mockInterceptor.Verify(m => m.InterceptAfterRequest(It.IsAny<HttpResponseMessage>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeDeserialize(It.IsAny<RestResponse>()),Times.Never);
+        interceptor.BeforeRequestCalled.Should().BeTrue();
+        interceptor.BeforeHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterRequestCalled.Should().BeFalse();
+        interceptor.BeforeDeserializationCalled.Should().BeFalse();
     }
+
     [Fact]
-    public async Task ThrowException_InInterceptBeforeDeserialize_ShouldBeCatchableInTest() {
-        //Arrange
-        var body    = new TestRequest("foo", 100);
-        var request = new RestRequest("post/json").AddJsonBody(body);
-        
-        var mockInterceptor = new Mock<Interceptors.Interceptor>();
-        mockInterceptor.Setup(m => m.InterceptBeforeDeserialize(It.IsAny<RestResponse>())).Throws<Exception>(() => throw new Exception("DummyException"));
-        var interceptor = mockInterceptor.Object;
-        var options     = _client.Options;
-        options.Interceptors.Add(interceptor);
+    public async Task ThrowExceptionIn_InterceptAfterRequest() {
+        // Arrange
+        var request = CreateRequest();
+        var (client, interceptor) = SetupClient(test => test.AfterRequestAction = req => throw new Exception("DummyException"));
+
         //Act
-        var action = () => _client.PostAsync<TestResponse>(request);
+        var action = () => client.ExecutePostAsync<TestResponse>(request);
+
         //Assert
         await action.Should().ThrowAsync<Exception>().WithMessage("DummyException");
-        mockInterceptor.Verify(m => m.InterceptBeforeSerialization(It.IsAny<RestRequest>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeRequest(It.IsAny<HttpRequestMessage>()));
-        mockInterceptor.Verify(m => m.InterceptAfterRequest(It.IsAny<HttpResponseMessage>()));
-        mockInterceptor.Verify(m => m.InterceptBeforeDeserialize(It.IsAny<RestResponse>()));
+        interceptor.BeforeRequestCalled.Should().BeTrue();
+        interceptor.BeforeHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterRequestCalled.Should().BeTrue();
+        interceptor.BeforeDeserializationCalled.Should().BeFalse();
     }
-    
-    
+
+    (RestClient client, TestInterceptor interceptor) SetupClient(Action<TestInterceptor>? configureInterceptor = null) {
+        var interceptor = new TestInterceptor();
+        configureInterceptor?.Invoke(interceptor);
+
+        var options = new RestClientOptions(fixture.Server.Url) {
+            Interceptors = new List<Interceptors.Interceptor> { interceptor }
+        };
+        return (new RestClient(options), interceptor);
+    }
+
+    static RestRequest CreateRequest() {
+        var body = new TestRequest("foo", 100);
+        return new RestRequest("post/json").AddJsonBody(body);
+    }
+}
+
+static class InterceptorChecks {
+    public static void ShouldHaveCalledAll(this TestInterceptor interceptor) {
+        interceptor.BeforeRequestCalled.Should().BeTrue();
+        interceptor.BeforeHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterHttpRequestCalled.Should().BeTrue();
+        interceptor.AfterRequestCalled.Should().BeTrue();
+        interceptor.BeforeDeserializationCalled.Should().BeTrue();
+    }
 }

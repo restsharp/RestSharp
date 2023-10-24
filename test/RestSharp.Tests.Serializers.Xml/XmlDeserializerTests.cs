@@ -9,7 +9,7 @@ namespace RestSharp.Tests.Serializers.Xml;
 public class XmlDeserializerTests {
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-#if NETCORE
+#if NET
     readonly string _sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
 #else
     readonly string _sampleDataPath = Path.Combine(Directory.GetCurrentDirectory(), "SampleData");

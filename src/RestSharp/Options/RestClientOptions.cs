@@ -65,6 +65,10 @@ public class RestClientOptions {
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
 
+    /// <summary>
+    /// List of interceptors that will be executed before the request is sent
+    /// </summary>
+    [Exclude]
     public List<Interceptor> Interceptors { get; set; } = new();
 
     /// <summary>
@@ -114,6 +118,7 @@ public class RestClientOptions {
 #if NET
     [UnsupportedOSPlatform("browser")]
 #endif
+    [Exclude]
     public X509CertificateCollection? ClientCertificates { get; set; }
 
     /// <summary>

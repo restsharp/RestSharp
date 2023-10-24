@@ -63,7 +63,7 @@ public class NamespacedXmlTests {
 
         foes.Add(new XAttribute(ns + "Team", "Yankees"));
 
-        for (var i = 0; i < 5; i++) foes.Add(new XElement(ns + "Foe", new XElement(ns + "Nickname", "Foe" + i)));
+        for (var i = 0; i < 5; i++) foes.Add(new XElement(ns + "Foe", new XElement(ns + "Nickname", $"Foe{i}")));
 
         root.Add(foes);
         doc.Add(root);

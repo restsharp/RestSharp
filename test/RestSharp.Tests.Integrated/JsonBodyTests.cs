@@ -5,16 +5,9 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.Tests.Integrated;
 
 #pragma warning disable xUnit1033
-public sealed class JsonBodyTests : IClassFixture<RequestBodyFixture> {
-    readonly SimpleServer      _server;
-    readonly ITestOutputHelper _output;
-    readonly RestClient        _client;
-
-    public JsonBodyTests(RequestBodyFixture fixture, ITestOutputHelper output) {
-        _output = output;
-        _server = fixture.Server;
-        _client = new RestClient(_server.Url);
-    }
+public sealed class JsonBodyTests(RequestBodyFixture fixture) : IClassFixture<RequestBodyFixture> {
+    readonly SimpleServer _server = fixture.Server;
+    readonly RestClient   _client = new(fixture.Server.Url);
 
     [Fact]
     public async Task Query_Parameters_With_Json_Body() {
@@ -55,7 +48,7 @@ public sealed class JsonBodyTests : IClassFixture<RequestBodyFixture> {
 },";
 
         var expected = JsonSerializer.Serialize(payload);
-        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post).AddJsonBody(payload, true);
+        var request  = new RestRequest(RequestBodyCapturer.Resource, Method.Post).AddJsonBody(payload, true);
 
         await _client.ExecuteAsync(request);
 

@@ -15,8 +15,7 @@ public class UploadFileTests {
 
     public UploadFileTests(TestServerFixture fixture, ITestOutputHelper output) {
         _output = output;
-        // _client = new RestClient(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = true });
-        _client   = new RestClient(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = false });
+        _client   = new RestClient(new RestClientOptions(fixture.Server.Url));
         _path     = Path.Combine(_basePath, "Assets", Filename);
         _expected = new UploadResponse(Filename, new FileInfo(_path).Length, true);
     }

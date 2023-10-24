@@ -6,19 +6,15 @@ using RestSharp.Tests.Serializers.Xml.SampleClasses;
 namespace RestSharp.Tests.Serializers.Xml;
 
 public class XmlAttributeDeserializerTests {
-    readonly ITestOutputHelper _output;
-
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-    #if NETCORE
+    #if NET
     readonly string _sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
     #else
     readonly string _sampleDataPath = Path.Combine(Directory.GetCurrentDirectory(), "SampleData");
     #endif
 
     string PathFor(string sampleFile) => Path.Combine(_sampleDataPath, sampleFile);
-
-    public XmlAttributeDeserializerTests(ITestOutputHelper output) => _output = output;
 
     [Fact]
     public void Can_Deserialize_Lists_of_Simple_Types() {

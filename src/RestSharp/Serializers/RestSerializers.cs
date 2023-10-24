@@ -20,6 +20,7 @@ using RestSharp.Serializers.Xml;
 namespace RestSharp.Serializers;
 
 public class RestSerializers {
+    [PublicAPI]
     public IReadOnlyDictionary<DataFormat, SerializerRecord> Serializers { get; }
 
     public RestSerializers(Dictionary<DataFormat, SerializerRecord> records)
@@ -34,10 +35,11 @@ public class RestSerializers {
 
     internal string[] GetAcceptedContentTypes() => Serializers.SelectMany(x => x.Value.AcceptedContentTypes).Distinct().ToArray();
 
-    internal RestResponse<T> Deserialize<T>(RestRequest request, RestResponse raw, ReadOnlyRestClientOptions options) {
+    internal async ValueTask<RestResponse<T>> Deserialize<T>(RestRequest request, RestResponse raw, ReadOnlyRestClientOptions options, CancellationToken cancellationToken) {
         var response = RestResponse<T>.FromResponse(raw);
 
         try {
+            await OnBeforeDeserialization(response, cancellationToken).ConfigureAwait(false);
             request.OnBeforeDeserialization?.Invoke(raw);
             response.Data = DeserializeContent<T>(raw);
         }
@@ -54,6 +56,13 @@ public class RestSerializers {
         return response;
     }
    
+    static async ValueTask OnBeforeDeserialization(RestResponse response, CancellationToken cancellationToken) {
+        if (response.Request.Interceptors == null) return;
+
+        foreach (var interceptor in response.Request.Interceptors) {
+            await interceptor.BeforeDeserialization(response, cancellationToken).ConfigureAwait(false);
+        }
+    }
 
     /// <summary>
     /// Deserialize the response content into the specified type

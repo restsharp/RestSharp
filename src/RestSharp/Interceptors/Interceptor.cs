@@ -13,45 +13,50 @@
 // limitations under the License.
 // 
 
-namespace RestSharp.Interceptors; 
+namespace RestSharp.Interceptors;
 
 /// <summary>
 /// Base Interceptor
 /// </summary>
 public abstract class Interceptor {
+    static readonly ValueTask Completed = 
+#if NET
+        ValueTask.CompletedTask;
+#else
+        new ();
+#endif
     /// <summary>
-    /// Intercepts the request before serialization
+    /// Intercepts the request before composing the request message
     /// </summary>
-    /// <param name="request">RestRequest before serialization</param>
-    /// <returns>Value Tags</returns>
-    public virtual ValueTask InterceptBeforeSerialization(RestRequest request) {
-        return new();
-    }
+    /// <param name="request">RestRequest before composing the request message</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public virtual ValueTask BeforeRequest(RestRequest request, CancellationToken cancellationToken) => Completed;
 
     /// <summary>
     /// Intercepts the request before being sent
     /// </summary>
-    /// <param name="req">HttpRequestMessage before being sent</param>
-    /// <returns>Value Tags</returns>
-    public virtual ValueTask InterceptBeforeRequest(HttpRequestMessage req) {
-        return new();
-    }
+    /// <param name="requestMessage">HttpRequestMessage before being sent</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public virtual ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken) => Completed;
 
     /// <summary>
     /// Intercepts the request before being sent
     /// </summary>
-    /// <param name="responseMessage">HttpResponseMessage as received from Server</param>
-    /// <returns>Value Tags</returns>
-    public virtual ValueTask InterceptAfterRequest(HttpResponseMessage responseMessage) {
-        return new();
-    }
+    /// <param name="responseMessage">HttpResponseMessage as received from the remote server</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public virtual ValueTask AfterHttpRequest(HttpResponseMessage responseMessage, CancellationToken cancellationToken) => Completed;
 
     /// <summary>
-    /// Intercepts the request before deserialization
+    /// Intercepts the request after it's created from HttpResponseMessage
     /// </summary>
-    /// <param name="response">HttpResponseMessage as received from Server</param>
-    /// <returns>Value Tags</returns>
-    public virtual ValueTask InterceptBeforeDeserialize(RestResponse response) {
-        return new();
-    }
+    /// <param name="response">HttpResponseMessage as received from the remote server</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public virtual ValueTask AfterRequest(RestResponse response, CancellationToken cancellationToken) => Completed;
+    
+    /// <summary>
+    /// Intercepts the request before deserialization, won't be called if using non-generic ExecuteAsync
+    /// </summary>
+    /// <param name="response">HttpResponseMessage as received from the remote server</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public virtual ValueTask BeforeDeserialization(RestResponse response, CancellationToken cancellationToken) => Completed;
 }

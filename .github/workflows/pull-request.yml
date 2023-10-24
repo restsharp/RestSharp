@@ -6,8 +6,25 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  test-windows:
     runs-on: windows-latest
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'
+          dotnet-quality: 'preview'
+      -
+        name: Run tests
+        run: dotnet test
+
+  test-linux:
+    runs-on: ubuntu-latest
 
     steps:
       -  
@@ -17,11 +34,21 @@ jobs:
         name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0'
+          dotnet-version: '8.0'
+          dotnet-quality: 'preview'
       -  
         name: Run tests
-        run: dotnet test -c Release
-        
+        run: dotnet test
+      -
+        name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            test-results/**/*.xml
+            test-results/**/*.trx
+            test-results/**/*.json
+
   docs:
     runs-on: ubuntu-latest
 

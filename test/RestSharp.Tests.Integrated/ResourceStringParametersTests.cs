@@ -4,9 +4,7 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.Tests.Integrated; 
 
 public sealed class ResourceStringParametersTests : IDisposable {
-    readonly SimpleServer _server;
-
-    public ResourceStringParametersTests() => _server = SimpleServer.Create(RequestHandler.Handle);
+    readonly SimpleServer _server = SimpleServer.Create(RequestHandler.Handle);
 
     public void Dispose() => _server.Dispose();
 
@@ -32,5 +30,4 @@ public sealed class ResourceStringParametersTests : IDisposable {
             Handlers.Echo(context);
         }
     }
-    #nullable enable
 }

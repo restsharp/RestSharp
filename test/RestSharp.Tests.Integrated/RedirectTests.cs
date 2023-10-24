@@ -19,15 +19,8 @@ using RestSharp.Tests.Integrated.Server;
 namespace RestSharp.Tests.Integrated;
 
 [Collection(nameof(TestServerCollection))]
-public class RedirectTests {
-    readonly RestClient _client;
-
-    public RedirectTests(TestServerFixture fixture) {
-        var options = new RestClientOptions(fixture.Server.Url) {
-            FollowRedirects = true
-        };
-        _client = new RestClient(options);
-    }
+public class RedirectTests(TestServerFixture fixture) {
+    readonly RestClient _client = new(new RestClientOptions(fixture.Server.Url) { FollowRedirects = true });
 
     [Fact]
     public async Task Can_Perform_GET_Async_With_Redirect() {
