@@ -13,7 +13,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="HttpTracer" Version="2.1.1"/>
-        <PackageVersion Include="Moq" Version="4.18.4"/>
         <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)"/>
         <PackageVersion Include="Polly" Version="7.2.4"/>
         <PackageVersion Include="Xunit.Extensions.Logging" Version="1.1.0"/>
