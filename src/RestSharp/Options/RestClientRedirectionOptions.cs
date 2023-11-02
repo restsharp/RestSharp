@@ -21,6 +21,7 @@ public class RestClientRedirectionOptions {
     /// redirect from HTTPS to HTTP.
     /// </summary>
     public bool FollowRedirectsToInsecure { get; set; } = false;
+
     /// <summary>
     /// Set to true (default), when you want to include the originally
     /// requested headers in redirected requests.
@@ -32,8 +33,9 @@ public class RestClientRedirectionOptions {
     /// Authorization header to the redirected destination.
     /// </summary>
     public bool ForwardAuthorization { get; set; } = false;
+
     /// <summary>
-    /// Set to true (default), when you want to include cookie3s from the 
+    /// Set to true (default), when you want to include cookies from the 
     /// CookieContainer on the redirected URL.
     /// </summary>
     /// <remarks>
@@ -88,6 +90,13 @@ public class RestClientRedirectionOptions {
     /// fragment should inherit the fragment from the original URI.
     /// </remarks>
     public bool ForwardFragment { get; set; } = true;
+
+    /// <summary>
+    /// Set to true (default), to allow the HTTP Method used on the original request to
+    /// be replaced with GET when the status code 303 (HttpStatusCode.RedirectMethod)
+    /// was returned. Setting this to false will disallow the altering of the verb.
+    /// </summary>
+    public bool AllowRedirectMethodStatusCodeToAlterVerb { get; set; } = true;
  
     /// <summary>
     /// HttpStatusCodes that trigger redirect processing. Defaults to MovedPermanently (301),

@@ -38,7 +38,6 @@ public sealed class HttpServer {
         _app.MapGet("headers", HeaderHandlers.HandleHeaders);
         _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
-        _app.MapGet("redirect", () => Results.Redirect("/success", false, true));
 
         // Cookies
         _app.MapGet("get-cookies", CookieHandlers.HandleCookies);

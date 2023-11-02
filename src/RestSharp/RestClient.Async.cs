@@ -94,26 +94,12 @@ public partial class RestClient {
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
 
         var ct = cts.Token;
+        
+        HttpResponseMessage? responseMessage = null;
+        var cookieContainer = request.CookieContainer ??= new CookieContainer();
 
-        
-        HttpResponseMessage? responseMessage;
-        // Make sure we have a cookie container if not provided in the request
-        CookieContainer cookieContainer = request.CookieContainer ??= new CookieContainer();
-        
-        var headers = new RequestHeaders()
-            .AddHeaders(request.Parameters)
-            .AddHeaders(DefaultParameters)
-            .AddAcceptHeader(AcceptedContentTypes)
-            .AddCookieHeaders(url, cookieContainer)
-            .AddCookieHeaders(url, Options.CookieContainer);
-
-        message.AddHeaders(headers);
-        if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
-        await OnBeforeRequest(message).ConfigureAwait(false);
-        
         try {
             // Make sure we have a cookie container if not provided in the request
-            var cookieContainer = request.CookieContainer ??= new CookieContainer();
 
             var headers = new RequestHeaders()
                 .AddHeaders(request.Parameters)
@@ -123,7 +109,6 @@ public partial class RestClient {
                 .AddCookieHeaders(url, Options.CookieContainer);
 
             bool foundCookies = false;
-            HttpResponseMessage? responseMessage = null;
 
             do {
                 using var requestContent = new RequestContent(this, request);
@@ -137,10 +122,12 @@ public partial class RestClient {
                 using var message = PrepareRequestMessage(httpMethod, url, content, headers);
 
                 if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+                await OnBeforeRequest(message).ConfigureAwait(false);
 
                 responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
 
                 if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+                await OnAfterRequest(responseMessage).ConfigureAwait(false);
 
                 if (!IsRedirect(Options.RedirectOptions, responseMessage)) {
                     break;
@@ -171,15 +158,17 @@ public partial class RestClient {
 
                 // Disallow automatic redirection from secure to non-secure schemes
                 // based on the option setting:
-                if (HttpUtilities.IsSupportedSecureScheme(requestUri.Scheme) 
+                if (HttpUtilities.IsSupportedSecureScheme(originalUrl.Scheme) 
                     && !HttpUtilities.IsSupportedSecureScheme(location.Scheme)
                     && !Options.RedirectOptions.FollowRedirectsToInsecure) {
                     // TODO: Log here...
                     break;
                 }
 
-                if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod) {
-                    // TODO: Add RedirectionOptions property for this decision:
+                // This is the expected behavior for this status code, but
+                // ignore it if requested from the RedirectOptions:
+                if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod
+                    && Options.RedirectOptions.AllowRedirectMethodStatusCodeToAlterVerb) {
                     httpMethod = HttpMethod.Get;
                 }
 
@@ -199,10 +188,8 @@ public partial class RestClient {
                     if (!Options.RedirectOptions.ForceForwardBody) {
                         // HttpClient RedirectHandler sets request.Content to null here:
                         message.Content = null;
-                        // HttpClient Redirect handler also does this:
-                        //if (message.Headers.TansferEncodingChunked == true) {
-                        //    request.Headers.TransferEncodingChunked = false;
-                        //}
+                        // HttpClient Redirect handler also foribly removes
+                        // a Transfer-Encoding of chunked in this case.
                         Parameter? transferEncoding = request.Parameters.TryFind(KnownHeaders.TransferEncoding);
                         if (transferEncoding != null
                             && transferEncoding.Type == ParameterType.HttpHeader
@@ -237,7 +224,6 @@ public partial class RestClient {
         if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
         await OnAfterRequest(responseMessage).ConfigureAwait(false);
         return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
-        
     }
 
     /// <summary>
