@@ -100,7 +100,7 @@ public class RestClientRedirectionOptions {
  
     /// <summary>
     /// HttpStatusCodes that trigger redirect processing. Defaults to MovedPermanently (301),
-    /// SeeOther (303),
+    /// SeeOther/RedirectMethod (303),
     /// TemporaryRedirect (307),
     /// Redirect (302),
     /// PermanentRedirect (308)

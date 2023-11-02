@@ -247,7 +247,9 @@ public partial class RestClient : IRestClient {
 #if NET
         }
 #endif
-        handler.AllowAutoRedirect = options.FollowRedirects;
+        // ExecuteAsync and RedirectionOptions now own
+        // redirection processing:
+        handler.AllowAutoRedirect = false;
 
 #if NET
         if (!OperatingSystem.IsBrowser() && !OperatingSystem.IsIOS() && !OperatingSystem.IsTvOS()) {

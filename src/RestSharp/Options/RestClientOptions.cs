@@ -50,6 +50,12 @@ public class RestClientOptions {
     /// <summary>
     /// Custom configuration for the underlying <seealso cref="HttpMessageHandler"/>
     /// </summary>
+    /// <remarks>
+    /// With the addition of all redirection processing being implemented directly by <see cref="RestClient"/>
+    /// please do not alter the <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect""/> from its default supplied by RestClient.
+    /// If you set <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect""/> to true, then redirection cookie
+    /// processing improvements in RestClient will be skipped since <see cref="System.Net.Http.HttpClient"/> will hide the details from us.
+    /// </remarks>
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
 
     /// <summary>
@@ -139,6 +145,9 @@ public class RestClientOptions {
     /// <summary>
     /// Instruct the client to follow redirects. Default is true.
     /// </summary>
+    /// <remarks>
+    /// Note: This now delegates the property implementation to <see cref="RestClientRedirectionOptions"/>.
+    /// </remarks>
     public bool FollowRedirects {
         get {
             return RedirectOptions.FollowRedirects;

@@ -25,7 +25,7 @@ public class RedirectTests {
 
     public RedirectTests(TestServerFixture fixture) {
         var options = new RestClientOptions(fixture.Server.Url) {
-            FollowRedirects = false
+            FollowRedirects = true
         };
         _client = new RestClient(options);
         _host   = _client.Options.BaseUrl!.Host;
@@ -98,6 +98,30 @@ public class RedirectTests {
         // Make sure the redirected location spits out the correct content from PUT /get-cookies:
         response.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
     }
+
+    // Needed tests:
+    //Test: ForwardHeaders = false
+    //Test: ForwardHeaders = true (default) might not need separate test
+    //Test: ForwardAuthorization = true
+    //Test: ForwardAuthorization = false (default) probably need separate test
+    //Test: ForwardCookies = true (might already have test)
+    //Test: ForwardCookies = false
+    //Test: ForwardBody = true (default, might not need test)
+    //Test: ForwardBody = false
+    //Test: ForceForwardBody = false (default, might not need test)
+    //Test: ForwardQuery = true (default, might not need test)
+    //Test: ForwardQuery = false
+    //Test: MaxRedirects
+    //Test: ForwardFragment = true
+    //Test: ForwardFragment = false
+    //Test: AllowRedirectMethodStatusCodeToAlterVerb = true (default, might not need test)
+    //Test: AllowRedirectMethodStatusCodeToAlterVerb = false
+    //Test: Altered Redirect Status Codes list
+    //Test: FollowRedirects = false
+    // Problem: Need secure test server:
+    //Test: FollowRedirectsToInsecure = true
+    //Test: FollowRedirectsToInsecure = false
+
 
     class Response {
         public string? Message { get; set; }

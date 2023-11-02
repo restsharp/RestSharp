@@ -96,11 +96,10 @@ public partial class RestClient {
         var ct = cts.Token;
         
         HttpResponseMessage? responseMessage = null;
+        // Make sure we have a cookie container if not provided in the request
         var cookieContainer = request.CookieContainer ??= new CookieContainer();
 
         try {
-            // Make sure we have a cookie container if not provided in the request
-
             var headers = new RequestHeaders()
                 .AddHeaders(request.Parameters)
                 .AddHeaders(DefaultParameters)
@@ -109,6 +108,7 @@ public partial class RestClient {
                 .AddCookieHeaders(url, Options.CookieContainer);
 
             bool foundCookies = false;
+            bool firstAttempt = true;
 
             do {
                 using var requestContent = new RequestContent(this, request);
@@ -121,13 +121,18 @@ public partial class RestClient {
                 }
                 using var message = PrepareRequestMessage(httpMethod, url, content, headers);
 
-                if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
-                await OnBeforeRequest(message).ConfigureAwait(false);
+                if (firstAttempt) {
+                    firstAttempt = false;
+                    try {
+                        if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+                        await OnBeforeRequest(message).ConfigureAwait(false);
+                    }
+                    catch (Exception e) {
+                        throw new RestClientInternalException("RestClient.ExecuteRequestAsync OnBeforeRequest threw an exception: ", e);
+                    }
+                }
 
                 responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
-
-                if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
-                await OnAfterRequest(responseMessage).ConfigureAwait(false);
 
                 if (!IsRedirect(Options.RedirectOptions, responseMessage)) {
                     break;
@@ -187,6 +192,10 @@ public partial class RestClient {
                     httpMethod = HttpMethod.Get;
                     if (!Options.RedirectOptions.ForceForwardBody) {
                         // HttpClient RedirectHandler sets request.Content to null here:
+                        // TODO: I don't think is quite correct yet.. 
+                        // We don't necessarily want to modify the original request, but..
+                        // is there a way to clone it properly and then clear out what we don't
+                        // care about?
                         message.Content = null;
                         // HttpClient Redirect handler also foribly removes
                         // a Transfer-Encoding of chunked in this case.
@@ -217,6 +226,9 @@ public partial class RestClient {
                 // ReSharper disable once PossibleMultipleEnumeration
                 Options.CookieContainer?.AddCookies(url, cookiesHeader2);
             }
+        }
+        catch (RestClientInternalException e) {
+            throw e.InnerException!;
         }
         catch (Exception ex) {
             return new HttpResponse(null, url, null, ex, timeoutCts.Token);
@@ -310,7 +322,7 @@ public partial class RestClient {
     }
 
     static bool IsRedirect(RestClientRedirectionOptions options, HttpResponseMessage responseMessage) {
-        return options.RedirectStatusCodes.Contains(responseMessage.StatusCode);
+        return options.FollowRedirects && options.RedirectStatusCodes.Contains(responseMessage.StatusCode);
     }
 
     record HttpResponse(
