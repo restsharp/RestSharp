@@ -36,13 +36,13 @@ public class RestClientRedirectionOptions {
 
     /// <summary>
     /// Set to true (default), when you want to include cookies from the 
-    /// CookieContainer on the redirected URL.
+    /// <see cref="CookieContainer"/> on the redirected URL.
     /// </summary>
     /// <remarks>
     /// NOTE: The exact cookies sent to the redirected url DEPENDS directly
     /// on the redirected url. A redirection to a completly differnet FQDN
     /// for example is unlikely to actually propagate any cookies from the 
-    /// CookieContqainer.
+    /// <see cref="CookieContainer"/>.
     /// </remarks>
     public bool ForwardCookies { get; set; } = true;
 

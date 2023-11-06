@@ -210,13 +210,24 @@ public partial class RestClient {
 
                 url = location;
 
-                if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader1)) {
-                    foundCookies = true;
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    cookieContainer.AddCookies(url, cookiesHeader1);
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    Options.CookieContainer?.AddCookies(url, cookiesHeader1);
+                if (Options.RedirectOptions.ForwardHeaders) {
+                    if (!Options.RedirectOptions.ForwardAuthorization) {
+                        headers.Parameters.RemoveParameter("Authorization");
+                    }
+                    if (!Options.RedirectOptions.ForwardCookies) {
+                        headers.Parameters.RemoveParameter("Cookie");
+                    }
+                    else {
+                        if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader1)) {
+                            foundCookies = true;
+                            // ReSharper disable once PossibleMultipleEnumeration
+                            cookieContainer.AddCookies(url, cookiesHeader1);
+                            // ReSharper disable once PossibleMultipleEnumeration
+                            Options.CookieContainer?.AddCookies(url, cookiesHeader1);
+                        }
+                    }
                 }
+
             } while (true);
 
             // Parse all the cookies from the response and update the cookie jar with cookies

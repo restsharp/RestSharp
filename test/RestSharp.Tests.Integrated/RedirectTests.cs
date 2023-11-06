@@ -14,6 +14,7 @@
 //
 
 using System.Net;
+using RestSharp.Extensions;
 using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated;
@@ -99,6 +100,30 @@ public class RedirectTests {
         response.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
     }
 
+    [Fact]
+    public async Task Can_ForwardHeadersTrue_OnRedirect() {
+        // This request sets cookies and redirects to url param value
+        // if supplied, otherwise redirects to /get-cookies
+        var request = new RestRequest("/get-cookies-redirect") {
+            Method = Method.Get,
+        };
+        request.AddQueryParameter("url", "/dump-headers");
+
+        var response = await _client.ExecuteAsync(request);
+        response.ResponseUri.Should().Be($"{_client.Options.BaseUrl}dump-headers");
+        var content = response.Content;
+        content.Should().Contain("'Accept':");
+        content.Should().Contain($"'Host': {_client.Options.BaseHost}");
+        content.Should().Contain("'User-Agent':");
+        content.Should().Contain("'Accept-Encoding':");
+        content.Should().Contain("'Cookie':");
+
+        // Verify the cookie exists from the redirected get:
+        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies[0].Name.Should().Be("redirectCookie");
+        response.Cookies[0].Value.Should().Be("value1");
+    }
+
     // Needed tests:
     //Test: ForwardHeaders = false
     //Test: ForwardHeaders = true (default) might not need separate test
@@ -112,7 +137,7 @@ public class RedirectTests {
     //Test: ForwardQuery = true (default, might not need test)
     //Test: ForwardQuery = false
     //Test: MaxRedirects
-    //Test: ForwardFragment = true
+    //Test: ForwardFragment = true (default)
     //Test: ForwardFragment = false
     //Test: AllowRedirectMethodStatusCodeToAlterVerb = true (default, might not need test)
     //Test: AllowRedirectMethodStatusCodeToAlterVerb = false

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using RestSharp.Tests.Integrated.Server.Handlers;
 using RestSharp.Tests.Shared.Extensions;
 using System.Net;
+using System.Text;
+using System.Web;
 
 // ReSharper disable ConvertClosureToMethodGroup
 
@@ -38,6 +40,15 @@ public sealed class HttpServer {
         _app.MapGet("headers", HeaderHandlers.HandleHeaders);
         _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
+        _app.MapGet("dump-headers", 
+            (HttpContext ctx) => {
+                var headers = ctx.Request.Headers;
+                StringBuilder sb = new StringBuilder();
+                foreach (var kvp in headers) {
+                    sb.Append($"'{kvp.Key}': '{kvp.Value}',");
+                }
+                return new TestResponse { Message = sb.ToString() };
+            });
 
         // Cookies
         _app.MapGet("get-cookies", CookieHandlers.HandleCookies);
@@ -48,12 +59,17 @@ public sealed class HttpServer {
             });
         _app.MapGet("set-cookies", CookieHandlers.HandleSetCookies);
         _app.MapGet("redirect", () => Results.Redirect("/success", false, true));
-
         _app.MapGet(
             "get-cookies-redirect",
             (HttpContext ctx) => {
                 ctx.Response.Cookies.Append("redirectCookie", "value1");
-                return Results.Redirect("/get-cookies", false, true);
+                string redirectDestination = "/get-cookies";
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value);
+                var urlParameter = queryString.Get("url");
+                if (!string.IsNullOrEmpty(urlParameter)) {
+                    redirectDestination = urlParameter;
+                }
+                return Results.Redirect(redirectDestination, false, true);
             }
         );
 
