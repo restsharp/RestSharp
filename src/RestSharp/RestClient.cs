@@ -73,6 +73,7 @@ public partial class RestClient : IRestClient {
 
         ConfigureSerializers(configureSerialization);
         Options = new ReadOnlyRestClientOptions(options);
+        DefaultParameters = new DefaultParameters(Options);
 
         if (useClientFactory) {
             _disposeHttpClient = false;
@@ -83,8 +84,6 @@ public partial class RestClient : IRestClient {
             HttpClient         = GetClient();
         }
 
-        DefaultParameters = new DefaultParameters(Options);
-
         HttpClient GetClient() {
             var handler = new HttpClientHandler();
             ConfigureHttpMessageHandler(handler, Options);
@@ -92,6 +91,7 @@ public partial class RestClient : IRestClient {
 
             var httpClient = new HttpClient(finalHandler);
             ConfigureHttpClient(httpClient, options);
+            ConfigureDefaultParameters(options);
             configureDefaultHeaders?.Invoke(httpClient.DefaultRequestHeaders);
             return httpClient;
         }
@@ -181,7 +181,10 @@ public partial class RestClient : IRestClient {
         Options           = new ReadOnlyRestClientOptions(opt);
         DefaultParameters = new DefaultParameters(Options);
 
-        if (options != null) ConfigureHttpClient(httpClient, options);
+        if (options != null) {
+            ConfigureHttpClient(httpClient, options);
+            ConfigureDefaultParameters(options);
+        }
     }
 
     /// <summary>
@@ -217,11 +220,6 @@ public partial class RestClient : IRestClient {
 
     static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
         if (options.MaxTimeout > 0) httpClient.Timeout = TimeSpan.FromMilliseconds(options.MaxTimeout);
-
-        if (options.UserAgent != null &&
-            httpClient.DefaultRequestHeaders.UserAgent.All(x => $"{x.Product?.Name}/{x.Product?.Version}" != options.UserAgent)) {
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation(KnownHeaders.UserAgent, options.UserAgent);
-        }
 
         if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
     }
@@ -268,6 +266,15 @@ public partial class RestClient : IRestClient {
         configureSerialization?.Invoke(serializerConfig);
         Serializers          = new RestSerializers(serializerConfig);
         AcceptedContentTypes = Serializers.GetAcceptedContentTypes();
+    }
+
+    void ConfigureDefaultParameters(RestClientOptions options) {
+        if (options.UserAgent != null) {
+            if (!options.AllowMultipleDefaultParametersWithSameName
+                && DefaultParameters.Any(parameter => parameter.Type == ParameterType.HttpHeader && parameter.Name == KnownHeaders.UserAgent))
+                DefaultParameters.RemoveParameter(KnownHeaders.UserAgent, ParameterType.HttpHeader);
+            DefaultParameters.AddParameter(Parameter.CreateParameter(KnownHeaders.UserAgent, options.UserAgent, ParameterType.HttpHeader));
+        }
     }
 
     readonly bool _disposeHttpClient;
