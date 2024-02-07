@@ -40,19 +40,50 @@ public partial class RestClient {
     /// <inheritdoc />
     [PublicAPI]
     public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
+        return await DownloadStreamInternalAsync(request, null, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [PublicAPI]
+    public async Task<Stream?> DownloadStreamAsync(RestRequest request, Action<RestResponse> errorHandler, CancellationToken cancellationToken = default) {
+        return await DownloadStreamInternalAsync(request, errorHandler, cancellationToken);
+    }
+
+    async Task<Stream?> DownloadStreamInternalAsync(RestRequest request, Action<RestResponse>? errorHandler, CancellationToken cancellationToken = default) {
         // Make sure we only read the headers so we can stream the content body efficiently
         request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
-        var response = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+        var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
+        if (errorHandler != null) {
+            if (internalResponse.Exception != null) {
+                var response = GetErrorResponse(request, internalResponse.Exception, internalResponse.TimeoutToken);
+
+                errorHandler(response);
+            }
+            else if (internalResponse.ResponseMessage!.IsSuccessStatusCode == false) {
+                var response = await RestResponse.FromHttpResponse(
+                    internalResponse.ResponseMessage!,
+                    request,
+                    Options.Encoding,
+                    internalResponse.CookieContainer?.GetCookies(internalResponse.Url),
+                    Options.CalculateResponseStatus,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
+
+                errorHandler(response);
+            }
+        }
+
+        var exception = internalResponse.Exception ?? internalResponse.ResponseMessage?.MaybeException();
 
         if (exception != null) {
             return Options.ThrowOnAnyError ? throw exception : null;
         }
 
-        if (response.ResponseMessage == null) return null;
+        if (internalResponse.ResponseMessage == null) return null;
 
-        return await response.ResponseMessage.ReadResponseStream(request.ResponseWriter, cancellationToken).ConfigureAwait(false);
+        return await internalResponse.ResponseMessage.ReadResponseStream(request.ResponseWriter, cancellationToken).ConfigureAwait(false);
     }
 
     static RestResponse GetErrorResponse(RestRequest request, Exception exception, CancellationToken timeoutToken) {
