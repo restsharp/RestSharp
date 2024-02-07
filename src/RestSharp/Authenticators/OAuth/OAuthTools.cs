@@ -142,7 +142,7 @@ static class OAuthTools {
     internal static IEnumerable<string> SortParametersExcludingSignature(WebPairCollection parameters)
         => parameters
             .Where(x => !x.Name.EqualsIgnoreCase("oauth_signature"))
-            .Select(x => new WebPair(UrlEncodeStrict(x.Name), UrlEncodeStrict(x.Value)))
+            .Select(x => new WebPair(UrlEncodeStrict(x.Name), UrlEncodeRelaxed(x.Value)))
             .OrderBy(x => x, WebPair.Comparer)
             .Select(x => x.GetQueryParameter(false));
 
