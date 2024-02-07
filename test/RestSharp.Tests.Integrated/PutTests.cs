@@ -40,7 +40,7 @@ public class PutTests {
         var request = new RestRequest(TimeoutResource, Method.Put).AddBody("Body_Content");
 
         // Half the value of ResponseHandler.Timeout
-        request.Timeout = 200;
+        request.Timeout = TimeSpan.FromMilliseconds(200);
 
         var response = await _client.ExecuteAsync(request);
 

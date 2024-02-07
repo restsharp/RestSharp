@@ -50,7 +50,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     public async Task Handles_Server_Timeout_Error() {
         var client = new RestClient(_server.Url);
 
-        var request = new RestRequest("404") { Timeout = 500 };
+        var request  = new RestRequest("404") { Timeout = TimeSpan.FromMilliseconds(500) };
         var response = await client.ExecuteAsync(request);
 
         response.ErrorException.Should().BeOfType<TaskCanceledException>();
@@ -60,7 +60,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     [Fact]
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
         var client   = new RestClient(_server.Url);
-        var request  = new RestRequest("404") { Timeout = 500 };
+        var request  = new RestRequest("404") { Timeout = TimeSpan.FromMilliseconds(500) };
         var response = await client.ExecuteAsync<TestResponse>(request);
 
         response.Data.Should().BeNull();
