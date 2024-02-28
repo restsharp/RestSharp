@@ -2,4 +2,7 @@
     <PropertyGroup>
         <IsTestProject>false</IsTestProject>
     </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Update="xunit" Version="2.6.0" />
+    </ItemGroup>
 </Project>

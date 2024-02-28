@@ -20,6 +20,9 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.21" />
         <PackageReference Include="Polly" Version="7.2.4" />
         <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
+        <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+        <PackageReference Update="xunit" Version="2.6.0" />
+        <PackageReference Update="xunit.runner.visualstudio" Version="2.5.3" />
     </ItemGroup>
     <ItemGroup>
         <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
