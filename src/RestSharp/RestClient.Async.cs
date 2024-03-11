@@ -78,7 +78,7 @@ public partial class RestClient {
             throw new ObjectDisposedException(nameof(RestClient));
         }
 
-        await OnBeforeSerialization(request).ConfigureAwait(false);   
+        await OnBeforeSerialization(request).ConfigureAwait(false);
         request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
 
@@ -94,7 +94,7 @@ public partial class RestClient {
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
 
         var ct = cts.Token;
-        
+
         HttpResponseMessage? responseMessage = null;
         // Make sure we have a cookie container if not provided in the request
         var cookieContainer = request.CookieContainer ??= new CookieContainer();
@@ -163,7 +163,7 @@ public partial class RestClient {
 
                 // Disallow automatic redirection from secure to non-secure schemes
                 // based on the option setting:
-                if (HttpUtilities.IsSupportedSecureScheme(originalUrl.Scheme) 
+                if (HttpUtilities.IsSupportedSecureScheme(originalUrl.Scheme)
                     && !HttpUtilities.IsSupportedSecureScheme(location.Scheme)
                     && !Options.RedirectOptions.FollowRedirectsToInsecure) {
                     // TODO: Log here...
@@ -192,7 +192,7 @@ public partial class RestClient {
                     httpMethod = HttpMethod.Get;
                     if (!Options.RedirectOptions.ForceForwardBody) {
                         // HttpClient RedirectHandler sets request.Content to null here:
-                        // TODO: I don't think is quite correct yet.. 
+                        // TODO: I don't think is quite correct yet..
                         // We don't necessarily want to modify the original request, but..
                         // is there a way to clone it properly and then clear out what we don't
                         // care about?
@@ -210,24 +210,50 @@ public partial class RestClient {
 
                 url = location;
 
+                // Regardless of whether or not we will be forwarding
+                // cookies, the CookieContainer will be updated:
+                if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader1)) {
+                    if (Options.RedirectOptions.ForwardCookies) {
+                        foundCookies = true;
+                    }
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    cookieContainer.AddCookies(url, cookiesHeader1);
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    Options.CookieContainer?.AddCookies(url, cookiesHeader1);
+                }
+
+                // Process header related RedirectOptions:
                 if (Options.RedirectOptions.ForwardHeaders) {
                     if (!Options.RedirectOptions.ForwardAuthorization) {
-                        headers.Parameters.RemoveParameter("Authorization");
+                        headers.Parameters.RemoveParameter(KnownHeaders.Authorization);
                     }
                     if (!Options.RedirectOptions.ForwardCookies) {
-                        headers.Parameters.RemoveParameter("Cookie");
+                        headers.Parameters.RemoveParameter(KnownHeaders.Cookie);
                     }
-                    else {
-                        if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader1)) {
-                            foundCookies = true;
-                            // ReSharper disable once PossibleMultipleEnumeration
-                            cookieContainer.AddCookies(url, cookiesHeader1);
-                            // ReSharper disable once PossibleMultipleEnumeration
-                            Options.CookieContainer?.AddCookies(url, cookiesHeader1);
+                }
+                else {
+                    List<string> headersToRemove = new List<string>();
+                    foreach (var param in headers.Parameters) {
+                        if (param is HeaderParameter header) {
+                            // Keep headers requested to be forwarded:
+                            if (string.Compare(param.Name, KnownHeaders.Authorization, StringComparison.InvariantCultureIgnoreCase) == 0
+                                && Options.RedirectOptions.ForwardAuthorization) {
+                                continue;
+                            }
+                            if (string.Compare(param.Name, KnownHeaders.Cookie, StringComparison.InvariantCultureIgnoreCase) == 0
+                                && Options.RedirectOptions.ForwardCookies) {
+                                continue;
+                            }
+                            // Otherwise: schedule the items for removal:
+                            headersToRemove.Add(param.Name);
+                        }
+                    }
+                    if (headersToRemove.Count > 0) {
+                        for (int i = 0; i < headersToRemove.Count; i++) {
+                            headers.Parameters.RemoveParameter(headersToRemove[i]);
                         }
                     }
                 }
-
             } while (true);
 
             // Parse all the cookies from the response and update the cookie jar with cookies
@@ -307,7 +333,7 @@ public partial class RestClient {
     }
 
     /// <summary>
-    /// Based on .net core RedirectHandler class: 
+    /// Based on .net core RedirectHandler class:
     /// https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/RedirectHandler.cs
     /// </summary>
     /// <param name="statusCode"></param>
@@ -316,7 +342,7 @@ public partial class RestClient {
     /// <exception cref="NotImplementedException"></exception>
     private bool RedirectRequestRequiresForceGet(HttpStatusCode statusCode, HttpMethod httpMethod) {
         return statusCode switch {
-            HttpStatusCode.Moved or HttpStatusCode.Found or HttpStatusCode.MultipleChoices 
+            HttpStatusCode.Moved or HttpStatusCode.Found or HttpStatusCode.MultipleChoices
                 => httpMethod == HttpMethod.Post,
             HttpStatusCode.SeeOther => httpMethod != HttpMethod.Get && httpMethod != HttpMethod.Head,
             _ => false,

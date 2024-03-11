@@ -52,8 +52,8 @@ public class RestClientOptions {
     /// </summary>
     /// <remarks>
     /// With the addition of all redirection processing being implemented directly by <see cref="RestClient"/>
-    /// please do not alter the <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect""/> from its default supplied by RestClient.
-    /// If you set <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect""/> to true, then redirection cookie
+    /// please do not alter the <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect"/> from its default supplied by RestClient.
+    /// If you set <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect"/> to true, then redirection cookie
     /// processing improvements in RestClient will be skipped since <see cref="System.Net.Http.HttpClient"/> will hide the details from us.
     /// </remarks>
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
@@ -92,7 +92,7 @@ public class RestClientOptions {
     public bool UseDefaultCredentials { get; set; }
 
     /// <summary>
-    /// Set to true if you need the Content-Type not to have the charset 
+    /// Set to true if you need the Content-Type not to have the charset
     /// </summary>
     public bool DisableCharset { get; set; }
 

@@ -26,6 +26,9 @@ public class RestClientRedirectionOptions {
     /// Set to true (default), when you want to include the originally
     /// requested headers in redirected requests.
     /// </summary>
+    /// <remarks>NOTE: The 'Authorization' header is controlled by <see cref="ForwardAuthorization"/>,
+    /// and the 'Cookie' header is controlled by <see cref="ForwardCookies"/>.
+    /// </remarks>
     public bool ForwardHeaders { get; set; } = true;
 
     /// <summary>
@@ -35,13 +38,13 @@ public class RestClientRedirectionOptions {
     public bool ForwardAuthorization { get; set; } = false;
 
     /// <summary>
-    /// Set to true (default), when you want to include cookies from the 
+    /// Set to true (default), when you want to include cookies from the
     /// <see cref="CookieContainer"/> on the redirected URL.
     /// </summary>
     /// <remarks>
     /// NOTE: The exact cookies sent to the redirected url DEPENDS directly
     /// on the redirected url. A redirection to a completly differnet FQDN
-    /// for example is unlikely to actually propagate any cookies from the 
+    /// for example is unlikely to actually propagate any cookies from the
     /// <see cref="CookieContainer"/>.
     /// </remarks>
     public bool ForwardCookies { get; set; } = true;
@@ -54,7 +57,7 @@ public class RestClientRedirectionOptions {
     public bool ForwardBody { get; set; } = true;
 
     /// <summary>
-    /// Set to true (default is false) to force forwarding the body of the 
+    /// Set to true (default is false) to force forwarding the body of the
     /// request even when normally, the verb might be altered to GET based
     /// on backward compatiblity with browser processing of HTTP status codes.
     /// </summary>
@@ -97,7 +100,7 @@ public class RestClientRedirectionOptions {
     /// was returned. Setting this to false will disallow the altering of the verb.
     /// </summary>
     public bool AllowRedirectMethodStatusCodeToAlterVerb { get; set; } = true;
- 
+
     /// <summary>
     /// HttpStatusCodes that trigger redirect processing. Defaults to MovedPermanently (301),
     /// SeeOther/RedirectMethod (303),

@@ -125,12 +125,6 @@ public class RedirectTests {
     }
 
     // Needed tests:
-    //Test: ForwardHeaders = false
-    //Test: ForwardHeaders = true (default) might not need separate test
-    //Test: ForwardAuthorization = true
-    //Test: ForwardAuthorization = false (default) probably need separate test
-    //Test: ForwardCookies = true (might already have test)
-    //Test: ForwardCookies = false
     //Test: ForwardBody = true (default, might not need test)
     //Test: ForwardBody = false
     //Test: ForceForwardBody = false (default, might not need test)
