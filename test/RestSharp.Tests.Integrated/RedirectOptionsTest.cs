@@ -439,7 +439,7 @@ namespace RestSharp.Tests.Integrated {
         }
 
         [Fact]
-        public async Task Can_RedirectToInsecureUrlWithRedirectOption() {
+        public async Task Can_RedirectToInsecureUrlWithRedirectOption_True() {
             var options = NewOptions();
             options.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
             options.RedirectOptions.FollowRedirectsToInsecure = true;
@@ -460,7 +460,6 @@ namespace RestSharp.Tests.Integrated {
         public async Task Can_RedirectToSecureUrl() {
             var options = NewOptions();
             options.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
-            options.RedirectOptions.FollowRedirectsToInsecure = true;
             var client = new RestClient(options);
 
             // This request sets cookies and redirects to url param value
