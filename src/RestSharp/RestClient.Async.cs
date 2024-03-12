@@ -150,7 +150,10 @@ public partial class RestClient {
 
                 if (Options.RedirectOptions.ForwardQuery) {
                     string oringalQuery = originalUrl.Query;
-                    if (!string.IsNullOrEmpty(oringalQuery)) {
+                    if (!string.IsNullOrEmpty(oringalQuery)
+                        && string.IsNullOrEmpty(location.Query)) {
+                        // AddQueryString DOES NOT want the ? in the supplied parameter,
+                        // so strip it:
                         if (oringalQuery[0] == '?') {
                             oringalQuery = oringalQuery.Substring(1, oringalQuery.Length - 1);
                         }

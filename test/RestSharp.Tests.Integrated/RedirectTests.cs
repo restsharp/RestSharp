@@ -129,8 +129,6 @@ public class RedirectTests {
     //Test: ForwardBody = false
     //Test: ForceForwardBody = false (default, might not need test)
     //Test: MaxRedirects
-    //Test: ForwardFragment = true (default)
-    //Test: ForwardFragment = false
     //Test: AllowRedirectMethodStatusCodeToAlterVerb = true (default, might not need test)
     //Test: AllowRedirectMethodStatusCodeToAlterVerb = false
     //Test: Altered Redirect Status Codes list

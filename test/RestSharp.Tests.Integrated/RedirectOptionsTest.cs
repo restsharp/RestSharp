@@ -167,6 +167,35 @@ namespace RestSharp.Tests.Integrated {
         }
 
         [Fact]
+        public async Task Can_RedirectWithForwardQueryWithRedirectLocationContainingQuery() {
+            var options = NewOptions();
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/get-cookies-redirect") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("url", "/dump-headers?blah=blah2");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}dump-headers?blah=blah2");
+            var content = response.Content;
+            // This is expected due to redirection options for this test:
+            content.Should().Contain("'Cookie':");
+            // These should exist:
+            content.Should().Contain("'Accept':");
+            content.Should().Contain("'User-Agent':");
+            content.Should().Contain("'Host':");
+            content.Should().Contain("'Accept-Encoding':");
+
+            // Verify the cookie exists from the redirected get:
+            response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+            response.Cookies[0].Name.Should().Be("redirectCookie");
+            response.Cookies[0].Value.Should().Be("value1");
+        }
+
+        [Fact]
         public async Task Can_RedirectWithForwardQueryFalse() {
             var options = NewOptions();
             options.RedirectOptions.ForwardQuery = false;
@@ -190,8 +219,86 @@ namespace RestSharp.Tests.Integrated {
             content.Should().Contain("'Host':");
             content.Should().Contain("'Accept-Encoding':");
 
-            // Regardless of ForwardCookie, the cookie container is ALWAYS
-            // updated:
+            // Verify the cookie exists from the redirected get:
+            response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+            response.Cookies[0].Name.Should().Be("redirectCookie");
+            response.Cookies[0].Value.Should().Be("value1");
+        }
+
+        [Fact]
+        public async Task Can_RedirectWithForwardFragment() {
+            var options = NewOptions();
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/get-cookies-redirect#fragmentName") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("url", "/dump-headers");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}dump-headers?url=%2fdump-headers#fragmentName");
+            var content = response.Content;
+            // This is expected due to redirection options for this test:
+            content.Should().Contain("'Cookie':");
+            // These should exist:
+            content.Should().Contain("'Accept':");
+            content.Should().Contain("'User-Agent':");
+            content.Should().Contain("'Host':");
+            content.Should().Contain("'Accept-Encoding':");
+
+            // Verify the cookie exists from the redirected get:
+            response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+            response.Cookies[0].Name.Should().Be("redirectCookie");
+            response.Cookies[0].Value.Should().Be("value1");
+        }
+
+        [Fact]
+        public async Task Can_RedirectWithForwardFragmentFalse() {
+            var options = NewOptions();
+            options.RedirectOptions.ForwardFragment = false;
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/get-cookies-redirect#fragmentName") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("url", "/dump-headers");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}dump-headers?url=%2fdump-headers");
+            var content = response.Content;
+            // This is expected due to redirection options for this test:
+            content.Should().Contain("'Cookie':");
+            // These should exist:
+            content.Should().Contain("'Accept':");
+            content.Should().Contain("'User-Agent':");
+            content.Should().Contain("'Host':");
+            content.Should().Contain("'Accept-Encoding':");
+
+            // Verify the cookie exists from the redirected get:
+            response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
+            response.Cookies[0].Name.Should().Be("redirectCookie");
+            response.Cookies[0].Value.Should().Be("value1");
+        }
+
+        [Fact]
+        public async Task Can_RedirectWithForwardFragmentWithoutQuery() {
+            var options = NewOptions();
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/get-cookies-redirect#fragmentName") {
+                Method = Method.Get,
+            };
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}get-cookies#fragmentName");
+            var content = response.Content;
+            content.Should().Contain("redirectCookie=value1");
 
             // Verify the cookie exists from the redirected get:
             response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
