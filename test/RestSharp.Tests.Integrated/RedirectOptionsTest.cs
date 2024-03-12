@@ -305,5 +305,103 @@ namespace RestSharp.Tests.Integrated {
             response.Cookies[0].Name.Should().Be("redirectCookie");
             response.Cookies[0].Value.Should().Be("value1");
         }
+
+        [Fact]
+        public async Task Can_RedirectBelowMaxRedirects_WithLoweredValue() {
+            var options = NewOptions();
+            options.RedirectOptions.MaxRedirects = 6;
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/redirect-countdown") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("n", "20");
+
+            var response = await client.ExecuteAsync(request);
+            HeaderParameter locationHeader = null;
+            response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=15");
+            response.Headers.Should().Contain((header) => string.Compare(header.Name, "Location", StringComparison.InvariantCultureIgnoreCase) == 0);
+            locationHeader = (from header in response.Headers
+                              where string.Compare(header.Name, "Location", StringComparison.InvariantCultureIgnoreCase) == 0
+                              select header).First();
+            locationHeader.Value.Should().Be("/redirect-countdown?n=14");
+            var content = response.Content;
+            content.Should().NotContain("Stopped redirection countdown!");
+        }
+
+        [Fact]
+        public async Task Can_RedirectBelowMaxRedirects_WithDefault() {
+            var options = NewOptions();
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/redirect-countdown") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("n", "20");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=1");
+            var content = response.Content;
+            content.Should().Contain("Stopped redirection countdown!");
+        }
+
+        [Fact]
+        public async Task Can_RedirectAtMaxRedirects() {
+            var options = NewOptions();
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/redirect-countdown") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("n", "50");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=1");
+            var content = response.Content;
+            content.Should().Contain("Stopped redirection countdown!");
+        }
+
+        [Fact]
+        public async Task Can_StopRedirectAboveMaxRedirectDefault() {
+            var options = NewOptions();
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/redirect-countdown") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("n", "51");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=2");
+            var content = response.Content;
+            content.Should().NotContain("Stopped redirection countdown!");
+        }
+
+        [Fact]
+        public async Task Can_StopRedirectAboveMaxRedirectSet() {
+            var options = NewOptions();
+            options.RedirectOptions.MaxRedirects = 5;
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest("/redirect-countdown") {
+                Method = Method.Get,
+            };
+            request.AddQueryParameter("n", "6");
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=2");
+            var content = response.Content;
+            content.Should().NotContain("Stopped redirection countdown!");
+        }
     }
 }

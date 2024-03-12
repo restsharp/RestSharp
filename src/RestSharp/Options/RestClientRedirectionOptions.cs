@@ -83,7 +83,7 @@ public class RestClientRedirectionOptions {
     /// <summary>
     /// The maximum number of redirects to follow.
     /// </summary>
-    public int MaxRedirects { get; set; } = 10;
+    public int MaxRedirects { get; set; } = 50;
 
     /// <summary>
     /// Set to true (default), to supply any requested fragment portion of the original URL to the destination URL.

@@ -109,6 +109,7 @@ public partial class RestClient {
 
             bool foundCookies = false;
             bool firstAttempt = true;
+            int redirectCount = 0;
 
             do {
                 using var requestContent = new RequestContent(this, request);
@@ -141,6 +142,11 @@ public partial class RestClient {
                 var location = responseMessage.Headers.Location;
 
                 if (location == null) {
+                    break;
+                }
+
+                redirectCount++;
+                if (redirectCount >= Options.RedirectOptions.MaxRedirects) {
                     break;
                 }
 

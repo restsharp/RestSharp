@@ -40,7 +40,20 @@ public sealed class HttpServer {
         _app.MapGet("headers", HeaderHandlers.HandleHeaders);
         _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
-        _app.MapGet("dump-headers", 
+        _app.MapGet("redirect-countdown",
+            (HttpContext ctx) => {
+                string redirectDestination = "/redirect-countdown";
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value);
+                int redirectsLeft = -1;
+                redirectsLeft = int.Parse(queryString.Get("n"));
+                if (redirectsLeft != -1
+                    && redirectsLeft > 1) {
+                    redirectDestination = $"{redirectDestination}?n={redirectsLeft - 1}";
+                    return Results.Redirect(redirectDestination, false, true);
+                }
+                return Results.Ok("Stopped redirection countdown!");
+            });
+        _app.MapGet("dump-headers",
             (HttpContext ctx) => {
                 var headers = ctx.Request.Headers;
                 StringBuilder sb = new StringBuilder();
