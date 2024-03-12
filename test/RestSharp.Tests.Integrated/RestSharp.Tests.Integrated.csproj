@@ -25,6 +25,9 @@
         <PackageReference Update="xunit.runner.visualstudio" Version="2.5.3" />
     </ItemGroup>
     <ItemGroup>
+        <None Update="Server\testCert.pfx">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
         <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>

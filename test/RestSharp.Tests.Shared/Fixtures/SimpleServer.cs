@@ -34,8 +34,11 @@ public sealed class SimpleServer : IDisposable {
     ) {
     TryAgain:
         var port = Random.Next(1000, 9999);
-        // Don't use Fiddler's default port:
-        if (port == 8888) {
+        // Don't use Fiddler's default port,
+        // or the TestServer insecure/secure ports:
+        if (port == 8888
+            || port == 5151
+            || port == 5152) {
             goto TryAgain;
         }
         return new SimpleServer(port, handler, authenticationSchemes);

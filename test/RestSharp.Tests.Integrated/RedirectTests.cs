@@ -132,9 +132,6 @@ public class RedirectTests {
     //Test: AllowRedirectMethodStatusCodeToAlterVerb = false
     //Test: Altered Redirect Status Codes list
     //Test: FollowRedirects = false
-    // Problem: Need secure test server:
-    //Test: FollowRedirectsToInsecure = true
-    //Test: FollowRedirectsToInsecure = false
 
 
     class Response {

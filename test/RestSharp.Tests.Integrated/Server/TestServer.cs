@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using RestSharp.Tests.Integrated.Server.Handlers;
 using RestSharp.Tests.Shared.Extensions;
 using System.Net;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Web;
 
@@ -17,6 +19,7 @@ public sealed class HttpServer {
     readonly WebApplication _app;
 
     const string Address = "http://localhost:5151";
+    const string SecureAddress = "https://localhost:5152";
 
     public const string ContentResource = "content";
     public const string TimeoutResource = "timeout";
@@ -26,8 +29,12 @@ public sealed class HttpServer {
 
         if (output != null) builder.Logging.AddXunit(output, LogLevel.Debug);
 
+        var currentAssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         builder.Services.AddControllers().AddApplicationPart(typeof(UploadController).Assembly);
-        builder.WebHost.UseUrls(Address);
+        builder.WebHost.UseUrls(Address, SecureAddress).UseKestrel(options => {
+            options.ListenAnyIP(5151, listenOptions => { return; });
+            options.ListenAnyIP(5152, listenOptions => listenOptions.UseHttps(new X509Certificate2(Path.Join(currentAssemblyPath, "Server\\testCert.pfx"), string.Empty)));
+        });
         _app = builder.Build();
 
         _app.MapControllers();
@@ -40,6 +47,14 @@ public sealed class HttpServer {
         _app.MapGet("headers", HeaderHandlers.HandleHeaders);
         _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
+        _app.MapGet("redirect-insecure", (HttpContext ctx) => {
+            string destination = $"{Address}/dump-headers";
+            return Results.Redirect(destination, false, true);
+        });
+        _app.MapGet("redirect-secure", (HttpContext ctx) => {
+            string destination = $"{SecureAddress}/dump-headers";
+            return Results.Redirect(destination, false, true);
+        });
         _app.MapGet("redirect-countdown",
             (HttpContext ctx) => {
                 string redirectDestination = "/redirect-countdown";
@@ -130,6 +145,7 @@ public sealed class HttpServer {
     }
 
     public Uri Url => new(Address);
+    public Uri SecureUrl => new(SecureAddress);
 
     public Task Start() => _app.StartAsync();
 

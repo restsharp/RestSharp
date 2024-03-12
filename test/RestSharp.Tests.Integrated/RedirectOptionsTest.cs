@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +12,11 @@ namespace RestSharp.Tests.Integrated {
     public class RedirectOptionsTest {
         readonly string _host;
         readonly Uri _baseUri;
+        readonly Uri _baseSecureUri;
 
         public RedirectOptionsTest(TestServerFixture fixture) {
             _baseUri = fixture.Server.Url;
+            _baseSecureUri = fixture.Server.SecureUrl;
             _host = _baseUri.Host;
         }
 
@@ -320,8 +324,8 @@ namespace RestSharp.Tests.Integrated {
             request.AddQueryParameter("n", "20");
 
             var response = await client.ExecuteAsync(request);
-            HeaderParameter locationHeader = null;
             response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=15");
+            HeaderParameter locationHeader = null;
             response.Headers.Should().Contain((header) => string.Compare(header.Name, "Location", StringComparison.InvariantCultureIgnoreCase) == 0);
             locationHeader = (from header in response.Headers
                               where string.Compare(header.Name, "Location", StringComparison.InvariantCultureIgnoreCase) == 0
@@ -402,6 +406,77 @@ namespace RestSharp.Tests.Integrated {
             response.ResponseUri.Should().Be($"{_baseUri}redirect-countdown?n=2");
             var content = response.Content;
             content.Should().NotContain("Stopped redirection countdown!");
+        }
+
+        // Custom logic that can either override or extends the .NET validation logic
+        private static bool RemoteCertificateValidationCallback(object sender, X509Certificate certificate,
+            X509Chain chain,
+            SslPolicyErrors sslPolicyErrors) {
+            return true;
+        }
+
+        [Fact]
+        public async Task Can_FailToRedirectToInsecureUrl() {
+            var options = NewOptions();
+            options.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest($"{_baseSecureUri}redirect-insecure") {
+                Method = Method.Get,
+            };
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().NotBe($"{_baseUri}dump-headers");
+            response.ResponseUri.Should().Be($"{_baseSecureUri}redirect-insecure");
+            HeaderParameter locationHeader = null;
+            response.Headers.Should().Contain((header) => string.Compare(header.Name, "Location", StringComparison.InvariantCultureIgnoreCase) == 0);
+            locationHeader = (from header in response.Headers
+                              where string.Compare(header.Name, "Location", StringComparison.InvariantCultureIgnoreCase) == 0
+                              select header).First();
+            locationHeader.Value.Should().Be($"{_baseUri}dump-headers");
+        }
+
+        [Fact]
+        public async Task Can_RedirectToInsecureUrlWithRedirectOption() {
+            var options = NewOptions();
+            options.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
+            options.RedirectOptions.FollowRedirectsToInsecure = true;
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest($"{_baseSecureUri}redirect-insecure") {
+                Method = Method.Get,
+            };
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseUri}dump-headers");
+            response.ResponseUri.Should().NotBe($"{_baseSecureUri}redirect-insecure");
+        }
+
+        [Fact]
+        public async Task Can_RedirectToSecureUrl() {
+            var options = NewOptions();
+            options.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
+            options.RedirectOptions.FollowRedirectsToInsecure = true;
+            var client = new RestClient(options);
+
+            // This request sets cookies and redirects to url param value
+            // if supplied, otherwise redirects to /get-cookies
+            var request = new RestRequest($"{_baseUri}redirect-secure") {
+                Method = Method.Get,
+            };
+
+            var response = await client.ExecuteAsync(request);
+            response.ResponseUri.Should().Be($"{_baseSecureUri}dump-headers");
+            response.ResponseUri.Should().NotBe($"{_baseUri}redirect-insecure");
+            var content = response.Content;
+            content.Should().Contain("'Accept':");
+            content.Should().Contain("'User-Agent':");
+            content.Should().Contain("'Host':");
+            content.Should().Contain("'Accept-Encoding':");
         }
     }
 }
