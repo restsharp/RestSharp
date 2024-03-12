@@ -110,7 +110,7 @@ public class RedirectTests {
         request.AddQueryParameter("url", "/dump-headers");
 
         var response = await _client.ExecuteAsync(request);
-        response.ResponseUri.Should().Be($"{_client.Options.BaseUrl}dump-headers");
+        response.ResponseUri.Should().Be($"{_client.Options.BaseUrl}dump-headers?url=%2fdump-headers");
         var content = response.Content;
         content.Should().Contain("'Accept':");
         content.Should().Contain($"'Host': {_client.Options.BaseHost}");
@@ -128,8 +128,6 @@ public class RedirectTests {
     //Test: ForwardBody = true (default, might not need test)
     //Test: ForwardBody = false
     //Test: ForceForwardBody = false (default, might not need test)
-    //Test: ForwardQuery = true (default, might not need test)
-    //Test: ForwardQuery = false
     //Test: MaxRedirects
     //Test: ForwardFragment = true (default)
     //Test: ForwardFragment = false

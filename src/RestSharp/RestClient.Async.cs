@@ -148,6 +148,16 @@ public partial class RestClient {
                     location = new Uri(url, location);
                 }
 
+                if (Options.RedirectOptions.ForwardQuery) {
+                    string oringalQuery = originalUrl.Query;
+                    if (!string.IsNullOrEmpty(oringalQuery)) {
+                        if (oringalQuery[0] == '?') {
+                            oringalQuery = oringalQuery.Substring(1, oringalQuery.Length - 1);
+                        }
+                        location = location.AddQueryString(oringalQuery);
+                    }
+                }
+
                 // Mirror HttpClient redirection behavior as of 07/25/2023:
                 // Per https://tools.ietf.org/html/rfc7231#section-7.1.2, a redirect location without a
                 // fragment should inherit the fragment from the original URI.
