@@ -36,6 +36,7 @@ public static class KnownHeaders {
     public const string Cookie             = "Cookie";
     public const string SetCookie          = "Set-Cookie";
     public const string UserAgent          = "User-Agent";
+    public const string TransferEncoding   = "Transfer-Encoding";
 
     internal static readonly string[] ContentHeaders = {
         Allow, Expires, ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
