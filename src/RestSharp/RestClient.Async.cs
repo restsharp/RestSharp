@@ -1,11 +1,11 @@
 ﻿//  Copyright (c) .NET Foundation and Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -70,6 +70,16 @@ public partial class RestClient {
         bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
     }
 
+    [Flags]
+    private enum ExecutionState {
+        None = 0x0,
+        FoundCookie = 0x1,
+        FirstAttempt = 0x2,
+        DoNotSendBody = 0x4,
+        VerbAltered = 0x8,
+        VerbAlterationPrevented = 0x10,
+    };
+
     async Task<HttpResponse> ExecuteRequestAsync(RestRequest request, CancellationToken cancellationToken) {
         Ensure.NotNull(request, nameof(request));
 
@@ -107,23 +117,26 @@ public partial class RestClient {
                 .AddCookieHeaders(url, cookieContainer)
                 .AddCookieHeaders(url, Options.CookieContainer);
 
-            bool foundCookies = false;
-            bool firstAttempt = true;
+            ExecutionState state = ExecutionState.FirstAttempt;
             int redirectCount = 0;
 
             do {
+                // TODO: Is there a more effecient way to do this other than rebuilding the RequestContent
+                // every time through this loop?
                 using var requestContent = new RequestContent(this, request);
-                using var content = requestContent.BuildContent();
+                using var content = requestContent.BuildContent(omitBody: state.HasFlag(ExecutionState.DoNotSendBody));
 
                 // If we found coookies during a redirect,
                 // we need to update the Cookie headers:
-                if (foundCookies) {
+                if (state.HasFlag(ExecutionState.FoundCookie)) {
                     headers.AddCookieHeaders(url, cookieContainer);
+                    // Clear the state:
+                    state &= ~ExecutionState.FoundCookie;
                 }
                 using var message = PrepareRequestMessage(httpMethod, url, content, headers);
 
-                if (firstAttempt) {
-                    firstAttempt = false;
+                if (state.HasFlag(ExecutionState.FirstAttempt)) {
+                    state &= ~ExecutionState.FirstAttempt;
                     try {
                         if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
                         await OnBeforeRequest(message).ConfigureAwait(false);
@@ -194,6 +207,10 @@ public partial class RestClient {
                 if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod
                     && Options.RedirectOptions.AllowRedirectMethodStatusCodeToAlterVerb) {
                     httpMethod = HttpMethod.Get;
+                    state |= ExecutionState.VerbAltered;
+                }
+                else if (responseMessage.StatusCode == HttpStatusCode.RedirectMethod) {
+                    state |= ExecutionState.VerbAlterationPrevented;
                 }
 
                 // Based on Wikipedia https://en.wikipedia.org/wiki/HTTP_302:
@@ -207,17 +224,20 @@ public partial class RestClient {
 
                 // NOTE: Given the above, it is not surprising that HttpClient when AllowRedirect = true
                 // solves this problem by a helper method:
-                if (RedirectRequestRequiresForceGet(responseMessage.StatusCode, httpMethod)) {
+                if (!state.HasFlag(ExecutionState.VerbAlterationPrevented)
+                    && (
+                       state.HasFlag(ExecutionState.VerbAltered)
+                       || (Options.RedirectOptions.AllowForcedRedirectVerbChange
+                           && RedirectRequestRequiresForceGet(responseMessage.StatusCode, httpMethod)))) {
                     httpMethod = HttpMethod.Get;
                     if (!Options.RedirectOptions.ForceForwardBody) {
                         // HttpClient RedirectHandler sets request.Content to null here:
-                        // TODO: I don't think is quite correct yet..
-                        // We don't necessarily want to modify the original request, but..
-                        // is there a way to clone it properly and then clear out what we don't
-                        // care about?
-                        message.Content = null;
-                        // HttpClient Redirect handler also foribly removes
+                        state |= ExecutionState.DoNotSendBody;
+                        // HttpClient Redirect handler also forcibly removes
                         // a Transfer-Encoding of chunked in this case.
+                        // This makes sense, since without a body, there isn't any chunked (or otherwise) content
+                        // to transmit.
+                        // NOTE: Although, I'm not sure why it only cares about chunked...
                         Parameter? transferEncoding = request.Parameters.TryFind(KnownHeaders.TransferEncoding);
                         if (transferEncoding != null
                             && transferEncoding.Type == ParameterType.HttpHeader
@@ -233,7 +253,7 @@ public partial class RestClient {
                 // cookies, the CookieContainer will be updated:
                 if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader1)) {
                     if (Options.RedirectOptions.ForwardCookies) {
-                        foundCookies = true;
+                        state |= ExecutionState.FoundCookie;
                     }
                     // ReSharper disable once PossibleMultipleEnumeration
                     cookieContainer.AddCookies(url, cookiesHeader1);
@@ -264,7 +284,7 @@ public partial class RestClient {
                                 continue;
                             }
                             // Otherwise: schedule the items for removal:
-                            headersToRemove.Add(param.Name);
+                            headersToRemove.Add(param.Name!);
                         }
                     }
                     if (headersToRemove.Count > 0) {
@@ -357,8 +377,7 @@ public partial class RestClient {
     /// </summary>
     /// <param name="statusCode"></param>
     /// <param name="httpMethod"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <returns>Returns true if statusCode requires a verb change to Get.</returns>
     private bool RedirectRequestRequiresForceGet(HttpStatusCode statusCode, HttpMethod httpMethod) {
         return statusCode switch {
             HttpStatusCode.Moved or HttpStatusCode.Found or HttpStatusCode.MultipleChoices

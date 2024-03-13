@@ -14,8 +14,8 @@
 //
 
 using System.Net;
-using RestSharp.Extensions;
 using RestSharp.Tests.Integrated.Server;
+using RestSharp.Tests.Shared.Extensions;
 
 namespace RestSharp.Tests.Integrated;
 
@@ -48,10 +48,22 @@ public class RedirectTests {
         var request = new RestRequest("get-cookies-redirect") {
             CookieContainer = new CookieContainer(),
         };
+        request.AddQueryParameter("url", "set-cookies");
         request.CookieContainer.Add(new Cookie("cookie", "value", null, _host));
         request.CookieContainer.Add(new Cookie("cookie2", "value2", null, _host));
         var response = await _client.ExecuteAsync(request);
-        response.Content.Should().Be("[\"redirectCookie=value1\",\"cookie=value\",\"cookie2=value2\"]");
+        response.Content.Should().Contain("success");
+        request.CookieContainer!.Count.Should().Be(9);
+        request.CookieContainer!.GetAllCookies().Should()
+                .ContainCookieWithNameAndValue("cookie", "value")
+                .And.ContainCookieWithNameAndValue("cookie2", "value2")
+                .And.ContainCookieWithNameAndValue("redirectCookie", "value1")
+                .And.ContainCookieWithNameAndValue("cookie1", "value1")
+                .And.ContainCookieWithNameAndValue("cookie2", "value2")
+                .And.ContainCookieWithNameAndValue("cookie3", "value3")
+                .And.ContainCookieWithNameAndValue("cookie4", "value4")
+                .And.ContainCookieWithNameAndValue("cookie5", "value5")
+                .And.ContainCookieWithNameAndValue("cookie6", "value6");
     }
 
     [Fact]
@@ -61,10 +73,10 @@ public class RedirectTests {
         };
 
         var response = await _client.ExecuteAsync(request);
+
         // Verify the cookie exists from the POST:
-        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
-        response.Cookies[0].Name.Should().Be("redirectCookie");
-        response.Cookies[0].Value.Should().Be("value1");
+        response.Cookies!.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies.Should().ContainCookieWithNameAndValue("redirectCookie", "value1");
         // Make sure the redirected location spits out the correct content:
         response.Content.Should().Be("[\"redirectCookie=value1\"]", "was successfully redirected to get-cookies");
     }
@@ -76,10 +88,10 @@ public class RedirectTests {
         };
 
         var response = await _client.ExecuteAsync(request);
+
         // Verify the cookie exists from the POST:
-        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
-        response.Cookies[0].Name.Should().Be("redirectCookie");
-        response.Cookies[0].Value.Should().Be("seeOtherValue1");
+        response.Cookies!.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies.Should().ContainCookieWithNameAndValue("redirectCookie", "seeOtherValue1");
         // Make sure the redirected location spits out the correct content:
         response.Content.Should().Be("[\"redirectCookie=seeOtherValue1\"]", "was successfully redirected to get-cookies");
     }
@@ -91,12 +103,11 @@ public class RedirectTests {
         };
 
         var response = await _client.ExecuteAsync(request);
+
         // Verify the cookie exists from the PUT:
-        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
-        response.Cookies[0].Name.Should().Be("redirectCookie");
-        response.Cookies[0].Value.Should().Be("putCookieValue1");
-        // However, the redirection location should have been a 404:
-        // Make sure the redirected location spits out the correct content from PUT /get-cookies:
+        response.Cookies!.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies.Should().ContainCookieWithNameAndValue("redirectCookie", "putCookieValue1");
+        // However, the redirection status code should be a 405 (Method Not Allowed):
         response.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
     }
 
@@ -112,26 +123,23 @@ public class RedirectTests {
         var response = await _client.ExecuteAsync(request);
         response.ResponseUri.Should().Be($"{_client.Options.BaseUrl}dump-headers?url=%2fdump-headers");
         var content = response.Content;
-        content.Should().Contain("'Accept':");
-        content.Should().Contain($"'Host': {_client.Options.BaseHost}");
-        content.Should().Contain("'User-Agent':");
-        content.Should().Contain("'Accept-Encoding':");
-        content.Should().Contain("'Cookie':");
+        content.Should()
+            .Contain("'Accept':")
+            .And.Contain($"'Host': {_client.Options.BaseHost}")
+            .And.Contain("'User-Agent':")
+            .And.Contain("'Accept-Encoding':")
+            .And.Contain("'Cookie':");
 
         // Verify the cookie exists from the redirected get:
-        response.Cookies.Count.Should().BeGreaterThan(0).And.Be(1);
-        response.Cookies[0].Name.Should().Be("redirectCookie");
-        response.Cookies[0].Value.Should().Be("value1");
+        response.Cookies!.Count.Should().BeGreaterThan(0).And.Be(1);
+        response.Cookies.Should().ContainCookieWithNameAndValue("redirectCookie", "value1");
     }
 
     // Needed tests:
     //Test: ForwardBody = true (default, might not need test)
     //Test: ForwardBody = false
     //Test: ForceForwardBody = false (default, might not need test)
-    //Test: AllowRedirectMethodStatusCodeToAlterVerb = true (default, might not need test)
-    //Test: AllowRedirectMethodStatusCodeToAlterVerb = false
     //Test: Altered Redirect Status Codes list
-    //Test: FollowRedirects = false
 
 
     class Response {

@@ -3,6 +3,6 @@
         <IsTestProject>false</IsTestProject>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Update="xunit" Version="2.6.0" />
+      <PackageReference Update="xunit" Version="2.7.0" />
     </ItemGroup>
 </Project>

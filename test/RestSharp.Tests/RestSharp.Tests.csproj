@@ -36,8 +36,8 @@
     <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageReference Update="xunit" Version="2.6.0" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.5.3" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Update="xunit" Version="2.7.0" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.5.7" />
   </ItemGroup>
 </Project>

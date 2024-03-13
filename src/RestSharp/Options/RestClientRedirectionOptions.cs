@@ -54,7 +54,7 @@ public class RestClientRedirectionOptions {
     /// redirected URL, unless the force verb to GET behavior is triggered.
     /// <see cref="ForceForwardBody"/>
     /// </summary>
-    public bool ForwardBody { get; set; } = true;
+    public bool ForwardBody { get; set; } = false;
 
     /// <summary>
     /// Set to true (default is false) to force forwarding the body of the
@@ -100,6 +100,24 @@ public class RestClientRedirectionOptions {
     /// was returned. Setting this to false will disallow the altering of the verb.
     /// </summary>
     public bool AllowRedirectMethodStatusCodeToAlterVerb { get; set; } = true;
+
+    /// <summary>
+    /// Set to true (default), to allow the backward compatibility behavior of
+    /// changing the verb to GET with non 303 redirection status codes.
+    /// </summary>
+    /// <remarks>
+    /// NOTE: Even though the below text only references 302, this also allows some other scenarios.
+    /// See <see cref="RestClient.RedirectRequestRequiresForceGet(HttpStatusCode, HttpMethod)"/> for the specifics.
+    /// Based on Wikipedia https://en.wikipedia.org/wiki/HTTP_302:
+    ///  Many web browsers implemented this code in a manner that violated this standard, changing
+    ///  the request type of the new request to GET, regardless of the type employed in the original request
+    ///  (e.g. POST). For this reason, HTTP/1.1 (RFC 2616) added the new status codes 303 and 307 to disambiguate
+    ///  between the two behaviours, with 303 mandating the change of request type to GET, and 307 preserving the
+    ///  request type as originally sent. Despite the greater clarity provided by this disambiguation, the 302 code
+    ///  is still employed in web frameworks to preserve compatibility with browsers that do not implement the HTTP/1.1
+    ///  specification.
+    /// </remarks>
+    public bool AllowForcedRedirectVerbChange { get; set; } = true;
 
     /// <summary>
     /// HttpStatusCodes that trigger redirect processing. Defaults to MovedPermanently (301),

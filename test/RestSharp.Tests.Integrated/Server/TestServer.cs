@@ -7,6 +7,7 @@ using RestSharp.Tests.Integrated.Server.Handlers;
 using RestSharp.Tests.Shared.Extensions;
 using System.Net;
 using System.Reflection;
+using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Web;
@@ -33,7 +34,18 @@ public sealed class HttpServer {
         builder.Services.AddControllers().AddApplicationPart(typeof(UploadController).Assembly);
         builder.WebHost.UseUrls(Address, SecureAddress).UseKestrel(options => {
             options.ListenAnyIP(5151, listenOptions => { return; });
-            options.ListenAnyIP(5152, listenOptions => listenOptions.UseHttps(new X509Certificate2(Path.Join(currentAssemblyPath, "Server\\testCert.pfx"), string.Empty)));
+            // Yes, this is lame, but dotnet dev-certs was giving me grief trying to export
+            // the public key using an empty password... :(
+            var secureString = new SecureString();
+            secureString.AppendChar('b');
+            secureString.AppendChar('l');
+            secureString.AppendChar('a');
+            secureString.AppendChar('h');
+            secureString.MakeReadOnly();
+            options.ListenAnyIP(5152,
+                listenOptions => listenOptions.UseHttps(
+                    new X509Certificate2(Path.Join(currentAssemblyPath, "Server\\testCert.pfx"),
+                    secureString)));
         });
         _app = builder.Build();
 
@@ -47,6 +59,41 @@ public sealed class HttpServer {
         _app.MapGet("headers", HeaderHandlers.HandleHeaders);
         _app.MapGet("request-echo", async context => await context.Request.BodyReader.AsStream().CopyToAsync(context.Response.BodyWriter.AsStream()));
         _app.MapDelete("delete", () => new TestResponse { Message = "Works!" });
+        _app.MapPost("redirect-forcechangeverb",
+            (HttpContext ctx) => {
+                string redirectDestination = "/dump-headers";
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value ?? string.Empty);
+                var urlParameter = queryString.Get("url");
+                if (!string.IsNullOrEmpty(urlParameter)) {
+                    redirectDestination = urlParameter;
+                }
+                // This forces the verb to change on the redirect to GET, unless the client has set the correct
+                // RedirectOption setting. (302)
+                return new RedirectWithStatusCodeResult((int)HttpStatusCode.Redirect, redirectDestination);
+            });
+        _app.MapPost("redirect-changeverb",
+            (HttpContext ctx) => {
+                string redirectDestination = "/dump-headers";
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value ?? string.Empty);
+                var urlParameter = queryString.Get("url");
+                if (!string.IsNullOrEmpty(urlParameter)) {
+                    redirectDestination = urlParameter;
+                }
+                // This allows the method to change to GET on redirect on purpose, unless the client has set the correct
+                // RedirectOption setting. (303)
+                return new RedirectWithStatusCodeResult((int)HttpStatusCode.RedirectMethod, redirectDestination);
+            });
+        _app.MapPost("redirect-keepverb",
+            (HttpContext ctx) => {
+                string redirectDestination = "/dump-headers";
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value ?? string.Empty);
+                var urlParameter = queryString.Get("url");
+                if (!string.IsNullOrEmpty(urlParameter)) {
+                    redirectDestination = urlParameter;
+                }
+                // This prevents the method to change on redirect. (307)
+                return new RedirectWithStatusCodeResult((int)HttpStatusCode.RedirectKeepVerb, redirectDestination);
+            });
         _app.MapGet("redirect-insecure", (HttpContext ctx) => {
             string destination = $"{Address}/dump-headers";
             return Results.Redirect(destination, false, true);
@@ -58,7 +105,7 @@ public sealed class HttpServer {
         _app.MapGet("redirect-countdown",
             (HttpContext ctx) => {
                 string redirectDestination = "/redirect-countdown";
-                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value);
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value ?? string.Empty);
                 int redirectsLeft = -1;
                 redirectsLeft = int.Parse(queryString.Get("n"));
                 if (redirectsLeft != -1
@@ -68,6 +115,7 @@ public sealed class HttpServer {
                 }
                 return Results.Ok("Stopped redirection countdown!");
             });
+
         _app.MapGet("dump-headers",
             (HttpContext ctx) => {
                 var headers = ctx.Request.Headers;
@@ -77,6 +125,11 @@ public sealed class HttpServer {
                 }
                 return new TestResponse { Message = sb.ToString() };
             });
+
+        _app.MapGet("dump-request", DumpRequest);
+        _app.MapPut("dump-request", DumpRequest);
+        _app.MapPost("dump-request", DumpRequest);
+        _app.MapDelete("dump-request", DumpRequest);
 
         // Cookies
         _app.MapGet("get-cookies", CookieHandlers.HandleCookies);
@@ -92,7 +145,7 @@ public sealed class HttpServer {
             (HttpContext ctx) => {
                 ctx.Response.Cookies.Append("redirectCookie", "value1");
                 string redirectDestination = "/get-cookies";
-                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value);
+                var queryString = HttpUtility.ParseQueryString(ctx.Request.QueryString.Value ?? string.Empty);
                 var urlParameter = queryString.Get("url");
                 if (!string.IsNullOrEmpty(urlParameter)) {
                     redirectDestination = urlParameter;
@@ -142,6 +195,15 @@ public sealed class HttpServer {
         );
 
         _app.MapPost("/post/data", FormRequestHandler.HandleForm);
+
+        // Dump the request verb and body into the response.
+        TestResponse DumpRequest(HttpContext ctx) {
+            var method = ctx.Request.Method;
+            var task = ctx.Request.Body.StreamToStringAsync();
+            task.Wait();
+            var body = task.Result;
+            return new TestResponse { Message = $"Method: {method}\r\nBody: {body}" };
+        }
     }
 
     public Uri Url => new(Address);

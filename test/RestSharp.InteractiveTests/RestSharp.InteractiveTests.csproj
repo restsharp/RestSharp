@@ -14,6 +14,6 @@
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="xunit" Version="2.6.0" />
+    <PackageReference Update="xunit" Version="2.7.0" />
   </ItemGroup>
 </Project>
