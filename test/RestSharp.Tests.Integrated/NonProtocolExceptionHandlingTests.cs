@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Sockets;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
@@ -77,9 +78,9 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
             Method        = Method.Get
         };
         var response = await client.ExecuteAsync<StupidClass>(request);
-
         response.ErrorException.Should().BeOfType<HttpRequestException>();
-        response.ErrorException!.Message.Should().Contain("known");
+        response.ErrorException!.InnerException.Should().BeOfType<SocketException>();
+        (response.ErrorException!.InnerException as SocketException)!.SocketErrorCode.Should().Be(SocketError.HostNotFound);
         response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 }
