@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+      <TargetFrameworks>net472;net6.0;net7.0;net8.0</TargetFrameworks>
+    </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.CsvHelper\RestSharp.Serializers.CsvHelper.csproj"/>
         <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj"/>

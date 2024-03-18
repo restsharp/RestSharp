@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;net6.0;net7.0;net8.0</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.20.2" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj" />

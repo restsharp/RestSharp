@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsTestProject>false</IsTestProject>
+        <TargetFrameworks>net472;net6.0;net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 </Project>
