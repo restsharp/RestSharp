@@ -446,7 +446,11 @@ public partial class ObjectParameterTests {
             .ContainSingle()
             .Which
             .Should()
+#if NET472
+            .BeEquivalentTo(new GetOrPostParameter("CustomName", "Hello world,Guid[]-matrix"));
+#else
             .BeEquivalentTo(new GetOrPostParameter("CustomName", "Hello world,Guid[] Array"));
+#endif
     }
 
     [Fact]
