@@ -1,12 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <TargetFrameworks>netstandard2.0;net471;net6.0;net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="7.0.3" />
-    </ItemGroup>
-    <ItemGroup>
         <None Remove="RestSharp.csproj.DotSettings" />
+        <PackageReference Include="System.Text.Json" Version="8.0.3" />
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
         <Reference Include="System.Net.Http" />
