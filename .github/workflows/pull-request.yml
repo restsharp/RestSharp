@@ -4,6 +4,7 @@ on: [pull_request]
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   test-windows:
@@ -18,7 +19,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0'
-          dotnet-quality: 'preview'
       -
         name: Run tests
         run: dotnet test
@@ -35,7 +35,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0'
-          dotnet-quality: 'preview'
       -  
         name: Run tests
         run: dotnet test
