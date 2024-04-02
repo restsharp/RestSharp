@@ -37,10 +37,17 @@ static class UriExtensions {
     public static Uri AddQueryString(this Uri uri, string? query) {
         if (query == null) return uri;
 
-        var absoluteUri       = uri.AbsoluteUri;
-        var separator = absoluteUri.Contains('?') ? "&" : "?";
-
-        return new Uri($"{absoluteUri}{separator}{query}");
+        var absoluteUri = uri.AbsoluteUri;
+        var fragment = string.Empty;
+        if (!string.IsNullOrEmpty(uri.Fragment)) {
+            int fragmentStartIndex = absoluteUri.LastIndexOf(uri.Fragment);
+            if (fragmentStartIndex != -1) {
+                fragment = absoluteUri.Substring(fragmentStartIndex, absoluteUri.Length - fragmentStartIndex);
+                absoluteUri = absoluteUri.Substring(0, fragmentStartIndex);
+            }
+        }
+        var separator = string.IsNullOrEmpty(uri.Query) ? "?" : "&"; //absoluteUri.Contains('?') ? "&" : "?";
+        return new Uri($"{absoluteUri}{separator}{query}{fragment}");
     }
 
     public static UrlSegmentParamsValues GetUrlSegmentParamsValues(

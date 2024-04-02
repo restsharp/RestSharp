@@ -114,6 +114,7 @@ public record FileParameter {
 [PublicAPI]
 public class FileParameterOptions {
     [Obsolete("Use DisableFilenameStar instead")]
+    [CLSCompliant(false)]
     public bool DisableFileNameStar {
         get => DisableFilenameStar;
         set => DisableFilenameStar = value;

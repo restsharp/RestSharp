@@ -32,7 +32,15 @@ public sealed class SimpleServer : IDisposable {
         Action<HttpListenerContext> handler               = null,
         AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
+    TryAgain:
         var port = Random.Next(1000, 9999);
+        // Don't use Fiddler's default port,
+        // or the TestServer insecure/secure ports:
+        if (port == 8888
+            || port == 5151
+            || port == 5152) {
+            goto TryAgain;
+        }
         return new SimpleServer(port, handler, authenticationSchemes);
     }
 

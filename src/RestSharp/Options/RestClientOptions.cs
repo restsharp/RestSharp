@@ -50,6 +50,12 @@ public class RestClientOptions {
     /// <summary>
     /// Custom configuration for the underlying <seealso cref="HttpMessageHandler"/>
     /// </summary>
+    /// <remarks>
+    /// With the addition of all redirection processing being implemented directly by <see cref="RestClient"/>
+    /// please do not alter the <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect"/> from its default supplied by RestClient.
+    /// If you set <see cref="System.Net.Http.HttpClientHandler.AllowAutoRedirect"/> to true, then redirection cookie
+    /// processing improvements in RestClient will be skipped since <see cref="System.Net.Http.HttpClient"/> will hide the details from us.
+    /// </remarks>
     public Func<HttpMessageHandler, HttpMessageHandler>? ConfigureMessageHandler { get; set; }
 
     /// <summary>
@@ -60,7 +66,7 @@ public class RestClientOptions {
             ? ResponseStatus.Completed
             : ResponseStatus.Error;
 
-    /// <summary>
+    /// <summary>s
     /// Authenticator that will be used to populate request with necessary authentication data
     /// </summary>
     public IAuthenticator? Authenticator { get; set; }
@@ -86,7 +92,7 @@ public class RestClientOptions {
     public bool UseDefaultCredentials { get; set; }
 
     /// <summary>
-    /// Set to true if you need the Content-Type not to have the charset 
+    /// Set to true if you need the Content-Type not to have the charset
     /// </summary>
     public bool DisableCharset { get; set; }
 
@@ -132,9 +138,24 @@ public class RestClientOptions {
     public CacheControlHeaderValue? CachePolicy { get; set; }
 
     /// <summary>
+    /// Policy settings for redirect processing
+    /// </summary>
+    public RestClientRedirectionOptions RedirectOptions { get; set; } = new RestClientRedirectionOptions();
+
+    /// <summary>
     /// Instruct the client to follow redirects. Default is true.
     /// </summary>
-    public bool FollowRedirects { get; set; } = true;
+    /// <remarks>
+    /// Note: This now delegates the property implementation to <see cref="RestClientRedirectionOptions"/>.
+    /// </remarks>
+    public bool FollowRedirects {
+        get {
+            return RedirectOptions.FollowRedirects;
+        }
+        set {
+            RedirectOptions.FollowRedirects = value;
+        }
+    }
 
     /// <summary>
     /// Gets or sets a value that indicates if the <see langword="Expect" /> header for an HTTP request contains Continue.
