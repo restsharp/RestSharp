@@ -22,30 +22,22 @@ using static RestSharp.KnownHeaders;
 
 namespace RestSharp;
 
-class RequestContent : IDisposable {
-    readonly RestClient           _client;
-    readonly RestRequest          _request;
-    readonly List<Stream>         _streams = new();
-    readonly ParametersCollection _parameters;
+class RequestContent(IRestClient client, RestRequest request) : IDisposable {
+    readonly List<Stream>         _streams    = new();
+    readonly ParametersCollection _parameters = new RequestParameters(request.Parameters.Union(client.DefaultParameters));
 
     HttpContent? Content { get; set; }
 
-    public RequestContent(RestClient client, RestRequest request) {
-        _client     = client;
-        _request    = request;
-        _parameters = new RequestParameters(_request.Parameters.Union(_client.DefaultParameters));
-    }
-
     public HttpContent BuildContent() {
-        var postParameters       = _parameters.GetContentParameters(_request.Method).ToArray();
+        var postParameters       = _parameters.GetContentParameters(request.Method).ToArray();
         var postParametersExists = postParameters.Length > 0;
-        var bodyParametersExists = _request.TryGetBodyParameter(out var bodyParameter);
-        var filesExists          = _request.Files.Any();
+        var bodyParametersExists = request.TryGetBodyParameter(out var bodyParameter);
+        var filesExists          = request.Files.Any();
 
-        if (_request.HasFiles()                      ||
+        if (request.HasFiles() ||
             BodyShouldBeMultipartForm(bodyParameter) ||
-            filesExists                              ||
-            _request.AlwaysMultipartFormData) {
+            filesExists ||
+            request.AlwaysMultipartFormData) {
             Content = CreateMultipartFormDataContent();
         }
 
@@ -62,15 +54,15 @@ class RequestContent : IDisposable {
 
     void AddFiles() {
         // File uploading without multipart/form-data
-        if (_request is { AlwaysSingleFileAsContent: true, Files.Count: 1 }) {
-            var fileParameter = _request.Files.First();
+        if (request is { AlwaysSingleFileAsContent: true, Files.Count: 1 }) {
+            var fileParameter = request.Files.First();
             Content?.Dispose();
             Content = ToStreamContent(fileParameter);
             return;
         }
 
         var mpContent = Content as MultipartFormDataContent;
-        foreach (var fileParameter in _request.Files) mpContent!.Add(ToStreamContent(fileParameter));
+        foreach (var fileParameter in request.Files) mpContent!.Add(ToStreamContent(fileParameter));
     }
 
     StreamContent ToStreamContent(FileParameter fileParameter) {
@@ -91,7 +83,7 @@ class RequestContent : IDisposable {
 
     HttpContent Serialize(BodyParameter body) {
         return body.DataFormat switch {
-            DataFormat.None   => new StringContent(body.Value!.ToString()!, _client.Options.Encoding, body.ContentType.Value),
+            DataFormat.None   => new StringContent(body.Value!.ToString(), client.Options.Encoding, body.ContentType.Value),
             DataFormat.Binary => GetBinary(),
             _                 => GetSerialized()
         };
@@ -109,14 +101,14 @@ class RequestContent : IDisposable {
         }
 
         HttpContent GetSerialized() {
-            var serializer = _client.Serializers.GetSerializer(body.DataFormat);
+            var serializer = client.Serializers.GetSerializer(body.DataFormat);
             var content    = serializer.Serialize(body);
 
             if (content == null) throw new SerializationException("Request body serialized to null");
 
             var contentType = body.ContentType.Or(serializer.Serializer.ContentType);
 
-            return new StringContent(content, _client.Options.Encoding, contentType.Value);
+            return new StringContent(content, client.Options.Encoding, contentType.Value);
         }
     }
 
@@ -127,13 +119,13 @@ class RequestContent : IDisposable {
         return bodyParameter.Name.IsNotEmpty() && bodyParameter.Name != bodyContentType;
     }
 
-    string GetOrSetFormBoundary() => _request.FormBoundary ?? (_request.FormBoundary = Guid.NewGuid().ToString());
+    string GetOrSetFormBoundary() => request.FormBoundary ?? (request.FormBoundary = Guid.NewGuid().ToString());
 
     MultipartFormDataContent CreateMultipartFormDataContent() {
         var boundary    = GetOrSetFormBoundary();
         var mpContent   = new MultipartFormDataContent(boundary);
         var contentType = new MediaTypeHeaderValue("multipart/form-data");
-        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, _request.MultipartFormQuoteBoundary)));
+        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, request.MultipartFormQuoteBoundary)));
         mpContent.Headers.ContentType = contentType;
         return mpContent;
     }
@@ -142,7 +134,7 @@ class RequestContent : IDisposable {
         var bodyContent = Serialize(bodyParameter);
 
         // we need to send the body
-        if (hasPostParameters || _request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter) || _request.AlwaysMultipartFormData) {
+        if (hasPostParameters || request.HasFiles() || BodyShouldBeMultipartForm(bodyParameter) || request.AlwaysMultipartFormData) {
             // here we must use multipart form data
             var mpContent = Content as MultipartFormDataContent ?? CreateMultipartFormDataContent();
             var ct        = bodyContent.Headers.ContentType?.MediaType;
@@ -159,7 +151,7 @@ class RequestContent : IDisposable {
             Content = bodyContent;
         }
 
-        if (_client.Options.DisableCharset) {
+        if (client.Options.DisableCharset) {
             Content.Headers.ContentType!.CharSet = "";
         }
     }
@@ -173,16 +165,16 @@ class RequestContent : IDisposable {
                 var parameterName = postParameter.Name!;
 
                 mpContent.Add(
-                    new StringContent(postParameter.Value?.ToString() ?? string.Empty, _client.Options.Encoding, postParameter.ContentType.Value),
-                    _request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
+                    new StringContent(postParameter.Value?.ToString() ?? string.Empty, client.Options.Encoding, postParameter.ContentType.Value),
+                    request.MultipartFormQuoteParameters ? $"\"{parameterName}\"" : parameterName
                 );
             }
         }
         else {
-            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()!.UrlEncode() ?? string.Empty}");
-            var encodedContent = new StringContent(encodedItems.JoinToString("&"), _client.Options.Encoding, ContentType.FormUrlEncoded.Value);
+            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString().UrlEncode() ?? string.Empty}");
+            var encodedContent = new StringContent(encodedItems.JoinToString("&"), client.Options.Encoding, ContentType.FormUrlEncoded.Value);
 
-            if (_client.Options.DisableCharset) {
+            if (client.Options.DisableCharset) {
                 encodedContent.Headers.ContentType!.CharSet = "";
             }
 
@@ -204,6 +196,7 @@ class RequestContent : IDisposable {
         }
 
         contentHeaders.ForEach(AddHeader);
+        return;
 
         void AddHeader(HeaderParameter parameter) {
             var parameterStringValue = parameter.Value!.ToString();
@@ -218,7 +211,7 @@ class RequestContent : IDisposable {
 
         string GetContentTypeHeader(string contentType)
             => Content is MultipartFormDataContent
-                ? $"{contentType}; boundary={GetBoundary(GetOrSetFormBoundary(), _request.MultipartFormQuoteBoundary)}"
+                ? $"{contentType}; boundary={GetBoundary(GetOrSetFormBoundary(), request.MultipartFormQuoteBoundary)}"
                 : contentType;
     }
 

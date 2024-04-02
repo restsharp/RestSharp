@@ -26,7 +26,7 @@ namespace RestSharp;
 /// </summary>
 /// <typeparam name="T">Type of data to deserialize to</typeparam>
 [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
-public class RestResponse<T> : RestResponse {
+public class RestResponse<T>(RestRequest request) : RestResponse(request) {
     /// <summary>
     /// Deserialized entity data
     /// </summary>
@@ -52,15 +52,13 @@ public class RestResponse<T> : RestResponse {
             StatusDescription   = response.StatusDescription,
             RootElement         = response.RootElement
         };
-
-    public RestResponse(RestRequest request) : base(request) { }
 }
 
 /// <summary>
 /// Container for data sent back from API
 /// </summary>
 [DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
-public class RestResponse : RestResponseBase {
+public class RestResponse(RestRequest request) : RestResponseBase(request) {
     internal static async Task<RestResponse> FromHttpResponse(
         HttpResponseMessage     httpResponse,
         RestRequest             request,
@@ -103,9 +101,7 @@ public class RestResponse : RestResponseBase {
         }
     }
 
-    public RestResponse(RestRequest request) : base(request) { }
-
-    public RestResponse() : base(new RestRequest()) { }
+    public RestResponse() : this(new RestRequest()) { }
 }
 
 public delegate ResponseStatus CalculateResponseStatus(HttpResponseMessage httpResponse);

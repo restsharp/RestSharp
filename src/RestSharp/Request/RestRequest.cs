@@ -48,12 +48,14 @@ public class RestRequest {
 
         var queryStringStart = Resource.IndexOf('?');
 
-        if (queryStringStart >= 0 && Resource.IndexOf('=') > queryStringStart) {
-            var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
-            Resource = Resource.Substring(0, queryStringStart);
+        if (queryStringStart < 0 || Resource.IndexOf('=') <= queryStringStart) return;
 
-            foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
-        }
+        var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
+        Resource = Resource.Substring(0, queryStringStart);
+
+        foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
+
+        return;
 
         static IEnumerable<KeyValuePair<string, string?>> ParseQuery(string query)
             => query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)

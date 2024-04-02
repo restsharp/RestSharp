@@ -17,11 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace RestSharp;
 
-public sealed class DefaultParameters : ParametersCollection {
-    readonly ReadOnlyRestClientOptions _options;
-
-    public DefaultParameters(ReadOnlyRestClientOptions options) => _options = options;
-
+public sealed class DefaultParameters(ReadOnlyRestClientOptions options) : ParametersCollection {
     /// <summary>
     /// Safely add a default parameter to the collection.
     /// </summary>
@@ -36,7 +32,7 @@ public sealed class DefaultParameters : ParametersCollection {
                 "Cannot set request body using default parameters. Use Request.AddBody() instead."
             );
 
-        if (!_options.AllowMultipleDefaultParametersWithSameName &&
+        if (!options.AllowMultipleDefaultParametersWithSameName &&
             !MultiParameterTypes.Contains(parameter.Type)        &&
             this.Any(x => x.Name == parameter.Name)) {
             throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));

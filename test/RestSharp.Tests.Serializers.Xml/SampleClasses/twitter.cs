@@ -1,6 +1,8 @@
 ﻿using RestSharp.Serializers;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 #pragma warning disable CS8981
 
 namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 

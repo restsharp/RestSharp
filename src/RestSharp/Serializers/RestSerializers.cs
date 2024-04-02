@@ -19,12 +19,9 @@ using RestSharp.Serializers.Xml;
 
 namespace RestSharp.Serializers;
 
-public class RestSerializers {
+public class RestSerializers(Dictionary<DataFormat, SerializerRecord> records) {
     [PublicAPI]
-    public IReadOnlyDictionary<DataFormat, SerializerRecord> Serializers { get; }
-
-    public RestSerializers(Dictionary<DataFormat, SerializerRecord> records)
-        => Serializers = new ReadOnlyDictionary<DataFormat, SerializerRecord>(records);
+    public IReadOnlyDictionary<DataFormat, SerializerRecord> Serializers { get; } = new ReadOnlyDictionary<DataFormat, SerializerRecord>(records);
 
     public RestSerializers(SerializerConfig config) : this(config.Serializers) { }
 

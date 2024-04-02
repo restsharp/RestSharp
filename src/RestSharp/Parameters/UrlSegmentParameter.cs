@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Text.RegularExpressions;
+
 namespace RestSharp;
 
 public record UrlSegmentParameter : NamedParameter {
+    static readonly Regex RegexPattern = new("%2f", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     /// <summary>
     /// Instantiates a new query parameter instance that will be added to the request URL by replacing part of the absolute path.
     /// The request resource should have a placeholder {name} that will be replaced with the parameter value when the request is made.
@@ -23,5 +27,10 @@ public record UrlSegmentParameter : NamedParameter {
     /// <param name="value">Parameter value</param>
     /// <param name="encode">Optional: encode the value, default is true</param>
     public UrlSegmentParameter(string name, string value, bool encode = true)
-        : base(name, Ensure.NotEmpty(value, nameof(value)).Replace("%2F", "/").Replace("%2f", "/"), ParameterType.UrlSegment, encode) { }
+        : base(
+            name,
+            RegexPattern.Replace(Ensure.NotEmpty(value, nameof(value)), "/"),
+            ParameterType.UrlSegment,
+            encode
+        ) { }
 }

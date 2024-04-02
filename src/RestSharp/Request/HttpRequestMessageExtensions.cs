@@ -23,6 +23,7 @@ static class HttpRequestMessageExtensions {
         var headerParameters = headers.Parameters.Where(x => !KnownHeaders.IsContentHeader(x.Name!));
 
         headerParameters.ForEach(x => AddHeader(x, message.Headers));
+        return;
 
         void AddHeader(Parameter parameter, HttpHeaders httpHeaders) {
             var parameterStringValue = parameter.Value!.ToString();

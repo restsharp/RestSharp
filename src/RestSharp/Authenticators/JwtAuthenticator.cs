@@ -18,9 +18,7 @@ namespace RestSharp.Authenticators;
 /// JSON WEB TOKEN (JWT) Authenticator class.
 /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
 /// </summary>
-public class JwtAuthenticator : AuthenticatorBase {
-    public JwtAuthenticator(string accessToken) : base(GetToken(accessToken)) { }
-
+public class JwtAuthenticator(string accessToken) : AuthenticatorBase(GetToken(accessToken)) {
     /// <summary>
     /// Set the new bearer token so the request gets the new header value
     /// </summary>
