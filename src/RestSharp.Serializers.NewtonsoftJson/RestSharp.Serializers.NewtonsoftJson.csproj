@@ -9,4 +9,7 @@
         <Using Include="Newtonsoft.Json"/>
         <Using Remove="System.Net.Http"/>
     </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>

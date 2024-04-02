@@ -37,7 +37,10 @@ In previous versions of RestSharp, the default XML serializer was a custom RestS
 You can add it back if necessary by installing the package and adding it to the client:
 
 ```csharp
-client.UseXmlSerializer();
+var client = new RestClient(
+    options, 
+    configureSerialization: s => s.UseXmlSerializer()
+);
 ```
 
 As before, you can supply three optional arguments for a custom namespace, custom root element, and if you want to use `SerializeAs` and `DeserializeAs` attributed.
@@ -76,6 +79,29 @@ JsonSerializerSettings DefaultSettings = new JsonSerializerSettings {
 
 If you need to use different settings, you can supply your instance of
 `JsonSerializerSettings` as a parameter for the extension method.
+
+## CSV
+
+A separate package `RestSharp.Serializers.CsvHelper` provides a CSV serializer for RestSharp. It is based on the 
+`CsvHelper` library.
+
+Use the extension method provided by the package to configure the client:
+
+```csharp
+var client = new RestClient(
+    options, 
+    configureSerialization: s => s.UseCsvHelper()
+);
+```
+
+You can also supply your instance of `CsvConfiguration` as a parameter for the extension method.
+
+```csharp
+var client = new RestClient(
+    options, 
+    configureSerialization: s => s.UseCsvHelper(new CsvConfiguration(CultureInfo.InvariantCulture) {...})
+);
+```
 
 ## Custom
 

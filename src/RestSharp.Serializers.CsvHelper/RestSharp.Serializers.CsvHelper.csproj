@@ -8,4 +8,7 @@
     <ItemGroup>
         <Using Remove="System.Net.Http"/>
     </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>
