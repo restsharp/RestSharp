@@ -83,7 +83,7 @@ class RequestContent(IRestClient client, RestRequest request) : IDisposable {
 
     HttpContent Serialize(BodyParameter body) {
         return body.DataFormat switch {
-            DataFormat.None   => new StringContent(body.Value!.ToString(), client.Options.Encoding, body.ContentType.Value),
+            DataFormat.None   => new StringContent(body.Value!.ToString()!, client.Options.Encoding, body.ContentType.Value),
             DataFormat.Binary => GetBinary(),
             _                 => GetSerialized()
         };
@@ -171,7 +171,7 @@ class RequestContent(IRestClient client, RestRequest request) : IDisposable {
             }
         }
         else {
-            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString().UrlEncode() ?? string.Empty}");
+            var encodedItems   = postParameters.Select(x => $"{x.Name!.UrlEncode()}={x.Value?.ToString()?.UrlEncode() ?? string.Empty}");
             var encodedContent = new StringContent(encodedItems.JoinToString("&"), client.Options.Encoding, ContentType.FormUrlEncoded.Value);
 
             if (client.Options.DisableCharset) {

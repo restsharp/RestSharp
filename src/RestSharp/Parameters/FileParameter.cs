@@ -113,11 +113,6 @@ public record FileParameter {
 
 [PublicAPI]
 public class FileParameterOptions {
-    [Obsolete("Use DisableFilenameStar instead")]
-    public bool DisableFileNameStar {
-        get => DisableFilenameStar;
-        set => DisableFilenameStar = value;
-    }
     public bool DisableFilenameStar     { get; set; } = true;
     public bool DisableFilenameEncoding { get; set; }
 }

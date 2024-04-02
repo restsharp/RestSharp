@@ -28,7 +28,7 @@ public abstract class RestResponseBase {
     protected RestResponseBase(RestRequest request) {
         ResponseStatus = ResponseStatus.None;
         Request        = request;
-        Request.IncreaseNumAttempts();
+        Request.IncreaseNumberOfAttempts();
     }
 
     /// <summary>

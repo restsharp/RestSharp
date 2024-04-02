@@ -36,8 +36,10 @@ public class RestSerializers(Dictionary<DataFormat, SerializerRecord> records) {
         var response = RestResponse<T>.FromResponse(raw);
 
         try {
-            await OnBeforeDeserialization(response, cancellationToken).ConfigureAwait(false);
+            await OnBeforeDeserialization(raw, cancellationToken).ConfigureAwait(false);
+#pragma warning disable CS0618 // Type or member is obsolete
             request.OnBeforeDeserialization?.Invoke(raw);
+#pragma warning restore CS0618 // Type or member is obsolete
             response.Data = DeserializeContent<T>(raw);
         }
         catch (Exception ex) {
@@ -80,13 +82,14 @@ public class RestSerializers(Dictionary<DataFormat, SerializerRecord> records) {
         // This can happen when a request returns for example a 404 page instead of the requested JSON/XML resource
         var deserializer = GetContentDeserializer(response);
 
-        if (deserializer is IXmlDeserializer xml && response.Request is RestXmlRequest xmlRequest) {
-            if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
+        if (deserializer is not IXmlDeserializer xml || response.Request is not RestXmlRequest xmlRequest)
+            return deserializer != null ? deserializer.Deserialize<T>(response) : default;
 
-            if (xml is IWithDateFormat withDateFormat && xmlRequest.DateFormat.IsNotEmpty()) withDateFormat.DateFormat = xmlRequest.DateFormat!;
-        }
+        if (xmlRequest.XmlNamespace.IsNotEmpty()) xml.Namespace = xmlRequest.XmlNamespace!;
 
-        return deserializer != null ? deserializer.Deserialize<T>(response) : default;
+        if (xml is IWithDateFormat withDateFormat && xmlRequest.DateFormat.IsNotEmpty()) withDateFormat.DateFormat = xmlRequest.DateFormat!;
+
+        return deserializer.Deserialize<T>(response);
     }
 
     IDeserializer? GetContentDeserializer(RestResponseBase response) {

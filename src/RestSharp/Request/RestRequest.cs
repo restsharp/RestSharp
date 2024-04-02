@@ -185,7 +185,7 @@ public class RestRequest {
     [Obsolete("Use Interceptors instead")]
     public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
-    internal void IncreaseNumAttempts() => Attempts++;
+    internal void IncreaseNumberOfAttempts() => Attempts++;
 
     /// <summary>
     /// How many attempts were made to send this Request

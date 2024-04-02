@@ -27,6 +27,7 @@ module.exports = {
                         "usage.md",
                         "serialization.md",
                         "authenticators.md",
+                        "interceptors.md",
                         "error-handling.md"
                     ]
                 }

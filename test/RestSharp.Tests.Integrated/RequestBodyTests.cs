@@ -3,7 +3,7 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class RequestBodyTests(RequestBodyFixture fixture, ITestOutputHelper output) : IClassFixture<RequestBodyFixture> {
+public class RequestBodyTests(RequestBodyFixture fixture) : IClassFixture<RequestBodyFixture> {
     readonly SimpleServer      _server = fixture.Server;
 
     const string NewLine = "\r\n";
@@ -15,13 +15,7 @@ public class RequestBodyTests(RequestBodyFixture fixture, ITestOutputHelper outp
     async Task AssertBody(Method method, bool disableCharset = false) {
         var options = new RestClientOptions(_server.Url) { DisableCharset = disableCharset };
         var client  = new RestClient(options);
-
-        var request = new RestRequest(RequestBodyCapturer.Resource, method) {
-            OnBeforeRequest = async m => {
-                output.WriteLine(m.ToString());
-                output.WriteLine(await m.Content!.ReadAsStringAsync());
-            }
-        };
+        var request = new RestRequest(RequestBodyCapturer.Resource, method);
 
         const string bodyData = "abc123 foo bar baz BING!";
 

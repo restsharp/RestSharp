@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using RestSharp.Interceptors;
 using RestSharp.Serializers.Xml;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
@@ -49,9 +50,12 @@ public sealed class StatusCodeTests : IDisposable {
             RootElement = "Success"
         };
 
-        request.OnBeforeDeserialization = resp => {
-            if (resp.StatusCode == HttpStatusCode.NotFound) request.RootElement = "Error";
+        var interceptor = new CompatibilityInterceptor {
+            OnBeforeDeserialization = resp => {
+                if (resp.StatusCode == HttpStatusCode.NotFound) request.RootElement = "Error";
+            }
         };
+        request.Interceptors = [interceptor];
 
         var response = await _client.ExecuteAsync<TestResponse>(request);
 
@@ -64,10 +68,14 @@ public sealed class StatusCodeTests : IDisposable {
         _server.SetHandler(Handlers.Generic<ResponseHandler>());
 
         var request = new RestRequest("error") {
-            RootElement = "Success",
-            OnBeforeDeserialization = resp => {
-                if (resp.StatusCode == HttpStatusCode.BadRequest) resp.RootElement = "Error";
-            }
+            RootElement  = "Success",
+            Interceptors = [
+                new CompatibilityInterceptor {
+                    OnBeforeDeserialization = resp => {
+                        if (resp.StatusCode == HttpStatusCode.BadRequest) resp.RootElement = "Error";
+                    }
+                }
+            ]
         };
 
         var response = await _client.ExecuteAsync<TestResponse>(request);

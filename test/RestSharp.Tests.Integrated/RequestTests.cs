@@ -12,6 +12,20 @@ public class AsyncTests(TestServerFixture fixture) {
     }
 
     [Fact]
+    public async Task Can_Handle_Exception_Thrown_By_Interceptor_BeforeDeserialization() {
+        const string exceptionMessage = "Thrown from OnBeforeDeserialization";
+
+        var request = new RestRequest("success") {
+            Interceptors = [new ThrowingInterceptor(exceptionMessage)]
+        };
+
+        var response = await _client.ExecuteAsync<Response>(request);
+
+        Assert.Equal(exceptionMessage, response.ErrorMessage);
+        Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+    }
+
+    [Fact, Obsolete("Obsolete")]
     public async Task Can_Handle_Exception_Thrown_By_OnBeforeDeserialization_Handler() {
         const string exceptionMessage = "Thrown from OnBeforeDeserialization";
 
@@ -71,5 +85,10 @@ public class AsyncTests(TestServerFixture fixture) {
         var response = await _client.DeleteAsync<Response>(request);
 
         response!.Message.Should().Be("Works!");
+    }
+
+    class ThrowingInterceptor(string errorMessage) : Interceptors.Interceptor {
+        public override ValueTask BeforeDeserialization(RestResponse response, CancellationToken cancellationToken)
+            => throw new Exception(errorMessage);
     }
 }

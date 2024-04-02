@@ -130,7 +130,9 @@ public partial class RestClient {
             .AddCookieHeaders(url, Options.CookieContainer);
 
         message.AddHeaders(headers);
+#pragma warning disable CS0618 // Type or member is obsolete
         if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         await OnBeforeHttpRequest(request, message, cancellationToken).ConfigureAwait(false);
 
         try {
@@ -148,7 +150,9 @@ public partial class RestClient {
             return new HttpResponse(null, url, null, ex, timeoutCts.Token);
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         await OnAfterHttpRequest(request, responseMessage, cancellationToken).ConfigureAwait(false);
         return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
     }

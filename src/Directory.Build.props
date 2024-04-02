@@ -18,6 +18,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'netstandard2.0'">
+        <AddSystemTextJson>true</AddSystemTextJson>
+        <AddNullable>true</AddNullable>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
         <PackageReference Include="MinVer" PrivateAssets="All"/>
