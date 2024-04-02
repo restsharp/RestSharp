@@ -60,10 +60,10 @@ Now, we need to implement the `GetToken` function in the class:
 
 ```csharp
 async Task<string> GetToken() {
-    var options = new RestClientOptions(_baseUrl);
-    using var client = new RestClient(options) {
+    var options = new RestClientOptions(_baseUrl){
         Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
     };
+    using var client = new RestClient(options);
 
     var request = new RestRequest("oauth2/token")
         .AddParameter("grant_type", "client_credentials");
@@ -107,11 +107,11 @@ public class TwitterClient : ITwitterClient, IDisposable {
     readonly RestClient _client;
 
     public TwitterClient(string apiKey, string apiKeySecret) {
-        var options = new RestClientOptions("https://api.twitter.com/2");
-
-        _client = new RestClient(options) {
+        var options = new RestClientOptions("https://api.twitter.com/2"){
             Authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret)
         };
+
+        _client = new RestClient(options);
     }
 
     public async Task<TwitterUser> GetUser(string user) {
@@ -594,7 +594,7 @@ One way of doing it is to use `RestClient` constructors that accept an instance 
 
 - `BaseAddress` will be used to set the base address of the `HttpClient` instance if base address is not set there already.
 - `MaxTimeout`
-- `UserAgent` will be set if the `User-Agent` header is not set on the `HttpClient` instance already.
+- `UserAgent` will be added to the `RestClient.DefaultParameters` list as a HTTP header. This will be added to each request made by the `RestClient`, and the `HttpClient` instance will not be modified. This is to allow the `HttpClient` instance to be reused for scenarios where different `User-Agent` headers are required.
 - `Expect100Continue`
 
 Another option is to use a simple HTTP client factory as described [above](#simple-factory). 

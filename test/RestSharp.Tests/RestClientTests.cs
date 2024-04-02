@@ -118,20 +118,41 @@ public class RestClientTests {
     }
 
     [Fact]
-    public void ConfigureHttpClient_does_not_duplicate_user_agent_for_same_client() {
+    public void ConfigureDefaultParameters_sets_user_agent_new_httpClient_instance() {
+        // arrange
+        var clientOptions = new RestClientOptions();
+
+        // act
+        var restClient = new RestClient(clientOptions);
+
+        //assert
+        Assert.Single(
+            restClient.DefaultParameters,
+            parameter => parameter.Type == ParameterType.HttpHeader &&
+                parameter.Name == KnownHeaders.UserAgent &&
+                parameter.Value is string valueAsString &&
+                valueAsString == clientOptions.UserAgent);
+
+        Assert.Empty(restClient.HttpClient.DefaultRequestHeaders.UserAgent);
+    }
+
+    [Fact]
+    public void ConfigureDefaultParameters_sets_user_agent_given_httpClient_instance() {
         // arrange
         var httpClient    = new HttpClient();
         var clientOptions = new RestClientOptions();
 
         // act
-        var unused = new RestClient(httpClient, clientOptions);
-        var dummy  = new RestClient(httpClient, clientOptions);
+        var restClient = new RestClient(httpClient, clientOptions);
 
-        // assert
-        Assert.Contains(
-            httpClient.DefaultRequestHeaders.UserAgent,
-            agent => $"{agent.Product.Name}/{agent.Product.Version}" == clientOptions.UserAgent
-        );
-        Assert.Single(httpClient.DefaultRequestHeaders.UserAgent);
+        //assert
+        Assert.Single(
+            restClient.DefaultParameters,
+            parameter => parameter.Type == ParameterType.HttpHeader &&
+                parameter.Name == KnownHeaders.UserAgent &&
+                parameter.Value is string valueAsString &&
+                valueAsString == clientOptions.UserAgent);
+
+        Assert.Empty(httpClient.DefaultRequestHeaders.UserAgent);
     }
 }

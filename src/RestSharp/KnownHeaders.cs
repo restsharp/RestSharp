@@ -42,7 +42,7 @@ public static class KnownHeaders {
         LastModified
     };
 
-    static readonly HashSet<string> ContentHeadersHash = new(ContentHeaders.Select(x => x.ToLower()));
+    static readonly HashSet<string> ContentHeadersHash = new(ContentHeaders, StringComparer.InvariantCultureIgnoreCase);
 
-    internal static bool IsContentHeader(string key) => ContentHeadersHash.Contains(key.ToLower());
+    internal static bool IsContentHeader(string key) => ContentHeadersHash.Contains(key);
 }

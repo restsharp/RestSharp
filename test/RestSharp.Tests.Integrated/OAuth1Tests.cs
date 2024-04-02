@@ -51,16 +51,28 @@ public class OAuth1Tests {
         actual.Should().BeEquivalentTo(expected);
     }
 
-    [Fact]
-    public void Properly_Encodes_Parameter_Names() {
-        var postData = new WebPairCollection {
-            { "name[first]", "Chuck" },
-            { "name[last]", "Testa" }
-        };
+    [Theory]
+    [MemberData(nameof(EncodeParametersTestData))]
+    public void Properly_Encodes_Parameter_Names(IList<(string, string)> parameters, string expected) {
+        var postData = new WebPairCollection();
+        postData.AddRange(parameters.Select(x => new WebPair(x.Item1, x.Item2)));
         var sortedParams = OAuthTools.SortParametersExcludingSignature(postData);
 
-        sortedParams.First().Should().Be("name%5Bfirst%5D=Chuck");
+        sortedParams.First().Should().Be(expected);
     }
+
+    public static IEnumerable<object[]> EncodeParametersTestData =>
+        new List<object[]>
+        {
+            new object[] {
+                new List<(string, string)> { ("name[first]", "Chuck"), ("name[last]", "Testa") },
+                "name%5Bfirst%5D=Chuck"
+            },
+            new object[] {
+                new List<(string, string)> { ("country", "España") },
+                "country=Espa%C3%B1a"
+            }
+        };
 
     [Fact]
     public void Use_RFC_3986_Encoding_For_Auth_Signature_Base() {
