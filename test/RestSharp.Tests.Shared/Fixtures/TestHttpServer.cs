@@ -15,7 +15,7 @@ public class TestHttpServer : IDisposable {
     public int Port { get; }
 
     public TestHttpServer(int port, string url, HandlerAction handlerAction, string hostName = "localhost")
-        : this(port, new List<TestRequestHandler> { new(url, handlerAction) }, hostName) { }
+        : this(port, [new(url, handlerAction)], hostName) { }
 
     public TestHttpServer(int port, List<TestRequestHandler> handlers, string hostName = "localhost") {
         _requestHandlers = handlers;

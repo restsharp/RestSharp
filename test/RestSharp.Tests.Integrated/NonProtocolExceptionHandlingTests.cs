@@ -1,24 +1,20 @@
-﻿using System.Net;
-using RestSharp.Tests.Shared.Fixtures;
-
-namespace RestSharp.Tests.Integrated;
+﻿namespace RestSharp.Tests.Integrated;
 
 public sealed class NonProtocolExceptionHandlingTests : IDisposable {
+    public NonProtocolExceptionHandlingTests()
+        => _server
+            .Given(Request.Create().WithPath("/timeout"))
+            .RespondWith(Response.Create().WithDelay(TimeSpan.FromSeconds(1)));
+
     // ReSharper disable once ClassNeverInstantiated.Local
     class StupidClass {
         // ReSharper disable once UnusedMember.Local
         public string Property { get; set; } = null!;
     }
 
-    /// <summary>
-    /// Simulates a long server process that should result in a client timeout
-    /// </summary>
-    /// <param name="context"></param>
-    static void TimeoutHandler(HttpListenerContext context) => Thread.Sleep(101000);
-
     public void Dispose() => _server.Dispose();
 
-    readonly SimpleServer _server = SimpleServer.Create(TimeoutHandler);
+    readonly WireMockServer _server = WireMockServer.Start();
 
     /// <summary>
     /// Success of this test is based largely on the behavior of your current DNS.
@@ -30,14 +26,14 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var request  = new RestRequest("foo");
         var response = await client.ExecuteAsync(request);
 
-        Assert.Equal(ResponseStatus.Error, response.ResponseStatus);
+        response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 
     [Fact]
     public async Task Handles_HttpClient_Timeout_Error() {
-        var client = new RestClient(new HttpClient {Timeout = TimeSpan.FromMilliseconds(500)});
+        var client = new RestClient(new HttpClient { Timeout = TimeSpan.FromMilliseconds(500) });
 
-        var request = new RestRequest($"{_server.Url}/404");
+        var request  = new RestRequest($"{_server.Url}/timeout");
         var response = await client.ExecuteAsync(request);
 
         response.ErrorException.Should().BeOfType<TaskCanceledException>();
@@ -46,9 +42,8 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     [Fact]
     public async Task Handles_Server_Timeout_Error() {
-        var client = new RestClient(_server.Url);
-
-        var request = new RestRequest("404") { Timeout = 500 };
+        var client   = new RestClient(_server.Url!);
+        var request  = new RestRequest("timeout") { Timeout = 500 };
         var response = await client.ExecuteAsync(request);
 
         response.ErrorException.Should().BeOfType<TaskCanceledException>();
@@ -57,8 +52,8 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     [Fact]
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
-        var client   = new RestClient(_server.Url);
-        var request  = new RestRequest("404") { Timeout = 500 };
+        var client   = new RestClient(_server.Url!);
+        var request  = new RestRequest("timeout") { Timeout = 500 };
         var response = await client.ExecuteAsync<TestResponse>(request);
 
         response.Data.Should().BeNull();

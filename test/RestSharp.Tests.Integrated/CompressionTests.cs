@@ -1,59 +1,69 @@
 ﻿using System.IO.Compression;
-using System.Net;
+using RestSharp.Extensions;
 using RestSharp.Tests.Shared.Extensions;
-using RestSharp.Tests.Shared.Fixtures;
 
-namespace RestSharp.Tests.Integrated; 
+namespace RestSharp.Tests.Integrated;
 
 public class CompressionTests {
-    static Action<HttpListenerContext> GzipEchoValue(string value)
-        => context => {
-            context.Response.Headers.Add("Content-encoding", "gzip");
+    static async Task<byte[]> GetBody(Func<Stream, Stream> getStream, string value) {
+        using var memoryStream = new MemoryStream();
 
-            using var gzip = new GZipStream(context.Response.OutputStream, CompressionMode.Compress, true);
+        await using (var stream = getStream(memoryStream)) {
+            stream.WriteStringUtf8(value);
+        }
 
-            gzip.WriteStringUtf8(value);
-        };
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        var body = await memoryStream.ReadAsBytes(default);
+        return body;
+    }
 
-    static Action<HttpListenerContext> DeflateEchoValue(string value)
-        => context => {
-            context.Response.Headers.Add("Content-encoding", "deflate");
-
-            using var gzip = new DeflateStream(context.Response.OutputStream, CompressionMode.Compress, true);
-
-            gzip.WriteStringUtf8(value);
-        };
+    static void ConfigureServer(WireMockServer server, byte[] body, string encoding)
+        => server
+            .Given(Request.Create().WithPath("/").UsingGet())
+            .RespondWith(Response.Create().WithBody(body).WithHeader("Content-Encoding", encoding));
 
     [Fact]
     public async Task Can_Handle_Deflate_Compressed_Content() {
-        using var server = SimpleServer.Create(DeflateEchoValue("This is some deflated content"));
+        const string value  = "This is some deflated content";
+        using var    server = WireMockServer.Start();
 
-        var client   = new RestClient(server.Url);
+        var body = await GetBody(s => new DeflateStream(s, CompressionMode.Compress, true), value);
+        ConfigureServer(server, body, "deflate");
+
+        var client   = new RestClient(server.Url!);
         var request  = new RestRequest("");
         var response = await client.ExecuteAsync(request);
 
-        Assert.Equal("This is some deflated content", response.Content);
+        response.Content.Should().Be(value);
     }
 
     [Fact]
     public async Task Can_Handle_Gzip_Compressed_Content() {
-        using var server = SimpleServer.Create(GzipEchoValue("This is some gzipped content"));
+        const string value  = "This is some gzipped content";
+        using var    server = WireMockServer.Start();
+        
+        var body = await GetBody(s => new GZipStream(s, CompressionMode.Compress, true), value);
+        ConfigureServer(server, body, "gzip");
 
-        var client   = new RestClient(server.Url);
+        var client   = new RestClient(server.Url!);
         var request  = new RestRequest("");
         var response = await client.ExecuteAsync(request);
 
-        Assert.Equal("This is some gzipped content", response.Content);
+        response.Content.Should().Be(value);
     }
 
     [Fact]
     public async Task Can_Handle_Uncompressed_Content() {
-        using var server = SimpleServer.Create(Handlers.EchoValue("This is some sample content"));
+        const string value  = "This is some sample content";
+        using var    server = WireMockServer.Start();
+        server
+            .Given(Request.Create().WithPath("/").UsingGet())
+            .RespondWith(Response.Create().WithBody(value));
 
-        var client   = new RestClient(server.Url);
+        var client   = new RestClient(server.Url!);
         var request  = new RestRequest("");
         var response = await client.ExecuteAsync(request);
 
-        Assert.Equal("This is some sample content", response.Content);
+        response.Content.Should().Be(value);
     }
 }

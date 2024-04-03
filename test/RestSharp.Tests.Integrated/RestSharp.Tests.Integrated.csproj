@@ -18,9 +18,16 @@
         <PackageReference Include="HttpTracer"/>
         <PackageReference Include="Microsoft.AspNetCore.TestHost"/>
         <PackageReference Include="Polly"/>
+        <PackageReference Include="WireMock.Net.FluentAssertions" />
         <PackageReference Include="Xunit.Extensions.Logging"/>
     </ItemGroup>
     <ItemGroup>
         <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Using Include="WireMock"/>
+        <Using Include="WireMock.Server"/>
+        <Using Include="WireMock.RequestBuilders"/>
+        <Using Include="WireMock.ResponseBuilders"/>
     </ItemGroup>
 </Project>
