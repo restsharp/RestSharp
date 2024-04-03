@@ -43,7 +43,7 @@ public sealed class DownloadFileTests : IDisposable {
 
     [Fact]
     public async Task Handles_File_Download_Failure() {
-        var request = new RestRequest("");
+        var request = new RestRequest("some/other/path");
         var task    = () => _client.DownloadDataAsync(request);
         await task.Should().ThrowAsync<HttpRequestException>().WithMessage("Request failed with status code NotFound");
     }
@@ -52,7 +52,7 @@ public sealed class DownloadFileTests : IDisposable {
     public async Task Handles_Binary_File_Download() {
         var request  = new RestRequest("");
         var response = await _client.DownloadDataAsync(request);
-        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, "Assets", "Koala.jpg"));
+        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, Path.Combine(LocalPath.Split('/'))));
 
         Assert.Equal(expected, response);
     }
