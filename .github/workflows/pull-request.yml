@@ -62,7 +62,7 @@ jobs:
 #          dotnet-version: '8.0'
       -  
         name: Run tests
-        run: dotnet test
+        run: dotnet test -f ${{ matrix.dotnet }}
       -
         name: Upload Test Results
         if: always()
