@@ -1,25 +1,24 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using RestMockCore;
 using RestSharp.Serializers.NewtonsoftJson;
 
 namespace RestSharp.Tests.Serializers.Json.NewtonsoftJson;
 
-public class IntegratedTests {
+public sealed class IntegratedTests : IDisposable {
     static readonly Fixture Fixture = new();
 
-    const int Port = 5001;
+    readonly WireMockServer _server = WireMockServer.Start();
 
     [Fact]
     public async Task Use_with_GetJsonAsync() {
         var data       = Fixture.Create<TestClass>();
         var serialized = JsonConvert.SerializeObject(data, JsonNetSerializer.DefaultSettings);
 
-        using var server = new HttpServer(Port);
-        server.Config.Get("/test").Send(serialized);
-        server.Run();
+        _server
+            .Given(Request.Create().WithPath("/test").UsingGet())
+            .RespondWith(Response.Create().WithBody(serialized).WithHeader(KnownHeaders.ContentType, ContentType.Json));
 
-        using var client = new RestClient($"http://localhost:{Port}", configureSerialization: cfg => cfg.UseNewtonsoftJson());
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson());
 
         var response = await client.GetJsonAsync<TestClass>("/test");
 
@@ -34,14 +33,16 @@ public class IntegratedTests {
         var data       = Fixture.Create<TestClass>();
         var serialized = JsonConvert.SerializeObject(data, settings);
 
-        using var server = new HttpServer(Port);
-        server.Config.Get("/test").Send(serialized);
-        server.Run();
+        _server
+            .Given(Request.Create().WithPath("/test").UsingGet())
+            .RespondWith(Response.Create().WithBody(serialized).WithHeader(KnownHeaders.ContentType, ContentType.Json));
 
-        using var client = new RestClient($"http://localhost:{Port}", configureSerialization: cfg => cfg.UseNewtonsoftJson(settings));
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson(settings));
 
         var response = await client.GetJsonAsync<TestClass>("/test");
 
         response.Should().BeEquivalentTo(data);
     }
+
+    public void Dispose() => _server?.Dispose();
 }

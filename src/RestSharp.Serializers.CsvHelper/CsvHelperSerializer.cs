@@ -5,26 +5,20 @@ using System.Globalization;
 
 namespace RestSharp.Serializers.CsvHelper; 
 
-public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
-    const string TextCsvContentType = "text/csv";
-
-    readonly CsvConfiguration _configuration;
-
+public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer, IRestSerializer, ISerializer {
     public ISerializer Serializer => this;
 
     public IDeserializer Deserializer => this;
 
-    public string[] AcceptedContentTypes => new[] { TextCsvContentType, "application/x-download" };
+    public string[] AcceptedContentTypes => [ContentType.Csv, "application/x-download"];
 
     public SupportsContentType SupportsContentType => x => Array.IndexOf(AcceptedContentTypes, x) != -1 || x.Value.Contains("csv");
 
     public DataFormat DataFormat => DataFormat.None;
 
-    public ContentType ContentType { get; set; } = TextCsvContentType;
+    public ContentType ContentType { get; set; } = ContentType.Csv;
 
-    public CsvHelperSerializer() => _configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
-
-    public CsvHelperSerializer(CsvConfiguration configuration) => _configuration = configuration;
+    public CsvHelperSerializer() : this(new CsvConfiguration(CultureInfo.InvariantCulture)) { }
 
     public T? Deserialize<T>(RestResponse response) {
         try {
@@ -33,7 +27,7 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
 
             using var stringReader = new StringReader(response.Content);
 
-            using var csvReader = new CsvReader(stringReader, _configuration);
+            using var csvReader = new CsvReader(stringReader, configuration);
 
             var @interface = typeof(T).GetInterface("IEnumerable`1");
 
@@ -81,7 +75,7 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
 
         using var stringWriter = new StringWriter();
 
-        using var csvWriter = new CsvWriter(stringWriter, _configuration);
+        using var csvWriter = new CsvWriter(stringWriter, configuration);
 
         if (obj is IEnumerable records) {
             csvWriter.WriteRecords(records);

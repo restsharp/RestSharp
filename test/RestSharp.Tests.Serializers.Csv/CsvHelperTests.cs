@@ -9,11 +9,20 @@ using System.Text;
 
 namespace RestSharp.Tests.Serializers.Csv;
 
-public class CsvHelperTests {
+public sealed class CsvHelperTests : IDisposable {
     static readonly Fixture Fixture = new();
 
-    [Fact]
-    public async Task Use_CsvHelper_For_Response() {
+    readonly WireMockServer _server = WireMockServer.Start();
+
+    void ConfigureResponse(object expected) {
+        var serializer = new CsvHelperSerializer();
+
+        _server
+            .Given(Request.Create().WithPath("/").UsingGet())
+            .RespondWith(Response.Create().WithBody(serializer.Serialize(expected)!).WithHeader(KnownHeaders.ContentType, ContentType.Csv));
+    }
+
+    TestObject CreateTestObject() {
         var expected = Fixture.Create<TestObject>();
 
         expected.DateTimeValue = new DateTime(
@@ -25,18 +34,16 @@ public class CsvHelperTests {
             expected.DateTimeValue.Second
         );
 
-        using var server = HttpServerFixture.StartServer(
-            (_, response) => {
-                var serializer = new CsvHelperSerializer();
+        return expected;
+    }
 
-                response.ContentType     = "text/csv";
-                response.ContentEncoding = Encoding.UTF8;
-                response.OutputStream.WriteStringUtf8(serializer.Serialize(expected)!);
-            }
-        );
+    [Fact]
+    public async Task Use_CsvHelper_For_Response() {
+        var expected = CreateTestObject();
 
-        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseCsvHelper());
+        ConfigureResponse(expected);
 
+        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
         var actual = await client.GetAsync<TestObject>(new RestRequest());
 
         actual.Should().BeEquivalentTo(expected);
@@ -48,49 +55,25 @@ public class CsvHelperTests {
         var expected = new List<TestObject>(count);
 
         for (var i = 0; i < count; i++) {
-            var item = Fixture.Create<TestObject>();
-
-            item.DateTimeValue = new DateTime(
-                item.DateTimeValue.Year,
-                item.DateTimeValue.Month,
-                item.DateTimeValue.Day,
-                item.DateTimeValue.Hour,
-                item.DateTimeValue.Minute,
-                item.DateTimeValue.Second
-            );
-
+            var item = CreateTestObject();
             expected.Add(item);
         }
 
-        using var server = HttpServerFixture.StartServer(
-            (_, response) => {
-                var serializer = new CsvHelperSerializer();
+        ConfigureResponse(expected);
 
-                response.ContentType     = "text/csv";
-                response.ContentEncoding = Encoding.UTF8;
-                response.OutputStream.WriteStringUtf8(serializer.Serialize(expected));
-            }
-        );
-
-        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseCsvHelper());
-
+        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
         var actual = await client.GetAsync<List<TestObject>>(new RestRequest());
 
         actual.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
-    public async Task DeserilizationFails_IsSuccessfull_Should_BeFalse() {
-        using var server = HttpServerFixture.StartServer(
-            (_, response) => {
-                response.StatusCode      = (int)HttpStatusCode.OK;
-                response.ContentType     = "text/csv";
-                response.ContentEncoding = Encoding.UTF8;
-                response.OutputStream.WriteStringUtf8("invalid csv");
-            }
-        );
+    public async Task DeserilizationFails_IsSuccessful_Should_BeFalse() {
+        _server
+            .Given(Request.Create().WithPath("/").UsingGet())
+            .RespondWith(Response.Create().WithBody("invalid csv").WithHeader(KnownHeaders.ContentType, ContentType.Csv));
 
-        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseCsvHelper());
+        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
 
         var response = await client.ExecuteAsync<TestObject>(new RestRequest());
 
@@ -100,21 +83,10 @@ public class CsvHelperTests {
 
     [Fact]
     public async Task DeserilizationSucceeds_IsSuccessful_Should_BeTrue() {
-        var item = Fixture.Create<TestObject>();
+        var item = CreateTestObject();
+        ConfigureResponse(item);
 
-        using var server = HttpServerFixture.StartServer(
-            (_, response) => {
-                var serializer = new SystemTextJsonSerializer();
-
-                response.StatusCode      = (int)HttpStatusCode.OK;
-                response.ContentType     = "text/csv";
-                response.ContentEncoding = Encoding.UTF8;
-                response.OutputStream.WriteStringUtf8(serializer.Serialize(item)!);
-            }
-        );
-
-        var client = new RestClient(server.Url, configureSerialization: cfg => cfg.UseSystemTextJson());
-
+        var client   = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseSystemTextJson());
         var response = await client.ExecuteAsync<TestObject>(new RestRequest());
 
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -180,4 +152,6 @@ public class CsvHelperTests {
                 "StringValue,Int32Value,DecimalValue,DoubleValue,SingleValue,DateTimeValue,TimeSpanValue;hello,32,0,0,16.5,01/20/2024 00:00:00,00:10:00;,65,89.555,0,0,08/19/2022 05:15:21,00:01:01;\"String, with comma\",0,0,20.00001,80000,01/01/0001 00:00:00,00:00:00;"
             );
     }
+
+    public void Dispose() => _server?.Dispose();
 }

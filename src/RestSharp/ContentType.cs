@@ -29,6 +29,7 @@ public class ContentType : IEquatable<ContentType> {
     public static readonly ContentType Json           = "application/json";
     public static readonly ContentType Xml            = "application/xml";
     public static readonly ContentType Plain          = "text/plain";
+    public static readonly ContentType Csv            = "text/csv";
     public static readonly ContentType Binary         = "application/octet-stream";
     public static readonly ContentType GZip           = "application/x-gzip";
     public static readonly ContentType FormUrlEncoded = "application/x-www-form-urlencoded";

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using RestSharp.Tests.Integrated.Fixtures;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 

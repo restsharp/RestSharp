@@ -1,6 +1,11 @@
-namespace RestSharp.Tests.Integrated.Fixtures;
+using RestSharp.Tests.Integrated.Fixtures;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 
-static class WireMockExtensions {
+namespace RestSharp.Tests.Shared.Fixtures;
+
+public static class WireMockExtensions {
     public static RequestBodyCapturer ConfigureBodyCapturer(this WireMockServer server, Method method, bool usePath = true) {
         var capturer = new RequestBodyCapturer();
 

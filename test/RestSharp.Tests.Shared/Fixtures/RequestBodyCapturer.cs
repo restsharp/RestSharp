@@ -1,6 +1,6 @@
 namespace RestSharp.Tests.Integrated.Fixtures;
 
-class RequestBodyCapturer {
+public class RequestBodyCapturer {
     public const string Resource = "/capture";
 
     public string? ContentType { get; private set; }
