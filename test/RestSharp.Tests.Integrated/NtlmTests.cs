@@ -4,10 +4,14 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
+/// <summary>
+/// These tests use NTML auth and don't work on Linux, at least not in GH Actions
+/// </summary>
 public class NtlmTests : CaptureFixture {
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate() {
-        if (!OperatingSystem.IsWindows()) return;
+        if (OperatingSystem.IsLinux()) return;
+
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>());
 
         var client  = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
@@ -25,6 +29,8 @@ public class NtlmTests : CaptureFixture {
 
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False() {
+        if (OperatingSystem.IsLinux()) return;
+
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 
         var client   = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = false });
@@ -37,7 +43,7 @@ public class NtlmTests : CaptureFixture {
 
     [Fact]
     public async Task Passes_Default_Credentials_When_UseDefaultCredentials_Is_True() {
-        if (!OperatingSystem.IsWindows()) return;
+        if (OperatingSystem.IsLinux()) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 
