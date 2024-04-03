@@ -7,43 +7,69 @@ permissions:
   checks: write
 
 jobs:
+  event_file:
+    name: "Event File"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
   test-windows:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet: ['net472', 'net6.0', 'net7.0', 'net8.0']
 
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
-      -
-        name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0'
+        uses: actions/checkout@v4
+#      -
+#        name: Setup .NET
+#        uses: actions/setup-dotnet@v3
+#        with:
+#          dotnet-version: '8.0'
       -
         name: Run tests
-        run: dotnet test
+        run: dotnet test -f ${{ matrix.dotnet }}
+      -
+        name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results Windows ${{ matrix.dotnet }}
+          path: |
+            test-results/**/*.xml
+            test-results/**/*.trx
+            test-results/**/*.json
 
   test-linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet: ['net6.0', 'net7.0', 'net8.0']
 
     steps:
       -  
         name: Checkout
         uses: actions/checkout@v3
-      -  
-        name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0'
+#      -  
+#        name: Setup .NET
+#        uses: actions/setup-dotnet@v3
+#        with:
+#          dotnet-version: '8.0'
       -  
         name: Run tests
         run: dotnet test
       -
-        name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        name: Upload Test Results
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          files: |
+          name: Test Results Ubuntu ${{ matrix.dotnet }}
+          path: |
             test-results/**/*.xml
             test-results/**/*.trx
             test-results/**/*.json
