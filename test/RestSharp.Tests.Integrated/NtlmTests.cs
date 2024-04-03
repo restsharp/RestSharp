@@ -7,16 +7,14 @@ namespace RestSharp.Tests.Integrated;
 public class NtlmTests : CaptureFixture {
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate() {
+        if (!OperatingSystem.IsWindows()) return;
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>());
 
-        var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
-
+        var client  = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
         var request = new RestRequest(RequestHeadCapturer.Resource);
-
         await client.ExecuteAsync(request);
 
         Assert.NotNull(RequestHeadCapturer.CapturedHeaders);
-
         var keys = RequestHeadCapturer.CapturedHeaders.Keys.Cast<string>().ToArray();
 
         Assert.False(

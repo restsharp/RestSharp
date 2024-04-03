@@ -9,7 +9,7 @@ public class RequestBodyTests {
     const string ExpectedTextContentType          = $"{TextPlainContentType}; charset=utf-8";
     const string ExpectedTextContentTypeNoCharset = TextPlainContentType;
 
-    readonly WireMockServer _server = WireMockServer.Start();
+    readonly WireMockServer _server = WireMockServer.Start(s => s.AllowBodyForAllHttpMethods = true);
 
     async Task AssertBody(Method method, bool disableCharset = false) {
         var options  = new RestClientOptions(_server.Url!) { DisableCharset = disableCharset };
@@ -64,10 +64,10 @@ public class RequestBodyTests {
         AssertHasNoRequestBody(capturer);
     }
 
-    [Fact(Skip = "GET with body is not supported on all platforms")]
+    [Fact]
     public Task Can_Be_Added_To_GET_Request() => AssertBody(Method.Get);
 
-    [Fact(Skip = "GET with body is not supported on all platforms")]
+    [Fact]
     public Task Can_Be_Added_To_HEAD_Request() => AssertBody(Method.Head);
 
     [Fact]
