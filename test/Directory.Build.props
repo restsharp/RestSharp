@@ -20,7 +20,7 @@
         <PackageReference Include="AutoFixture" />
         <PackageReference Include="FluentAssertions" />
     </ItemGroup>
-    <ItemGroup Condition="$(TargetFramework) == 'net472'">
+    <ItemGroup Condition="$(TargetFramework) == 'net48'">
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" PrivateAssets="All"/>
     </ItemGroup>
 

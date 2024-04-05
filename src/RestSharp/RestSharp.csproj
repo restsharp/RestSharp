@@ -5,11 +5,9 @@
     <ItemGroup>
         <None Remove="RestSharp.csproj.DotSettings"/>
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
+    <ItemGroup Condition="'$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net48'">
         <Reference Include="System.Net.Http"/>
         <Reference Include="System.Web"/>
-        <PackageReference Include="Nullable" PrivateAssets="All"/>
-        <PackageReference Include="System.Text.Json"/>
     </ItemGroup>
     <ItemGroup Condition="$(AddNullable) == 'true'">
         <PackageReference Include="Nullable" PrivateAssets="All"/>

@@ -1,4 +1,3 @@
-using RestSharp.Tests.Integrated.Fixtures;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
