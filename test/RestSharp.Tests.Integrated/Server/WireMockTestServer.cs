@@ -120,6 +120,7 @@ static class WireMockTestServer {
 
         using var stream = new MemoryStream(request.BodyAsBytes!);
         var       reader = new MultipartReader(boundary.Value!, stream);
+        reader.HeadersLengthLimit = int.MaxValue;
 
         FileMultipartSection? fileSection = null;
         while (true) {
