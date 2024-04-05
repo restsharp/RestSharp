@@ -185,7 +185,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         using var client = new RestClient(_server.Url!);
 
         var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
-            AlwaysMultipartFormData = true
+            AlwaysMultipartFormData = true,
         };
         var capturer = _server.ConfigureBodyCapturer(Method.Post);
 
@@ -197,12 +197,12 @@ public sealed class MultipartFormDataTests : IDisposable {
         await client.ExecuteAsync(request);
 
         var expectedBody = new[] {
-            $"{KnownHeaders.ContentType}: {ContentType.Plain}",
-            $"{KnownHeaders.ContentDisposition}: form-data; name={multipartName}",
+            ContentTypeString,
+            $"{ContentDispositionString} name={multipartName}",
             bodyData
         };
 
-        var actual = capturer.Body!.Split('\r');
+        var actual = capturer.Body!.Replace("\n", string.Empty).Split('\r');
         actual.Should().Contain(expectedBody);
     }
 }
