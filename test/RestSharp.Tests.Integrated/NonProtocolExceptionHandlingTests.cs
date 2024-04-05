@@ -1,4 +1,6 @@
-﻿namespace RestSharp.Tests.Integrated;
+﻿using RestSharp.Tests.Integrated.Server;
+
+namespace RestSharp.Tests.Integrated;
 
 public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     public NonProtocolExceptionHandlingTests()
@@ -54,7 +56,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
         var client   = new RestClient(_server.Url!);
         var request  = new RestRequest("timeout") { Timeout = 500 };
-        var response = await client.ExecuteAsync<TestResponse>(request);
+        var response = await client.ExecuteAsync<SuccessResponse>(request);
 
         response.Data.Should().BeNull();
         response.ErrorException.Should().BeOfType<TaskCanceledException>();

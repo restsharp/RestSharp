@@ -4,7 +4,6 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-[Collection(nameof(TestServerCollection))]
 public sealed class DefaultParameterTests : IDisposable {
     readonly WireMockServer      _server = WireMockServer.Start();
     readonly RequestBodyCapturer _capturer;

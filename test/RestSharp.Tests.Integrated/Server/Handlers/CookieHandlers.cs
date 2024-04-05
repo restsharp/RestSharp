@@ -3,17 +3,17 @@ using Microsoft.AspNetCore.Http;
 namespace RestSharp.Tests.Integrated.Server.Handlers;
 
 public static class CookieHandlers {
-    public static IResult HandleCookies(HttpContext ctx) {
-        var results = new List<string>();
+    // public static IResult HandleCookies(HttpContext ctx) {
+    //     var results = new List<string>();
+    //
+    //     foreach (var (key, value) in ctx.Request.Cookies) {
+    //         results.Add($"{key}={value}");
+    //     }
+    //
+    //     return Results.Ok(results);
+    // }
 
-        foreach (var (key, value) in ctx.Request.Cookies) {
-            results.Add($"{key}={value}");
-        }
-
-        return Results.Ok(results);
-    }
-
-    public static IResult HandleSetCookies(HttpContext ctx) {
+    public static void HandleSetCookies(HttpContext ctx) {
         ctx.Response.Cookies.Append("cookie1", "value1");
 
         ctx.Response.Cookies.Append(
@@ -65,6 +65,6 @@ public static class CookieHandlers {
             }
         );
         
-        return Results.Content("success");
+        // return Results.Content("success");
     }
 }

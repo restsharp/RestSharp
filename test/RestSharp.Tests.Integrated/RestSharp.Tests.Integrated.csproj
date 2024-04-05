@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Nullable>enable</Nullable>
-<!--        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>-->
+        <!--        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>-->
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj"/>
@@ -15,11 +15,13 @@
         <None Update="Assets\Teståæ.txt" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="HttpMultipartParser"/>
         <PackageReference Include="HttpTracer"/>
-        <PackageReference Include="Microsoft.AspNetCore.TestHost"/>
+        <!--        <PackageReference Include="Microsoft.AspNetCore.TestHost"/>-->
         <PackageReference Include="Polly"/>
-        <PackageReference Include="WireMock.Net.FluentAssertions" />
-        <PackageReference Include="Xunit.Extensions.Logging"/>
+        <PackageReference Include="PolySharp" PrivateAssets="All"/>
+        <PackageReference Include="WireMock.Net.FluentAssertions"/>
+        <!--        <PackageReference Include="Xunit.Extensions.Logging"/>-->
     </ItemGroup>
     <ItemGroup>
         <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
@@ -29,5 +31,6 @@
         <Using Include="WireMock.Server"/>
         <Using Include="WireMock.RequestBuilders"/>
         <Using Include="WireMock.ResponseBuilders"/>
+        <Using Include="System.Net"/>
     </ItemGroup>
 </Project>

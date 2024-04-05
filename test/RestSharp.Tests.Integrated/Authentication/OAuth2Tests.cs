@@ -3,16 +3,13 @@ using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated.Authentication;
 
-[Collection(nameof(TestServerCollection))]
-public class OAuth2Tests {
-    readonly TestServerFixture _fixture;
-
-    public OAuth2Tests(TestServerFixture fixture) => _fixture = fixture;
-
+public class OAuth2Tests : IDisposable {
+    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
+    
     [Fact]
     public async Task ShouldHaveProperHeader() {
         var auth   = new OAuth2AuthorizationRequestHeaderAuthenticator("token", "Bearer");
-        var client = new RestClient(_fixture.Server.Url, o => o.Authenticator = auth);
+        var client = new RestClient(_server.Url!, o => o.Authenticator = auth);
 
         var response   = await client.GetJsonAsync<TestServerResponse[]>("headers");
         var authHeader = response!.FirstOrDefault(x => x.Name == KnownHeaders.Authorization);
@@ -20,4 +17,6 @@ public class OAuth2Tests {
         authHeader.Should().NotBeNull();
         authHeader!.Value.Should().Be("Bearer token");
     }
+
+    public void Dispose() => _server.Dispose();
 }

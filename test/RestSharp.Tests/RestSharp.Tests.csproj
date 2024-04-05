@@ -6,6 +6,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="$(RepoRoot)\src\RestSharp\RestSharp.csproj"/>
+        <ProjectReference Include="..\RestSharp.Tests.Shared\RestSharp.Tests.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Update="SampleData\4sq.json" CopyToOutputDirectory="PreserveNewest"/>

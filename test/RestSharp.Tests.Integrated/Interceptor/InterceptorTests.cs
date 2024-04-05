@@ -2,8 +2,10 @@
 
 namespace RestSharp.Tests.Integrated.Interceptor;
 
-[Collection(nameof(TestServerCollection))]
-public class InterceptorTests(TestServerFixture fixture) {
+// [Collection(nameof(TestServerCollection))]
+public class InterceptorTests : IDisposable {
+    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
+
     [Fact]
     public async Task Should_call_client_interceptor() {
         // Arrange
@@ -32,7 +34,7 @@ public class InterceptorTests(TestServerFixture fixture) {
         // Arrange
         var request = CreateRequest();
 
-        var client      = new RestClient(fixture.Server.Url);
+        var client      = new RestClient(_server.Url!);
         var interceptor = new TestInterceptor();
         request.Interceptors = new List<Interceptors.Interceptor> { interceptor };
 
@@ -79,6 +81,8 @@ public class InterceptorTests(TestServerFixture fixture) {
         interceptor.AfterHttpRequestCalled.Should().BeFalse();
         interceptor.AfterRequestCalled.Should().BeFalse();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
+        
+        client.Dispose();
     }
 
     [Fact]
@@ -97,6 +101,8 @@ public class InterceptorTests(TestServerFixture fixture) {
         interceptor.AfterHttpRequestCalled.Should().BeFalse();
         interceptor.AfterRequestCalled.Should().BeFalse();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
+        
+        client.Dispose();
     }
 
     [Fact]
@@ -115,6 +121,8 @@ public class InterceptorTests(TestServerFixture fixture) {
         interceptor.AfterHttpRequestCalled.Should().BeTrue();
         interceptor.AfterRequestCalled.Should().BeFalse();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
+        
+        client.Dispose();
     }
 
     [Fact]
@@ -133,13 +141,15 @@ public class InterceptorTests(TestServerFixture fixture) {
         interceptor.AfterHttpRequestCalled.Should().BeTrue();
         interceptor.AfterRequestCalled.Should().BeTrue();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
+        
+        client.Dispose();
     }
 
     (RestClient client, TestInterceptor interceptor) SetupClient(Action<TestInterceptor>? configureInterceptor = null) {
         var interceptor = new TestInterceptor();
         configureInterceptor?.Invoke(interceptor);
 
-        var options = new RestClientOptions(fixture.Server.Url) {
+        var options = new RestClientOptions(_server.Url!) {
             Interceptors = new List<Interceptors.Interceptor> { interceptor }
         };
         return (new RestClient(options), interceptor);
@@ -149,6 +159,8 @@ public class InterceptorTests(TestServerFixture fixture) {
         var body = new TestRequest("foo", 100);
         return new RestRequest("post/json").AddJsonBody(body);
     }
+
+    public void Dispose() => _server.Dispose();
 }
 
 static class InterceptorChecks {

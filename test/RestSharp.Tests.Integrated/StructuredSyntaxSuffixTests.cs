@@ -17,7 +17,7 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
     }
 
     const string XmlContent  = "<Person><name>Bob</name><age>50</age></Person>";
-    const string JsonContent = @"{ ""name"":""Bob"", ""age"":50 }";
+    const string JsonContent = """{ "name":"Bob", "age":50 }""";
 
     public StructuredSyntaxSuffixTests() {
         _server = WireMockServer.Start();
@@ -38,19 +38,13 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
             };
             return response;
         }
-
-        // static void HandleRequest(HttpListenerRequest request, HttpListenerResponse response, Dictionary<string, string> p) {
-        //     response.ContentType = request.QueryString["ct"];
-        //     response.OutputStream.WriteStringUtf8(request.QueryString["c"]);
-        //     response.StatusCode = 200;
-        // }
     }
 
     public void Dispose() => _server.Dispose();
 
     [Fact]
     public async Task By_default_application_json_content_type_should_deserialize_as_JSON() {
-        var client = new RestClient(_server.Url!);
+        using var client = new RestClient(_server.Url!);
 
         var request = new RestRequest()
             .AddParameter("ct", "application/json")
@@ -64,7 +58,7 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
 
     [Fact]
     public async Task By_default_content_types_with_JSON_structured_syntax_suffix_should_deserialize_as_JSON() {
-        var client = new RestClient(_server.Url!);
+        using var client = new RestClient(_server.Url!);
 
         var request = new RestRequest()
             .AddParameter("ct", "application/vnd.somebody.something+json")
@@ -78,7 +72,7 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
 
     [Fact]
     public async Task By_default_content_types_with_XML_structured_syntax_suffix_should_deserialize_as_XML() {
-        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseXmlSerializer());
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseXmlSerializer());
 
         var request = new RestRequest()
             .AddParameter("ct", "application/vnd.somebody.something+xml")
@@ -92,7 +86,7 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
 
     [Fact]
     public async Task By_default_text_xml_content_type_should_deserialize_as_XML() {
-        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseXmlSerializer());
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseXmlSerializer());
 
         var request = new RestRequest()
             .AddParameter("ct", "text/xml")

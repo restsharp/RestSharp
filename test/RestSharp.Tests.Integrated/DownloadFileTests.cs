@@ -31,7 +31,7 @@ public sealed class DownloadFileTests : IDisposable {
             AdvancedResponseWriter = (response, request) => {
                 var buf = new byte[16];
                 // ReSharper disable once MustUseReturnValue
-                response.Content.ReadAsStream().Read(buf, 0, buf.Length);
+                response.Content.ReadAsStreamAsync().GetAwaiter().GetResult().Read(buf, 0, buf.Length);
                 tag = Encoding.ASCII.GetString(buf, 6, 4);
                 return new RestResponse(request);
             }
@@ -52,7 +52,7 @@ public sealed class DownloadFileTests : IDisposable {
     public async Task Handles_Binary_File_Download() {
         var request  = new RestRequest("");
         var response = await _client.DownloadDataAsync(request);
-        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, Path.Combine(LocalPath.Split('/'))));
+        var expected = File.ReadAllBytes(Path.Combine(_path, Path.Combine(LocalPath.Split('/'))));
 
         Assert.Equal(expected, response);
     }
@@ -73,8 +73,8 @@ public sealed class DownloadFileTests : IDisposable {
 
         Assert.Null(response);
 
-        var fromTemp = await File.ReadAllBytesAsync(tempFile);
-        var expected = await File.ReadAllBytesAsync(Path.Combine(_path, Path.Combine(LocalPath.Split('/'))));
+        var fromTemp = File.ReadAllBytes(tempFile);
+        var expected = File.ReadAllBytes(Path.Combine(_path, Path.Combine(LocalPath.Split('/'))));
 
         Assert.Equal(expected, fromTemp);
     }

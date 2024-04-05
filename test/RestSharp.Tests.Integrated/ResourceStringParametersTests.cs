@@ -17,7 +17,7 @@ public sealed class ResourceStringParametersTests : IDisposable {
                 return new ResponseMessage();
             }));
         
-        var client  = new RestClient(_server.Url!);
+        using var client  = new RestClient(_server.Url!);
         var request = new RestRequest(parameters);
 
         await client.GetAsync(request);

@@ -3,9 +3,11 @@ using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated;
 
-[Collection(nameof(TestServerCollection))]
-public class PostTests(TestServerFixture fixture) {
-    readonly RestClient _client = new(fixture.Server.Url);
+public class PostTests {
+    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
+    readonly RestClient     _client;
+    
+    public PostTests() => _client = new RestClient(_server.Url!);
 
     [Fact]
     public async Task Should_post_json() {

@@ -3,13 +3,11 @@ using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated;
 
-[Collection(nameof(TestServerCollection))]
-public class AsyncTests(TestServerFixture fixture) {
-    readonly RestClient _client = new(fixture.Server.Url);
-
-    class Response {
-        public string Message { get; set; } = null!;
-    }
+public class AsyncTests : IDisposable {
+    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
+    readonly RestClient _client;
+    
+    public AsyncTests() => _client = new RestClient(_server.Url!);
 
     [Fact]
     public async Task Can_Handle_Exception_Thrown_By_Interceptor_BeforeDeserialization() {
@@ -42,7 +40,7 @@ public class AsyncTests(TestServerFixture fixture) {
     [Fact]
     public async Task Can_Perform_ExecuteGetAsync_With_Response_Type() {
         var request  = new RestRequest("success");
-        var response = await _client.ExecuteAsync<Response>(request);
+        var response = await _client.ExecuteAsync<SuccessResponse>(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Data!.Message.Should().Be("Works!");
@@ -73,7 +71,7 @@ public class AsyncTests(TestServerFixture fixture) {
     [Fact]
     public async Task Can_Perform_Delete_With_Response_Type() {
         var request  = new RestRequest("delete");
-        var response = await _client.ExecuteAsync<Response>(request, Method.Delete);
+        var response = await _client.ExecuteAsync<SuccessResponse>(request, Method.Delete);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Data!.Message.Should().Be("Works!");
@@ -82,7 +80,7 @@ public class AsyncTests(TestServerFixture fixture) {
     [Fact]
     public async Task Can_Delete_With_Response_Type_using_extension() {
         var request  = new RestRequest("delete");
-        var response = await _client.DeleteAsync<Response>(request);
+        var response = await _client.DeleteAsync<SuccessResponse>(request);
 
         response!.Message.Should().Be("Works!");
     }
@@ -90,5 +88,10 @@ public class AsyncTests(TestServerFixture fixture) {
     class ThrowingInterceptor(string errorMessage) : Interceptors.Interceptor {
         public override ValueTask BeforeDeserialization(RestResponse response, CancellationToken cancellationToken)
             => throw new Exception(errorMessage);
+    }
+
+    public void Dispose() {
+        _server.Dispose();
+        _client.Dispose();
     }
 }

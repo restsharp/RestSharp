@@ -18,7 +18,10 @@ public sealed class MultipartFormDataTests : IDisposable {
         _client = new RestClient(options);
     }
 
-    public void Dispose() => _server.Dispose();
+    public void Dispose() {
+        _server.Dispose();
+        _client.Dispose();
+    }
 
     const string LineBreak = "\r\n";
 
@@ -175,5 +178,31 @@ public sealed class MultipartFormDataTests : IDisposable {
         var expected = string.Format(Expected, boundary);
 
         _capturer.Body.Should().Be(expected);
+    }
+    
+    [Fact]
+    public async Task MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
+        using var client = new RestClient(_server.Url!);
+
+        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
+            AlwaysMultipartFormData = true
+        };
+        var capturer = _server.ConfigureBodyCapturer(Method.Post);
+
+        const string bodyData      = "abc123 foo bar baz BING!";
+        const string multipartName = "mybody";
+
+        request.AddParameter(new BodyParameter(multipartName, bodyData, ContentType.Plain));
+
+        await client.ExecuteAsync(request);
+
+        var expectedBody = new[] {
+            $"{KnownHeaders.ContentType}: {ContentType.Plain}",
+            $"{KnownHeaders.ContentDisposition}: form-data; name={multipartName}",
+            bodyData
+        };
+
+        var actual = capturer.Body!.Split('\r');
+        actual.Should().Contain(expectedBody);
     }
 }

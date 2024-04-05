@@ -1,11 +1,14 @@
 using System.Net;
 using RestSharp.Tests.Integrated.Server;
+using WireMock.Util;
 
 namespace RestSharp.Tests.Integrated;
 
-[Collection(nameof(TestServerCollection))]
-public class HttpHeadersTests(TestServerFixture fixture) {
-    readonly RestClient _client = new(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = true });
+public class HttpHeadersTests : IDisposable {
+    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
+    readonly RestClient     _client;
+
+    public HttpHeadersTests() => _client = new RestClient(new RestClientOptions(_server.Url!) { ThrowOnAnyError = true });
 
     [Fact]
     public async Task Ensure_headers_correctly_set_in_the_interceptor() {
@@ -43,6 +46,7 @@ public class HttpHeadersTests(TestServerFixture fixture) {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Data.Should().NotBeNull();
         var header = response.Data!.First(x => x.Name == headerName);
         header.Should().NotBeNull();
         header.Value.Should().Be(headerValue);
@@ -75,7 +79,12 @@ public class HttpHeadersTests(TestServerFixture fixture) {
     class HeaderInterceptor(string headerName, string headerValue) : Interceptors.Interceptor {
         public override ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken) {
             requestMessage.Headers.Add(headerName, headerValue);
-            return ValueTask.CompletedTask;
+            return default;
         }
+    }
+
+    public void Dispose() {
+        _server.Dispose();
+        _client.Dispose();
     }
 }

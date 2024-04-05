@@ -24,7 +24,10 @@ public sealed class StatusCodeTests : IDisposable {
         }
     }
 
-    public void Dispose() => _server.Dispose();
+    public void Dispose() {
+        _server.Dispose();
+        _client.Dispose();
+    }
 
     readonly WireMockServer _server = WireMockServer.Start();
     readonly RestClient     _client;

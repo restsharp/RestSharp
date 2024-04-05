@@ -1,4 +1,5 @@
 ﻿using RestSharp.Serializers.Xml;
+using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated; 
 
@@ -20,7 +21,7 @@ public class RootElementTests {
             .Given(Request.Create().WithPath("/success"))
             .RespondWith(Response.Create().WithBody(xmlBody).WithHeader(KnownHeaders.ContentType, ContentType.Xml));
 
-        var client = new RestClient(server.Url!, configureSerialization: cfg => cfg.UseXmlSerializer());
+        using var client = new RestClient(server.Url!, configureSerialization: cfg => cfg.UseXmlSerializer());
 
         var request = new RestRequest("success") { RootElement = "Success" };
 

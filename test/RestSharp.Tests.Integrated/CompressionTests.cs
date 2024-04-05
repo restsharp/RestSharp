@@ -8,7 +8,7 @@ public class CompressionTests {
     static async Task<byte[]> GetBody(Func<Stream, Stream> getStream, string value) {
         using var memoryStream = new MemoryStream();
 
-        await using (var stream = getStream(memoryStream)) {
+        using (var stream = getStream(memoryStream)) {
             stream.WriteStringUtf8(value);
         }
 

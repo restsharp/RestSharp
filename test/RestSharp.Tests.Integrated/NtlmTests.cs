@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Runtime.InteropServices;
 using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -10,7 +11,7 @@ namespace RestSharp.Tests.Integrated;
 public class NtlmTests : CaptureFixture {
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_Server_Does_Not_Negotiate() {
-        if (OperatingSystem.IsLinux()) return;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>());
 
@@ -29,7 +30,7 @@ public class NtlmTests : CaptureFixture {
 
     [Fact]
     public async Task Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False() {
-        if (OperatingSystem.IsLinux()) return;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 
@@ -43,7 +44,7 @@ public class NtlmTests : CaptureFixture {
 
     [Fact]
     public async Task Passes_Default_Credentials_When_UseDefaultCredentials_Is_True() {
-        if (OperatingSystem.IsLinux()) return;
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
 

@@ -3,24 +3,23 @@ using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class RequestBodyTests {
-    const string NewLine = "\r\n";
+public class RequestBodyTests : IDisposable {
+    // const string NewLine = "\r\n";
 
-    const string TextPlainContentType             = "text/plain";
-    const string ExpectedTextContentType          = $"{TextPlainContentType}; charset=utf-8";
-    const string ExpectedTextContentTypeNoCharset = TextPlainContentType;
+    static readonly string ExpectedTextContentType          = $"{ContentType.Plain}; charset=utf-8";
+    static readonly string ExpectedTextContentTypeNoCharset = ContentType.Plain;
 
     readonly WireMockServer _server = WireMockServer.Start(s => s.AllowBodyForAllHttpMethods = true);
 
     async Task AssertBody(Method method, bool disableCharset = false) {
         var options  = new RestClientOptions(_server.Url!) { DisableCharset = disableCharset };
-        var client   = new RestClient(options);
+        using var client   = new RestClient(options);
         var request  = new RestRequest(RequestBodyCapturer.Resource, method);
         var capturer = _server.ConfigureBodyCapturer(method);
 
         const string bodyData = "abc123 foo bar baz BING!";
 
-        request.AddBody(bodyData, TextPlainContentType);
+        request.AddBody(bodyData, ContentType.Plain);
 
         await client.ExecuteAsync(request);
 
@@ -56,7 +55,7 @@ public class RequestBodyTests {
     public async Task Can_Have_No_Body_Added_To_POST_Request() {
         const Method httpMethod = Method.Post;
 
-        var client   = new RestClient(_server.Url!);
+        using var client   = new RestClient(_server.Url!);
         var request  = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
         var capturer = _server.ConfigureBodyCapturer(httpMethod);
 
@@ -71,31 +70,6 @@ public class RequestBodyTests {
     [Fact]
     public Task Can_Be_Added_To_HEAD_Request() => AssertBody(Method.Head);
 
-    [Fact]
-    public async Task MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
-        var client = new RestClient(_server.Url!);
-
-        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
-            AlwaysMultipartFormData = true
-        };
-        var capturer = _server.ConfigureBodyCapturer(Method.Post);
-
-        const string bodyData      = "abc123 foo bar baz BING!";
-        const string multipartName = "mybody";
-
-        request.AddParameter(new BodyParameter(multipartName, bodyData, TextPlainContentType));
-
-        await client.ExecuteAsync(request);
-
-        var expectedBody = new[] {
-            $"{KnownHeaders.ContentType}: {ExpectedTextContentType}",
-            $"{KnownHeaders.ContentDisposition}: form-data; name={multipartName}",
-            bodyData
-        };
-
-        var actual = capturer.Body!.Split(NewLine);
-        actual.Should().Contain(expectedBody);
-    }
 
     static void AssertHasNoRequestBody(RequestBodyCapturer capturer) {
         capturer.ContentType.Should().BeNull();
@@ -108,4 +82,6 @@ public class RequestBodyTests {
         capturer.HasBody.Should().BeTrue();
         capturer.Body.Should().Be(bodyData);
     }
+
+    public void Dispose() => _server.Dispose();
 }

@@ -5,7 +5,7 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.Tests.Integrated;
 
 #pragma warning disable xUnit1033
-public sealed class JsonBodyTests {
+public sealed class JsonBodyTests : IDisposable {
     readonly WireMockServer _server = WireMockServer.Start();
     readonly RestClient     _client;
 
@@ -60,5 +60,10 @@ public sealed class JsonBodyTests {
 
         capturer.ContentType.Should().Be("application/json; charset=utf-8");
         capturer.Body.Should().Be(expected);
+    }
+
+    public void Dispose() {
+        _server.Dispose();
+        _client.Dispose();
     }
 }
