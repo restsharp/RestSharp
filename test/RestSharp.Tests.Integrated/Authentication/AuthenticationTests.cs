@@ -1,21 +1,18 @@
 ﻿using System.Text;
 using System.Web;
 using RestSharp.Authenticators;
-using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated.Authentication;
 
-public class AuthenticationTests : IDisposable {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-
+public class AuthenticationTests(WireMockTestServer server) : IClassFixture<WireMockTestServer> {
     [Fact]
     public async Task Can_Authenticate_With_Basic_Http_Auth() {
         const string userName = "testuser";
         const string password = "testpassword";
 
-        var client = new RestClient(
-            _server.Url!,
-            o => o.Authenticator = new HttpBasicAuthenticator(userName, password)
+        using var client = new RestClient(
+            server.Url!,
+            o => o.Authenticator = new HttpBasicAuth(userName, password)
         );
         var request  = new RestRequest("headers");
         var response = await client.GetAsync<TestServerResponse[]>(request);
@@ -28,6 +25,4 @@ public class AuthenticationTests : IDisposable {
         parts[0].Should().Be(userName);
         parts[1].Should().Be(password);
     }
-
-    public void Dispose() => _server.Dispose();
 }

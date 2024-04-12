@@ -16,9 +16,9 @@ public class RestClientTests {
     [InlineData(Method.Post, Method.Put)]
     [InlineData(Method.Get, Method.Delete)]
     public async Task Execute_with_RestRequest_and_Method_overrides_previous_request_method(Method reqMethod, Method overrideMethod) {
-        var req    = new RestRequest("", reqMethod);
-        var client = new RestClient(BaseUrl);
+        var req = new RestRequest("", reqMethod);
 
+        using var client = new RestClient(BaseUrl);
         await client.ExecuteAsync(req, overrideMethod);
 
         req.Method.Should().Be(overrideMethod);
@@ -26,9 +26,9 @@ public class RestClientTests {
 
     [Fact]
     public async Task ConfigureHttp_will_set_proxy_to_null_with_no_exceptions_When_no_proxy_can_be_found() {
-        var req    = new RestRequest();
-        var client = new RestClient(new RestClientOptions(BaseUrl) { Proxy = null });
+        var req = new RestRequest();
 
+        using var client = new RestClient(new RestClientOptions(BaseUrl) { Proxy = null });
         await client.ExecuteAsync(req);
     }
 
@@ -40,7 +40,8 @@ public class RestClientTests {
         var req         = new RestRequest(absoluteUri);
 
         // act
-        var client   = new RestClient();
+        using var client = new RestClient();
+
         var builtUri = client.BuildUri(req);
 
         // assert
@@ -55,7 +56,8 @@ public class RestClientTests {
         var req      = new RestRequest(relative);
 
         // act
-        var client   = new RestClient(baseUrl);
+        using var client = new RestClient(baseUrl);
+
         var builtUri = client.BuildUri(req);
 
         // assert
@@ -68,7 +70,7 @@ public class RestClientTests {
         var baseUrl = new Uri(BaseUrl);
 
         // act
-        var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseJson());
+        using var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseJson());
 
         // assert
         client.Serializers.Serializers.Should().HaveCount(1);
@@ -81,7 +83,7 @@ public class RestClientTests {
         var baseUrl = new Uri(BaseUrl);
 
         // act
-        var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseXml());
+        using var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseXml());
 
         // assert
         client.Serializers.Serializers.Should().HaveCount(1);
@@ -94,7 +96,7 @@ public class RestClientTests {
         var baseUrl = new Uri(BaseUrl);
 
         // act
-        var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseOnlySerializer(() => new SystemTextJsonSerializer()));
+        using var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseOnlySerializer(() => new SystemTextJsonSerializer()));
 
         // assert
         client.Serializers.Serializers.Should().HaveCount(1);
@@ -103,16 +105,16 @@ public class RestClientTests {
 
     [Fact]
     public void Should_reuse_httpClient_instance() {
-        var client1 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
-        var client2 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
+        using var client1 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
+        using var client2 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
 
         client1.HttpClient.Should().BeSameAs(client2.HttpClient);
     }
 
     [Fact]
     public void Should_use_new_httpClient_instance() {
-        var client1 = new RestClient(new Uri("https://fake.api"));
-        var client2 = new RestClient(new Uri("https://fake.api"));
+        using var client1 = new RestClient(new Uri("https://fake.api"));
+        using var client2 = new RestClient(new Uri("https://fake.api"));
 
         client1.HttpClient.Should().NotBeSameAs(client2.HttpClient);
     }
@@ -123,7 +125,7 @@ public class RestClientTests {
         var clientOptions = new RestClientOptions();
 
         // act
-        var restClient = new RestClient(clientOptions);
+        using var restClient = new RestClient(clientOptions);
 
         //assert
         Assert.Single(
@@ -131,7 +133,8 @@ public class RestClientTests {
             parameter => parameter.Type == ParameterType.HttpHeader &&
                 parameter.Name == KnownHeaders.UserAgent &&
                 parameter.Value is string valueAsString &&
-                valueAsString == clientOptions.UserAgent);
+                valueAsString == clientOptions.UserAgent
+        );
 
         Assert.Empty(restClient.HttpClient.DefaultRequestHeaders.UserAgent);
     }
@@ -143,7 +146,7 @@ public class RestClientTests {
         var clientOptions = new RestClientOptions();
 
         // act
-        var restClient = new RestClient(httpClient, clientOptions);
+        using var restClient = new RestClient(httpClient, clientOptions);
 
         //assert
         Assert.Single(
@@ -151,7 +154,8 @@ public class RestClientTests {
             parameter => parameter.Type == ParameterType.HttpHeader &&
                 parameter.Name == KnownHeaders.UserAgent &&
                 parameter.Value is string valueAsString &&
-                valueAsString == clientOptions.UserAgent);
+                valueAsString == clientOptions.UserAgent
+        );
 
         Assert.Empty(httpClient.DefaultRequestHeaders.UserAgent);
     }

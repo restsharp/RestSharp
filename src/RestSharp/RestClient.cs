@@ -288,10 +288,10 @@ public partial class RestClient : IRestClient {
     bool          _disposed;
 
     protected virtual void Dispose(bool disposing) {
-        if (disposing && !_disposed) {
-            _disposed = true;
-            if (_disposeHttpClient) HttpClient.Dispose();
-        }
+        if (!disposing || _disposed) return;
+
+        _disposed = true;
+        if (_disposeHttpClient) HttpClient.Dispose();
     }
 
     public void Dispose() {

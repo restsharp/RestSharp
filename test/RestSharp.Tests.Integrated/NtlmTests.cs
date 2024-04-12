@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using RestSharp.Tests.Integrated.Fixtures;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -14,8 +13,8 @@ public class NtlmTests : CaptureFixture {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>());
+        using var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
 
-        var client  = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
         var request = new RestRequest(RequestHeadCapturer.Resource);
         await client.ExecuteAsync(request);
 
@@ -33,8 +32,8 @@ public class NtlmTests : CaptureFixture {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
+        using var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = false });
 
-        var client   = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = false });
         var request  = new RestRequest(RequestHeadCapturer.Resource);
         var response = await client.ExecuteAsync(request);
 
@@ -47,8 +46,8 @@ public class NtlmTests : CaptureFixture {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
         using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
+        using var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
 
-        var client   = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
         var request  = new RestRequest(RequestHeadCapturer.Resource);
         var response = await client.ExecuteAsync(request);
 

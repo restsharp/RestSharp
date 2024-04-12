@@ -50,7 +50,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
     public string Serialize(object obj) {
         var ns = new XmlSerializerNamespaces();
 
-        ns.Add(string.Empty, Namespace);
+        ns.Add(string.Empty, Namespace!);
 
         var serializer = GetXmlSerializer(obj.GetType(), RootElement);
         var writer     = new EncodingStringWriter(Encoding);

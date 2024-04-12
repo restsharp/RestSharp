@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <!--        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>-->
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="$(RepoRoot)\src\RestSharp.Serializers.Xml\RestSharp.Serializers.Xml.csproj"/>
@@ -17,14 +16,9 @@
     <ItemGroup>
         <PackageReference Include="HttpMultipartParser"/>
         <PackageReference Include="HttpTracer"/>
-        <!--        <PackageReference Include="Microsoft.AspNetCore.TestHost"/>-->
         <PackageReference Include="Polly"/>
         <PackageReference Include="PolySharp" PrivateAssets="All"/>
-        <PackageReference Include="WireMock.Net.FluentAssertions"/>
-        <!--        <PackageReference Include="Xunit.Extensions.Logging"/>-->
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+        <PackageReference Include="WireMock.Net"/>
     </ItemGroup>
     <ItemGroup>
         <Using Include="WireMock"/>
@@ -32,5 +26,6 @@
         <Using Include="WireMock.RequestBuilders"/>
         <Using Include="WireMock.ResponseBuilders"/>
         <Using Include="System.Net"/>
+        <Using Include="RestSharp.Tests.Integrated.Server"/>
     </ItemGroup>
 </Project>

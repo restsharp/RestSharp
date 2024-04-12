@@ -5,7 +5,7 @@ using RestSharp.Tests.Shared.Extensions;
 
 #pragma warning disable CS8618
 
-namespace RestSharp.Tests;
+namespace RestSharp.Tests.Auth;
 
 public class OAuth1Tests {
     [XmlRoot("queue")]
@@ -40,9 +40,9 @@ public class OAuth1Tests {
             "oauth_signature"
         };
 
-        var client        = new RestClient(baseUrl);
-        var request       = new RestRequest();
-        var authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
+        using var client        = new RestClient(baseUrl);
+        var       request       = new RestRequest();
+        var       authenticator = OAuth1Auth.ForRequestToken(consumerKey, consumerSecret);
         authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
         await authenticator.Authenticate(client, request);
 
@@ -62,18 +62,16 @@ public class OAuth1Tests {
         sortedParams.First().Should().Be(expected);
     }
 
-    public static IEnumerable<object[]> EncodeParametersTestData =>
-        new List<object[]>
-        {
-            new object[] {
-                new List<(string, string)> { ("name[first]", "Chuck"), ("name[last]", "Testa") },
-                "name%5Bfirst%5D=Chuck"
-            },
-            new object[] {
-                new List<(string, string)> { ("country", "España") },
-                "country=Espa%C3%B1a"
-            }
-        };
+    public static IEnumerable<object[]> EncodeParametersTestData => new List<object[]> {
+        new object[] {
+            new List<(string, string)> { ("name[first]", "Chuck"), ("name[last]", "Testa") },
+            "name%5Bfirst%5D=Chuck"
+        },
+        new object[] {
+            new List<(string, string)> { ("country", "España") },
+            "country=Espa%C3%B1a"
+        }
+    };
 
     [Fact]
     public void Use_RFC_3986_Encoding_For_Auth_Signature_Base() {

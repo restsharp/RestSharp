@@ -1,13 +1,7 @@
-﻿using System.Net;
-using RestSharp.Tests.Integrated.Server;
+﻿namespace RestSharp.Tests.Integrated;
 
-namespace RestSharp.Tests.Integrated;
-
-public class AsyncTests : IDisposable {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-    readonly RestClient _client;
-    
-    public AsyncTests() => _client = new RestClient(_server.Url!);
+public sealed class AsyncTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    readonly RestClient _client = new(server.Url!);
 
     [Fact]
     public async Task Can_Handle_Exception_Thrown_By_Interceptor_BeforeDeserialization() {
@@ -90,8 +84,5 @@ public class AsyncTests : IDisposable {
             => throw new Exception(errorMessage);
     }
 
-    public void Dispose() {
-        _server.Dispose();
-        _client.Dispose();
-    }
+    public void Dispose() => _client.Dispose();
 }

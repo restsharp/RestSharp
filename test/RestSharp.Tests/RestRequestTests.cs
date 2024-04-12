@@ -4,8 +4,7 @@ public class RestRequestTests {
     [Fact]
     public void RestRequest_Request_Property() {
         var request = new RestRequest("resource");
-
-        Assert.Equal("resource", request.Resource);
+        request.Resource.Should().Be("resource");
     }
 
     [Fact]
@@ -13,22 +12,21 @@ public class RestRequestTests {
         var request    = new RestRequest("/api/get?query=Id%3d198&another=notencoded");
         var parameters = request.Parameters.ToArray();
 
-        Assert.Equal("/api/get", request.Resource);
-        Assert.Equal(2, request.Parameters.Count);
-        Assert.Equal("query", parameters[0].Name);
-        Assert.Equal("Id%3d198", parameters[0].Value);
-        Assert.Equal(ParameterType.QueryString, parameters[0].Type);
-        Assert.False(parameters[0].Encode);
-        Assert.Equal("another", parameters[1].Name);
-        Assert.Equal("notencoded", parameters[1].Value);
-        Assert.Equal(ParameterType.QueryString, parameters[1].Type);
-        Assert.False(parameters[1].Encode);
+        request.Resource.Should().Be("/api/get");
+        parameters.Length.Should().Be(2);
+
+        var expected = new[] {
+            new { Name = "query", Value   = "Id%3d198", Type   = ParameterType.QueryString, Encode = false },
+            new { Name = "another", Value = "notencoded", Type = ParameterType.QueryString, Encode = false }
+        };
+        parameters.Should().BeEquivalentTo(expected, options => options.ExcludingMissingMembers());
     }
 
     [Fact]
     public async Task RestRequest_Fail_On_Exception() {
-        var req    = new RestRequest("nonexisting");
-        var client = new RestClient(new RestClientOptions("http://localhost:12345") { ThrowOnAnyError = true });
+        var req = new RestRequest("nonexisting");
+
+        using var client = new RestClient(new RestClientOptions("http://localhost:12345") { ThrowOnAnyError = true });
         await Assert.ThrowsAsync<HttpRequestException>(() => client.ExecuteAsync(req));
     }
 }

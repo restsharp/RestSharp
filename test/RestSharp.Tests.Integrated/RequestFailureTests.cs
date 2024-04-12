@@ -4,11 +4,8 @@ namespace RestSharp.Tests.Integrated;
 
 using Server;
 
-public class RequestFailureTests : IDisposable {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-    readonly RestClient     _client;
-
-    public RequestFailureTests() => _client = new RestClient(_server.Url!);
+public sealed class RequestFailureTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    readonly RestClient _client = new(server.Url!);
 
     [Fact]
     public async Task Handles_GET_Request_Errors() {
@@ -29,8 +26,8 @@ public class RequestFailureTests : IDisposable {
 
     [Fact]
     public async Task Throws_on_unsuccessful_call() {
-        using var client  = new RestClient(new RestClientOptions(_server.Url!) { ThrowOnAnyError = true });
-        var request = new RestRequest("status?code=500");
+        using var client  = new RestClient(new RestClientOptions(server.Url!) { ThrowOnAnyError = true });
+        var       request = new RestRequest("status?code=500");
 
         var task = () => client.ExecuteAsync<SuccessResponse>(request);
         await task.Should().ThrowExactlyAsync<HttpRequestException>();
@@ -69,8 +66,5 @@ public class RequestFailureTests : IDisposable {
         response.Should().BeNull();
     }
 
-    public void Dispose() {
-        _server.Dispose();
-        _client.Dispose();
-    }
+    public void Dispose() => _client.Dispose();
 }

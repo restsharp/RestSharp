@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Authenticators.OAuth.Extensions;
 
-namespace RestSharp.Tests; 
+namespace RestSharp.Tests.Auth; 
 
 public class OAuthTests {
     public OAuthTests() {
@@ -60,7 +60,8 @@ public class OAuthTests {
         var hasher = SHA1.Create();
         var hash   = hasher.ComputeHash(value.GetBytes());
 
-        using var crypto = new RSACryptoServiceProvider(keySize) { PersistKeyInCsp = false };
+        using var crypto = new RSACryptoServiceProvider(keySize);
+        crypto.PersistKeyInCsp = false;
 
         var privateKey = crypto.ToXmlString(true);
 

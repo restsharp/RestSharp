@@ -1,16 +1,14 @@
 using CsvHelper.Configuration;
 using RestSharp.Serializers.CsvHelper;
 using RestSharp.Serializers.Json;
-using RestSharp.Tests.Shared.Extensions;
-using RestSharp.Tests.Shared.Fixtures;
 using System.Globalization;
-using System.Net;
-using System.Text;
 
 namespace RestSharp.Tests.Serializers.Csv;
 
 public sealed class CsvHelperTests : IDisposable {
     static readonly Fixture Fixture = new();
+
+    static CsvHelperTests() => Fixture.Customize(new TestObjectCustomization());
 
     readonly WireMockServer _server = WireMockServer.Start();
 
@@ -22,73 +20,48 @@ public sealed class CsvHelperTests : IDisposable {
             .RespondWith(Response.Create().WithBody(serializer.Serialize(expected)!).WithHeader(KnownHeaders.ContentType, ContentType.Csv));
     }
 
-    TestObject CreateTestObject() {
-        var expected = Fixture.Create<TestObject>();
-
-        expected.DateTimeValue = new DateTime(
-            expected.DateTimeValue.Year,
-            expected.DateTimeValue.Month,
-            expected.DateTimeValue.Day,
-            expected.DateTimeValue.Hour,
-            expected.DateTimeValue.Minute,
-            expected.DateTimeValue.Second
-        );
-
-        return expected;
-    }
-
     [Fact]
     public async Task Use_CsvHelper_For_Response() {
-        var expected = CreateTestObject();
-
+        var expected = Fixture.Create<TestObject>();
         ConfigureResponse(expected);
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
 
-        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
         var actual = await client.GetAsync<TestObject>(new RestRequest());
-
         actual.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
     public async Task Use_CsvHelper_For_Collection_Response() {
-        var count    = Fixture.Create<int>();
-        var expected = new List<TestObject>(count);
-
-        for (var i = 0; i < count; i++) {
-            var item = CreateTestObject();
-            expected.Add(item);
-        }
+        var expected = Fixture.CreateMany<TestObject>();
 
         ConfigureResponse(expected);
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
 
-        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
         var actual = await client.GetAsync<List<TestObject>>(new RestRequest());
-
         actual.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
-    public async Task DeserilizationFails_IsSuccessful_Should_BeFalse() {
+    public async Task Invalid_csv_request_body_should_fail() {
         _server
             .Given(Request.Create().WithPath("/").UsingGet())
             .RespondWith(Response.Create().WithBody("invalid csv").WithHeader(KnownHeaders.ContentType, ContentType.Csv));
 
-        var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
 
         var response = await client.ExecuteAsync<TestObject>(new RestRequest());
-
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeFalse();
     }
 
     [Fact]
-    public async Task DeserilizationSucceeds_IsSuccessful_Should_BeTrue() {
-        var item = CreateTestObject();
+    public async Task Valid_csv_response_should_succeed() {
+        var item = Fixture.Create<TestObject>();
         ConfigureResponse(item);
 
-        var client   = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseSystemTextJson());
-        var response = await client.ExecuteAsync<TestObject>(new RestRequest());
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseSystemTextJson());
 
+        var response = await client.ExecuteAsync<TestObject>(new RestRequest());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeTrue();
     }
@@ -101,18 +74,9 @@ public sealed class CsvHelperTests : IDisposable {
             }
         );
 
-        var item = new TestObject {
-            Int32Value    = 32,
-            SingleValue   = 16.5f,
-            StringValue   = "hello",
-            TimeSpanValue = TimeSpan.FromMinutes(10),
-            DateTimeValue = new DateTime(2024, 1, 20)
-        };
-
-        var actual = serializer.Serialize(item);
-
-        const string expected =
-            "StringValue,Int32Value,DecimalValue,DoubleValue,SingleValue,DateTimeValue,TimeSpanValue;hello,32,0,0,16.5,01/20/2024 00:00:00,00:10:00;";
+        var item     = Fixture.Create<TestObject>();
+        var actual   = serializer.Serialize(item);
+        var expected = $"{TestObject.Titles};{item.ToString(CultureInfo.InvariantCulture)};";
 
         actual.Should().Be(expected);
     }
@@ -145,13 +109,28 @@ public sealed class CsvHelperTests : IDisposable {
                 StringValue = "String, with comma"
             }
         };
+        string[] strings = [TestObject.Titles, .. items.Select(i => i.ToString(CultureInfo.InvariantCulture))];
 
-        serializer.Serialize(items)
-            .Should()
-            .Be(
-                "StringValue,Int32Value,DecimalValue,DoubleValue,SingleValue,DateTimeValue,TimeSpanValue;hello,32,0,0,16.5,01/20/2024 00:00:00,00:10:00;,65,89.555,0,0,08/19/2022 05:15:21,00:01:01;\"String, with comma\",0,0,20.00001,80000,01/01/0001 00:00:00,00:00:00;"
-            );
+        var expected = $"{string.Join(";", strings)};";
+        var actual   = serializer.Serialize(items);
+
+        actual.Should().Be(expected);
     }
 
     public void Dispose() => _server?.Dispose();
+}
+
+class TestObjectCustomization : ICustomization {
+    public void Customize(IFixture fixture)
+        => fixture.Customize<TestObject>(
+            o => o
+                .WithAutoProperties()
+                .With(
+                    p => p.DateTimeValue,
+                    () => {
+                        var dt = fixture.Create<DateTime>();
+                        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+                    }
+                )
+        );
 }

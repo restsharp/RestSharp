@@ -17,21 +17,12 @@ public class SerializationTests {
     [Fact]
     public void Serialize_multiple_objects_within_one_thread() {
         var serializer = new JsonNetSerializer();
-        var dummy1     = Fixture.Create<TestClass>();
-        var dummy2     = Fixture.Create<TestClass>();
-        var dummy3     = Fixture.Create<TestClass>();
-
-        var expectedSerialization1 = JsonConvert.SerializeObject(dummy1, _jsonSerializerSettings);
-        var expectedSerialization2 = JsonConvert.SerializeObject(dummy2, _jsonSerializerSettings);
-        var expectedSerialization3 = JsonConvert.SerializeObject(dummy3, _jsonSerializerSettings);
-
-        var actualSerialization1 = serializer.Serialize(dummy1);
-        var actualSerialization2 = serializer.Serialize(dummy2);
-        var actualSerialization3 = serializer.Serialize(dummy3);
-
-        actualSerialization1.Should().Be(expectedSerialization1);
-        actualSerialization2.Should().Be(expectedSerialization2);
-        actualSerialization3.Should().Be(expectedSerialization3);
+        var dummy      = Fixture.CreateMany<TestClass>().ToArray();
+        var expectedSerializations = dummy.Select(
+            d => JsonConvert.SerializeObject(d, _jsonSerializerSettings)
+        ).ToList();
+        var actualSerializations = dummy.Select(serializer.Serialize).ToList();
+        actualSerializations.Should().BeEquivalentTo(expectedSerializations);
     }
 
     [Fact]
@@ -42,7 +33,8 @@ public class SerializationTests {
             0,
             100,
             _ => {
-                var dummy                 = Fixture.Create<TestClass>();
+                var dummy = Fixture.Create<TestClass>();
+
                 var expectedSerialization = JsonConvert.SerializeObject(dummy, _jsonSerializerSettings);
                 var actualSerialization   = serializer.Serialize(dummy);
 
@@ -50,5 +42,4 @@ public class SerializationTests {
             }
         );
     }
-
 }

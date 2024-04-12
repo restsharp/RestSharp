@@ -1,6 +1,4 @@
-﻿using RestSharp.Tests.Integrated.Server;
-
-namespace RestSharp.Tests.Integrated;
+﻿namespace RestSharp.Tests.Integrated;
 
 public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     public NonProtocolExceptionHandlingTests()
@@ -24,7 +22,8 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     /// </summary>
     [Fact]
     public async Task Handles_Non_Existent_Domain() {
-        var client   = new RestClient("http://nonexistantdomainimguessing.org");
+        using var client = new RestClient("http://nonexistantdomainimguessing.org");
+
         var request  = new RestRequest("foo");
         var response = await client.ExecuteAsync(request);
 
@@ -33,7 +32,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     [Fact]
     public async Task Handles_HttpClient_Timeout_Error() {
-        var client = new RestClient(new HttpClient { Timeout = TimeSpan.FromMilliseconds(500) });
+        using var client = new RestClient(new HttpClient { Timeout = TimeSpan.FromMilliseconds(500) });
 
         var request  = new RestRequest($"{_server.Url}/timeout");
         var response = await client.ExecuteAsync(request);
@@ -44,7 +43,8 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     [Fact]
     public async Task Handles_Server_Timeout_Error() {
-        var client   = new RestClient(_server.Url!);
+        using var client = new RestClient(_server.Url!);
+
         var request  = new RestRequest("timeout") { Timeout = 500 };
         var response = await client.ExecuteAsync(request);
 
@@ -54,7 +54,8 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     [Fact]
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
-        var client   = new RestClient(_server.Url!);
+        using var client = new RestClient(_server.Url!);
+
         var request  = new RestRequest("timeout") { Timeout = 500 };
         var response = await client.ExecuteAsync<SuccessResponse>(request);
 
@@ -65,7 +66,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     [Fact]
     public async Task Task_Handles_Non_Existent_Domain() {
-        var client = new RestClient("http://this.cannot.exist:8001");
+        using var client = new RestClient("http://this.cannot.exist:8001");
 
         var request = new RestRequest("/") {
             RequestFormat = DataFormat.Json,

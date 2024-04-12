@@ -1,5 +1,6 @@
 ﻿using HttpTracer;
 using RestSharp.Tests.Integrated.Fixtures;
+using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
@@ -110,7 +111,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
         request.AddFile("fileName", path);
 
-        request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
+        request.AddParameter(new BodyParameter("controlName", "test", ContentType.Json));
 
         var response = await _client.ExecuteAsync(request);
 
@@ -135,7 +136,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         const string customContentType = "multipart/vnd.resteasy+form-data";
         request.AddHeader(KnownHeaders.ContentType, customContentType);
         request.AddFile("fileName", path);
-        request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
+        request.AddParameter(new BodyParameter("controlName", "test", ContentType.Json));
 
         await _client.ExecuteAsync(request);
         var boundary = request.FormBoundary;
@@ -156,7 +157,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "TestFile.txt");
         request.AddFile("fileName", path);
 
-        request.AddParameter(new BodyParameter("controlName", "test", "application/json"));
+        request.AddParameter(new BodyParameter("controlName", "test", ContentType.Json));
 
         await _client.ExecuteAsync(request);
         var boundary = request.FormBoundary;

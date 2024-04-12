@@ -15,10 +15,10 @@ public class AuthenticationTests {
 
         var baseUrl = new Uri("https://api.twitter.com");
 
-        var client = new RestClient(
+        using var client = new RestClient(
             baseUrl,
             options =>
-                options.Authenticator = OAuth1Authenticator.ForRequestToken(
+                options.Authenticator = OAuth1Auth.ForRequestToken(
                     twitterKeys.ConsumerKey!,
                     twitterKeys.ConsumerSecret,
                     "https://restsharp.dev"
@@ -47,7 +47,7 @@ public class AuthenticationTests {
         var verifier = Console.ReadLine();
 
         request = new RestRequest("oauth/access_token") {
-            Authenticator = OAuth1Authenticator.ForAccessToken(
+            Authenticator = OAuth1Auth.ForAccessToken(
                 twitterKeys.ConsumerKey!,
                 twitterKeys.ConsumerSecret,
                 oauthToken!,
@@ -69,7 +69,7 @@ public class AuthenticationTests {
         Assert.NotNull(oauthTokenSecret);
 
         request = new RestRequest("1.1/account/verify_credentials.json") {
-            Authenticator = OAuth1Authenticator.ForProtectedResource(
+            Authenticator = OAuth1Auth.ForProtectedResource(
                 twitterKeys.ConsumerKey!,
                 twitterKeys.ConsumerSecret,
                 oauthToken!,

@@ -47,7 +47,7 @@ public sealed class StructuredSyntaxSuffixTests : IDisposable {
         using var client = new RestClient(_server.Url!);
 
         var request = new RestRequest()
-            .AddParameter("ct", "application/json")
+            .AddParameter("ct", ContentType.Json)
             .AddParameter("c", JsonContent);
 
         var response = await client.ExecuteAsync<Person>(request);

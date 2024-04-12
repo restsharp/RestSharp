@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using RestSharp.Tests.Integrated.Fixtures;
-using RestSharp.Tests.Integrated.Server;
 using WireMock.Types;
 using WireMock.Util;
 

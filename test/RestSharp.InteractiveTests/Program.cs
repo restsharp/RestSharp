@@ -1,6 +1,6 @@
 ﻿using RestSharp.InteractiveTests;
 
-var client = new TwitterClient("apikey", "apisecret");
+using var client = new TwitterClient("apikey", "apisecret");
 
 await foreach (var tweet in client.SearchStream()) {
     Console.WriteLine(tweet);

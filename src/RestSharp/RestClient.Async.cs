@@ -199,7 +199,7 @@ public partial class RestClient {
         public void Dispose() => ResponseMessage?.Dispose();
     }
 
-    static HttpMethod AsHttpMethod(Method method)
+    internal static HttpMethod AsHttpMethod(Method method)
         => method switch {
             Method.Get     => HttpMethod.Get,
             Method.Post    => HttpMethod.Post,

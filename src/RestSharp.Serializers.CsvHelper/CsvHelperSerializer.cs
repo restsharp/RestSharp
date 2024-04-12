@@ -3,7 +3,7 @@ using CsvHelper.Configuration;
 using System.Collections;
 using System.Globalization;
 
-namespace RestSharp.Serializers.CsvHelper; 
+namespace RestSharp.Serializers.CsvHelper;
 
 public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer, IRestSerializer, ISerializer {
     public ISerializer Serializer => this;
@@ -26,14 +26,12 @@ public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer
                 throw new InvalidOperationException(message: "Response content is null");
 
             using var stringReader = new StringReader(response.Content);
-
-            using var csvReader = new CsvReader(stringReader, configuration);
+            using var csvReader    = new CsvReader(stringReader, configuration);
 
             var @interface = typeof(T).GetInterface("IEnumerable`1");
 
             if (@interface == null) {
                 csvReader.Read();
-
                 return csvReader.GetRecord<T>();
             }
 
@@ -74,8 +72,7 @@ public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer
         }
 
         using var stringWriter = new StringWriter();
-
-        using var csvWriter = new CsvWriter(stringWriter, configuration);
+        using var csvWriter    = new CsvWriter(stringWriter, configuration);
 
         if (obj is IEnumerable records) {
             csvWriter.WriteRecords(records);

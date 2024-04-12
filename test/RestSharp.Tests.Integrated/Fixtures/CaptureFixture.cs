@@ -1,5 +1,4 @@
 using System.Collections.Specialized;
-using System.Net;
 
 namespace RestSharp.Tests.Integrated.Fixtures;
 

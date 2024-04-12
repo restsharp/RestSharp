@@ -1,8 +1,5 @@
-using System.Net;
 using RestSharp.Interceptors;
 using RestSharp.Serializers.Xml;
-using RestSharp.Tests.Integrated.Server;
-using WireMock;
 
 namespace RestSharp.Tests.Integrated;
 

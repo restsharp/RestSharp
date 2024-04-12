@@ -1,15 +1,9 @@
 using System.Text.Json;
-using RestSharp.Tests.Integrated.Server;
-
-// using static RestSharp.Tests.Integrated.Server.HttpServer;
 
 namespace RestSharp.Tests.Integrated;
 
-public class PutTests : IDisposable {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-    readonly RestClient _client;
-    
-    public PutTests() => _client = new(_server.Url!);
+public sealed class PutTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    readonly RestClient _client = new(server.Url!);
 
     static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
 
@@ -44,10 +38,7 @@ public class PutTests : IDisposable {
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
 
-    public void Dispose() {
-        _server.Dispose();
-        _client.Dispose();
-    }
+    public void Dispose() => _client.Dispose();
 }
 
 public record TestRequest(string Data, int Number);

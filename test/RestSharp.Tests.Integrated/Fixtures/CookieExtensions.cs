@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace RestSharp.Tests.Integrated.Fixtures;
 
 static class CookieExtensions {

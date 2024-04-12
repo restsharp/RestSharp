@@ -1,13 +1,7 @@
-using System.Net;
-using RestSharp.Tests.Integrated.Server;
-
 namespace RestSharp.Tests.Integrated;
 
-public class PostTests {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-    readonly RestClient     _client;
-    
-    public PostTests() => _client = new RestClient(_server.Url!);
+public sealed class PostTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    readonly RestClient _client = new(server.Url!);
 
     [Fact]
     public async Task Should_post_json() {
@@ -62,6 +56,7 @@ public class PostTests {
 
         CheckResponse(defParam);
         CheckResponse(reqParam);
+        return;
 
         void CheckResponse(PostParameter parameter) {
             var p = response.Data!.FirstOrDefault(x => x.Name == parameter.Name);
@@ -75,4 +70,6 @@ public class PostTests {
     }
 
     record PostParameter(string Name, string Value);
+
+    public void Dispose() => _client.Dispose();
 }

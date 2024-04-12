@@ -1,6 +1,4 @@
-﻿using System.Net;
-using RestSharp.Serializers.Xml;
-using WireMock;
+﻿using RestSharp.Serializers.Xml;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InconsistentNaming

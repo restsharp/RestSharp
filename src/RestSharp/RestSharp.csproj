@@ -49,11 +49,26 @@
         <Compile Update="RestClient.Extensions.Options.cs">
             <DependentUpon>RestClient.Extensions.cs</DependentUpon>
         </Compile>
+        <Compile Update="Request\RestRequestExtensions.Headers.cs">
+            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Request\RestRequestExtensions.Url.cs">
+            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Request\RestRequestExtensions.Query.cs">
+            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Request\RestRequestExtensions.File.cs">
+            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
-    <ItemGroup>
+    <ItemGroup Label="Source generator">
         <ProjectReference Include="$(RepoRoot)\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
+    <ItemGroup Label="Package README">
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
     <ItemGroup>
-        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <Using Include="System.Net"/>
     </ItemGroup>
 </Project>

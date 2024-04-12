@@ -1,10 +1,9 @@
 using System.Text.Json;
-using RestSharp.Tests.Integrated.Fixtures;
+using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-#pragma warning disable xUnit1033
 public sealed class JsonBodyTests : IDisposable {
     readonly WireMockServer _server = WireMockServer.Start();
     readonly RestClient     _client;
@@ -41,16 +40,7 @@ public sealed class JsonBodyTests : IDisposable {
 
     [Fact]
     public async Task Add_JSON_body_string() {
-        const string payload = @"
-""requestBody"": { 
-    ""content"": { 
-        ""application/json"": { 
-            ""schema"": { 
-                ""type"": ""string"" 
-            } 
-        } 
-    } 
-},";
+        var payload = $" \"requestBody\": {{ \"content\": {{ \"{ContentType.Json}\": {{ \"schema\": {{ \"type\": \"string\" }} }} }} }}";
 
         var expected = JsonSerializer.Serialize(payload);
         var capturer = _server.ConfigureBodyCapturer(Method.Post);

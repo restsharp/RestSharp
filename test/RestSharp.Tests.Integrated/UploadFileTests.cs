@@ -1,15 +1,12 @@
 // ReSharper disable MethodHasAsyncOverload
 
 using HttpMultipartParser;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
 using RestSharp.Extensions;
+using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-using Server;
-
-public class UploadFileTests {
+public sealed class UploadFileTests : IDisposable {
     readonly ITestOutputHelper _output;
     readonly RestClient        _client;
     readonly string            _basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -61,7 +58,6 @@ public class UploadFileTests {
         response.Data.Should().BeEquivalentTo(_expected);
     }
 
-#if !NET6_0
     // This test fails because MultipartFormDataParser doesn't understand filename*
     [Fact]
     public async Task Should_upload_from_stream_non_ascii() {
@@ -77,7 +73,6 @@ public class UploadFileTests {
         _output.WriteLine(response.Content);
         response.Data.Should().BeEquivalentTo(new UploadResponse(nonAsciiFilename, new FileInfo(_path).Length, true));
     }
-#endif
 
     static async Task<ResponseMessage> HandleUpload(IRequestMessage request) {
         var response = new ResponseMessage();
@@ -92,14 +87,7 @@ public class UploadFileTests {
 
         var fileSection = form.Files[0];
         var fileLength  = fileSection.Data.Length;
-
-#if !NET6_0
-        // Doing this because MultipartFormDataParser doesn't understand filename*
-        var section = await request.GetFileSection("file");
-        var fileName = section!.FileName;
-#else
         var fileName = fileSection.FileName;
-#endif
 
         // ReSharper disable once InvertIf
         if (checkFile) {
@@ -118,5 +106,10 @@ public class UploadFileTests {
         }
 
         return WireMockTestServer.CreateJson(new UploadResponse(fileName, fileLength, true));
+    }
+
+    public void Dispose() {
+        _client.Dispose();
+        _server.Dispose();
     }
 }

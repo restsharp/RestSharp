@@ -1,41 +1,38 @@
 ﻿using RestSharp.Authenticators;
 using RestSharp.Authenticators.OAuth;
 
-namespace RestSharp.Tests;
+namespace RestSharp.Tests.Auth;
 
-public class OAuth1AuthenticatorTests {
-    public OAuth1AuthenticatorTests()
-        => _authenticator = new OAuth1Authenticator {
-            CallbackUrl        = "CallbackUrl",
-            ClientPassword     = "ClientPassword",
-            Type               = OAuthType.ClientAuthentication,
-            ClientUsername     = "ClientUsername",
-            ConsumerKey        = "ConsumerKey",
-            ConsumerSecret     = "ConsumerSecret",
-            Realm              = "Realm",
-            SessionHandle      = "SessionHandle",
-            SignatureMethod    = OAuthSignatureMethod.PlainText,
-            SignatureTreatment = OAuthSignatureTreatment.Escaped,
-            Token              = "Token",
-            TokenSecret        = "TokenSecret",
-            Verifier           = "Verifier",
-            Version            = "Version"
-        };
-
-    readonly OAuth1Authenticator _authenticator;
+public class OAuth1AuthTests {
+    readonly OAuth1Auth _auth = new() {
+        CallbackUrl        = "CallbackUrl",
+        ClientPassword     = "ClientPassword",
+        Type               = OAuthType.ClientAuthentication,
+        ClientUsername     = "ClientUsername",
+        ConsumerKey        = "ConsumerKey",
+        ConsumerSecret     = "ConsumerSecret",
+        Realm              = "Realm",
+        SessionHandle      = "SessionHandle",
+        SignatureMethod    = OAuthSignatureMethod.PlainText,
+        SignatureTreatment = OAuthSignatureTreatment.Escaped,
+        Token              = "Token",
+        TokenSecret        = "TokenSecret",
+        Verifier           = "Verifier",
+        Version            = "Version"
+    };
 
     [Fact]
     public void Authenticate_ShouldAddAuthorizationAsTextValueToRequest_OnHttpAuthorizationHeaderHandling() {
         // Arrange
         const string url = "https://no-query.string";
 
-        var client  = new RestClient(url);
+        using var client  = new RestClient(url);
         var request = new RestRequest();
 
-        _authenticator.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
+        _auth.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
 
         // Act
-        _authenticator.Authenticate(client, request);
+        _auth.Authenticate(client, request);
 
         // Assert
         var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);
@@ -59,14 +56,14 @@ public class OAuth1AuthenticatorTests {
         // Arrange
         const string url = "https://no-query.string";
 
-        var client  = new RestClient(url);
+        using var client  = new RestClient(url);
         var request = new RestRequest();
         request.AddQueryParameter("queryparameter", "foobartemp");
 
-        _authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
+        _auth.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
 
         // Act
-        _authenticator.Authenticate(client, request);
+        _auth.Authenticate(client, request);
 
         // Assert
         var parameters = request.Parameters;
@@ -100,13 +97,13 @@ public class OAuth1AuthenticatorTests {
         // Arrange
         const string url = "https://no-query.string";
 
-        var client  = new RestClient(url);
+        using var client  = new RestClient(url);
         var request = new RestRequest();
-        _authenticator.Type  = type;
-        _authenticator.Token = value;
+        _auth.Type  = type;
+        _auth.Token = value;
 
         // Act
-        _authenticator.Authenticate(client, request);
+        _auth.Authenticate(client, request);
 
         // Assert
         var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);
@@ -117,7 +114,7 @@ public class OAuth1AuthenticatorTests {
     }
 
     /// <summary>
-    /// According the specifications of OAuth 1.0a, the customer secret is not required.
+    /// According to the specifications of OAuth 1.0a, the customer secret is not required.
     /// For more information, check the section 4 on https://oauth.net/core/1.0a/.
     /// </summary>
     [Theory]
@@ -127,13 +124,13 @@ public class OAuth1AuthenticatorTests {
         // Arrange
         const string url = "https://no-query.string";
 
-        var client  = new RestClient(url);
+        using var client  = new RestClient(url);
         var request = new RestRequest();
-        _authenticator.Type           = type;
-        _authenticator.ConsumerSecret = null;
+        _auth.Type           = type;
+        _auth.ConsumerSecret = null;
 
         // Act
-        _authenticator.Authenticate(client, request);
+        _auth.Authenticate(client, request);
 
         // Assert
         var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);

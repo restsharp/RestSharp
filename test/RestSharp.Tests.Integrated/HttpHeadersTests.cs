@@ -1,14 +1,7 @@
-using System.Net;
-using RestSharp.Tests.Integrated.Server;
-using WireMock.Util;
-
 namespace RestSharp.Tests.Integrated;
 
-public class HttpHeadersTests : IDisposable {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-    readonly RestClient     _client;
-
-    public HttpHeadersTests() => _client = new RestClient(new RestClientOptions(_server.Url!) { ThrowOnAnyError = true });
+public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    readonly RestClient _client = new(new RestClientOptions(server.Url!) { ThrowOnAnyError = true });
 
     [Fact]
     public async Task Ensure_headers_correctly_set_in_the_interceptor() {
@@ -83,8 +76,5 @@ public class HttpHeadersTests : IDisposable {
         }
     }
 
-    public void Dispose() {
-        _server.Dispose();
-        _client.Dispose();
-    }
+    public void Dispose() => _client.Dispose();
 }

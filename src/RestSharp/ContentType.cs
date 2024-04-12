@@ -60,11 +60,11 @@ public class ContentType : IEquatable<ContentType> {
         };
 
     public static readonly string[] JsonAccept = {
-        "application/json", "text/json", "text/x-json", "text/javascript"
+        ContentType.Json, "text/json", "text/x-json", "text/javascript"
     };
 
     public static readonly string[] XmlAccept = {
-        "application/xml", "text/xml"
+        ContentType.Xml, "text/xml"
     };
 
     readonly string _value;

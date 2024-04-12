@@ -8,6 +8,7 @@ public class CompressionTests {
     static async Task<byte[]> GetBody(Func<Stream, Stream> getStream, string value) {
         using var memoryStream = new MemoryStream();
 
+        // ReSharper disable once UseAwaitUsing
         using (var stream = getStream(memoryStream)) {
             stream.WriteStringUtf8(value);
         }
@@ -30,9 +31,9 @@ public class CompressionTests {
         var body = await GetBody(s => new DeflateStream(s, CompressionMode.Compress, true), value);
         ConfigureServer(server, body, "deflate");
 
-        var client   = new RestClient(server.Url!);
-        var request  = new RestRequest("");
-        var response = await client.ExecuteAsync(request);
+        using var client   = new RestClient(server.Url!);
+        var       request  = new RestRequest("");
+        var       response = await client.ExecuteAsync(request);
 
         response.Content.Should().Be(value);
     }
@@ -41,13 +42,13 @@ public class CompressionTests {
     public async Task Can_Handle_Gzip_Compressed_Content() {
         const string value  = "This is some gzipped content";
         using var    server = WireMockServer.Start();
-        
+
         var body = await GetBody(s => new GZipStream(s, CompressionMode.Compress, true), value);
         ConfigureServer(server, body, "gzip");
 
-        var client   = new RestClient(server.Url!);
-        var request  = new RestRequest("");
-        var response = await client.ExecuteAsync(request);
+        using var client   = new RestClient(server.Url!);
+        var       request  = new RestRequest("");
+        var       response = await client.ExecuteAsync(request);
 
         response.Content.Should().Be(value);
     }
@@ -56,13 +57,14 @@ public class CompressionTests {
     public async Task Can_Handle_Uncompressed_Content() {
         const string value  = "This is some sample content";
         using var    server = WireMockServer.Start();
+
         server
             .Given(Request.Create().WithPath("/").UsingGet())
             .RespondWith(Response.Create().WithBody(value));
 
-        var client   = new RestClient(server.Url!);
-        var request  = new RestRequest("");
-        var response = await client.ExecuteAsync(request);
+        using var client   = new RestClient(server.Url!);
+        var       request  = new RestRequest("");
+        var       response = await client.ExecuteAsync(request);
 
         response.Content.Should().Be(value);
     }

@@ -22,7 +22,7 @@ using System.Web;
 namespace RestSharp.Authenticators;
 
 /// <seealso href="http://tools.ietf.org/html/rfc5849">RFC: The OAuth 1.0 Protocol</seealso>
-public class OAuth1Authenticator : IAuthenticator {
+public class OAuth1Auth : IAuthenticator {
     public virtual string?                 Realm              { get; set; }
     public virtual OAuthParameterHandling  ParameterHandling  { get; set; }
     public virtual OAuthSignatureMethod    SignatureMethod    { get; set; }
@@ -61,7 +61,7 @@ public class OAuth1Authenticator : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Authenticator ForRequestToken(
+    public static OAuth1Auth ForRequestToken(
         string               consumerKey,
         string?              consumerSecret,
         OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1
@@ -76,7 +76,7 @@ public class OAuth1Authenticator : IAuthenticator {
         };
 
     [PublicAPI]
-    public static OAuth1Authenticator ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
+    public static OAuth1Auth ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
         var authenticator = ForRequestToken(consumerKey, consumerSecret);
 
         authenticator.CallbackUrl = callbackUrl;
@@ -85,7 +85,7 @@ public class OAuth1Authenticator : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Authenticator ForAccessToken(
+    public static OAuth1Auth ForAccessToken(
         string               consumerKey,
         string?              consumerSecret,
         string               token,
@@ -104,7 +104,7 @@ public class OAuth1Authenticator : IAuthenticator {
         };
 
     [PublicAPI]
-    public static OAuth1Authenticator ForAccessToken(
+    public static OAuth1Auth ForAccessToken(
         string  consumerKey,
         string? consumerSecret,
         string  token,
@@ -119,7 +119,7 @@ public class OAuth1Authenticator : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Authenticator ForAccessTokenRefresh(
+    public static OAuth1Auth ForAccessTokenRefresh(
         string  consumerKey,
         string? consumerSecret,
         string  token,
@@ -134,7 +134,7 @@ public class OAuth1Authenticator : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Authenticator ForAccessTokenRefresh(
+    public static OAuth1Auth ForAccessTokenRefresh(
         string  consumerKey,
         string? consumerSecret,
         string  token,
@@ -151,7 +151,7 @@ public class OAuth1Authenticator : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Authenticator ForClientAuthentication(
+    public static OAuth1Auth ForClientAuthentication(
         string               consumerKey,
         string?              consumerSecret,
         string               username,
@@ -170,7 +170,7 @@ public class OAuth1Authenticator : IAuthenticator {
         };
 
     [PublicAPI]
-    public static OAuth1Authenticator ForProtectedResource(
+    public static OAuth1Auth ForProtectedResource(
         string               consumerKey,
         string?              consumerSecret,
         string               accessToken,

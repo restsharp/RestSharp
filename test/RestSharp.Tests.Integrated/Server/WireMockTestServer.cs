@@ -1,60 +1,45 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 
 namespace RestSharp.Tests.Integrated.Server;
 
-static class WireMockTestServer {
-    public static WireMockServer StartTestServer() {
-        var server = WireMockServer.Start();
-
-        server
-            .Given(Request.Create().WithPath("/echo"))
+// ReSharper disable once ClassNeverInstantiated.Global
+public class WireMockTestServer : WireMockServer {
+    public WireMockTestServer() : base(new WireMockServerSettings { Port = 0, UseHttp2 = false, UseSSL = false }) {
+        Given(Request.Create().WithPath("/echo"))
             .RespondWith(Response.Create().WithCallback(EchoQuery));
 
-        server
-            .Given(Request.Create().WithPath("/success").UsingGet())
+        Given(Request.Create().WithPath("/success").UsingGet())
             .RespondWith(Response.Create().WithBodyAsJson(new SuccessResponse("Works!")));
 
-        server
-            .Given(Request.Create().WithPath("/delete").UsingDelete())
+        Given(Request.Create().WithPath("/delete").UsingDelete())
             .RespondWith(Response.Create().WithBodyAsJson(new SuccessResponse("Works!")));
 
-        server
-            .Given(Request.Create().WithPath("/content"))
+        Given(Request.Create().WithPath("/content"))
             .RespondWith(Response.Create().WithCallback(EchoJsonBody));
 
-        server
-            .Given(Request.Create().WithPath("/post/json").UsingPost())
+        Given(Request.Create().WithPath("/post/json").UsingPost())
             .RespondWith(Response.Create().WithCallback(WrapBody));
 
-        server
-            .Given(Request.Create().WithPath("/post/data").UsingPost())
+        Given(Request.Create().WithPath("/post/data").UsingPost())
             .RespondWith(Response.Create().WithCallback(HandleForm));
 
-        server
-            .Given(Request.Create().WithPath("/post/form").UsingPost())
+        Given(Request.Create().WithPath("/post/form").UsingPost())
             .RespondWith(Response.Create().WithCallback(WrapForm));
 
-        server
-            .Given(Request.Create().WithPath("/timeout"))
+        Given(Request.Create().WithPath("/timeout"))
             .RespondWith(Response.Create().WithDelay(1000));
 
-        server
-            .Given(Request.Create().WithPath("/redirect"))
+        Given(Request.Create().WithPath("/redirect"))
             .RespondWith(Response.Create().WithStatusCode(HttpStatusCode.Redirect).WithHeader("Location", "/success"));
 
-        server
-            .Given(Request.Create().WithPath("/status").UsingGet())
+        Given(Request.Create().WithPath("/status").UsingGet())
             .RespondWith(Response.Create().WithCallback(StatusCode));
 
-        server
-            .Given(Request.Create().WithPath("/headers"))
+        Given(Request.Create().WithPath("/headers"))
             .RespondWith(Response.Create().WithCallback(EchoHeaders));
-
-        return server;
     }
 
     static ResponseMessage WrapForm(IRequestMessage request) {
@@ -112,25 +97,5 @@ static class WireMockTestServer {
                 DetectedBodyType = BodyType.Json
             }
         };
-    
-    public static async Task<FileMultipartSection?> GetFileSection(this IRequestMessage request, string name) {
-        var headerValue = request.Headers![KnownHeaders.ContentType][0];
-        var mediaType   = MediaTypeHeaderValue.Parse(headerValue);
-        var boundary    = mediaType.Boundary;
 
-        using var stream = new MemoryStream(request.BodyAsBytes!);
-        var       reader = new MultipartReader(boundary.Value!, stream);
-        reader.HeadersLengthLimit = int.MaxValue;
-
-        FileMultipartSection? fileSection = null;
-        while (true) {
-            var section = await reader.ReadNextSectionAsync();
-            if (section == null) break;
-            fileSection = section.AsFileSection();
-            if (fileSection == null) continue;
-            if (fileSection.Name == name) break;
-        }
-
-        return fileSection;
-    }
 }

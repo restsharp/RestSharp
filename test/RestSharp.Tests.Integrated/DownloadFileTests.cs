@@ -1,4 +1,5 @@
 ﻿using System.Text;
+// ReSharper disable MethodHasAsyncOverload
 
 namespace RestSharp.Tests.Integrated;
 

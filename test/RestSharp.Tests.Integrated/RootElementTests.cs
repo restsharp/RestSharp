@@ -1,5 +1,4 @@
 ﻿using RestSharp.Serializers.Xml;
-using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated; 
 

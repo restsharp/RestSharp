@@ -1,11 +1,6 @@
-﻿using RestSharp.Tests.Integrated.Server;
+﻿namespace RestSharp.Tests.Integrated.Interceptor;
 
-namespace RestSharp.Tests.Integrated.Interceptor;
-
-// [Collection(nameof(TestServerCollection))]
-public class InterceptorTests : IDisposable {
-    readonly WireMockServer _server = WireMockTestServer.StartTestServer();
-
+public class InterceptorTests(WireMockTestServer server) : IClassFixture<WireMockTestServer> {
     [Fact]
     public async Task Should_call_client_interceptor() {
         // Arrange
@@ -32,19 +27,16 @@ public class InterceptorTests : IDisposable {
     [Fact]
     public async Task Should_call_request_interceptor() {
         // Arrange
-        var request = CreateRequest();
-
-        var client      = new RestClient(_server.Url!);
+        var request     = CreateRequest();
         var interceptor = new TestInterceptor();
         request.Interceptors = new List<Interceptors.Interceptor> { interceptor };
 
         //Act
+        using var client = new RestClient(server.Url!);
         await client.ExecutePostAsync<TestResponse>(request);
 
         //Assert
         interceptor.ShouldHaveCalledAll();
-
-        client.Dispose();
     }
 
     [Fact]
@@ -81,7 +73,7 @@ public class InterceptorTests : IDisposable {
         interceptor.AfterHttpRequestCalled.Should().BeFalse();
         interceptor.AfterRequestCalled.Should().BeFalse();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
-        
+
         client.Dispose();
     }
 
@@ -101,7 +93,7 @@ public class InterceptorTests : IDisposable {
         interceptor.AfterHttpRequestCalled.Should().BeFalse();
         interceptor.AfterRequestCalled.Should().BeFalse();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
-        
+
         client.Dispose();
     }
 
@@ -121,7 +113,7 @@ public class InterceptorTests : IDisposable {
         interceptor.AfterHttpRequestCalled.Should().BeTrue();
         interceptor.AfterRequestCalled.Should().BeFalse();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
-        
+
         client.Dispose();
     }
 
@@ -141,7 +133,7 @@ public class InterceptorTests : IDisposable {
         interceptor.AfterHttpRequestCalled.Should().BeTrue();
         interceptor.AfterRequestCalled.Should().BeTrue();
         interceptor.BeforeDeserializationCalled.Should().BeFalse();
-        
+
         client.Dispose();
     }
 
@@ -149,8 +141,8 @@ public class InterceptorTests : IDisposable {
         var interceptor = new TestInterceptor();
         configureInterceptor?.Invoke(interceptor);
 
-        var options = new RestClientOptions(_server.Url!) {
-            Interceptors = new List<Interceptors.Interceptor> { interceptor }
+        var options = new RestClientOptions(server.Url!) {
+            Interceptors = [interceptor]
         };
         return (new RestClient(options), interceptor);
     }
@@ -159,8 +151,6 @@ public class InterceptorTests : IDisposable {
         var body = new TestRequest("foo", 100);
         return new RestRequest("post/json").AddJsonBody(body);
     }
-
-    public void Dispose() => _server.Dispose();
 }
 
 static class InterceptorChecks {

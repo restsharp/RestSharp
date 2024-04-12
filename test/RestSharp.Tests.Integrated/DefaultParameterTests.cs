@@ -1,21 +1,15 @@
-using RestSharp.Tests.Integrated.Fixtures;
-using RestSharp.Tests.Integrated.Server;
+using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public sealed class DefaultParameterTests : IDisposable {
-    readonly WireMockServer      _server = WireMockServer.Start();
-    readonly RequestBodyCapturer _capturer;
-
-    public DefaultParameterTests() => _capturer = _server.ConfigureBodyCapturer(Method.Get, false);
-
-    public void Dispose() => _server.Dispose();
+public sealed class DefaultParameterTests(WireMockTestServer server) : IClassFixture<WireMockTestServer> {
+    readonly RequestBodyCapturer _capturer = server.ConfigureBodyCapturer(Method.Get, false);
 
     [Fact]
     public async Task Should_add_default_and_request_query_get_parameters() {
-        var client   = new RestClient(_server.Url!).AddDefaultParameter("foo", "bar", ParameterType.QueryString);
-        var request  = new RestRequest().AddParameter("foo1", "bar1", ParameterType.QueryString);
+        using var client  = new RestClient(server.Url!).AddDefaultParameter("foo", "bar", ParameterType.QueryString);
+        var       request = new RestRequest().AddParameter("foo1", "bar1", ParameterType.QueryString);
 
         await client.GetAsync(request);
 
@@ -26,8 +20,8 @@ public sealed class DefaultParameterTests : IDisposable {
 
     [Fact]
     public async Task Should_add_default_and_request_url_get_parameters() {
-        var client  = new RestClient($"{_server.Url}/{{foo}}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
-        var request = new RestRequest("{foo1}").AddParameter("foo1", "bar1", ParameterType.UrlSegment);
+        using var client  = new RestClient($"{server.Url}/{{foo}}/").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+        var       request = new RestRequest("{foo1}").AddParameter("foo1", "bar1", ParameterType.UrlSegment);
 
         await client.GetAsync(request);
 
@@ -36,8 +30,8 @@ public sealed class DefaultParameterTests : IDisposable {
 
     [Fact]
     public async Task Should_not_throw_exception_when_name_is_null() {
-        var client  = new RestClient($"{_server.Url}/request-echo").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
-        var request = new RestRequest("{foo1}").AddParameter(null, "value", ParameterType.RequestBody);
+        using var client  = new RestClient($"{server.Url}/request-echo").AddDefaultParameter("foo", "bar", ParameterType.UrlSegment);
+        var       request = new RestRequest("{foo1}").AddParameter(null, "value", ParameterType.RequestBody);
 
         await client.ExecuteAsync(request);
     }

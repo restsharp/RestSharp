@@ -1,9 +1,9 @@
-﻿using RestSharp.Tests.Integrated.Fixtures;
+﻿using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class RequestBodyTests : IDisposable {
+public sealed class RequestBodyTests : IDisposable {
     // const string NewLine = "\r\n";
 
     static readonly string ExpectedTextContentType          = $"{ContentType.Plain}; charset=utf-8";
@@ -12,10 +12,10 @@ public class RequestBodyTests : IDisposable {
     readonly WireMockServer _server = WireMockServer.Start(s => s.AllowBodyForAllHttpMethods = true);
 
     async Task AssertBody(Method method, bool disableCharset = false) {
-        var options  = new RestClientOptions(_server.Url!) { DisableCharset = disableCharset };
+        var       options  = new RestClientOptions(_server.Url!) { DisableCharset = disableCharset };
         using var client   = new RestClient(options);
-        var request  = new RestRequest(RequestBodyCapturer.Resource, method);
-        var capturer = _server.ConfigureBodyCapturer(method);
+        var       request  = new RestRequest(RequestBodyCapturer.Resource, method);
+        var       capturer = _server.ConfigureBodyCapturer(method);
 
         const string bodyData = "abc123 foo bar baz BING!";
 
@@ -56,8 +56,8 @@ public class RequestBodyTests : IDisposable {
         const Method httpMethod = Method.Post;
 
         using var client   = new RestClient(_server.Url!);
-        var request  = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
-        var capturer = _server.ConfigureBodyCapturer(httpMethod);
+        var       request  = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+        var       capturer = _server.ConfigureBodyCapturer(httpMethod);
 
         await client.ExecuteAsync(request);
 
@@ -69,7 +69,6 @@ public class RequestBodyTests : IDisposable {
 
     [Fact]
     public Task Can_Be_Added_To_HEAD_Request() => AssertBody(Method.Head);
-
 
     static void AssertHasNoRequestBody(RequestBodyCapturer capturer) {
         capturer.ContentType.Should().BeNull();

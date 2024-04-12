@@ -26,7 +26,7 @@ public class ObjectParserTests {
     [Fact]
     public void ShouldProduceMultipleParametersForArray() {
         var request = new AnotherTestObject {
-            SomeIds = new[] { 1, 2, 3 }
+            SomeIds = [1, 2, 3]
         };
         var expected = request.SomeIds.Select(x => ("ids[]", x.ToString()));
         var parsed   = request.GetProperties().Select(x => (x.Name, x.Value));
