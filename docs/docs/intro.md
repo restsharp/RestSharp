@@ -41,7 +41,7 @@ var response = await client.GetAsync(request, cancellationToken);
 It will return a `RestResponse` back, which contains all the information returned from the remote server.
 You have access to the headers, content, HTTP status and more.
 
-We recommend using the generic overloads like `Get<T>` to automatically deserialize the response into .NET classes.
+You can also use generic overloads like `Get<T>` to automatically deserialize the response into .NET classes.
 
 For example:
 
@@ -68,7 +68,7 @@ throw an exception. For keeping the API consistent, non-generic functions like `
 
 Read [here](error-handling.md) about how RestSharp handles exceptions.
 
-RestSharp also offers even simpler way to make JSON calls. You can use the `GetJsonAsync` and `PostJsonAsync` extension methods, which will automatically serialize the request body to JSON and deserialize the response to the specified type.
+RestSharp also offers simple ways to call APIs that accept and return JSON payloads. You can use the `GetJsonAsync` and `PostJsonAsync` extension methods, which will automatically serialize the request body to JSON and deserialize the response to the specified type.
 
 ```csharp
 var client = new RestClient(options);
@@ -79,7 +79,7 @@ Read [here](usage.md#json-requests) about making JSON calls without preparing a 
 
 ### Content type
 
-RestSharp supports sending XML or JSON body as part of the request. To add a body to the request, simply call `AddJsonBody` or `AddXmlBody` method of the `RestRequest` instance.
+RestSharp supports sending XML or JSON body as part of the request. To add a body to the request, simply call `AddJsonBody` or `AddXmlBody` method of the `RestRequest` object.
 
 There is no need to set the `Content-Type` or add the `DataFormat` parameter to the request when using those methods, RestSharp will do it for you.
 
@@ -92,14 +92,22 @@ var request = new RestRequest("address/update").AddJsonBody(updatedAddress);
 var response = await client.PostAsync<AddressUpdateResponse>(request);
 ```
 
+It's also possible to make the same call using `PostAsync` shorter syntax:
+
+```csharp
+var response = await PostJsonAsync<AddressUpdateRequest, AddressUpdateResponse>(
+    "address/update", request, cancellationToken
+);
+```
+
 Read more about serialization and deserialization [here](serialization.md).
 
 ### Response
 
-When you use `ExecuteAsync`, you get an instance of `RestResponse` back that has the `Content` property, which contains the response as string. You can find other useful properties there, like `StatusCode`, `ContentType` and so on. If the request wasn't successful, you'd get a response back with `IsSuccessful` property set to `false` and the error explained in the `ErrorException` and `ErrorMessage` properties.
+When you use `ExecuteAsync`, you get an instance of `RestResponse` back. The response object has the `Content` property, which contains the response as string. You can find other useful properties there, like `StatusCode`, `ContentType` and so on. If the request wasn't successful, you'd get a response back with `IsSuccessful` property set to `false` and the error explained in the `ErrorException` and `ErrorMessage` properties.
 
 When using typed `ExecuteAsync<T>`, you get an instance of `RestResponse<T>` back, which is identical to `RestResponse` but also contains the `T Data` property with the deserialized response.
 
 None of `ExecuteAsync` overloads throw if the remote server returns an error. You can inspect the response and find the status code, error message, and, potentially, an exception.
 
-Extensions like `GetAsync<T>` will not return the whole `RestResponse<T>` but just a deserialized response. These extensions will throw an exception if the remote server returns an error. The exception will tell you what status code was returned by the server.
+Extensions like `GetAsync<T>` will not return the whole `RestResponse<T>` but just a deserialized response. These extensions will throw an exception if the remote server returns an error. The exception details contain the status code returned by the server.
