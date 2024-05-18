@@ -35,23 +35,23 @@ public class RestResponse<T>(RestRequest request) : RestResponse(request) {
     public static RestResponse<T> FromResponse(RestResponse response)
         => new(response.Request) {
             Content             = response.Content,
-            RawBytes            = response.RawBytes,
             ContentEncoding     = response.ContentEncoding,
-            Version             = response.Version,
+            ContentHeaders      = response.ContentHeaders,
             ContentLength       = response.ContentLength,
             ContentType         = response.ContentType,
             Cookies             = response.Cookies,
-            ErrorMessage        = response.ErrorMessage,
             ErrorException      = response.ErrorException,
+            ErrorMessage        = response.ErrorMessage,
             Headers             = response.Headers,
-            ContentHeaders      = response.ContentHeaders,
             IsSuccessStatusCode = response.IsSuccessStatusCode,
+            RawBytes            = response.RawBytes,
             ResponseStatus      = response.ResponseStatus,
             ResponseUri         = response.ResponseUri,
+            RootElement         = response.RootElement,
             Server              = response.Server,
             StatusCode          = response.StatusCode,
             StatusDescription   = response.StatusDescription,
-            RootElement         = response.RootElement
+            Version             = response.Version
         };
 }
 
@@ -82,22 +82,22 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
 
             return new RestResponse(request) {
                 Content             = content,
-                RawBytes            = bytes,
                 ContentEncoding     = httpResponse.Content?.Headers.ContentEncoding ?? Array.Empty<string>(),
-                Version             = httpResponse.RequestMessage?.Version,
+                ContentHeaders      = httpResponse.Content?.Headers.GetHeaderParameters(),
                 ContentLength       = httpResponse.Content?.Headers.ContentLength,
                 ContentType         = httpResponse.Content?.Headers.ContentType?.MediaType,
-                ResponseStatus      = calculateResponseStatus(httpResponse),
+                Cookies             = cookieCollection,
                 ErrorException      = httpResponse.MaybeException(),
+                Headers             = httpResponse.Headers.GetHeaderParameters(),
+                IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
+                RawBytes            = bytes,
+                ResponseStatus      = calculateResponseStatus(httpResponse),
                 ResponseUri         = httpResponse.RequestMessage?.RequestUri,
+                RootElement         = request.RootElement,
                 Server              = httpResponse.Headers.Server.ToString(),
                 StatusCode          = httpResponse.StatusCode,
                 StatusDescription   = httpResponse.ReasonPhrase,
-                IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
-                Headers             = httpResponse.Headers.GetHeaderParameters(),
-                ContentHeaders      = httpResponse.Content?.Headers.GetHeaderParameters(),
-                Cookies             = cookieCollection,
-                RootElement         = request.RootElement
+                Version             = httpResponse.RequestMessage?.Version
             };
         }
     }
