@@ -37,6 +37,7 @@ public class RestResponse<T>(RestRequest request) : RestResponse(request) {
             Content             = response.Content,
             RawBytes            = response.RawBytes,
             ContentEncoding     = response.ContentEncoding,
+            Version             = response.Version,
             ContentLength       = response.ContentLength,
             ContentType         = response.ContentType,
             Cookies             = response.Cookies,
