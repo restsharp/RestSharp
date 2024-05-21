@@ -44,6 +44,10 @@ const config: Config = {
           label: "Documentation",
         },
         {
+          href: "/support",
+          label: "Support",
+        },
+        {
           href: 'https://github.com/RestSharp/RestSharp',
           label: "GitHub",
           position: "right",
