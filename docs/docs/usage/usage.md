@@ -379,7 +379,7 @@ Task<RestResponse<T>> ExecutePostAsync<T>(RestRequest request, CancellationToken
 Task<RestResponse<T>> ExecutePutAsync<T>(RestRequest request, CancellationToken cancellationToken)
 ```
 
-All the overloads with names starting with `Execute` don't throw an exception if the server returns an error. Read more about it [here](error-handling.md).
+All the overloads with names starting with `Execute` don't throw an exception if the server returns an error. Read more about it [here](../advanced/error-handling.md).
 
 If you just need a deserialized response, you can use one of the extensions:
 

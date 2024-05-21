@@ -87,5 +87,6 @@ jobs:
       -  
         name: Build docs
         run: |
+          cd docs
           yarn install
           yarn docs:build

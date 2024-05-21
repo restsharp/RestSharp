@@ -6,7 +6,7 @@ title: Quick start
 ## Introduction
 
 :::warning
-RestSharp v107 changes the library API surface and its behaviour significantly. We advise looking at [v107](/v107/) docs to understand how to migrate to the latest version of RestSharp.
+RestSharp v107 changes the library API surface and its behaviour significantly. We advise looking at [v107](v107) docs to understand how to migrate to the latest version of RestSharp.
 :::
 
 The main purpose of RestSharp is to make synchronous and asynchronous calls to remote resources over HTTP. As the name suggests, the main audience of RestSharp are developers who use REST APIs. However, RestSharp can call any API over HTTP, as long as you have the resource URI and request parameters that you want to send comply with W3C HTTP standards.
@@ -66,7 +66,7 @@ All `ExecuteAsync` overloads and return the `RestResponse` or `RestResponse<T>`.
 The most important difference is that async methods that are named after HTTP methods return the `Task<T>` instead of `Task<RestResponse<T>>`. Because it means that you won't get an error response if the request fails, those methods
 throw an exception. For keeping the API consistent, non-generic functions like `GetAsync` or `PostAsync` also throw an exception if the request fails, although they return the `Task<RestResponse>`.
 
-Read [here](error-handling.md) about how RestSharp handles exceptions.
+Read [here](advanced/error-handling.md) about how RestSharp handles exceptions.
 
 RestSharp also offers simple ways to call APIs that accept and return JSON payloads. You can use the `GetJsonAsync` and `PostJsonAsync` extension methods, which will automatically serialize the request body to JSON and deserialize the response to the specified type.
 
@@ -100,7 +100,7 @@ var response = await PostJsonAsync<AddressUpdateRequest, AddressUpdateResponse>(
 );
 ```
 
-Read more about serialization and deserialization [here](serialization.md).
+Read more about serialization and deserialization [here](advanced/serialization.md).
 
 ### Response
 
