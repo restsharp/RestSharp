@@ -10,32 +10,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: "Easy to Use",
+    title: "Serialization",
     // Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Make calls using XML or JSON body, and receive XML or JSON responses.
+        RestSharp takes care of serializing requests and deserializing responses, as well as adding the correct content type.
       </>
     ),
   },
   {
-    title: "Focus on What Matters",
+    title: "Fully async",
     // Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+          RestSharp API has an extensive number of async functions to make all sort of HTTP calls.
+          It still provides sync overloads to allow using RestSharp in legacy applications or non-async environments.
       </>
     ),
   },
   {
-    title: "Powered by React",
+    title: "Parameters",
     // Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+          Whether you want to add a query, a URL, or URL-encoded form parameters, RestSharp allows doing it with one line of code.
+          The same applies to sending files and using multipart forms.
       </>
     ),
   },
