@@ -27,10 +27,10 @@ public record TwitterUser(string Id, string Name, string Username);
 When that is done, we can implement the interface and add all the necessary code blocks to get a working API client.
 
 The client class needs the following:
-- A constructor, which accepts API credentials to pass to the authenticator
+- A constructor for passing API credentials
 - A wrapped `RestClient` instance with the Twitter API base URI pre-configured
 - An authenticator to support authorizing the client using Twitter OAuth2 authentication
-- The actual function to get the user
+- The actual function to get the user (to implement the `ITwitterClient` interface)
 
 Creating an authenticator is described [below](#authenticator).
 
@@ -64,7 +64,6 @@ public class TwitterClient : ITwitterClient, IDisposable {
 
 It is also possible to use ASP.NET Core Options for configuring the client, instead of passing the credentials as strings. For example, we can add a class for Twitter client options, and use it in a constructor:
 
-[//]: # (TODO: Inherit from RestClientOptions)
 ```csharp
 public class TwitterClientOptions(string ApiKey, string ApiSecret);
 
@@ -74,6 +73,9 @@ public TwitterClient(IOptions<TwitterClientOptions> options) {
 }
 ```
 
+Then, you can register and configure the client using ASP.NET Core dependency injection container.
+
+Right now, the client won't really work as Twitter API requires authentication. It's covered in the next section.
 
 ## Authenticator
 
@@ -136,3 +138,11 @@ As we need to make a call to the token endpoint, we need our own short-lived ins
 Here we add a POST parameter `grant_type` with `client_credentials` as its value. At the moment, it's the only supported value.
 
 The POST request will use the `application/x-www-form-urlencoded` content type by default.
+
+:::note
+Sample code provided on this page is a production code. For example, the authenticator might produce undesired side effect when multiple requests are made at the same time when the token hasn't been obtained yet. It can be solved rather than simply using semaphores or synchronized invocation.
+:::
+
+## Final words
+
+This page demonstrates how an API client can be implemented as a typed, configurable client with its own interface. Usage of the client in applications is not covered here as different application types and target frameworks have their own idiomatic ways to use HTTP clients.

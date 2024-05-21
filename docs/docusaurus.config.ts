@@ -34,14 +34,14 @@ const config: Config = {
       title: "RestSharp",
       logo: {
         alt: "RestSharp Logo",
-        src: "img/logo.svg",
+        src: "img/restsharp.png",
       },
       items: [
         {
           type: "docSidebar",
           sidebarId: "tutorialSidebar",
           position: "left",
-          label: "Tutorial",
+          label: "Documentation",
         },
         {
           href: 'https://github.com/RestSharp/RestSharp',
@@ -57,7 +57,7 @@ const config: Config = {
           title: "Docs",
           items: [
             {
-              label: "Tutorial",
+              label: "Documentation",
               to: "/docs/intro",
             },
           ],
@@ -75,7 +75,7 @@ const config: Config = {
             },
             {
               label: "Twitter",
-              href: "https://twitter.com/docusaurus",
+              href: "https://twitter.com/RestSharp",
             },
           ],
         },

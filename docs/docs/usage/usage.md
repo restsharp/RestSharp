@@ -1,10 +1,12 @@
 ---
-title: Usage1
 sidebar_position: 2
 ---
 
-## Recommended usage
+# RestSharp basics
 
+This page describes some of the essential properties and features of RestSharp.
+
+## What RestSharp does
 
 Essentially, RestSharp is a wrapper around `HttpClient` that allows you to do the following:
 - Add default parameters of any kind (not just headers) to the client, once
@@ -14,78 +16,25 @@ Essentially, RestSharp is a wrapper around `HttpClient` that allows you to do th
 - Handle the remote endpoint response
 - Deserialize the response from JSON or XML if necessary
 
+## API client
 
+The best way to call an external HTTP API is to create a typed client, which encapsulates RestSharp calls and doesn't expose the `RestClient` instance in public.
 
-### API client
+You can find an example of a Twitter API client on the [Example](example.md) page.
 
-Now, we can start creating the API client itself. Here we start with a single function that retrieves one Twitter user. Let's being by defining the API client interface:
+## Creating the client
 
-```csharp
-public interface ITwitterClient {
-    Task<TwitterUser> GetUser(string user);
-}
-```
-
-As the function returns a `TwitterUser` instance, we need to define it as a model:
+A RestSharp client can be instantiated by one of the constructors:
 
 ```csharp
-public record TwitterUser(string Id, string Name, string Username);
-```
+// Creates a client with default options to call a given base URL
+var client = new RestClient("https://localhost:5000");
 
-When that is done, we can implement the interface and add all the necessary code blocks to get a working API client.
-
-The client class needs the following:
-- A constructor, which accepts API credentials to pass to the authenticator
-- A wrapped `RestClient` instance with the Twitter API base URI pre-configured
-- The `TwitterAuthenticator` that we created previously as the client authenticator
-- The actual function to get the user
-
-```csharp
-public class TwitterClient : ITwitterClient, IDisposable {
-    readonly RestClient _client;
-
-    public TwitterClient(string apiKey, string apiKeySecret) {
-        var options = new RestClientOptions("https://api.twitter.com/2"){
-            // Authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret)
-        };
-
-        _client = new RestClient(options);
-    }
-
-    public async Task<TwitterUser> GetUser(string user) {
-        var response = await _client.GetJsonAsync<TwitterSingleObject<TwitterUser>>(
-            "users/by/username/{user}",
-            new { user }
-        );
-        return response!.Data;
-    }
-
-    record TwitterSingleObject<T>(T Data);
-
-    public void Dispose() {
-        _client?.Dispose();
-        GC.SuppressFinalize(this);
-    }
-}
-```
-
-The code above includes a couple of things that go beyond the "basics", and so we won't cover them here:
-- The API client class needs to be disposable, so that it can dispose of the wrapped `HttpClient` instance
-- Twitter API returns wrapped models. In this case, we use the `TwitterSingleObject` wrapper. In other methods, you'd need a similar object with `T[] Data` to accept collections
-
-You can find the full example code in [this gist](https://gist.github.com/alexeyzimarev/62d77bb25d7aa5bb4b9685461f8aabdd).
-
-Such a client can and should be used _as a singleton_, as it's thread-safe and authentication-aware. If you make it a transient dependency, you'll keep bombarding Twitter with token requests and effectively half your request limit.
-
-You can, for example, register it in the DI container:
-
-```csharp
-services.AddSingleton<ITwitterClient>(
-    new TwitterClient(
-        Configuration["Twitter:ApiKey"],
-        Configuration["Twitter:ApiKeySecret"]
-    )
-);
+// Creates a client using the options object
+var options = new RestClientOptions("https://localhost:5000") {
+    MaxTimeout = 1000
+};
+var client = new RestClient(options);
 ```
 
 ### Simple factory
@@ -128,7 +77,7 @@ var request = new RestRequest(resource, Method.Post);
 
 After you've created a `RestRequest`, you can add parameters to it. Below, you can find all the parameter types supported by RestSharp.
 
-### Headers
+### Adding headers
 
 Adds the header parameter as an HTTP header that is sent along with the request. The header name is the parameter's name and the header value is the value.
 
@@ -138,6 +87,12 @@ You can use one of the following request methods to add a header parameter:
 AddHeader(string name, string value);
 AddHeader<T>(string name, T value);           // value will be converted to string
 AddOrUpdateHeader(string name, string value); // replaces the header if it already exists
+```
+
+For example:
+
+```csharp
+var request = new RestRequest("/path").AddHeader("X-Key", someKey);
 ```
 
 You can also add header parameters to the client, and they will be added to every request made by the client. This is useful for adding authentication headers, for example.
@@ -150,14 +105,26 @@ client.AddDefaultHeader(string name, string value);
 RestSharp will use the correct content type by default. Avoid adding the `Content-Type` header manually to your requests unless you are absolutely sure it is required. You can add a custom content type to the [body parameter](#request-body) itself.
 :::
 
-### Get or Post
+### Get or Post parameters
 
-`GetOrPost` behaves differently based on the method. If you execute a GET call, RestSharp will append the parameters to the Url in the form `url?name1=value1&name2=value2`.
+The default RestSharp parameter type is `GetOrPostParameter`. You can add `GetOrPost` parameter to the request using the `AddParameter` function:
 
-On a POST or PUT Requests, it depends on whether you have files attached to a Request.
-If not, the Parameters will be sent as the body of the request in the form `name1=value1&name2=value2`. Also, the request will be sent as `application/x-www-form-urlencoded`.
+```csharp
+request
+    .AddParameter("name1", "value1")
+    .AddParameter("name2", "value2");
+```
 
-In both cases, name and value will automatically be url-encoded.
+`GetOrPost` behaves differently based on the HTTP method. If you execute a `GET` call, RestSharp will append the parameters to the URL in the form `url?name1=value1&name2=value2`.
+
+On a `POST` or `PUT` requests, it depends on whether you have files attached to a request.
+If not, the parameters will be sent as the body of the request in the form `name1=value1&name2=value2`. Also, the request will be sent as `application/x-www-form-urlencoded`.
+
+In both cases, name and value will automatically be URL-encoded, unless specified otherwise:
+
+```csharp
+request.AddParameter("name", "Væ üé", false); // don't encode the value
+```
 
 If you have files, RestSharp will send a `multipart/form-data` request. Your parameters will be part of this request in the form:
 
@@ -175,7 +142,7 @@ client.AddDefaultParameter("foo", "bar");
 
 It will work the same way as request parameters, except that it will be added to every request.
 
-#### AddObject
+### Using AddObject
 
 You can avoid calling `AddParameter` multiple times if you collect all the parameters in an object, and then use `AddObject`.
 For example, this code:
@@ -214,7 +181,31 @@ request.AddObject(new RequestModel { FromDate = DateTime.Now });
 
 In this case, the request will get a GET or POST parameter named `from_date` and its value would be the current date in short date format.
 
-### Url Segment
+### Using AddObjectStatic
+
+Request function `AddObjectStatic<T>(...)` allows using pre-compiled expressions for getting property values. Compared to `AddObject` that uses reflections for each call, `AddObjectStatic` caches functions to retrieve properties from an object of type `T`, so it works much faster.
+
+You can instruct `AddObjectStatic` to use custom parameter names and formats, as well as supply the list of properties than need to be used as parameters. The last option could be useful if the type `T` has properties that don't need to be sent with HTTP call.
+
+To use custom parameter name or format, use the `RequestProperty` attribute. For example:
+
+```csharp
+class TestObject {
+    [RequestProperty(Name = "some_data")]
+    public string SomeData { get; set; }
+
+    [RequestProperty(Format = "d")]
+    public DateTime SomeDate { get; set; }
+
+    [RequestProperty(Name = "dates", Format = "d")]
+    public DateTime[] DatesArray { get; set; }
+
+    public int        Plain      { get; set; }
+    public DateTime[] PlainArray { get; set; }
+}
+```
+
+### Url segment parameter
 
 Unlike `GetOrPost`, this `ParameterType` replaces placeholder values in the `RequestUrl`:
 
@@ -223,7 +214,7 @@ var request = new RestRequest("health/{entity}/status")
     .AddUrlSegment("entity", "s2");
 ```
 
-When the request executes, RestSharp will try to match any `{placeholder}` with a parameter of that name (without the `{}`) and replace it with the value. So the above code results in `health/s2/status` being the url.
+When the request executes, RestSharp will try to match any `{placeholder}` with a parameter of that name (without the `{}`) and replace it with the value. So the above code results in `health/s2/status` being the URL.
 
 You can also add `UrlSegment` parameter as a default parameter to the client. This will add the parameter to every request made by the client.
 
@@ -254,7 +245,7 @@ RestSharp supports multiple ways to add a request body:
 
 We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParameter` with type `BodyParameter`. Those methods will set the proper request type and do the serialization work for you.
 
-When you make a `POST`, `PUT` or `PATCH` request and added `GetOrPost` [parameters](#get-or-post), RestSharp will send them as a URL-encoded form request body by default. When a request also has files, it will send a `multipart/form-data` request. You can also instruct RestSharp to send the body as `multipart/form-data` by setting the `AlwaysMultipartFormData` property to `true`. 
+When you make a `POST`, `PUT` or `PATCH` request and added `GetOrPost` [parameters](#get-or-post-parameters), RestSharp will send them as a URL-encoded form request body by default. When a request also has files, it will send a `multipart/form-data` request. You can also instruct RestSharp to send the body as `multipart/form-data` by setting the `AlwaysMultipartFormData` property to `true`. 
 
 It is not possible to add client-level default body parameters.
 
@@ -316,11 +307,11 @@ When you call `AddXmlBody`, it does the following for you:
 - Sets the content type to `application/xml`
 - Sets the internal data type of the request body to `DataType.Xml`
 
-::: warning
+:::warning
 Do not send XML string to `AddXmlBody`; it won't work!
 :::
 
-### Query String
+### Query string
 
 `QueryString` works like `GetOrPost`, except that it always appends the parameters to the url in the form `url?name1=value1&name2=value2`, regardless of the request method.
 
@@ -333,7 +324,7 @@ var request = new RestRequest("search")
 var response = await client.GetAsync<SearchResponse>(request);
 ```
 
-It will send a `GET` request to `https://search.me/search?foo=bar")`.
+It will send a `GET` request to `https://search.me/search?foo=bar`.
 
 For `POST`-style requests you need to add the query string parameter explicitly:
 
