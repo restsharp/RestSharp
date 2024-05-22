@@ -29,11 +29,6 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v4
-#      -
-#        name: Setup .NET
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: '8.0'
       -
         name: Run tests
         run: dotnet test -f ${{ matrix.dotnet }}
@@ -58,11 +53,6 @@ jobs:
       -  
         name: Checkout
         uses: actions/checkout@v4
-#      -  
-#        name: Setup .NET
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: '8.0'
       -  
         name: Run tests
         run: dotnet test -f ${{ matrix.dotnet }}
@@ -76,17 +66,3 @@ jobs:
             test-results/**/*.xml
             test-results/**/*.trx
             test-results/**/*.json
-
-  docs:
-    runs-on: ubuntu-latest
-
-    steps:
-      -  
-        name: Checkout
-        uses: actions/checkout@v4
-      -  
-        name: Build docs
-        run: |
-          cd docs
-          yarn install
-          yarn build
