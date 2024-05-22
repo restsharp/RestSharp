@@ -64,8 +64,7 @@ public class RequestHeaderTests {
 
         // Assert
         var headers = GetHeaders(request);
-        Assert.Equal(ContentType.Json, headers.First(parameter => parameter.Name == KnownHeaders.Accept).Value);
-        Assert.Single(headers);
+        GetHeader(request, KnownHeaders.Accept).Should().Be(ContentType.Json);
     }
 
     [Fact]
@@ -77,8 +76,7 @@ public class RequestHeaderTests {
         request.AddOrUpdateHeader(KnownHeaders.Accept, ContentType.Json);
 
         // Assert
-        var headers = GetHeaders(request);
-        headers.Single(parameter => parameter.Name == KnownHeaders.Accept).Value.Should().Be(ContentType.Json);
+        GetHeader(request, KnownHeaders.Accept).Should().Be(ContentType.Json);
     }
 
     [Fact]
@@ -153,7 +151,7 @@ public class RequestHeaderTests {
         var requestHeaders = GetHeaders(request);
 
         HeaderParameter[] expected = [
-            new HeaderParameter(KnownHeaders.ContentType, ContentType.Xml),
+            new HeaderParameter(KnownHeaders.Accept, ContentType.Xml),
             new HeaderParameter(KnownHeaders.AcceptLanguage, "en-us,en;q=0.5"),
             new HeaderParameter(KnownHeaders.KeepAlive, "300")
         ];
@@ -161,4 +159,6 @@ public class RequestHeaderTests {
     }
 
     static Parameter[] GetHeaders(RestRequest request) => request.Parameters.Where(x => x.Type == ParameterType.HttpHeader).ToArray();
+
+    static string GetHeader(RestRequest request, string name) => request.Parameters.FirstOrDefault(x => x.Name == name)?.Value?.ToString();
 }

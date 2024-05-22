@@ -89,4 +89,4 @@ jobs:
         run: |
           cd docs
           yarn install
-          yarn docs:build
+          yarn build
