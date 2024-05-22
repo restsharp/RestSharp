@@ -23,7 +23,7 @@ dotnet add package RestSharp
 
 ### Basic Usage
 
-If you only have a few number of one-off requests to make to an API, you can use RestSharp like so:
+If you only have a small number of one-off API requests to perform, you can use RestSharp like this:
 
 ```csharp
 using RestSharp;
@@ -41,7 +41,7 @@ var response = await client.GetAsync(request, cancellationToken);
 It will return a `RestResponse` back, which contains all the information returned from the remote server.
 You have access to the headers, content, HTTP status and more.
 
-You can also use generic overloads like `Get<T>` to automatically deserialize the response into .NET classes.
+You can also use generic overloads like `Get<T>` to automatically deserialize the response into a .NET class.
 
 For example:
 
@@ -63,8 +63,7 @@ var timeline = await client.GetAsync<HomeTimeline>(request, cancellationToken);
 Both snippets above use the `GetAsync` extension, which is a wrapper about `ExecuteGetAsync`, which, in turn, is a wrapper around `ExecuteAsync`.
 All `ExecuteAsync` overloads and return the `RestResponse` or `RestResponse<T>`.
 
-The most important difference is that async methods that are named after HTTP methods return the `Task<T>` instead of `Task<RestResponse<T>>`. Because it means that you won't get an error response if the request fails, those methods
-throw an exception. For keeping the API consistent, non-generic functions like `GetAsync` or `PostAsync` also throw an exception if the request fails, although they return the `Task<RestResponse>`.
+The most important difference is that async methods named after HTTP methods (like `GetAsync` or `PostAsync`) return `Task<T>` instead of `Task<RestResponse<T>>`. It means that you won't get an error response if the request fails as those methods throw an exception for unsuccessful HTTP calls. For keeping the API consistent, non-generic functions like `GetAsync` or `PostAsync` also throw an exception if the request fails, although they return the `Task<RestResponse>`.
 
 Read [here](advanced/error-handling.md) about how RestSharp handles exceptions.
 

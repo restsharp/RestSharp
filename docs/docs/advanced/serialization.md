@@ -1,6 +1,10 @@
 # Serialization
 
-RestSharp has JSON and XML serializers built in.
+One of the most common reasons to choose RestSharp over plain `HttpClient` is its rich build-in serialization support. RestSharp allows adding complex objects as request body to be serialized when making a call to an API endpoint, and deserializing the response to a given .NET type. RestSharp supports JSON and XML serialization and deserialization by default. In addition, you can use a CSV serializer or write your own.
+
+In contrast to `System.Net.Http.Json` package that contains `HttpClient` extensions to make `GET` or `POST` calls using JSON, RestSharp support JSON responses for all HTTP methods, not just for `GET`.
+
+## Configuration
 
 :::tip
 The default behavior of RestSharp is to swallow deserialization errors and return `null` in the `Data`
@@ -14,6 +18,14 @@ var client = new RestClient(
     options, 
     configureSerialization: s => s.UseSerializer(() => new CustomSerializer());
 );
+```
+
+All RestSharp serializers implement the `IRestSerializer` interface. Among other things, the interface requires implementing the `AcceptedContentTypes` property, which must return a collection of content types supported by the serializer. Being configured to use certain serializers, RestSharp populates the `Accept` header accordingly, so it doesn't need to be set manually.
+
+When making a call, RestSharp sets the request content type according to the request body type. For example, when you use `AddJsonBody`, the content type is set to `application/json`. Normally, you won't need to set the `Content-Type` header manually. If you need to set a custom content type for a JSON call, you can use the optional `contentType` argument of `AddJsonBody`, for example:
+
+```csharp
+request.AddJsonBody(data, "text/json");
 ```
 
 ## JSON

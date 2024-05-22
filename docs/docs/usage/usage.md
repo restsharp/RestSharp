@@ -205,9 +205,9 @@ class TestObject {
 }
 ```
 
-### Url segment parameter
+### URL segment parameter
 
-Unlike `GetOrPost`, this `ParameterType` replaces placeholder values in the `RequestUrl`:
+Unlike `GetOrPost`, URL segment parameter replaces placeholder values in the request URL:
 
 ```csharp
 var request = new RestRequest("health/{entity}/status")
@@ -247,9 +247,11 @@ We recommend using `AddJsonBody` or `AddXmlBody` methods instead of `AddParamete
 
 When you make a `POST`, `PUT` or `PATCH` request and added `GetOrPost` [parameters](#get-or-post-parameters), RestSharp will send them as a URL-encoded form request body by default. When a request also has files, it will send a `multipart/form-data` request. You can also instruct RestSharp to send the body as `multipart/form-data` by setting the `AlwaysMultipartFormData` property to `true`. 
 
+You can specify a custom body content type if necessary. The `contentType` argument is available in all the overloads that add a request body.
+
 It is not possible to add client-level default body parameters.
 
-#### AddStringBody
+#### String body
 
 If you have a pre-serialized payload like a JSON string, you can use `AddStringBody` to add it as a body parameter. You need to specify the content type, so the remote endpoint knows what to do with the request body. For example:
 
@@ -258,9 +260,7 @@ const json = "{ data: { foo: \"bar\" } }";
 request.AddStringBody(json, ContentType.Json);
 ```
 
-You can specify a custom body content type if necessary. The `contentType` argument is available in all the overloads that add a request body.
-
-#### AddJsonBody
+#### JSON body
 
 When you call `AddJsonBody`, it does the following for you:
 
@@ -299,7 +299,7 @@ request.AddJsonBody(payload, forceSerialize: true); // the string will be serial
 request.AddJsonBody(payload); // the string will NOT be serialized and will be sent as-is
 ```
 
-#### AddXmlBody
+#### XML body
 
 When you call `AddXmlBody`, it does the following for you:
 
