@@ -122,7 +122,7 @@ Now, we need to implement the `GetToken` function in the class:
 ```csharp
 async Task<string> GetToken() {
     var options = new RestClientOptions(_baseUrl){
-        Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
+        Authenticator = new HttpBasicAuth(_clientId, _clientSecret),
     };
     using var client = new RestClient(options);
 
@@ -133,7 +133,7 @@ async Task<string> GetToken() {
 }
 ```
 
-As we need to make a call to the token endpoint, we need our own short-lived instance of `RestClient`. Unlike the actual Twitter client, it will use the `HttpBasicAuthenticator` to send the API key and secret as the username and password. The client then gets disposed as we only use it once.
+As we need to make a call to the token endpoint, we need our own short-lived instance of `RestClient`. Unlike the actual Twitter client, it will use the `HttpBasicAuth` to send the API key and secret as the username and password. The client then gets disposed as we only use it once.
 
 Here we add a POST parameter `grant_type` with `client_credentials` as its value. At the moment, it's the only supported value.
 
