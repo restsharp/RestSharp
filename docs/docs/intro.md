@@ -30,7 +30,7 @@ using RestSharp;
 using RestSharp.Authenticators;
 
 var options = new RestClientOptions("https://api.twitter.com/1.1") {
-    Authenticator = new HttpBasicAuthenticator("username", "password")
+    Authenticator = new HttpBasicAuth("username", "password")
 };
 var client = new RestClient(options);
 var request = new RestRequest("statuses/home_timeline.json");
@@ -50,7 +50,7 @@ using RestSharp;
 using RestSharp.Authenticators;
 
 var options = new RestClientOptions("https://api.twitter.com/1.1") {
-    Authenticator = new HttpBasicAuthenticator("username", "password")
+    Authenticator = new HttpBasicAuth("username", "password")
 };
 var client = new RestClient(options);
 

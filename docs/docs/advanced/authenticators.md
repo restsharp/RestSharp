@@ -8,7 +8,7 @@ Set the client-wide authenticator by assigning the `Authenticator` property of `
 
 ```csharp
 var options = new RestClientOptions("https://example.com") {
-    Authenticator = new HttpBasicAuthenticator("username", "password")
+    Authenticator = new HttpBasicAuth("username", "password")
 };
 var client = new RestClient(options);
 ```
@@ -17,18 +17,18 @@ To set the authenticator per-request, assign the `Authenticator` property of `Re
 
 ```csharp
 var request = new RestRequest("/api/users/me") {
-    Authenticator = new HttpBasicAuthenticator("username", "password")
+    Authenticator = new HttpBasicAuth("username", "password")
 };
 var response = await client.ExecuteAsync(request, cancellationToken);
 ```
 
 ## Basic Authentication
 
-The `HttpBasicAuthenticator` allows you pass a username and password as a basic `Authorization` header using a base64 encoded string.
+The `HttpBasicAuth` allows you pass a username and password as a basic `Authorization` header using a base64 encoded string.
 
 ```csharp
 var options = new RestClientOptions("https://example.com") {
-    Authenticator = new HttpBasicAuthenticator("username", "password")
+    Authenticator = new HttpBasicAuth("username", "password")
 };
 var client = new RestClient(options);
 ```
