@@ -130,9 +130,7 @@ public class RestClientTests {
         //assert
         Assert.Single(
             restClient.DefaultParameters,
-            parameter => parameter.Type == ParameterType.HttpHeader &&
-                parameter.Name == KnownHeaders.UserAgent &&
-                parameter.Value is string valueAsString &&
+            parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent, Value: string valueAsString } &&
                 valueAsString == clientOptions.UserAgent
         );
 
@@ -151,9 +149,7 @@ public class RestClientTests {
         //assert
         Assert.Single(
             restClient.DefaultParameters,
-            parameter => parameter.Type == ParameterType.HttpHeader &&
-                parameter.Name == KnownHeaders.UserAgent &&
-                parameter.Value is string valueAsString &&
+            parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent, Value: string valueAsString } &&
                 valueAsString == clientOptions.UserAgent
         );
 

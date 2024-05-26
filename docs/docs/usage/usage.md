@@ -171,7 +171,7 @@ If you need to override the property name or format, you can do it using the `Re
 ```csharp
 public class RequestModel {
     // override the name and the format
-    [RequestAttribute(Name = "from_date", Format = "d")]
+    [RequestProperty(Name = "from_date", Format = "d")]
     public DateTime FromDate { get; set; }
 }
 

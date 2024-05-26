@@ -34,8 +34,10 @@ sealed class OAuthWorkflow {
     public OAuthParameterHandling  ParameterHandling  { get; set; }
     public string?                 ClientUsername     { get; init; }
     public string?                 ClientPassword     { get; init; }
-    public string?                 RequestTokenUrl    { get; set; }
-    public string?                 AccessTokenUrl     { get; set; }
+    public string?                 RequestUrl         { get; set; }
+
+    internal Func<string> GetTimestamp { get; init; } = OAuthTools.GetTimestamp;
+    internal Func<string> GetNonce     { get; init; } = OAuthTools.GetNonce;
 
     /// <summary>
     /// Generates an OAuth signature to pass to an
@@ -45,19 +47,20 @@ sealed class OAuthWorkflow {
     /// <param name="method">The HTTP method for the intended request</param>
     /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
     /// <returns></returns>
-    public OAuthParameters BuildRequestTokenInfo(string method, WebPairCollection parameters) {
-        ValidateTokenRequestState();
+    public OAuthParameters BuildRequestTokenSignature(string method, WebPairCollection parameters) {
+        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
 
-        var timestamp = OAuthTools.GetTimestamp();
-        var nonce     = OAuthTools.GetNonce();
+        var uri       = new Uri(Ensure.NotEmptyString(RequestUrl, nameof(RequestUrl)));
+        var timestamp = GetTimestamp();
+        var nonce     = GetNonce();
 
         var authParameters = GenerateAuthParameters(timestamp, nonce);
         allParameters.AddRange(authParameters);
 
-        var signatureBase = OAuthTools.ConcatenateRequestElements(method, Ensure.NotNull(RequestTokenUrl, nameof(RequestTokenUrl)), allParameters);
+        var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
         return new OAuthParameters {
             Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret),
@@ -73,14 +76,15 @@ sealed class OAuthWorkflow {
     /// <param name="method">The HTTP method for the intended request</param>
     /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
     public OAuthParameters BuildAccessTokenSignature(string method, WebPairCollection parameters) {
-        ValidateAccessRequestState();
+        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+        Ensure.NotEmpty(Token, nameof(Token));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
 
-        var uri       = new Uri(Ensure.NotEmptyString(AccessTokenUrl, nameof(AccessTokenUrl)));
-        var timestamp = OAuthTools.GetTimestamp();
-        var nonce     = OAuthTools.GetNonce();
+        var uri       = new Uri(Ensure.NotEmptyString(RequestUrl, nameof(RequestUrl)));
+        var timestamp = GetTimestamp();
+        var nonce     = GetNonce();
 
         var authParameters = GenerateAuthParameters(timestamp, nonce);
         allParameters.AddRange(authParameters);
@@ -101,14 +105,15 @@ sealed class OAuthWorkflow {
     /// <param name="method">The HTTP method for the intended request</param>
     /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
     public OAuthParameters BuildClientAuthAccessTokenSignature(string method, WebPairCollection parameters) {
-        ValidateClientAuthAccessRequestState();
+        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+        Ensure.NotEmpty(ClientUsername, nameof(ClientUsername));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
 
-        var uri       = new Uri(Ensure.NotNull(AccessTokenUrl, nameof(AccessTokenUrl)));
-        var timestamp = OAuthTools.GetTimestamp();
-        var nonce     = OAuthTools.GetNonce();
+        var uri       = new Uri(Ensure.NotEmptyString(RequestUrl, nameof(RequestUrl)));
+        var timestamp = GetTimestamp();
+        var nonce     = GetNonce();
 
         var authParameters = GenerateXAuthParameters(timestamp, nonce);
         allParameters.AddRange(authParameters);
@@ -121,50 +126,31 @@ sealed class OAuthWorkflow {
         };
     }
 
-    public OAuthParameters BuildProtectedResourceSignature(string method, WebPairCollection parameters, string url) {
-        ValidateProtectedResourceState();
+    public OAuthParameters BuildProtectedResourceSignature(string method, WebPairCollection parameters) {
+        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
 
         // Include url parameters in query pool
-        var uri           = new Uri(url);
+        var uri       = new Uri(Ensure.NotEmptyString(RequestUrl, nameof(RequestUrl)));
         var urlParameters = HttpUtility.ParseQueryString(uri.Query);
 
         allParameters.AddRange(urlParameters.AllKeys.Select(x => new WebPair(x!, urlParameters[x]!)));
 
-        var timestamp = OAuthTools.GetTimestamp();
-        var nonce     = OAuthTools.GetNonce();
+        var timestamp = GetTimestamp();
+        var nonce     = GetNonce();
 
         var authParameters = GenerateAuthParameters(timestamp, nonce);
         allParameters.AddRange(authParameters);
 
-        var signatureBase = OAuthTools.ConcatenateRequestElements(method, url, allParameters);
+        var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
         return new OAuthParameters {
             Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret, TokenSecret),
             Parameters = authParameters
         };
     }
-
-    void ValidateTokenRequestState() {
-        Ensure.NotEmpty(RequestTokenUrl, nameof(RequestTokenUrl));
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-    }
-
-    void ValidateAccessRequestState() {
-        Ensure.NotEmpty(AccessTokenUrl, nameof(AccessTokenUrl));
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-        Ensure.NotEmpty(Token, nameof(Token));
-    }
-
-    void ValidateClientAuthAccessRequestState() {
-        Ensure.NotEmpty(AccessTokenUrl, nameof(AccessTokenUrl));
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-        Ensure.NotEmpty(ClientUsername, nameof(ClientUsername));
-    }
-
-    void ValidateProtectedResourceState() => Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
 
     WebPairCollection GenerateAuthParameters(string timestamp, string nonce)
         => new WebPairCollection {
@@ -173,13 +159,14 @@ sealed class OAuthWorkflow {
                 new("oauth_signature_method", SignatureMethod.ToRequestValue()),
                 new("oauth_timestamp", timestamp),
                 new("oauth_version", Version ?? "1.0")
-            }.AddNotEmpty("oauth_token", Token!, true)
-            .AddNotEmpty("oauth_callback", CallbackUrl!, true)
-            .AddNotEmpty("oauth_verifier", Verifier!)
-            .AddNotEmpty("oauth_session_handle", SessionHandle!);
+            }
+            .AddNotEmpty("oauth_token", Token, true)
+            .AddNotEmpty("oauth_callback", CallbackUrl, true)
+            .AddNotEmpty("oauth_verifier", Verifier)
+            .AddNotEmpty("oauth_session_handle", SessionHandle);
 
     WebPairCollection GenerateXAuthParameters(string timestamp, string nonce)
-        => new() {
+        => [
             new("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
             new("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
             new("x_auth_mode", "client_auth"),
@@ -188,7 +175,7 @@ sealed class OAuthWorkflow {
             new("oauth_timestamp", timestamp),
             new("oauth_nonce", nonce),
             new("oauth_version", Version ?? "1.0")
-        };
+        ];
 
     internal class OAuthParameters {
         public WebPairCollection Parameters { get; init; } = null!;

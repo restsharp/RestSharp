@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 
-using System.Net;
-
 namespace RestSharp.Extensions;
 
 static class CookieContainerExtensions {

@@ -1,7 +1,9 @@
 namespace RestSharp.Tests.Integrated;
 
 public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
-    readonly RestClient _client = new(new RestClientOptions(server.Url!) { ThrowOnAnyError = true });
+    const string UserAgent = "RestSharp/test";
+
+    readonly RestClient _client = new(new RestClientOptions(server.Url!) { ThrowOnAnyError = true, UserAgent = UserAgent });
 
     [Fact]
     public async Task Ensure_headers_correctly_set_in_the_interceptor() {
@@ -17,7 +19,7 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var header = response.Data!.First(x => x.Name == headerName);
+        var header = FindHeader(response, headerName);
         header.Should().NotBeNull();
         header.Value.Should().Be(headerValue);
     }
@@ -40,7 +42,7 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Data.Should().NotBeNull();
-        var header = response.Data!.First(x => x.Name == headerName);
+        var header = FindHeader(response, headerName);
         header.Should().NotBeNull();
         header.Value.Should().Be(headerValue);
     }
@@ -56,16 +58,27 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
             .AddHeader(requestHeader.Name, requestHeader.Value);
 
         var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
-        CheckHeader(defaultHeader);
-        CheckHeader(requestHeader);
-        return;
-
-        void CheckHeader(Header header) {
-            var h = response.Data!.First(x => x.Name == header.Name);
-            h.Should().NotBeNull();
-            h.Value.Should().Be(header.Value);
-        }
+        CheckHeader(response, defaultHeader);
+        CheckHeader(response, requestHeader);
     }
+
+    [Fact]
+    public async Task Should_sent_custom_UserAgent() {
+        var request  = new RestRequest("/headers");
+        var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
+        var h = FindHeader(response, "User-Agent");
+        h.Should().NotBeNull();
+        h.Value.Should().Be(UserAgent);
+    }
+
+    static void CheckHeader(RestResponse<TestServerResponse[]> response, Header header) {
+        var h = FindHeader(response, header.Name);
+        h.Should().NotBeNull();
+        h.Value.Should().Be(header.Value);
+    }
+
+    static TestServerResponse FindHeader(RestResponse<TestServerResponse[]> response, string headerName)
+        => response.Data!.First(x => x.Name == headerName);
 
     record Header(string Name, string Value);
 

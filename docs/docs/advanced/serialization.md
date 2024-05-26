@@ -126,24 +126,23 @@ Here is an example of a custom serializer that uses `System.Text.Json`:
 
 ```csharp
 public class SimpleJsonSerializer : IRestSerializer {
-    public string Serialize(object obj) => JsonSerializer.Serialize(obj);
+    public string? Serialize(object? obj) => obj == null ? null : JsonSerializer.Serialize(obj);
 
-    public string Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
+    public string? Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);
 
-    public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response.Content);
+    public T? Deserialize<T>(RestResponse response) => JsonSerializer.Deserialize<T>(response.Content!);
 
-    public string[] SupportedContentTypes { get; } = {
-        "application/json", "text/json", "text/x-json", "text/javascript", "*+json"
-    };
+    public ContentType ContentType { get; set; } = ContentType.Json;
 
-    public string ContentType { get; set; } = "application/json";
-
-    public DataFormat DataFormat { get; } = DataFormat.Json;
+    public ISerializer   Serializer           => this;
+    public IDeserializer Deserializer         => this;
+    public DataFormat    DataFormat           => DataFormat.Json;
+    public string[]      AcceptedContentTypes => ContentType.JsonAccept;
+    public SupportsContentType SupportsContentType 
+        => contentType => contentType.Value.EndsWith("json", StringComparison.InvariantCultureIgnoreCase);
 }
 ```
 
-The value of the `SupportedContentTypes` property will be used to match the
-serializer with the response `Content-Type` headers.
+The `SupportedContentTypes` function will be used to check if the serializer is able to deserialize the response based on the `Content-Type` response header.
 
-The `ContentType` property will be used when making a request so the
-server knows how to handle the payload.
+The `ContentType` property will be used when making a request so the server knows how to handle the payload.

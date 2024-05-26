@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Net;
 using RestSharp.Extensions;
-using RestSharp.Interceptors;
 
 namespace RestSharp;
 
 public partial class RestClient {
     // Default HttpClient timeout 
-    public TimeSpan DefaultTimeout = TimeSpan.FromSeconds(100);
+    readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(100);
+
     /// <inheritdoc />
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
         using var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
@@ -115,7 +114,7 @@ public partial class RestClient {
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
 
-        using var timeoutCts = new CancellationTokenSource(request.Timeout ?? Options.Timeout ?? DefaultTimeout);
+        using var timeoutCts = new CancellationTokenSource(request.Timeout ?? Options.Timeout ?? _defaultTimeout);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
 
         var ct = cts.Token;

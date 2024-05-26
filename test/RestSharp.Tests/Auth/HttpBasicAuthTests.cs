@@ -7,7 +7,7 @@ public class HttpBasicAuthTests {
     const string Username = "username";
     const string Password = "password";
 
-    readonly HttpBasicAuth _auth = new(Username, Password);
+    readonly HttpBasicAuthenticator _auth = new(Username, Password);
 
     [Fact]
     public async Task Authenticate_ShouldAddAuthorizationParameter_IfPreviouslyUnassigned() {

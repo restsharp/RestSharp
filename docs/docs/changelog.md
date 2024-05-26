@@ -14,8 +14,8 @@ Only the most important or breaking changes are listed there. All other changes 
 
 * Added [interceptors](advanced/interceptors.md).
 * As interceptors provide a better way to interject the request and response execution flow, request properties `OnBeforeRequest`, `OnBeforeDeserialization` and `OnAfterRequest` are marked obsolete and will be removed in future versions.
-* Client option `MaxTimeout` renamed to `Timeout` and changed type to `Timespan` for clarity. It doesn't configure the `HttpClient` timeout any more. Instead, the same method is used for client and request level timeouts with cancellation tokens.
-* Request option `Timeout` changed type to `Timespan` for clarity.
+* **Breaking change.** Client option `MaxTimeout` renamed to `Timeout` and changed type to `Timespan` for clarity. It doesn't configure the `HttpClient` timeout anymore. Instead, the same method is used for client and request level timeouts with cancellation tokens.
+* **Breaking change.** Request option `Timeout` changed type to `Timespan` for clarity.
 * Added .NET 8 target.
 * Support uploading files as content without multipart form.
 * Added `CacheControl` options to client and requests.

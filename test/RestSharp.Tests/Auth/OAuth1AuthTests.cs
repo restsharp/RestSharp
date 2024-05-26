@@ -4,7 +4,7 @@ using RestSharp.Authenticators.OAuth;
 namespace RestSharp.Tests.Auth;
 
 public class OAuth1AuthTests {
-    readonly OAuth1Auth _auth = new() {
+    readonly OAuth1Authenticator _auth = new() {
         CallbackUrl        = "CallbackUrl",
         ClientPassword     = "ClientPassword",
         Type               = OAuthType.ClientAuthentication,
@@ -27,7 +27,7 @@ public class OAuth1AuthTests {
         const string url = "https://no-query.string";
 
         using var client  = new RestClient(url);
-        var request = new RestRequest();
+        var       request = new RestRequest();
 
         _auth.ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader;
 
@@ -57,7 +57,7 @@ public class OAuth1AuthTests {
         const string url = "https://no-query.string";
 
         using var client  = new RestClient(url);
-        var request = new RestRequest();
+        var       request = new RestRequest();
         request.AddQueryParameter("queryparameter", "foobartemp");
 
         _auth.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
@@ -98,7 +98,7 @@ public class OAuth1AuthTests {
         const string url = "https://no-query.string";
 
         using var client  = new RestClient(url);
-        var request = new RestRequest();
+        var       request = new RestRequest();
         _auth.Type  = type;
         _auth.Token = value;
 
@@ -125,7 +125,7 @@ public class OAuth1AuthTests {
         const string url = "https://no-query.string";
 
         using var client  = new RestClient(url);
-        var request = new RestRequest();
+        var       request = new RestRequest();
         _auth.Type           = type;
         _auth.ConsumerSecret = null;
 
@@ -140,5 +140,27 @@ public class OAuth1AuthTests {
         Assert.NotEmpty(value);
         Assert.Contains("OAuth", value!);
         Assert.Contains($"oauth_signature=\"{OAuthTools.UrlEncodeStrict("&")}", value);
+    }
+
+    [Fact]
+    public async Task Authenticate_ShouldUriEncodeConsumerKey_OnHttpAuthorizationHeaderHandling() {
+        // Arrange
+        const string url = "https://no-query.string";
+
+        var client  = new RestClient(url);
+        var request = new RestRequest();
+        _auth.Type           = OAuthType.ProtectedResource;
+        _auth.ConsumerKey    = "my@consumer!key";
+        _auth.ConsumerSecret = null;
+
+        // Act
+        await _auth.Authenticate(client, request);
+
+        // Assert
+        var authParameter = request.Parameters.Single(x => x.Name == KnownHeaders.Authorization);
+        var value         = (string)authParameter.Value;
+
+        value.Should().Contain("OAuth");
+        value.Should().Contain("oauth_consumer_key=\"my%40consumer%21key");
     }
 }

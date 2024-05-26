@@ -45,7 +45,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     public async Task Handles_Server_Timeout_Error() {
         using var client = new RestClient(_server.Url!);
 
-        var request  = new RestRequest("404") { Timeout = TimeSpan.FromMilliseconds(500) };
+        var request  = new RestRequest("timeout") { Timeout = TimeSpan.FromMilliseconds(500) };
         var response = await client.ExecuteAsync(request);
 
         response.ErrorException.Should().BeOfType<TaskCanceledException>();

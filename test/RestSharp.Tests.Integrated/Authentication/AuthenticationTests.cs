@@ -12,7 +12,7 @@ public class AuthenticationTests(WireMockTestServer server) : IClassFixture<Wire
 
         using var client = new RestClient(
             server.Url!,
-            o => o.Authenticator = new HttpBasicAuth(userName, password)
+            o => o.Authenticator = new HttpBasicAuthenticator(userName, password)
         );
         var request  = new RestRequest("headers");
         var response = await client.GetAsync<TestServerResponse[]>(request);
