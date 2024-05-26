@@ -42,7 +42,7 @@ public class OAuth1Tests {
 
         using var client        = new RestClient(baseUrl);
         var       request       = new RestRequest();
-        var       authenticator = OAuth1Auth.ForRequestToken(consumerKey, consumerSecret);
+        var       authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret);
         authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
         await authenticator.Authenticate(client, request);
 
@@ -74,22 +74,14 @@ public class OAuth1Tests {
     };
 
     [Fact]
-    public void Use_RFC_3986_Encoding_For_Auth_Signature_Base() {
-        // reserved characters for 2396 and 3986
-        // http://www.ietf.org/rfc/rfc2396.txt
-        string[] reserved2396Characters = { ";", "/", "?", ":", "@", "&", "=", "+", "$", "," };
-        // http://www.ietf.org/rfc/rfc3986.txt
-        string[] additionalReserved3986Characters = { "!", "*", "'", "(", ")" };
+    public void Encodes_parameter() {
+        var parameter  = new WebPair("status", "Hello Ladies + Gentlemen, a signed OAuth request!");
+        var parameters = new WebPairCollection { parameter };
 
-        var reservedCharacterString = string.Join(
-            string.Empty,
-            reserved2396Characters.Union(additionalReserved3986Characters)
-        );
+        const string expected = "status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521";
 
-        // act
-        var escapedString = OAuthTools.UrlEncodeRelaxed(reservedCharacterString);
-
-        // assert
-        Assert.Equal("%3B%2F%3F%3A%40%26%3D%2B%24%2C%2521%252A%2527%2528%2529", escapedString);
+        var norm    = OAuthTools.NormalizeRequestParameters(parameters);
+        var escaped = OAuthTools.UrlEncodeRelaxed(norm);
+        escaped.Should().Be(expected);
     }
 }

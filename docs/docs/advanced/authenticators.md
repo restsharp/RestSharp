@@ -22,7 +22,7 @@ var request = new RestRequest("/api/users/me") {
 var response = await client.ExecuteAsync(request, cancellationToken);
 ```
 
-## Basic Authentication
+## Basic authentication
 
 The `HttpBasicAuthenticator` allows you pass a username and password as a basic `Authorization` header using a base64 encoded string.
 
@@ -36,43 +36,89 @@ var client = new RestClient(options);
 ## OAuth1
 
 For OAuth1 authentication the `OAuth1Authenticator` class provides static methods to help generate an OAuth authenticator.
+OAuth1 authenticator will add the necessary OAuth parameters to the request, including signature.  
+
+The authenticator will use `HMAC SHA1` to create a signature by default. 
+Each static function to create the authenticator allows you to override the default and use another method to generate the signature.
 
 ### Request token
 
+Getting a temporary request token is the usual first step in the 3-legged OAuth1 flow. 
+Use `OAuth1Authenticator.ForRequestToken` function to get the request token authenticator.
 This method requires a `consumerKey` and `consumerSecret` to authenticate.
 
 ```csharp
-var options = new RestClientOptions("https://example.com") {
+var options = new RestClientOptions("https://api.twitter.com") {
     Authenticator = OAuth1Authenticator.ForRequestToken(consumerKey, consumerSecret)
 };
 var client = new RestClient(options);
+var request = new RestRequest("oauth/request_token");
 ```
+
+The response should contain the token and the token secret, which can then be used to complete the authorization process.
+If you need to provide the callback URL, assign the `CallbackUrl` property of the authenticator to the callback destination.
 
 ### Access token
 
-This method retrieves an access token when provided `consumerKey`, `consumerSecret`, `oauthToken`, and `oauthTokenSecret`.
+Getting an access token is the usual third step in the 3-legged OAuth1 flow.
+This method retrieves an access token when provided `consumerKey`, `consumerSecret`, `oauthToken`, and `oauthTokenSecret`. 
+If you don't have a token for this call, you need to make a call to get the request token as described above.
 
 ```csharp
 var authenticator = OAuth1Authenticator.ForAccessToken(
     consumerKey, consumerSecret, oauthToken, oauthTokenSecret
 );
-var options = new RestClientOptions("https://example.com") {
+var options = new RestClientOptions("https://api.twitter.com") {
     Authenticator = authenticator
 };
 var client = new RestClient(options);
+var request = new RestRequest("oauth/access_token");
 ```
 
-This method also includes an optional parameter to specify the `OAuthSignatureMethod`.
+If the second step in 3-leg OAuth1 flow returned a verifier value, you can use another overload of `ForAccessToken`:
+
 ```csharp
 var authenticator = OAuth1Authenticator.ForAccessToken(
-    consumerKey, consumerSecret, oauthToken, oauthTokenSecret, 
-    OAuthSignatureMethod.PlainText
+    consumerKey, consumerSecret, oauthToken, oauthTokenSecret, verifier
+);
+```
+
+The response should contain the access token that can be used to make calls to protected resources.
+
+For refreshing access tokens, use one of the two overloads of `ForAccessToken` that accept `sessionHandle`.
+
+### Protected resource
+
+When the access token is available, use `ForProtectedResource` function to get the authenticator for accessing protected resources.
+
+```csharp
+var authenticator = OAuth1Authenticator.ForAccessToken(
+    consumerKey, consumerSecret, accessToken, accessTokenSecret
+);
+var options = new RestClientOptions("https://api.twitter.com/1.1") {
+    Authenticator = authenticator
+};
+var client = new RestClient(options);
+var request = new RestRequest("statuses/update.json", Method.Post)
+        .AddParameter("status", "Hello Ladies + Gentlemen, a signed OAuth request!")
+        .AddParameter("include_entities", "true");
+```
+
+### xAuth
+
+xAuth is a simplified version of OAuth1. It allows sending the username and password as `x_auth_username` and `x_auth_password` request parameters and directly get the access token. xAuth is not widely supported, but RestSharp still allows using it.
+
+Create an xAuth authenticator using `OAuth1Authenticator.ForClientAuthentication` function:
+
+```csharp
+var authenticator = OAuth1Authenticator.ForClientAuthentication(
+    consumerKey, consumerSecret, username, password
 );
 ```
 
 ### 0-legged OAuth
 
-The same access token authenticator can be used in 0-legged OAuth scenarios by providing `null` for the `consumerSecret`.
+The access token authenticator can be used in 0-legged OAuth scenarios by providing `null` for the `consumerSecret`.
 
 ```csharp
 var authenticator = OAuth1Authenticator.ForAccessToken(
@@ -120,7 +166,7 @@ For each request, it will add an `Authorization` header with the value `Bearer <
 
 As you might need to refresh the token from, you can use the `SetBearerToken` method to update the token.
 
-## Custom Authenticator
+## Custom authenticator
 
 You can write your own implementation by implementing `IAuthenticator` and 
 registering it with your RestClient:

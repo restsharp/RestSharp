@@ -4,7 +4,7 @@ using RestSharp.Authenticators.OAuth;
 namespace RestSharp.Tests.Auth;
 
 public class OAuth1AuthTests {
-    readonly OAuth1Auth _auth = new() {
+    readonly OAuth1Authenticator _auth = new() {
         CallbackUrl        = "CallbackUrl",
         ClientPassword     = "ClientPassword",
         Type               = OAuthType.ClientAuthentication,

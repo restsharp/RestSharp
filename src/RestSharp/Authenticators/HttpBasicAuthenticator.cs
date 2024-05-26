@@ -24,9 +24,9 @@ namespace RestSharp.Authenticators;
 /// UTF-8 is used by default but some servers might expect ISO-8859-1 encoding.
 /// </remarks>
 [PublicAPI]
-public class HttpBasicAuth(string username, string password, Encoding encoding)
+public class HttpBasicAuthenticator(string username, string password, Encoding encoding)
     : AuthenticatorBase(GetHeader(username, password, encoding)) {
-    public HttpBasicAuth(string username, string password) : this(username, password, Encoding.UTF8) { }
+    public HttpBasicAuthenticator(string username, string password) : this(username, password, Encoding.UTF8) { }
 
     static string GetHeader(string username, string password, Encoding encoding)
         => Convert.ToBase64String(encoding.GetBytes($"{username}:{password}"));

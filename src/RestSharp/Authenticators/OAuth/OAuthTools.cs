@@ -132,7 +132,7 @@ static class OAuthTools {
     /// </summary>
     /// <param name="parameters"></param>
     /// <returns></returns>
-    static string NormalizeRequestParameters(WebPairCollection parameters) => string.Join("&", SortParametersExcludingSignature(parameters));
+    internal static string NormalizeRequestParameters(WebPairCollection parameters) => string.Join("&", SortParametersExcludingSignature(parameters));
 
     /// <summary>
     /// Sorts a <see cref="WebPairCollection" /> by name, and then value if equal.
@@ -193,24 +193,7 @@ static class OAuthTools {
         string               signatureBase,
         string?              consumerSecret
     )
-        => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, signatureBase, consumerSecret, null);
-
-    /// <summary>
-    /// Creates a signature value given a signature base and the consumer secret.
-    /// This method is used when the token secret is currently unknown.
-    /// </summary>
-    /// <param name="signatureMethod">The hashing method</param>
-    /// <param name="signatureTreatment">The treatment to use on a signature value</param>
-    /// <param name="signatureBase">The signature base</param>
-    /// <param name="consumerSecret">The consumer key</param>
-    /// <returns></returns>
-    public static string GetSignature(
-        OAuthSignatureMethod    signatureMethod,
-        OAuthSignatureTreatment signatureTreatment,
-        string                  signatureBase,
-        string?                 consumerSecret
-    )
-        => GetSignature(signatureMethod, signatureTreatment, signatureBase, consumerSecret, null);
+        => GetSignature(signatureMethod, OAuthSignatureTreatment.Escaped, signatureBase, consumerSecret);
 
     /// <summary>
     /// Creates a signature value given a signature base and the consumer secret and a known token secret.
@@ -226,7 +209,7 @@ static class OAuthTools {
         OAuthSignatureTreatment signatureTreatment,
         string                  signatureBase,
         string?                 consumerSecret,
-        string?                 tokenSecret
+        string?                 tokenSecret = null
     ) {
         if (tokenSecret.IsEmpty()) tokenSecret       = string.Empty;
         if (consumerSecret.IsEmpty()) consumerSecret = string.Empty;
@@ -250,7 +233,8 @@ static class OAuthTools {
         return result;
 
         string GetRsaSignature() {
-            using var provider = new RSACryptoServiceProvider { PersistKeyInCsp = false };
+            using var provider = new RSACryptoServiceProvider();
+            provider.PersistKeyInCsp = false;
 
             provider.FromXmlString(unencodedConsumerSecret);
 

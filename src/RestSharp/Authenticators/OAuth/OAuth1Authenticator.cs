@@ -22,7 +22,7 @@ using System.Web;
 namespace RestSharp.Authenticators;
 
 /// <seealso href="http://tools.ietf.org/html/rfc5849">RFC: The OAuth 1.0 Protocol</seealso>
-public class OAuth1Auth : IAuthenticator {
+public class OAuth1Authenticator : IAuthenticator {
     public virtual string?                 Realm              { get; set; }
     public virtual OAuthParameterHandling  ParameterHandling  { get; set; }
     public virtual OAuthSignatureMethod    SignatureMethod    { get; set; }
@@ -56,12 +56,19 @@ public class OAuth1Auth : IAuthenticator {
             ClientPassword     = ClientPassword
         };
 
-        AddOAuthData(client, request, workflow);
+        AddOAuthData(client, request, workflow, Type, Realm);
         return default;
     }
 
+    /// <summary>
+    /// Creates an authenticator to retrieve a request token.
+    /// </summary>
+    /// <param name="consumerKey">Consumer or API key</param>
+    /// <param name="consumerSecret">Consumer or API secret</param>
+    /// <param name="signatureMethod">Signature method, default is HMAC SHA1</param>
+    /// <returns>Authenticator instance</returns>
     [PublicAPI]
-    public static OAuth1Auth ForRequestToken(
+    public static OAuth1Authenticator ForRequestToken(
         string               consumerKey,
         string?              consumerSecret,
         OAuthSignatureMethod signatureMethod = OAuthSignatureMethod.HmacSha1
@@ -75,8 +82,15 @@ public class OAuth1Auth : IAuthenticator {
             Type               = OAuthType.RequestToken
         };
 
+    /// <summary>
+    /// Creates an authenticator to retrieve a request token with custom callback.
+    /// </summary>
+    /// <param name="consumerKey">Consumer or API key</param>
+    /// <param name="consumerSecret">Consumer or API secret</param>
+    /// <param name="callbackUrl">URL to where the user will be redirected to after authhentication</param>
+    /// <returns>Authenticator instance</returns>
     [PublicAPI]
-    public static OAuth1Auth ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
+    public static OAuth1Authenticator ForRequestToken(string consumerKey, string? consumerSecret, string callbackUrl) {
         var authenticator = ForRequestToken(consumerKey, consumerSecret);
 
         authenticator.CallbackUrl = callbackUrl;
@@ -84,8 +98,17 @@ public class OAuth1Auth : IAuthenticator {
         return authenticator;
     }
 
+    /// <summary>
+    /// Creates an authenticator to retrieve an access token using the request token.
+    /// </summary>
+    /// <param name="consumerKey">Consumer or API key</param>
+    /// <param name="consumerSecret">Consumer or API secret</param>
+    /// <param name="token">Request token</param>
+    /// <param name="tokenSecret">Request token secret</param>
+    /// <param name="signatureMethod">Signature method, default is HMAC SHA1</param>
+    /// <returns>Authenticator instance</returns>
     [PublicAPI]
-    public static OAuth1Auth ForAccessToken(
+    public static OAuth1Authenticator ForAccessToken(
         string               consumerKey,
         string?              consumerSecret,
         string               token,
@@ -103,8 +126,17 @@ public class OAuth1Auth : IAuthenticator {
             Type               = OAuthType.AccessToken
         };
 
+    /// <summary>
+    /// Creates an authenticator to retrieve an access token using the request token and a verifier.
+    /// </summary>
+    /// <param name="consumerKey">Consumer or API key</param>
+    /// <param name="consumerSecret">Consumer or API secret</param>
+    /// <param name="token">Request token</param>
+    /// <param name="tokenSecret">Request token secret</param>
+    /// <param name="verifier">Verifier received from the API server</param>
+    /// <returns>Authenticator instance</returns>
     [PublicAPI]
-    public static OAuth1Auth ForAccessToken(
+    public static OAuth1Authenticator ForAccessToken(
         string  consumerKey,
         string? consumerSecret,
         string  token,
@@ -119,7 +151,7 @@ public class OAuth1Auth : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Auth ForAccessTokenRefresh(
+    public static OAuth1Authenticator ForAccessTokenRefresh(
         string  consumerKey,
         string? consumerSecret,
         string  token,
@@ -134,7 +166,7 @@ public class OAuth1Auth : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Auth ForAccessTokenRefresh(
+    public static OAuth1Authenticator ForAccessTokenRefresh(
         string  consumerKey,
         string? consumerSecret,
         string  token,
@@ -151,7 +183,7 @@ public class OAuth1Auth : IAuthenticator {
     }
 
     [PublicAPI]
-    public static OAuth1Auth ForClientAuthentication(
+    public static OAuth1Authenticator ForClientAuthentication(
         string               consumerKey,
         string?              consumerSecret,
         string               username,
@@ -169,8 +201,17 @@ public class OAuth1Auth : IAuthenticator {
             Type               = OAuthType.ClientAuthentication
         };
 
+    /// <summary>
+    /// Creates an authenticator to make calls to protected resources using the access token.
+    /// </summary>
+    /// <param name="consumerKey">Consumer or API key</param>
+    /// <param name="consumerSecret">Consumer or API secret</param>
+    /// <param name="accessToken">Access token</param>
+    /// <param name="accessTokenSecret">Access token secret</param>
+    /// <param name="signatureMethod">Signature method, default is HMAC SHA1</param>
+    /// <returns>Authenticator instance</returns>
     [PublicAPI]
-    public static OAuth1Auth ForProtectedResource(
+    public static OAuth1Authenticator ForProtectedResource(
         string               consumerKey,
         string?              consumerSecret,
         string               accessToken,
@@ -188,7 +229,13 @@ public class OAuth1Auth : IAuthenticator {
             TokenSecret        = accessTokenSecret
         };
 
-    void AddOAuthData(IRestClient client, RestRequest request, OAuthWorkflow workflow) {
+    internal static void AddOAuthData(
+        IRestClient            client,
+        RestRequest            request,
+        OAuthWorkflow          workflow,
+        OAuthType              type,
+        string?                realm
+    ) {
         var requestUrl = client.BuildUriWithoutQueryParameters(request).AbsoluteUri;
 
         if (requestUrl.Contains('?'))
@@ -204,13 +251,6 @@ public class OAuth1Auth : IAuthenticator {
         var method     = request.Method.ToString().ToUpperInvariant();
         var parameters = new WebPairCollection();
 
-        // include all GET and POST parameters before generating the signature
-        // according to the RFC 5849 - The OAuth 1.0 Protocol
-        // http://tools.ietf.org/html/rfc5849#section-3.4.1
-        // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
-        // or implement a separate class for each OAuth version
-        static bool BaseQuery(Parameter x) => x.Type is ParameterType.GetOrPost or ParameterType.QueryString;
-
         var query =
             request.AlwaysMultipartFormData || request.Files.Count > 0
                 ? x => BaseQuery(x) && x.Name != null && x.Name.StartsWith("oauth_")
@@ -219,22 +259,19 @@ public class OAuth1Auth : IAuthenticator {
         parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
         parameters.AddRange(request.Parameters.Where(query).ToWebParameters());
 
-        if (Type == OAuthType.RequestToken)
-            workflow.RequestTokenUrl = url;
-        else
-            workflow.AccessTokenUrl = url;
+        workflow.RequestUrl = url;
 
-        var oauth = Type switch {
-            OAuthType.RequestToken         => workflow.BuildRequestTokenInfo(method, parameters),
+        var oauth = type switch {
+            OAuthType.RequestToken         => workflow.BuildRequestTokenSignature(method, parameters),
             OAuthType.AccessToken          => workflow.BuildAccessTokenSignature(method, parameters),
             OAuthType.ClientAuthentication => workflow.BuildClientAuthAccessTokenSignature(method, parameters),
-            OAuthType.ProtectedResource    => workflow.BuildProtectedResourceSignature(method, parameters, url),
+            OAuthType.ProtectedResource    => workflow.BuildProtectedResourceSignature(method, parameters),
             _                              => throw new ArgumentOutOfRangeException(nameof(Type))
         };
 
         oauth.Parameters.Add("oauth_signature", oauth.Signature);
 
-        var oauthParameters = ParameterHandling switch {
+        var oauthParameters = workflow.ParameterHandling switch {
             OAuthParameterHandling.HttpAuthorizationHeader => CreateHeaderParameters(),
             OAuthParameterHandling.UrlOrPostParameters     => CreateUrlParameters(),
             _                                              => throw new ArgumentOutOfRangeException(nameof(ParameterHandling))
@@ -243,7 +280,14 @@ public class OAuth1Auth : IAuthenticator {
         request.AddOrUpdateParameters(oauthParameters);
         return;
 
-        IEnumerable<Parameter> CreateHeaderParameters() => new[] { new HeaderParameter(KnownHeaders.Authorization, GetAuthorizationHeader()) };
+        // include all GET and POST parameters before generating the signature
+        // according to the RFC 5849 - The OAuth 1.0 Protocol
+        // http://tools.ietf.org/html/rfc5849#section-3.4.1
+        // if this change causes trouble we need to introduce a flag indicating the specific OAuth implementation level,
+        // or implement a separate class for each OAuth version
+        static bool BaseQuery(Parameter x) => x.Type is ParameterType.GetOrPost or ParameterType.QueryString;
+
+        IEnumerable<Parameter> CreateHeaderParameters() => [new HeaderParameter(KnownHeaders.Authorization, GetAuthorizationHeader())];
 
         IEnumerable<Parameter> CreateUrlParameters() => oauth.Parameters.Select(p => new GetOrPostParameter(p.Name, HttpUtility.UrlDecode(p.Value)));
 
@@ -254,7 +298,7 @@ public class OAuth1Auth : IAuthenticator {
                     .Select(x => x.GetQueryParameter(true))
                     .ToList();
 
-            if (!Realm.IsEmpty()) oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(Realm)}\"");
+            if (!realm.IsEmpty()) oathParameters.Insert(0, $"realm=\"{OAuthTools.UrlEncodeRelaxed(realm)}\"");
 
             return $"OAuth {string.Join(",", oathParameters)}";
         }
