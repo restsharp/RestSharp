@@ -36,7 +36,7 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="HttpTracer" Version="2.1.1" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="Moq" Version="4.20.69" />
     <PackageVersion Include="Polly" Version="8.3.1" />
     <PackageVersion Include="rest-mock-core" Version="0.7.12" />
