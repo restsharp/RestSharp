@@ -113,6 +113,7 @@ public partial class RestClient {
         message.Content              = requestContent.BuildContent();
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
+        message.Version              = request.Version;
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout ?? Options.Timeout ?? _defaultTimeout);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);

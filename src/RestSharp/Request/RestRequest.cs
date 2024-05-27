@@ -166,6 +166,11 @@ public class RestRequest {
     /// Can be used to skip container or root elements that do not have corresponding deserialization targets.
     /// </summary>
     public string? RootElement { get; set; }
+    
+    /// <summary>
+    /// HTTP version for the request. Default is Version11.
+    /// </summary>
+    public Version Version { get; set; } = HttpVersion.Version11;
 
     /// <summary>
     /// When supplied, the function will be called before calling the deserializer
