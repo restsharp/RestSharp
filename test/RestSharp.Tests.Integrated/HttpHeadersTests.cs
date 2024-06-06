@@ -14,10 +14,8 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
             Interceptors = [new HeaderInterceptor(headerName, headerValue)]
         };
 
-        // Run
         var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
 
-        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var header = FindHeader(response, headerName);
         header.Should().NotBeNull();
@@ -36,10 +34,8 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
             }
         };
 
-        // Run
         var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
 
-        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Data.Should().NotBeNull();
         var header = FindHeader(response, headerName);
@@ -69,6 +65,8 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
         var h = FindHeader(response, "User-Agent");
         h.Should().NotBeNull();
         h.Value.Should().Be(UserAgent);
+
+        response.GetHeaderValue("Server").Should().Be("Kestrel");
     }
 
     static void CheckHeader(RestResponse<TestServerResponse[]> response, Header header) {

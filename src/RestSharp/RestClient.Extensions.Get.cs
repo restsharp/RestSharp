@@ -26,6 +26,15 @@ public static partial class RestClientExtensions {
         => client.ExecuteAsync(request, Method.Get, cancellationToken);
 
     /// <summary>
+    /// Executes a GET-style asynchronously, authenticating if needed.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="resource">Request resource</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public static Task<RestResponse> ExecuteGetAsync(this IRestClient client, string resource, CancellationToken cancellationToken = default)
+        => client.ExecuteAsync(new RestRequest(resource), Method.Get, cancellationToken);
+
+    /// <summary>
     /// Executes a GET-style synchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
@@ -50,6 +59,22 @@ public static partial class RestClientExtensions {
         => client.ExecuteAsync<T>(request, Method.Get, cancellationToken);
 
     /// <summary>
+    /// Executes a GET-style request to the specified resource URL asynchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="resource">Request resource</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Deserialized response content</returns>
+    public static Task<RestResponse<T>> ExecuteGetAsync<T>(
+        this IRestClient  client,
+        string            resource,
+        CancellationToken cancellationToken = default
+    )
+        => client.ExecuteAsync<T>(new RestRequest(resource), Method.Get, cancellationToken);
+
+    /// <summary>
     /// Executes a GET-style request synchronously, authenticating if needed.
     /// The response content then gets deserialized to T.
     /// </summary>
@@ -59,6 +84,17 @@ public static partial class RestClientExtensions {
     /// <returns>Deserialized response content</returns>
     public static RestResponse<T> ExecuteGet<T>(this IRestClient client, RestRequest request)
         => AsyncHelpers.RunSync(() => client.ExecuteAsync<T>(request, Method.Get));
+    
+    /// <summary>
+    /// Executes a GET-style request synchronously, authenticating if needed.
+    /// The response content then gets deserialized to T.
+    /// </summary>
+    /// <typeparam name="T">Target deserialization type</typeparam>
+    /// <param name="client"></param>
+    /// <param name="resource">Request resource</param>
+    /// <returns>Deserialized response content</returns>
+    public static RestResponse<T> ExecuteGet<T>(this IRestClient client, string resource)
+        => AsyncHelpers.RunSync(() => client.ExecuteGetAsync<T>(resource));
 
     /// <summary>
     /// Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
@@ -112,10 +148,20 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns></returns>
-    public static Task<TResponse?> GetJsonAsync<TResponse>(this IRestClient client, string resource, CancellationToken cancellationToken = default) {
-        var request = new RestRequest(resource);
-        return client.GetAsync<TResponse>(request, cancellationToken);
-    }
+    public static Task<TResponse?> GetAsync<TResponse>(this IRestClient client, string resource, CancellationToken cancellationToken = default)
+        => client.GetAsync<TResponse>(new RestRequest(resource), cancellationToken);
+
+    [Obsolete("Use GetAsync instead")]
+    public static Task<TResponse?> GetJsonAsync<TResponse>(
+        this IRestClient  client,
+        string            resource,
+        CancellationToken cancellationToken = default
+    )
+        => client.GetAsync<TResponse>(resource, cancellationToken);
+
+    [Obsolete("Use Get instead")]
+    public static TResponse? GetJson<TResponse>(this IRestClient client, string resource)
+        => AsyncHelpers.RunSync(() => client.GetAsync<TResponse>(resource));
 
     /// <summary>
     /// Calls the URL specified in the <code>resource</code> parameter, expecting a JSON response back. Deserializes and returns the response.
@@ -124,8 +170,8 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Resource URL</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns>Deserialized response object</returns>
-    public static TResponse? GetJson<TResponse>(this IRestClient client, string resource)
-        => AsyncHelpers.RunSync(() => client.GetJsonAsync<TResponse>(resource));
+    public static TResponse? Get<TResponse>(this IRestClient client, string resource)
+        => AsyncHelpers.RunSync(() => client.GetAsync<TResponse>(resource));
 
     /// <summary>
     /// Calls the URL specified in the <code>resource</code> parameter, expecting a JSON response back. Deserializes and returns the response.
@@ -136,7 +182,7 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns>Deserialized response object</returns>
-    public static Task<TResponse?> GetJsonAsync<TResponse>(
+    public static Task<TResponse?> GetAsync<TResponse>(
         this IRestClient  client,
         string            resource,
         object            parameters,
@@ -155,6 +201,15 @@ public static partial class RestClientExtensions {
         return client.GetAsync<TResponse>(request, cancellationToken);
     }
 
+    [Obsolete("Use GetAsync instead")]
+    public static Task<TResponse?> GetJsonAsync<TResponse>(
+        this IRestClient  client,
+        string            resource,
+        object            parameters,
+        CancellationToken cancellationToken = default
+    )
+        => client.GetAsync<TResponse>(resource, parameters, cancellationToken);
+
     /// <summary>
     /// Calls the URL specified in the <code>resource</code> parameter, expecting a JSON response back. Deserializes and returns the response.
     /// </summary>
@@ -163,6 +218,10 @@ public static partial class RestClientExtensions {
     /// <param name="parameters">Parameters to pass to the request</param>
     /// <typeparam name="TResponse">Response object type</typeparam>
     /// <returns>Deserialized response object</returns>
+    public static TResponse? Get<TResponse>(this IRestClient client, string resource, object parameters)
+        => AsyncHelpers.RunSync(() => client.GetAsync<TResponse>(resource, parameters));
+
+    [Obsolete("Use Get instead")]
     public static TResponse? GetJson<TResponse>(this IRestClient client, string resource, object parameters)
-        => AsyncHelpers.RunSync(() => client.GetJsonAsync<TResponse>(resource, parameters));
+        => client.Get<TResponse>(resource, parameters);
 }

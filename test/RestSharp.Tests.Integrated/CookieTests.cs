@@ -87,10 +87,11 @@ public sealed class CookieTests : IDisposable {
         var notFoundCookie = response.Cookies.Find("cookie_empty_domain");
         notFoundCookie.Should().BeNull();
 
-        var emptyDomainCookieHeader = response.Headers!
-            .SingleOrDefault(h => h.Name == KnownHeaders.SetCookie && ((string)h.Value!).StartsWith("cookie_empty_domain"));
+        var emptyDomainCookieHeader = response
+            .GetHeaderValues(KnownHeaders.SetCookie)
+            .SingleOrDefault(h => h.StartsWith("cookie_empty_domain"));
         emptyDomainCookieHeader.Should().NotBeNull();
-        ((string)emptyDomainCookieHeader!.Value!).Should().Contain("domain=;");
+        emptyDomainCookieHeader.Should().Contain("domain=;");
     }
 
     static ResponseMessage HandleGetCookies(IRequestMessage request) {
