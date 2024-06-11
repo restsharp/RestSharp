@@ -13,12 +13,6 @@
 // limitations under the License.
 //
 
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-
 namespace SourceGenerator;
 
 [Generator]
@@ -28,10 +22,7 @@ public class ImmutableGenerator : ISourceGenerator {
     public void Execute(GeneratorExecutionContext context) {
         var compilation = context.Compilation;
 
-        var mutableClasses = compilation.SyntaxTrees
-            .Select(tree => compilation.GetSemanticModel(tree))
-            .SelectMany(model => model.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
-            .Where(syntax => syntax.AttributeLists.Any(list => list.Attributes.Any(attr => attr.Name.ToString() == "GenerateImmutable")));
+        var mutableClasses = compilation.FindAnnotatedClass("GenerateImmutable", strict: true);
 
         foreach (var mutableClass in mutableClasses) {
             var immutableClass = GenerateImmutableClass(mutableClass, compilation);

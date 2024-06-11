@@ -27,13 +27,12 @@ static class HttpResponseExtensions {
             : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}");
 #endif
 
-    public static string GetResponseString(this HttpResponseMessage response, byte[] bytes, Encoding clientEncoding) {
+    public static async Task<string> GetResponseString(this HttpResponseMessage response, byte[] bytes, Encoding clientEncoding) {
         var encodingString = response.Content.Headers.ContentType?.CharSet;
         var encoding       = encodingString != null ? TryGetEncoding(encodingString) : clientEncoding;
 
         using var reader = new StreamReader(new MemoryStream(bytes), encoding);
-        return reader.ReadToEnd();
-
+        return await reader.ReadToEndAsync();
         Encoding TryGetEncoding(string es) {
             try {
                 return Encoding.GetEncoding(es);

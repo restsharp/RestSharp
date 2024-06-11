@@ -13,7 +13,6 @@
 //   limitations under the License. 
 
 using System.Diagnostics;
-using System.Net;
 using System.Text;
 using RestSharp.Extensions;
 
@@ -25,34 +24,13 @@ namespace RestSharp;
 /// Container for data sent back from API including deserialized data
 /// </summary>
 /// <typeparam name="T">Type of data to deserialize to</typeparam>
-[DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
-public class RestResponse<T>(RestRequest request) : RestResponse(request) {
+[GenerateClone<RestResponse>(Name = "FromResponse")]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
+public partial class RestResponse<T>(RestRequest request) : RestResponse(request) {
     /// <summary>
     /// Deserialized entity data
     /// </summary>
     public T? Data { get; set; }
-
-    public static RestResponse<T> FromResponse(RestResponse response)
-        => new(response.Request) {
-            Content             = response.Content,
-            ContentEncoding     = response.ContentEncoding,
-            ContentHeaders      = response.ContentHeaders,
-            ContentLength       = response.ContentLength,
-            ContentType         = response.ContentType,
-            Cookies             = response.Cookies,
-            ErrorException      = response.ErrorException,
-            ErrorMessage        = response.ErrorMessage,
-            Headers             = response.Headers,
-            IsSuccessStatusCode = response.IsSuccessStatusCode,
-            RawBytes            = response.RawBytes,
-            ResponseStatus      = response.ResponseStatus,
-            ResponseUri         = response.ResponseUri,
-            RootElement         = response.RootElement,
-            Server              = response.Server,
-            StatusCode          = response.StatusCode,
-            StatusDescription   = response.StatusDescription,
-            Version             = response.Version
-        };
 }
 
 /// <summary>
@@ -78,7 +56,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
 #endif
 
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-            var content = bytes  == null ? null : httpResponse.GetResponseString(bytes, encoding);
+            var content = bytes  == null ? null : await httpResponse.GetResponseString(bytes, encoding);
 
             return new RestResponse(request) {
                 Content             = content,
