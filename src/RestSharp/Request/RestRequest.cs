@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Net;
 using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 using RestSharp.Interceptors;
 
-// ReSharper disable ReplaceSubstringWithRangeIndexer
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace RestSharp;
@@ -50,7 +48,7 @@ public class RestRequest {
 
         if (queryStringStart < 0 || Resource.IndexOf('=') <= queryStringStart) return;
 
-        var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
+        var queryParams = ParseQuery(Resource[(queryStringStart + 1)..]);
         Resource = Resource.Substring(0, queryStringStart);
 
         foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
@@ -64,7 +62,7 @@ public class RestRequest {
                         var position = x.IndexOf('=');
 
                         return position > 0
-                            ? new KeyValuePair<string, string?>(x.Substring(0, position), x.Substring(position + 1))
+                            ? new KeyValuePair<string, string?>(x[..position], x[(position + 1)..])
                             : new KeyValuePair<string, string?>(x, null);
                     }
                 );
@@ -84,12 +82,12 @@ public class RestRequest {
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
-    
+
     /// <summary>
     /// Always send a file as request content without multipart/form-data request - even when the request contains only one file parameter
     /// </summary>
     public bool AlwaysSingleFileAsContent { get; set; }
-    
+
     /// <summary>
     /// When set to true, parameter values in a multipart form data requests will be enclosed in
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
@@ -166,7 +164,7 @@ public class RestRequest {
     /// Can be used to skip container or root elements that do not have corresponding deserialization targets.
     /// </summary>
     public string? RootElement { get; set; }
-    
+
     /// <summary>
     /// HTTP version for the request. Default is Version11.
     /// </summary>
@@ -217,10 +215,9 @@ public class RestRequest {
     public Func<Stream, Stream?>? ResponseWriter {
         get => _responseWriter;
         set {
-            if (AdvancedResponseWriter != null)
-                throw new ArgumentException(
-                    "AdvancedResponseWriter is not null. Only one response writer can be used."
-                );
+            if (AdvancedResponseWriter != null) {
+                throw new ArgumentException("AdvancedResponseWriter is not null. Only one response writer can be used.");
+            }
 
             _responseWriter = value;
         }
@@ -232,12 +229,14 @@ public class RestRequest {
     public Func<HttpResponseMessage, RestRequest, RestResponse>? AdvancedResponseWriter {
         get => _advancedResponseHandler;
         set {
-            if (ResponseWriter != null) throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
+            if (ResponseWriter != null) {
+                throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
+            }
 
             _advancedResponseHandler = value;
         }
     }
-    
+
     /// <summary>
     /// Request-level interceptors. Will be combined with client-level interceptors if set.
     /// </summary>

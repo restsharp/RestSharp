@@ -20,7 +20,7 @@
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net48'">
         <AddSystemTextJson>true</AddSystemTextJson>
-        <AddNullable>true</AddNullable>
+        <AddPolyfills>true</AddPolyfills>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>

@@ -9,7 +9,7 @@ public sealed class IntegratedTests : IDisposable {
 
     readonly WireMockServer _server = WireMockServer.Start();
 
-    [Fact]
+    [Fact, Obsolete("Obsolete")]
     public async Task Use_with_GetJsonAsync() {
         var data       = Fixture.Create<TestClass>();
         var serialized = JsonConvert.SerializeObject(data, JsonNetSerializer.DefaultSettings);
@@ -20,7 +20,7 @@ public sealed class IntegratedTests : IDisposable {
 
         using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson());
 
-        var response = await client.GetJsonAsync<TestClass>("/test");
+        var response = await client.GetAsync<TestClass>("/test");
 
         response.Should().BeEquivalentTo(data);
     }
@@ -39,7 +39,7 @@ public sealed class IntegratedTests : IDisposable {
 
         using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson(settings));
 
-        var response = await client.GetJsonAsync<TestClass>("/test");
+        var response = await client.GetAsync<TestClass>("/test");
 
         response.Should().BeEquivalentTo(data);
     }

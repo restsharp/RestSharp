@@ -9,7 +9,7 @@
         <Reference Include="System.Net.Http"/>
         <Reference Include="System.Web"/>
     </ItemGroup>
-    <ItemGroup Condition="$(AddNullable) == 'true'">
+    <ItemGroup Condition="$(AddPolyfills) == 'true'">
         <PackageReference Include="Nullable" PrivateAssets="All"/>
     </ItemGroup>
     <ItemGroup Condition="$(AddSystemTextJson) == 'true'">
