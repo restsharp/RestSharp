@@ -76,6 +76,7 @@ public class OAuth1AuthTests {
         ParameterShouldBe("oauth_version", "Version");
         ParameterShouldHaveValue("oauth_nonce");
         ParameterShouldHaveValue("oauth_timestamp");
+        return;
 
         void ParameterShould(string name, Func<Parameter, bool> check) {
             var parameter = parameters.FirstOrDefault(x => x.Type == ParameterType.GetOrPost && x.Name == name);

@@ -36,9 +36,9 @@ static class OAuthTools {
     /// <summary>
     /// The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
     /// </summary>
-    static readonly string[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
+    static readonly string[] UriRfc3986CharsToEscape = ["!", "*", "'", "(", ")"];
 
-    static readonly string[] UriRfc3968EscapedHex = { "%21", "%2A", "%27", "%28", "%29" };
+    static readonly string[] UriRfc3968EscapedHex = ["%21", "%2A", "%27", "%28", "%29"];
 
     static OAuthTools() {
         var bytes = new byte[4];

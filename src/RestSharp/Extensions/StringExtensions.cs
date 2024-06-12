@@ -20,20 +20,21 @@ using System.Web;
 
 namespace RestSharp.Extensions;
 
-static class StringExtensions {
-    static readonly Regex IsUpperCaseRegex = new(@"^[A-Z]+$");
+// ReSharper disable once PartialTypeWithSinglePart
+static partial class StringExtensions {
+    static readonly Regex IsUpperCaseRegex = IsUpperCase();
 
-    static readonly Regex AddUnderscoresRegex1 = new(@"[-\s]");
-    static readonly Regex AddUnderscoresRegex2 = new(@"([a-z\d])([A-Z])");
-    static readonly Regex AddUnderscoresRegex3 = new(@"([A-Z]+)([A-Z][a-z])");
+    static readonly Regex AddUnderscoresRegex1 = AddUnderscores1();
+    static readonly Regex AddUnderscoresRegex2 = AddUnderscores2();
+    static readonly Regex AddUnderscoresRegex3 = AddUnderscores3();
 
-    static readonly Regex AddDashesRegex1 = new(@"[\s]");
-    static readonly Regex AddDashesRegex2 = new(@"([a-z\d])([A-Z])");
-    static readonly Regex AddDashesRegex3 = new(@"([A-Z]+)([A-Z][a-z])");
+    static readonly Regex AddDashesRegex1 = AddDashes1();
+    static readonly Regex AddDashesRegex2 = AddDashes2();
+    static readonly Regex AddDashesRegex3 = AddDashes3();
 
-    static readonly Regex AddSpacesRegex1 = new(@"[-\s]");
-    static readonly Regex AddSpacesRegex2 = new(@"([a-z\d])([A-Z])");
-    static readonly Regex AddSpacesRegex3 = new(@"([A-Z]+)([A-Z][a-z])");
+    static readonly Regex AddSpacesRegex1 = AddSpaces1();
+    static readonly Regex AddSpacesRegex2 = AddSpaces2();
+    static readonly Regex AddSpacesRegex3 = AddSpaces3();
 
     internal static string UrlDecode(this string input) => HttpUtility.UrlDecode(input);
 
@@ -67,7 +68,7 @@ static class StringExtensions {
         return sb.ToString();
     }
 
-    internal static string? UrlEncode(this string input, Encoding encoding) {
+    internal static string? UrlEncode(this string? input, Encoding encoding) {
         var encoded = HttpUtility.UrlEncode(input, encoding);
         return encoded?.Replace("+", "%20");
     }
@@ -91,7 +92,7 @@ static class StringExtensions {
             .JoinToString(joinString);
 
         string CaseWord(string word) {
-            var restOfWord = word.Substring(1);
+            var restOfWord = word[1..];
             var firstChar  = char.ToUpper(word[0], culture);
 
             if (restOfWord.IsUpperCase()) restOfWord = restOfWord.ToLower(culture);
@@ -151,8 +152,7 @@ static class StringExtensions {
 
     internal static string JoinToString(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
 
-    static string MakeInitialLowerCase(this string word, CultureInfo culture)
-        => string.Concat(word.Substring(0, 1).ToLower(culture), word.Substring(1));
+    static string MakeInitialLowerCase(this string word, CultureInfo culture) => string.Concat(word[..1].ToLower(culture), word[1..]);
 
     static string AddUnderscores(this string pascalCasedWord)
         => AddUnderscoresRegex1.Replace(
@@ -184,4 +184,67 @@ static class StringExtensions {
             ),
             " "
         );
+
+    const string RIsUpperCase    = "^[A-Z]+$";
+    const string RAddUnderscore1 = @"[-\s]";
+    const string RAddUnderscore2 = @"([a-z\d])([A-Z])";
+    const string RAddUnderscore3 = "([A-Z]+)([A-Z][a-z])";
+    const string RAddDashes1     = @"[\s]";
+    const string RAddDashes2     = @"([a-z\d])([A-Z])";
+    const string RAddDashes3     = "([A-Z]+)([A-Z][a-z])";
+    const string RAddSpaces1     = @"[-\s]";
+    const string RAddSpaces2     = @"([a-z\d])([A-Z])";
+    const string RAddSpaces3     = "([A-Z]+)([A-Z][a-z])";
+
+#if NET7_0_OR_GREATER
+    [GeneratedRegex(RIsUpperCase)]
+    private static partial Regex IsUpperCase();
+
+    [GeneratedRegex(RAddUnderscore1)]
+    private static partial Regex AddUnderscores1();
+
+    [GeneratedRegex(RAddUnderscore2)]
+    private static partial Regex AddUnderscores2();
+
+    [GeneratedRegex(RAddUnderscore3)]
+    private static partial Regex AddUnderscores3();
+
+    [GeneratedRegex(RAddDashes1)]
+    private static partial Regex AddDashes1();
+
+    [GeneratedRegex(RAddDashes2)]
+    private static partial Regex AddDashes2();
+
+    [GeneratedRegex(RAddDashes3)]
+    private static partial Regex AddDashes3();
+
+    [GeneratedRegex(RAddSpaces1)]
+    private static partial Regex AddSpaces1();
+
+    [GeneratedRegex(RAddSpaces2)]
+    private static partial Regex AddSpaces2();
+
+    [GeneratedRegex(RAddSpaces3)]
+    private static partial Regex AddSpaces3();
+#else
+    static Regex IsUpperCase() => new(RIsUpperCase);
+
+    static Regex AddUnderscores1() => new(RAddUnderscore1);
+
+    static Regex AddUnderscores2() => new(RAddUnderscore2);
+
+    static Regex AddUnderscores3() => new(RAddUnderscore3);
+
+    static Regex AddDashes1() => new(RAddDashes1);
+
+    static Regex AddDashes2() => new(RAddDashes2);
+
+    static Regex AddDashes3() => new(RAddDashes3);
+
+    static Regex AddSpaces1() => new(RAddSpaces1);
+
+    static Regex AddSpaces2() => new(RAddSpaces1);
+
+    static Regex AddSpaces3() => new(RAddSpaces1);
+#endif
 }

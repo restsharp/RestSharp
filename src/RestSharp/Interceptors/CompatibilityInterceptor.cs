@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace RestSharp.Interceptors;
 
 /// <summary>
@@ -28,13 +29,15 @@ public class CompatibilityInterceptor : Interceptor {
         return default;
     }
 
-    public override ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken) {
-        OnBeforeRequest?.Invoke(requestMessage);
-        return default;
+    public override async ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken) {
+        if (OnBeforeRequest != null) {
+            await OnBeforeRequest(requestMessage);
+        }
     }
     
-    public override ValueTask AfterHttpRequest(HttpResponseMessage responseMessage, CancellationToken cancellationToken) {
-        OnAfterRequest?.Invoke(responseMessage);
-        return default;
+    public override async ValueTask AfterHttpRequest(HttpResponseMessage responseMessage, CancellationToken cancellationToken) {
+        if (OnAfterRequest != null) {
+            await OnAfterRequest(responseMessage);
+        }
     }
 }

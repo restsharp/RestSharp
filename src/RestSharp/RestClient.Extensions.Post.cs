@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 
-using System.Net;
-
 namespace RestSharp;
 
 public static partial class RestClientExtensions {

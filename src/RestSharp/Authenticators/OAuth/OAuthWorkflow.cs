@@ -167,14 +167,14 @@ sealed class OAuthWorkflow {
 
     WebPairCollection GenerateXAuthParameters(string timestamp, string nonce)
         => [
-            new("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
-            new("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
-            new("x_auth_mode", "client_auth"),
-            new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey)), true),
-            new("oauth_signature_method", SignatureMethod.ToRequestValue()),
-            new("oauth_timestamp", timestamp),
-            new("oauth_nonce", nonce),
-            new("oauth_version", Version ?? "1.0")
+            new WebPair("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
+            new WebPair("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
+            new WebPair("x_auth_mode", "client_auth"),
+            new WebPair("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey)), true),
+            new WebPair("oauth_signature_method", SignatureMethod.ToRequestValue()),
+            new WebPair("oauth_timestamp", timestamp),
+            new WebPair("oauth_nonce", nonce),
+            new WebPair("oauth_version", Version ?? "1.0")
         ];
 
     internal class OAuthParameters {

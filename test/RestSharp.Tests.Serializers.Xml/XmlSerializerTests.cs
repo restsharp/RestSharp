@@ -15,17 +15,18 @@ public class XmlSerializerTests {
     [Fact]
     public void Can_serialize_a_list_of_items_with_interface_type() {
         var items = new NamedItems {
-            Items = new List<INamed> {
+            Items = [
                 new Person {
                     Name      = "Foo",
                     Age       = 50,
                     Price     = 19.95m,
                     StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item> { new() { Name = "One", Value = 1 } }
+                    Items     = [new Item { Name = "One", Value = 1 }]
                 },
+
                 new Item { Name = "Two", Value   = 2 },
                 new Item { Name = "Three", Value = 3 }
-            }
+            ]
         };
 
         var xml      = new XmlSerializer();
@@ -38,30 +39,31 @@ public class XmlSerializerTests {
     [Fact]
     public void Can_serialize_a_list_which_is_the_content_of_root_element() {
         var contacts = new Contacts {
-            People = new List<Person> {
-                new() {
+            People = [
+                new Person {
                     Name      = "Foo",
                     Age       = 50,
                     Price     = 19.95m,
                     StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item> {
-                        new() { Name = "One", Value   = 1 },
-                        new() { Name = "Two", Value   = 2 },
-                        new() { Name = "Three", Value = 3 }
-                    }
+                    Items = [
+                        new Item { Name = "One", Value   = 1 },
+                        new Item { Name = "Two", Value   = 2 },
+                        new Item { Name = "Three", Value = 3 }
+                    ]
                 },
-                new() {
+
+                new Person {
                     Name      = "Bar",
                     Age       = 23,
                     Price     = 23.23m,
                     StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                    Items = new List<Item> {
-                        new() { Name = "One", Value   = 1 },
-                        new() { Name = "Two", Value   = 2 },
-                        new() { Name = "Three", Value = 3 }
-                    }
+                    Items = [
+                        new Item { Name = "One", Value   = 1 },
+                        new Item { Name = "Two", Value   = 2 },
+                        new Item { Name = "Three", Value = 3 }
+                    ]
                 }
-            }
+            ]
         };
 
         var xml      = new XmlSerializer();
@@ -79,22 +81,22 @@ public class XmlSerializerTests {
                 Age       = 50,
                 Price     = 19.95m,
                 StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                Items = new List<Item> {
-                    new() { Name = "One", Value   = 1 },
-                    new() { Name = "Two", Value   = 2 },
-                    new() { Name = "Three", Value = 3 }
-                }
+                Items = [
+                    new Item { Name = "One", Value   = 1 },
+                    new Item { Name = "Two", Value   = 2 },
+                    new Item { Name = "Three", Value = 3 }
+                ]
             },
             new() {
                 Name      = "Bar",
                 Age       = 23,
                 Price     = 23.23m,
                 StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                Items = new List<Item> {
-                    new() { Name = "One", Value   = 1 },
-                    new() { Name = "Two", Value   = 2 },
-                    new() { Name = "Three", Value = 3 }
-                }
+                Items = [
+                    new Item { Name = "One", Value   = 1 },
+                    new Item { Name = "Two", Value   = 2 },
+                    new Item { Name = "Three", Value = 3 }
+                ]
             }
         };
         var xml      = new XmlSerializer();
@@ -108,8 +110,8 @@ public class XmlSerializerTests {
     public void Can_Serialize_An_Object_To_Node_With_Attribute_And_Text_Content() {
         var note = new Note {
             Id      = 1,
-            Title   = Note.TITLE,
-            Message = Note.MESSAGE
+            Title   = Note.ConstTitle,
+            Message = Note.ConstMessage
         };
 
         var xml = new XmlSerializer();
@@ -142,11 +144,11 @@ public class XmlSerializerTests {
             Age       = 50,
             Price     = 19.95m,
             StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-            Items = new List<Item> {
-                new() { Name = "One", Value   = 1 },
-                new() { Name = "Two", Value   = 2 },
-                new() { Name = "Three", Value = 3 }
-            }
+            Items = [
+                new Item { Name = "One", Value   = 1 },
+                new Item { Name = "Two", Value   = 2 },
+                new Item { Name = "Three", Value = 3 }
+            ]
         };
         var xml      = new XmlSerializer();
         var doc      = xml.Serialize(poco);
@@ -178,12 +180,12 @@ public class XmlSerializerTests {
             Price     = 19.95m,
             StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
             ContactData = new ContactData {
-                EmailAddresses = new List<EmailAddress> {
-                    new() {
+                EmailAddresses = [
+                    new EmailAddress {
                         Address  = "test@test.com",
                         Location = "Work"
                     }
-                }
+                ]
             }
         };
         var xml      = new XmlSerializer();
@@ -324,13 +326,11 @@ public class XmlSerializerTests {
     }
 
     [SerializeAs(Name = "People")]
-    class PersonList : List<Person> { }
+    class PersonList : List<Person>;
 
     class ContactData {
-        public ContactData() => EmailAddresses = new List<EmailAddress>();
-
         [SerializeAs(Name = "email-addresses")]
-        public List<EmailAddress> EmailAddresses { get; set; }
+        public List<EmailAddress> EmailAddresses { get; set; } = [];
     }
 
     [SerializeAs(Name = "email-address")]
@@ -347,8 +347,8 @@ public class XmlSerializerTests {
         var root = new XElement("Note");
 
         root.SetAttributeValue("Id", 1);
-        root.Value = Note.MESSAGE;
-        root.Add(new XElement("Title", Note.TITLE));
+        root.Value = Note.ConstMessage;
+        root.Add(new XElement("Title", Note.ConstTitle));
 
         doc.Add(root);
 

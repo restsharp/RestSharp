@@ -86,7 +86,7 @@ public class OAuthTests {
     [InlineData("%$%", "%25%24%25")]
     [InlineData("%", "%25")]
     [InlineData("/:;<=>?@", "%2F%3A%3B%3C%3D%3E%3F%40")]
-    [InlineData("\x00\x01\a\b\f\n\r\t\v", @"%00%01%07%08%0C%0A%0D%09%0B")]
+    [InlineData("\x00\x01\a\b\f\n\r\t\v", "%00%01%07%08%0C%0A%0D%09%0B")]
     public void UrlStrictEncode_Encodes_Correctly(string value, string expected) {
         var actual = OAuthTools.UrlEncodeStrict(value);
 

@@ -16,7 +16,7 @@ public sealed class StatusCodeTests : IDisposable {
         ResponseMessage CreateResponse(IRequestMessage request) {
             var url = new Uri(request.Url);
 
-            return new ResponseMessage() {
+            return new ResponseMessage {
                 StatusCode = int.Parse(url.Segments.Last())
             };
         }

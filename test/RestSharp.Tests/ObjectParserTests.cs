@@ -1,3 +1,4 @@
+// ReSharper disable PropertyCanBeMadeInitOnly.Local
 namespace RestSharp.Tests;
 
 public class ObjectParserTests {

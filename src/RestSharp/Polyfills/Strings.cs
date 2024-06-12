@@ -1,4 +1,4 @@
-//  Copyright (c) .NET Foundation and Contributors
+// Copyright (c) .NET Foundation and Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,17 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 
-using System.Collections.Concurrent;
+#if !NET
+// ReSharper disable once CheckNamespace
+namespace System;
 
-namespace RestSharp;
-
-static class SimpleClientFactory {
-    static readonly ConcurrentDictionary<string, HttpClient> CachedClients = new();
-
-    public static HttpClient GetClient(Uri baseUrl, Func<HttpClient> getClient) {
-        var key = baseUrl.ToString();
-        return CachedClients.GetOrAdd(key, _ => getClient());
-    }
+static class Strings {
+    public static string[] Split(this string str, char separator, StringSplitOptions options) => str.Split([separator], options);
 }
+#endif

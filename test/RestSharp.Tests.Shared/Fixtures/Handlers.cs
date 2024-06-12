@@ -30,9 +30,9 @@ public static class Handlers {
                 BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static
             );
 
-            if (method.IsStatic)
-                method.Invoke(null, new object[] { ctx });
+            if (method!.IsStatic)
+                method.Invoke(null, [ctx]);
             else
-                method.Invoke(new T(), new object[] { ctx });
+                method.Invoke(new T(), [ctx]);
         };
 }

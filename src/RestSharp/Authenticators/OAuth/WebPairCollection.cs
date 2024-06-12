@@ -17,7 +17,7 @@ using System.Collections;
 namespace RestSharp.Authenticators.OAuth; 
 
 class WebPairCollection : IList<WebPair> {
-    readonly List<WebPair> _parameters = new();
+    readonly List<WebPair> _parameters = [];
 
     public IEnumerator<WebPair> GetEnumerator() => _parameters.GetEnumerator();
 

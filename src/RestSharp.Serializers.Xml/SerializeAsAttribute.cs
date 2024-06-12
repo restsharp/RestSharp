@@ -14,6 +14,8 @@
 
 using System.Globalization;
 using RestSharp.Extensions;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 // ReSharper disable once CheckNamespace
 namespace RestSharp.Serializers; 

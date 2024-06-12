@@ -6,11 +6,14 @@ namespace RestSharp.Tests;
 /// Note: These tests do not handle QueryString building, which is handled in Http, not RestClient
 /// </summary>
 public class UrlBuilderTests {
+    const string Base     = "https://some.path";
+    const string Resource = "resource";
+
     [Fact]
     public void GET_with_empty_base_and_query_parameters_without_encoding() {
-        var request = new RestRequest("http://example.com/resource?param1=value1")
+        var request = new RestRequest($"{Base}/{Resource}?param1=value1")
             .AddQueryParameter("foo", "bar,baz", false);
-        var expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
+        var expected = new Uri($"{Base}/{Resource}?param1=value1&foo=bar,baz");
 
         using var client = new RestClient();
 
@@ -20,12 +23,12 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_empty_base_and_resource_containing_tokens() {
-        var request = new RestRequest("http://example.com/resource/{foo}");
+        var request = new RestRequest($"{Base}/{Resource}/{{foo}}");
         request.AddUrlSegment("foo", "bar");
 
         using var client = new RestClient();
 
-        var expected = new Uri("http://example.com/resource/bar");
+        var expected = new Uri($"{Base}/{Resource}/bar");
         var output   = client.BuildUri(request);
 
         Assert.Equal(expected, output);
@@ -34,9 +37,9 @@ public class UrlBuilderTests {
     [Fact]
     public void GET_with_empty_request() {
         var request  = new RestRequest();
-        var expected = new Uri("http://example.com/");
+        var expected = new Uri(Base);
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -45,9 +48,9 @@ public class UrlBuilderTests {
     [Fact]
     public void GET_with_empty_request_and_bare_hostname() {
         var request  = new RestRequest();
-        var expected = new Uri("http://example.com/");
+        var expected = new Uri(Base);
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -57,9 +60,9 @@ public class UrlBuilderTests {
     public void GET_with_empty_request_and_query_parameters_without_encoding() {
         var request = new RestRequest();
         request.AddQueryParameter("foo", "bar,baz", false);
-        var expected = new Uri("http://example.com/resource?param1=value1&foo=bar,baz");
+        var expected = new Uri($"{Base}/{Resource}?param1=value1&foo=bar,baz");
 
-        using var client = new RestClient("http://example.com/resource?param1=value1");
+        using var client = new RestClient($"{Base}/{Resource}?param1=value1");
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -68,17 +71,15 @@ public class UrlBuilderTests {
     [Fact]
     public void GET_with_Invalid_Url_string_throws_exception()
         => Assert.Throws<UriFormatException>(
-            () => {
-                var unused = new RestClient("invalid url");
-            }
+            () => { _ = new RestClient("invalid url"); }
         );
 
     [Fact]
     public void GET_with_leading_slash() {
-        var request  = new RestRequest("/resource");
-        var expected = new Uri("http://example.com/resource");
+        var request  = new RestRequest($"/{Resource}");
+        var expected = new Uri($"{Base}/{Resource}");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -86,11 +87,11 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_leading_slash_and_baseurl_trailing_slash() {
-        var request = new RestRequest("/resource");
+        var request = new RestRequest($"/{Resource}");
         request.AddParameter("foo", "bar");
-        var expected = new Uri("http://example.com/resource?foo=bar");
+        var expected = new Uri($"{Base}/{Resource}?foo=bar");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -113,16 +114,16 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_resource_containing_null_token() {
-        var request = new RestRequest("/resource/{foo}");
-        Assert.Throws<ArgumentNullException>(() => request.AddUrlSegment("foo", null));
+        var request = new RestRequest($"/{Resource}/{{foo}}");
+        Assert.Throws<ArgumentNullException>(() => request.AddUrlSegment("foo", null!));
     }
 
     [Fact]
     public void GET_with_resource_containing_slashes() {
-        var request  = new RestRequest("resource/foo");
-        var expected = new Uri("http://example.com/resource/foo");
+        var request  = new RestRequest($"{Resource}/foo");
+        var expected = new Uri($"{Base}/{Resource}/foo");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -130,11 +131,11 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_resource_containing_tokens() {
-        var request = new RestRequest("resource/{foo}");
+        var request = new RestRequest($"{Resource}/{{foo}}");
         request.AddUrlSegment("foo", "bar");
-        var expected = new Uri("http://example.com/resource/bar");
+        var expected = new Uri($"{Base}/{Resource}/bar");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -142,12 +143,12 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_Uri_and_resource_containing_tokens() {
-        var request = new RestRequest("resource/{baz}");
+        var request = new RestRequest($"{Resource}/{{baz}}");
         request.AddUrlSegment("foo", "bar");
         request.AddUrlSegment("baz", "bat");
-        var expected = new Uri("http://example.com/bar/resource/bat");
+        var expected = new Uri($"{Base}/bar/{Resource}/bat");
 
-        using var client = new RestClient(new Uri("http://example.com/{foo}"));
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -157,9 +158,9 @@ public class UrlBuilderTests {
     public void GET_with_Uri_containing_tokens() {
         var request = new RestRequest();
         request.AddUrlSegment("foo", "bar");
-        var expected = new Uri("http://example.com/bar");
+        var expected = new Uri(Base);
 
-        using var client = new RestClient(new Uri("http://example.com/{foo}"));
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -167,12 +168,12 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_Url_string_and_resource_containing_tokens() {
-        var request = new RestRequest("resource/{baz}");
+        var request = new RestRequest($"{Resource}/{{baz}}");
         request.AddUrlSegment("foo", "bar");
         request.AddUrlSegment("baz", "bat");
-        var expected = new Uri("http://example.com/bar/resource/bat");
+        var expected = new Uri($"{Base}/bar/{Resource}/bat");
 
-        using var client = new RestClient("http://example.com/{foo}");
+        using var client = new RestClient($"{Base}/{{foo}}");
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -182,9 +183,9 @@ public class UrlBuilderTests {
     public void GET_with_Url_string_containing_tokens() {
         var request = new RestRequest();
         request.AddUrlSegment("foo", "bar");
-        var expected = new Uri("http://example.com/bar");
+        var expected = new Uri(Base);
 
-        using var client = new RestClient("http://example.com/{foo}");
+        using var client = new RestClient($"{Base}/{{foo}}");
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -192,11 +193,11 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_wth_trailing_slash_and_query_parameters() {
-        var request = new RestRequest("/resource/");
+        var request = new RestRequest($"/{Resource}/");
         request.AddParameter("foo", "bar");
-        var expected = new Uri("http://example.com/resource/?foo=bar");
+        var expected = new Uri($"{Base}/{Resource}/?foo=bar");
 
-        using var client = new RestClient("http://example.com");
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -204,10 +205,10 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_leading_slash() {
-        var request  = new RestRequest("/resource", Method.Post);
-        var expected = new Uri("http://example.com/resource");
+        var request  = new RestRequest($"/{Resource}", Method.Post);
+        var expected = new Uri($"{Base}/{Resource}");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(new Uri(Base));
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -215,10 +216,10 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_leading_slash_and_baseurl_trailing_slash() {
-        var request  = new RestRequest("/resource", Method.Post);
-        var expected = new Uri("http://example.com/resource");
+        var request  = new RestRequest($"/{Resource}", Method.Post);
+        var expected = new Uri($"{Base}/{Resource}");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -226,11 +227,11 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_querystring_containing_tokens() {
-        var request = new RestRequest("resource", Method.Post);
+        var request = new RestRequest(Resource, Method.Post);
         request.AddParameter("foo", "bar", ParameterType.QueryString);
-        var expected = new Uri("http://example.com/resource?foo=bar");
+        var expected = new Uri($"{Base}/{Resource}?foo=bar");
 
-        using var client = new RestClient("http://example.com");
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -238,10 +239,10 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_resource_containing_slashes() {
-        var request  = new RestRequest("resource/foo", Method.Post);
-        var expected = new Uri("http://example.com/resource/foo");
+        var request  = new RestRequest($"{Resource}/foo", Method.Post);
+        var expected = new Uri($"{Base}/{Resource}/foo");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -249,11 +250,11 @@ public class UrlBuilderTests {
 
     [Fact]
     public void POST_with_resource_containing_tokens() {
-        var request = new RestRequest("resource/{foo}", Method.Post);
+        var request = new RestRequest($"{Resource}/{{foo}}", Method.Post);
         request.AddUrlSegment("foo", "bar");
-        var expected = new Uri("http://example.com/resource/bar");
+        var expected = new Uri($"{Base}/{Resource}/bar");
 
-        using var client = new RestClient(new Uri("http://example.com"));
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -264,9 +265,9 @@ public class UrlBuilderTests {
         var request = new RestRequest();
         request.AddOrUpdateParameter("param2", "value2");
         request.AddOrUpdateParameter("param3", "value3");
-        var expected = new Uri("http://example.com/resource?param1=value1&param2=value2&param3=value3");
+        var expected = new Uri($"{Base}/{Resource}?param1=value1&param2=value2&param3=value3");
 
-        using var client = new RestClient("http://example.com/resource?param1=value1");
+        using var client = new RestClient($"{Base}/{Resource}?param1=value1");
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -278,22 +279,22 @@ public class UrlBuilderTests {
         // adding parameter with o-slash character which is encoded differently between
         // utf-8 and iso-8859-1
         request.AddOrUpdateParameter("town", "Hillerød");
-        var expectedDefaultEncoding  = new Uri("http://example.com/resource?town=Hiller%C3%B8d");
-        var expectedIso89591Encoding = new Uri("http://example.com/resource?town=Hiller%f8d");
+        var expectedDefaultEncoding  = new Uri($"{Base}/{Resource}?town=Hiller%C3%B8d");
+        var expectedIso89591Encoding = new Uri($"{Base}/{Resource}?town=Hiller%f8d");
 
-        using var client1 = new RestClient(new RestClientOptions("http://example.com/resource"));
+        using var client1 = new RestClient(new RestClientOptions($"{Base}/{Resource}"));
         Assert.Equal(expectedDefaultEncoding, client1.BuildUri(request));
 
-        using var client2 = new RestClient(new RestClientOptions("http://example.com/resource") { Encoding = Encoding.GetEncoding("ISO-8859-1") });
+        using var client2 = new RestClient(new RestClientOptions($"{Base}/{Resource}") { Encoding = Encoding.GetEncoding("ISO-8859-1") });
         Assert.Equal(expectedIso89591Encoding, client2.BuildUri(request));
     }
 
     [Fact]
     public void Should_build_uri_with_resource_full_uri() {
-        var request  = new RestRequest("https://www.example1.com/connect/authorize");
-        var expected = new Uri("https://www.example1.com/connect/authorize");
+        var request  = new RestRequest($"{Base}/connect/authorize");
+        var expected = new Uri($"{Base}/connect/authorize");
 
-        using var client = new RestClient("https://www.example1.com/");
+        using var client = new RestClient(Base);
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -306,9 +307,9 @@ public class UrlBuilderTests {
         // utf-8 and iso-8859-1
         request.AddOrUpdateParameter("parameter", "some:value");
 
-        using var client = new RestClient("http://example.com/resource");
+        using var client = new RestClient($"{Base}/{Resource}");
 
-        var expectedDefaultEncoding = new Uri("http://example.com/resource?parameter=some%3avalue");
+        var expectedDefaultEncoding = new Uri($"{Base}/{Resource}?parameter=some%3avalue");
         Assert.Equal(expectedDefaultEncoding, client.BuildUri(request));
     }
 
@@ -316,9 +317,9 @@ public class UrlBuilderTests {
     public void Should_not_duplicate_question_mark() {
         var request = new RestRequest();
         request.AddParameter("param2", "value2");
-        var expected = new Uri("http://example.com/resource?param1=value1&param2=value2");
+        var expected = new Uri($"{Base}/{Resource}?param1=value1&param2=value2");
 
-        using var client = new RestClient("http://example.com/resource?param1=value1");
+        using var client = new RestClient($"{Base}/{Resource}?param1=value1");
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
@@ -326,7 +327,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void Should_not_touch_request_url() {
-        const string baseUrl    = "http://rs.test.org";
+        const string baseUrl    = "https://rs.test.org";
         const string requestUrl = "reportserver?/Prod/Report";
 
         var req = new RestRequest(requestUrl, Method.Post);
@@ -342,9 +343,9 @@ public class UrlBuilderTests {
         var request = new RestRequest();
         request.AddOrUpdateParameter("param2", "value2");
         request.AddOrUpdateParameter("param2", "value2-1");
-        var expected = new Uri("http://example.com/resource?param1=value1&param2=value2-1");
+        var expected = new Uri($"{Base}/{Resource}?param1=value1&param2=value2-1");
 
-        using var client = new RestClient("http://example.com/resource?param1=value1");
+        using var client = new RestClient($"{Base}/{Resource}?param1=value1");
 
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);

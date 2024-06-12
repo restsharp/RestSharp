@@ -86,8 +86,8 @@ public class DotNetXmlSerializer : IXmlSerializer {
         CacheLock.EnterReadLock();
 
         try {
-            if (Cache.ContainsKey(key)) {
-                serializer = Cache[key];
+            if (Cache.TryGetValue(key, out var value)) {
+                serializer = value;
             }
         }
         finally {
@@ -103,13 +103,13 @@ public class DotNetXmlSerializer : IXmlSerializer {
         try {
             // check again for a cached instance, because between the EnterWriteLock
             // and the last check, some other thread could have added an instance
-            if (!Cache.ContainsKey(key)) {
+            if (!Cache.TryGetValue(key, out var value)) {
                 var root = rootElement == null ? null : new XmlRootAttribute(rootElement);
-
-                Cache[key] = new XmlSerializer(type, root);
+                value = new XmlSerializer(type, root);
+                Cache[key] = value;
             }
 
-            serializer = Cache[key];
+            serializer = value;
         }
         finally {
             CacheLock.ExitWriteLock();

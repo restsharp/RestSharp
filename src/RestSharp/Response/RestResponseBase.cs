@@ -13,7 +13,8 @@
 // limitations under the License.
 
 using System.Diagnostics;
-using System.Net;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace RestSharp;
 

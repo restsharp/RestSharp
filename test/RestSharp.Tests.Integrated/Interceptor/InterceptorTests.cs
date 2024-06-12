@@ -1,4 +1,5 @@
-﻿namespace RestSharp.Tests.Integrated.Interceptor;
+﻿// ReSharper disable AccessToDisposedClosure
+namespace RestSharp.Tests.Integrated.Interceptor;
 
 public class InterceptorTests(WireMockTestServer server) : IClassFixture<WireMockTestServer> {
     [Fact]

@@ -1,4 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable ClassNeverInstantiated.Global
 #pragma warning disable CS8981
 namespace RestSharp.Tests.Serializers.Xml.SampleClasses;
 
@@ -28,7 +31,7 @@ public class Event : LastfmBase {
     public int cancelled { get; set; }
 }
 
-public class EventArtistList : List<artist> { }
+public class EventArtistList : List<artist>;
 
 public class artist {
     public string Value { get; set; }

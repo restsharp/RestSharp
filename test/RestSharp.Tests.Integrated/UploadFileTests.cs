@@ -2,7 +2,6 @@
 
 using HttpMultipartParser;
 using RestSharp.Extensions;
-using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 

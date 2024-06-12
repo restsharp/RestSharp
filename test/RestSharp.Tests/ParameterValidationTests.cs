@@ -26,7 +26,7 @@ public class ParameterValidationTests {
     public void RestRequest_AlwaysSingleFileAsContent_And_PostParameters_IsNotAllowed() {
         var request = new RestRequest {
             Method                    = Method.Post,
-            AlwaysSingleFileAsContent = true,
+            AlwaysSingleFileAsContent = true
         };
 
         request.AddParameter("name", "value", ParameterType.GetOrPost);
@@ -35,7 +35,7 @@ public class ParameterValidationTests {
 
     [Fact]
     public void RestRequest_AlwaysSingleFileAsContent_And_BodyParameters_IsNotAllowed() {
-        var request = new RestRequest { AlwaysSingleFileAsContent = true, };
+        var request = new RestRequest { AlwaysSingleFileAsContent = true };
         request.AddParameter("name", "value", ParameterType.RequestBody);
         Assert.Throws<ArgumentException>(() => request.ValidateParameters());
     }

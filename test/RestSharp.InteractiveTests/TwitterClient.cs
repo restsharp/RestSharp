@@ -16,6 +16,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using RestSharp.Authenticators;
+// ReSharper disable ClassNeverInstantiated.Local
 
 namespace RestSharp.InteractiveTests;
 
@@ -34,7 +35,7 @@ public class TwitterClient : ITwitterClient, IDisposable {
     }
 
     public async Task<TwitterUser> GetUser(string user) {
-        var response = await _client.GetJsonAsync<TwitterSingleObject<TwitterUser>>(
+        var response = await _client.GetAsync<TwitterSingleObject<TwitterUser>>(
             "users/by/username/{user}",
             new { user }
         );
@@ -50,14 +51,14 @@ public class TwitterClient : ITwitterClient, IDisposable {
     }
 
     public async Task<SearchRulesResponse[]> GetSearchRules() {
-        var response = await _client.GetJsonAsync<TwitterCollectionObject<SearchRulesResponse>>("tweets/search/stream/rules");
+        var response = await _client.GetAsync<TwitterCollectionObject<SearchRulesResponse>>("tweets/search/stream/rules");
         return response?.Data;
     }
 
     public async IAsyncEnumerable<SearchResponse> SearchStream([EnumeratorCancellation] CancellationToken cancellationToken = default) {
         var response = _client.StreamJsonAsync<TwitterSingleObject<SearchResponse>>("tweets/search/stream", cancellationToken);
 
-        await foreach (var item in response.WithCancellation(cancellationToken)) {
+        await foreach (var item in response) {
             yield return item.Data;
         }
     }

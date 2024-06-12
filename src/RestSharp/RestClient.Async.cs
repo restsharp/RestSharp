@@ -91,10 +91,13 @@ public partial class RestClient {
         Ensure.NotNull(request, nameof(request));
 
         // Make sure we are not disposed of when someone tries to call us!
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(_disposed, this);
+#else
         if (_disposed) {
             throw new ObjectDisposedException(nameof(RestClient));
         }
-
+#endif
         CombineInterceptors(request);
         await OnBeforeRequest(request, cancellationToken).ConfigureAwait(false);
         request.ValidateParameters();

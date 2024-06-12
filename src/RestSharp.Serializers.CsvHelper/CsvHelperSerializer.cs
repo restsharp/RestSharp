@@ -54,7 +54,7 @@ public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer
             }
 
             foreach (var record in csvReader.GetRecords(itemType)) {
-                method.Invoke(result, new[] { record });
+                method.Invoke(result, [record]);
             }
 
             return result;

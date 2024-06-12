@@ -21,7 +21,7 @@ static class UriExtensions {
     public static Uri MergeBaseUrlAndResource(this Uri? baseUrl, string? resource) {
         var assembled = resource;
 
-        if (assembled.IsNotEmpty() && assembled.StartsWith("/")) assembled = assembled.Substring(1);
+        if (assembled.IsNotEmpty() && assembled[0] == '/') assembled = assembled[1..];
 
         if (baseUrl == null || baseUrl.AbsoluteUri.IsEmpty()) {
             return assembled.IsNotEmpty()
@@ -29,7 +29,7 @@ static class UriExtensions {
                 : throw new ArgumentException("Both BaseUrl and Resource are empty", nameof(resource));
         }
 
-        var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || assembled.IsEmpty() ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
+        var usingBaseUri = baseUrl.AbsoluteUri[^1] == '/' || assembled.IsEmpty() ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
 
         return assembled != null ? new Uri(usingBaseUri, assembled) : baseUrl;
     }
@@ -37,8 +37,8 @@ static class UriExtensions {
     public static Uri AddQueryString(this Uri uri, string? query) {
         if (query == null) return uri;
 
-        var absoluteUri       = uri.AbsoluteUri;
-        var separator = absoluteUri.Contains('?') ? "&" : "?";
+        var absoluteUri = uri.AbsoluteUri;
+        var separator   = absoluteUri.Contains('?') ? "&" : "?";
 
         return new Uri($"{absoluteUri}{separator}{query}");
     }

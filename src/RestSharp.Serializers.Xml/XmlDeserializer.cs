@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using RestSharp.Extensions;
+// ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace RestSharp.Serializers.Xml;
 
@@ -37,7 +38,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
         if (string.IsNullOrEmpty(response.Content))
             return default;
 
-        var doc         = XDocument.Parse(response.Content);
+        var doc         = XDocument.Parse(response.Content!);
         var root        = doc.Root;
         var rootElement = response.RootElement ?? RootElement;
 
@@ -161,8 +162,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             var asType = type.AsType();
 
             if (asType == typeof(bool)) {
-                var toConvert = value.ToString()!
-                    .ToLower(Culture);
+                var toConvert = value.ToString()!.ToLower(Culture);
 
                 prop.SetValue(x, XmlConvert.ToBoolean(toConvert), null);
             }
@@ -227,9 +227,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             else if (asType == typeof(Guid)) {
                 var raw = value.ToString();
 
-                value = string.IsNullOrEmpty(raw)
-                    ? Guid.Empty
-                    : new Guid(value.ToString()!);
+                value = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(value.ToString()!);
 
                 prop.SetValue(x, value, null);
             }

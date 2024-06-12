@@ -41,7 +41,7 @@ public class ContentType : IEquatable<ContentType> {
 
     public override string ToString() => Value;
 
-    public static implicit operator ContentType(string? contentType) => contentType == null ? Undefined : new(contentType);
+    public static implicit operator ContentType(string? contentType) => contentType == null ? Undefined : new ContentType(contentType);
 
     public static implicit operator string(ContentType contentType) => contentType.Value;
 
@@ -59,13 +59,9 @@ public class ContentType : IEquatable<ContentType> {
             { DataFormat.Binary, Binary }
         };
 
-    public static readonly string[] JsonAccept = {
-        Json, "text/json", "text/x-json", "text/javascript"
-    };
+    public static readonly string[] JsonAccept = [Json, "text/json", "text/x-json", "text/javascript"];
 
-    public static readonly string[] XmlAccept = {
-        Xml, "text/xml"
-    };
+    public static readonly string[] XmlAccept = [Xml, "text/xml"];
 
     readonly string _value;
 

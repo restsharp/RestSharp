@@ -13,7 +13,6 @@
 // limitations under the License.
 // 
 
-using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Reflection;
@@ -70,7 +69,7 @@ public class RestClientOptions {
     /// List of interceptors that will be executed before the request is sent
     /// </summary>
     [Exclude]
-    public List<Interceptor> Interceptors { get; set; } = new();
+    public List<Interceptor> Interceptors { get; set; } = [];
 
     /// <summary>
     /// Passed to <see cref="HttpMessageHandler"/> <code>Credentials</code> property

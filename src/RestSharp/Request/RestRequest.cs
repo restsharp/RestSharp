@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 using RestSharp.Interceptors;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -49,14 +50,14 @@ public class RestRequest {
         if (queryStringStart < 0 || Resource.IndexOf('=') <= queryStringStart) return;
 
         var queryParams = ParseQuery(Resource[(queryStringStart + 1)..]);
-        Resource = Resource.Substring(0, queryStringStart);
+        Resource = Resource[..queryStringStart];
 
         foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
 
         return;
 
         static IEnumerable<KeyValuePair<string, string?>> ParseQuery(string query)
-            => query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
+            => query.Split('&', StringSplitOptions.RemoveEmptyEntries)
                 .Select(
                     x => {
                         var position = x.IndexOf('=');

@@ -4,7 +4,7 @@
 
 #if !NET
 using System.Runtime.CompilerServices;
-
+#pragma warning disable CS3019
 // ReSharper disable once CheckNamespace
 namespace System;
 

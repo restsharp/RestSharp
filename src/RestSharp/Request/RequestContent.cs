@@ -32,7 +32,7 @@ class RequestContent(IRestClient client, RestRequest request) : IDisposable {
         var postParameters       = _parameters.GetContentParameters(request.Method).ToArray();
         var postParametersExists = postParameters.Length > 0;
         var bodyParametersExists = request.TryGetBodyParameter(out var bodyParameter);
-        var filesExists          = request.Files.Any();
+        var filesExists          = request.Files.Count != 0;
 
         if (request.HasFiles() ||
             BodyShouldBeMultipartForm(bodyParameter) ||

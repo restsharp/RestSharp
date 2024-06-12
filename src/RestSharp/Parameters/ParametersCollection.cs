@@ -18,7 +18,7 @@ using System.Collections;
 namespace RestSharp;
 
 public abstract class ParametersCollection : IReadOnlyCollection<Parameter> {
-    protected readonly List<Parameter> Parameters = new();
+    protected readonly List<Parameter> Parameters = [];
 
     // public ParametersCollection(IEnumerable<Parameter> parameters) => _parameters.AddRange(parameters);
 

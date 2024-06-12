@@ -84,7 +84,7 @@ public static class BuildUriExtensions {
     }
 
     static void DoBuildUriValidations(IRestClient client, RestRequest request) {
-        if (client.Options.BaseUrl == null && !request.Resource.ToLowerInvariant().StartsWith("http"))
+        if (client.Options.BaseUrl == null && !request.Resource.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
             throw new ArgumentOutOfRangeException(
                 nameof(request),
                 "Request resource doesn't contain a valid scheme for an empty base URL of the client"

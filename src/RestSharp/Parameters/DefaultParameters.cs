@@ -69,5 +69,5 @@ public sealed class DefaultParameters(ReadOnlyRestClientOptions options) : Param
             RemoveParameter(Ensure.NotEmptyString(parameter.Name, "Parameter name"), parameter.Type)
                 .AddParameter(parameter);
 
-    static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
+    static readonly ParameterType[] MultiParameterTypes = [ParameterType.QueryString, ParameterType.GetOrPost];
 }

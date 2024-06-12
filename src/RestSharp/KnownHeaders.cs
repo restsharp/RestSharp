@@ -39,10 +39,10 @@ public static class KnownHeaders {
     public const string SetCookie          = "Set-Cookie";
     public const string UserAgent          = "User-Agent";
 
-    internal static readonly string[] ContentHeaders = {
+    internal static readonly string[] ContentHeaders = [
         Allow, Expires, ContentDisposition, ContentEncoding, ContentLanguage, ContentLength, ContentLocation, ContentRange, ContentType, ContentMD5,
         LastModified
-    };
+    ];
 
     static readonly HashSet<string> ContentHeadersHash = new(ContentHeaders, StringComparer.InvariantCultureIgnoreCase);
 

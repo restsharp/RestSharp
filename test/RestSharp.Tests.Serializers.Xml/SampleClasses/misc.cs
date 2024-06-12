@@ -1,6 +1,10 @@
 ﻿using RestSharp.Serializers;
 
-namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable CollectionNeverUpdated.Global
+
+namespace RestSharp.Tests.Serializers.Xml.SampleClasses;
 
 public class PersonForXml {
     public string Name { get; set; }
@@ -49,13 +53,13 @@ public class PersonForXml {
 }
 
 public class ValueCollectionForXml {
-    public string Value { get; set; }
+    public string            Value  { get; set; }
     public List<ValueForXml> Values { get; set; }
 }
 
 public class ValueForXml {
     public DateTime Timestamp { get; set; }
-    public string Value { get; set; }
+    public string   Value     { get; set; }
 }
 
 public class IncomingInvoice {
@@ -141,7 +145,7 @@ public class ObjectProperties {
     public object ObjectProperty { get; set; }
 }
 
-public class DatabaseCollection : List<Database> { }
+public class DatabaseCollection : List<Database>;
 
 public class Database {
     public string Name { get; set; }
@@ -242,8 +246,8 @@ public class DecimalNumber {
 }
 
 public class Note {
-    public const string TITLE   = "What a note.";
-    public const string MESSAGE = "Content";
+    public const string ConstTitle   = "What a note.";
+    public const string ConstMessage = "Content";
 
     [SerializeAs(Attribute = true), DeserializeAs(Attribute = true)]
     public int Id { get; set; }

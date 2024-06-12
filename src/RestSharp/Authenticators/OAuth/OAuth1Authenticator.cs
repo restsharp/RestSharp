@@ -15,6 +15,7 @@
 using RestSharp.Authenticators.OAuth;
 using RestSharp.Extensions;
 using System.Web;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 // ReSharper disable NotResolvedInText
 // ReSharper disable CheckNamespace
@@ -22,6 +23,7 @@ using System.Web;
 namespace RestSharp.Authenticators;
 
 /// <seealso href="http://tools.ietf.org/html/rfc5849">RFC: The OAuth 1.0 Protocol</seealso>
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class OAuth1Authenticator : IAuthenticator {
     public virtual string?                 Realm              { get; set; }
     public virtual OAuthParameterHandling  ParameterHandling  { get; set; }
@@ -246,7 +248,7 @@ public class OAuth1Authenticator : IAuthenticator {
         var url              = client.BuildUri(request).ToString();
         var queryStringStart = url.IndexOf('?');
 
-        if (queryStringStart != -1) url = url.Substring(0, queryStringStart);
+        if (queryStringStart != -1) url = url[..queryStringStart];
 
         var method     = request.Method.ToString().ToUpperInvariant();
         var parameters = new WebPairCollection();

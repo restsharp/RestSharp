@@ -1,4 +1,5 @@
 ﻿using RestSharp.InteractiveTests;
+// ReSharper disable HeuristicUnreachableCode
 
 using var client = new TwitterClient("apikey", "apisecret");
 
@@ -11,7 +12,7 @@ return;
 #pragma warning disable CS0162 // Unreachable code detected
 var keys = new AuthenticationTests.TwitterKeys {
     ConsumerKey    = Prompt("Consumer key"),
-    ConsumerSecret = Prompt("Consumer secret"),
+    ConsumerSecret = Prompt("Consumer secret")
 };
 
 await AuthenticationTests.Can_Authenticate_With_OAuth_Async_With_Callback(keys);

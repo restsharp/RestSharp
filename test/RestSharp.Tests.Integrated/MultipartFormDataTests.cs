@@ -186,7 +186,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         using var client = new RestClient(_server.Url!);
 
         var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
-            AlwaysMultipartFormData = true,
+            AlwaysMultipartFormData = true
         };
         var capturer = _server.ConfigureBodyCapturer(Method.Post);
 

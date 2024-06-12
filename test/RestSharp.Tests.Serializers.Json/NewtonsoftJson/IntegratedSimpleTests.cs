@@ -1,6 +1,5 @@
 using RestSharp.Serializers.NewtonsoftJson;
 using RestSharp.Tests.Shared.Extensions;
-using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Serializers.Json.NewtonsoftJson;
 

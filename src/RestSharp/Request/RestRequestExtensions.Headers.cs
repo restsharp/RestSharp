@@ -102,10 +102,12 @@ public static partial class RestRequestExtensions {
             .Select(group => group.Key)
             .ToList();
 
-        if (duplicateKeys.Any()) throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+        if (duplicateKeys.Count == 0) {
+            throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
+        }
     }
 
-    static readonly Regex PortSplitRegex = new(@":\d+");
+    static readonly Regex PortSplitRegex = PartSplit();
 
     static void CheckAndThrowsForInvalidHost(string name, string value) {
         if (name == KnownHeaders.Host && InvalidHost(value))
@@ -115,4 +117,11 @@ public static partial class RestRequestExtensions {
 
         static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
     }
+
+#if NET7_0_OR_GREATER
+    [GeneratedRegex(@":\d+")]
+    private static partial Regex PartSplit();
+#else
+    static Regex PartSplit() => new(@":\d+");
+#endif
 }

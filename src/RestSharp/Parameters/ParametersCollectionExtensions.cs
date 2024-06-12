@@ -26,7 +26,7 @@ static class ParametersCollectionExtensions {
     }
 
     internal static IEnumerable<GetOrPostParameter> GetContentParameters(this ParametersCollection parameters, Method method)
-        => IsPost(method) ? parameters.GetParameters<GetOrPostParameter>() : Enumerable.Empty<GetOrPostParameter>();
+        => IsPost(method) ? parameters.GetParameters<GetOrPostParameter>() : [];
 
     static bool IsPost(Method method) => method is Method.Post or Method.Put or Method.Patch;
 }

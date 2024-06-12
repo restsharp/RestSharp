@@ -13,7 +13,7 @@ public class OAuth1SignatureTests {
         SignatureMethod   = OAuthSignatureMethod.HmacSha1,
         Version           = "1.0",
         GetNonce          = () => "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
-        GetTimestamp      = () => "1318622958",
+        GetTimestamp      = () => "1318622958"
     };
 
     readonly RestClient _client = new("https://api.twitter.com/1.1");

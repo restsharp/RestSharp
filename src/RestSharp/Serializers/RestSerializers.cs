@@ -104,6 +104,7 @@ public class RestSerializers(Dictionary<DataFormat, SerializerRecord> records) {
 
         var serializer = Serializers.Values.FirstOrDefault(x => x.SupportsContentType(contentType));
 
+        // ReSharper disable once InvertIf
         if (serializer == null) {
             var detectedType = DetectContentType()?.Value;
 

@@ -34,7 +34,7 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
         ConstructorHandling  = ConstructorHandling.AllowNonPublicDefaultConstructor
     };
 
-    [ThreadStatic] static WriterBuffer? writerBuffer;
+    [ThreadStatic] static WriterBuffer? _writerBuffer;
 
     readonly JsonSerializer _serializer;
 
@@ -52,11 +52,11 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     public string? Serialize(object? obj) {
         if (obj == null) return null;
 
-        using var writerBuffer = JsonNetSerializer.writerBuffer ??= new WriterBuffer(_serializer);
+        using var buffer = _writerBuffer ??= new WriterBuffer(_serializer);
 
-        _serializer.Serialize(writerBuffer.GetJsonTextWriter(), obj, obj.GetType());
+        _serializer.Serialize(buffer.GetJsonTextWriter(), obj, obj.GetType());
 
-        return writerBuffer.GetStringWriter().ToString();
+        return buffer.GetStringWriter().ToString();
     }
 
     public string? Serialize(Parameter bodyParameter) => Serialize(bodyParameter.Value);

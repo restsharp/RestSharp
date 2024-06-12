@@ -36,6 +36,15 @@ static class ObjectParser {
                 properties.Add(GetValue(prop, val));
         }
 
+        return properties;
+
+        ParsedParameter GetValue(PropertyInfo propertyInfo, object? value) {
+            var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
+            var name      = attribute?.Name ?? propertyInfo.Name;
+            var val       = ParseValue(attribute?.Format, value);
+            return new ParsedParameter(name, val, attribute?.Encode ?? true);
+        }
+
         IEnumerable<ParsedParameter> GetArray(PropertyInfo propertyInfo, object? value) {
             var elementType = propertyInfo.PropertyType.GetElementType();
             var array       = (Array)value!;
@@ -59,15 +68,6 @@ static class ObjectParser {
             };
 
         }
-
-        ParsedParameter GetValue(PropertyInfo propertyInfo, object? value) {
-            var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
-            var name      = attribute?.Name ?? propertyInfo.Name;
-            var val       = ParseValue(attribute?.Format, value);
-            return new ParsedParameter(name, val, attribute?.Encode ?? true);
-        }
-
-        return properties;
 
         bool IsAllowedProperty(string propertyName)
             => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);

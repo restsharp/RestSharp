@@ -13,7 +13,6 @@
 //   limitations under the License. 
 
 using System.Diagnostics;
-using System.Net;
 using System.Text;
 using RestSharp.Extensions;
 

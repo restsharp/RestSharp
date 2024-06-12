@@ -278,7 +278,7 @@ public partial class RestClient : IRestClient {
         if (options.UserAgent == null) return;
 
         if (!options.AllowMultipleDefaultParametersWithSameName &&
-            DefaultParameters.Any(parameter => parameter.Type == ParameterType.HttpHeader && parameter.Name == KnownHeaders.UserAgent))
+            DefaultParameters.Any(parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent }))
             DefaultParameters.RemoveParameter(KnownHeaders.UserAgent, ParameterType.HttpHeader);
         DefaultParameters.AddParameter(Parameter.CreateParameter(KnownHeaders.UserAgent, options.UserAgent, ParameterType.HttpHeader));
     }

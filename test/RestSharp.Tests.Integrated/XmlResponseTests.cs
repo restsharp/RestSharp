@@ -114,7 +114,7 @@ public sealed class XmlResponseTests : IDisposable {
 
     static ResponseMessage ContentTypeOData(IRequestMessage request) {
         var contentType      = request.Headers![KnownHeaders.ContentType];
-        var hasCorrectHeader = contentType!.Contains($"{ContentType.Json}; odata=verbose");
+        var hasCorrectHeader = contentType.Contains($"{ContentType.Json}; odata=verbose");
 
         var response = new ResponseMessage {
             StatusCode = hasCorrectHeader ? 200 : 400

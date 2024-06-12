@@ -41,6 +41,7 @@ public record BodyParameter : Parameter {
 }
 
 public record XmlParameter : BodyParameter {
+    [PublicAPI]
     public XmlParameter(string name, object value, string? xmlNamespace = null, ContentType? contentType = null)
         : base(name, value, contentType ?? ContentType.Xml, DataFormat.Xml)
         => XmlNamespace = xmlNamespace;
@@ -52,6 +53,7 @@ public record XmlParameter : BodyParameter {
 }
 
 public record JsonParameter : BodyParameter {
+    [PublicAPI]
     public JsonParameter(string name, object value, ContentType? contentType = null)
         : base(name, value, contentType ?? ContentType.Json, DataFormat.Json) { }
 

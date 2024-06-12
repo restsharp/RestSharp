@@ -8,7 +8,7 @@ public class OAuth2Tests(WireMockTestServer server) : IClassFixture<WireMockTest
         var       auth   = new OAuth2AuthorizationRequestHeaderAuthenticator("token", "Bearer");
         using var client = new RestClient(server.Url!, o => o.Authenticator = auth);
 
-        var response   = await client.GetJsonAsync<TestServerResponse[]>("headers");
+        var response   = await client.GetAsync<TestServerResponse[]>("headers");
         var authHeader = response!.FirstOrDefault(x => x.Name == KnownHeaders.Authorization);
 
         authHeader.Should().NotBeNull();
