@@ -8,11 +8,11 @@ namespace RestSharp.Tests.Serializers.Xml;
 public class XmlAttributeDeserializerTests {
     const string GuidString = "AC1FC4BC-087A-4242-B8EE-C53EBE9887A5";
 
-    #if NET
+#if NET
     readonly string _sampleDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SampleData");
-    #else
+#else
     readonly string _sampleDataPath = Path.Combine(Directory.GetCurrentDirectory(), "SampleData");
-    #endif
+#endif
 
     string PathFor(string sampleFile) => Path.Combine(_sampleDataPath, sampleFile);
 
@@ -28,7 +28,7 @@ public class XmlAttributeDeserializerTests {
 
         Assert.NotEmpty(output.Numbers);
         Assert.False(output.Names[0].Length == 0);
-        Assert.False(output.Numbers.Sum()   == 0);
+        Assert.False(output.Numbers.Sum() == 0);
     }
 
     [Fact]
@@ -422,40 +422,37 @@ public class XmlAttributeDeserializerTests {
 
     [Fact]
     public void Can_Deserialize_Eventful_Xml() {
-        var xmlpath  = PathFor("eventful.xml");
-        var doc      = XDocument.Load(xmlpath);
-        var response = new RestResponse { Content = doc.ToString() };
-        var d        = new XmlAttributeDeserializer();
-        var output   = d.Deserialize<VenueSearch>(response)!;
+        var xmlFilePath = PathFor("eventful.xml");
+        var doc         = XDocument.Load(xmlFilePath);
+        var response    = new RestResponse { Content = doc.ToString() };
+        var d           = new XmlAttributeDeserializer();
+        var output      = d.Deserialize<VenueSearch>(response)!;
 
         Assert.Equal(3, output.venues.Count);
         Assert.Equal("Tivoli", output.venues[0].name);
-        Assert.Equal("http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
+        Assert.Equal("https://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8", output.venues[1].url);
         Assert.Equal("V0-001-000266914-3", output.venues[2].id);
     }
 
     [Fact]
     public void Can_Deserialize_Lastfm_Xml() {
-        var xmlpath  = PathFor("Lastfm.xml");
-        var doc      = XDocument.Load(xmlpath);
-        var response = new RestResponse { Content = doc.ToString() };
-        var d        = new XmlAttributeDeserializer();
-        var output   = d.Deserialize<Event>(response)!;
+        var xmlFilePath = PathFor("Lastfm.xml");
+        var doc         = XDocument.Load(xmlFilePath);
+        var response    = new RestResponse { Content = doc.ToString() };
+        var d           = new XmlAttributeDeserializer();
+        var output      = d.Deserialize<Event>(response)!;
 
-        Assert.Equal(
-            "http://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008",
-            output.url
-        );
-        Assert.Equal("http://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
+        Assert.Equal("https://www.last.fm/event/328799+Philip+Glass+at+Barbican+Centre+on+12+June+2008", output.url);
+        Assert.Equal("https://www.last.fm/venue/8777860+Barbican+Centre", output.venue.url);
     }
 
     [Fact]
     public void Can_Deserialize_Google_Weather_Xml() {
-        var xmlpath  = PathFor("GoogleWeather.xml");
-        var doc      = XDocument.Load(xmlpath);
-        var response = new RestResponse { Content = doc.ToString() };
-        var d        = new XmlAttributeDeserializer();
-        var output   = d.Deserialize<xml_api_reply>(response)!;
+        var xmlFilePath = PathFor("GoogleWeather.xml");
+        var doc         = XDocument.Load(xmlFilePath);
+        var response    = new RestResponse { Content = doc.ToString() };
+        var d           = new XmlAttributeDeserializer();
+        var output      = d.Deserialize<xml_api_reply>(response)!;
 
         Assert.Equal(4, output.weather.Count);
         Assert.Equal("Sunny", output.weather[0].condition.data);
@@ -463,11 +460,11 @@ public class XmlAttributeDeserializerTests {
 
     [Fact]
     public void Can_Deserialize_Google_Weather_Xml_WithDeserializeAs() {
-        var xmlpath  = PathFor("GoogleWeather.xml");
-        var doc      = XDocument.Load(xmlpath);
-        var response = new RestResponse { Content = doc.ToString() };
-        var d        = new XmlAttributeDeserializer();
-        var output   = d.Deserialize<GoogleWeatherApi>(response)!;
+        var xmlFilePath = PathFor("GoogleWeather.xml");
+        var doc         = XDocument.Load(xmlFilePath);
+        var response    = new RestResponse { Content = doc.ToString() };
+        var d           = new XmlAttributeDeserializer();
+        var output      = d.Deserialize<GoogleWeatherApi>(response)!;
 
         Assert.Equal(4, output.Weather.Count);
         Assert.Equal("Sunny", output.Weather[0].Condition.Data);
@@ -475,22 +472,22 @@ public class XmlAttributeDeserializerTests {
 
     [Fact]
     public void Can_Deserialize_Boolean_From_Number() {
-        var xmlpath  = PathFor("boolean_from_number.xml");
-        var doc      = XDocument.Load(xmlpath);
-        var response = new RestResponse { Content = doc.ToString() };
-        var d        = new XmlAttributeDeserializer();
-        var output   = d.Deserialize<BooleanTest>(response)!;
+        var xmlFilePath = PathFor("boolean_from_number.xml");
+        var doc         = XDocument.Load(xmlFilePath);
+        var response    = new RestResponse { Content = doc.ToString() };
+        var d           = new XmlAttributeDeserializer();
+        var output      = d.Deserialize<BooleanTest>(response)!;
 
         Assert.True(output.Value);
     }
 
     [Fact]
     public void Can_Deserialize_Boolean_From_String() {
-        var xmlpath  = PathFor("boolean_from_string.xml");
-        var doc      = XDocument.Load(xmlpath);
-        var response = new RestResponse { Content = doc.ToString() };
-        var d        = new XmlAttributeDeserializer();
-        var output   = d.Deserialize<BooleanTest>(response)!;
+        var xmlFilePath = PathFor("boolean_from_string.xml");
+        var doc         = XDocument.Load(xmlFilePath);
+        var response    = new RestResponse { Content = doc.ToString() };
+        var d           = new XmlAttributeDeserializer();
+        var output      = d.Deserialize<BooleanTest>(response)!;
 
         Assert.True(output.Value);
     }
@@ -576,7 +573,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend"             + i),
+                    new XElement("Name", "Friend" + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
@@ -626,7 +623,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend"             + i),
+                    new XElement("Name", "Friend" + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
@@ -676,7 +673,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend"             + i),
+                    new XElement("Name", "Friend" + i),
                     new XAttribute("Since", DateTime.Now.Year - i)
                 )
             );
@@ -745,7 +742,7 @@ public class XmlAttributeDeserializerTests {
             friends.Add(
                 new XElement(
                     "Friend",
-                    new XElement("Name", "Friend"           + i),
+                    new XElement("Name", "Friend" + i),
                     new XElement("Since", DateTime.Now.Year - i)
                 )
             );

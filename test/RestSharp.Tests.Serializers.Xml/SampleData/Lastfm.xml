@@ -15,7 +15,7 @@
                 <country>United Kingdom</country>
                 <street>Silk Street</street>
                 <postalcode>EC2Y 8DS</postalcode>
-                <geo:point xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+                <geo:point xmlns:geo="https://www.w3.org/2003/01/geo/wgs84_pos#">
                     <geo:lat>51.520099</geo:lat>
                     <geo:long>-0.093609</geo:long>
                 </geo:point>

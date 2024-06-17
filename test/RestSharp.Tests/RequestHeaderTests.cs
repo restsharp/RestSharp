@@ -35,7 +35,7 @@ public class RequestHeaderTests {
         request.AddHeaders(_headers);
 
         var httpParameters = GetHeaders(request);
-        Assert.Equal(3, httpParameters.Count());
+        Assert.Equal(3, httpParameters.Length);
     }
 
     [Fact]

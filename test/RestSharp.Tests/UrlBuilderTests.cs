@@ -143,7 +143,7 @@ public class UrlBuilderTests {
 
     [Fact]
     public void GET_with_Uri_and_resource_containing_tokens() {
-        var request = new RestRequest($"{Resource}/{{baz}}");
+        var request = new RestRequest($"/{{foo}}/{Resource}/{{baz}}");
         request.AddUrlSegment("foo", "bar");
         request.AddUrlSegment("baz", "bat");
         var expected = new Uri($"{Base}/bar/{Resource}/bat");
@@ -183,7 +183,7 @@ public class UrlBuilderTests {
     public void GET_with_Url_string_containing_tokens() {
         var request = new RestRequest();
         request.AddUrlSegment("foo", "bar");
-        var expected = new Uri(Base);
+        var expected = new Uri($"{Base}/bar");
 
         using var client = new RestClient($"{Base}/{{foo}}");
 

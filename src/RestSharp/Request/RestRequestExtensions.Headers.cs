@@ -102,7 +102,7 @@ public static partial class RestRequestExtensions {
             .Select(group => group.Key)
             .ToList();
 
-        if (duplicateKeys.Count == 0) {
+        if (duplicateKeys.Count > 0) {
             throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
         }
     }

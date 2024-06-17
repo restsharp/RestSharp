@@ -10,7 +10,7 @@
     <search_time>0.262</search_time>
     <venues>
         <venue id="V0-001-002011236-6">
-            <url>http://eventful.com/venues/tivoli-/V0-001-002011236-6</url>
+            <url>https://eventful.com/venues/tivoli-/V0-001-002011236-6</url>
             <name>Tivoli</name>
             <venue_name>Tivoli</venue_name>
             <description></description>
@@ -36,7 +36,7 @@
             <image></image>
         </venue>
         <venue id="V0-001-002169294-8">
-            <url>http://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8</url>
+            <url>https://eventful.com/brisbane/venues/tivoli-/V0-001-002169294-8</url>
             <name>Tivoli</name>
             <venue_name>Tivoli</venue_name>
             <description>&lt;br&gt; &lt;br&gt;(No phone for this venue yet.)&lt;br&gt; &lt;br&gt;(No website for this venue yet.)&lt;br&gt; &lt;br&gt;</description>
@@ -62,7 +62,7 @@
             <image></image>
         </venue>
         <venue id="V0-001-000266914-3">
-            <url>http://eventful.com/brisbane/venues/the-tivoli-/V0-001-000266914-3</url>
+            <url>https://eventful.com/brisbane/venues/the-tivoli-/V0-001-000266914-3</url>
             <name>The Tivoli</name>
             <venue_name>The Tivoli</venue_name>
             <description>Built in 1917 and restored in Art Deco style, this elegant, fully licensed theatre has state-of-the-art technical features, top-of-the-range facilities, in-house catering by our 5 star chef and dedicated staff available to meet all your needs.</description>
@@ -86,22 +86,22 @@
             <comment_count>7</comment_count>
             <link_count>1</link_count>
             <image>
-                <url>http://images.evdb.com/images/small/I0-001/001/414/278-2.jpeg</url>
+                <url>https://images.evdb.com/images/small/I0-001/001/414/278-2.jpeg</url>
                 <width>48</width>
                 <height>48</height>
                 <caption></caption>
                 <thumb>
-                    <url>http://images.evdb.com/images/thumb/I0-001/001/414/278-2.jpeg</url>
+                    <url>https://images.evdb.com/images/thumb/I0-001/001/414/278-2.jpeg</url>
                     <width>48</width>
                     <height>48</height>
                 </thumb>
                 <small>
-                    <url>http://images.evdb.com/images/small/I0-001/001/414/278-2.jpeg</url>
+                    <url>https://images.evdb.com/images/small/I0-001/001/414/278-2.jpeg</url>
                     <width>48</width>
                     <height>48</height>
                 </small>
                 <medium>
-                    <url>http://images.evdb.com/images/medium/I0-001/001/414/278-2.jpeg</url>
+                    <url>https://images.evdb.com/images/medium/I0-001/001/414/278-2.jpeg</url>
                     <width>128</width>
                     <height>128</height>
                 </medium>
