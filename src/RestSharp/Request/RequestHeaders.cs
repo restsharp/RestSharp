@@ -27,7 +27,7 @@ class RequestHeaders {
         return this;
     }
 
-    // Add Accept header based on registered deserializers if none has been set by the caller.
+    // Add Accept header based on registered deserializers if the caller has set none.
     public RequestHeaders AddAcceptHeader(string[] acceptedContentTypes) {
         if (Parameters.TryFind(KnownHeaders.Accept) == null) {
             var accepts = acceptedContentTypes.JoinToString(", ");

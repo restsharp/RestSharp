@@ -16,7 +16,9 @@
 using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Reflection;
+#if NET
 using System.Runtime.Versioning;
+#endif
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using RestSharp.Authenticators;
