@@ -20,7 +20,12 @@ namespace RestSharp;
 [PublicAPI]
 public static partial class RestClientExtensions {
     [PublicAPI]
-    public static ValueTask<RestResponse<T>> Deserialize<T>(this IRestClient client, RestResponse response, CancellationToken cancellationToken)
+    [Obsolete("Please use the async overload with a cancellation token")]
+    public static RestResponse<T> Deserialize<T>(this IRestClient client, RestResponse response)
+        => AsyncHelpers.RunSync(() => client.Serializers.Deserialize<T>(response.Request, response, client.Options, CancellationToken.None).AsTask());
+
+    [PublicAPI]
+    public static ValueTask<RestResponse<T>> Deserialize<T>(this IRestClient client, RestResponse response, CancellationToken cancellationToken)    
         => client.Serializers.Deserialize<T>(response.Request, response, client.Options, cancellationToken);
 
     /// <summary>
