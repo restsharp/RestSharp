@@ -14,7 +14,7 @@
   <ItemGroup Label="Runtime dependencies">
     <PackageVersion Include="HttpMultipartParser" Version="8.4.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="CsvHelper" Version="32.0.3" />
+    <PackageVersion Include="CsvHelper" Version="33.0.1" />
     <PackageVersion Include="PolySharp" Version="1.14.1" />
     <PackageVersion Include="System.Text.Json" Version="8.0.3" />
     <PackageVersion Include="WireMock.Net" Version="1.5.51" />
