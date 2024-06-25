@@ -40,7 +40,7 @@ static class UriExtensions {
         var absoluteUri = uri.AbsoluteUri;
         var separator   = absoluteUri.Contains('?') ? "&" : "?";
 
-        return new Uri($"{absoluteUri}{separator}{query}");
+        return new($"{absoluteUri}{separator}{query}");
     }
 
     public static UrlSegmentParamsValues GetUrlSegmentParamsValues(

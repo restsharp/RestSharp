@@ -17,11 +17,25 @@ namespace RestSharp;
 /// <summary>
 /// Parameter container for REST requests
 /// </summary>
-public abstract record Parameter(string? Name, object? Value, ParameterType Type, bool Encode) {
+public abstract record Parameter {
+    /// <summary>
+    /// Parameter container for REST requests
+    /// </summary>
+    protected Parameter(string? name, object? value, ParameterType type, bool encode) {
+        Name   = name;
+        Value  = value;
+        Type   = type;
+        Encode = encode;
+    }
+
     /// <summary>
     /// MIME content type of the parameter
     /// </summary>
     public ContentType ContentType { get; protected init; } = ContentType.Undefined;
+    public string?       Name   { get; }
+    public object?       Value  { get; }
+    public ParameterType Type   { get; }
+    public bool          Encode { get; }
 
     /// <summary>
     /// Return a human-readable representation of this parameter
@@ -34,10 +48,17 @@ public abstract record Parameter(string? Name, object? Value, ParameterType Type
         => type switch {
             ParameterType.GetOrPost   => new GetOrPostParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString(), encode),
             ParameterType.UrlSegment  => new UrlSegmentParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString()!, encode),
-            ParameterType.HttpHeader  => new HeaderParameter(name, value?.ToString()),
+            ParameterType.HttpHeader  => new HeaderParameter(name!, value?.ToString()!),
             ParameterType.QueryString => new QueryParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString(), encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
+
+    public void Deconstruct(out string? name, out object? value, out ParameterType type, out bool encode) {
+        name   = Name;
+        value  = Value;
+        type   = Type;
+        encode = Encode;
+    }
 }
 
 public record NamedParameter : Parameter {

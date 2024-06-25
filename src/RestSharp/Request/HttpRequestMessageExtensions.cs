@@ -20,16 +20,16 @@ namespace RestSharp;
 
 static class HttpRequestMessageExtensions {
     public static void AddHeaders(this HttpRequestMessage message, RequestHeaders headers) {
-        var headerParameters = headers.Parameters.Where(x => !KnownHeaders.IsContentHeader(x.Name!));
+        var headerParameters = headers.Where(x => !KnownHeaders.IsContentHeader(x.Name));
 
         headerParameters.ForEach(x => AddHeader(x, message.Headers));
         return;
 
-        void AddHeader(Parameter parameter, HttpHeaders httpHeaders) {
-            var parameterStringValue = parameter.Value!.ToString();
+        void AddHeader(HeaderParameter parameter, HttpHeaders httpHeaders) {
+            var parameterStringValue = parameter.Value;
 
             httpHeaders.Remove(parameter.Name!);
-            httpHeaders.TryAddWithoutValidation(parameter.Name!, parameterStringValue);
+            httpHeaders.TryAddWithoutValidation(parameter.Name, parameterStringValue);
         }
     }
 }

@@ -21,5 +21,14 @@ public record HeaderParameter : Parameter {
     /// </summary>
     /// <param name="name">Parameter name</param>
     /// <param name="value">Parameter value</param>
-    public HeaderParameter(string? name, string? value) : base(name, value, ParameterType.HttpHeader, false) { }
+    public HeaderParameter(string name, string value)
+        : base(
+            Ensure.NotEmptyString(name, nameof(name)),
+            Ensure.NotNull(value, nameof(value)),
+            ParameterType.HttpHeader,
+            false
+        ) { }
+
+    public new string Name  => base.Name!;
+    public new string Value => (string)base.Value!;
 }

@@ -42,7 +42,7 @@ public sealed class RequestParameters : ParametersCollection {
     }
 
     /// <summary>
-    /// Add parameters from another parameters collection
+    /// Add parameters from another parameter collection
     /// </summary>
     /// <param name="parameters"></param>
     /// <returns></returns>
