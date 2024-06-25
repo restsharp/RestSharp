@@ -92,7 +92,7 @@ public abstract class RestResponseBase {
     public Uri? ResponseUri { get; set; }
 
     /// <summary>
-    /// HttpWebResponse.Server
+    /// Server header value
     /// </summary>
     public string? Server { get; set; }
 
@@ -118,7 +118,7 @@ public abstract class RestResponseBase {
     public ResponseStatus ResponseStatus { get; set; }
 
     /// <summary>
-    /// Transport or other non-HTTP error generated while attempting request
+    /// Transport or another non-HTTP error generated while attempting request
     /// </summary>
     public string? ErrorMessage { get; set; }
 

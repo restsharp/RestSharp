@@ -58,7 +58,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
             var content = bytes  == null ? null : await httpResponse.GetResponseString(bytes, encoding);
 
-            return new RestResponse(request) {
+            return new(request) {
                 Content             = content,
                 ContentEncoding     = httpResponse.Content?.Headers.ContentEncoding ?? Array.Empty<string>(),
                 ContentHeaders      = httpResponse.Content?.Headers.GetHeaderParameters(),
@@ -80,7 +80,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
         }
     }
 
-    public RestResponse() : this(new RestRequest()) { }
+    public RestResponse() : this(new()) { }
 }
 
 public delegate ResponseStatus CalculateResponseStatus(HttpResponseMessage httpResponse);

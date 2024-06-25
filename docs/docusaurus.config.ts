@@ -44,6 +44,10 @@ const config: Config = {
           label: "Documentation",
         },
         {
+          href: "/migration",
+          label: "Migration"
+        },
+        {
           href: "/support",
           label: "Support",
         },

@@ -17,7 +17,7 @@ namespace RestSharp;
 
 public static partial class RestClientExtensions {
     /// <summary>
-    /// Executes a OPTIONS-style request asynchronously, authenticating if needed
+    /// Executes an OPTIONS-style request asynchronously, authenticating if needed
     /// </summary>
     /// <param name="client"></param>
     /// <param name="request">Request to be executed</param>

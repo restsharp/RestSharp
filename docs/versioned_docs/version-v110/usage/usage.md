@@ -405,29 +405,13 @@ Task<RestResponse> PatchAsync(RestRequest request, CancellationToken cancellatio
 Task<RestResponse> DeleteAsync(RestRequest request, CancellationToken cancellationToken)
 ``` 
 
-### Requests without body
-
-Some HTTP methods don't suppose to be used with request body. For those methods, RestSharp supports making simplified calls without using `RestRequest`. All you need is to provide the resource path as a string.
-
-For example, you can make a `DELETE` call like this:
-
-```csharp
-var response = await client.ExecuteDeleteAsync($"order/delete/{orderId}", cancellationToken);
-```
-
-Similarly, you can make `GET` calls with or without deserialization of the response using `ExecuteGetAsync(resource)`, `GetAsync(resource)`, `ExecuteGetAsync<TResponse>(resource)`, and `GetAsync<TResponse>(resource)` (see below).
-
 ### JSON requests
 
 To make a simple `GET` call and get a deserialized JSON response with a pre-formed resource string, use this:
 
 ```csharp
-var response = await client.GetAsync<TResponse>("endpoint?foo=bar", cancellationToken);
+var response = await client.GetJsonAsync<TResponse>("endpoint?foo=bar", cancellationToken);
 ```
-
-:::
-In v111, `GetJsonAsync<T>` is renamed to `GetAsync<T>`.
-:::
 
 You can also use a more advanced extension that uses an object to compose the resource string:
 
@@ -438,7 +422,7 @@ var args = new {
     foo = "bar"
 };
 // Will make a call to https://example.org/endpoint/123?foo=bar
-var response = await client.GetAsync<TResponse>("endpoint/{id}", args, cancellationToken);
+var response = await client.GetJsonAsync<TResponse>("endpoint/{id}", args, cancellationToken);
 ```
 
 It will search for the URL segment parameters matching any of the object properties and replace them with values. All the other properties will be used as query parameters.
@@ -460,40 +444,6 @@ var statusCode = client.PostJsonAsync("orders", request, cancellationToken);
 ```
 
 The same two extensions also exist for `PUT` requests (`PutJsonAsync`);
-
-## Handling responses
-
-All `Execute{Method}Async` functions return an instance of `RestResponse`. Similarly, `Execute{Method}Async<T>` return a generic instance of `RestResponse<T>` where `T` is the response object type.
-
-Response object contains the following properties:
-
-| Property                 | Type                                                | Description                                                                                                                  |
-|--------------------------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-| `Request`                | `RestRequest`                                       | Request instance that was used to get the response.                                                                          |
-| `ContentType`            | `string?`                                           | Response content type. `Null` if response has no content.                                                                    |
-| `ContentLength`          | `long?`                                             | Response content length. `Null` if response has no content.                                                                  |
-| `ContentEncoding`        | `ICollection<string>`                               | Content encoding collection. Empty if response has no content.                                                               |
-| `Content`                | `string?`                                           | Response content as string. `Null` if response has no content.                                                               |
-| `IsSuccessfulStatusCode` | `bool`                                              | Indicates if response was successful, so no errors were reported by the server. Note that `404` response code means success. |
-| `ResponseStatus`         | `None`, `Completed`, `Error`, `TimedOut`, `Aborted` | Response completion status. Note that completed responses might still return errors.                                         |
-| `IsSuccessful`           | `bool`                                              | `True` when `IsSuccessfulStatusCode` is `true` and `ResponseStatus` is `Completed`.                                          |
-| `StatusDescription`      | `string?`                                           | Response status description, if available.                                                                                   |
-| `RawBytes`               | `byte[]?`                                           | Response content as byte array. `Null` if response has no content.                                                           |
-| `ResponseUri`            | `Uri?`                                              | URI of the response, which might be different from request URI in case of redirects.                                         |
-| `Server`                 | `string?`                                           | Server header value of the response.                                                                                         |
-| `Cookies`                | `CookieCollection?`                                 | Collection of cookies received with the response, if any.                                                                    |
-| `Headers`                | Collection of `HeaderParameter`                     | Response headers.                                                                                                            |
-| `ContentHeaders`         | Collection of `HeaderParameter`                     | Response content headers.                                                                                                    |
-| `ErrorMessage`           | `string?`                                           | Transport or another non-HTTP error generated while attempting request.                                                      |
-| `ErrorException`         | `Exception?`                                        | Exception thrown when executing the request, if any.                                                                         |
-| `Version`                | `Version?`                                          | HTTP protocol version of the request.                                                                                        |
-| `RootElement`            | `string?`                                           | Root element of the serialized response content, only works if deserializer supports it.                                     |
-
-In addition, `RestResponse<T>` has one additional property:
-
-| Property | Type | Description                                                                                                                                               |
-|----------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Data`   | `T?` | Deserialized response object. `Null` if there's no content in the response, deserializer failed to understand the response content, or if request failed. |
 
 ### JSON streaming APIs
 

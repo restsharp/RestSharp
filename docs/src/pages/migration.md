@@ -1,12 +1,12 @@
 ---
-title: RestSharp Next (v107+)
+title: Migration from v106 and earlier
 ---
 
-## RestSharp v107+
+## New RestSharp
 
 RestSharp got a major upgrade in v107, which contains quite a few breaking changes.
 
-The most important change is that RestSharp stop using the legacy `HttpWebRequest` class, and uses well-known 'HttpClient' instead.
+The most important change is that RestSharp stop using the legacy `HttpWebRequest` class, and uses well-known `HttpClient` instead.
 This move solves lots of issues, like hanging connections due to improper `HttpClient` instance cache, updated protocols support, and many other problems.
 
 Another big change is that `SimpleJson` is retired completely from the code base. Instead, RestSharp uses `JsonSerializer` from the `System.Text.Json` package, which is the default serializer for ASP.NET Core.
@@ -19,7 +19,7 @@ Finally, most of the interfaces are now gone.
 
 The `IRestClient` interface is deprecated in v107, but brought back in v109. The new interface, however, has a much smaller API compared to previous versions. You will be using the `RestClient` class instance.
 
-Most of the client options are moved to `RestClientOptions`. If you can't find the option you used to set on `IRestClient`, check the options, it's probably there.
+Most of the client options are moved to `RestClientOptions`. If you can't find the option you used to set on `IRestClient`, check the options; it's probably there.
 
 This is how you can instantiate the client using the simplest possible way:
 
@@ -32,12 +32,18 @@ For customizing the client, use `RestClientOptions`:
 ```csharp
 var options = new RestClientOptions("https://api.myorg.com") {
     ThrowOnAnyError = true,
-    Timeout = 1000
+    Timeout = TimeSpan.FromSeconds(1)
 };
 var client = new RestClient(options);
 ```
 
 You can still change serializers and add default parameters to the client.
+
+:::
+Note that client options cannot be changed after the client is instantiated.
+It's because the client constructor either uses those options to configure its internal `HttpClient`, `HttpMessageHandler` or for making requests. 
+Even though options that are used for making requests can be changed in theory, making those options mutable would make `RestClient` not thread-safe. 
+:::
 
 ### RestClient lifecycle
 

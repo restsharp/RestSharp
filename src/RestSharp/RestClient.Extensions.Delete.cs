@@ -32,7 +32,7 @@ public static partial class RestClientExtensions {
     /// <param name="resource">Request resource</param>
     /// <param name="cancellationToken">Cancellation token</param>
     public static Task<RestResponse> ExecuteDeleteAsync(this IRestClient client, string resource, CancellationToken cancellationToken = default)
-        => client.ExecuteAsync(new RestRequest(resource), Method.Delete, cancellationToken);
+        => client.ExecuteAsync(new(resource), Method.Delete, cancellationToken);
 
     /// <summary>
     /// Executes a DELETE-style synchronously, authenticating if needed
@@ -80,7 +80,7 @@ public static partial class RestClientExtensions {
         string            resource,
         CancellationToken cancellationToken = default
     )
-        => client.ExecuteAsync<T>(new RestRequest(resource), Method.Delete, cancellationToken);
+        => client.ExecuteAsync<T>(new(resource), Method.Delete, cancellationToken);
 
     /// <summary>
     /// Executes a DELETE-style request synchronously, authenticating if needed.
@@ -128,7 +128,7 @@ public static partial class RestClientExtensions {
     /// <typeparam name="T">Expected result type</typeparam>
     /// <returns></returns>
     public static async Task<T?> DeleteAsync<T>(this IRestClient client, string resource, CancellationToken cancellationToken = default) {
-        var response = await client.ExecuteAsync<T>(new RestRequest(resource), Method.Delete, cancellationToken).ConfigureAwait(false);
+        var response = await client.ExecuteAsync<T>(new(resource), Method.Delete, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError().Data;
     }
 
@@ -160,7 +160,7 @@ public static partial class RestClientExtensions {
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
     public static async Task<RestResponse> DeleteAsync(this IRestClient client, string resource, CancellationToken cancellationToken = default) {
-        var response = await client.ExecuteAsync(new RestRequest(resource), Method.Delete, cancellationToken).ConfigureAwait(false);
+        var response = await client.ExecuteAsync(new(resource), Method.Delete, cancellationToken).ConfigureAwait(false);
         return response.ThrowIfError();
     }
 
