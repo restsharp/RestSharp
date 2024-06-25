@@ -126,20 +126,6 @@ First, there's `DownloadDataAsync`, which returns `Task<byte[]`. It will read th
 
 For larger responses, you can use `DownloadStreamAsync` that returns `Task<Stream>`. This function allows you to open a stream reader and asynchronously stream large responses to memory or disk.
 
-
-## Reusing HttpClient
-
-RestSharp uses `HttpClient` internally to make HTTP requests. It's possible to reuse the same `HttpClient` instance for multiple `RestClient` instances. This is useful when you want to share the same connection pool between multiple `RestClient` instances.
-
-One way of doing it is to use `RestClient` constructors that accept an instance of `HttpClient` or `HttpMessageHandler` as an argument. Note that in that case not all the options provided via `RestClientOptions` will be used. Here is the list of options that will work:
-
-- `BaseAddress` will be used to set the base address of the `HttpClient` instance if base address is not set there already.
-- `MaxTimeout`
-- `UserAgent` will be added to the `RestClient.DefaultParameters` list as a HTTP header. This will be added to each request made by the `RestClient`, and the `HttpClient` instance will not be modified. This is to allow the `HttpClient` instance to be reused for scenarios where different `User-Agent` headers are required.
-- `Expect100Continue`
-
-Another option is to use a simple HTTP client factory as described [above](#simple-factory). 
-
 ## Blazor support
 
 Inside a Blazor webassembly app, you can make requests to external API endpoints. Microsoft examples show how to do it with `HttpClient`, and it's also possible to use RestSharp for the same purpose.

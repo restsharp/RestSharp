@@ -58,3 +58,17 @@ You need to set the `useClientFactory` parameter to `true` in the `RestClient` c
 ```csharp
 var client = new RestClient("https://api.twitter.com/2", true);
 ```
+
+## Reusing HttpClient
+
+RestSharp uses `HttpClient` internally to make HTTP requests. It's possible to reuse the same `HttpClient` instance for multiple `RestClient` instances. This is useful when you want to share the same connection pool between multiple `RestClient` instances.
+
+One way of doing it is to use `RestClient` constructors that accept an instance of `HttpClient` or `HttpMessageHandler` as an argument. Note that in that case not all the options provided via `RestClientOptions` will be used. Here is the list of options that will work:
+
+- `BaseAddress` is be used to set the base address of the `HttpClient` instance if base address is not set there already.
+- `MaxTimeout` is used to cancel the call using the cancellation token source, so
+- `UserAgent` will be added to the `RestClient.DefaultParameters` list as a HTTP header. This will be added to each request made by the `RestClient`, and the `HttpClient` instance will not be modified. This is to allow the `HttpClient` instance to be reused for scenarios where different `User-Agent` headers are required.
+- `Expect100Continue`
+
+Another option is to use a simple HTTP client factory as described [above](#simple-factory). 
+

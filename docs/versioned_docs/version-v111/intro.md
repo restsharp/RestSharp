@@ -74,7 +74,7 @@ var client = new RestClient(options);
 var timeline = await client.GetJsonAsync<HomeTimeline>("statuses/home_timeline.json", cancellationToken);
 ```
 
-Read [here](usage/basics#json-requests) about making JSON calls without preparing a request object.
+Read [here](usage/execute#json-requests) about making JSON calls without preparing a request object.
 
 ### Content type
 
