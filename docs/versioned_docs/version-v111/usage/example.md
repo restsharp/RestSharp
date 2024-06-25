@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Example
 
 RestSharp works best as the foundation for a proxy class for your API. Each API would most probably require different settings for `RestClient`. Hence, a dedicated API class (and its interface) gives you sound isolation between different `RestClient` instances and make them testable.
@@ -46,7 +50,7 @@ public class TwitterClient : ITwitterClient, IDisposable {
     }
 
     public async Task<TwitterUser> GetUser(string user) {
-        var response = await _client.GetJsonAsync<TwitterSingleObject<TwitterUser>>(
+        var response = await _client.GetAsync<TwitterSingleObject<TwitterUser>>(
             "users/by/username/{user}",
             new { user }
         );
@@ -139,7 +143,7 @@ Here we add a POST parameter `grant_type` with `client_credentials` as its value
 
 The POST request will use the `application/x-www-form-urlencoded` content type by default.
 
-:::note
+::: note
 Sample code provided on this page is a production code. For example, the authenticator might produce undesired side effect when multiple requests are made at the same time when the token hasn't been obtained yet. It can be solved rather than simply using semaphores or synchronized invocation.
 :::
 

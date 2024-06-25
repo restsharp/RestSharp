@@ -28,7 +28,7 @@ Constructor parameters are:
 | options                 | Client options                                                                                                                                              | Yes       |
 | configureDefaultHeaders | Function to configure headers. Allows to configure default headers for `HttpClient`. Most of the time you'd prefer using `client.AddDefaultHeader` instead. | No        |
 | configureSerialization  | Function to configure client serializers with non-default options or to use a different serializer ([learn more](serialization.md))                         | No        |
-| useClientFactory        | Instructs the client to use `SimpleFactory` ([learn more](../usage/usage.md#simple-factory)) to get an `HttpClient` instance                                | No        |
+| useClientFactory        | Instructs the client to use `SimpleFactory` ([learn more](../usage/basics#simple-factory)) to get an `HttpClient` instance                                | No        |
 
 Here's an example of how to create a client using client options:
 
@@ -227,4 +227,4 @@ Client options apply to all requests made by the client. Sometimes, you want to 
 | `AdvancedResponseWriter`     | Allows custom handling of the response. The function gets an instance of `HttpResponseMessage` and an instance of `RestRequest`. It must return an instance of `RestResponse`, so it effectively overrides RestSharp default functionality for creating responses.                                                |
 | `Interceptors`               | Allows adding interceptors to the request. Both client-level and request-level interceptors will be called.                                                                                                                                                                                                       |
 
-The table below contains all configuration properties of `RestRequest`. To learn more about adding request parameters, check the [usage page](../usage/usage.md#create-a-request) section about creating requests with parameters.
+The table below contains all configuration properties of `RestRequest`. To learn more about adding request parameters, check the [usage page](../usage/basics#create-a-request) section about creating requests with parameters.
