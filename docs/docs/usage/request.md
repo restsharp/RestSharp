@@ -289,3 +289,43 @@ When you call `AddXmlBody`, it does the following for you:
 Do not send XML string to `AddXmlBody`; it won't work!
 :::
 
+## Uploading files
+
+To add a file to the request you can use the `RestRequest` function called `AddFile`. The main function accepts the `FileParameter` argument:
+
+```csharp
+request.AddFile(fileParameter);
+```
+
+You can instantiate the file parameter using `FileParameter.Create` that accepts a bytes array, or `FileParameter.FromFile`, which will load the file from disk.
+
+There are also extension functions that wrap the creation of `FileParameter` inside:
+
+```csharp
+// Adds a file from disk
+AddFile(parameterName, filePath, contentType);
+
+// Adds an array of bytes
+AddFile(parameterName, bytes, fileName, contentType);
+
+// Adds a stream returned by the getFile function
+AddFile(parameterName, getFile, fileName, contentType);
+```
+
+Remember that `AddFile` will set all the necessary headers, so please don't try to set content headers manually.
+
+You can also provide file upload options to the `AddFile` call. The options are:
+- `DisableFilenameEncoding` (default `false`): if set to `true`, RestSharp will not encode the file name in the `Content-Disposition` header
+- `DisableFilenameStar` (default `true`): if set to `true`, RestSharp will not add the `filename*` parameter to the `Content-Disposition` header
+
+Example of using the options:
+
+```csharp
+var options = new FileParameterOptions {
+    DisableFilenameEncoding = true,
+    DisableFilenameStar = false
+};
+request.AddFile("file", filePath, options: options);
+```
+
+The options specified in the snippet above usually help when you upload files with non-ASCII characters in their names.
