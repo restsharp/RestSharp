@@ -43,7 +43,7 @@
     <PackageVersion Include="RichardSzalay.MockHttp" Version="7.0.0" />
     <PackageVersion Include="System.Net.Http.Json" Version="8.0.0" />
     <PackageVersion Include="Xunit.Extensions.Logging" Version="1.1.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" PrivateAssets="All" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="All" />
     <PackageVersion Include="xunit" Version="2.8.1" />
   </ItemGroup>
 </Project>
