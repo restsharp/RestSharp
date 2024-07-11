@@ -50,8 +50,7 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
 
         _client.AddDefaultHeader(defaultHeader.Name, defaultHeader.Value);
 
-        var request = new RestRequest("/headers")
-            .AddHeader(requestHeader.Name, requestHeader.Value);
+        var request = new RestRequest("/headers").AddHeader(requestHeader.Name, requestHeader.Value);
 
         var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
         CheckHeader(response, defaultHeader);

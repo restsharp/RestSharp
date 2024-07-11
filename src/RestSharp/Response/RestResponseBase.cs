@@ -21,7 +21,7 @@ namespace RestSharp;
 /// <summary>
 /// Base class for common properties shared by RestResponse and RestResponse[[T]]
 /// </summary>
-[DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
 public abstract class RestResponseBase {
     /// <summary>
     /// Default constructor

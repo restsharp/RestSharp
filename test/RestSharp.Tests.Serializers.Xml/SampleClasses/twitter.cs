@@ -1,14 +1,15 @@
 ﻿using RestSharp.Serializers;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 #pragma warning disable CS8981
 
-namespace RestSharp.Tests.Serializers.Xml.SampleClasses; 
+namespace RestSharp.Tests.Serializers.Xml.SampleClasses;
 
 #pragma warning disable CS8981
 public class status {
-#pragma warning restore CS8981
     public bool truncated { get; set; }
 
     public string created_at { get; set; }
@@ -114,3 +115,4 @@ public class complexStatus {
 
     public string text { get; set; }
 }
+#pragma warning restore CS8981
