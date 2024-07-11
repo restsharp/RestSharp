@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp.Authenticators; 
+namespace RestSharp.Authenticators;
 
 /// <summary>
 /// JSON WEB TOKEN (JWT) Authenticator class.
@@ -26,7 +26,8 @@ public class JwtAuthenticator(string accessToken) : AuthenticatorBase(GetToken(a
     [PublicAPI]
     public void SetBearerToken(string accessToken) => Token = GetToken(accessToken);
 
-    static string GetToken(string accessToken) => Ensure.NotEmpty(accessToken, nameof(accessToken)).StartsWith("Bearer ") ? accessToken : $"Bearer {accessToken}";
+    static string GetToken(string accessToken)
+        => Ensure.NotEmptyString(accessToken, nameof(accessToken)).StartsWith("Bearer ") ? accessToken : $"Bearer {accessToken}";
 
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
         => new(new HeaderParameter(KnownHeaders.Authorization, accessToken));

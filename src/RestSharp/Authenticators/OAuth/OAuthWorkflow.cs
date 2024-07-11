@@ -48,7 +48,7 @@ sealed class OAuthWorkflow {
     /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
     /// <returns></returns>
     public OAuthParameters BuildRequestTokenSignature(string method, WebPairCollection parameters) {
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+        Ensure.NotEmptyString(ConsumerKey, nameof(ConsumerKey));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
@@ -76,8 +76,8 @@ sealed class OAuthWorkflow {
     /// <param name="method">The HTTP method for the intended request</param>
     /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
     public OAuthParameters BuildAccessTokenSignature(string method, WebPairCollection parameters) {
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-        Ensure.NotEmpty(Token, nameof(Token));
+        Ensure.NotEmptyString(ConsumerKey, nameof(ConsumerKey));
+        Ensure.NotEmptyString(Token, nameof(Token));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
@@ -105,8 +105,8 @@ sealed class OAuthWorkflow {
     /// <param name="method">The HTTP method for the intended request</param>
     /// <param name="parameters">Any existing, non-OAuth query parameters desired in the request</param>
     public OAuthParameters BuildClientAuthAccessTokenSignature(string method, WebPairCollection parameters) {
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
-        Ensure.NotEmpty(ClientUsername, nameof(ClientUsername));
+        Ensure.NotEmptyString(ConsumerKey, nameof(ConsumerKey));
+        Ensure.NotEmptyString(ClientUsername, nameof(ClientUsername));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);
@@ -127,7 +127,7 @@ sealed class OAuthWorkflow {
     }
 
     public OAuthParameters BuildProtectedResourceSignature(string method, WebPairCollection parameters) {
-        Ensure.NotEmpty(ConsumerKey, nameof(ConsumerKey));
+        Ensure.NotEmptyString(ConsumerKey, nameof(ConsumerKey));
 
         var allParameters = new WebPairCollection();
         allParameters.AddRange(parameters);

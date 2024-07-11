@@ -21,7 +21,7 @@ public class RequestHeaderTests {
     [Fact]
     public void AddHeaders_DifferentCaseDuplicatesExist_ThrowsException() {
         var headers = _headers;
-        headers.Add(new KeyValuePair<string, string>(KnownHeaders.Accept, ContentType.Json));
+        headers.Add(new(KnownHeaders.Accept, ContentType.Json));
 
         var request = new RestRequest();
 
@@ -121,10 +121,8 @@ public class RequestHeaderTests {
 
         // Assert
         var requestHeaders = GetHeaders(request);
-        HeaderParameter[] expected = [
-            new HeaderParameter(KnownHeaders.Accept, ContentType.Xml),
-            new HeaderParameter(KnownHeaders.KeepAlive, "400")
-        ];
+
+        HeaderParameter[] expected = [new(KnownHeaders.Accept, ContentType.Xml), new(KnownHeaders.KeepAlive, "400")];
         requestHeaders.Should().BeEquivalentTo(expected);
     }
 
@@ -151,11 +149,29 @@ public class RequestHeaderTests {
         var requestHeaders = GetHeaders(request);
 
         HeaderParameter[] expected = [
-            new HeaderParameter(KnownHeaders.Accept, ContentType.Xml),
-            new HeaderParameter(KnownHeaders.AcceptLanguage, "en-us,en;q=0.5"),
-            new HeaderParameter(KnownHeaders.KeepAlive, "300")
+            new(KnownHeaders.Accept, ContentType.Xml),
+            new(KnownHeaders.AcceptLanguage, "en-us,en;q=0.5"),
+            new(KnownHeaders.KeepAlive, "300")
         ];
         requestHeaders.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Should_not_allow_null_header_value() {
+        var request = new RestRequest();
+        Assert.Throws<ArgumentNullException>("value", () => request.AddHeader("name", null!));
+    }
+    
+    [Fact]
+    public void Should_not_allow_null_header_name() {
+        var request = new RestRequest();
+        Assert.Throws<ArgumentNullException>("name", () => request.AddHeader(null!, "value"));
+    }
+    
+    [Fact]
+    public void Should_not_allow_empty_header_name() {
+        var request = new RestRequest();
+        Assert.Throws<ArgumentException>("name", () => request.AddHeader("", "value"));
     }
 
     static Parameter[] GetHeaders(RestRequest request) => request.Parameters.Where(x => x.Type == ParameterType.HttpHeader).ToArray();

@@ -17,11 +17,10 @@ namespace RestSharp;
 static class Ensure {
     public static T NotNull<T>(T? value, [InvokerParameterName] string name) => value ?? throw new ArgumentNullException(name);
 
-    public static string NotEmpty(string? value, [InvokerParameterName] string name)
-        => string.IsNullOrWhiteSpace(value) ? throw new ArgumentNullException(name) : value!;
-
     public static string NotEmptyString(object? value, [InvokerParameterName] string name) {
         var s = value as string ?? value?.ToString();
-        return string.IsNullOrWhiteSpace(s) ? throw new ArgumentNullException(name) : s!;
+        if (s == null) throw new ArgumentNullException(name);
+
+        return string.IsNullOrWhiteSpace(s) ? throw new ArgumentException("Parameter cannot be an empty string", name) : s;
     }
 }

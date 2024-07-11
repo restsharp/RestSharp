@@ -29,7 +29,7 @@ public partial record UrlSegmentParameter : NamedParameter {
     public UrlSegmentParameter(string name, string value, bool encode = true)
         : base(
             name,
-            RegexPattern.Replace(Ensure.NotEmpty(value, nameof(value)), "/"),
+            RegexPattern.Replace(Ensure.NotEmptyString(value, nameof(value)), "/"),
             ParameterType.UrlSegment,
             encode
         ) { }

@@ -13,9 +13,6 @@
 // limitations under the License.
 // 
 
-using System.Diagnostics.CodeAnalysis;
-// ReSharper disable UseNullableAnnotationInsteadOfAttribute
-
 namespace RestSharp;
 
 public record HeaderParameter : Parameter {
@@ -24,7 +21,7 @@ public record HeaderParameter : Parameter {
     /// </summary>
     /// <param name="name">Parameter name</param>
     /// <param name="value">Parameter value</param>
-    public HeaderParameter([AllowNull] string name, [AllowNull] string value)
+    public HeaderParameter(string name, string value)
         : base(
             Ensure.NotEmptyString(name, nameof(name)),
             Ensure.NotNull(value, nameof(value)),
