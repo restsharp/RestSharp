@@ -22,14 +22,14 @@ static class HttpRequestMessageExtensions {
     public static void AddHeaders(this HttpRequestMessage message, RequestHeaders headers) {
         var headerParameters = headers.Where(x => !KnownHeaders.IsContentHeader(x.Name));
 
-        headerParameters.ForEach(x => AddHeader(x, message.Headers));
+        headerParameters.GroupBy(x => x.Name).ForEach(x => AddHeader(x, message.Headers));
         return;
 
-        void AddHeader(HeaderParameter parameter, HttpHeaders httpHeaders) {
-            var parameterStringValue = parameter.Value;
+        void AddHeader(IGrouping<string, HeaderParameter> group, HttpHeaders httpHeaders) {
+            var parameterStringValues = group.Select(x => x.Value);
 
-            httpHeaders.Remove(parameter.Name!);
-            httpHeaders.TryAddWithoutValidation(parameter.Name, parameterStringValue);
+            httpHeaders.Remove(group.Key);
+            httpHeaders.TryAddWithoutValidation(group.Key, parameterStringValues);
         }
     }
 }

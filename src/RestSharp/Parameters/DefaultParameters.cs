@@ -33,7 +33,8 @@ public sealed class DefaultParameters(ReadOnlyRestClientOptions options) : Param
             );
 
         if (!options.AllowMultipleDefaultParametersWithSameName &&
-            !MultiParameterTypes.Contains(parameter.Type)        &&
+            parameter.Type != ParameterType.HttpHeader &&
+            !MultiParameterTypes.Contains(parameter.Type) &&
             this.Any(x => x.Name == parameter.Name)) {
             throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
         }

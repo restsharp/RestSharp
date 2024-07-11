@@ -190,7 +190,7 @@ public class RestRequest {
     internal void IncreaseNumberOfAttempts() => Attempts++;
 
     /// <summary>
-    /// How many attempts were made to send this Request
+    /// The number of attempts that were made to send this request
     /// </summary>
     /// <remarks>
     /// This number is incremented each time the RestClient sends the request.
