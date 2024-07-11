@@ -63,7 +63,6 @@ public class RequestHeaderTests {
         request.AddOrUpdateHeader(KnownHeaders.Accept, ContentType.Json);
 
         // Assert
-        var headers = GetHeaders(request);
         GetHeader(request, KnownHeaders.Accept).Should().Be(ContentType.Json);
     }
 
@@ -158,16 +157,18 @@ public class RequestHeaderTests {
 
     [Fact]
     public void Should_not_allow_null_header_value() {
-        var request = new RestRequest();
-        Assert.Throws<ArgumentNullException>("value", () => request.AddHeader("name", null!));
+        string value   = null;
+        var    request = new RestRequest();
+        // ReSharper disable once AssignNullToNotNullAttribute
+        Assert.Throws<ArgumentNullException>("value", () => request.AddHeader("name", value));
     }
-    
+
     [Fact]
     public void Should_not_allow_null_header_name() {
         var request = new RestRequest();
         Assert.Throws<ArgumentNullException>("name", () => request.AddHeader(null!, "value"));
     }
-    
+
     [Fact]
     public void Should_not_allow_empty_header_name() {
         var request = new RestRequest();

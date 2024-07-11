@@ -16,8 +16,8 @@ using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
 using RestSharp.Interceptors;
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace RestSharp;

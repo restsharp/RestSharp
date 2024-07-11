@@ -210,6 +210,7 @@ public class RestClientOptions {
 
     /// <summary>
     /// Set to true to allow multiple default parameters with the same name. Default is false.
+    /// This setting doesn't apply to headers as multiple header values for the same key is allowed.
     /// </summary>
     public bool AllowMultipleDefaultParametersWithSameName { get; set; }
 

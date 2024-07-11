@@ -44,14 +44,16 @@ public abstract record Parameter {
     /// Return a human-readable representation of this parameter
     /// </summary>
     /// <returns>String</returns>
-    public sealed override string ToString() => Value == null ? $"{Name}" : $"{Name}={Value}";
+    public sealed override string ToString() => Value == null ? $"{Name}" : $"{Name}={ValueString}";
+
+    protected virtual string ValueString => Value?.ToString() ?? "null";
 
     public static Parameter CreateParameter(string? name, object? value, ParameterType type, bool encode = true)
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         => type switch {
             ParameterType.GetOrPost   => new GetOrPostParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString(), encode),
             ParameterType.UrlSegment  => new UrlSegmentParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString()!, encode),
-            ParameterType.HttpHeader  => new HeaderParameter(name, value?.ToString()),
+            ParameterType.HttpHeader  => new HeaderParameter(name!, value?.ToString()!),
             ParameterType.QueryString => new QueryParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString(), encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };

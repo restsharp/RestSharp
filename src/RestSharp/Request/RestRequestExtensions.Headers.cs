@@ -22,6 +22,21 @@ public static partial class RestRequestExtensions {
     /// </summary>
     /// <param name="request">Request instance</param>
     /// <param name="name">Header name</param>
+    /// <param name="values">Header values</param>
+    /// <returns></returns>
+    public static RestRequest AddHeader(this RestRequest request, string name, string[] values) {
+        foreach (var value in values) {
+            AddHeader(request, name, value);
+        }
+
+        return request;
+    }
+
+    /// <summary>
+    /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+    /// </summary>
+    /// <param name="request">Request instance</param>
+    /// <param name="name">Header name</param>
     /// <param name="value">Header value</param>
     /// <returns></returns>
     public static RestRequest AddHeader(this RestRequest request, string name, string value) {
@@ -41,7 +56,7 @@ public static partial class RestRequestExtensions {
 
     /// <summary>
     /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
-    /// Existing header with the same name will be replaced.
+    /// The existing header with the same name will be replaced.
     /// </summary>
     /// <param name="request">Request instance</param>
     /// <param name="name">Header name</param>
@@ -54,7 +69,7 @@ public static partial class RestRequestExtensions {
 
     /// <summary>
     /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
-    /// Existing header with the same name will be replaced.
+    /// The existing header with the same name will be replaced.
     /// </summary>
     /// <param name="request">Request instance</param>
     /// <param name="name">Header name</param>

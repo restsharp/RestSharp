@@ -28,9 +28,7 @@ public sealed class DefaultParameters(ReadOnlyRestClientOptions options) : Param
     [MethodImpl(MethodImplOptions.Synchronized)]
     public DefaultParameters AddParameter(Parameter parameter) {
         if (parameter.Type == ParameterType.RequestBody)
-            throw new NotSupportedException(
-                "Cannot set request body using default parameters. Use Request.AddBody() instead."
-            );
+            throw new NotSupportedException("Cannot set request body using default parameters. Use Request.AddBody() instead.");
 
         if (!options.AllowMultipleDefaultParametersWithSameName &&
             parameter.Type != ParameterType.HttpHeader &&
