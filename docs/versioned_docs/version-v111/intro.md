@@ -63,7 +63,7 @@ var timeline = await client.GetAsync<HomeTimeline>(request, cancellationToken);
 Both snippets above use the `GetAsync` extension, which is a wrapper about `ExecuteGetAsync`, which, in turn, is a wrapper around `ExecuteAsync`.
 All `ExecuteAsync` overloads and return the `RestResponse` or `RestResponse<T>`.
 
-The most important difference is that async methods named after HTTP methods (like `GetAsync` or `PostAsync`) return `Task<T>` instead of `Task<RestResponse<T>>`. It means that you won't get an error response if the request fails as those methods throw an exception for unsuccessful HTTP calls. For keeping the API consistent, non-generic functions like `GetAsync` or `PostAsync` also throw an exception if the request fails, although they return the `Task<RestResponse>`.
+The most important difference is that async methods named after HTTP methods (like `GetAsync<T>` or `PostAsync<T>`) return `Task<T>` instead of `Task<RestResponse<T>>`. It means that you won't get an error response if the request fails as those methods throw an exception for unsuccessful HTTP calls. For keeping the API consistent, non-generic functions like `GetAsync` or `PostAsync` also throw an exception if the request fails, although they return the `Task<RestResponse>`.
 
 Read [here](advanced/error-handling.md) about how RestSharp handles exceptions.
 
