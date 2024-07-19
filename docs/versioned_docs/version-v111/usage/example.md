@@ -12,7 +12,7 @@ For example, let's look at a simple Twitter API v2 client, which uses OAuth2 mac
 
 Before implementing an API client, we need to have a model for it. The model includes an abstraction for the client, which has functions for the API calls we are interested to implement. In addition, the client model would include the necessary request and response models. Usually those are simple classes or records without logic, which are often referred to as DTOs (data transfer objects).
 
-This example starts with a single function that retrieves one Twitter user. Lets being by defining the API client interface:
+This example starts with a single function that retrieves one Twitter user. Let's begin by defining the API client interface:
 
 ```csharp
 public interface ITwitterClient {
