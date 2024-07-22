@@ -73,7 +73,7 @@ public class TwitterClientOptions(string ApiKey, string ApiSecret);
 
 public TwitterClient(IOptions<TwitterClientOptions> options) {
     var opt = new RestClientOptions("https://api.twitter.com/2");
-    _client = new RestClient(options);
+    _client = new RestClient(opt);
 }
 ```
 
