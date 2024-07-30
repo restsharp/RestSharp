@@ -13,6 +13,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         _server = WireMockServer.Start();
 
         _capturer = _server.ConfigureBodyCapturer(Method.Post);
+
         var options = new RestClientOptions($"{_server.Url!}{RequestBodyCapturer.Resource}") {
             ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new OutputLogger(output), HttpMessageParts.All)
         };
@@ -180,7 +181,7 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         _capturer.Body.Should().Be(expected);
     }
-    
+
     [Fact]
     public async Task MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
         using var client = new RestClient(_server.Url!);
@@ -205,5 +206,30 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         var actual = capturer.Body!.Replace("\n", string.Empty).Split('\r');
         actual.Should().Contain(expectedBody);
+    }
+
+    [Fact]
+    public async Task PostParameter_contentType_in_multipart_form() {
+        using var client = new RestClient(_server.Url!);
+
+        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
+            AlwaysMultipartFormData = true
+        };
+        var capturer = _server.ConfigureBodyCapturer(Method.Post);
+        
+        const string parameterName = "Arequest";
+        const string parameterValue = "{\"attributeFormat\":\"pdf\"}";
+
+        var parameter = new GetOrPostParameter(parameterName, parameterValue) {
+            ContentType = "application/json"
+        };
+        request.AddParameter(parameter);
+
+        await client.ExecuteAsync(request);
+
+        var actual = capturer.Body!.Replace("\n", string.Empty).Split('\r');
+        actual[1].Should().Be("Content-Type: application/json; charset=utf-8");
+        actual[2].Should().Be($"Content-Disposition: form-data; name={parameterName}");
+        actual[4].Should().Be(parameterValue);
     }
 }
