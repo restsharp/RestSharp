@@ -71,9 +71,28 @@ request.AddParameter("name", "Væ üé", false); // don't encode the value
 If you have files, RestSharp will send a `multipart/form-data` request. Your parameters will be part of this request in the form:
 
 ```
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: form-data; name="parameterName"
 
 ParameterValue
+```
+
+Sometimes, you need to override the default content type for the parameter when making a multipart form call. It's possible to do by setting the `ContentType` property of the parameter object. As an example, the code below will create a POST parameter with JSON value, and set the appropriate content type:
+
+```csharp
+var parameter = new GetOrPostParameter("someJson", "{\"attributeFormat\":\"pdf\"}") {
+    ContentType = "application/json"
+};
+request.AddParameter(parameter);
+```
+
+When the request is set to use multipart content, the parameter will be sent as part of the request with the specified content type:
+
+```
+Content-Type: application/json; charset=utf-8
+Content-Disposition: form-data; name="someJson"
+
+{"attributeFormat":"pdf"}
 ```
 
 You can also add `GetOrPost` parameter as a default parameter to the client. This will add the parameter to every request made by the client.
