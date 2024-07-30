@@ -32,13 +32,29 @@ public abstract record Parameter {
     }
 
     /// <summary>
-    /// MIME content type of the parameter
+    /// Content type of the parameter. Normally applies to the body parameter, or POST parameter in multipart requests.
     /// </summary>
-    public ContentType ContentType { get; protected init; } = ContentType.Undefined;
-    public string?       Name   { get; }
-    public object?       Value  { get; }
-    public ParameterType Type   { get; }
-    public bool          Encode { get; }
+    public ContentType ContentType { get; set; } = ContentType.Undefined;
+
+    /// <summary>
+    /// Parameter name
+    /// </summary>
+    public string? Name { get; }
+
+    /// <summary>
+    /// Parameter value
+    /// </summary>
+    public object? Value { get; }
+
+    /// <summary>
+    /// Parameter type
+    /// </summary>
+    public ParameterType Type { get; }
+
+    /// <summary>
+    /// Indicates if the parameter value should be encoded or not.
+    /// </summary>
+    public bool Encode { get; }
 
     /// <summary>
     /// Return a human-readable representation of this parameter
@@ -48,6 +64,15 @@ public abstract record Parameter {
 
     protected virtual string ValueString => Value?.ToString() ?? "null";
 
+    /// <summary>
+    /// Creates a parameter object of based on the type
+    /// </summary>
+    /// <param name="name">Parameter name</param>
+    /// <param name="value">Parameter value</param>
+    /// <param name="type">Parameter type</param>
+    /// <param name="encode">Indicates if the parameter value should be encoded</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static Parameter CreateParameter(string? name, object? value, ParameterType type, bool encode = true)
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         => type switch {
