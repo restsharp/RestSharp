@@ -56,7 +56,8 @@ Constructor parameters to configure the `HttpMessageHandler` and default `HttpCl
 You need to set the `useClientFactory` parameter to `true` in the `RestClient` constructor to enable the factory.
 
 ```csharp
-var client = new RestClient("https://api.twitter.com/2", true);
+var options = new RestClientOptions("https://api.twitter.com/2");
+var client = new RestClient(options, useClientFactory: true);
 ```
 
 ## Reusing HttpClient
