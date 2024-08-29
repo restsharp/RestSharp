@@ -174,6 +174,12 @@ public class RequestHeaderTests {
         var request = new RestRequest();
         Assert.Throws<ArgumentException>("name", () => request.AddHeader("", "value"));
     }
+    
+    [Fact]
+    public void Should_not_allow_CRLF_in_header_value() {
+        var request = new RestRequest();
+        Assert.Throws<ArgumentException>(() => request.AddHeader("name", "test\r\nUser-Agent: injected header!\r\n\r\nGET /smuggled HTTP/1.1\r\nHost: insert.some.site.here"));
+    }
 
     static Parameter[] GetHeaders(RestRequest request) => request.Parameters.Where(x => x.Type == ParameterType.HttpHeader).ToArray();
 

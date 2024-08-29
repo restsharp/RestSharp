@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Text.RegularExpressions;
-
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
@@ -39,10 +37,8 @@ public static partial class RestRequestExtensions {
     /// <param name="name">Header name</param>
     /// <param name="value">Header value</param>
     /// <returns></returns>
-    public static RestRequest AddHeader(this RestRequest request, string name, string value) {
-        CheckAndThrowsForInvalidHost(name, value);
-        return request.AddParameter(new HeaderParameter(name, value));
-    }
+    public static RestRequest AddHeader(this RestRequest request, string name, string value)
+        => request.AddParameter(new HeaderParameter(name, value));
 
     /// <summary>
     /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
@@ -62,10 +58,8 @@ public static partial class RestRequestExtensions {
     /// <param name="name">Header name</param>
     /// <param name="value">Header value</param>
     /// <returns></returns>
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value) {
-        CheckAndThrowsForInvalidHost(name, value);
-        return request.AddOrUpdateParameter(new HeaderParameter(name, value));
-    }
+    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value)
+        => request.AddOrUpdateParameter(new HeaderParameter(name, value));
 
     /// <summary>
     /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
@@ -121,22 +115,4 @@ public static partial class RestRequestExtensions {
             throw new ArgumentException($"Duplicate header names exist: {string.Join(", ", duplicateKeys)}");
         }
     }
-
-    static readonly Regex PortSplitRegex = PartSplit();
-
-    static void CheckAndThrowsForInvalidHost(string name, string value) {
-        if (name == KnownHeaders.Host && InvalidHost(value))
-            throw new ArgumentException("The specified value is not a valid Host header string.", nameof(value));
-
-        return;
-
-        static bool InvalidHost(string host) => Uri.CheckHostName(PortSplitRegex.Split(host)[0]) == UriHostNameType.Unknown;
-    }
-
-#if NET7_0_OR_GREATER
-    [GeneratedRegex(@":\d+")]
-    private static partial Regex PartSplit();
-#else
-    static Regex PartSplit() => new(@":\d+");
-#endif
 }
