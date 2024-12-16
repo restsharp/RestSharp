@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet: ['net6.0', 'net7.0', 'net8.0']
+        dotnet: ['net8.0', 'net9.0']
 
     steps:
       -  
