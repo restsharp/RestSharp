@@ -12,9 +12,6 @@
     <ItemGroup Condition="$(AddPolyfills) == 'true'">
         <PackageReference Include="Nullable" PrivateAssets="All"/>
     </ItemGroup>
-    <ItemGroup Condition="$(AddSystemTextJson) == 'true'">
-        <PackageReference Include="System.Text.Json"/>
-    </ItemGroup>
     <ItemGroup>
         <Compile Update="RestClient.Extensions.Params.cs">
             <DependentUpon>RestClient.Extensions.cs</DependentUpon>
@@ -63,12 +60,21 @@
         </Compile>
     </ItemGroup>
     <ItemGroup Label="Source generator">
-        <ProjectReference Include="$(RepoRoot)\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="$(RepoRoot)\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
     <ItemGroup Label="Package README">
-        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
     <ItemGroup>
-        <Using Include="System.Net"/>
+        <Using Include="System.Net" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
+      <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+      <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+      <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 </Project>

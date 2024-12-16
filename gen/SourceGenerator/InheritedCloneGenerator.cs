@@ -14,37 +14,44 @@
 
 namespace SourceGenerator;
 
-[Generator]
-public class InheritedCloneGenerator : ISourceGenerator {
+[Generator(LanguageNames.CSharp)]
+public class InheritedCloneGenerator : IIncrementalGenerator {
     const string AttributeName = "GenerateClone";
 
-    public void Initialize(GeneratorInitializationContext context) { }
+    public void Initialize(IncrementalGeneratorInitializationContext context) {
+        var c = context.CompilationProvider.SelectMany((x, _) => GetClones(x));
 
-    public void Execute(GeneratorExecutionContext context) {
-        var compilation = context.Compilation;
+        context.RegisterSourceOutput(
+            c.Collect(),
+            static (ctx, sources) => {
+                foreach (var source in sources) {
+                    ctx.AddSource(source.Item1, source.Item2);
+                }
+            }
+        );
+        return;
 
-        var candidates = compilation.FindAnnotatedClass(AttributeName, false);
+        IEnumerable<(string, SourceText)> GetClones(Compilation compilation) {
+            var candidates = compilation.FindAnnotatedClasses(AttributeName, false);
 
-        foreach (var candidate in candidates) {
-            var semanticModel      = compilation.GetSemanticModel(candidate.SyntaxTree);
-            var genericClassSymbol = semanticModel.GetDeclaredSymbol(candidate);
-            if (genericClassSymbol == null) continue;
+            foreach (var candidate in candidates) {
+                var semanticModel      = compilation.GetSemanticModel(candidate.SyntaxTree);
+                var genericClassSymbol = semanticModel.GetDeclaredSymbol(candidate);
+                if (genericClassSymbol == null) continue;
 
-            // Get the method name from the attribute Name argument
-            var attributeData = genericClassSymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == $"{AttributeName}Attribute");
-            var methodName    = (string)attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "Name").Value.Value;
+                var attributeData = genericClassSymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == $"{AttributeName}Attribute");
+                var methodName    = (string)attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "Name").Value.Value;
+                var baseType      = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "BaseType").Value.Value;
 
-            // Get the generic argument type where properties need to be copied from
-            var attributeSyntax = candidate.AttributeLists
-                .SelectMany(l => l.Attributes)
-                .FirstOrDefault(a => a.Name.ToString().StartsWith(AttributeName));
-            if (attributeSyntax == null) continue; // This should never happen
+                // Get the generic argument type where properties need to be copied from
+                var attributeSyntax = candidate.AttributeLists
+                    .SelectMany(l => l.Attributes)
+                    .FirstOrDefault(a => a.Name.ToString().StartsWith(AttributeName));
+                if (attributeSyntax == null) continue; // This should never happen
 
-            var typeArgumentSyntax = ((GenericNameSyntax)attributeSyntax.Name).TypeArgumentList.Arguments[0];
-            var typeSymbol         = (INamedTypeSymbol)semanticModel.GetSymbolInfo(typeArgumentSyntax).Symbol;
-
-            var code = GenerateMethod(candidate, genericClassSymbol, typeSymbol, methodName);
-            context.AddSource($"{genericClassSymbol.Name}.Clone.g.cs", SourceText.From(code, Encoding.UTF8));
+                var code = GenerateMethod(candidate, genericClassSymbol, (INamedTypeSymbol)baseType, methodName);
+                yield return ($"{genericClassSymbol.Name}.Clone.g.cs", SourceText.From(code, Encoding.UTF8));
+            }
         }
     }
 

@@ -21,7 +21,7 @@ static class Extensions {
             .SelectMany(model => model.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
             .Where(predicate);
 
-    public static IEnumerable<ClassDeclarationSyntax> FindAnnotatedClass(this Compilation compilation, string attributeName, bool strict) {
+    public static IEnumerable<ClassDeclarationSyntax> FindAnnotatedClasses(this Compilation compilation, string attributeName, bool strict) {
         return compilation.FindClasses(
             syntax => syntax.AttributeLists.Any(list => list.Attributes.Any(CheckAttribute))
         );

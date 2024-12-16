@@ -24,7 +24,7 @@ namespace RestSharp;
 /// Container for data sent back from API including deserialized data
 /// </summary>
 /// <typeparam name="T">Type of data to deserialize to</typeparam>
-[GenerateClone<RestResponse>(Name = "FromResponse")]
+[GenerateClone(BaseType = typeof(RestResponse), Name = "FromResponse")]
 [DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
 public partial class RestResponse<T>(RestRequest request) : RestResponse(request) {
     /// <summary>

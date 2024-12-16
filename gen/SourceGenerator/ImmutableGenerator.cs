@@ -15,18 +15,28 @@
 
 namespace SourceGenerator;
 
-[Generator]
-public class ImmutableGenerator : ISourceGenerator {
-    public void Initialize(GeneratorInitializationContext context) { }
+[Generator(LanguageNames.CSharp)]
+public class ImmutableGenerator : IIncrementalGenerator {
+    public void Initialize(IncrementalGeneratorInitializationContext context) {
+        var c = context.CompilationProvider.SelectMany((x, _) => GetImmutableClasses(x));
 
-    public void Execute(GeneratorExecutionContext context) {
-        var compilation = context.Compilation;
+        context.RegisterSourceOutput(
+            c.Collect(),
+            static (ctx, sources) => {
+                foreach (var source in sources) {
+                    ctx.AddSource(source.Item1, source.Item2);
+                }
+            }
+        );
+        return;
 
-        var mutableClasses = compilation.FindAnnotatedClass("GenerateImmutable", strict: true);
+        IEnumerable<(string, SourceText)> GetImmutableClasses(Compilation compilation) {
+            var mutableClasses = compilation.FindAnnotatedClasses("GenerateImmutable", strict: true);
 
-        foreach (var mutableClass in mutableClasses) {
-            var immutableClass = GenerateImmutableClass(mutableClass, compilation);
-            context.AddSource($"ReadOnly{mutableClass.Identifier.Text}.cs", SourceText.From(immutableClass, Encoding.UTF8));
+            foreach (var mutableClass in mutableClasses) {
+                var immutableClass = GenerateImmutableClass(mutableClass, compilation);
+                yield return ($"ReadOnly{mutableClass.Identifier.Text}.cs", SourceText.From(immutableClass, Encoding.UTF8));
+            }
         }
     }
 

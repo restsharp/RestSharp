@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
-        <TargetFrameworks>net48;net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net48;net8.0;net9.0</TargetFrameworks>
         <Nullable>disable</Nullable>
         <NoWarn>xUnit1033</NoWarn>
         <VSTestLogger>trx%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>

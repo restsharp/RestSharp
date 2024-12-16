@@ -19,8 +19,9 @@ namespace RestSharp.Extensions;
 class GenerateImmutableAttribute : Attribute;
 
 [AttributeUsage(AttributeTargets.Class)]
-class GenerateCloneAttribute<T> : Attribute where T : class {
-    public string? Name { get; set; }
+class GenerateCloneAttribute : Attribute {
+    public Type?   BaseType { get; set; }
+    public string? Name     { get; set; }
 };
 
 [AttributeUsage(AttributeTargets.Property)]
