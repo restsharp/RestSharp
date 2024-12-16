@@ -23,7 +23,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet: ['net48', 'net6.0', 'net7.0', 'net8.0']
+        dotnet: ['net48', 'net9.0', 'net9.0']
 
     steps:
       -
