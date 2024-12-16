@@ -30,6 +30,13 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
       -
+        name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+      -
         name: Run tests
         run: dotnet test -f ${{ matrix.dotnet }}
       -
@@ -53,6 +60,13 @@ jobs:
       -  
         name: Checkout
         uses: actions/checkout@v4
+      -
+        name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
       -  
         name: Run tests
         run: dotnet test -f ${{ matrix.dotnet }}
