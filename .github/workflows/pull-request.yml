@@ -38,7 +38,7 @@ jobs:
             9.0.x
       -
         name: Run tests
-        run: dotnet test -f ${{ matrix.dotnet }}
+        run: dotnet test -c Debug -f ${{ matrix.dotnet }}
       -
         name: Upload Test Results
         if: always()
