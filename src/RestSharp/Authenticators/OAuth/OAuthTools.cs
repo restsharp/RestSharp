@@ -83,12 +83,6 @@ static class OAuthTools {
     /// </summary>
     /// <param name="value">The value to escape.</param>
     /// <returns>The escaped value.</returns>
-    /// <remarks>
-    /// The <see cref="Uri.EscapeDataString" /> method is <i>supposed</i> to take on
-    /// RFC 3986 behavior if certain elements are present in a .config file.  Even if this
-    /// actually worked (which in my experiments it <i>doesn't</i>), we can't rely on every
-    /// host actually having this configuration element present.
-    /// </remarks>
     [return: NotNullIfNotNull(nameof(value))]
     public static string? UrlEncodeRelaxed(string? value) {
         if (value == null) return null;

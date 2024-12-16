@@ -182,16 +182,6 @@ public class RestClientOptions {
     public CookieContainer? CookieContainer { get; set; }
 
     /// <summary>
-    /// Maximum request duration in milliseconds. When the request timeout is specified using <seealso cref="RestRequest.Timeout"/>,
-    /// the lowest value between the client timeout and request timeout will be used.
-    /// </summary>
-    [Obsolete("Use Timeout instead.")]
-    public int MaxTimeout {
-        get => (int) (Timeout?.TotalMilliseconds ?? 0);
-        set => Timeout = TimeSpan.FromMilliseconds(value);
-    }
-
-    /// <summary>
     /// Request duration. Used when the request timeout is not specified using <seealso cref="RestRequest.Timeout"/>,
     /// </summary>
     public TimeSpan? Timeout { get; set; }
