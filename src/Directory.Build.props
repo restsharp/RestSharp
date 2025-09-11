@@ -9,6 +9,7 @@
         <RepositoryType>git</RepositoryType>
         <Description>Simple REST and HTTP API Client</Description>
         <Authors>.NET Foundation and Contributors</Authors>
+        <Copyright>Copyright © $(Authors) $([System.DateTime]::Now.Year)</Copyright>
         <UpdateVersionProperties>true</UpdateVersionProperties>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
