@@ -14,6 +14,8 @@
 
 using RestSharp.Extensions;
 
+// ReSharper disable PossiblyMistakenUseOfCancellationToken
+
 namespace RestSharp;
 
 public partial class RestClient {
@@ -145,21 +147,26 @@ public partial class RestClient {
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
-                // ReSharper disable once PossibleMultipleEnumeration
-                cookieContainer.AddCookies(url, cookiesHeader);
-                // ReSharper disable once PossibleMultipleEnumeration
-                Options.CookieContainer?.AddCookies(url, cookiesHeader);
+                try {
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    cookieContainer.AddCookies(url, cookiesHeader);
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    Options.CookieContainer?.AddCookies(url, cookiesHeader);
+                }
+                catch (CookieException) when (!Options.IgnoreInvalidCookies) {
+                    throw;
+                }
             }
         }
         catch (Exception ex) {
-            return new HttpResponse(null, url, null, ex, timeoutCts.Token);
+            return new(null, url, null, ex, timeoutCts.Token);
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
         if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 #pragma warning restore CS0618 // Type or member is obsolete
         await OnAfterHttpRequest(request, responseMessage, cancellationToken).ConfigureAwait(false);
-        return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
+        return new(responseMessage, url, cookieContainer, null, timeoutCts.Token);
     }
 
     static async ValueTask OnBeforeRequest(RestRequest request, CancellationToken cancellationToken) {
