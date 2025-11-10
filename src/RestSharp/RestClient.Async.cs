@@ -153,8 +153,8 @@ public partial class RestClient {
                     // ReSharper disable once PossibleMultipleEnumeration
                     Options.CookieContainer?.AddCookies(url, cookiesHeader);
                 }
-                catch (CookieException) when (!Options.IgnoreInvalidCookies) {
-                    throw;
+                catch (CookieException) when (Options.IgnoreInvalidCookies) {
+                    // Ignore
                 }
             }
         }
