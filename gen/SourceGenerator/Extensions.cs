@@ -15,20 +15,22 @@
 namespace SourceGenerator;
 
 static class Extensions {
-    public static IEnumerable<ClassDeclarationSyntax> FindClasses(this Compilation compilation, Func<ClassDeclarationSyntax, bool> predicate)
-        => compilation.SyntaxTrees
-            .Select(tree => compilation.GetSemanticModel(tree))
-            .SelectMany(model => model.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
-            .Where(predicate);
+    extension(Compilation compilation) {
+        public IEnumerable<ClassDeclarationSyntax> FindClasses(Func<ClassDeclarationSyntax, bool> predicate)
+            => compilation.SyntaxTrees
+                .Select(tree => compilation.GetSemanticModel(tree))
+                .SelectMany(model => model.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
+                .Where(predicate);
 
-    public static IEnumerable<ClassDeclarationSyntax> FindAnnotatedClasses(this Compilation compilation, string attributeName, bool strict) {
-        return compilation.FindClasses(
-            syntax => syntax.AttributeLists.Any(list => list.Attributes.Any(CheckAttribute))
-        );
+        public IEnumerable<ClassDeclarationSyntax> FindAnnotatedClasses(string attributeName, bool strict) {
+            return compilation.FindClasses(
+                syntax => syntax.AttributeLists.Any(list => list.Attributes.Any(CheckAttribute))
+            );
 
-        bool CheckAttribute(AttributeSyntax attr) {
-            var name = attr.Name.ToString();
-            return strict ? name == attributeName : name.StartsWith(attributeName);
+            bool CheckAttribute(AttributeSyntax attr) {
+                var name = attr.Name.ToString();
+                return strict ? name == attributeName : name.StartsWith(attributeName);
+            }
         }
     }
 

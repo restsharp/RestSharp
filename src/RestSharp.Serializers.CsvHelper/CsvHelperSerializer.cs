@@ -18,7 +18,7 @@ public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer
 
     public ContentType ContentType { get; set; } = ContentType.Csv;
 
-    public CsvHelperSerializer() : this(new CsvConfiguration(CultureInfo.InvariantCulture)) { }
+    public CsvHelperSerializer() : this(new(CultureInfo.InvariantCulture)) { }
 
     public T? Deserialize<T>(RestResponse response) {
         try {

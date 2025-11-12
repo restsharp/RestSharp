@@ -15,93 +15,89 @@
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
-    /// <summary>
-    /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
-    /// </summary>
     /// <param name="request">Request instance</param>
-    /// <param name="name">Header name</param>
-    /// <param name="values">Header values</param>
-    /// <returns></returns>
-    public static RestRequest AddHeader(this RestRequest request, string name, string[] values) {
-        foreach (var value in values) {
-            AddHeader(request, name, value);
+    extension(RestRequest request) {
+        /// <summary>
+        /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="values">Header values</param>
+        /// <returns></returns>
+        public RestRequest AddHeader(string name, string[] values) {
+            foreach (var value in values) {
+                AddHeader(request, name, value);
+            }
+
+            return request;
         }
 
-        return request;
-    }
+        /// <summary>
+        /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns></returns>
+        public RestRequest AddHeader(string name, string value)
+            => request.AddParameter(new HeaderParameter(name, value));
 
-    /// <summary>
-    /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Header name</param>
-    /// <param name="value">Header value</param>
-    /// <returns></returns>
-    public static RestRequest AddHeader(this RestRequest request, string name, string value)
-        => request.AddParameter(new HeaderParameter(name, value));
+        /// <summary>
+        /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns></returns>
+        public RestRequest AddHeader<T>(string name, T value) where T : struct
+            => request.AddHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
 
-    /// <summary>
-    /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Header name</param>
-    /// <param name="value">Header value</param>
-    /// <returns></returns>
-    public static RestRequest AddHeader<T>(this RestRequest request, string name, T value) where T : struct
-        => request.AddHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
+        /// <summary>
+        /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
+        /// The existing header with the same name will be replaced.
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns></returns>
+        public RestRequest AddOrUpdateHeader(string name, string value)
+            => request.AddOrUpdateParameter(new HeaderParameter(name, value));
 
-    /// <summary>
-    /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
-    /// The existing header with the same name will be replaced.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Header name</param>
-    /// <param name="value">Header value</param>
-    /// <returns></returns>
-    public static RestRequest AddOrUpdateHeader(this RestRequest request, string name, string value)
-        => request.AddOrUpdateParameter(new HeaderParameter(name, value));
+        /// <summary>
+        /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
+        /// The existing header with the same name will be replaced.
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns></returns>
+        public RestRequest AddOrUpdateHeader<T>(string name, T value) where T : struct
+            => request.AddOrUpdateHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
 
-    /// <summary>
-    /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
-    /// The existing header with the same name will be replaced.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Header name</param>
-    /// <param name="value">Header value</param>
-    /// <returns></returns>
-    public static RestRequest AddOrUpdateHeader<T>(this RestRequest request, string name, T value) where T : struct
-        => request.AddOrUpdateHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
+        /// <summary>
+        /// Adds multiple headers to the request, using the key-value pairs provided.
+        /// </summary>
+        /// <param name="headers">Collection of key-value pairs, where key will be used as header name, and value as header value</param>
+        /// <returns></returns>
+        public RestRequest AddHeaders(ICollection<KeyValuePair<string, string>> headers) {
+            CheckAndThrowsDuplicateKeys(headers);
 
-    /// <summary>
-    /// Adds multiple headers to the request, using the key-value pairs provided.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="headers">Collection of key-value pairs, where key will be used as header name, and value as header value</param>
-    /// <returns></returns>
-    public static RestRequest AddHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
-        CheckAndThrowsDuplicateKeys(headers);
+            foreach (var header in headers) {
+                request.AddHeader(header.Key, header.Value);
+            }
 
-        foreach (var header in headers) {
-            request.AddHeader(header.Key, header.Value);
+            return request;
         }
 
-        return request;
-    }
+        /// <summary>
+        /// Adds or updates multiple headers to the request, using the key-value pairs provided. Existing headers with the same name will be replaced.
+        /// </summary>
+        /// <param name="headers">Collection of key-value pairs, where key will be used as header name, and value as header value</param>
+        /// <returns></returns>
+        public RestRequest AddOrUpdateHeaders(ICollection<KeyValuePair<string, string>> headers) {
+            CheckAndThrowsDuplicateKeys(headers);
 
-    /// <summary>
-    /// Adds or updates multiple headers to the request, using the key-value pairs provided. Existing headers with the same name will be replaced.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="headers">Collection of key-value pairs, where key will be used as header name, and value as header value</param>
-    /// <returns></returns>
-    public static RestRequest AddOrUpdateHeaders(this RestRequest request, ICollection<KeyValuePair<string, string>> headers) {
-        CheckAndThrowsDuplicateKeys(headers);
+            foreach (var pair in headers) {
+                request.AddOrUpdateHeader(pair.Key, pair.Value);
+            }
 
-        foreach (var pair in headers) {
-            request.AddOrUpdateHeader(pair.Key, pair.Value);
+            return request;
         }
-
-        return request;
     }
 
     static void CheckAndThrowsDuplicateKeys(ICollection<KeyValuePair<string, string>> headers) {

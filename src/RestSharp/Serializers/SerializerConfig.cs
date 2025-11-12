@@ -28,7 +28,7 @@ public class SerializerConfig {
     public SerializerConfig UseSerializer(Func<IRestSerializer> serializerFactory) {
         var instance = serializerFactory();
 
-        Serializers[instance.DataFormat] = new SerializerRecord(
+        Serializers[instance.DataFormat] = new(
             instance.DataFormat,
             instance.AcceptedContentTypes,
             instance.SupportsContentType,
@@ -48,35 +48,35 @@ public class SerializerConfig {
 }
 
 public static class SerializerConfigExtensions {
-    /// <summary>
-    /// Sets the <see cref="SerializerConfig"/> to only use JSON
-    /// </summary>
     /// <param name="config">Configuration instance to work with</param>
-    /// <returns>Reference to the client instance</returns>
-    public static SerializerConfig UseJson(this SerializerConfig config) {
-        config.Serializers.Remove(DataFormat.Xml);
-        return config;
-    }
+    extension(SerializerConfig config) {
+        /// <summary>
+        /// Sets the <see cref="SerializerConfig"/> to only use JSON
+        /// </summary>
+        /// <returns>Reference to the client instance</returns>
+        public SerializerConfig UseJson() {
+            config.Serializers.Remove(DataFormat.Xml);
+            return config;
+        }
 
-    /// <summary>
-    /// Sets the <see cref="SerializerConfig"/> to only use XML
-    /// </summary>
-    /// <param name="config">Configuration instance to work with</param>
-    /// <returns>Reference to the client instance</returns>
-    public static SerializerConfig UseXml(this SerializerConfig config) {
-        config.Serializers.Remove(DataFormat.Json);
-        return config;
-    }
+        /// <summary>
+        /// Sets the <see cref="SerializerConfig"/> to only use XML
+        /// </summary>
+        /// <returns>Reference to the client instance</returns>
+        public SerializerConfig UseXml() {
+            config.Serializers.Remove(DataFormat.Json);
+            return config;
+        }
 
-    /// <summary>
-    /// Sets the <see cref="SerializerConfig"/> to only use the passed in custom serializer
-    /// </summary>
-    /// <param name="config">Configuration instance to work with</param>
-    /// <param name="serializerFactory">Function that returns the serializer instance</param>
-    /// <returns>Reference to the client instance</returns>
-    public static SerializerConfig UseOnlySerializer(this SerializerConfig config, Func<IRestSerializer> serializerFactory) {
-        config.Serializers.Clear();
-        config.UseSerializer(serializerFactory);
-        return config;
+        /// <summary>
+        /// Sets the <see cref="SerializerConfig"/> to only use the passed in custom serializer
+        /// </summary>
+        /// <param name="serializerFactory">Function that returns the serializer instance</param>
+        /// <returns>Reference to the client instance</returns>
+        public SerializerConfig UseOnlySerializer(Func<IRestSerializer> serializerFactory) {
+            config.Serializers.Clear();
+            config.UseSerializer(serializerFactory);
+            return config;
+        }
     }
 }

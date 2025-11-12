@@ -23,7 +23,7 @@ public class RequestBodyCapturer {
     }
 
     public bool CaptureUrl(string url) {
-        Url = new Uri(url);
+        Url = new(url);
         return true;
     }
 }

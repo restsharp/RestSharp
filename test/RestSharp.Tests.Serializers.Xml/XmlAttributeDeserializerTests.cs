@@ -22,13 +22,11 @@ public class XmlAttributeDeserializerTests {
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlAttributeDeserializer();
 
-        var output = xml.Deserialize<SimpleTypesListSample>(
-            new RestResponse { Content = doc.ToString() }
-        )!;
+        var output = xml.Deserialize<SimpleTypesListSample>(new() { Content = doc.ToString() })!;
 
         Assert.NotEmpty(output.Numbers);
-        Assert.False(output.Names[0].Length == 0);
-        Assert.False(output.Numbers.Sum() == 0);
+        Assert.NotEqual(0, output.Names[0].Length);
+        Assert.NotEqual(0, output.Numbers.Sum());
     }
 
     [Fact]
@@ -36,7 +34,7 @@ public class XmlAttributeDeserializerTests {
         var xmlPath = PathFor("ListWithAttributes.xml");
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlAttributeDeserializer { RootElement = "Calls" };
-        var output  = xml.Deserialize<TwilioCallList>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<TwilioCallList>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(3, output.NumPages);
         Assert.Equal(2, output.Count);
@@ -47,7 +45,7 @@ public class XmlAttributeDeserializerTests {
         var xmlPath = PathFor("InlineListSample.xml");
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<List<Image>>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<List<Image>>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Count);
     }
@@ -57,7 +55,7 @@ public class XmlAttributeDeserializerTests {
         var xmlPath = PathFor("InlineListSample.xml");
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<List<image>>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<List<image>>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Count);
     }
@@ -67,7 +65,7 @@ public class XmlAttributeDeserializerTests {
         var xmlPath = PathFor("directlists.xml");
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<List<Database>>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<List<Database>>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(2, output.Count);
     }
@@ -77,7 +75,7 @@ public class XmlAttributeDeserializerTests {
         var xmlPath = PathFor("InlineListSample.xml");
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Images.Count);
     }
@@ -87,7 +85,7 @@ public class XmlAttributeDeserializerTests {
         var xmlpath = PathFor("InlineListSample.xml");
         var doc     = XDocument.Load(xmlpath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.images.Count);
     }
@@ -97,7 +95,7 @@ public class XmlAttributeDeserializerTests {
         var xmlpath = PathFor("InlineListSample.xml");
         var doc     = XDocument.Load(xmlpath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Count);
     }
@@ -107,7 +105,7 @@ public class XmlAttributeDeserializerTests {
         var xmlpath = PathFor("NestedListSample.xml");
         var doc     = XDocument.Load(xmlpath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Images.Count);
     }
@@ -117,7 +115,7 @@ public class XmlAttributeDeserializerTests {
         var xmlpath = PathFor("NestedListSample.xml");
         var doc     = XDocument.Load(xmlpath);
         var xml     = new XmlAttributeDeserializer();
-        var output  = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output  = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.images.Count);
     }
@@ -126,7 +124,7 @@ public class XmlAttributeDeserializerTests {
     public void Can_Deserialize_Nested_List_Without_Elements_To_Empty_List() {
         var doc    = CreateXmlWithEmptyNestedList();
         var xml    = new XmlAttributeDeserializer();
-        var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<EmptyListSample>(new() { Content = doc })!;
 
         Assert.NotNull(output.Images);
         Assert.Empty(output.Images);
@@ -136,7 +134,7 @@ public class XmlAttributeDeserializerTests {
     public void Can_Deserialize_Inline_List_Without_Elements_To_Empty_List() {
         var doc    = CreateXmlWithEmptyInlineList();
         var xml    = new XmlAttributeDeserializer();
-        var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<EmptyListSample>(new() { Content = doc })!;
 
         Assert.NotNull(output.Images);
         Assert.Empty(output.Images);
@@ -146,7 +144,7 @@ public class XmlAttributeDeserializerTests {
     public void Can_Deserialize_Empty_Elements_to_Nullable_Values() {
         var doc    = CreateXmlWithNullValues();
         var xml    = new XmlAttributeDeserializer();
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.Null(output.Id);
         Assert.Null(output.StartDate);
@@ -159,7 +157,7 @@ public class XmlAttributeDeserializerTests {
         var doc     = CreateXmlWithoutEmptyValues(culture);
 
         var xml    = new XmlAttributeDeserializer { Culture = culture };
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.NotNull(output.Id);
         Assert.NotNull(output.StartDate);
@@ -193,14 +191,14 @@ public class XmlAttributeDeserializerTests {
         var d        = new XmlAttributeDeserializer { Culture = culture };
         var payload  = d.Deserialize<TimeSpanTestStructure>(response)!;
 
-        Assert.Equal(new TimeSpan(468006), payload.Tick);
-        Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
-        Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
-        Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
-        Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+        Assert.Equal(new(468006), payload.Tick);
+        Assert.Equal(new(0, 0, 0, 0, 125), payload.Millisecond);
+        Assert.Equal(new(0, 0, 8), payload.Second);
+        Assert.Equal(new(0, 55, 2), payload.Minute);
+        Assert.Equal(new(21, 30, 7), payload.Hour);
         Assert.Null(payload.NullableWithoutValue);
         Assert.NotNull(payload.NullableWithValue);
-        Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+        Assert.Equal(new(21, 30, 7), payload.NullableWithValue.Value);
     }
 
     [Fact]
@@ -245,15 +243,15 @@ public class XmlAttributeDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
+        Assert.Equal(new(GuidString), p.UniqueId);
         Assert.Equal(Guid.Empty, p.EmptyGuid);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.Equal(Order.Third, p.Order);
         Assert.Equal(Disposition.SoSo, p.Disposition);
         Assert.NotNull(p.Friends);
@@ -271,14 +269,14 @@ public class XmlAttributeDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new (2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new (GuidString), p.UniqueId);
+        Assert.Equal(new ("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new ("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.BestFriend);
         Assert.Equal("The Fonz", p.BestFriend.Name);
         Assert.Equal(1952, p.BestFriend.Since);
@@ -312,14 +310,14 @@ public class XmlAttributeDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new (2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new (GuidString), p.UniqueId);
+        Assert.Equal(new ("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new ("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -338,14 +336,14 @@ public class XmlAttributeDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new (2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new (GuidString), p.UniqueId);
+        Assert.Equal(new ("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new ("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -364,14 +362,14 @@ public class XmlAttributeDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new (2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new (GuidString), p.UniqueId);
+        Assert.Equal(new ("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new ("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -390,14 +388,14 @@ public class XmlAttributeDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new (2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new (GuidString), p.UniqueId);
+        Assert.Equal(new ("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new ("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -496,7 +494,7 @@ public class XmlAttributeDeserializerTests {
     public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values() {
         var doc    = CreateXmlWithAttributesAndNullValues();
         var xml    = new XmlAttributeDeserializer();
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.Null(output.Id);
         Assert.Null(output.StartDate);

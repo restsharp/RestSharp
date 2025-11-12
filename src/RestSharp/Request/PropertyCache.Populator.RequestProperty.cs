@@ -58,7 +58,7 @@ static partial class PropertyCache<T> where T : class {
 
                 var propertyName = requestPropertyAttribute.Name ?? property.Name;
 
-                return new RequestProperty(
+                return new(
                     propertyName,
                     requestPropertyAttribute.Format,
                     requestPropertyAttribute.ArrayQueryType,

@@ -26,9 +26,6 @@ namespace RestSharp;
 /// Container for data used to make requests
 /// </summary>
 public class RestRequest {
-    Func<HttpResponseMessage, RestRequest, RestResponse>? _advancedResponseHandler;
-    Func<Stream, Stream?>?                                _responseWriter;
-
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -212,13 +209,13 @@ public class RestRequest {
     /// Set this to write response to Stream rather than reading into memory.
     /// </summary>
     public Func<Stream, Stream?>? ResponseWriter {
-        get => _responseWriter;
+        get;
         set {
             if (AdvancedResponseWriter != null) {
                 throw new ArgumentException("AdvancedResponseWriter is not null. Only one response writer can be used.");
             }
 
-            _responseWriter = value;
+            field = value;
         }
     }
 
@@ -226,13 +223,13 @@ public class RestRequest {
     /// Set this to handle the response stream yourself, based on the response details
     /// </summary>
     public Func<HttpResponseMessage, RestRequest, RestResponse>? AdvancedResponseWriter {
-        get => _advancedResponseHandler;
+        get;
         set {
             if (ResponseWriter != null) {
                 throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
             }
 
-            _advancedResponseHandler = value;
+            field = value;
         }
     }
 

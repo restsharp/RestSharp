@@ -18,10 +18,12 @@ namespace RestSharp;
 using System.Diagnostics.CodeAnalysis;
 
 static class BodyExtensions {
-    public static bool TryGetBodyParameter(this RestRequest request, [NotNullWhen(true)] out BodyParameter? bodyParameter) {
-        bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody) as BodyParameter;
-        return bodyParameter != null;
-    }
+    extension(RestRequest request) {
+        public bool TryGetBodyParameter([NotNullWhen(true)] out BodyParameter? bodyParameter) {
+            bodyParameter = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody) as BodyParameter;
+            return bodyParameter != null;
+        }
 
-    public static bool HasFiles(this RestRequest request) => request.Files.Count > 0;
+        public bool HasFiles() => request.Files.Count > 0;
+    }
 }

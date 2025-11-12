@@ -24,9 +24,7 @@ using RestSharp.Extensions;
 namespace RestSharp.Serializers.Xml;
 
 public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateFormat {
-    public XmlDeserializer() => Culture = CultureInfo.InvariantCulture;
-
-    public CultureInfo Culture { get; set; }
+    public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
     public string? RootElement { get; set; }
 
@@ -75,7 +73,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
                         a => a.IsNamespaceDeclaration
                             ? null
                             : a.Name.Namespace != XNamespace.None
-                                ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value)
+                                ? new(XNamespace.None.GetName(a.Name.LocalName), a.Value)
                                 : a
                     )
             );
@@ -227,7 +225,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             else if (asType == typeof(Guid)) {
                 var raw = value.ToString();
 
-                value = string.IsNullOrEmpty(raw) ? Guid.Empty : new Guid(value.ToString()!);
+                value = string.IsNullOrEmpty(raw) ? Guid.Empty : new(value.ToString()!);
 
                 prop.SetValue(x, value, null);
             }

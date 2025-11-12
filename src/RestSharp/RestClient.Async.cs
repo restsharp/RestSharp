@@ -125,7 +125,7 @@ public partial class RestClient {
 
         HttpResponseMessage? responseMessage;
         // Make sure we have a cookie container if not provided in the request
-        var cookieContainer = request.CookieContainer ??= new CookieContainer();
+        var cookieContainer = request.CookieContainer ??= new();
 
         var headers = new RequestHeaders()
             .AddHeaders(request.Parameters)
@@ -152,14 +152,14 @@ public partial class RestClient {
             }
         }
         catch (Exception ex) {
-            return new HttpResponse(null, url, null, ex, timeoutCts.Token);
+            return new(null, url, null, ex, timeoutCts.Token);
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
         if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
 #pragma warning restore CS0618 // Type or member is obsolete
         await OnAfterHttpRequest(request, responseMessage, cancellationToken).ConfigureAwait(false);
-        return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
+        return new(responseMessage, url, cookieContainer, null, timeoutCts.Token);
     }
 
     static async ValueTask OnBeforeRequest(RestRequest request, CancellationToken cancellationToken) {
@@ -215,11 +215,11 @@ public partial class RestClient {
 #if NET
             Method.Patch => HttpMethod.Patch,
 #else
-            Method.Patch => new HttpMethod("PATCH"),
+            Method.Patch => new("PATCH"),
 #endif
-            Method.Merge  => new HttpMethod("MERGE"),
-            Method.Copy   => new HttpMethod("COPY"),
-            Method.Search => new HttpMethod("SEARCH"),
+            Method.Merge  => new("MERGE"),
+            Method.Copy   => new("COPY"),
+            Method.Search => new("SEARCH"),
             _             => throw new ArgumentOutOfRangeException(nameof(method))
         };
 }

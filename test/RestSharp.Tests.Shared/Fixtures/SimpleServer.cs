@@ -16,7 +16,7 @@ public sealed class SimpleServer : IDisposable {
         AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
         Url     = $"http://localhost:{port}/";
-        _server = new WebServer(Url, handler, authenticationSchemes);
+        _server = new(Url, handler, authenticationSchemes);
         Task.Run(() => _server.Run(_cts.Token));
     }
 
@@ -31,7 +31,7 @@ public sealed class SimpleServer : IDisposable {
         AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
         var port = Random.Next(1000, 9999);
-        return new SimpleServer(port, handler, authenticationSchemes);
+        return new(port, handler, authenticationSchemes);
     }
 
     public void SetHandler(Action<HttpListenerContext> handler) => _server.ChangeHandler(handler);

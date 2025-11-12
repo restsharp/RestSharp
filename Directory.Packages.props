@@ -2,16 +2,23 @@
     <PropertyGroup>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
-    <PropertyGroup Label="Package versions for .NET 8" Condition="$(TargetFramework) == 'net8.0'">
-        <MicrosoftTestHostVer>8.0.3</MicrosoftTestHostVer>
+    <PropertyGroup Label="Package versions for .NET 10" Condition="'$(TargetFramework)' == 'net10.0'">
+        <MicrosoftTestHostVer>10.0.0-rc.2.25502.107</MicrosoftTestHostVer>
+        <SystemTextJsonVer>10.0.0-rc.2.25502.107</SystemTextJsonVer>
     </PropertyGroup>
-    <PropertyGroup Label="Package versions for .NET 9" Condition="$(TargetFramework) == 'net9.0'">
-        <MicrosoftTestHostVer>9.0.0</MicrosoftTestHostVer>
+    <PropertyGroup Label="Package versions for .NET 9" Condition="'$(TargetFramework)' == 'net9.0'">
+        <MicrosoftTestHostVer>9.0.10</MicrosoftTestHostVer>
+    </PropertyGroup>
+    <PropertyGroup Label="Package versions for .NET 8" Condition="'$(TargetFramework)' == 'net8.0'">
+        <MicrosoftTestHostVer>8.0.21</MicrosoftTestHostVer>
+    </PropertyGroup>
+    <PropertyGroup Label="Package versions for pre-.NET 10" Condition="'$(TargetFramework)' != 'net10.0'">
+        <SystemTextJsonVer>9.0.10</SystemTextJsonVer>
     </PropertyGroup>
     <ItemGroup Label="Runtime dependencies">
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageVersion Include="CsvHelper" Version="33.0.1"/>
-        <PackageVersion Include="System.Text.Json" Version="9.0.0"/>
+        <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVer)"/>
     </ItemGroup>
     <ItemGroup Label="Compile dependencies">
         <PackageVersion Include="BenchmarkDotNet" Version="0.14.0"/>
