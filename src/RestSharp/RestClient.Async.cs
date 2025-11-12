@@ -147,15 +147,10 @@ public partial class RestClient {
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
-                try {
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    cookieContainer.AddCookies(url, cookiesHeader);
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    Options.CookieContainer?.AddCookies(url, cookiesHeader);
-                }
-                catch (CookieException) when (Options.IgnoreInvalidCookies) {
-                    // Ignore
-                }
+                // ReSharper disable once PossibleMultipleEnumeration
+                cookieContainer.AddCookies(url, cookiesHeader);
+                // ReSharper disable once PossibleMultipleEnumeration
+                Options.CookieContainer?.AddCookies(url, cookiesHeader);
             }
         }
         catch (Exception ex) {

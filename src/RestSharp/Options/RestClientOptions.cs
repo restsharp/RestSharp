@@ -223,9 +223,4 @@ public class RestClientOptions {
     /// Custom function to encode a string for use in a URL query.
     /// </summary>
     public Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
-    
-    /// <summary>
-    /// Set to <code>true</code> to ignore invalid cookies returned by the remote server. Default is <code>false</code>.
-    /// </summary>
-    public bool IgnoreInvalidCookies { get; set; }
 }

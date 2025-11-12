@@ -32,7 +32,12 @@ public sealed class DownloadFileTests : IDisposable {
             AdvancedResponseWriter = (response, request) => {
                 var buf = new byte[16];
                 // ReSharper disable once MustUseReturnValue
-                response.Content.ReadAsStreamAsync().GetAwaiter().GetResult().Read(buf, 0, buf.Length);
+                using var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+#if NET8_0_OR_GREATER
+                stream.ReadExactly(buf);
+#else                
+                stream.Read(buf, 0, buf.Length);
+#endif
                 tag = Encoding.ASCII.GetString(buf, 6, 4);
                 return new RestResponse(request);
             }

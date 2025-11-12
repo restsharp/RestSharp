@@ -3,9 +3,9 @@
     <PropertyGroup>
         <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
-        <TargetFrameworks>net48;net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net48;net8.0;net9.0;net10.0</TargetFrameworks>
         <Nullable>disable</Nullable>
-        <NoWarn>xUnit1033</NoWarn>
+        <NoWarn>xUnit1033;CS8002</NoWarn>
         <VSTestLogger>trx%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
         <VSTestResultsDirectory>$(RepoRoot)/test-results/$(TargetFramework)</VSTestResultsDirectory>
     </PropertyGroup>
