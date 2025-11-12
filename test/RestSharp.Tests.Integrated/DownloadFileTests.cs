@@ -7,15 +7,13 @@ public sealed class DownloadFileTests : IDisposable {
     const string LocalPath = "Assets/Koala.jpg";
 
     public DownloadFileTests() {
-        // _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
-
         var pathToFile = Path.Combine(_path, Path.Combine(LocalPath.Split('/')));
 
         _server
             .Given(Request.Create().WithPath($"/{LocalPath}"))
             .RespondWith(Response.Create().WithBodyFromFile(pathToFile));
         var options = new RestClientOptions($"{_server.Url}/{LocalPath}") { ThrowOnAnyError = true };
-        _client = new RestClient(options);
+        _client = new(options);
     }
 
     public void Dispose() => _server.Dispose();

@@ -1,53 +1,53 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <PropertyGroup Label="Package versions for .NET 10" Condition="'$(TargetFramework)' == 'net10.0'">
-        <MicrosoftTestHostVer>10.0.0-rc.2.25502.107</MicrosoftTestHostVer>
-        <SystemTextJsonVer>10.0.0-rc.2.25502.107</SystemTextJsonVer>
-    </PropertyGroup>
-    <PropertyGroup Label="Package versions for .NET 9" Condition="'$(TargetFramework)' == 'net9.0'">
-        <MicrosoftTestHostVer>9.0.10</MicrosoftTestHostVer>
-    </PropertyGroup>
-    <PropertyGroup Label="Package versions for .NET 8" Condition="'$(TargetFramework)' == 'net8.0'">
-        <MicrosoftTestHostVer>8.0.21</MicrosoftTestHostVer>
-    </PropertyGroup>
-    <PropertyGroup Label="Package versions for pre-.NET 10" Condition="'$(TargetFramework)' != 'net10.0'">
-        <SystemTextJsonVer>9.0.10</SystemTextJsonVer>
-    </PropertyGroup>
-    <ItemGroup Label="Runtime dependencies">
-        <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageVersion Include="CsvHelper" Version="33.0.1"/>
-        <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVer)"/>
-    </ItemGroup>
-    <ItemGroup Label="Compile dependencies">
-        <PackageVersion Include="BenchmarkDotNet" Version="0.14.0"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0"/>
-        <PackageVersion Include="MinVer" Version="6.0.0"/>
-        <PackageVersion Include="Nullable" Version="1.3.1"/>
-        <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.3"/>
-        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0"/>
-        <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0"/>
-    </ItemGroup>
-    <ItemGroup Label="Testing dependencies">
-        <PackageVersion Include="HttpMultipartParser" Version="8.4.0"/>
-        <PackageVersion Include="PolySharp" Version="1.15.0"/>
-        <PackageVersion Include="AutoFixture" Version="4.18.1"/>
-        <PackageVersion Include="coverlet.collector" Version="6.0.2"/>
-        <PackageVersion Include="FluentAssertions" Version="7.0.0"/>
-        <PackageVersion Include="HttpTracer" Version="2.1.1"/>
-        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)"/>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        <PackageVersion Include="Moq" Version="4.20.72"/>
-        <PackageVersion Include="Polly" Version="8.5.0"/>
-        <PackageVersion Include="rest-mock-core" Version="0.7.12"/>
-        <PackageVersion Include="RichardSzalay.MockHttp" Version="7.0.0"/>
-        <PackageVersion Include="System.Net.Http.Json" Version="9.0.0"/>
-        <PackageVersion Include="Xunit.Extensions.Logging" Version="1.1.0"/>
-        <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="All"/>
-        <PackageVersion Include="xunit" Version="2.9.2"/>
-        <PackageVersion Include="WireMock.Net" Version="1.6.10"/>
-        <PackageVersion Include="WireMock.Net.FluentAssertions" Version="1.5.51"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <PropertyGroup Label="Package versions for .NET 10" Condition="'$(TargetFramework)' == 'net10.0'">
+    <MicrosoftTestHostVer>10.0.0-rc.2.25502.107</MicrosoftTestHostVer>
+    <SystemTextJsonVer>10.0.0-rc.2.25502.107</SystemTextJsonVer>
+  </PropertyGroup>
+  <PropertyGroup Label="Package versions for .NET 9" Condition="'$(TargetFramework)' == 'net9.0'">
+    <MicrosoftTestHostVer>9.0.10</MicrosoftTestHostVer>
+  </PropertyGroup>
+  <PropertyGroup Label="Package versions for .NET 8" Condition="'$(TargetFramework)' == 'net8.0'">
+    <MicrosoftTestHostVer>8.0.21</MicrosoftTestHostVer>
+  </PropertyGroup>
+  <PropertyGroup Label="Package versions for pre-.NET 10" Condition="'$(TargetFramework)' != 'net10.0'">
+    <SystemTextJsonVer>9.0.10</SystemTextJsonVer>
+  </PropertyGroup>
+  <ItemGroup Label="Runtime dependencies">
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="CsvHelper" Version="33.0.1" />
+    <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVer)" />
+  </ItemGroup>
+  <ItemGroup Label="Compile dependencies">
+    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
+    <PackageVersion Include="MinVer" Version="6.0.0" />
+    <PackageVersion Include="Nullable" Version="1.3.1" />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.3" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
+  </ItemGroup>
+  <ItemGroup Label="Testing dependencies">
+    <PackageVersion Include="HttpMultipartParser" Version="8.4.0" />
+    <PackageVersion Include="PolySharp" Version="1.15.0" />
+    <PackageVersion Include="AutoFixture" Version="4.18.1" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
+    <PackageVersion Include="HttpTracer" Version="2.1.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="Polly" Version="8.5.0" />
+    <PackageVersion Include="rest-mock-core" Version="0.7.12" />
+    <PackageVersion Include="RichardSzalay.MockHttp" Version="7.0.0" />
+    <PackageVersion Include="System.Net.Http.Json" Version="9.0.0" />
+    <PackageVersion Include="Xunit.Extensions.Logging" Version="1.1.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="All" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="WireMock.Net" Version="1.15.0" />
+    <PackageVersion Include="WireMock.Net.FluentAssertions" Version="1.5.51" />
+  </ItemGroup>
 </Project>

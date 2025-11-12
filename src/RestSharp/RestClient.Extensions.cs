@@ -171,11 +171,10 @@ public static partial class RestClientExtensions {
 
             using var reader = new StreamReader(stream);
 
-            while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested) {
 #if NET7_0_OR_GREATER
-            var line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
+            while (await reader.ReadLineAsync(cancellationToken) is { } line && !cancellationToken.IsCancellationRequested) {
 #else
-                var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            while (await reader.ReadLineAsync() is { } line && !cancellationToken.IsCancellationRequested) {
 #endif
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
