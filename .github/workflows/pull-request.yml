@@ -23,7 +23,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet: ['net48', 'net8.0', 'net9.0']
+        dotnet: ['net48', 'net8.0', 'net9.0', 'net10.0']
 
     steps:
       -
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet: ['net8.0', 'net9.0']
+        dotnet: ['net8.0', 'net9.0', 'net10.0']
 
     steps:
       -  
