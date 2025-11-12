@@ -15,27 +15,28 @@
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
-    /// <summary>
-    /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
-    /// The parameter will be added to the request URL as a query string using name=value format.
-    /// </summary>
     /// <param name="request">Request instance</param>
-    /// <param name="name">Parameter name</param>
-    /// <param name="value">Parameter value</param>
-    /// <param name="encode">Encode the value or not, default true</param>
-    /// <returns></returns>
-    public static RestRequest AddQueryParameter(this RestRequest request, string name, string? value, bool encode = true)
-        => request.AddParameter(new QueryParameter(name, value, encode));
+    extension(RestRequest request) {
+        /// <summary>
+        /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
+        /// The parameter will be added to the request URL as a query string using name=value format.
+        /// </summary>
+        /// <param name="name">Parameter name</param>
+        /// <param name="value">Parameter value</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns></returns>
+        public RestRequest AddQueryParameter(string name, string? value, bool encode = true)
+            => request.AddParameter(new QueryParameter(name, value, encode));
 
-    /// <summary>
-    /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
-    /// The parameter will be added to the request URL as a query string using name=value format.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Parameter name</param>
-    /// <param name="value">Parameter value</param>
-    /// <param name="encode">Encode the value or not, default true</param>
-    /// <returns></returns>
-    public static RestRequest AddQueryParameter<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
-        => request.AddQueryParameter(name, value.ToString(), encode);
+        /// <summary>
+        /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
+        /// The parameter will be added to the request URL as a query string using name=value format.
+        /// </summary>
+        /// <param name="name">Parameter name</param>
+        /// <param name="value">Parameter value</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns></returns>
+        public RestRequest AddQueryParameter<T>(string name, T value, bool encode = true) where T : struct
+            => request.AddQueryParameter(name, value.ToString(), encode);
+    }
 }

@@ -49,24 +49,12 @@ readonly struct Index : IEquatable<Index> {
     /// <summary>Create an Index from the start at the position indicated by the value.</summary>
     /// <param name="value">The index value from the start.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Index FromStart(int value) {
-        if (value < 0) {
-            throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative");
-        }
-
-        return new Index(value);
-    }
+    public static Index FromStart(int value) => value < 0 ? throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative") : new Index(value);
 
     /// <summary>Create an Index from the end at the position indicated by the value.</summary>
     /// <param name="value">The index value from the end.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Index FromEnd(int value) {
-        if (value < 0) {
-            throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative");
-        }
-
-        return new Index(~value);
-    }
+    public static Index FromEnd(int value) => value < 0 ? throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative") : new Index(~value);
 
     /// <summary>Returns the index value.</summary>
     public int Value {

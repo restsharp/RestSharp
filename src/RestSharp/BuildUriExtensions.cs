@@ -16,71 +16,71 @@
 namespace RestSharp;
 
 public static class BuildUriExtensions {
-    /// <summary>
-    /// Builds the URI for the request
-    /// </summary>
     /// <param name="client">Client instance</param>
-    /// <param name="request">Request instance</param>
-    /// <returns></returns>
-    public static Uri BuildUri(this IRestClient client, RestRequest request) {
-        DoBuildUriValidations(client, request);
+    extension(IRestClient client) {
+        /// <summary>
+        /// Builds the URI for the request
+        /// </summary>
+        /// <param name="request">Request instance</param>
+        /// <returns></returns>
+        public Uri BuildUri(RestRequest request) {
+            DoBuildUriValidations(client, request);
 
-        var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
-            request.Resource,
-            client.Options.Encode,
-            request.Parameters,
-            client.DefaultParameters
-        );
-        var mergedUri = uri.MergeBaseUrlAndResource(resource);
-        var query     = client.GetRequestQuery(request);
-        return mergedUri.AddQueryString(query);
-    }
-
-    /// <summary>
-    /// Builds the URI for the request without query parameters.
-    /// </summary>
-    /// <param name="client">Client instance</param>
-    /// <param name="request">Request instance</param>
-    /// <returns></returns>
-    public static Uri BuildUriWithoutQueryParameters(this IRestClient client, RestRequest request) {
-        DoBuildUriValidations(client, request);
-
-        var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
-            request.Resource,
-            client.Options.Encode,
-            request.Parameters,
-            client.DefaultParameters
-        );
-        return uri.MergeBaseUrlAndResource(resource);
-    }
-
-    /// <summary>
-    /// Gets the query string for the request.
-    /// </summary>
-    /// <param name="client">Client instance</param>
-    /// <param name="request">Request instance</param>
-    /// <returns></returns>
-    [PublicAPI]
-    public static string? GetRequestQuery(this IRestClient client, RestRequest request) {
-        var parametersCollections = new ParametersCollection[] { request.Parameters, client.DefaultParameters };
-
-        var parameters = parametersCollections.SelectMany(x => x.GetQueryParameters(request.Method)).ToList();
-
-        return parameters.Count == 0 ? null : string.Join("&", parameters.Select(EncodeParameter).ToArray());
-
-        string GetString(string name, string? value, Func<string, string>? encode) {
-            var val = encode != null && value != null ? encode(value) : value;
-            return val == null ? name : $"{name}={val}";
+            var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
+                request.Resource,
+                client.Options.Encode,
+                request.Parameters,
+                client.DefaultParameters
+            );
+            var mergedUri = uri.MergeBaseUrlAndResource(resource);
+            var query     = client.GetRequestQuery(request);
+            return mergedUri.AddQueryString(query);
         }
 
-        string EncodeParameter(Parameter parameter)
-            => !parameter.Encode
-                ? GetString(parameter.Name!, parameter.Value?.ToString(), null)
-                : GetString(
-                    client.Options.EncodeQuery(parameter.Name!, client.Options.Encoding),
-                    parameter.Value?.ToString(),
-                    x => client.Options.EncodeQuery(x, client.Options.Encoding)
-                );
+        /// <summary>
+        /// Builds the URI for the request without query parameters.
+        /// </summary>
+        /// <param name="request">Request instance</param>
+        /// <returns></returns>
+        public Uri BuildUriWithoutQueryParameters(RestRequest request) {
+            DoBuildUriValidations(client, request);
+
+            var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
+                request.Resource,
+                client.Options.Encode,
+                request.Parameters,
+                client.DefaultParameters
+            );
+            return uri.MergeBaseUrlAndResource(resource);
+        }
+
+        /// <summary>
+        /// Gets the query string for the request.
+        /// </summary>
+        /// <param name="request">Request instance</param>
+        /// <returns></returns>
+        [PublicAPI]
+        public string? GetRequestQuery(RestRequest request) {
+            var parametersCollections = new ParametersCollection[] { request.Parameters, client.DefaultParameters };
+
+            var parameters = parametersCollections.SelectMany(x => x.GetQueryParameters(request.Method)).ToList();
+
+            return parameters.Count == 0 ? null : string.Join("&", parameters.Select(EncodeParameter).ToArray());
+
+            string GetString(string name, string? value, Func<string, string>? encode) {
+                var val = encode != null && value != null ? encode(value) : value;
+                return val == null ? name : $"{name}={val}";
+            }
+
+            string EncodeParameter(Parameter parameter)
+                => !parameter.Encode
+                    ? GetString(parameter.Name!, parameter.Value?.ToString(), null)
+                    : GetString(
+                        client.Options.EncodeQuery(parameter.Name!, client.Options.Encoding),
+                        parameter.Value?.ToString(),
+                        x => client.Options.EncodeQuery(x, client.Options.Encoding)
+                    );
+        }
     }
 
     static void DoBuildUriValidations(IRestClient client, RestRequest request) {

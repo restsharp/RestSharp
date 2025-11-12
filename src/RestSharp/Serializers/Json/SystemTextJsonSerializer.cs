@@ -22,7 +22,7 @@ public class SystemTextJsonSerializer : IRestSerializer, ISerializer, IDeseriali
     /// <summary>
     /// Create the new serializer that uses System.Text.Json.JsonSerializer with default settings
     /// </summary>
-    public SystemTextJsonSerializer() => _options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+    public SystemTextJsonSerializer() => _options = new(JsonSerializerDefaults.Web);
 
     /// <summary>
     /// Create the new serializer that uses System.Text.Json.JsonSerializer with custom settings

@@ -44,7 +44,7 @@ static class OAuthTools {
         var bytes = new byte[4];
 
         Rng.GetBytes(bytes);
-        Random = new Random(BitConverter.ToInt32(bytes, 0));
+        Random = new(BitConverter.ToInt32(bytes, 0));
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ static class OAuthTools {
             for (var i = 0; i < nonce.Length; i++) nonce[i] = chars[Random.Next(0, chars.Length)];
         }
 
-        return new string(nonce);
+        return new(nonce);
     }
 
     /// <summary>

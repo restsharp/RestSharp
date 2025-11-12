@@ -41,7 +41,7 @@ public class ContentType : IEquatable<ContentType> {
 
     public override string ToString() => Value;
 
-    public static implicit operator ContentType(string? contentType) => contentType == null ? Undefined : new ContentType(contentType);
+    public static implicit operator ContentType(string? contentType) => contentType == null ? Undefined : new(contentType);
 
     public static implicit operator string(ContentType contentType) => contentType.Value;
 

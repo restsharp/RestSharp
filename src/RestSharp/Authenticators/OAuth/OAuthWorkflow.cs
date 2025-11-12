@@ -62,7 +62,7 @@ sealed class OAuthWorkflow {
 
         var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
-        return new OAuthParameters {
+        return new() {
             Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret),
             Parameters = authParameters
         };
@@ -91,7 +91,7 @@ sealed class OAuthWorkflow {
 
         var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
-        return new OAuthParameters {
+        return new() {
             Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret, TokenSecret),
             Parameters = authParameters
         };
@@ -120,7 +120,7 @@ sealed class OAuthWorkflow {
 
         var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
-        return new OAuthParameters {
+        return new() {
             Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret),
             Parameters = authParameters
         };
@@ -133,7 +133,7 @@ sealed class OAuthWorkflow {
         allParameters.AddRange(parameters);
 
         // Include url parameters in query pool
-        var uri       = new Uri(Ensure.NotEmptyString(RequestUrl, nameof(RequestUrl)));
+        var uri           = new Uri(Ensure.NotEmptyString(RequestUrl, nameof(RequestUrl)));
         var urlParameters = HttpUtility.ParseQueryString(uri.Query);
 
         allParameters.AddRange(urlParameters.AllKeys.Select(x => new WebPair(x!, urlParameters[x]!)));
@@ -146,7 +146,7 @@ sealed class OAuthWorkflow {
 
         var signatureBase = OAuthTools.ConcatenateRequestElements(method, uri.ToString(), allParameters);
 
-        return new OAuthParameters {
+        return new() {
             Signature  = OAuthTools.GetSignature(SignatureMethod, SignatureTreatment, signatureBase, ConsumerSecret, TokenSecret),
             Parameters = authParameters
         };
@@ -167,14 +167,14 @@ sealed class OAuthWorkflow {
 
     WebPairCollection GenerateXAuthParameters(string timestamp, string nonce)
         => [
-            new WebPair("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
-            new WebPair("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
-            new WebPair("x_auth_mode", "client_auth"),
-            new WebPair("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey)), true),
-            new WebPair("oauth_signature_method", SignatureMethod.ToRequestValue()),
-            new WebPair("oauth_timestamp", timestamp),
-            new WebPair("oauth_nonce", nonce),
-            new WebPair("oauth_version", Version ?? "1.0")
+            new("x_auth_username", Ensure.NotNull(ClientUsername, nameof(ClientUsername))),
+            new("x_auth_password", Ensure.NotNull(ClientPassword, nameof(ClientPassword))),
+            new("x_auth_mode", "client_auth"),
+            new("oauth_consumer_key", Ensure.NotNull(ConsumerKey, nameof(ConsumerKey)), true),
+            new("oauth_signature_method", SignatureMethod.ToRequestValue()),
+            new("oauth_timestamp", timestamp),
+            new("oauth_nonce", nonce),
+            new("oauth_version", Version ?? "1.0")
         ];
 
     internal class OAuthParameters {

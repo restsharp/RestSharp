@@ -9,7 +9,7 @@ public sealed class SystemTextJsonTests : IDisposable {
     readonly WireMockServer _server = WireMockServer.Start();
     readonly RestClient     _client;
 
-    public SystemTextJsonTests() => _client = new RestClient(_server.Url!);
+    public SystemTextJsonTests() => _client = new(_server.Url!);
 
     [Fact]
     public async Task Should_serialize_request() {
@@ -21,7 +21,7 @@ public sealed class SystemTextJsonTests : IDisposable {
 
         await _client.PostAsync(request);
 
-        var actual = serializer.Deserialize<TestClass>(new RestResponse(request) { Content = capturer.Body });
+        var actual = serializer.Deserialize<TestClass>(new(request) { Content = capturer.Body });
         actual.Should().BeEquivalentTo(testData);
     }
 
@@ -43,7 +43,7 @@ public sealed class SystemTextJsonTests : IDisposable {
             .Given(Request.Create().WithPath("/").UsingGet())
             .RespondWith(Response.Create().WithBody("invalid json").WithHeader(KnownHeaders.ContentType, ContentType.Json));
 
-        var response = await _client.ExecuteAsync<TestClass>(new RestRequest());
+        var response = await _client.ExecuteAsync<TestClass>(new());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeFalse();
     }
@@ -56,7 +56,7 @@ public sealed class SystemTextJsonTests : IDisposable {
             .Given(Request.Create().WithPath("/").UsingGet())
             .RespondWith(Response.Create().WithBodyAsJson(item));
 
-        var response = await _client.ExecuteAsync<TestClass>(new RestRequest());
+        var response = await _client.ExecuteAsync<TestClass>(new());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeTrue();
     }

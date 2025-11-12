@@ -74,7 +74,7 @@ static partial class PropertyCache<T> where T : class {
 
             var populate = GetPopulate(getObject, property);
 
-            return new Populator(property.Name, populate);
+            return new(property.Name, populate);
         }
 
         static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IFormattable> getFormattable, RequestProperty requestProperty)

@@ -16,19 +16,20 @@ namespace RestSharp.Serializers.NewtonsoftJson;
 
 [PublicAPI]
 public static class RestClientExtensions {
-    /// <summary>
-    /// Use Newtonsoft.Json serializer with default settings
-    /// </summary>
     /// <param name="config"></param>
-    /// <returns></returns>
-    public static SerializerConfig UseNewtonsoftJson(this SerializerConfig config) => config.UseSerializer(() => new JsonNetSerializer());
+    extension(SerializerConfig config) {
+        /// <summary>
+        /// Use Newtonsoft.Json serializer with default settings
+        /// </summary>
+        /// <returns></returns>
+        public SerializerConfig UseNewtonsoftJson() => config.UseSerializer(() => new JsonNetSerializer());
 
-    /// <summary>
-    /// Use Newtonsoft.Json serializer with custom settings
-    /// </summary>
-    /// <param name="config"></param>
-    /// <param name="settings">Newtonsoft.Json serializer settings</param>
-    /// <returns></returns>
-    public static SerializerConfig UseNewtonsoftJson(this SerializerConfig config, JsonSerializerSettings settings)
-        => config.UseSerializer(() => new JsonNetSerializer(settings));
+        /// <summary>
+        /// Use Newtonsoft.Json serializer with custom settings
+        /// </summary>
+        /// <param name="settings">Newtonsoft.Json serializer settings</param>
+        /// <returns></returns>
+        public SerializerConfig UseNewtonsoftJson(JsonSerializerSettings settings)
+            => config.UseSerializer(() => new JsonNetSerializer(settings));
+    }
 }

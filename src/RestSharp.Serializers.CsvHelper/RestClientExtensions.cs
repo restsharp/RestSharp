@@ -4,8 +4,10 @@ namespace RestSharp.Serializers.CsvHelper;
 
 [PublicAPI]
 public static class RestClientExtensions {
-    public static SerializerConfig UseCsvHelper(this SerializerConfig config) => config.UseSerializer<CsvHelperSerializer>();
+    extension(SerializerConfig config) {
+        public SerializerConfig UseCsvHelper() => config.UseSerializer<CsvHelperSerializer>();
 
-    public static SerializerConfig UseCsvHelper(this SerializerConfig config, CsvConfiguration configuration)
-        => config.UseSerializer(() => new CsvHelperSerializer(configuration));
+        public SerializerConfig UseCsvHelper(CsvConfiguration configuration)
+            => config.UseSerializer(() => new CsvHelperSerializer(configuration));
+    }
 }

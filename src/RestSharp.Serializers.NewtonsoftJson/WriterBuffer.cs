@@ -13,7 +13,6 @@
 //   limitations under the License. 
 
 using System.Globalization;
-using System.Text;
 
 namespace RestSharp.Serializers.NewtonsoftJson; 
 
@@ -22,9 +21,9 @@ sealed class WriterBuffer : IDisposable {
     readonly JsonTextWriter _jsonTextWriter;
 
     public WriterBuffer(JsonSerializer jsonSerializer) {
-        _stringWriter = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture);
+        _stringWriter = new(new(256), CultureInfo.InvariantCulture);
 
-        _jsonTextWriter = new JsonTextWriter(_stringWriter) {
+        _jsonTextWriter = new(_stringWriter) {
             Formatting = jsonSerializer.Formatting, CloseOutput = false
         };
     }

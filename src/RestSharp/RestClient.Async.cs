@@ -127,7 +127,7 @@ public partial class RestClient {
 
         HttpResponseMessage? responseMessage;
         // Make sure we have a cookie container if not provided in the request
-        var cookieContainer = request.CookieContainer ??= new CookieContainer();
+        var cookieContainer = request.CookieContainer ??= new();
 
         var headers = new RequestHeaders()
             .AddHeaders(request.Parameters)
@@ -217,11 +217,11 @@ public partial class RestClient {
 #if NET
             Method.Patch => HttpMethod.Patch,
 #else
-            Method.Patch => new HttpMethod("PATCH"),
+            Method.Patch => new("PATCH"),
 #endif
-            Method.Merge  => new HttpMethod("MERGE"),
-            Method.Copy   => new HttpMethod("COPY"),
-            Method.Search => new HttpMethod("SEARCH"),
+            Method.Merge  => new("MERGE"),
+            Method.Copy   => new("COPY"),
+            Method.Search => new("SEARCH"),
             _             => throw new ArgumentOutOfRangeException(nameof(method))
         };
 }

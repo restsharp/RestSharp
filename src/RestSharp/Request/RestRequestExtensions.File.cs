@@ -15,77 +15,74 @@
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
-    /// <summary>
-    /// Adds a file parameter to the request body. The file will be read from disk as a stream.
-    /// </summary>
     /// <param name="request">Request instance</param>
-    /// <param name="name">Parameter name</param>
-    /// <param name="path">Full path to the file</param>
-    /// <param name="contentType">Optional: content type</param>
-    /// <param name="options">File parameter header options</param>
-    /// <returns></returns>
-    public static RestRequest AddFile(
-        this RestRequest request,
-        string name,
-        string path,
-        ContentType? contentType = null,
-        FileParameterOptions? options = null
-    )
-        => request.AddFile(FileParameter.FromFile(path, name, contentType, options));
+    extension(RestRequest request) {
+        /// <summary>
+        /// Adds a file parameter to the request body. The file will be read from disk as a stream.
+        /// </summary>
+        /// <param name="name">Parameter name</param>
+        /// <param name="path">Full path to the file</param>
+        /// <param name="contentType">Optional: content type</param>
+        /// <param name="options">File parameter header options</param>
+        /// <returns></returns>
+        public RestRequest AddFile(
+            string                name,
+            string                path,
+            ContentType?          contentType = null,
+            FileParameterOptions? options     = null
+        )
+            => request.AddFile(FileParameter.FromFile(path, name, contentType, options));
 
-    /// <summary>
-    /// Adds bytes to the request as file attachment
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Parameter name</param>
-    /// <param name="bytes">File content as bytes</param>
-    /// <param name="fileName">File name</param>
-    /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
-    /// <param name="options">File parameter header options</param>
-    /// <returns></returns>
-    public static RestRequest AddFile(
-        this RestRequest request,
-        string name,
-        byte[] bytes,
-        string fileName,
-        ContentType? contentType = null,
-        FileParameterOptions? options = null
-    )
-        => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType, options));
+        /// <summary>
+        /// Adds bytes to the request as file attachment
+        /// </summary>
+        /// <param name="name">Parameter name</param>
+        /// <param name="bytes">File content as bytes</param>
+        /// <param name="fileName">File name</param>
+        /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
+        /// <param name="options">File parameter header options</param>
+        /// <returns></returns>
+        public RestRequest AddFile(
+            string                name,
+            byte[]                bytes,
+            string                fileName,
+            ContentType?          contentType = null,
+            FileParameterOptions? options     = null
+        )
+            => request.AddFile(FileParameter.Create(name, bytes, fileName, contentType, options));
 
-    /// <summary>
-    /// Adds a file attachment to the request, where the file content will be retrieved from a given stream
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Parameter name</param>
-    /// <param name="getFile">Function that returns a stream with the file content</param>
-    /// <param name="fileName">File name</param>
-    /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
-    /// <param name="options">File parameter header options</param>
-    /// <returns></returns>
-    public static RestRequest AddFile(
-        this RestRequest request,
-        string name,
-        Func<Stream> getFile,
-        string fileName,
-        ContentType? contentType = null,
-        FileParameterOptions? options = null
-    )
-        => request.AddFile(FileParameter.Create(name, getFile, fileName, contentType, options));
+        /// <summary>
+        /// Adds a file attachment to the request, where the file content will be retrieved from a given stream
+        /// </summary>
+        /// <param name="name">Parameter name</param>
+        /// <param name="getFile">Function that returns a stream with the file content</param>
+        /// <param name="fileName">File name</param>
+        /// <param name="contentType">Optional: content type. Default is "application/octet-stream"</param>
+        /// <param name="options">File parameter header options</param>
+        /// <returns></returns>
+        public RestRequest AddFile(
+            string                name,
+            Func<Stream>          getFile,
+            string                fileName,
+            ContentType?          contentType = null,
+            FileParameterOptions? options     = null
+        )
+            => request.AddFile(FileParameter.Create(name, getFile, fileName, contentType, options));
 
-    internal static void ValidateParameters(this RestRequest request) {
-        if (!request.AlwaysSingleFileAsContent) return;
+        internal void ValidateParameters() {
+            if (!request.AlwaysSingleFileAsContent) return;
 
-        var postParametersExists = request.Parameters.GetContentParameters(request.Method).Any();
-        var bodyParametersExists = request.Parameters.Any(p => p.Type == ParameterType.RequestBody);
+            var postParametersExists = request.Parameters.GetContentParameters(request.Method).Any();
+            var bodyParametersExists = request.Parameters.Any(p => p.Type == ParameterType.RequestBody);
 
-        if (request.AlwaysMultipartFormData)
-            throw new ArgumentException("Failed to put file as content because flag AlwaysMultipartFormData is enabled");
+            if (request.AlwaysMultipartFormData)
+                throw new ArgumentException("Failed to put file as content because flag AlwaysMultipartFormData is enabled");
 
-        if (postParametersExists)
-            throw new ArgumentException("Failed to put file as content because POST parameters were added");
+            if (postParametersExists)
+                throw new ArgumentException("Failed to put file as content because POST parameters were added");
 
-        if (bodyParametersExists)
-            throw new ArgumentException("Failed to put file as content because body parameters were added");
+            if (bodyParametersExists)
+                throw new ArgumentException("Failed to put file as content because body parameters were added");
+        }
     }
 }

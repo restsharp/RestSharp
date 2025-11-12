@@ -31,7 +31,7 @@ public class TwitterClient : ITwitterClient, IDisposable {
         var options = new RestClientOptions("https://api.twitter.com/2") {
             Authenticator = new TwitterAuthenticator("https://api.twitter.com", apiKey, apiKeySecret)
         };
-        _client = new RestClient(options);
+        _client = new(options);
     }
 
     public async Task<TwitterUser> GetUser(string user) {
@@ -45,7 +45,7 @@ public class TwitterClient : ITwitterClient, IDisposable {
     public async Task<SearchRulesResponse[]> AddSearchRules(params AddStreamSearchRule[] rules) {
         var response = await _client.PostJsonAsync<AddSearchRulesRequest, TwitterCollectionObject<SearchRulesResponse>>(
             "tweets/search/stream/rules",
-            new AddSearchRulesRequest(rules)
+            new(rules)
         );
         return response?.Data;
     }
@@ -75,17 +75,7 @@ public class TwitterClient : ITwitterClient, IDisposable {
     }
 }
 
-class TwitterAuthenticator : AuthenticatorBase {
-    readonly string _baseUrl;
-    readonly string _clientId;
-    readonly string _clientSecret;
-
-    public TwitterAuthenticator(string baseUrl, string clientId, string clientSecret) : base("") {
-        _baseUrl      = baseUrl;
-        _clientId     = clientId;
-        _clientSecret = clientSecret;
-    }
-
+class TwitterAuthenticator(string baseUrl, string clientId, string clientSecret) : AuthenticatorBase("") {
     protected override async ValueTask<Parameter> GetAuthenticationParameter(string accessToken) {
         var token = string.IsNullOrEmpty(Token) ? await GetToken() : Token;
         Token = token;
@@ -93,8 +83,8 @@ class TwitterAuthenticator : AuthenticatorBase {
     }
 
     async Task<string> GetToken() {
-        var options = new RestClientOptions(_baseUrl) {
-            Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret)
+        var options = new RestClientOptions(baseUrl) {
+            Authenticator = new HttpBasicAuthenticator(clientId, clientSecret)
         };
 
         using var client = new RestClient(options);

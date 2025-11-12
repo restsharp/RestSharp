@@ -42,7 +42,7 @@ static class ObjectParser {
             var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
             var name      = attribute?.Name ?? propertyInfo.Name;
             var val       = ParseValue(attribute?.Format, value);
-            return new ParsedParameter(name, val, attribute?.Encode ?? true);
+            return new(name, val, attribute?.Encode ?? true);
         }
 
         IEnumerable<ParsedParameter> GetArray(PropertyInfo propertyInfo, object? value) {
@@ -54,7 +54,7 @@ static class ObjectParser {
             var queryType = attribute?.ArrayQueryType ?? RequestArrayQueryType.CommaSeparated;
             var encode    = attribute?.Encode         ?? true;
 
-            if (array.Length <= 0 || elementType == null) return new ParsedParameter[] { new(name, null, encode) };
+            if (array.Length <= 0 || elementType == null) return [new(name, null, encode)];
 
             // convert the array to an array of strings
             var values = array
@@ -62,7 +62,7 @@ static class ObjectParser {
                 .Select(item => ParseValue(attribute?.Format, item));
 
             return queryType switch {
-                RequestArrayQueryType.CommaSeparated  => new[] { new ParsedParameter(name, string.Join(",", values), encode) },
+                RequestArrayQueryType.CommaSeparated  => [new(name, string.Join(",", values), encode)],
                 RequestArrayQueryType.ArrayParameters => values.Select(x => new ParsedParameter($"{name}[]", x, encode)),
                 _                                     => throw new ArgumentOutOfRangeException()
             };

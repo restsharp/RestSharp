@@ -1,7 +1,7 @@
 <Project>
     <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'RestSharp.sln'))\props\Common.props"/>
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net471;net48;net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net471;net48;net8.0;net9.0;net10.0</TargetFrameworks>
         <PackageIcon>restsharp.png</PackageIcon>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://restsharp.dev</PackageProjectUrl>
@@ -9,6 +9,7 @@
         <RepositoryType>git</RepositoryType>
         <Description>Simple REST and HTTP API Client</Description>
         <Authors>.NET Foundation and Contributors</Authors>
+        <Copyright>Copyright © $(Authors) $([System.DateTime]::Now.Year)</Copyright>
         <UpdateVersionProperties>true</UpdateVersionProperties>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>

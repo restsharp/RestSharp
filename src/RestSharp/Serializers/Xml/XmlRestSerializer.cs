@@ -15,10 +15,13 @@
 namespace RestSharp.Serializers.Xml;
 
 public class XmlRestSerializer(IXmlSerializer serializer, IXmlDeserializer deserializer) : IRestSerializer {
+    IXmlDeserializer _deserializer = deserializer;
+    IXmlSerializer   _serializer   = serializer;
+
     public XmlRestSerializer() : this(new DotNetXmlSerializer(), new DotNetXmlDeserializer()) { }
 
-    public ISerializer         Serializer           => serializer;
-    public IDeserializer       Deserializer         => deserializer;
+    public ISerializer         Serializer           => _serializer;
+    public IDeserializer       Deserializer         => _deserializer;
     public string[]            AcceptedContentTypes => ContentType.XmlAccept;
     public SupportsContentType SupportsContentType  => contentType => contentType.Value.EndsWith("xml", StringComparison.InvariantCultureIgnoreCase);
 
@@ -31,23 +34,23 @@ public class XmlRestSerializer(IXmlSerializer serializer, IXmlDeserializer deser
         if (parameter.Value == null)
             throw new ArgumentNullException(nameof(parameter), "Parameter value is null");
 
-        var savedNamespace = serializer.Namespace;
-        serializer.Namespace = xmlParameter.XmlNamespace ?? savedNamespace;
+        var savedNamespace = _serializer.Namespace;
+        _serializer.Namespace = xmlParameter.XmlNamespace ?? savedNamespace;
 
-        var result = serializer.Serialize(parameter.Value);
+        var result = _serializer.Serialize(parameter.Value);
 
-        serializer.Namespace = savedNamespace;
+        _serializer.Namespace = savedNamespace;
 
         return result;
     }
 
     public XmlRestSerializer WithXmlSerializer(IXmlSerializer xmlSerializer) {
-        serializer = xmlSerializer;
+        _serializer = xmlSerializer;
         return this;
     }
 
     public XmlRestSerializer WithXmlDeserializer(IXmlDeserializer xmlDeserializer) {
-        deserializer = xmlDeserializer;
+        _deserializer = xmlDeserializer;
         return this;
     }
 }

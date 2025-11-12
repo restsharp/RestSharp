@@ -105,7 +105,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
             // and the last check, some other thread could have added an instance
             if (!Cache.TryGetValue(key, out var value)) {
                 var root = rootElement == null ? null : new XmlRootAttribute(rootElement);
-                value = new XmlSerializer(type, root);
+                value      = new(type, root);
                 Cache[key] = value;
             }
 
@@ -118,10 +118,9 @@ public class DotNetXmlSerializer : IXmlSerializer {
         return serializer;
     }
 
-    class EncodingStringWriter : StringWriter {
+    class EncodingStringWriter(Encoding encoding) : StringWriter {
         // Need to subclass StringWriter in order to override Encoding
-        public EncodingStringWriter(Encoding encoding) => Encoding = encoding;
 
-        public override Encoding Encoding { get; }
+        public override Encoding Encoding { get; } = encoding;
     }
 }

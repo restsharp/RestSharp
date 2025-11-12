@@ -15,49 +15,48 @@
 namespace RestSharp;
 
 public static class RestResponseExtensions {
-    /// <summary>
-    /// Gets the value of the header with the specified name.
-    /// </summary>
     /// <param name="response">Response object</param>
-    /// <param name="headerName">Name of the header</param>
-    /// <returns>Header value or null if the header is not found in the response</returns>
-    public static string? GetHeaderValue(this RestResponse response, string headerName)
-        => response.Headers?.FirstOrDefault(x => NameIs(x.Name, headerName))?.Value.ToString();
+    extension(RestResponse response) {
+        /// <summary>
+        /// Gets the value of the header with the specified name.
+        /// </summary>
+        /// <param name="headerName">Name of the header</param>
+        /// <returns>Header value or null if the header is not found in the response</returns>
+        public string? GetHeaderValue(string headerName)
+            => response.Headers?.FirstOrDefault(x => NameIs(x.Name, headerName))?.Value.ToString();
 
-    /// <summary>
-    /// Gets all the values of the header with the specified name.
-    /// </summary>
-    /// <param name="response">Response object</param>
-    /// <param name="headerName">Name of the header</param>
-    /// <returns>Array of header values or empty array if the header is not found in the response</returns>
-    public static string[] GetHeaderValues(this RestResponse response, string headerName)
-        => response.Headers
-                ?.Where(x => NameIs(x.Name, headerName))
-                .Select(x => x.Value.ToString() ?? "")
-                .ToArray() ??
-            [];
+        /// <summary>
+        /// Gets all the values of the header with the specified name.
+        /// </summary>
+        /// <param name="headerName">Name of the header</param>
+        /// <returns>Array of header values or empty array if the header is not found in the response</returns>
+        public string[] GetHeaderValues(string headerName)
+            => response.Headers
+                    ?.Where(x => NameIs(x.Name, headerName))
+                    .Select(x => x.Value.ToString() ?? "")
+                    .ToArray() ??
+                [];
 
-    /// <summary>
-    /// Gets the value of the content header with the specified name.
-    /// </summary>
-    /// <param name="response">Response object</param>
-    /// <param name="headerName">Name of the header</param>
-    /// <returns>Header value or null if the content header is not found in the response</returns>
-    public static string? GetContentHeaderValue(this RestResponse response, string headerName)
-        => response.ContentHeaders?.FirstOrDefault(x => NameIs(x.Name, headerName))?.Value.ToString();
+        /// <summary>
+        /// Gets the value of the content header with the specified name.
+        /// </summary>
+        /// <param name="headerName">Name of the header</param>
+        /// <returns>Header value or null if the content header is not found in the response</returns>
+        public string? GetContentHeaderValue(string headerName)
+            => response.ContentHeaders?.FirstOrDefault(x => NameIs(x.Name, headerName))?.Value.ToString();
 
-    /// <summary>
-    /// Gets all the values of the content header with the specified name.
-    /// </summary>
-    /// <param name="response">Response object</param>
-    /// <param name="headerName">Name of the header</param>
-    /// <returns>Array of header values or empty array if the content header is not found in the response</returns>
-    public static string[] GetContentHeaderValues(this RestResponse response, string headerName)
-        => response.ContentHeaders
-                ?.Where(x => NameIs(x.Name, headerName))
-                .Select(x => x.Value.ToString() ?? "")
-                .ToArray() ??
-            [];
+        /// <summary>
+        /// Gets all the values of the content header with the specified name.
+        /// </summary>
+        /// <param name="headerName">Name of the header</param>
+        /// <returns>Array of header values or empty array if the content header is not found in the response</returns>
+        public string[] GetContentHeaderValues(string headerName)
+            => response.ContentHeaders
+                    ?.Where(x => NameIs(x.Name, headerName))
+                    .Select(x => x.Value.ToString() ?? "")
+                    .ToArray() ??
+                [];
+    }
 
     static bool NameIs(string? name, string headerName)
         => name != null && name.Equals(headerName, StringComparison.InvariantCultureIgnoreCase);

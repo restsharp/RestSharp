@@ -357,7 +357,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("header_and_rows.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<Header>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<Header>(new() { Content = doc.ToString() })!;
 
         Assert.NotNull(output);
         Assert.Equal("text title", output.Title);
@@ -368,7 +368,7 @@ public class XmlDeserializerTests {
     public void Can_deal_with_value_attribute() {
         const string content = "<Color><Name>Green</Name><Value>255</Value></Color>";
         var          xml     = new XmlDeserializer();
-        var          output  = xml.Deserialize<ColorWithValue>(new RestResponse { Content = content })!;
+        var          output  = xml.Deserialize<ColorWithValue>(new() { Content = content })!;
 
         Assert.NotNull(output);
         Assert.Equal("Green", output.Name);
@@ -384,7 +384,7 @@ public class XmlDeserializerTests {
         };
 
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<NodeWithAttributeAndValue>(new RestResponse { Content = content })!;
+        var output = xml.Deserialize<NodeWithAttributeAndValue>(new() { Content = content })!;
 
         Assert.Equal(expected.AttributeValue, output.AttributeValue);
     }
@@ -515,7 +515,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("directlists.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<List<Database>>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<List<Database>>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(2, output.Count);
     }
@@ -588,7 +588,7 @@ public class XmlDeserializerTests {
         var xml = new XmlDeserializer {
             Culture = culture
         };
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.NotNull(output.Id);
         Assert.NotNull(output.StartDate);
@@ -602,7 +602,7 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Empty_Elements_to_Nullable_Values() {
         var doc    = CreateXmlWithNullValues();
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.Null(output.Id);
         Assert.Null(output.StartDate);
@@ -613,7 +613,7 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Empty_Elements_With_Attributes_to_Nullable_Values() {
         var doc    = CreateXmlWithAttributesAndNullValues();
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.Null(output.Id);
         Assert.Null(output.StartDate);
@@ -654,8 +654,7 @@ public class XmlDeserializerTests {
         var response = new RestResponse { Content = doc.ToString() };
         var d        = new XmlDeserializer();
 
-        Assert.Throws<FormatException>(
-            () => d.Deserialize<GoodReadsReviewCollection>(response)
+        Assert.Throws<FormatException>(() => d.Deserialize<GoodReadsReviewCollection>(response)
         );
     }
 
@@ -675,7 +674,7 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Inline_List_Without_Elements_To_Empty_List() {
         var doc    = CreateXmlWithEmptyInlineList();
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<EmptyListSample>(new() { Content = doc })!;
 
         Assert.NotNull(output.Images);
         Assert.Empty(output.Images);
@@ -686,7 +685,7 @@ public class XmlDeserializerTests {
         const string content = "<root><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></root>";
 
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+        var output = xml.Deserialize<SimpleStruct>(new() { Content = content });
 
         Assert.Equal("oneOneOne", output.One);
         Assert.Equal("twoTwoTwo", output.Two);
@@ -714,12 +713,10 @@ public class XmlDeserializerTests {
         var doc     = XDocument.Load(xmlPath);
         var xml     = new XmlDeserializer();
 
-        var output = xml.Deserialize<SimpleTypesListSample>(
-            new RestResponse { Content = doc.ToString() }
-        )!;
+        var output = xml.Deserialize<SimpleTypesListSample>(new() { Content = doc.ToString() })!;
 
-        Assert.False(output.Names[0].Length == 0);
-        Assert.False(output.Numbers.Sum() == 0);
+        Assert.NotEqual(0, output.Names[0].Length);
+        Assert.NotEqual(0, output.Numbers.Sum());
     }
 
     [Fact]
@@ -730,14 +727,14 @@ public class XmlDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response)!;
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -752,7 +749,7 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Mixture_Of_Empty_Elements_With_Attributes_And_Populated_Elements() {
         var doc    = CreateXmlWithAttributesAndNullValuesAndPopulatedValues();
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<NullableValues>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<NullableValues>(new() { Content = doc })!;
 
         Assert.Null(output.Id);
         Assert.Null(output.StartDate);
@@ -767,14 +764,14 @@ public class XmlDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response)!;
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -793,14 +790,14 @@ public class XmlDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response)!;
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -819,14 +816,14 @@ public class XmlDeserializerTests {
         var p        = d.Deserialize<PersonForXml>(response)!;
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("https://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -842,7 +839,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("NestedListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.images.Count);
     }
@@ -852,7 +849,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("NestedListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Images.Count);
     }
@@ -861,7 +858,7 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Nested_List_Without_Elements_To_Empty_List() {
         var doc    = CreateXmlWithEmptyNestedList();
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<EmptyListSample>(new RestResponse { Content = doc })!;
+        var output = xml.Deserialize<EmptyListSample>(new() { Content = doc })!;
 
         Assert.NotNull(output.Images);
         Assert.Empty(output.Images);
@@ -871,10 +868,8 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Node_That_Has_Attribute_And_Content() {
         var doc = CreateNoteXml();
 
-        var response = new RestResponse {
-            Content = doc
-        };
-        var d = new XmlDeserializer();
+        var response = new RestResponse { Content = doc };
+        var d        = new XmlDeserializer();
 
         var note = d.Deserialize<Note>(response)!;
 
@@ -887,12 +882,10 @@ public class XmlDeserializerTests {
     public void Can_Deserialize_Node_Using_Exact_Name_Defined_In_DeserializeAs_Attribute() {
         const string content = "<response><node-value>711</node-value></response>";
 
-        var expected = new SingleNode {
-            Node = "711"
-        };
+        var expected = new SingleNode { Node = "711" };
 
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<SingleNode>(new RestResponse { Content = content })!;
+        var output = xml.Deserialize<SingleNode>(new() { Content = content })!;
 
         Assert.NotNull(output);
         Assert.Equal(expected.Node, output.Node);
@@ -903,7 +896,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("InlineListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.images.Count);
     }
@@ -913,7 +906,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("InlineListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Count);
     }
@@ -923,7 +916,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("InlineListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<InlineListSample>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<InlineListSample>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Images.Count);
     }
@@ -961,19 +954,17 @@ public class XmlDeserializerTests {
             Content = doc.ToString()
         };
 
-        var d = new XmlDeserializer {
-            Culture = culture
-        };
+        var d       = new XmlDeserializer { Culture = culture };
         var payload = d.Deserialize<TimeSpanTestStructure>(response)!;
 
-        Assert.Equal(new TimeSpan(468006), payload.Tick);
-        Assert.Equal(new TimeSpan(0, 0, 0, 0, 125), payload.Millisecond);
-        Assert.Equal(new TimeSpan(0, 0, 8), payload.Second);
-        Assert.Equal(new TimeSpan(0, 55, 2), payload.Minute);
-        Assert.Equal(new TimeSpan(21, 30, 7), payload.Hour);
+        Assert.Equal(new(468006), payload.Tick);
+        Assert.Equal(new(0, 0, 0, 0, 125), payload.Millisecond);
+        Assert.Equal(new(0, 0, 8), payload.Second);
+        Assert.Equal(new(0, 55, 2), payload.Minute);
+        Assert.Equal(new(21, 30, 7), payload.Hour);
         Assert.Null(payload.NullableWithoutValue);
         Assert.NotNull(payload.NullableWithValue);
-        Assert.Equal(new TimeSpan(21, 30, 7), payload.NullableWithValue.Value);
+        Assert.Equal(new(21, 30, 7), payload.NullableWithValue.Value);
     }
 
     [Fact]
@@ -981,7 +972,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("ListWithAttributes.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer { RootElement = "Calls" };
-        var output      = xml.Deserialize<TwilioCallList>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<TwilioCallList>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(3, output.NumPages);
         Assert.Equal(2, output.Count);
@@ -992,7 +983,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("InlineListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<List<image>>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<List<image>>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Count);
     }
@@ -1002,7 +993,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("InlineListSample.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<List<Image>>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<List<Image>>(new() { Content = doc.ToString() })!;
 
         Assert.Equal(4, output.Count);
     }
@@ -1012,7 +1003,7 @@ public class XmlDeserializerTests {
         const string content =
             "<root><subroot><subsubroot><one>oneOneOne</one><two>twoTwoTwo</two><three>3</three></subsubroot></subroot></root>";
         var xml    = new XmlDeserializer { RootElement = "subsubroot" };
-        var output = xml.Deserialize<SimpleStruct>(new RestResponse { Content = content });
+        var output = xml.Deserialize<SimpleStruct>(new() { Content = content });
 
         Assert.Equal("oneOneOne", output.One);
         Assert.Equal("twoTwoTwo", output.Two);
@@ -1024,7 +1015,7 @@ public class XmlDeserializerTests {
         const string content =
             "<oddball><sid>1</sid><friendlyName>Jackson</friendlyName><oddballPropertyName>oddball</oddballPropertyName></oddball>";
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<Oddball>(new RestResponse { Content = content })!;
+        var output = xml.Deserialize<Oddball>(new() { Content = content })!;
 
         Assert.NotNull(output);
         Assert.Equal("1", output.Sid);
@@ -1037,7 +1028,7 @@ public class XmlDeserializerTests {
         var xmlFilePath = PathFor("deserialize_as_list.xml");
         var doc         = XDocument.Load(xmlFilePath);
         var xml         = new XmlDeserializer();
-        var output      = xml.Deserialize<List<Oddball>>(new RestResponse { Content = doc.ToString() })!;
+        var output      = xml.Deserialize<List<Oddball>>(new() { Content = doc.ToString() })!;
 
         Assert.NotNull(output);
         Assert.Equal("1", output[0].Sid);
@@ -1049,7 +1040,7 @@ public class XmlDeserializerTests {
             "<oddball><oddballListName><item>TestValue</item></oddballListName></oddball>";
 
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<Oddball>(new RestResponse { Content = content })!;
+        var output = xml.Deserialize<Oddball>(new() { Content = content })!;
 
         Assert.NotNull(output);
         Assert.NotNull(output.ListWithGoodName);
@@ -1060,14 +1051,10 @@ public class XmlDeserializerTests {
     public void Cannot_Deserialize_Node_To_An_Object_That_Has_Two_Properties_With_Text_Content_Attributes() {
         var doc = CreateNoteXml();
 
-        var response = new RestResponse {
-            Content = doc
-        };
-        var d = new XmlDeserializer();
+        var response = new RestResponse { Content = doc };
+        var d        = new XmlDeserializer();
 
-        Assert.Throws<ArgumentException>(
-            () => d.Deserialize<WrongNote>(response)
-        );
+        Assert.Throws<ArgumentException>(() => d.Deserialize<WrongNote>(response));
     }
 
     [Fact]
