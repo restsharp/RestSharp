@@ -1,4 +1,5 @@
 ﻿using System.Text;
+
 // ReSharper disable MethodHasAsyncOverload
 
 namespace RestSharp.Tests.Integrated;
@@ -32,7 +33,11 @@ public sealed class DownloadFileTests : IDisposable {
             AdvancedResponseWriter = (response, request) => {
                 var buf = new byte[16];
                 // ReSharper disable once MustUseReturnValue
+#if NET
+                response.Content.ReadAsStreamAsync().GetAwaiter().GetResult().ReadExactly(buf);
+#else
                 response.Content.ReadAsStreamAsync().GetAwaiter().GetResult().Read(buf, 0, buf.Length);
+#endif
                 tag = Encoding.ASCII.GetString(buf, 6, 4);
                 return new RestResponse(request);
             }
