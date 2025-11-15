@@ -35,14 +35,12 @@ jobs:
       -
         name: Unshallow
         run: git fetch --prune --unshallow
-
       -
         name: NuGet login
         uses: NuGet/login@v1
         id: nuget-login
         with:
           user: ${{ secrets.NUGET_USER }}
-
       -
         name: Create and push NuGet package
         run: |

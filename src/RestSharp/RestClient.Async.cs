@@ -14,6 +14,8 @@
 
 using RestSharp.Extensions;
 
+// ReSharper disable PossiblyMistakenUseOfCancellationToken
+
 namespace RestSharp;
 
 public partial class RestClient {

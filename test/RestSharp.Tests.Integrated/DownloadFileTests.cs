@@ -8,15 +8,13 @@ public sealed class DownloadFileTests : IDisposable {
     const string LocalPath = "Assets/Koala.jpg";
 
     public DownloadFileTests() {
-        // _server = HttpServerFixture.StartServer("Assets/Koala.jpg", FileHandler);
-
         var pathToFile = Path.Combine(_path, Path.Combine(LocalPath.Split('/')));
 
         _server
             .Given(Request.Create().WithPath($"/{LocalPath}"))
             .RespondWith(Response.Create().WithBodyFromFile(pathToFile));
         var options = new RestClientOptions($"{_server.Url}/{LocalPath}") { ThrowOnAnyError = true };
-        _client = new RestClient(options);
+        _client = new(options);
     }
 
     public void Dispose() => _server.Dispose();
@@ -33,10 +31,11 @@ public sealed class DownloadFileTests : IDisposable {
             AdvancedResponseWriter = (response, request) => {
                 var buf = new byte[16];
                 // ReSharper disable once MustUseReturnValue
-#if NET
-                response.Content.ReadAsStreamAsync().GetAwaiter().GetResult().ReadExactly(buf);
-#else
-                response.Content.ReadAsStreamAsync().GetAwaiter().GetResult().Read(buf, 0, buf.Length);
+                using var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+#if NET8_0_OR_GREATER
+                stream.ReadExactly(buf);
+#else                
+                stream.Read(buf, 0, buf.Length);
 #endif
                 tag = Encoding.ASCII.GetString(buf, 6, 4);
                 return new RestResponse(request);
