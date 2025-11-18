@@ -17,7 +17,7 @@
 namespace RestSharp;
 
 public class DeserializationException(RestResponse response, Exception innerException)
-    : Exception("Error occured while deserializing the response", innerException) {
+    : Exception("Error occurred while deserializing the response", innerException) {
     [PublicAPI]
     public RestResponse Response { get; } = response;
 }
