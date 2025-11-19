@@ -209,6 +209,12 @@ public class RestClientOptions {
     public bool ThrowOnAnyError { get; set; }
 
     /// <summary>
+    /// When set to false, the client doesn't throw an exception when the response status code is not successful.
+    /// Default is true.
+    /// </summary>
+    public bool ErrorWhenUnsuccessfulStatusCode { get; set; } = true;
+
+    /// <summary>
     /// Set to true to allow multiple default parameters with the same name. Default is false.
     /// This setting doesn't apply to headers as multiple header values for the same key is allowed.
     /// </summary>

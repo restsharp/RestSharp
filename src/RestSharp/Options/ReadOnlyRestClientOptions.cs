@@ -21,7 +21,6 @@ namespace RestSharp;
 public partial class ReadOnlyRestClientOptions {
     public IReadOnlyCollection<Interceptor>? Interceptors { get; private set; }
 
-    // partial void CopyAdditionalProperties(RestClientOptions inner); 
     partial void CopyAdditionalProperties(RestClientOptions inner) => Interceptors = GetInterceptors(inner);
 
     static ReadOnlyCollection<Interceptor>? GetInterceptors(RestClientOptions? options) {

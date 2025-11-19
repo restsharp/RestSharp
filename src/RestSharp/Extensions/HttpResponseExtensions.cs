@@ -18,8 +18,8 @@ using System.Text;
 namespace RestSharp.Extensions;
 
 static class HttpResponseExtensions {
-    public static Exception? MaybeException(this HttpResponseMessage httpResponse)
-        => httpResponse.IsSuccessStatusCode
+    public static Exception? MaybeException(this HttpResponseMessage httpResponse, bool throwOnUnsuccessfulStatusCode)
+        => httpResponse.IsSuccessStatusCode || !throwOnUnsuccessfulStatusCode
             ? null
 #if NET
             : new HttpRequestException($"Request failed with status code {httpResponse.StatusCode}", null, httpResponse.StatusCode);
