@@ -48,7 +48,7 @@ public partial class RestClient {
         request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
         var response = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var exception = response.Exception ?? response.ResponseMessage?.MaybeException(Options.ErrorWhenUnsuccessfulStatusCode);
+        var exception = response.Exception ?? response.ResponseMessage?.MaybeException(Options.SetErrorExceptionOnUnsuccessfulStatusCode);
 
         if (exception != null) {
             return Options.ThrowOnAnyError ? throw exception : null;

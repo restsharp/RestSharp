@@ -63,7 +63,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
                 ContentLength       = httpResponse.Content?.Headers.ContentLength,
                 ContentType         = httpResponse.Content?.Headers.ContentType?.MediaType,
                 Cookies             = cookieCollection,
-                ErrorException      = httpResponse.MaybeException(options.ErrorWhenUnsuccessfulStatusCode),
+                ErrorException      = httpResponse.MaybeException(options.SetErrorExceptionOnUnsuccessfulStatusCode),
                 Headers             = httpResponse.Headers.GetHeaderParameters(),
                 IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
                 RawBytes            = bytes,

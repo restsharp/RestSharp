@@ -28,7 +28,7 @@ public sealed class RequestFailureTests(WireMockTestServer server) : IClassFixtu
 
     [Fact]
     public async Task Does_not_throw_on_unsuccessful_status_code_with_option() {
-        using var client   = new RestClient(new RestClientOptions(server.Url!) { ErrorWhenUnsuccessfulStatusCode = false });
+        using var client   = new RestClient(new RestClientOptions(server.Url!) { SetErrorExceptionOnUnsuccessfulStatusCode = false });
         var       request  = new RestRequest("status?code=404");
         var       response = await client.ExecuteAsync<SuccessResponse>(request);
 
