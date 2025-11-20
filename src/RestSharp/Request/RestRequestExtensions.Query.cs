@@ -26,7 +26,7 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns></returns>
         public RestRequest AddQueryParameter(string name, string? value, bool encode = true)
-            => request.AddOrUpdateParameter(new QueryParameter(name, value, encode));
+            => request.AddParameter(new QueryParameter(name, value, encode));
 
         /// <summary>
         /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.

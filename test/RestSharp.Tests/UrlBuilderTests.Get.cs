@@ -198,4 +198,30 @@ public partial class UrlBuilderTests {
         var output = client.BuildUri(request);
         Assert.Equal(expected, output);
     }
+
+    [Fact]
+    public void Multiple_query_parameters_with_same_name() {
+        var request = new RestRequest($"/{Resource}/")
+            .AddQueryParameter("foo", "bar")
+            .AddQueryParameter("foo", "baz");
+        var expected = new Uri($"{Base}/{Resource}/?foo=bar&foo=baz");
+
+        using var client = new RestClient(Base);
+
+        var output = client.BuildUri(request);
+        Assert.Equal(expected, output);
+    }
+
+    [Fact]
+    public void Query_parameter_with_non_string_value() {
+        var request = new RestRequest($"/{Resource}/")
+            .AddQueryParameter("foo", 123)
+            .AddQueryParameter("bar", true);
+        var expected = new Uri($"{Base}/{Resource}/?foo=123&bar=True");
+
+        using var client = new RestClient(Base);
+
+        var output = client.BuildUri(request);
+        Assert.Equal(expected, output);
+    }
 }
