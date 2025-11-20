@@ -26,7 +26,7 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns></returns>
         public RestRequest AddUrlSegment(string name, string? value, bool encode = true)
-            => request.AddParameter(new UrlSegmentParameter(name, value, encode));
+            => request.AddOrUpdateParameter(new UrlSegmentParameter(name, value, encode));
 
         /// <summary>
         /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
