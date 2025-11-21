@@ -28,10 +28,10 @@ public class CompressionTests {
         const string value  = "This is some deflated content";
         using var    server = WireMockServer.Start();
 
-        var body = await GetBody(s => new DeflateStream(s, CompressionMode.Compress, true), value);
+        var body = await GetBody(s => new DeflateStream(s, CompressionMode.Decompress, true), value);
         ConfigureServer(server, body, "deflate");
 
-        using var client   = new RestClient(server.Url!);
+        using var client   = new RestClient(server.Url!, options => options.AutomaticDecompression = DecompressionMethods.Deflate);
         var       request  = new RestRequest("");
         var       response = await client.ExecuteAsync(request);
 
