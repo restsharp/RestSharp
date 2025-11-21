@@ -247,6 +247,7 @@ public partial class RestClient : IRestClient {
         if (!OperatingSystem.IsBrowser()) {
 #endif
             handler.CookieUsePolicy        = CookieUsePolicy.IgnoreCookies;
+
             handler.ServerCredentials      = options.UseDefaultCredentials ? CredentialCache.DefaultCredentials : options.Credentials;
             handler.AutomaticDecompression = options.AutomaticDecompression;
             handler.PreAuthenticate        = options.PreAuthenticate;

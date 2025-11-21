@@ -31,7 +31,7 @@ public class NtlmTests : CaptureFixture {
     public async Task Does_Not_Pass_Default_Credentials_When_UseDefaultCredentials_Is_False() {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
 
-        using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
+        using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.IntegratedWindowsAuthentication);
         using var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = false });
 
         var request  = new RestRequest(RequestHeadCapturer.Resource);
@@ -45,7 +45,7 @@ public class NtlmTests : CaptureFixture {
     public async Task Passes_Default_Credentials_When_UseDefaultCredentials_Is_True() {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
-        using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.Negotiate);
+        using var server = SimpleServer.Create(Handlers.Generic<RequestHeadCapturer>(), AuthenticationSchemes.IntegratedWindowsAuthentication);
         using var client = new RestClient(new RestClientOptions(server.Url) { UseDefaultCredentials = true });
 
         var request  = new RestRequest(RequestHeadCapturer.Resource);
