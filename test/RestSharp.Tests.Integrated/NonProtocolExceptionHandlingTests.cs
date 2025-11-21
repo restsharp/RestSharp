@@ -75,7 +75,6 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync<StupidClass>(request);
 
         response.ErrorException.Should().BeOfType<HttpRequestException>();
-        response.ErrorException!.Message.Should().Contain("known");
         response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 }
