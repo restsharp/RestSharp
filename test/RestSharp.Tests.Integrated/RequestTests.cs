@@ -50,6 +50,7 @@ public sealed class AsyncTests(WireMockTestServer server) : IClassFixture<WireMo
         response.Content.Should().Be(val);
     }
 
+#if NET
     [Fact]
     public async Task Can_Timeout_GET_Async() {
         var request = new RestRequest("timeout").AddBody("Body_Content");
@@ -61,6 +62,7 @@ public sealed class AsyncTests(WireMockTestServer server) : IClassFixture<WireMo
 
         response.ResponseStatus.Should().Be(ResponseStatus.TimedOut, response.ErrorMessage);
     }
+#endif
 
     [Fact]
     public async Task Can_Perform_Delete_With_Response_Type() {
