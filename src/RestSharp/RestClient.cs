@@ -15,6 +15,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using RestSharp.Serializers;
 
 // ReSharper disable InvertIf
@@ -89,8 +90,18 @@ public partial class RestClient : IRestClient {
         return;
 
         HttpClient GetClient() {
-            var handler = new HttpClientHandler();
-            ConfigureHttpMessageHandler(handler, options);
+            HttpMessageHandler handler;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                var winHttpHandler = new WinHttpHandler();
+                ConfigureHttpMessageHandler(winHttpHandler, options);
+                handler = winHttpHandler;
+            }
+            else {
+                var httpClientHandler = new HttpClientHandler();
+                ConfigureHttpMessageHandler(httpClientHandler, options);
+                handler = httpClientHandler;
+            }
             var finalHandler = options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
             var httpClient   = new HttpClient(finalHandler);
             ConfigureHttpClient(httpClient, options);
@@ -228,26 +239,61 @@ public partial class RestClient : IRestClient {
         if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
     }
 
+    static void ConfigureHttpMessageHandler(WinHttpHandler handler, RestClientOptions options) {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            throw new PlatformNotSupportedException("WinHttpHandler is only supported on Windows");
+        }
+#if NET
+        if (!OperatingSystem.IsBrowser()) {
+#endif
+            handler.CookieUsePolicy        = CookieUsePolicy.IgnoreCookies;
+            handler.ServerCredentials      = options.UseDefaultCredentials ? CredentialCache.DefaultCredentials : options.Credentials;
+            handler.AutomaticDecompression = options.AutomaticDecompression;
+            handler.PreAuthenticate        = options.PreAuthenticate;
+            if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
+
+            if (options.RemoteCertificateValidationCallback != null)
+                handler.ServerCertificateValidationCallback =
+                    (request, cert, chain, errors) => options.RemoteCertificateValidationCallback(request, cert, chain, errors);
+
+            if (options.ClientCertificates != null) {
+                handler.ClientCertificates.AddRange(options.ClientCertificates);
+                handler.ClientCertificateOption = ClientCertificateOption.Manual;
+            }
+#if NET
+        }
+#endif
+        handler.AutomaticRedirection = options.FollowRedirects;
+
+        if (options.Proxy != null) {
+            handler.Proxy                 = options.Proxy;
+            handler.WindowsProxyUsePolicy = WindowsProxyUsePolicy.UseCustomProxy;
+        }
+        else {
+            handler.WindowsProxyUsePolicy = WindowsProxyUsePolicy.UseWinHttpProxy;
+        }
+    }
+
     // ReSharper disable once CognitiveComplexity
     static void ConfigureHttpMessageHandler(HttpClientHandler handler, RestClientOptions options) {
 #if NET
         if (!OperatingSystem.IsBrowser()) {
 #endif
-        handler.UseCookies             = false;
-        handler.Credentials            = options.Credentials;
-        handler.UseDefaultCredentials  = options.UseDefaultCredentials;
-        handler.AutomaticDecompression = options.AutomaticDecompression;
-        handler.PreAuthenticate        = options.PreAuthenticate;
-        if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
+            handler.UseCookies             = false;
+            handler.Credentials            = options.Credentials;
+            handler.UseDefaultCredentials  = options.UseDefaultCredentials;
+            handler.AutomaticDecompression = options.AutomaticDecompression;
+            handler.PreAuthenticate        = options.PreAuthenticate;
+            if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
 
-        if (options.RemoteCertificateValidationCallback != null)
-            handler.ServerCertificateCustomValidationCallback =
-                (request, cert, chain, errors) => options.RemoteCertificateValidationCallback(request, cert, chain, errors);
+            if (options.RemoteCertificateValidationCallback != null)
+                handler.ServerCertificateCustomValidationCallback =
+                    (request, cert, chain, errors) => options.RemoteCertificateValidationCallback(request, cert, chain, errors);
 
-        if (options.ClientCertificates != null) {
-            handler.ClientCertificates.AddRange(options.ClientCertificates);
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-        }
+            if (options.ClientCertificates != null) {
+                handler.ClientCertificates.AddRange(options.ClientCertificates);
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            }
 #if NET
         }
 #endif
@@ -257,7 +303,7 @@ public partial class RestClient : IRestClient {
         // ReSharper disable once InvertIf
         if (!OperatingSystem.IsBrowser() && !OperatingSystem.IsIOS() && !OperatingSystem.IsTvOS()) {
 #endif
-        if (handler.SupportsProxy) handler.Proxy = options.Proxy;
+            if (handler.SupportsProxy) handler.Proxy = options.Proxy;
 #if NET
         }
 #endif
