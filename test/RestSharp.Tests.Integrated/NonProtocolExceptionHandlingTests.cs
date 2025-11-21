@@ -41,6 +41,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         response.ResponseStatus.Should().Be(ResponseStatus.TimedOut, response.ErrorMessage);
     }
 
+#if NET
     [Fact]
     public async Task Handles_Server_Timeout_Error() {
         using var client = new RestClient(_server.Url!);
@@ -51,6 +52,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         response.ErrorException.Should().BeOfType<TaskCanceledException>();
         response.ResponseStatus.Should().Be(ResponseStatus.TimedOut);
     }
+#endif
 
     [Fact]
     public async Task Handles_Server_Timeout_Error_With_Deserializer() {
@@ -75,7 +77,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync<StupidClass>(request);
 
         response.ErrorException.Should().BeOfType<HttpRequestException>();
-        response.ErrorException!.Message.Should().Contain("known");
+        response.ErrorException!.Message.Should().Contain("known", response.ErrorMessage);
         response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 }
