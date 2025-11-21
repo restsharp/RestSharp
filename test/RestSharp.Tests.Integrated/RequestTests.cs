@@ -59,7 +59,7 @@ public sealed class AsyncTests(WireMockTestServer server) : IClassFixture<WireMo
 
         var response = await _client.ExecuteAsync(request);
 
-        Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
+        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut, response.ErrorMessage);
     }
 
     [Fact]

@@ -38,7 +38,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync(request);
 
         response.ErrorException.Should().BeOfType<TaskCanceledException>();
-        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut);
+        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut, response.ErrorMessage);
     }
 
     [Fact]
