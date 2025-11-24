@@ -1,5 +1,4 @@
-﻿using HttpTracer;
-using RestSharp.Tests.Integrated.Fixtures;
+﻿using RestSharp.Tests.Integrated.HttpTracer;
 using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
@@ -15,7 +14,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         _capturer = _server.ConfigureBodyCapturer(Method.Post);
 
         var options = new RestClientOptions($"{_server.Url!}{RequestBodyCapturer.Resource}") {
-            ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new OutputLogger(output), HttpMessageParts.All)
+            ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new OutputHttpTracerLogger(output), HttpMessageParts.All)
         };
         _client = new RestClient(options);
     }

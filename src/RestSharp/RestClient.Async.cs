@@ -30,9 +30,8 @@ public partial class RestClient {
             ? await RestResponse.FromHttpResponse(
                     internalResponse.ResponseMessage!,
                     request,
-                    Options.Encoding,
+                    Options,
                     internalResponse.CookieContainer?.GetCookies(internalResponse.Url),
-                    Options.CalculateResponseStatus,
                     cancellationToken
                 )
                 .ConfigureAwait(false)
@@ -49,7 +48,7 @@ public partial class RestClient {
         request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
         var response = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
+        var exception = response.Exception ?? response.ResponseMessage?.MaybeException(Options.SetErrorExceptionOnUnsuccessfulStatusCode);
 
         if (exception != null) {
             return Options.ThrowOnAnyError ? throw exception : null;

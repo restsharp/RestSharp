@@ -54,7 +54,7 @@ public class UrlSegmentTests {
         var urlSegmentParameter = new UrlSegmentParameter("foo", inputValue);
         urlSegmentParameter.Value.Should().BeEquivalentTo("bar/BAR");
     }
-    
+
     [Theory]
     [InlineData("bar%2fBAR")]
     [InlineData("bar%2FBAR")]
@@ -62,12 +62,25 @@ public class UrlSegmentTests {
         var urlSegmentParameter = new UrlSegmentParameter("foo", inputValue, replaceEncodedSlash: true);
         urlSegmentParameter.Value.Should().BeEquivalentTo("bar/BAR");
     }
-    
+
     [Theory]
     [InlineData("bar%2fBAR")]
     [InlineData("bar%2FBAR")]
     public void UrlSegmentParameter_WithValueWithEncodedSlash_CanLeaveEncodedSlash(string inputValue) {
         var urlSegmentParameter = new UrlSegmentParameter("foo", inputValue, replaceEncodedSlash: false);
         urlSegmentParameter.Value.Should().BeEquivalentTo(inputValue);
+    }
+
+    [Fact]
+    public void AddSameUrlSegmentTwice_ShouldReplaceFirst() {
+        var client  = new RestClient();
+        var request = new RestRequest("https://api.example.com/orgs/{segment}/something");
+        request.AddUrlSegment("segment", 1);
+        var url1 = client.BuildUri(request);
+        request.AddUrlSegment("segment", 2);
+        var url2 = client.BuildUri(request);
+        
+        url1.AbsolutePath.Should().Be("/orgs/1/something");
+        url2.AbsolutePath.Should().Be("/orgs/2/something");
     }
 }

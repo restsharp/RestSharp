@@ -3,8 +3,8 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <PropertyGroup Label="Package versions for .NET 10" Condition="'$(TargetFramework)' == 'net10.0'">
-    <MicrosoftTestHostVer>10.0.0-rc.2.25502.107</MicrosoftTestHostVer>
-    <SystemTextJsonVer>10.0.0-rc.2.25502.107</SystemTextJsonVer>
+    <MicrosoftTestHostVer>10.0.0</MicrosoftTestHostVer>
+    <SystemTextJsonVer>10.0.0</SystemTextJsonVer>
   </PropertyGroup>
   <PropertyGroup Label="Package versions for .NET 9" Condition="'$(TargetFramework)' == 'net9.0'">
     <MicrosoftTestHostVer>9.0.10</MicrosoftTestHostVer>
@@ -36,7 +36,6 @@
     <PackageVersion Include="AutoFixture" Version="4.18.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="FluentAssertions" Version="7.0.0" />
-    <PackageVersion Include="HttpTracer" Version="2.1.1" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="Moq" Version="4.20.72" />
@@ -47,7 +46,7 @@
     <PackageVersion Include="Xunit.Extensions.Logging" Version="1.1.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="All" />
     <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="WireMock.Net" Version="1.15.0" />
+    <PackageVersion Include="WireMock.Net" Version="1.16.0" />
     <PackageVersion Include="WireMock.Net.FluentAssertions" Version="1.5.51" />
   </ItemGroup>
 </Project>
