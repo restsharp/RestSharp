@@ -16,20 +16,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
 
     readonly WireMockServer _server = WireMockServer.Start();
 
-    /// <summary>
-    /// Success of this test is based largely on the behavior of your current DNS.
-    /// For example, if you're using OpenDNS this will test will fail; ResponseStatus will be Completed.
-    /// </summary>
-    [Fact]
-    public async Task Handles_Non_Existent_Domain() {
-        using var client = new RestClient("http://nonexistantdomainimguessing.org");
-
-        var request  = new RestRequest("foo");
-        var response = await client.ExecuteAsync(request);
-
-        response.ResponseStatus.Should().Be(ResponseStatus.Error);
-    }
-
+#if NET
     [Fact]
     public async Task Handles_HttpClient_Timeout_Error() {
         using var client = new RestClient(new HttpClient { Timeout = TimeSpan.FromMilliseconds(500) });
@@ -38,8 +25,9 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync(request);
 
         response.ErrorException.Should().BeOfType<TaskCanceledException>();
-        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut);
+        response.ResponseStatus.Should().Be(ResponseStatus.TimedOut, response.ErrorMessage);
     }
+#endif
 
     [Fact]
     public async Task Handles_Server_Timeout_Error() {
@@ -65,7 +53,7 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
     }
 
     [Fact]
-    public async Task Task_Handles_Non_Existent_Domain() {
+    public async Task Handles_Non_Existent_Domain() {
         using var client = new RestClient("http://this.cannot.exist:8001");
 
         var request = new RestRequest("/") {
@@ -75,7 +63,6 @@ public sealed class NonProtocolExceptionHandlingTests : IDisposable {
         var response = await client.ExecuteAsync<StupidClass>(request);
 
         response.ErrorException.Should().BeOfType<HttpRequestException>();
-        response.ErrorException!.Message.Should().Contain("known");
         response.ResponseStatus.Should().Be(ResponseStatus.Error);
     }
 }

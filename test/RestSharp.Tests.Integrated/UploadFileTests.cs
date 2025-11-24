@@ -73,7 +73,7 @@ public sealed class UploadFileTests : IDisposable {
         response.Data.Should().BeEquivalentTo(new UploadResponse(nonAsciiFilename, new FileInfo(_path).Length, true));
     }
 
-    static async Task<ResponseMessage> HandleUpload(IRequestMessage request) {
+    static async Task<IResponseMessage> HandleUpload(IRequestMessage request) {
         var response = new ResponseMessage();
 
         var checkFile = request.Query == null ||

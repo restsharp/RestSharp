@@ -16,17 +16,19 @@
 namespace RestSharp;
 
 static class ParametersCollectionExtensions {
-    internal static IEnumerable<Parameter> GetQueryParameters(this ParametersCollection parameters, Method method) {
-        Func<Parameter, bool> condition =
-            !IsPost(method)
-                ? p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
-                : p => p.Type is ParameterType.QueryString;
+    extension(ParametersCollection parameters) {
+        internal IEnumerable<Parameter> GetQueryParameters(Method method) {
+            Func<Parameter, bool> condition =
+                !IsPost(method)
+                    ? p => p.Type is ParameterType.GetOrPost or ParameterType.QueryString
+                    : p => p.Type is ParameterType.QueryString;
 
-        return parameters.Where(p => condition(p));
+            return parameters.Where(p => condition(p));
+        }
+
+        internal IEnumerable<GetOrPostParameter> GetContentParameters(Method method)
+            => IsPost(method) ? parameters.GetParameters<GetOrPostParameter>() : [];
     }
-
-    internal static IEnumerable<GetOrPostParameter> GetContentParameters(this ParametersCollection parameters, Method method)
-        => IsPost(method) ? parameters.GetParameters<GetOrPostParameter>() : [];
 
     static bool IsPost(Method method) => method is Method.Post or Method.Put or Method.Patch;
 }

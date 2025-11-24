@@ -74,7 +74,7 @@ class RequestContent(IRestClient client, RestRequest request) : IDisposable {
 
         var dispositionHeader = fileParameter.Options.DisableFilenameEncoding
             ? ContentDispositionHeaderValue.Parse($"form-data; name=\"{fileParameter.Name}\"; filename=\"{fileParameter.FileName}\"")
-            : new ContentDispositionHeaderValue("form-data") { Name = $"\"{fileParameter.Name}\"", FileName = $"\"{fileParameter.FileName}\"" };
+            : new("form-data") { Name = $"\"{fileParameter.Name}\"", FileName = $"\"{fileParameter.FileName}\"" };
         if (!fileParameter.Options.DisableFilenameStar) dispositionHeader.FileNameStar = fileParameter.FileName;
         streamContent.Headers.ContentDisposition = dispositionHeader;
 
@@ -125,7 +125,7 @@ class RequestContent(IRestClient client, RestRequest request) : IDisposable {
         var boundary    = GetOrSetFormBoundary();
         var mpContent   = new MultipartFormDataContent(boundary);
         var contentType = new MediaTypeHeaderValue("multipart/form-data");
-        contentType.Parameters.Add(new NameValueHeaderValue(nameof(boundary), GetBoundary(boundary, request.MultipartFormQuoteBoundary)));
+        contentType.Parameters.Add(new(nameof(boundary), GetBoundary(boundary, request.MultipartFormQuoteBoundary)));
         mpContent.Headers.ContentType = contentType;
         return mpContent;
     }

@@ -58,6 +58,12 @@
         <Compile Update="Request\RestRequestExtensions.File.cs">
             <DependentUpon>RestRequestExtensions.cs</DependentUpon>
         </Compile>
+        <Compile Update="Request\RestRequestExtensions.Body.cs">
+          <DependentUpon>RestRequestExtensions.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Request\RestRequestExtensions.Object.cs">
+          <DependentUpon>RestRequestExtensions.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup Label="Source generator">
         <ProjectReference Include="$(RepoRoot)\gen\SourceGenerator\SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

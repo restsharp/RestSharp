@@ -27,12 +27,6 @@ namespace RestSharp.Serializers;
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = false)]
 public sealed class SerializeAsAttribute : Attribute {
-    public SerializeAsAttribute() {
-        NameStyle = NameStyle.AsIs;
-        Index     = int.MaxValue;
-        Culture   = CultureInfo.InvariantCulture;
-    }
-
     /// <summary>
     /// The name to use for the serialized element
     /// </summary>
@@ -51,17 +45,17 @@ public sealed class SerializeAsAttribute : Attribute {
     /// <summary>
     /// The culture to use when serializing
     /// </summary>
-    public CultureInfo Culture { get; set; }
+    public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
     /// <summary>
     /// Transforms the casing of the name based on the selected value.
     /// </summary>
-    public NameStyle NameStyle { get; set; }
+    public NameStyle NameStyle { get; set; } = NameStyle.AsIs;
 
     /// <summary>
     /// The order to serialize the element. Default is int.MaxValue.
     /// </summary>
-    public int Index { get; set; }
+    public int Index { get; set; } = int.MaxValue;
 
     /// <summary>
     /// Called by the attribute when NameStyle is speficied

@@ -37,7 +37,7 @@ public class AuthenticationTests {
         Assert.NotNull(oauthToken);
         Assert.NotNull(oauthTokenSecret);
 
-        request = new RestRequest("oauth/authorize?oauth_token=" + oauthToken);
+        request = new($"oauth/authorize?oauth_token={oauthToken}");
 
         var url = client.BuildUri(request)
             .ToString();
@@ -46,7 +46,7 @@ public class AuthenticationTests {
         Console.Write("Enter the verifier: ");
         var verifier = Console.ReadLine();
 
-        request = new RestRequest("oauth/access_token") {
+        request = new("oauth/access_token") {
             Authenticator = OAuth1Authenticator.ForAccessToken(
                 twitterKeys.ConsumerKey!,
                 twitterKeys.ConsumerSecret,
@@ -68,7 +68,7 @@ public class AuthenticationTests {
         Assert.NotNull(oauthToken);
         Assert.NotNull(oauthTokenSecret);
 
-        request = new RestRequest("1.1/account/verify_credentials.json") {
+        request = new("1.1/account/verify_credentials.json") {
             Authenticator = OAuth1Authenticator.ForProtectedResource(
                 twitterKeys.ConsumerKey!,
                 twitterKeys.ConsumerSecret,

@@ -15,51 +15,51 @@
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
-    /// <summary>
-    /// Gets object properties and adds each property as a form data parameter
-    /// </summary>
     /// <param name="request">Request instance</param>
-    /// <param name="obj">Object to add as form data</param>
-    /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
-    /// <returns></returns>
-    public static RestRequest AddObject<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class {
-        var props = obj.GetProperties(includedProperties);
+    extension(RestRequest request) {
+        /// <summary>
+        /// Gets object properties and adds each property as a form data parameter
+        /// </summary>
+        /// <param name="obj">Object to add as form data</param>
+        /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
+        /// <returns></returns>
+        public RestRequest AddObject<T>(T obj, params string[] includedProperties) where T : class {
+            var props = obj.GetProperties(includedProperties);
 
-        foreach (var prop in props) {
-            request.AddParameter(prop.Name, prop.Value, prop.Encode);
+            foreach (var prop in props) {
+                request.AddParameter(prop.Name, prop.Value, prop.Encode);
+            }
+
+            return request;
         }
 
-        return request;
+        /// <summary>
+        /// Gets object properties and adds each property as a form data parameter
+        /// </summary>
+        /// <remarks>
+        /// This method gets public instance properties from the provided <typeparamref name="T"/> type
+        /// rather than from <paramref name="obj"/> itself, which allows for caching of properties and
+        /// other optimizations. If you don't know the type at runtime, or wish to use properties not
+        /// available from the provided type parameter, consider using <see cref="AddObject{T}(RestRequest, T, string[])"/>
+        /// </remarks>
+        /// <param name="obj">Object to add as form data</param>
+        /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
+        /// <returns></returns>
+        public RestRequest AddObjectStatic<T>(T obj, params string[] includedProperties) where T : class
+            => request.AddParameters(PropertyCache<T>.GetParameters(obj, includedProperties));
+
+        /// <summary>
+        /// Gets object properties and adds each property as a form data parameter
+        /// </summary>
+        /// <remarks>
+        /// This method gets public instance properties from the provided <typeparamref name="T"/> type
+        /// rather than from <paramref name="obj"/> itself, which allows for caching of properties and
+        /// other optimizations. If you don't know the type at runtime, or wish to use properties not
+        /// available from the provided type parameter, consider using <see cref="AddObject{T}(RestRequest, T, string[])"/>
+        /// </remarks>
+        /// <param name="obj">Object to add as form data</param>
+        /// <returns></returns>
+        public RestRequest AddObjectStatic<T>(T obj) where T : class
+            => request.AddParameters(PropertyCache<T>.GetParameters(obj));
     }
-
-    /// <summary>
-    /// Gets object properties and adds each property as a form data parameter
-    /// </summary>
-    /// <remarks>
-    /// This method gets public instance properties from the provided <typeparamref name="T"/> type
-    /// rather than from <paramref name="obj"/> itself, which allows for caching of properties and
-    /// other optimizations. If you don't know the type at runtime, or wish to use properties not
-    /// available from the provided type parameter, consider using <see cref="AddObject{T}(RestRequest, T, string[])"/>
-    /// </remarks>
-    /// <param name="request">Request instance</param>
-    /// <param name="obj">Object to add as form data</param>
-    /// <param name="includedProperties">Properties to include, or nothing to include everything. The array will be sorted.</param>
-    /// <returns></returns>
-    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj, params string[] includedProperties) where T : class
-        => request.AddParameters(PropertyCache<T>.GetParameters(obj, includedProperties));
-
-    /// <summary>
-    /// Gets object properties and adds each property as a form data parameter
-    /// </summary>
-    /// <remarks>
-    /// This method gets public instance properties from the provided <typeparamref name="T"/> type
-    /// rather than from <paramref name="obj"/> itself, which allows for caching of properties and
-    /// other optimizations. If you don't know the type at runtime, or wish to use properties not
-    /// available from the provided type parameter, consider using <see cref="AddObject{T}(RestRequest, T, string[])"/>
-    /// </remarks>
-    /// <param name="request">Request instance</param>
-    /// <param name="obj">Object to add as form data</param>
-    /// <returns></returns>
-    public static RestRequest AddObjectStatic<T>(this RestRequest request, T obj) where T : class
-        => request.AddParameters(PropertyCache<T>.GetParameters(obj));
 }

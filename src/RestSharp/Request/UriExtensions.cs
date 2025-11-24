@@ -29,9 +29,9 @@ static class UriExtensions {
                 : throw new ArgumentException("Both BaseUrl and Resource are empty", nameof(resource));
         }
 
-        var usingBaseUri = baseUrl.AbsoluteUri[^1] == '/' || assembled.IsEmpty() ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
+        var usingBaseUri = baseUrl.AbsoluteUri[^1] == '/' || assembled.IsEmpty() ? baseUrl : new(baseUrl.AbsoluteUri + "/");
 
-        return assembled != null ? new Uri(usingBaseUri, assembled) : baseUrl;
+        return assembled != null ? new(usingBaseUri, assembled) : baseUrl;
     }
 
     public static Uri AddQueryString(this Uri uri, string? query) {

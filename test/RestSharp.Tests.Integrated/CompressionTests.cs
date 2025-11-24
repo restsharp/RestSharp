@@ -31,7 +31,7 @@ public class CompressionTests {
         var body = await GetBody(s => new DeflateStream(s, CompressionMode.Compress, true), value);
         ConfigureServer(server, body, "deflate");
 
-        using var client   = new RestClient(server.Url!);
+        using var client   = new RestClient(server.Url!, options => options.AutomaticDecompression = DecompressionMethods.Deflate);
         var       request  = new RestRequest("");
         var       response = await client.ExecuteAsync(request);
 

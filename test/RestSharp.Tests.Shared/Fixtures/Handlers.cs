@@ -23,7 +23,7 @@ public static class Handlers {
     /// </summary>
     public static Action<HttpListenerContext> Generic<T>() where T : new()
         => ctx => {
-            var methodName = ctx.Request.Url.Segments.Last();
+            var methodName = ctx.Request.Url!.Segments.Last();
 
             var method = typeof(T).GetMethod(
                 methodName,

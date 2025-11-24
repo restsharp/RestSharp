@@ -13,7 +13,6 @@
 //   limitations under the License. 
 
 using System.Diagnostics;
-using System.Text;
 using RestSharp.Extensions;
 
 // ReSharper disable SuggestBaseTypeForParameter
@@ -39,12 +38,11 @@ public partial class RestResponse<T>(RestRequest request) : RestResponse(request
 [DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
 public class RestResponse(RestRequest request) : RestResponseBase(request) {
     internal static async Task<RestResponse> FromHttpResponse(
-        HttpResponseMessage     httpResponse,
-        RestRequest             request,
-        Encoding                encoding,
-        CookieCollection?       cookieCollection,
-        CalculateResponseStatus calculateResponseStatus,
-        CancellationToken       cancellationToken
+        HttpResponseMessage       httpResponse,
+        RestRequest               request,
+        ReadOnlyRestClientOptions options,
+        CookieCollection?         cookieCollection,
+        CancellationToken         cancellationToken
     ) {
         return request.AdvancedResponseWriter?.Invoke(httpResponse, request) ?? await GetDefaultResponse().ConfigureAwait(false);
 
@@ -56,7 +54,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
 #endif
 
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-            var content = bytes  == null ? null : await httpResponse.GetResponseString(bytes, encoding);
+            var content = bytes == null ? null : await httpResponse.GetResponseString(bytes, options.Encoding);
 
             return new(request) {
                 Content             = content,
@@ -65,11 +63,11 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
                 ContentLength       = httpResponse.Content?.Headers.ContentLength,
                 ContentType         = httpResponse.Content?.Headers.ContentType?.MediaType,
                 Cookies             = cookieCollection,
-                ErrorException      = httpResponse.MaybeException(),
+                ErrorException      = httpResponse.MaybeException(options.SetErrorExceptionOnUnsuccessfulStatusCode),
                 Headers             = httpResponse.Headers.GetHeaderParameters(),
                 IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
                 RawBytes            = bytes,
-                ResponseStatus      = calculateResponseStatus(httpResponse),
+                ResponseStatus      = options.CalculateResponseStatus(httpResponse),
                 ResponseUri         = httpResponse.RequestMessage?.RequestUri,
                 RootElement         = request.RootElement,
                 Server              = httpResponse.Headers.Server.ToString(),

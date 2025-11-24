@@ -15,27 +15,28 @@
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
-    /// <summary>
-    /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
-    /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
-    /// </summary>
     /// <param name="request">Request instance</param>
-    /// <param name="name">Name of the parameter; must be matching a placeholder in the resource URL as {name}</param>
-    /// <param name="value">Value of the parameter</param>
-    /// <param name="encode">Encode the value or not, default true</param>
-    /// <returns></returns>
-    public static RestRequest AddUrlSegment(this RestRequest request, string name, string? value, bool encode = true)
-        => request.AddParameter(new UrlSegmentParameter(name, value, encode));
+    extension(RestRequest request) {
+        /// <summary>
+        /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
+        /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
+        /// </summary>
+        /// <param name="name">Name of the parameter; must be matching a placeholder in the resource URL as {name}</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns></returns>
+        public RestRequest AddUrlSegment(string name, string? value, bool encode = true)
+            => request.AddOrUpdateParameter(new UrlSegmentParameter(name, value, encode));
 
-    /// <summary>
-    /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
-    /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
-    /// </summary>
-    /// <param name="request">Request instance</param>
-    /// <param name="name">Name of the parameter; must be matching a placeholder in the resource URL as {name}</param>
-    /// <param name="value">Value of the parameter</param>
-    /// <param name="encode">Encode the value or not, default true</param>
-    /// <returns></returns>
-    public static RestRequest AddUrlSegment<T>(this RestRequest request, string name, T value, bool encode = true) where T : struct
-        => request.AddUrlSegment(name, value.ToString(), encode);
+        /// <summary>
+        /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
+        /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
+        /// </summary>
+        /// <param name="name">Name of the parameter; must be matching a placeholder in the resource URL as {name}</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns></returns>
+        public RestRequest AddUrlSegment<T>(string name, T value, bool encode = true) where T : struct
+            => request.AddUrlSegment(name, value.ToString(), encode);
+    }
 }

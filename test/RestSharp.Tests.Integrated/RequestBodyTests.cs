@@ -12,6 +12,7 @@ public sealed class RequestBodyTests : IDisposable {
     readonly WireMockServer _server = WireMockServer.Start(s => s.AllowBodyForAllHttpMethods = true);
 
     async Task AssertBody(Method method, bool disableCharset = false) {
+#if NET
         var       options  = new RestClientOptions(_server.Url!) { DisableCharset = disableCharset };
         using var client   = new RestClient(options);
         var       request  = new RestRequest(RequestBodyCapturer.Resource, method);
@@ -25,6 +26,7 @@ public sealed class RequestBodyTests : IDisposable {
 
         var expected = disableCharset ? ExpectedTextContentTypeNoCharset : ExpectedTextContentType;
         AssertHasRequestBody(capturer, expected, bodyData);
+#endif
     }
 
     [Fact]

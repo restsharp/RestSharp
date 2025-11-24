@@ -1,4 +1,3 @@
-using CsvHelper.Configuration;
 using RestSharp.Serializers.CsvHelper;
 using RestSharp.Serializers.Json;
 using System.Globalization;
@@ -49,7 +48,7 @@ public sealed class CsvHelperTests : IDisposable {
 
         using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseCsvHelper());
 
-        var response = await client.ExecuteAsync<TestObject>(new RestRequest());
+        var response = await client.ExecuteAsync<TestObject>(new());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeFalse();
     }
@@ -61,18 +60,14 @@ public sealed class CsvHelperTests : IDisposable {
 
         using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseSystemTextJson());
 
-        var response = await client.ExecuteAsync<TestObject>(new RestRequest());
+        var response = await client.ExecuteAsync<TestObject>(new());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]
     public void SerializedObject_Should_Be() {
-        var serializer = new CsvHelperSerializer(
-            new CsvConfiguration(CultureInfo.InvariantCulture) {
-                NewLine = ";"
-            }
-        );
+        var serializer = new CsvHelperSerializer(new(CultureInfo.InvariantCulture) { NewLine = ";" });
 
         var item     = Fixture.Create<TestObject>();
         var actual   = serializer.Serialize(item);
@@ -83,11 +78,7 @@ public sealed class CsvHelperTests : IDisposable {
 
     [Fact]
     public void SerializedCollection_Should_Be() {
-        var serializer = new CsvHelperSerializer(
-            new CsvConfiguration(CultureInfo.InvariantCulture) {
-                NewLine = ";"
-            }
-        );
+        var serializer = new CsvHelperSerializer(new(CultureInfo.InvariantCulture) { NewLine = ";" });
 
         var items = new TestObject[] {
             new() {
@@ -95,13 +86,13 @@ public sealed class CsvHelperTests : IDisposable {
                 SingleValue   = 16.5f,
                 StringValue   = "hello",
                 TimeSpanValue = TimeSpan.FromMinutes(10),
-                DateTimeValue = new DateTime(2024, 1, 20)
+                DateTimeValue = new(2024, 1, 20)
             },
             new() {
                 Int32Value    = 65,
                 DecimalValue  = 89.555m,
                 TimeSpanValue = TimeSpan.FromSeconds(61),
-                DateTimeValue = new DateTime(2022, 8, 19, 5, 15, 21)
+                DateTimeValue = new(2022, 8, 19, 5, 15, 21)
             },
             new() {
                 SingleValue = 80000,
@@ -122,15 +113,14 @@ public sealed class CsvHelperTests : IDisposable {
 
 class TestObjectCustomization : ICustomization {
     public void Customize(IFixture fixture)
-        => fixture.Customize<TestObject>(
-            o => o
-                .WithAutoProperties()
-                .With(
-                    p => p.DateTimeValue,
-                    () => {
-                        var dt = fixture.Create<DateTime>();
-                        return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
-                    }
-                )
+        => fixture.Customize<TestObject>(o => o
+            .WithAutoProperties()
+            .With(
+                p => p.DateTimeValue,
+                () => {
+                    var dt = fixture.Create<DateTime>();
+                    return new(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+                }
+            )
         );
 }

@@ -18,20 +18,21 @@ namespace RestSharp.Serializers.Json;
 
 [PublicAPI]
 public static class RestClientExtensions {
-    /// <summary>
-    /// Use System.Text.Json serializer with default settings
-    /// </summary>
     /// <param name="serializerConfig"></param>
-    /// <returns></returns>
-    public static SerializerConfig UseSystemTextJson(this SerializerConfig serializerConfig)
-        => serializerConfig.UseSerializer(() => new SystemTextJsonSerializer());
+    extension(SerializerConfig serializerConfig) {
+        /// <summary>
+        /// Use System.Text.Json serializer with default settings
+        /// </summary>
+        /// <returns></returns>
+        public SerializerConfig UseSystemTextJson()
+            => serializerConfig.UseSerializer(() => new SystemTextJsonSerializer());
 
-    /// <summary>
-    /// Use System.Text.Json serializer with custom settings
-    /// </summary>
-    /// <param name="serializerConfig"></param>
-    /// <param name="options">System.Text.Json serializer options</param>
-    /// <returns></returns>
-    public static SerializerConfig UseSystemTextJson(this SerializerConfig serializerConfig, JsonSerializerOptions options)
-        => serializerConfig.UseSerializer(() => new SystemTextJsonSerializer(options));
+        /// <summary>
+        /// Use System.Text.Json serializer with custom settings
+        /// </summary>
+        /// <param name="options">System.Text.Json serializer options</param>
+        /// <returns></returns>
+        public SerializerConfig UseSystemTextJson(JsonSerializerOptions options)
+            => serializerConfig.UseSerializer(() => new SystemTextJsonSerializer(options));
+    }
 }

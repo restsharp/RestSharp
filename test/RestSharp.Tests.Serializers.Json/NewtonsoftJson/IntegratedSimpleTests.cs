@@ -9,7 +9,7 @@ public sealed class IntegratedSimpleTests : IDisposable {
     readonly WireMockServer _server = WireMockServer.Start();
     readonly RestClient     _client;
 
-    public IntegratedSimpleTests() => _client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson());
+    public IntegratedSimpleTests() => _client = new(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson());
 
     [Fact]
     public async Task Should_serialize_request() {
@@ -19,7 +19,7 @@ public sealed class IntegratedSimpleTests : IDisposable {
         var request    = new RestRequest().AddJsonBody(testData);
 
         await _client.PostAsync(request);
-        var actual = serializer.Deserialize<TestClass>(new RestResponse(request) { Content = capturer.Body! });
+        var actual = serializer.Deserialize<TestClass>(new(request) { Content = capturer.Body! });
 
         actual.Should().BeEquivalentTo(testData);
     }
@@ -43,7 +43,7 @@ public sealed class IntegratedSimpleTests : IDisposable {
             .RespondWith(Response.Create().WithBody("invalid json").WithHeader(KnownHeaders.ContentType, ContentType.Json));
 
 
-        var response = await _client.ExecuteAsync<TestClass>(new RestRequest());
+        var response = await _client.ExecuteAsync<TestClass>(new());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeFalse();
     }
@@ -56,7 +56,7 @@ public sealed class IntegratedSimpleTests : IDisposable {
             .Given(Request.Create().WithPath("/").UsingGet())
             .RespondWith(Response.Create().WithBodyAsJson(item));
 
-        var response = await _client.ExecuteAsync<TestClass>(new RestRequest());
+        var response = await _client.ExecuteAsync<TestClass>(new());
         response.IsSuccessStatusCode.Should().BeTrue();
         response.IsSuccessful.Should().BeTrue();
     }

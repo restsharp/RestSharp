@@ -15,7 +15,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="HttpMultipartParser"/>
-        <PackageReference Include="HttpTracer"/>
         <PackageReference Include="Polly"/>
         <PackageReference Include="PolySharp" PrivateAssets="All"/>
         <PackageReference Include="WireMock.Net"/>

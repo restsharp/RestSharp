@@ -21,6 +21,20 @@ public sealed class RequestFailureTests(WireMockTestServer server) : IClassFixtu
         var response = await _client.ExecuteAsync<SuccessResponse>(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.ErrorException.Should().NotBeNull();
+        response.Data.Should().Be(null);
+    }
+
+    [Fact]
+    public async Task Does_not_throw_on_unsuccessful_status_code_with_option() {
+        using var client   = new RestClient(new RestClientOptions(server.Url!) { SetErrorExceptionOnUnsuccessfulStatusCode = false });
+        var       request  = new RestRequest("status?code=404");
+        var       response = await client.ExecuteAsync<SuccessResponse>(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.ErrorException.Should().BeNull();
         response.Data.Should().Be(null);
     }
 
@@ -29,6 +43,7 @@ public sealed class RequestFailureTests(WireMockTestServer server) : IClassFixtu
         using var client  = new RestClient(new RestClientOptions(server.Url!) { ThrowOnAnyError = true });
         var       request = new RestRequest("status?code=500");
 
+        // ReSharper disable once AccessToDisposedClosure
         var task = () => client.ExecuteAsync<SuccessResponse>(request);
         await task.Should().ThrowExactlyAsync<HttpRequestException>();
     }

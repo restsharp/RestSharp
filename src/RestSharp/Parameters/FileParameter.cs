@@ -65,7 +65,7 @@ public record FileParameter {
         ContentType?          contentType = null,
         FileParameterOptions? options     = null
     ) {
-        return new FileParameter(name, filename, GetFile, contentType, options ?? new FileParameterOptions());
+        return new(name, filename, GetFile, contentType, options ?? new FileParameterOptions());
 
         Stream GetFile() {
             var stream = new MemoryStream();
@@ -105,7 +105,7 @@ public record FileParameter {
         var fileName      = Path.GetFileName(fullPath);
         var parameterName = name ?? fileName;
 
-        return new FileParameter(parameterName, fileName, GetFile, contentType, options ?? new FileParameterOptions());
+        return new(parameterName, fileName, GetFile, contentType, options ?? new FileParameterOptions());
 
         Stream GetFile() => File.OpenRead(fullPath);
     }

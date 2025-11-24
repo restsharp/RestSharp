@@ -36,114 +36,117 @@ static partial class StringExtensions {
     static readonly Regex AddSpacesRegex2 = AddSpaces2();
     static readonly Regex AddSpacesRegex3 = AddSpaces3();
 
-    internal static string UrlDecode(this string input) => HttpUtility.UrlDecode(input);
+    extension(string input) {
+        internal string UrlDecode() => HttpUtility.UrlDecode(input);
 
-    /// <summary>
-    /// Uses Uri.EscapeDataString() based on recommendations on MSDN
-    /// http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
-    /// </summary>
-    internal static string UrlEncode(this string input) {
-        const int maxLength = 32766;
+        /// <summary>
+        /// Uses Uri.EscapeDataString() based on recommendations on MSDN
+        /// http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+        /// </summary>
+        internal string UrlEncode() {
+            const int maxLength = 32766;
 
-        if (input == null) throw new ArgumentNullException(nameof(input));
+            if (input == null) throw new ArgumentNullException(nameof(input));
 
-        if (input.Length <= maxLength) return Uri.EscapeDataString(input);
+            if (input.Length <= maxLength) return Uri.EscapeDataString(input);
 
-        var sb    = new StringBuilder(input.Length * 2);
-        var index = 0;
+            var sb    = new StringBuilder(input.Length * 2);
+            var index = 0;
 
-        while (index < input.Length) {
-            var length = Math.Min(input.Length - index, maxLength);
+            while (index < input.Length) {
+                var length = Math.Min(input.Length - index, maxLength);
 
-            while (CharUnicodeInfo.GetUnicodeCategory(input[index + length - 1]) == UnicodeCategory.Surrogate) {
-                length--;
+                while (CharUnicodeInfo.GetUnicodeCategory(input[index + length - 1]) == UnicodeCategory.Surrogate) {
+                    length--;
+                }
+
+                var subString = input.Substring(index, length);
+
+                sb.Append(Uri.EscapeDataString(subString));
+                index += subString.Length;
             }
 
-            var subString = input.Substring(index, length);
-
-            sb.Append(Uri.EscapeDataString(subString));
-            index += subString.Length;
+            return sb.ToString();
         }
 
-        return sb.ToString();
-    }
-
-    internal static string? UrlEncode(this string? input, Encoding encoding) {
-        var encoded = HttpUtility.UrlEncode(input, encoding);
-        return encoded?.Replace("+", "%20");
-    }
-
-    internal static string RemoveUnderscoresAndDashes(this string input) => input.Replace("_", "").Replace("-", "");
-
-    internal static string ToPascalCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
-        => ToPascalCase(lowercaseAndUnderscoredWord, true, culture);
-
-    internal static string ToPascalCase(this string text, bool removeUnderscores, CultureInfo culture) {
-        if (string.IsNullOrEmpty(text)) return text;
-
-        text = text.Replace('_', ' ');
-
-        var joinString = removeUnderscores ? string.Empty : "_";
-        var words      = text.Split(' ');
-
-        return words
-            .Where(x => x.Length > 0)
-            .Select(CaseWord)
-            .JoinToString(joinString);
-
-        string CaseWord(string word) {
-            var restOfWord = word[1..];
-            var firstChar  = char.ToUpper(word[0], culture);
-
-            if (restOfWord.IsUpperCase()) restOfWord = restOfWord.ToLower(culture);
-
-            return string.Concat(firstChar, restOfWord);
+        internal string? UrlEncode(Encoding encoding) {
+            var encoded = HttpUtility.UrlEncode(input, encoding);
+            return encoded?.Replace("+", "%20");
         }
     }
 
-    internal static string ToCamelCase(this string lowercaseAndUnderscoredWord, CultureInfo culture)
-        => MakeInitialLowerCase(ToPascalCase(lowercaseAndUnderscoredWord, culture), culture);
+    extension(string input) {
+        internal string RemoveUnderscoresAndDashes() => input.Replace("_", "").Replace("-", "");
 
-    internal static IEnumerable<string> GetNameVariants(this string name, CultureInfo culture) {
-        if (string.IsNullOrEmpty(name)) yield break;
+        internal string ToPascalCase(CultureInfo culture) => ToPascalCase(input, true, culture);
 
-        yield return name;
+        internal string ToPascalCase(bool removeUnderscores, CultureInfo culture) {
+            if (string.IsNullOrEmpty(input)) return input;
 
-        // try camel cased name
-        yield return name.ToCamelCase(culture);
+            input = input.Replace('_', ' ');
 
-        // try lower cased name
-        yield return name.ToLower(culture);
+            var joinString = removeUnderscores ? string.Empty : "_";
+            var words      = input.Split(' ');
 
-        // try name with underscores
-        yield return name.AddUnderscores();
+            return words
+                .Where(x => x.Length > 0)
+                .Select(CaseWord)
+                .JoinToString(joinString);
 
-        // try name with underscores with lower case
-        yield return name.AddUnderscores().ToLower(culture);
+            string CaseWord(string word) {
+                var restOfWord = word[1..];
+                var firstChar  = char.ToUpper(word[0], culture);
 
-        // try name with dashes
-        yield return name.AddDashes();
+                if (restOfWord.IsUpperCase()) restOfWord = restOfWord.ToLower(culture);
 
-        // try name with dashes with lower case
-        yield return name.AddDashes().ToLower(culture);
+                return string.Concat(firstChar, restOfWord);
+            }
+        }
 
-        // try name with underscore prefix
-        yield return name.AddUnderscorePrefix();
+        internal string ToCamelCase(CultureInfo culture)
+            => MakeInitialLowerCase(ToPascalCase(input, culture), culture);
 
-        // try name with proper camel case
-        yield return name.AddUnderscores().ToCamelCase(culture);
+        internal IEnumerable<string> GetNameVariants(CultureInfo culture) {
+            if (string.IsNullOrEmpty(input)) yield break;
 
-        // try name with underscore prefix, using proper camel case
-        yield return name.ToCamelCase(culture).AddUnderscorePrefix();
+            yield return input;
 
-        // try name with underscore prefix, using camel case
-        yield return name.AddUnderscores().ToCamelCase(culture).AddUnderscorePrefix();
+            // try camel cased name
+            yield return input.ToCamelCase(culture);
 
-        // try name with spaces
-        yield return name.AddSpaces();
+            // try lower cased name
+            yield return input.ToLower(culture);
 
-        // try name with spaces with lower case
-        yield return name.AddSpaces().ToLower(culture);
+            // try name with underscores
+            yield return input.AddUnderscores();
+
+            // try name with underscores with lower case
+            yield return input.AddUnderscores().ToLower(culture);
+
+            // try name with dashes
+            yield return input.AddDashes();
+
+            // try name with dashes with lower case
+            yield return input.AddDashes().ToLower(culture);
+
+            // try name with underscore prefix
+            yield return input.AddUnderscorePrefix();
+
+            // try name with proper camel case
+            yield return input.AddUnderscores().ToCamelCase(culture);
+
+            // try name with underscore prefix, using proper camel case
+            yield return input.ToCamelCase(culture).AddUnderscorePrefix();
+
+            // try name with underscore prefix, using camel case
+            yield return input.AddUnderscores().ToCamelCase(culture).AddUnderscorePrefix();
+
+            // try name with spaces
+            yield return input.AddSpaces();
+
+            // try name with spaces with lower case
+            yield return input.AddSpaces().ToLower(culture);
+        }
     }
 
     internal static bool IsEmpty([NotNullWhen(false)] this string? value) => string.IsNullOrWhiteSpace(value);
@@ -152,38 +155,40 @@ static partial class StringExtensions {
 
     internal static string JoinToString(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
 
-    static string MakeInitialLowerCase(this string word, CultureInfo culture) => string.Concat(word[..1].ToLower(culture), word[1..]);
+    extension(string word) {
+        string MakeInitialLowerCase(CultureInfo culture) => string.Concat(word[..1].ToLower(culture), word[1..]);
 
-    static string AddUnderscores(this string pascalCasedWord)
-        => AddUnderscoresRegex1.Replace(
-            AddUnderscoresRegex2.Replace(
-                AddUnderscoresRegex3.Replace(pascalCasedWord, "$1_$2"),
-                "$1_$2"
-            ),
-            "_"
-        );
+        string AddUnderscores()
+            => AddUnderscoresRegex1.Replace(
+                AddUnderscoresRegex2.Replace(
+                    AddUnderscoresRegex3.Replace(word, "$1_$2"),
+                    "$1_$2"
+                ),
+                "_"
+            );
 
-    static string AddDashes(this string pascalCasedWord)
-        => AddDashesRegex1.Replace(
-            AddDashesRegex2.Replace(
-                AddDashesRegex3.Replace(pascalCasedWord, "$1-$2"),
-                "$1-$2"
-            ),
-            "-"
-        );
+        string AddDashes()
+            => AddDashesRegex1.Replace(
+                AddDashesRegex2.Replace(
+                    AddDashesRegex3.Replace(word, "$1-$2"),
+                    "$1-$2"
+                ),
+                "-"
+            );
 
-    static bool IsUpperCase(this string inputString) => IsUpperCaseRegex.IsMatch(inputString);
+        bool IsUpperCase() => IsUpperCaseRegex.IsMatch(word);
 
-    static string AddUnderscorePrefix(this string pascalCasedWord) => $"_{pascalCasedWord}";
+        string AddUnderscorePrefix() => $"_{word}";
 
-    static string AddSpaces(this string pascalCasedWord)
-        => AddSpacesRegex1.Replace(
-            AddSpacesRegex2.Replace(
-                AddSpacesRegex3.Replace(pascalCasedWord, "$1 $2"),
-                "$1 $2"
-            ),
-            " "
-        );
+        string AddSpaces()
+            => AddSpacesRegex1.Replace(
+                AddSpacesRegex2.Replace(
+                    AddSpacesRegex3.Replace(word, "$1 $2"),
+                    "$1 $2"
+                ),
+                " "
+            );
+    }
 
     const string RIsUpperCase    = "^[A-Z]+$";
     const string RAddUnderscore1 = @"[-\s]";

@@ -52,7 +52,7 @@ public class JsonNetSerializer : IRestSerializer, ISerializer, IDeserializer {
     public string? Serialize(object? obj) {
         if (obj == null) return null;
 
-        using var buffer = _writerBuffer ??= new WriterBuffer(_serializer);
+        using var buffer = _writerBuffer ??= new(_serializer);
 
         _serializer.Serialize(buffer.GetJsonTextWriter(), obj, obj.GetType());
 

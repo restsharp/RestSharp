@@ -25,22 +25,22 @@ public class NamespacedXmlTests {
         var ns   = XNamespace.Get("http://restsharp.org");
         var root = new XElement(ns + "Person");
 
-        root.Add(new XElement(ns   + "Name", "John Sheehan"));
-        root.Add(new XElement(ns   + "Start_Date", new DateTime(2009, 9, 25, 0, 6, 1)));
+        root.Add(new XElement(ns + "Name", "John Sheehan"));
+        root.Add(new XElement(ns + "Start_Date", new DateTime(2009, 9, 25, 0, 6, 1)));
         root.Add(new XAttribute(ns + "Age", 28));
-        root.Add(new XElement(ns   + "Percent", 99.9999m));
-        root.Add(new XElement(ns   + "Big_Number", long.MaxValue));
+        root.Add(new XElement(ns + "Percent", 99.9999m));
+        root.Add(new XElement(ns + "Big_Number", long.MaxValue));
         root.Add(new XAttribute(ns + "Is_Cool", false));
-        root.Add(new XElement(ns   + "Ignore", "dummy"));
+        root.Add(new XElement(ns + "Ignore", "dummy"));
         root.Add(new XAttribute(ns + "Read_Only", "dummy"));
         root.Add(new XAttribute(ns + "Unique_Id", new Guid(GuidString)));
-        root.Add(new XElement(ns   + "Url", "http://example.com"));
-        root.Add(new XElement(ns   + "Url_Path", "/foo/bar"));
+        root.Add(new XElement(ns + "Url", "http://example.com"));
+        root.Add(new XElement(ns + "Url_Path", "/foo/bar"));
 
         root.Add(
             new XElement(
                 ns + "Best_Friend",
-                new XElement(ns   + "Name", "The Fonz"),
+                new XElement(ns + "Name", "The Fonz"),
                 new XAttribute(ns + "Since", 1952)
             )
         );
@@ -51,7 +51,7 @@ public class NamespacedXmlTests {
             friends.Add(
                 new XElement(
                     ns + "Friend",
-                    new XElement(ns   + "Name", "Friend"           + i),
+                    new XElement(ns + "Name", "Friend" + i),
                     new XAttribute(ns + "Since", DateTime.Now.Year - i)
                 )
             );
@@ -102,7 +102,7 @@ public class NamespacedXmlTests {
             friends.Add(
                 new XElement(
                     ns + "Friend",
-                    new XElement(ns + "Name", "Friend"           + i),
+                    new XElement(ns + "Name", "Friend" + i),
                     new XElement(ns + "Since", DateTime.Now.Year - i)
                 )
             );
@@ -184,14 +184,14 @@ public class NamespacedXmlTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.BestFriend);
         Assert.Equal("The Fonz", p.BestFriend.Name);
         Assert.Equal(1952, p.BestFriend.Since);
@@ -205,14 +205,14 @@ public class NamespacedXmlTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -228,14 +228,14 @@ public class NamespacedXmlTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -263,14 +263,14 @@ public class NamespacedXmlTests {
         var p        = d.Deserialize<PersonForXml>(response);
 
         Assert.Equal("John Sheehan", p.Name);
-        Assert.Equal(new DateTime(2009, 9, 25, 0, 6, 1), p.StartDate);
+        Assert.Equal(new(2009, 9, 25, 0, 6, 1), p.StartDate);
         Assert.Equal(28, p.Age);
         Assert.Equal(long.MaxValue, p.BigNumber);
         Assert.Equal(99.9999m, p.Percent);
         Assert.False(p.IsCool);
-        Assert.Equal(new Guid(GuidString), p.UniqueId);
-        Assert.Equal(new Uri("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
-        Assert.Equal(new Uri("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
+        Assert.Equal(new(GuidString), p.UniqueId);
+        Assert.Equal(new("http://example.com", UriKind.RelativeOrAbsolute), p.Url);
+        Assert.Equal(new("/foo/bar", UriKind.RelativeOrAbsolute), p.UrlPath);
         Assert.NotNull(p.Friends);
         Assert.Equal(10, p.Friends.Count);
         Assert.NotNull(p.BestFriend);
@@ -298,7 +298,7 @@ public class NamespacedXmlTests {
         };
 
         var xml    = new XmlDeserializer();
-        var output = xml.Deserialize<SingleNode>(new RestResponse { Content = doc.ToString() });
+        var output = xml.Deserialize<SingleNode>(new() { Content = doc.ToString() });
 
         Assert.NotNull(output);
 

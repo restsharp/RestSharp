@@ -16,17 +16,17 @@
 namespace RestSharp;
 
 public static class ResponseThrowExtension {
-    public static RestResponse ThrowIfError(this RestResponse response) {
-        var exception = response.GetException();
-        if (exception != null) throw exception;
-
-        return response;
+    extension(RestResponse response) {
+        public RestResponse ThrowIfError() {
+            var exception = response.GetException();
+            return exception != null ? throw exception : response;
+        }
     }
 
-    public static RestResponse<T> ThrowIfError<T>(this RestResponse<T> response) {
-        var exception = response.GetException();
-        if (exception != null) throw exception;
-
-        return response;
+    extension<T>(RestResponse<T> response) {
+        public RestResponse<T> ThrowIfError() {
+            var exception = response.GetException();
+            return exception != null ? throw exception : response;
+        }
     }
 }
