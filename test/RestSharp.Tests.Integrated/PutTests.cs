@@ -40,5 +40,3 @@ public sealed class PutTests(WireMockTestServer server) : IClassFixture<WireMock
 
     public void Dispose() => _client.Dispose();
 }
-
-public record TestRequest(string Data, int Number);

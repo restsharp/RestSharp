@@ -16,6 +16,7 @@
     <SystemTextJsonVer>9.0.10</SystemTextJsonVer>
   </PropertyGroup>
   <ItemGroup Label="Runtime dependencies">
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="CsvHelper" Version="33.0.1" />
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVer)" />

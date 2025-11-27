@@ -224,12 +224,12 @@ public partial class RestClient : IRestClient {
     )
         : this(new HttpClient(handler, disposeHandler), true, configureRestClient, configureSerialization) { }
 
-    static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
+    internal static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
         if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
     }
 
     // ReSharper disable once CognitiveComplexity
-    static void ConfigureHttpMessageHandler(HttpClientHandler handler, RestClientOptions options) {
+    internal static void ConfigureHttpMessageHandler(HttpClientHandler handler, RestClientOptions options) {
 #if NET
         if (!OperatingSystem.IsBrowser()) {
 #endif

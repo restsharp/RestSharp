@@ -13,56 +13,17 @@
         <PackageReference Include="Nullable" PrivateAssets="All"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Update="RestClient.Extensions.Params.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
         <Compile Update="RestClient.Async.cs">
             <DependentUpon>RestClient.cs</DependentUpon>
         </Compile>
-        <Compile Update="Request\PropertyCache.Populator.cs">
+        <Compile Update="Request\PropertyCache.*.cs">
             <DependentUpon>PropertyCache.cs</DependentUpon>
         </Compile>
-        <Compile Update="Request\PropertyCache.Populator.RequestProperty.cs">
-            <DependentUpon>PropertyCache.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Get.cs">
+        <Compile Update="RestClient.Extensions.*.cs">
             <DependentUpon>RestClient.Extensions.cs</DependentUpon>
         </Compile>
-        <Compile Update="RestClient.Extensions.Post.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Put.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Patch.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Head.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Delete.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="RestClient.Extensions.Options.cs">
-            <DependentUpon>RestClient.Extensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Request\RestRequestExtensions.Headers.cs">
+        <Compile Update="Request\RestRequestExtensions.*.cs">
             <DependentUpon>RestRequestExtensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Request\RestRequestExtensions.Url.cs">
-            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Request\RestRequestExtensions.Query.cs">
-            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Request\RestRequestExtensions.File.cs">
-            <DependentUpon>RestRequestExtensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Request\RestRequestExtensions.Body.cs">
-          <DependentUpon>RestRequestExtensions.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Request\RestRequestExtensions.Object.cs">
-          <DependentUpon>RestRequestExtensions.cs</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup Label="Source generator">

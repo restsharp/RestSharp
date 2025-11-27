@@ -2,8 +2,6 @@
 
 namespace RestSharp.Tests.Integrated;
 
-using Server;
-
 public sealed class RequestFailureTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
     readonly RestClient _client = new(server.Url!);
 

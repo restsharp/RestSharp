@@ -1,13 +1,17 @@
+using System.Net;
 using System.Text.Json;
-using WireMock.Settings;
+using WireMock;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 using WireMock.Types;
 using WireMock.Util;
 
-namespace RestSharp.Tests.Integrated.Server;
+namespace RestSharp.Tests.Shared.Server;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class WireMockTestServer : WireMockServer {
-    public WireMockTestServer() : base(new WireMockServerSettings { Port = 0, UseHttp2 = false, UseSSL = false }) {
+    public WireMockTestServer() : base(new() { Port = 0, UseHttp2 = false, UseSSL = false }) {
         Given(Request.Create().WithPath("/echo"))
             .RespondWith(Response.Create().WithCallback(EchoQuery));
 
@@ -97,5 +101,6 @@ public class WireMockTestServer : WireMockServer {
                 DetectedBodyType = BodyType.Json
             }
         };
-
 }
+
+public record TestRequest(string Data, int Number);

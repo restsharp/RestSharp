@@ -1,6 +1,6 @@
-namespace RestSharp.Tests.Integrated.Server;
+namespace RestSharp.Tests.Shared.Server;
 
-record TestServerResponse(string Name, string Value);
+public record TestServerResponse(string Name, string Value);
 
 public record UploadResponse(string FileName, long Length, bool Equal);
 

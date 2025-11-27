@@ -1,7 +1,5 @@
 namespace RestSharp.Tests.Integrated;
 
-using Server;
-
 public sealed class RedirectTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
     readonly RestClient _client = new(new RestClientOptions(server.Url!) { FollowRedirects = true });
 
