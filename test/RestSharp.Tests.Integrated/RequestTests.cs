@@ -6,5 +6,5 @@ public sealed class RequestTests(WireMockTestServer server)
     
     public void Dispose() => _client.Dispose();
 
-    protected override RestClient GetClient() => _client;
+    protected override IRestClient GetClient() => _client;
 }

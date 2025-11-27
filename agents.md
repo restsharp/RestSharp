@@ -99,7 +99,7 @@ The build system uses a hierarchical props structure:
 
 **Modern .NET (8/9/10):**
 - Native support for most features
-- Conditional compilation using `#if NET8_0_OR_GREATER`
+- Conditional compilation using `#if NET`
 - Platform-specific attributes like `[UnsupportedOSPlatform("browser")]`
 
 ### Assembly Signing
