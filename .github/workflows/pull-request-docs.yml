@@ -16,5 +16,5 @@ jobs:
         name: Build docs
         run: |
           cd docs
-          yarn install
-          yarn build
+          pnpm install
+          pnpm build
