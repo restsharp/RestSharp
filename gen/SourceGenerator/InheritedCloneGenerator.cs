@@ -42,6 +42,8 @@ public class InheritedCloneGenerator : IIncrementalGenerator {
                 var attributeData = genericClassSymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == $"{AttributeName}Attribute");
                 var methodName    = (string)attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "Name").Value.Value;
                 var baseType      = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "BaseType").Value.Value;
+                var maybeMutate   = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "Mutate").Value.Value;
+                var mutate        = maybeMutate as bool? ?? false;
 
                 // Get the generic argument type where properties need to be copied from
                 var attributeSyntax = candidate.AttributeLists
@@ -49,7 +51,7 @@ public class InheritedCloneGenerator : IIncrementalGenerator {
                     .FirstOrDefault(a => a.Name.ToString().StartsWith(AttributeName));
                 if (attributeSyntax == null) continue; // This should never happen
 
-                var code = GenerateMethod(candidate, genericClassSymbol, (INamedTypeSymbol)baseType, methodName);
+                var code = GenerateMethod(candidate, genericClassSymbol, (INamedTypeSymbol)baseType, methodName, (bool)mutate!);
                 yield return ($"{genericClassSymbol.Name}.Clone.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         }
@@ -59,7 +61,8 @@ public class InheritedCloneGenerator : IIncrementalGenerator {
         TypeDeclarationSyntax classToExtendSyntax,
         INamedTypeSymbol      classToExtendSymbol,
         INamedTypeSymbol      classToClone,
-        string                methodName
+        string                methodName,
+        bool                  mutate
     ) {
         var namespaceName         = classToExtendSymbol.ContainingNamespace.ToDisplayString();
         var className             = classToExtendSyntax.Identifier.Text;
@@ -74,24 +77,41 @@ public class InheritedCloneGenerator : IIncrementalGenerator {
         var constructorArgs       = string.Join(", ", constructorParams.Select(p => $"original.{GetPropertyName(p.Name, props)}"));
         var constructorParamNames = constructorParams.Select(p => p.Name).ToArray();
 
+        var endLine = mutate ? ";" : ",";
+        var spaces = string.Empty.PadRight(mutate ? 8 : 12);
         var properties = props
             // ReSharper disable once PossibleUnintendedLinearSearchInSet
             .Where(prop => !constructorParamNames.Contains(prop.Name, StringComparer.OrdinalIgnoreCase) && prop.SetMethod != null)
-            .Select(prop => $"            {prop.Name} = original.{prop.Name},")
+            .Select(prop => $"{spaces}{prop.Name} = original.{prop.Name}{endLine}")
             .ToArray();
 
-        const string template = """
-                                {Usings}
+        const string immutableTemplate =
+            """
+            {Usings}
 
-                                namespace {Namespace};
+            namespace {Namespace};
 
-                                public partial class {ClassDeclaration} {
-                                    public static {ClassDeclaration} {MethodName}({OriginalClassName} original)
-                                        => new {ClassDeclaration}({ConstructorArgs}) {
-                                {Properties}
-                                        };
-                                }
-                                """;
+            public partial class {ClassDeclaration} {
+                public static {ClassDeclaration} {MethodName}({OriginalClassName} original) {
+                    return new {ClassDeclaration}({ConstructorArgs}) {
+            {Properties}
+                    };
+                }
+            }
+            """;
+        const string mutableTemplate =
+            """
+            {Usings}
+
+            namespace {Namespace};
+
+            public partial class {ClassDeclaration} {
+                public void {MethodName}({OriginalClassName} original) {
+            {Properties}
+                }
+            }
+            """;
+        var template = mutate ? mutableTemplate : immutableTemplate;
 
         var code = template
             .Replace("{Usings}", string.Join("\n", usings))

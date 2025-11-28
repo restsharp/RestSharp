@@ -5,13 +5,12 @@ using RestSharp.Tests.Shared.Server;
 
 namespace RestSharp.Tests.DependencyInjection;
 
-public sealed class RequestTests
-    : RequestTestsBase, IClassFixture<WireMockTestServer>, IDisposable {
+public sealed class DefaultClientRequestTests : RequestTestsBase, IClassFixture<WireMockTestServer>, IDisposable {
     readonly ServiceProvider _provider;
 
-    public RequestTests(WireMockTestServer server) : base(false) {
+    public DefaultClientRequestTests(WireMockTestServer server) : base(false) {
         var services = new ServiceCollection();
-        services.AddRestClient(server.Url!);
+        services.AddRestClient(new Uri(server.Url!));
         _provider = services.BuildServiceProvider();
     }
 

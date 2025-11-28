@@ -32,7 +32,8 @@ using RestSharp.Interceptors;
 namespace RestSharp;
 
 [GenerateImmutable]
-public class RestClientOptions {
+[GenerateClone(BaseType = typeof(RestClientOptions), Name = "CopyFrom", Mutate = true)]
+public partial class RestClientOptions {
     static readonly Version Version = new AssemblyName(typeof(RestClientOptions).Assembly.FullName!).Version!;
 
     static readonly string DefaultUserAgent = $"RestSharp/{Version}";
