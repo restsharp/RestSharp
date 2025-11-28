@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 [PublicAPI]
@@ -52,7 +54,7 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns>This request</returns>
         public RestRequest AddParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddParameter(name, value.ToString(), encode);
+            => request.AddParameter(name, value.ToStringInvariant(), encode);
 
         /// <summary>
         /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
@@ -72,7 +74,7 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns>This request</returns>
         public RestRequest AddOrUpdateParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddOrUpdateParameter(name, value.ToString(), encode);
+            => request.AddOrUpdateParameter(name, value.ToStringInvariant(), encode);
 
         RestRequest AddParameters(IEnumerable<Parameter> parameters) {
             request.Parameters.AddParameters(parameters);

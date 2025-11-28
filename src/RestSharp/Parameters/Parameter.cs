@@ -13,6 +13,7 @@
 //   limitations under the License. 
 
 using System.Diagnostics;
+using RestSharp.Extensions;
 
 namespace RestSharp;
 
@@ -76,10 +77,10 @@ public abstract record Parameter {
     public static Parameter CreateParameter(string? name, object? value, ParameterType type, bool encode = true)
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         => type switch {
-            ParameterType.GetOrPost   => new GetOrPostParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString(), encode),
-            ParameterType.UrlSegment  => new UrlSegmentParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString()!, encode),
-            ParameterType.HttpHeader  => new HeaderParameter(name!, value?.ToString()!),
-            ParameterType.QueryString => new QueryParameter(Ensure.NotEmptyString(name, nameof(name)), value?.ToString(), encode),
+            ParameterType.GetOrPost   => new GetOrPostParameter(Ensure.NotEmptyString(name, nameof(name)), value.ToStringInvariant(), encode),
+            ParameterType.UrlSegment  => new UrlSegmentParameter(Ensure.NotEmptyString(name, nameof(name)), value.ToStringInvariant()!, encode),
+            ParameterType.HttpHeader  => new HeaderParameter(name!, value.ToStringInvariant()!),
+            ParameterType.QueryString => new QueryParameter(Ensure.NotEmptyString(name, nameof(name)), value.ToStringInvariant(), encode),
             _                         => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
@@ -37,6 +39,6 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns></returns>
         public RestRequest AddQueryParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddQueryParameter(name, value.ToString(), encode);
+            => request.AddQueryParameter(name, value.ToStringInvariant(), encode);
     }
 }
