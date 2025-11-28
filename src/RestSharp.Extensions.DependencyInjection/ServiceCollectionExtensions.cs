@@ -78,6 +78,16 @@ public static class ServiceCollectionExtensions {
         }
 
         /// <summary>
+        /// Adds a RestClient to the service collection with custom options.
+        /// </summary>
+        /// <param name="configureRestClient">Function to configure the RestClient options.</param>
+        [PublicAPI]
+        public void AddRestClient(ConfigureRestClient configureRestClient) {
+            Ensure.NotNull(configureRestClient, nameof(configureRestClient));
+            services.AddRestClient(Constants.DefaultRestClient, configureRestClient);
+        }
+
+        /// <summary>
         /// Adds a named RestClient to the service collection with base URL.
         /// </summary>
         /// <param name="name">Client name.</param>
