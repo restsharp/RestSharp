@@ -17,6 +17,9 @@ public static class ServiceCollectionExtensions {
             ConfigureRestClient?    configureRestClient    = null,
             ConfigureSerialization? configureSerialization = null
         ) {
+            Ensure.NotEmptyString(name, nameof(name));
+            Ensure.NotNull(services, nameof(services));
+
             var options   = new RestClientOptions();
             var configure = configureRestClient ?? (_ => { });
             configure(options);
@@ -69,20 +72,26 @@ public static class ServiceCollectionExtensions {
         /// </summary>
         /// <param name="options">Custom options for the RestClient.</param>
         [PublicAPI]
-        public void AddRestClient(RestClientOptions options) => services.AddRestClient(Constants.DefaultRestClient, o => o.CopyFrom(options));
-        
+        public void AddRestClient(RestClientOptions options) {
+            Ensure.NotNull(options, nameof(options));
+            services.AddRestClient(Constants.DefaultRestClient, o => o.CopyFrom(options));
+        }
+
         /// <summary>
         /// Adds a named RestClient to the service collection with base URL.
         /// </summary>
         /// <param name="name">Client name.</param>
         /// <param name="baseUrl">The base URL for the RestClient.</param>
         public void AddRestClient(string name, Uri baseUrl) => services.AddRestClient(name, o => o.BaseUrl = baseUrl);
-        
+
         /// <summary>
         /// Adds a named RestClient to the service collection with custom options.
         /// </summary>
         /// <param name="name">Client name.</param>
         /// <param name="options">Custom options for the RestClient.</param>
-        public void AddRestClient(string name, RestClientOptions options) => services.AddRestClient(name, o => o.CopyFrom(options));
+        public void AddRestClient(string name, RestClientOptions options) {
+            Ensure.NotNull(options, nameof(options));
+            services.AddRestClient(name, o => o.CopyFrom(options));
+        }
     }
 }
