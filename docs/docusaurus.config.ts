@@ -9,10 +9,14 @@ const config: Config = {
     url: "https://restsharp.dev",
     baseUrl: "/",
     onBrokenLinks: "throw",
-    onBrokenMarkdownLinks: "warn",
     i18n: {
         defaultLocale: "en",
         locales: ["en"],
+    },
+    markdown: {
+        hooks: {
+            onBrokenMarkdownLinks: "warn",
+        }
     },
     plugins: [
         [
