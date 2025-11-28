@@ -14,7 +14,7 @@ Methods that you can override are:
 - `BeforeRequest(RestRequest request, CancellationToken cancellationToken)`
 - `AfterRequest(RestResponse response, CancellationToken cancellationToken)`
 - `BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken)`
-- `AfterHttpResponse(HttpResponseMessage responseMessage, CancellationToken cancellationToken)`
+- `AfterHttpRequest(HttpResponseMessage responseMessage, CancellationToken cancellationToken)`
 - `BeforeDeserialization(RestResponse response, CancellationToken cancellationToken)`
 
 All those functions must return a `ValueTask` instance.

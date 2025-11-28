@@ -60,6 +60,12 @@ var options = new RestClientOptions("https://api.twitter.com/2");
 var client = new RestClient(options, useClientFactory: true);
 ```
 
+## Dependency Injection
+
+Since version 113.0, RestSharp provides integration with Microsoft Dependency Injection container using `RestSharp.Extensions.DepndencyInjection` package. It also allows using `IHttpClientFactory`, which manages the lifecycle of HTTP message handlers, avoiding socket exhaustion when RestClient is used as a transient dependency. It also resolves the issue with DNS changes when RestClient is used as a singleton. The latter is solved by using RestClient as a transient dependency and letting the client factory to deal with message handlers lifecycle.
+
+Learn more about registering the client in the DI container [here](./di.md).
+
 ## Reusing HttpClient
 
 RestSharp uses `HttpClient` internally to make HTTP requests. It's possible to reuse the same `HttpClient` instance for multiple `RestClient` instances. This is useful when you want to share the same connection pool between multiple `RestClient` instances.
@@ -71,7 +77,9 @@ One way of doing it is to use `RestClient` constructors that accept an instance 
 - `UserAgent` will be added to the `RestClient.DefaultParameters` list as a HTTP header. This will be added to each request made by the `RestClient`, and the `HttpClient` instance will not be modified. This is to allow the `HttpClient` instance to be reused for scenarios where different `User-Agent` headers are required.
 - `Expect100Continue`
 
-Another option is to use a simple HTTP client factory as described [above](#simple-factory). 
+The second option is to use a simple HTTP client factory as described [above](#simple-factory). 
+
+Finally, you can use `IHttpClientFactory` that properly manages the client message handler lifecycle. Read more [here](./di.md).
 
 ## Blazor support
 
