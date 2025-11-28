@@ -253,7 +253,7 @@ It is not possible to add client-level default body parameters.
 If you have a pre-serialized payload like a JSON string, you can use `AddStringBody` to add it as a body parameter. You need to specify the content type, so the remote endpoint knows what to do with the request body. For example:
 
 ```csharp
-const json = "{ data: { foo: \"bar\" } }";
+const json = "{ \"data\": { \"foo\": \"bar\" } }";
 request.AddStringBody(json, ContentType.Json);
 ```
 

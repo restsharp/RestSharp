@@ -94,8 +94,8 @@ var response = await client.PostAsync<AddressUpdateResponse>(request);
 It's also possible to make the same call using `PostAsync` shorter syntax:
 
 ```csharp
-var response = await PostJsonAsync<AddressUpdateRequest, AddressUpdateResponse>(
-    "address/update", request, cancellationToken
+var response = await client.PostJsonAsync<AddressUpdateRequest, AddressUpdateResponse>(
+    "address/update", updatedAddress, cancellationToken
 );
 ```
 

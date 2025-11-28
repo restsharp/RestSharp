@@ -26,4 +26,4 @@ Changes between major versions are documented in the documentation for each vers
 * For responses with 404 (not found) status code the `IsSuccessful` is set to `false`
 * When the new option `ErrorWhenUnsuccessfulStatusCode` is set to `false`, the error message and the exception won't be added to the response. Default for this option is `true` for backwards compatibility.
 * When `AddUrlSegment` is called more than once with the same name, the last value will be used.
-* The new package `RestSharp.Extensions.DepdencyInjection` integrates RestSharp with Microsoft DI container and `IHttpClientFactory`.
+* The new package `RestSharp.Extensions.DependencyInjection` integrates RestSharp with Microsoft DI container and `IHttpClientFactory`.
