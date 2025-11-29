@@ -54,7 +54,19 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns>This request</returns>
         public RestRequest AddParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddParameter(name, value.ToStringInvariant(), encode);
+            => request.AddParameter(name, value.ToString(), encode);
+
+        /// <summary>
+        /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT).
+        /// The value will be converted to string using invariant culture for IFormattable types.
+        /// </summary>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="useInvariantCulture">When true, uses invariant culture for IFormattable types (e.g., numbers, dates)</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns>This request</returns>
+        public RestRequest AddParameter<T>(string name, T value, bool useInvariantCulture, bool encode = true) where T : struct
+            => request.AddParameter(name, useInvariantCulture ? value.ToStringInvariant() : value.ToString(), encode);
 
         /// <summary>
         /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
@@ -74,7 +86,19 @@ public static partial class RestRequestExtensions {
         /// <param name="encode">Encode the value or not, default true</param>
         /// <returns>This request</returns>
         public RestRequest AddOrUpdateParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddOrUpdateParameter(name, value.ToStringInvariant(), encode);
+            => request.AddOrUpdateParameter(name, value.ToString(), encode);
+
+        /// <summary>
+        /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT).
+        /// The value will be converted to string using invariant culture for IFormattable types.
+        /// </summary>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <param name="useInvariantCulture">When true, uses invariant culture for IFormattable types (e.g., numbers, dates)</param>
+        /// <param name="encode">Encode the value or not, default true</param>
+        /// <returns>This request</returns>
+        public RestRequest AddOrUpdateParameter<T>(string name, T value, bool useInvariantCulture, bool encode = true) where T : struct
+            => request.AddOrUpdateParameter(name, useInvariantCulture ? value.ToStringInvariant() : value.ToString(), encode);
 
         RestRequest AddParameters(IEnumerable<Parameter> parameters) {
             request.Parameters.AddParameters(parameters);

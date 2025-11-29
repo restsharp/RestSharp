@@ -13,9 +13,7 @@
 // limitations under the License.
 // 
 
-using System.Globalization;
 using System.Reflection;
-using RestSharp.Extensions;
 
 namespace RestSharp;
 
@@ -74,7 +72,7 @@ static class ObjectParser {
         bool IsAllowedProperty(string propertyName)
             => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
 
-        string? ParseValue(string? format, object? value) => format == null ? value.ToStringInvariant() : string.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value);
+        string? ParseValue(string? format, object? value) => format == null ? value?.ToString() : string.Format($"{{0:{format}}}", value);
     }
 }
 
