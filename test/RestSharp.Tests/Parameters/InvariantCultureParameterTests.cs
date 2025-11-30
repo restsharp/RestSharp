@@ -1,5 +1,4 @@
 using System.Globalization;
-using RichardSzalay.MockHttp;
 
 namespace RestSharp.Tests.Parameters;
 
