@@ -13,6 +13,7 @@
 // limitations under the License.
 // 
 
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Reflection;
@@ -230,4 +231,10 @@ public partial class RestClientOptions {
     /// Custom function to encode a string for use in a URL query.
     /// </summary>
     public Func<string, Encoding, string> EncodeQuery { get; set; } = (s, encoding) => s.UrlEncode(encoding)!;
+
+    /// <summary>
+    /// Culture to use for formatting IFormattable parameter values. Default is null which uses the current culture.
+    /// Set to <see cref="CultureInfo.InvariantCulture"/> to ensure consistent formatting across different locales.
+    /// </summary>
+    public CultureInfo? CultureForParameters { get; set; }
 }

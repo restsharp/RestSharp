@@ -1,18 +1,21 @@
 using System.Globalization;
+using RichardSzalay.MockHttp;
 
 namespace RestSharp.Tests.Parameters;
 
 public class InvariantCultureParameterTests {
     [Fact]
-    public void AddParameter_Double_UsesInvariantCulture_WhenOptIn() {
+    public void AddParameter_Double_UsesInvariantCulture_WhenConfigured() {
         // Save original culture
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             // Set a culture that uses comma as decimal separator
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest();
-            request.AddParameter("value", 1.234, useInvariantCulture: true);
+            request.AddParameter(client, "value", 1.234);
             
             var parameter = request.Parameters.First();
             parameter.Value.Should().Be("1.234");
@@ -43,13 +46,15 @@ public class InvariantCultureParameterTests {
     }
 
     [Fact]
-    public void AddOrUpdateParameter_Double_UsesInvariantCulture_WhenOptIn() {
+    public void AddOrUpdateParameter_Double_UsesInvariantCulture_WhenConfigured() {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest();
-            request.AddOrUpdateParameter("value", 1.234, useInvariantCulture: true);
+            request.AddOrUpdateParameter(client, "value", 1.234);
             
             var parameter = request.Parameters.First();
             parameter.Value.Should().Be("1.234");
@@ -60,13 +65,15 @@ public class InvariantCultureParameterTests {
     }
 
     [Fact]
-    public void AddQueryParameter_Double_UsesInvariantCulture_WhenOptIn() {
+    public void AddQueryParameter_Double_UsesInvariantCulture_WhenConfigured() {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest();
-            request.AddQueryParameter("value", 1.234, useInvariantCulture: true);
+            request.AddQueryParameter(client, "value", 1.234);
             
             var parameter = request.Parameters.First();
             parameter.Value.Should().Be("1.234");
@@ -77,13 +84,15 @@ public class InvariantCultureParameterTests {
     }
 
     [Fact]
-    public void AddUrlSegment_Double_UsesInvariantCulture_WhenOptIn() {
+    public void AddUrlSegment_Double_UsesInvariantCulture_WhenConfigured() {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest("{value}");
-            request.AddUrlSegment("value", 1.234, useInvariantCulture: true);
+            request.AddUrlSegment(client, "value", 1.234);
             
             var parameter = request.Parameters.First();
             parameter.Value.Should().Be("1.234");
@@ -94,13 +103,87 @@ public class InvariantCultureParameterTests {
     }
 
     [Fact]
-    public void AddParameter_Decimal_UsesInvariantCulture_WhenOptIn() {
+    public void AddDefaultParameter_Double_UsesInvariantCulture_WhenConfigured() {
+        var originalCulture = Thread.CurrentThread.CurrentCulture;
+        try {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
+            
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
+            client.AddDefaultParameter("value", 1.234);
+            
+            var parameter = client.DefaultParameters.First(p => p.Name == "value");
+            parameter.Value.Should().Be("1.234");
+        }
+        finally {
+            Thread.CurrentThread.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Fact]
+    public void AddDefaultQueryParameter_Double_UsesInvariantCulture_WhenConfigured() {
+        var originalCulture = Thread.CurrentThread.CurrentCulture;
+        try {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
+            
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
+            client.AddDefaultQueryParameter("value", 1.234);
+            
+            var parameter = client.DefaultParameters.First(p => p.Name == "value");
+            parameter.Value.Should().Be("1.234");
+        }
+        finally {
+            Thread.CurrentThread.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Fact]
+    public void AddDefaultUrlSegment_Double_UsesInvariantCulture_WhenConfigured() {
+        var originalCulture = Thread.CurrentThread.CurrentCulture;
+        try {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
+            
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
+            client.AddDefaultUrlSegment("value", 1.234);
+            
+            var parameter = client.DefaultParameters.First(p => p.Name == "value");
+            parameter.Value.Should().Be("1.234");
+        }
+        finally {
+            Thread.CurrentThread.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Fact]
+    public void FormatValue_Double_UsesInvariantCulture_WhenConfigured() {
+        var originalCulture = Thread.CurrentThread.CurrentCulture;
+        try {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
+            
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
+            
+            var formattedValue = client.FormatValue(1.234);
+            
+            formattedValue.Should().Be("1.234");
+        }
+        finally {
+            Thread.CurrentThread.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Fact]
+    public void AddParameter_Decimal_UsesInvariantCulture_WhenConfigured() {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest();
-            request.AddParameter("value", 123.456m, useInvariantCulture: true);
+            request.AddParameter(client, "value", 123.456m);
             
             var parameter = request.Parameters.First();
             parameter.Value.Should().Be("123.456");
@@ -111,13 +194,15 @@ public class InvariantCultureParameterTests {
     }
 
     [Fact]
-    public void AddParameter_Float_UsesInvariantCulture_WhenOptIn() {
+    public void AddParameter_Float_UsesInvariantCulture_WhenConfigured() {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest();
-            request.AddParameter("value", 2.5f, useInvariantCulture: true);
+            request.AddParameter(client, "value", 2.5f);
             
             var parameter = request.Parameters.First();
             parameter.Value.Should().Be("2.5");
@@ -128,14 +213,16 @@ public class InvariantCultureParameterTests {
     }
 
     [Fact]
-    public void AddParameter_DateTime_UsesInvariantCulture_WhenOptIn() {
+    public void AddParameter_DateTime_UsesInvariantCulture_WhenConfigured() {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             
             var dateTime = new DateTime(2024, 12, 25, 10, 30, 0, DateTimeKind.Unspecified);
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var request = new RestRequest();
-            request.AddParameter("date", dateTime, useInvariantCulture: true);
+            request.AddParameter(client, "date", dateTime);
             
             var parameter = request.Parameters.First();
             // DateTime.ToString with InvariantCulture uses MM/dd/yyyy format
@@ -152,8 +239,10 @@ public class InvariantCultureParameterTests {
         try {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             
+            var options = new RestClientOptions { CultureForParameters = CultureInfo.InvariantCulture };
+            using var client = new RestClient(options);
             var requestWithInvariant = new RestRequest();
-            requestWithInvariant.AddParameter("value", 12345, useInvariantCulture: true);
+            requestWithInvariant.AddParameter(client, "value", 12345);
             
             var requestWithoutInvariant = new RestRequest();
             requestWithoutInvariant.AddParameter("value", 12345);
@@ -167,5 +256,11 @@ public class InvariantCultureParameterTests {
         finally {
             Thread.CurrentThread.CurrentCulture = originalCulture;
         }
+    }
+
+    [Fact]
+    public void CultureForParameters_DefaultValue_IsNull() {
+        var options = new RestClientOptions();
+        options.CultureForParameters.Should().BeNull();
     }
 }

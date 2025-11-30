@@ -13,6 +13,8 @@
 // limitations under the License.
 // 
 
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 public static partial class RestClientExtensions {
@@ -37,6 +39,17 @@ public static partial class RestClientExtensions {
         /// <returns>This request</returns>
         public IRestClient AddDefaultParameter(string name, string value)
             => client.AddDefaultParameter(new GetOrPostParameter(name, value));
+
+        /// <summary>
+        /// Adds a default HTTP parameter (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        /// Used on every request made by this client instance. The value will be formatted using the culture
+        /// specified in <see cref="RestClientOptions.CultureForParameters"/>.
+        /// </summary>
+        /// <param name="name">Name of the parameter</param>
+        /// <param name="value">Value of the parameter</param>
+        /// <returns>This request</returns>
+        public IRestClient AddDefaultParameter<T>(string name, T value) where T : struct
+            => client.AddDefaultParameter(new GetOrPostParameter(name, value.ToStringWithCulture(client.Options.CultureForParameters)));
 
         /// <summary>
         /// Adds a default parameter to the client options. There are four types of parameters:
@@ -83,6 +96,16 @@ public static partial class RestClientExtensions {
             => client.AddDefaultParameter(new UrlSegmentParameter(name, value));
 
         /// <summary>
+        /// Adds a default URL segment parameter to the RestClient. Used on every request made by this client instance.
+        /// The value will be formatted using the culture specified in <see cref="RestClientOptions.CultureForParameters"/>.
+        /// </summary>
+        /// <param name="name">Name of the segment to add</param>
+        /// <param name="value">Value of the segment to add</param>
+        /// <returns></returns>
+        public IRestClient AddDefaultUrlSegment<T>(string name, T value) where T : struct
+            => client.AddDefaultParameter(new UrlSegmentParameter(name, value.ToStringWithCulture(client.Options.CultureForParameters)));
+
+        /// <summary>
         /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
         /// </summary>
         /// <param name="name">Name of the query parameter to add</param>
@@ -90,5 +113,23 @@ public static partial class RestClientExtensions {
         /// <returns></returns>
         public IRestClient AddDefaultQueryParameter(string name, string value)
             => client.AddDefaultParameter(new QueryParameter(name, value));
+
+        /// <summary>
+        /// Adds a default URL query parameter to the RestClient. Used on every request made by this client instance.
+        /// The value will be formatted using the culture specified in <see cref="RestClientOptions.CultureForParameters"/>.
+        /// </summary>
+        /// <param name="name">Name of the query parameter to add</param>
+        /// <param name="value">Value of the query parameter to add</param>
+        /// <returns></returns>
+        public IRestClient AddDefaultQueryParameter<T>(string name, T value) where T : struct
+            => client.AddDefaultParameter(new QueryParameter(name, value.ToStringWithCulture(client.Options.CultureForParameters)));
+
+        /// <summary>
+        /// Formats the value using the culture specified in <see cref="RestClientOptions.CultureForParameters"/>.
+        /// </summary>
+        /// <param name="value">Value to format</param>
+        /// <returns>String representation of the value using the client's culture setting</returns>
+        public string? FormatValue<T>(T value) where T : struct
+            => value.ToStringWithCulture(client.Options.CultureForParameters);
     }
 }

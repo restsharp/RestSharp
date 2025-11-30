@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using RestSharp.Extensions;
-
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
@@ -40,18 +38,5 @@ public static partial class RestRequestExtensions {
         /// <returns></returns>
         public RestRequest AddUrlSegment<T>(string name, T value, bool encode = true) where T : struct
             => request.AddUrlSegment(name, value.ToString(), encode);
-
-        /// <summary>
-        /// Adds a URL segment parameter to the request. The resource URL must have a placeholder for the parameter for it to work.
-        /// For example, if you add a URL segment parameter with the name "id", the resource URL should contain {id} in its path.
-        /// The value will be converted to string using invariant culture for IFormattable types.
-        /// </summary>
-        /// <param name="name">Name of the parameter; must be matching a placeholder in the resource URL as {name}</param>
-        /// <param name="value">Value of the parameter</param>
-        /// <param name="useInvariantCulture">When true, uses invariant culture for IFormattable types (e.g., numbers, dates)</param>
-        /// <param name="encode">Encode the value or not, default true</param>
-        /// <returns></returns>
-        public RestRequest AddUrlSegment<T>(string name, T value, bool useInvariantCulture, bool encode = true) where T : struct
-            => request.AddUrlSegment(name, useInvariantCulture ? value.ToStringInvariant() : value.ToString(), encode);
     }
 }

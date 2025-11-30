@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using RestSharp.Extensions;
-
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
@@ -40,18 +38,5 @@ public static partial class RestRequestExtensions {
         /// <returns></returns>
         public RestRequest AddQueryParameter<T>(string name, T value, bool encode = true) where T : struct
             => request.AddQueryParameter(name, value.ToString(), encode);
-
-        /// <summary>
-        /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
-        /// The parameter will be added to the request URL as a query string using name=value format.
-        /// The value will be converted to string using invariant culture for IFormattable types.
-        /// </summary>
-        /// <param name="name">Parameter name</param>
-        /// <param name="value">Parameter value</param>
-        /// <param name="useInvariantCulture">When true, uses invariant culture for IFormattable types (e.g., numbers, dates)</param>
-        /// <param name="encode">Encode the value or not, default true</param>
-        /// <returns></returns>
-        public RestRequest AddQueryParameter<T>(string name, T value, bool useInvariantCulture, bool encode = true) where T : struct
-            => request.AddQueryParameter(name, useInvariantCulture ? value.ToStringInvariant() : value.ToString(), encode);
     }
 }

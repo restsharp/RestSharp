@@ -18,14 +18,15 @@ namespace RestSharp.Extensions;
 
 static class ObjectExtensions {
     /// <summary>
-    /// Converts a value to its string representation using invariant culture for IFormattable types.
+    /// Converts a value to its string representation using the specified culture for IFormattable types.
     /// </summary>
     /// <typeparam name="T">The type of value to convert</typeparam>
     /// <param name="value">The value to convert</param>
-    /// <returns>String representation using invariant culture, or null if value is null</returns>
-    internal static string? ToStringInvariant<T>(this T value) => value switch {
+    /// <param name="culture">The culture to use for formatting. If null, uses the current culture.</param>
+    /// <returns>String representation using the specified culture, or null if value is null</returns>
+    internal static string? ToStringWithCulture<T>(this T value, CultureInfo? culture) => value switch {
         null           => null,
-        IFormattable f => f.ToString(null, CultureInfo.InvariantCulture),
+        IFormattable f => f.ToString(null, culture),
         _              => value.ToString()
     };
 }
