@@ -31,7 +31,11 @@ static class UriExtensions {
 
         var usingBaseUri = baseUrl.AbsoluteUri[^1] == '/' || assembled.IsEmpty() ? baseUrl : new(baseUrl.AbsoluteUri + "/");
 
-        return assembled != null ? new(usingBaseUri, assembled) : baseUrl;
+#if NETSTANDARD2_0
+        return !string.IsNullOrWhiteSpace(assembled) ? new(usingBaseUri, assembled, true) : baseUrl;
+#else
+        return !string.IsNullOrWhiteSpace(assembled) ? new(usingBaseUri, assembled) : baseUrl;
+#endif
     }
 
     public static Uri AddQueryString(this Uri uri, string? query) {
@@ -50,7 +54,11 @@ static class UriExtensions {
         params ParametersCollection[] parametersCollections
     ) {
         var assembled = baseUri == null ? "" : resource;
-        var baseUrl   = baseUri ?? new Uri(resource);
+#if NETSTANDARD2_0
+        var baseUrl = baseUri ?? new Uri(resource, true);
+#else
+        var baseUrl = baseUri ?? new Uri(resource);
+#endif
 
         var hasResource = !assembled.IsEmpty();
 
