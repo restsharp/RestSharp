@@ -172,7 +172,7 @@ RestSharp allows configuring `RestClient` using client options, as mentioned at 
 | `RemoteCertificateValidationCallback`        | Custom function to validate the server certificate. Normally, it's used when the server uses a certificate that isn't trusted by default.                                                                                                                                                         |
 | `BaseHost`                                   | Value for the `Host` header sent with each request.                                                                                                                                                                                                                                               |
 | `CookieContainer`                            | Custom cookie container that will be shared among all calls made by the client. Normally not required as RestSharp handles cookies without using a client-level cookie container.                                                                                                                 |
-| `Timeout`                                | Client-level timeout as `TimeSpan`. Used when the request timeout is not specified using `RestRequest.Timeout`. If not set, the default timeout is 100 seconds. Set to `Timeout.InfiniteTimeSpan` (or `TimeSpan.FromMilliseconds(-1)`) for no timeout. Setting to `TimeSpan.Zero` will cancel the request immediately. Negative values other than -1 millisecond will throw an exception. |
+| `Timeout`                                    | Client-level timeout as `TimeSpan`. Default is 100 seconds. See [Configuring Timeouts](#configuring-timeouts) for details on timeout behavior.                                                                                                                                                   |
 | `Encoding`                                   | Default request encoding. Override it only if you don't use UTF-8.                                                                                                                                                                                                                                |
 | `ThrowOnDeserializationError`                | Forces the client to throw if it fails to deserialize the response. Remember that not all deserialization issues forces the serializer to throw. Default is `false`, so the client will return a `RestResponse` with deserialization exception details. Only relevant for `Execute...` functions. |
 | `FailOnDeserializationError`                 | When set to `true`, if the client fails to deserialize the response, the response object will have status `Failed`, although the HTTP calls might have been successful. Default is `true`.                                                                                                        |
@@ -213,7 +213,7 @@ Client options apply to all requests made by the client. Sometimes, you want to 
 | `Authenticator`              | Overrides the client-level authenticator.                                                                                                                                                                                                                                                                         |
 | `Files`                      | Collection of file parameters, read-only. Use `AddFile` for adding files to the request.                                                                                                                                                                                                                          |
 | `Method`                     | Request HTTP method, default is `GET`. Only needed when using `Execute` or `ExecuteAsync` as other functions like `ExecutePostAsync` will override the request method.                                                                                                                                            |
-| `Timeout`                    | Overrides the client-level timeout. If not set, uses the client timeout or the default of 100 seconds. Set to `Timeout.InfiniteTimeSpan` (or `TimeSpan.FromMilliseconds(-1)`) for no timeout. Setting to `TimeSpan.Zero` will cancel the request immediately. Negative values other than -1 millisecond will throw an exception. |
+| `Timeout`                    | Request-level timeout override. See [Configuring Timeouts](#configuring-timeouts) for details on timeout behavior.                                                                                                                                                                                |
 | `Resource`                   | Resource part of the remote endpoint URL. For example, when using the client-level base URL `https://localhost:5000/api` and `Resource` set to `weather`, the request will be sent to `https://localhost:5000/api/weather`. It can container resource placeholders to be used in combination with `AddUrlSegment` |
 | `RequestFormat`              | Identifies the request as JSON, XML, binary, or none. Rarely used because the client will set the request format based on the body type if functions like `AddJsonBody` or `AddXmlBody` are used.                                                                                                                 |
 | `RootElement`                | Used by the default deserializers to determine where to start deserializing from. Only supported for XML responses. Does not apply to requests.                                                                                                                                                                   |
@@ -228,3 +228,46 @@ Client options apply to all requests made by the client. Sometimes, you want to 
 | `Interceptors`               | Allows adding interceptors to the request. Both client-level and request-level interceptors will be called.                                                                                                                                                                                                       |
 
 The table below contains all configuration properties of `RestRequest`. To learn more about adding request parameters, check the [usage page](../usage/request.md) page about creating requests with parameters.
+
+## Configuring Timeouts
+
+RestSharp provides flexible timeout configuration at both the client and request levels. The timeout determines how long RestSharp will wait for a response before canceling the request.
+
+### Timeout Resolution
+
+When making a request, RestSharp uses the following priority order to determine the timeout:
+1. `RestRequest.Timeout` (if set)
+2. `RestClientOptions.Timeout` (if set)
+3. Default timeout of 100 seconds
+
+### Timeout Values
+
+The `Timeout` property accepts a `TimeSpan?` value and supports the following behaviors:
+
+| Value | Behavior |
+|-------|----------|
+| `null` (not set) | Uses the next level timeout (client timeout, then default 100 seconds) |
+| Positive `TimeSpan` | Request times out after the specified duration (e.g., `TimeSpan.FromSeconds(30)`) |
+| `Timeout.InfiniteTimeSpan` or `TimeSpan.FromMilliseconds(-1)` | No timeout - request will wait indefinitely for a response |
+| `TimeSpan.Zero` | Request is canceled immediately (effectively no time allowed for the request) |
+| Other negative values | Throws `ArgumentOutOfRangeException` when the request is executed |
+
+### Examples
+
+```csharp
+// Client-level timeout of 30 seconds
+var options = new RestClientOptions("https://api.example.com") {
+    Timeout = TimeSpan.FromSeconds(30)
+};
+var client = new RestClient(options);
+
+// Request-level timeout override
+var request = new RestRequest("resource") {
+    Timeout = TimeSpan.FromSeconds(60) // This request gets 60 seconds
+};
+
+// Infinite timeout (no timeout)
+var longRunningRequest = new RestRequest("long-operation") {
+    Timeout = Timeout.InfiniteTimeSpan
+};
+```
