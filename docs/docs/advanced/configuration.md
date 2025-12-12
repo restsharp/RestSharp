@@ -233,6 +233,10 @@ The table below contains all configuration properties of `RestRequest`. To learn
 
 RestSharp provides flexible timeout configuration at both the client and request levels. The timeout determines how long RestSharp will wait for a response before canceling the request.
 
+:::note Migration from MaxTimeout
+In older versions of RestSharp, the `MaxTimeout` property (measured in milliseconds) was used. This has been replaced by the `Timeout` property, which uses `TimeSpan` for more intuitive and type-safe timeout configuration.
+:::
+
 ### Timeout Resolution
 
 When making a request, RestSharp uses the following priority order to determine the timeout:
