@@ -39,6 +39,8 @@ public class WebServer {
             Console.WriteLine(e.ToString());
         }
 
+        return;
+
         Task<HttpListenerContext> GetContextAsync()
             => taskFactory.FromAsync(
                 (callback, state) => ((HttpListener)state!).BeginGetContext(callback, state),

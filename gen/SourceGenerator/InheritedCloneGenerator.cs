@@ -1,0 +1,132 @@
+// Copyright (c) .NET Foundation and Contributors
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+namespace SourceGenerator;
+
+[Generator(LanguageNames.CSharp)]
+public class InheritedCloneGenerator : IIncrementalGenerator {
+    const string AttributeName = "GenerateClone";
+
+    public void Initialize(IncrementalGeneratorInitializationContext context) {
+        var c = context.CompilationProvider.SelectMany((x, _) => GetClones(x));
+
+        context.RegisterSourceOutput(
+            c.Collect(),
+            static (ctx, sources) => {
+                foreach (var source in sources) {
+                    ctx.AddSource(source.Item1, source.Item2);
+                }
+            }
+        );
+        return;
+
+        IEnumerable<(string, SourceText)> GetClones(Compilation compilation) {
+            var candidates = compilation.FindAnnotatedClasses(AttributeName, false);
+
+            foreach (var candidate in candidates) {
+                var semanticModel      = compilation.GetSemanticModel(candidate.SyntaxTree);
+                var genericClassSymbol = semanticModel.GetDeclaredSymbol(candidate);
+                if (genericClassSymbol == null) continue;
+
+                var attributeData = genericClassSymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == $"{AttributeName}Attribute");
+                var methodName    = (string)attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "Name").Value.Value;
+                var baseType      = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "BaseType").Value.Value;
+                var maybeMutate   = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "Mutate").Value.Value;
+                var mutate        = maybeMutate as bool? ?? false;
+
+                // Get the generic argument type where properties need to be copied from
+                var attributeSyntax = candidate.AttributeLists
+                    .SelectMany(l => l.Attributes)
+                    .FirstOrDefault(a => a.Name.ToString().StartsWith(AttributeName));
+                if (attributeSyntax == null) continue; // This should never happen
+
+                var code = GenerateMethod(candidate, genericClassSymbol, (INamedTypeSymbol)baseType, methodName, (bool)mutate!);
+                yield return ($"{genericClassSymbol.Name}.Clone.g.cs", SourceText.From(code, Encoding.UTF8));
+            }
+        }
+    }
+
+    static string GenerateMethod(
+        TypeDeclarationSyntax classToExtendSyntax,
+        INamedTypeSymbol      classToExtendSymbol,
+        INamedTypeSymbol      classToClone,
+        string                methodName,
+        bool                  mutate
+    ) {
+        var namespaceName         = classToExtendSymbol.ContainingNamespace.ToDisplayString();
+        var className             = classToExtendSyntax.Identifier.Text;
+        var genericTypeParameters = string.Join(", ", classToExtendSymbol.TypeParameters.Select(tp => tp.Name));
+        var classDeclaration      = classToExtendSymbol.TypeParameters.Length > 0 ? $"{className}<{genericTypeParameters}>" : className;
+
+        var all    = classToClone.GetBaseTypesAndThis();
+        var props  = all.SelectMany(x => x.GetMembers().OfType<IPropertySymbol>()).ToArray();
+        var usings = classToExtendSyntax.SyntaxTree.GetCompilationUnitRoot().Usings.Select(u => u.ToString());
+
+        var constructorParams     = classToExtendSymbol.Constructors.First().Parameters.ToArray();
+        var constructorArgs       = string.Join(", ", constructorParams.Select(p => $"original.{GetPropertyName(p.Name, props)}"));
+        var constructorParamNames = constructorParams.Select(p => p.Name).ToArray();
+
+        var endLine = mutate ? ";" : ",";
+        var spaces = string.Empty.PadRight(mutate ? 8 : 12);
+        var properties = props
+            // ReSharper disable once PossibleUnintendedLinearSearchInSet
+            .Where(prop => !constructorParamNames.Contains(prop.Name, StringComparer.OrdinalIgnoreCase) && prop.SetMethod != null)
+            .Select(prop => $"{spaces}{prop.Name} = original.{prop.Name}{endLine}")
+            .ToArray();
+
+        const string immutableTemplate =
+            """
+            {Usings}
+
+            namespace {Namespace};
+
+            public partial class {ClassDeclaration} {
+                public static {ClassDeclaration} {MethodName}({OriginalClassName} original) {
+                    return new {ClassDeclaration}({ConstructorArgs}) {
+            {Properties}
+                    };
+                }
+            }
+            """;
+        const string mutableTemplate =
+            """
+            {Usings}
+
+            namespace {Namespace};
+
+            public partial class {ClassDeclaration} {
+                public void {MethodName}({OriginalClassName} original) {
+            {Properties}
+                }
+            }
+            """;
+        var template = mutate ? mutableTemplate : immutableTemplate;
+
+        var code = template
+            .Replace("{Usings}", string.Join("\n", usings))
+            .Replace("{Namespace}", namespaceName)
+            .Replace("{ClassDeclaration}", classDeclaration)
+            .Replace("{OriginalClassName}", classToClone.Name)
+            .Replace("{MethodName}", methodName)
+            .Replace("{ConstructorArgs}", constructorArgs)
+            .Replace("{Properties}", string.Join("\n", properties).TrimEnd(','));
+
+        return code;
+
+        static string GetPropertyName(string parameterName, IPropertySymbol[] properties) {
+            var property = properties.FirstOrDefault(p => string.Equals(p.Name, parameterName, StringComparison.OrdinalIgnoreCase));
+            return property?.Name ?? parameterName;
+        }
+    }
+}

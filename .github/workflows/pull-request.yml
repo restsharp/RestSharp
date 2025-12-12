@@ -1,36 +1,77 @@
 name: Build and test PRs
 
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - docs/**
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
-  test:
-    runs-on: windows-latest
-
-    steps:
-      -  
-        name: Checkout
-        uses: actions/checkout@v3
-      -  
-        name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '7.0'
-      -  
-        name: Run tests
-        run: dotnet test -c Release
-        
-  docs:
+  event_file:
+    name: "Event File"
     runs-on: ubuntu-latest
+    steps:
+      - name: Upload
+        uses: actions/upload-artifact@v5
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
+  
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet: ['net48', 'net8.0', 'net9.0', 'net10.0']
 
     steps:
-      -  
-        name: Checkout
-        uses: actions/checkout@v3
-      -  
-        name: Build docs
-        run: |
-          yarn install
-          yarn docs:build
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Run tests
+        run: dotnet test -c Debug -f ${{ matrix.dotnet }}
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: Test Results Windows ${{ matrix.dotnet }}
+          path: |
+            test-results/**/*.xml
+            test-results/**/*.trx
+            test-results/**/*.json
+
+  test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet: [ 'net8.0', 'net9.0', 'net10.0' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Run tests
+        run: dotnet test -f ${{ matrix.dotnet }}
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: Test Results Ubuntu ${{ matrix.dotnet }}
+          path: |
+            test-results/**/*.xml
+            test-results/**/*.trx
+            test-results/**/*.json

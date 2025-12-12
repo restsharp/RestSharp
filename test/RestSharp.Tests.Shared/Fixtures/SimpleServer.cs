@@ -8,17 +8,15 @@ public sealed class SimpleServer : IDisposable {
     readonly WebServer               _server;
     readonly CancellationTokenSource _cts = new();
 
-    public string Url       { get; }
-    public string ServerUrl { get; }
+    public string Url { get; }
 
     SimpleServer(
         int                         port,
         Action<HttpListenerContext> handler               = null,
         AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
-        Url       = $"http://localhost:{port}/";
-        ServerUrl = $"http://{Environment.MachineName}:{port}/";
-        _server   = new WebServer(Url, handler, authenticationSchemes);
+        Url     = $"http://localhost:{port}/";
+        _server = new(Url, handler, authenticationSchemes);
         Task.Run(() => _server.Run(_cts.Token));
     }
 
@@ -33,7 +31,7 @@ public sealed class SimpleServer : IDisposable {
         AuthenticationSchemes       authenticationSchemes = AuthenticationSchemes.Anonymous
     ) {
         var port = Random.Next(1000, 9999);
-        return new SimpleServer(port, handler, authenticationSchemes);
+        return new(port, handler, authenticationSchemes);
     }
 
     public void SetHandler(Action<HttpListenerContext> handler) => _server.ChangeHandler(handler);

@@ -50,7 +50,7 @@ public class DotNetXmlSerializer : IXmlSerializer {
     public string Serialize(object obj) {
         var ns = new XmlSerializerNamespaces();
 
-        ns.Add(string.Empty, Namespace);
+        ns.Add(string.Empty, Namespace!);
 
         var serializer = GetXmlSerializer(obj.GetType(), RootElement);
         var writer     = new EncodingStringWriter(Encoding);
@@ -86,8 +86,8 @@ public class DotNetXmlSerializer : IXmlSerializer {
         CacheLock.EnterReadLock();
 
         try {
-            if (Cache.ContainsKey(key)) {
-                serializer = Cache[key];
+            if (Cache.TryGetValue(key, out var value)) {
+                serializer = value;
             }
         }
         finally {
@@ -103,13 +103,13 @@ public class DotNetXmlSerializer : IXmlSerializer {
         try {
             // check again for a cached instance, because between the EnterWriteLock
             // and the last check, some other thread could have added an instance
-            if (!Cache.ContainsKey(key)) {
+            if (!Cache.TryGetValue(key, out var value)) {
                 var root = rootElement == null ? null : new XmlRootAttribute(rootElement);
-
-                Cache[key] = new XmlSerializer(type, root);
+                value      = new(type, root);
+                Cache[key] = value;
             }
 
-            serializer = Cache[key];
+            serializer = value;
         }
         finally {
             CacheLock.ExitWriteLock();
@@ -118,10 +118,9 @@ public class DotNetXmlSerializer : IXmlSerializer {
         return serializer;
     }
 
-    class EncodingStringWriter : StringWriter {
+    class EncodingStringWriter(Encoding encoding) : StringWriter {
         // Need to subclass StringWriter in order to override Encoding
-        public EncodingStringWriter(Encoding encoding) => Encoding = encoding;
 
-        public override Encoding Encoding { get; }
+        public override Encoding Encoding { get; } = encoding;
     }
 }

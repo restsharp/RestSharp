@@ -21,7 +21,7 @@ static class UriExtensions {
     public static Uri MergeBaseUrlAndResource(this Uri? baseUrl, string? resource) {
         var assembled = resource;
 
-        if (assembled.IsNotEmpty() && assembled.StartsWith("/")) assembled = assembled.Substring(1);
+        if (assembled.IsNotEmpty() && assembled[0] == '/') assembled = assembled[1..];
 
         if (baseUrl == null || baseUrl.AbsoluteUri.IsEmpty()) {
             return assembled.IsNotEmpty()
@@ -29,18 +29,22 @@ static class UriExtensions {
                 : throw new ArgumentException("Both BaseUrl and Resource are empty", nameof(resource));
         }
 
-        var usingBaseUri = baseUrl.AbsoluteUri.EndsWith("/") || assembled.IsEmpty() ? baseUrl : new Uri(baseUrl.AbsoluteUri + "/");
+        var usingBaseUri = baseUrl.AbsoluteUri[^1] == '/' || assembled.IsEmpty() ? baseUrl : new(baseUrl.AbsoluteUri + "/");
 
-        return assembled != null ? new Uri(usingBaseUri, assembled) : baseUrl;
+#if NETSTANDARD2_0
+        return !string.IsNullOrWhiteSpace(assembled) ? new(usingBaseUri, assembled, true) : baseUrl;
+#else
+        return !string.IsNullOrWhiteSpace(assembled) ? new(usingBaseUri, assembled) : baseUrl;
+#endif
     }
 
     public static Uri AddQueryString(this Uri uri, string? query) {
         if (query == null) return uri;
 
-        var absoluteUri       = uri.AbsoluteUri;
-        var separator = absoluteUri.Contains('?') ? "&" : "?";
+        var absoluteUri = uri.AbsoluteUri;
+        var separator   = absoluteUri.Contains('?') ? "&" : "?";
 
-        return new Uri($"{absoluteUri}{separator}{query}");
+        return new($"{absoluteUri}{separator}{query}");
     }
 
     public static UrlSegmentParamsValues GetUrlSegmentParamsValues(
@@ -50,7 +54,11 @@ static class UriExtensions {
         params ParametersCollection[] parametersCollections
     ) {
         var assembled = baseUri == null ? "" : resource;
-        var baseUrl   = baseUri ?? new Uri(resource);
+#if NETSTANDARD2_0
+        var baseUrl = baseUri ?? new Uri(resource, true);
+#else
+        var baseUrl = baseUri ?? new Uri(resource);
+#endif
 
         var hasResource = !assembled.IsEmpty();
 
@@ -68,7 +76,7 @@ static class UriExtensions {
             builder.Path = builder.Path.UrlDecode().Replace(paramPlaceHolder, paramValue);
         }
 
-        return new UrlSegmentParamsValues(builder.Uri, assembled);
+        return new(builder.Uri, assembled);
     }
 }
 

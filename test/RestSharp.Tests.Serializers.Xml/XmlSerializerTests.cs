@@ -15,17 +15,18 @@ public class XmlSerializerTests {
     [Fact]
     public void Can_serialize_a_list_of_items_with_interface_type() {
         var items = new NamedItems {
-            Items = new List<INamed> {
+            Items = [
                 new Person {
                     Name      = "Foo",
                     Age       = 50,
                     Price     = 19.95m,
-                    StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item> { new() { Name = "One", Value = 1 } }
+                    StartDate = new(2009, 12, 18, 10, 2, 23),
+                    Items     = [new() { Name = "One", Value = 1 }]
                 },
+
                 new Item { Name = "Two", Value   = 2 },
                 new Item { Name = "Three", Value = 3 }
-            }
+            ]
         };
 
         var xml      = new XmlSerializer();
@@ -38,30 +39,31 @@ public class XmlSerializerTests {
     [Fact]
     public void Can_serialize_a_list_which_is_the_content_of_root_element() {
         var contacts = new Contacts {
-            People = new List<Person> {
+            People = [
                 new() {
                     Name      = "Foo",
                     Age       = 50,
                     Price     = 19.95m,
-                    StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                    Items = new List<Item> {
+                    StartDate = new(2009, 12, 18, 10, 2, 23),
+                    Items = [
                         new() { Name = "One", Value   = 1 },
                         new() { Name = "Two", Value   = 2 },
                         new() { Name = "Three", Value = 3 }
-                    }
+                    ]
                 },
+
                 new() {
                     Name      = "Bar",
                     Age       = 23,
                     Price     = 23.23m,
-                    StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                    Items = new List<Item> {
+                    StartDate = new(2009, 12, 23, 10, 23, 23),
+                    Items = [
                         new() { Name = "One", Value   = 1 },
                         new() { Name = "Two", Value   = 2 },
                         new() { Name = "Three", Value = 3 }
-                    }
+                    ]
                 }
-            }
+            ]
         };
 
         var xml      = new XmlSerializer();
@@ -78,23 +80,23 @@ public class XmlSerializerTests {
                 Name      = "Foo",
                 Age       = 50,
                 Price     = 19.95m,
-                StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-                Items = new List<Item> {
+                StartDate = new(2009, 12, 18, 10, 2, 23),
+                Items = [
                     new() { Name = "One", Value   = 1 },
                     new() { Name = "Two", Value   = 2 },
                     new() { Name = "Three", Value = 3 }
-                }
+                ]
             },
             new() {
                 Name      = "Bar",
                 Age       = 23,
                 Price     = 23.23m,
-                StartDate = new DateTime(2009, 12, 23, 10, 23, 23),
-                Items = new List<Item> {
+                StartDate = new(2009, 12, 23, 10, 23, 23),
+                Items = [
                     new() { Name = "One", Value   = 1 },
                     new() { Name = "Two", Value   = 2 },
                     new() { Name = "Three", Value = 3 }
-                }
+                ]
             }
         };
         var xml      = new XmlSerializer();
@@ -108,8 +110,8 @@ public class XmlSerializerTests {
     public void Can_Serialize_An_Object_To_Node_With_Attribute_And_Text_Content() {
         var note = new Note {
             Id      = 1,
-            Title   = Note.TITLE,
-            Message = Note.MESSAGE
+            Title   = Note.ConstTitle,
+            Message = Note.ConstMessage
         };
 
         var xml = new XmlSerializer();
@@ -141,12 +143,12 @@ public class XmlSerializerTests {
             Name      = "Foo",
             Age       = 50,
             Price     = 19.95m,
-            StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-            Items = new List<Item> {
+            StartDate = new(2009, 12, 18, 10, 2, 23),
+            Items = [
                 new() { Name = "One", Value   = 1 },
                 new() { Name = "Two", Value   = 2 },
                 new() { Name = "Three", Value = 3 }
-            }
+            ]
         };
         var xml      = new XmlSerializer();
         var doc      = xml.Serialize(poco);
@@ -161,7 +163,7 @@ public class XmlSerializerTests {
             Name      = "Foo",
             Age       = 50,
             Price     = 19.95m,
-            StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+            StartDate = new(2009, 12, 18, 10, 2, 23)
         };
         var xml      = new XmlSerializer();
         var doc      = xml.Serialize(poco);
@@ -176,14 +178,14 @@ public class XmlSerializerTests {
             Name      = "Foo",
             Age       = 50,
             Price     = 19.95m,
-            StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
-            ContactData = new ContactData {
-                EmailAddresses = new List<EmailAddress> {
+            StartDate = new(2009, 12, 18, 10, 2, 23),
+            ContactData = new() {
+                EmailAddresses = [
                     new() {
                         Address  = "test@test.com",
                         Location = "Work"
                     }
-                }
+                ]
             }
         };
         var xml      = new XmlSerializer();
@@ -199,7 +201,7 @@ public class XmlSerializerTests {
             Name      = "Foo",
             Age       = 50,
             Price     = 19.95m,
-            StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+            StartDate = new(2009, 12, 18, 10, 2, 23)
         };
         var xml      = new XmlSerializer { DateFormat = DateFormat.ISO_8601 };
         var doc      = xml.Serialize(poco);
@@ -214,7 +216,7 @@ public class XmlSerializerTests {
             Name      = "Foo",
             Age       = 50,
             Price     = 19.95m,
-            StartDate = new DateTime(2009, 12, 18, 10, 2, 23)
+            StartDate = new(2009, 12, 18, 10, 2, 23)
         };
         var xml      = new XmlSerializer { RootElement = "Result" };
         var doc      = xml.Serialize(poco);
@@ -229,7 +231,7 @@ public class XmlSerializerTests {
             Name      = "Foo",
             Age       = 50,
             Price     = 19.95m,
-            StartDate = new DateTime(2009, 12, 18, 10, 2, 23),
+            StartDate = new(2009, 12, 18, 10, 2, 23),
             IsCool    = false
         };
         var xml      = new XmlSerializer { DateFormat = DateFormat.ISO_8601 };
@@ -256,7 +258,7 @@ public class XmlSerializerTests {
         var ordered = new OrderedProperties {
             Name      = "Name",
             Age       = 99,
-            StartDate = new DateTime(2010, 1, 1)
+            StartDate = new(2010, 1, 1)
         };
         var xml      = new XmlSerializer();
         var doc      = xml.Serialize(ordered);
@@ -324,13 +326,11 @@ public class XmlSerializerTests {
     }
 
     [SerializeAs(Name = "People")]
-    class PersonList : List<Person> { }
+    class PersonList : List<Person>;
 
     class ContactData {
-        public ContactData() => EmailAddresses = new List<EmailAddress>();
-
         [SerializeAs(Name = "email-addresses")]
-        public List<EmailAddress> EmailAddresses { get; set; }
+        public List<EmailAddress> EmailAddresses { get; set; } = [];
     }
 
     [SerializeAs(Name = "email-address")]
@@ -347,8 +347,8 @@ public class XmlSerializerTests {
         var root = new XElement("Note");
 
         root.SetAttributeValue("Id", 1);
-        root.Value = Note.MESSAGE;
-        root.Add(new XElement("Title", Note.TITLE));
+        root.Value = Note.ConstMessage;
+        root.Add(new XElement("Title", Note.ConstTitle));
 
         doc.Add(root);
 
@@ -541,7 +541,7 @@ public class XmlSerializerTests {
 
         element.Add(items);
         root.Add(element);
-        element = new XElement("Person");
+        element = new("Person");
 
         element.Add(
             new XElement("Name", "Bar"),

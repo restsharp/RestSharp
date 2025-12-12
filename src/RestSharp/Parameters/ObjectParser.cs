@@ -36,7 +36,14 @@ static class ObjectParser {
                 properties.Add(GetValue(prop, val));
         }
 
-        string? ParseValue(string? format, object? value) => format == null ? value?.ToString() : string.Format($"{{0:{format}}}", value);
+        return properties;
+
+        ParsedParameter GetValue(PropertyInfo propertyInfo, object? value) {
+            var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
+            var name      = attribute?.Name ?? propertyInfo.Name;
+            var val       = ParseValue(attribute?.Format, value);
+            return new(name, val, attribute?.Encode ?? true);
+        }
 
         IEnumerable<ParsedParameter> GetArray(PropertyInfo propertyInfo, object? value) {
             var elementType = propertyInfo.PropertyType.GetElementType();
@@ -47,33 +54,25 @@ static class ObjectParser {
             var queryType = attribute?.ArrayQueryType ?? RequestArrayQueryType.CommaSeparated;
             var encode    = attribute?.Encode         ?? true;
 
-            if (array.Length > 0 && elementType != null) {
-                // convert the array to an array of strings
-                var values = array
-                    .Cast<object>()
-                    .Select(item => ParseValue(attribute?.Format, item));
+            if (array.Length <= 0 || elementType == null) return [new(name, null, encode)];
 
-                return queryType switch {
-                    RequestArrayQueryType.CommaSeparated  => new[] { new ParsedParameter(name, string.Join(",", values), encode) },
-                    RequestArrayQueryType.ArrayParameters => values.Select(x => new ParsedParameter($"{name}[]", x, encode)),
-                    _                                     => throw new ArgumentOutOfRangeException()
-                };
-            }
+            // convert the array to an array of strings
+            var values = array
+                .Cast<object>()
+                .Select(item => ParseValue(attribute?.Format, item));
 
-            return new ParsedParameter[] { new(name, null, encode) };
-        }
+            return queryType switch {
+                RequestArrayQueryType.CommaSeparated  => [new(name, string.Join(",", values), encode)],
+                RequestArrayQueryType.ArrayParameters => values.Select(x => new ParsedParameter($"{name}[]", x, encode)),
+                _                                     => throw new ArgumentOutOfRangeException()
+            };
 
-        ParsedParameter GetValue(PropertyInfo propertyInfo, object? value) {
-            var attribute = propertyInfo.GetCustomAttribute<RequestPropertyAttribute>();
-            var name      = attribute?.Name ?? propertyInfo.Name;
-            var val       = ParseValue(attribute?.Format, value);
-            return new ParsedParameter(name, val, attribute?.Encode ?? true);
         }
 
         bool IsAllowedProperty(string propertyName)
             => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
 
-        return properties;
+        string? ParseValue(string? format, object? value) => format == null ? value?.ToString() : string.Format($"{{0:{format}}}", value);
     }
 }
 

@@ -3,28 +3,22 @@ using CsvHelper.Configuration;
 using System.Collections;
 using System.Globalization;
 
-namespace RestSharp.Serializers.CsvHelper; 
+namespace RestSharp.Serializers.CsvHelper;
 
-public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
-    const string TextCsvContentType = "text/csv";
-
-    readonly CsvConfiguration _configuration;
-
+public class CsvHelperSerializer(CsvConfiguration configuration) : IDeserializer, IRestSerializer, ISerializer {
     public ISerializer Serializer => this;
 
     public IDeserializer Deserializer => this;
 
-    public string[] AcceptedContentTypes => new[] { TextCsvContentType, "application/x-download" };
+    public string[] AcceptedContentTypes => [ContentType.Csv, "application/x-download"];
 
     public SupportsContentType SupportsContentType => x => Array.IndexOf(AcceptedContentTypes, x) != -1 || x.Value.Contains("csv");
 
     public DataFormat DataFormat => DataFormat.None;
 
-    public ContentType ContentType { get; set; } = TextCsvContentType;
+    public ContentType ContentType { get; set; } = ContentType.Csv;
 
-    public CsvHelperSerializer() => _configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
-
-    public CsvHelperSerializer(CsvConfiguration configuration) => _configuration = configuration;
+    public CsvHelperSerializer() : this(new(CultureInfo.InvariantCulture)) { }
 
     public T? Deserialize<T>(RestResponse response) {
         try {
@@ -32,14 +26,12 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
                 throw new InvalidOperationException(message: "Response content is null");
 
             using var stringReader = new StringReader(response.Content);
-
-            using var csvReader = new CsvReader(stringReader, _configuration);
+            using var csvReader    = new CsvReader(stringReader, configuration);
 
             var @interface = typeof(T).GetInterface("IEnumerable`1");
 
             if (@interface == null) {
                 csvReader.Read();
-
                 return csvReader.GetRecord<T>();
             }
 
@@ -62,7 +54,7 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
             }
 
             foreach (var record in csvReader.GetRecords(itemType)) {
-                method.Invoke(result, new[] { record });
+                method.Invoke(result, [record]);
             }
 
             return result;
@@ -80,23 +72,10 @@ public class CsvHelperSerializer : IDeserializer, IRestSerializer, ISerializer {
         }
 
         using var stringWriter = new StringWriter();
-
-        using var csvWriter = new CsvWriter(stringWriter, _configuration);
+        using var csvWriter    = new CsvWriter(stringWriter, configuration);
 
         if (obj is IEnumerable records) {
-            // ReSharper disable once PossibleMultipleEnumeration
-            var enumerator = records.GetEnumerator();
-
-            if (enumerator.MoveNext() && enumerator.Current != null) {
-                csvWriter.WriteHeader(enumerator.Current.GetType());
-                csvWriter.NextRecord();
-                // ReSharper disable once PossibleMultipleEnumeration
-                csvWriter.WriteRecords(records);
-            }
-
-            if (enumerator is IDisposable disposable) {
-                disposable.Dispose();
-            }
+            csvWriter.WriteRecords(records);
         }
         else {
             csvWriter.WriteHeader(obj.GetType());

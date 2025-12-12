@@ -15,7 +15,7 @@ public class RestContentTests {
     
     [Fact]
     public void RestContent_supports_manual_json_body() {
-        const string myContentType = "application/json";
+        string myContentType = ContentType.Json;
         const string myJsonString  = "[]";
 
         var request = new RestRequest("resource").AddParameter(myContentType, myJsonString, ParameterType.RequestBody);

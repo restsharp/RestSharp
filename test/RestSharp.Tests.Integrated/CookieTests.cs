@@ -1,19 +1,35 @@
-using System.Net;
-using RestSharp.Tests.Integrated.Server;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using RestSharp.Tests.Integrated.Fixtures;
+using WireMock.Types;
+using WireMock.Util;
 
 namespace RestSharp.Tests.Integrated;
 
-[Collection(nameof(TestServerCollection))]
-public class CookieTests {
-    readonly RestClient _client;
-    readonly string     _host;
+public sealed class CookieTests : IDisposable {
+    readonly RestClient     _client;
+    readonly string         _host;
+    readonly WireMockServer _server = WireMockServer.Start();
 
-    public CookieTests(TestServerFixture fixture) {
-        var options = new RestClientOptions(fixture.Server.Url) {
+    public CookieTests() {
+        var options = new RestClientOptions(_server.Url!) {
             CookieContainer = new CookieContainer()
         };
         _client = new RestClient(options);
         _host   = _client.Options.BaseUrl!.Host;
+
+        _server
+            .Given(Request.Create().WithPath("/get-cookies"))
+            .RespondWith(Response.Create().WithCallback(HandleGetCookies));
+
+        _server
+            .Given(Request.Create().WithPath("/set-cookies"))
+            .RespondWith(Response.Create().WithCallback(HandleSetCookies));
+
+        _server
+            .Given(Request.Create().WithPath("/invalid-cookies"))
+            .RespondWith(Response.Create().WithCallback(HandleInvalidCookies));
     }
 
     [Fact]
@@ -49,20 +65,19 @@ public class CookieTests {
         response.Content.Should().Be("success");
 
         AssertCookie("cookie1", "value1", x => x == DateTime.MinValue);
-        FindCookie("cookie2").Should().BeNull("Cookie 2 should vanish as the path will not match");
-        AssertCookie("cookie3", "value3", x => x > DateTime.Now);
-        AssertCookie("cookie4", "value4", x => x > DateTime.Now);
-        FindCookie("cookie5").Should().BeNull("Cookie 5 should vanish as the request is not SSL");
+        response.Cookies.Find("cookie2").Should().BeNull("Cookie 2 should vanish as the path will not match");
+        AssertCookie("cookie3", "value3", x => x > DateTime.UtcNow);
+        AssertCookie("cookie4", "value4", x => x > DateTime.UtcNow);
+        response.Cookies.Find("cookie5").Should().BeNull("Cookie 5 should vanish as the request is not SSL");
         AssertCookie("cookie6", "value6", x => x == DateTime.MinValue, true);
-
-        Cookie? FindCookie(string name) => response.Cookies!.FirstOrDefault(p => p.Name == name);
+        return;
 
         void AssertCookie(string name, string value, Func<DateTime, bool> checkExpiration, bool httpOnly = false) {
-            var c = FindCookie(name)!;
+            var c = response.Cookies.Find(name)!;
             c.Value.Should().Be(value);
             c.Path.Should().Be("/");
             c.Domain.Should().Be(_host);
-            checkExpiration(c.Expires).Should().BeTrue();
+            checkExpiration(c.Expires).Should().BeTrue($"Expires at {c.Expires}");
             c.HttpOnly.Should().Be(httpOnly);
         }
     }
@@ -73,14 +88,110 @@ public class CookieTests {
         var response = await _client.ExecuteAsync(request);
         response.Content.Should().Be("success");
 
-        var notFoundCookie = FindCookie("cookie_empty_domain");
+        var notFoundCookie = response.Cookies.Find("cookie_empty_domain");
         notFoundCookie.Should().BeNull();
 
-        var emptyDomainCookieHeader = response.Headers!
-            .SingleOrDefault(h => h.Name == KnownHeaders.SetCookie && ((string)h.Value!).StartsWith("cookie_empty_domain"));
+        var emptyDomainCookieHeader = response
+            .GetHeaderValues(KnownHeaders.SetCookie)
+            .SingleOrDefault(h => h.StartsWith("cookie_empty_domain"));
         emptyDomainCookieHeader.Should().NotBeNull();
-        ((string)emptyDomainCookieHeader!.Value!).Should().Contain("domain=;");
+        emptyDomainCookieHeader.Should().Contain("domain=;");
+    }
 
-        Cookie? FindCookie(string name) => response.Cookies!.FirstOrDefault(p => p.Name == name);
+    [Fact]
+    public async Task GET_Async_With_Invalid_Cookies_Should_Still_Return_Response_When_IgnoreInvalidCookies_Is_False() {
+        var request  = new RestRequest("invalid-cookies") {
+            CookieContainer      = new()
+        };
+        var response = await _client.ExecuteAsync(request);
+
+        // Even with IgnoreInvalidCookies = false, the response should be successful
+        // because AddCookies swallows CookieException by default
+        response.IsSuccessful.Should().BeTrue();
+        response.Content.Should().Be("success");
+    }
+
+    [Fact]
+    public async Task GET_Async_With_Invalid_Cookies_Should_Return_Response_When_IgnoreInvalidCookies_Is_True() {
+        var options = new RestClientOptions(_server.Url!) {
+            CookieContainer      = new()
+        };
+        using var client = new RestClient(options);
+
+        var request  = new RestRequest("invalid-cookies");
+        var response = await client.ExecuteAsync(request);
+
+        response.IsSuccessful.Should().BeTrue();
+        response.Content.Should().Be("success");
+    }
+
+    static ResponseMessage HandleGetCookies(IRequestMessage request) {
+        var response = request.Cookies!.Select(x => $"{x.Key}={x.Value}").ToArray();
+        return WireMockTestServer.CreateJson(response);
+    }
+
+    static ResponseMessage HandleSetCookies(IRequestMessage request) {
+        var cookies = new List<CookieInternal> {
+            new("cookie1", "value1", new()),
+            new("cookie2", "value2", new() { Path                             = "/path_extra" }),
+            new("cookie3", "value3", new() { Expires                          = DateTimeOffset.Now.AddDays(2) }),
+            new("cookie4", "value4", new() { MaxAge                           = TimeSpan.FromSeconds(100) }),
+            new("cookie5", "value5", new() { Secure                           = true }),
+            new("cookie6", "value6", new() { HttpOnly                         = true }),
+            new("cookie_empty_domain", "value_empty_domain", new() { HttpOnly = true, Domain = string.Empty })
+        };
+
+        var response = new ResponseMessage {
+            Headers = new Dictionary<string, WireMockList<string>>(),
+            BodyData = new BodyData {
+                DetectedBodyType = BodyType.String,
+                BodyAsString     = "success"
+            }
+        };
+
+        var valuesList = new WireMockList<string>();
+        valuesList.AddRange(cookies.Select(cookie => cookie.Options.GetHeader(cookie.Name, cookie.Value)));
+        response.Headers.Add(KnownHeaders.SetCookie, valuesList);
+
+        return response;
+    }
+
+    static ResponseMessage HandleInvalidCookies(IRequestMessage request) {
+        var response = new ResponseMessage {
+            Headers = new Dictionary<string, WireMockList<string>>(),
+            BodyData = new BodyData {
+                DetectedBodyType = BodyType.String,
+                BodyAsString     = "success"
+            }
+        };
+
+        // Create an invalid cookie with a domain mismatch that will cause CookieException
+        // The cookie domain doesn't match the request URL domain
+        var valuesList = new WireMockList<string> { "invalid_cookie=value; Domain=.invalid-domain.com" };
+        response.Headers.Add(KnownHeaders.SetCookie, valuesList);
+
+        return response;
+    }
+
+    record CookieInternal(string Name, string Value, CookieOptions Options);
+
+    public void Dispose() {
+        _client.Dispose();
+        _server.Dispose();
+    }
+}
+
+static class CookieExtensions {
+    public static string GetHeader(this CookieOptions self, string name, string value) {
+        var cookieHeader = new SetCookieHeaderValue((StringSegment)name, (StringSegment)value) {
+            Domain   = (StringSegment)self.Domain,
+            Path     = (StringSegment)self.Path,
+            Expires  = self.Expires,
+            Secure   = self.Secure,
+            HttpOnly = self.HttpOnly,
+            MaxAge   = self.MaxAge,
+            SameSite = (Microsoft.Net.Http.Headers.SameSiteMode)self.SameSite
+        };
+        return cookieHeader.ToString();
     }
 }

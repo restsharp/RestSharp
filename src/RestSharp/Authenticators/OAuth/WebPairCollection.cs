@@ -17,7 +17,7 @@ using System.Collections;
 namespace RestSharp.Authenticators.OAuth; 
 
 class WebPairCollection : IList<WebPair> {
-    readonly List<WebPair> _parameters = new();
+    readonly List<WebPair> _parameters = [];
 
     public IEnumerator<WebPair> GetEnumerator() => _parameters.GetEnumerator();
 
@@ -27,11 +27,11 @@ class WebPairCollection : IList<WebPair> {
 
     public void AddRange(IEnumerable<WebPair> collection) => AddCollection(collection);
 
-    public void Add(string name, string value) => Add(new WebPair(name, value));
+    public void Add(string name, string value) => Add(new(name, value));
     
     public WebPairCollection AddNotEmpty(string name, string? value, bool encode = false) {
         if (value != null)
-            Add(new WebPair(name, value, encode));
+            Add(new(name, value, encode));
         return this;
     }
 

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Net;
 using System.Net.Http.Headers;
 using RestSharp.Authenticators;
 using RestSharp.Extensions;
+using RestSharp.Interceptors;
 
-// ReSharper disable ReplaceSubstringWithRangeIndexer
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace RestSharp;
@@ -26,9 +26,6 @@ namespace RestSharp;
 /// Container for data used to make requests
 /// </summary>
 public class RestRequest {
-    Func<HttpResponseMessage, RestRequest, RestResponse>? _advancedResponseHandler;
-    Func<Stream, Stream?>?                                _responseWriter;
-
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -47,22 +44,22 @@ public class RestRequest {
 
         var queryStringStart = Resource.IndexOf('?');
 
-        if (queryStringStart >= 0 && Resource.IndexOf('=') > queryStringStart) {
-            var queryParams = ParseQuery(Resource.Substring(queryStringStart + 1));
-            Resource = Resource.Substring(0, queryStringStart);
+        if (queryStringStart < 0 || Resource.IndexOf('=') <= queryStringStart) return;
 
-            foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
-        }
+        var queryParams = ParseQuery(Resource[(queryStringStart + 1)..]);
+        Resource = Resource[..queryStringStart];
+
+        foreach (var param in queryParams) this.AddQueryParameter(param.Key, param.Value, false);
+
+        return;
 
         static IEnumerable<KeyValuePair<string, string?>> ParseQuery(string query)
-            => query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
+            => query.Split('&', StringSplitOptions.RemoveEmptyEntries)
                 .Select(
                     x => {
                         var position = x.IndexOf('=');
 
-                        return position > 0
-                            ? new KeyValuePair<string, string?>(x.Substring(0, position), x.Substring(position + 1))
-                            : new KeyValuePair<string, string?>(x, null);
+                        return position > 0 ? new KeyValuePair<string, string?>(x[..position], x[(position + 1)..]) : new(x, null);
                     }
                 );
     }
@@ -75,18 +72,18 @@ public class RestRequest {
     public RestRequest(Uri resource, Method method = Method.Get)
         : this(resource.IsAbsoluteUri ? resource.AbsoluteUri : resource.OriginalString, method) { }
 
-    readonly List<FileParameter> _files = new();
+    readonly List<FileParameter> _files = [];
 
     /// <summary>
     /// Always send a multipart/form-data request - even when no Files are present.
     /// </summary>
     public bool AlwaysMultipartFormData { get; set; }
-    
+
     /// <summary>
     /// Always send a file as request content without multipart/form-data request - even when the request contains only one file parameter
     /// </summary>
     public bool AlwaysSingleFileAsContent { get; set; }
-    
+
     /// <summary>
     /// When set to true, parameter values in a multipart form data requests will be enclosed in
     /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
@@ -136,7 +133,7 @@ public class RestRequest {
     /// <summary>
     /// Custom request timeout
     /// </summary>
-    public int Timeout { get; set; }
+    public TimeSpan? Timeout { get; set; }
 
     /// <summary>
     /// The Resource URL to make the request against.
@@ -160,29 +157,37 @@ public class RestRequest {
 
     /// <summary>
     /// Used by the default deserializers to determine where to start deserializing from.
-    /// Can be used to skip container or root elements that do not have corresponding deserialzation targets.
+    /// Can be used to skip container or root elements that do not have corresponding deserialization targets.
     /// </summary>
     public string? RootElement { get; set; }
 
     /// <summary>
+    /// HTTP version for the request. Default is Version11.
+    /// </summary>
+    public Version Version { get; set; } = HttpVersion.Version11;
+
+    /// <summary>
     /// When supplied, the function will be called before calling the deserializer
     /// </summary>
+    [Obsolete("Use Interceptors instead")]
     public Action<RestResponse>? OnBeforeDeserialization { get; set; }
 
     /// <summary>
     /// When supplied, the function will be called before making a request
     /// </summary>
+    [Obsolete("Use Interceptors instead")]
     public Func<HttpRequestMessage, ValueTask>? OnBeforeRequest { get; set; }
 
     /// <summary>
     /// When supplied, the function will be called after the request is complete
     /// </summary>
+    [Obsolete("Use Interceptors instead")]
     public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
-    internal void IncreaseNumAttempts() => Attempts++;
+    internal void IncreaseNumberOfAttempts() => Attempts++;
 
     /// <summary>
-    /// How many attempts were made to send this Request
+    /// The number of attempts that were made to send this request
     /// </summary>
     /// <remarks>
     /// This number is incremented each time the RestClient sends the request.
@@ -204,14 +209,13 @@ public class RestRequest {
     /// Set this to write response to Stream rather than reading into memory.
     /// </summary>
     public Func<Stream, Stream?>? ResponseWriter {
-        get => _responseWriter;
+        get;
         set {
-            if (AdvancedResponseWriter != null)
-                throw new ArgumentException(
-                    "AdvancedResponseWriter is not null. Only one response writer can be used."
-                );
+            if (AdvancedResponseWriter != null) {
+                throw new ArgumentException("AdvancedResponseWriter is not null. Only one response writer can be used.");
+            }
 
-            _responseWriter = value;
+            field = value;
         }
     }
 
@@ -219,13 +223,20 @@ public class RestRequest {
     /// Set this to handle the response stream yourself, based on the response details
     /// </summary>
     public Func<HttpResponseMessage, RestRequest, RestResponse>? AdvancedResponseWriter {
-        get => _advancedResponseHandler;
+        get;
         set {
-            if (ResponseWriter != null) throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
+            if (ResponseWriter != null) {
+                throw new ArgumentException("ResponseWriter is not null. Only one response writer can be used.");
+            }
 
-            _advancedResponseHandler = value;
+            field = value;
         }
     }
+
+    /// <summary>
+    /// Request-level interceptors. Will be combined with client-level interceptors if set.
+    /// </summary>
+    public List<Interceptor>? Interceptors { get; set; }
 
     /// <summary>
     /// Adds a parameter object to the request parameters

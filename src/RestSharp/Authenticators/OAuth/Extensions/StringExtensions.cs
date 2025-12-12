@@ -17,13 +17,15 @@ using System.Text;
 namespace RestSharp.Authenticators.OAuth.Extensions;
 
 static class StringExtensions {
-    public static bool EqualsIgnoreCase(this string left, string right) => string.Equals(left, right, StringComparison.InvariantCultureIgnoreCase);
+    extension(string left) {
+        public bool EqualsIgnoreCase(string right) => string.Equals(left, right, StringComparison.InvariantCultureIgnoreCase);
 
-    public static string Then(this string input, string value) => string.Concat(input, value);
+        public string Then(string value) => string.Concat(left, value);
 
-    public static Uri AsUri(this string value) => new(value);
+        public Uri AsUri() => new(left);
 
-    public static byte[] GetBytes(this string input) => Encoding.UTF8.GetBytes(input);
+        public byte[] GetBytes() => Encoding.UTF8.GetBytes(left);
 
-    public static string PercentEncode(this string s) => string.Join("", s.GetBytes().Select(x => $"%{x:X2}"));
+        public string PercentEncode() => string.Join("", left.GetBytes().Select(x => $"%{x:X2}"));
+    }
 }

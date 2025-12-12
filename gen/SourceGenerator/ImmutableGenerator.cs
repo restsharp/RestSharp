@@ -13,70 +13,81 @@
 // limitations under the License.
 //
 
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-
 namespace SourceGenerator;
 
-[Generator]
-public class ImmutableGenerator : ISourceGenerator {
-    public void Initialize(GeneratorInitializationContext context) { }
+[Generator(LanguageNames.CSharp)]
+public class ImmutableGenerator : IIncrementalGenerator {
+    public void Initialize(IncrementalGeneratorInitializationContext context) {
+        var c = context.CompilationProvider.SelectMany((x, _) => GetImmutableClasses(x));
 
-    public void Execute(GeneratorExecutionContext context) {
-        var compilation = context.Compilation;
+        context.RegisterSourceOutput(
+            c.Collect(),
+            static (ctx, sources) => {
+                foreach (var source in sources) {
+                    ctx.AddSource(source.Item1, source.Item2);
+                }
+            }
+        );
+        return;
 
-        var mutableClasses = compilation.SyntaxTrees
-            .Select(tree => compilation.GetSemanticModel(tree))
-            .SelectMany(model => model.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
-            .Where(syntax => syntax.AttributeLists.Any(list => list.Attributes.Any(attr => attr.Name.ToString() == "GenerateImmutable")));
+        IEnumerable<(string, SourceText)> GetImmutableClasses(Compilation compilation) {
+            var mutableClasses = compilation.FindAnnotatedClasses("GenerateImmutable", strict: true);
 
-        foreach (var mutableClass in mutableClasses) {
-            var immutableClass = GenerateImmutableClass(mutableClass, compilation);
-            context.AddSource($"ReadOnly{mutableClass.Identifier.Text}.cs", SourceText.From(immutableClass, Encoding.UTF8));
+            foreach (var mutableClass in mutableClasses) {
+                var immutableClass = GenerateImmutableClass(mutableClass, compilation);
+                yield return ($"ReadOnly{mutableClass.Identifier.Text}.cs", SourceText.From(immutableClass, Encoding.UTF8));
+            }
         }
     }
 
     static string GenerateImmutableClass(TypeDeclarationSyntax mutableClass, Compilation compilation) {
         var containingNamespace = compilation.GetSemanticModel(mutableClass.SyntaxTree).GetDeclaredSymbol(mutableClass)!.ContainingNamespace;
-
-        var namespaceName = containingNamespace.ToDisplayString();
-
-        var className = mutableClass.Identifier.Text;
-
-        var usings = mutableClass.SyntaxTree.GetCompilationUnitRoot().Usings.Select(u => u.ToString());
+        var namespaceName       = containingNamespace.ToDisplayString();
+        var className           = mutableClass.Identifier.Text;
+        var usings              = mutableClass.SyntaxTree.GetCompilationUnitRoot().Usings.Select(u => u.ToString());
 
         var properties = GetDefinitions(SyntaxKind.SetKeyword)
-            .Select(prop => $"    public {prop.Type} {prop.Identifier.Text} {{ get; }}")
+            .Select(
+                prop => {
+                    var xml = prop.GetLeadingTrivia().FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)).GetStructure();
+                    return $"/// {xml}    public {prop.Type} {prop.Identifier.Text} {{ get; }}";
+                }
+            )
             .ToArray();
 
         var props = GetDefinitions(SyntaxKind.SetKeyword).ToArray();
 
         const string argName = "inner";
-        var mutableProperties = props
-            .Select(prop => $"        {prop.Identifier.Text} = {argName}.{prop.Identifier.Text};");
 
-        var constructor = $@"    public ReadOnly{className}({className} {argName}) {{
-{string.Join("\n", mutableProperties)}
-    }}";
+        var mutableProperties = props.Select(prop => $"        {prop.Identifier.Text} = {argName}.{prop.Identifier.Text};");
 
-        const string template = @"{Usings}
+        var constructor = $$"""
+                                public ReadOnly{{className}}({{className}} {{argName}}) {
+                            {{string.Join("\n", mutableProperties)}}
+                                    CopyAdditionalProperties({{argName}});
+                                }
+                            """;
 
-namespace {Namespace};
+        const string template = """
+                                {Usings}
 
-public class ReadOnly{ClassName} {
-{Constructor}
+                                namespace {Namespace};
 
-{Properties}
-}";
+                                public partial class ReadOnly{ClassName} {
+                                {Constructor}
+                                
+                                    partial void CopyAdditionalProperties({ClassName} {ArgName}); 
+
+                                {Properties}
+                                }
+                                """;
 
         var code = template
             .Replace("{Usings}", string.Join("\n", usings))
             .Replace("{Namespace}", namespaceName)
             .Replace("{ClassName}", className)
             .Replace("{Constructor}", constructor)
+            .Replace("{ArgName}", argName)
             .Replace("{Properties}", string.Join("\n", properties));
 
         return code;
@@ -86,7 +97,8 @@ public class ReadOnly{ClassName} {
                 .OfType<PropertyDeclarationSyntax>()
                 .Where(
                     prop =>
-                        prop.AccessorList!.Accessors.Any(accessor => accessor.Keyword.IsKind(kind))
+                        prop.AccessorList!.Accessors.Any(accessor => accessor.Keyword.IsKind(kind)) &&
+                        prop.AttributeLists.All(list => list.Attributes.All(attr => attr.Name.ToString() != "Exclude"))
                 );
     }
 }

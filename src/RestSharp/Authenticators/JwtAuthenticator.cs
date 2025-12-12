@@ -12,15 +12,13 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
 
-namespace RestSharp.Authenticators; 
+namespace RestSharp.Authenticators;
 
 /// <summary>
 /// JSON WEB TOKEN (JWT) Authenticator class.
 /// <remarks>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token</remarks>
 /// </summary>
-public class JwtAuthenticator : AuthenticatorBase {
-    public JwtAuthenticator(string accessToken) : base(GetToken(accessToken)) { }
-
+public class JwtAuthenticator(string accessToken) : AuthenticatorBase(GetToken(accessToken)) {
     /// <summary>
     /// Set the new bearer token so the request gets the new header value
     /// </summary>
@@ -28,7 +26,8 @@ public class JwtAuthenticator : AuthenticatorBase {
     [PublicAPI]
     public void SetBearerToken(string accessToken) => Token = GetToken(accessToken);
 
-    static string GetToken(string accessToken) => Ensure.NotEmpty(accessToken, nameof(accessToken)).StartsWith("Bearer ") ? accessToken : $"Bearer {accessToken}";
+    static string GetToken(string accessToken)
+        => Ensure.NotEmptyString(accessToken, nameof(accessToken)).StartsWith("Bearer ") ? accessToken : $"Bearer {accessToken}";
 
     protected override ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
         => new(new HeaderParameter(KnownHeaders.Authorization, accessToken));

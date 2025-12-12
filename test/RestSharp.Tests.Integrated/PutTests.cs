@@ -1,25 +1,16 @@
 using System.Text.Json;
-using RestSharp.Tests.Integrated.Server;
-using static RestSharp.Tests.Integrated.Server.HttpServer;
 
-namespace RestSharp.Tests.Integrated; 
+namespace RestSharp.Tests.Integrated;
 
-[Collection(nameof(TestServerCollection))]
-public class PutTests {
-    readonly ITestOutputHelper _output;
-    readonly RestClient        _client;
+public sealed class PutTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    readonly RestClient _client = new(server.Url!);
 
     static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
 
-    public PutTests(TestServerFixture fixture, ITestOutputHelper output) {
-        _output  = output;
-        _client  = new RestClient(fixture.Server.Url);
-    }
-
     [Fact]
     public async Task Should_put_json_body() {
-        var body     = new TestRequest("foo", 100);
-        var request  = new RestRequest(ContentResource).AddJsonBody(body);
+        var body    = new TestRequest("foo", 100);
+        var request = new RestRequest("/content").AddJsonBody(body);
 
         var response = await _client.PutAsync(request);
 
@@ -30,23 +21,22 @@ public class PutTests {
     [Fact]
     public async Task Should_put_json_body_using_extension() {
         var body     = new TestRequest("foo", 100);
-        var response = await _client.PutJsonAsync<TestRequest, TestRequest>(ContentResource, body);
-        
+        var response = await _client.PutJsonAsync<TestRequest, TestRequest>("/content", body);
+
         response.Should().BeEquivalentTo(body);
     }
 
     [Fact]
     public async Task Can_Timeout_PUT_Async() {
-        var request = new RestRequest(TimeoutResource, Method.Put).AddBody("Body_Content");
+        var request = new RestRequest("/timeout", Method.Put).AddBody("Body_Content");
 
         // Half the value of ResponseHandler.Timeout
-        request.Timeout = 200;
+        request.Timeout = TimeSpan.FromMilliseconds(200);
 
         var response = await _client.ExecuteAsync(request);
 
         Assert.Equal(ResponseStatus.TimedOut, response.ResponseStatus);
     }
-    
-}
 
-public record TestRequest(string Data, int Number);
+    public void Dispose() => _client.Dispose();
+}

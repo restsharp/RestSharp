@@ -1,27 +1,17 @@
 ﻿using System.Text;
 using System.Web;
 using RestSharp.Authenticators;
-using RestSharp.Tests.Integrated.Server;
 
 namespace RestSharp.Tests.Integrated.Authentication;
 
-[Collection(nameof(TestServerCollection))]
-public class AuthenticationTests {
-    readonly TestServerFixture _fixture;
-    readonly ITestOutputHelper _output;
-
-    public AuthenticationTests(TestServerFixture fixture, ITestOutputHelper output) {
-        _fixture = fixture;
-        _output  = output;
-    }
-
+public class AuthenticationTests(WireMockTestServer server) : IClassFixture<WireMockTestServer> {
     [Fact]
     public async Task Can_Authenticate_With_Basic_Http_Auth() {
         const string userName = "testuser";
         const string password = "testpassword";
 
-        var client = new RestClient(
-            _fixture.Server.Url,
+        using var client = new RestClient(
+            server.Url!,
             o => o.Authenticator = new HttpBasicAuthenticator(userName, password)
         );
         var request  = new RestRequest("headers");

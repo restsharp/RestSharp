@@ -22,6 +22,6 @@ static class SimpleClientFactory {
 
     public static HttpClient GetClient(Uri baseUrl, Func<HttpClient> getClient) {
         var key = baseUrl.ToString();
-        return CachedClients.GetOrAdd(key, key => getClient());
+        return CachedClients.GetOrAdd(key, _ => getClient());
     }
 }

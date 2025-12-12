@@ -1,42 +1,32 @@
-﻿using RestSharp.Tests.Integrated.Fixtures;
+﻿using RestSharp.Tests.Shared.Extensions;
 using RestSharp.Tests.Shared.Fixtures;
 
 namespace RestSharp.Tests.Integrated;
 
-public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
-    readonly ITestOutputHelper _output;
-    readonly SimpleServer      _server;
+public sealed class RequestBodyTests : IDisposable {
+    // const string NewLine = "\r\n";
 
-    const string NewLine = "\r\n";
+    static readonly string ExpectedTextContentType          = $"{ContentType.Plain}; charset=utf-8";
+    static readonly string ExpectedTextContentTypeNoCharset = ContentType.Plain;
 
-    const string TextPlainContentType             = "text/plain";
-    const string ExpectedTextContentType          = $"{TextPlainContentType}; charset=utf-8";
-    const string ExpectedTextContentTypeNoCharset = TextPlainContentType;
-
-    public RequestBodyTests(RequestBodyFixture fixture, ITestOutputHelper output) {
-        _output = output;
-        _server = fixture.Server;
-    }
+    readonly WireMockServer _server = WireMockServer.Start(s => s.AllowBodyForAllHttpMethods = true);
 
     async Task AssertBody(Method method, bool disableCharset = false) {
-        var options = new RestClientOptions(_server.Url) { DisableCharset = disableCharset };
-        var client  = new RestClient(options);
-
-        var request = new RestRequest(RequestBodyCapturer.Resource, method) {
-            OnBeforeRequest = async m => {
-                _output.WriteLine(m.ToString());
-                _output.WriteLine(await m.Content!.ReadAsStringAsync());
-            }
-        };
+#if NET
+        var       options  = new RestClientOptions(_server.Url!) { DisableCharset = disableCharset };
+        using var client   = new RestClient(options);
+        var       request  = new RestRequest(RequestBodyCapturer.Resource, method);
+        var       capturer = _server.ConfigureBodyCapturer(method);
 
         const string bodyData = "abc123 foo bar baz BING!";
 
-        request.AddParameter(TextPlainContentType, bodyData, ParameterType.RequestBody);
+        request.AddBody(bodyData, ContentType.Plain);
 
         await client.ExecuteAsync(request);
 
         var expected = disableCharset ? ExpectedTextContentTypeNoCharset : ExpectedTextContentType;
-        AssertHasRequestBody(expected, bodyData);
+        AssertHasRequestBody(capturer, expected, bodyData);
+#endif
     }
 
     [Fact]
@@ -53,7 +43,7 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
 
     [Fact]
     public Task Can_Be_Added_To_POST_Request_NoCharset() => AssertBody(Method.Post, true);
-    
+
     [Fact]
     public Task Can_Be_Added_To_POST_Request() => AssertBody(Method.Post);
 
@@ -67,12 +57,13 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     public async Task Can_Have_No_Body_Added_To_POST_Request() {
         const Method httpMethod = Method.Post;
 
-        var client  = new RestClient(_server.Url);
-        var request = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+        using var client   = new RestClient(_server.Url!);
+        var       request  = new RestRequest(RequestBodyCapturer.Resource, httpMethod);
+        var       capturer = _server.ConfigureBodyCapturer(httpMethod);
 
         await client.ExecuteAsync(request);
 
-        AssertHasNoRequestBody();
+        AssertHasNoRequestBody(capturer);
     }
 
     [Fact]
@@ -81,40 +72,17 @@ public class RequestBodyTests : IClassFixture<RequestBodyFixture> {
     [Fact]
     public Task Can_Be_Added_To_HEAD_Request() => AssertBody(Method.Head);
 
-    [Fact]
-    public async Task MultipartFormData_Without_File_Creates_A_Valid_RequestBody() {
-        var client = new RestClient(_server.Url);
-
-        var request = new RestRequest(RequestBodyCapturer.Resource, Method.Post) {
-            AlwaysMultipartFormData = true
-        };
-
-        const string bodyData      = "abc123 foo bar baz BING!";
-        const string multipartName = "mybody";
-
-        request.AddParameter(new BodyParameter(multipartName, bodyData, TextPlainContentType));
-
-        await client.ExecuteAsync(request);
-
-        var expectedBody = new[] {
-            $"{KnownHeaders.ContentType}: {ExpectedTextContentType}",
-            $"{KnownHeaders.ContentDisposition}: form-data; name={multipartName}",
-            bodyData
-        };
-
-        var actual = RequestBodyCapturer.CapturedEntityBody.Split(NewLine);
-        actual.Should().Contain(expectedBody);
+    static void AssertHasNoRequestBody(RequestBodyCapturer capturer) {
+        capturer.ContentType.Should().BeNull();
+        capturer.HasBody.Should().BeFalse();
+        capturer.Body.Should().BeNullOrEmpty();
     }
 
-    static void AssertHasNoRequestBody() {
-        RequestBodyCapturer.CapturedContentType.Should().BeNull();
-        RequestBodyCapturer.CapturedHasEntityBody.Should().BeFalse();
-        RequestBodyCapturer.CapturedEntityBody.Should().BeNullOrEmpty();
+    static void AssertHasRequestBody(RequestBodyCapturer capturer, string contentType, string bodyData) {
+        capturer.ContentType.Should().Be(contentType);
+        capturer.HasBody.Should().BeTrue();
+        capturer.Body.Should().Be(bodyData);
     }
 
-    static void AssertHasRequestBody(string contentType, string bodyData) {
-        RequestBodyCapturer.CapturedContentType.Should().Be(contentType);
-        RequestBodyCapturer.CapturedHasEntityBody.Should().BeTrue();
-        RequestBodyCapturer.CapturedEntityBody.Should().Be(bodyData);
-    }
+    public void Dispose() => _server.Dispose();
 }

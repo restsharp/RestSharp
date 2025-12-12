@@ -16,4 +16,14 @@
 namespace RestSharp.Extensions;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class GenerateImmutableAttribute : Attribute { }
+class GenerateImmutableAttribute : Attribute;
+
+[AttributeUsage(AttributeTargets.Class)]
+class GenerateCloneAttribute : Attribute {
+    public Type?   BaseType { get; set; }
+    public string? Name     { get; set; }
+    public bool    Mutate   { get; set; }
+};
+
+[AttributeUsage(AttributeTargets.Property)]
+class Exclude : Attribute;

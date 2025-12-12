@@ -33,6 +33,7 @@ public class XmlSerializer : IXmlSerializer, IWithRootElement, IWithDateFormat {
     /// Specify the namespaced to be used when serializing
     /// </summary>
     /// <param name="namespace">XML namespace</param>
+    [PublicAPI]
     public XmlSerializer(string @namespace) => Namespace = @namespace;
 
     /// <summary>

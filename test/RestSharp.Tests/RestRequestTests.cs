@@ -4,31 +4,37 @@ public class RestRequestTests {
     [Fact]
     public void RestRequest_Request_Property() {
         var request = new RestRequest("resource");
-
-        Assert.Equal("resource", request.Resource);
+        request.Resource.Should().Be("resource");
     }
 
     [Fact]
     public void RestRequest_Test_Already_Encoded() {
-        var request    = new RestRequest("/api/get?query=Id%3d198&another=notencoded");
+        const string resource = "/api/get?query=Id%3d198&another=notencoded&novalue=";
+        const string baseUrl  = "https://example.com";
+
+        var request    = new RestRequest(resource);
         var parameters = request.Parameters.ToArray();
 
-        Assert.Equal("/api/get", request.Resource);
-        Assert.Equal(2, request.Parameters.Count);
-        Assert.Equal("query", parameters[0].Name);
-        Assert.Equal("Id%3d198", parameters[0].Value);
-        Assert.Equal(ParameterType.QueryString, parameters[0].Type);
-        Assert.False(parameters[0].Encode);
-        Assert.Equal("another", parameters[1].Name);
-        Assert.Equal("notencoded", parameters[1].Value);
-        Assert.Equal(ParameterType.QueryString, parameters[1].Type);
-        Assert.False(parameters[1].Encode);
+        request.Resource.Should().Be("/api/get");
+        parameters.Length.Should().Be(3);
+
+        var expected = new[] {
+            new { Name = "query", Value   = "Id%3d198", Type   = ParameterType.QueryString, Encode = false },
+            new { Name = "another", Value = "notencoded", Type = ParameterType.QueryString, Encode = false },
+            new { Name = "novalue", Value = "", Type           = ParameterType.QueryString, Encode = false }
+        };
+        parameters.Should().BeEquivalentTo(expected, options => options.ExcludingMissingMembers());
+        
+        using var client = new RestClient(baseUrl);
+        var       actual = client.BuildUri(request);
+        actual.AbsoluteUri.Should().Be($"{baseUrl}{resource}");
     }
 
     [Fact]
     public async Task RestRequest_Fail_On_Exception() {
-        var req    = new RestRequest("nonexisting");
-        var client = new RestClient(new RestClientOptions("http://localhost:12345") { ThrowOnAnyError = true });
+        var req = new RestRequest("nonexisting");
+
+        using var client = new RestClient(new RestClientOptions("http://localhost:12345") { ThrowOnAnyError = true });
         await Assert.ThrowsAsync<HttpRequestException>(() => client.ExecuteAsync(req));
     }
 }

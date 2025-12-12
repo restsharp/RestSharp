@@ -13,15 +13,11 @@
 // limitations under the License.
 //
 
+using System.Runtime.CompilerServices;
+
 namespace RestSharp;
 
-public sealed class DefaultParameters : ParametersCollection {
-    readonly ReadOnlyRestClientOptions _options;
-
-    readonly object _lock = new();
-
-    public DefaultParameters(ReadOnlyRestClientOptions options) => _options = options;
-
+public sealed class DefaultParameters(ReadOnlyRestClientOptions options) : ParametersCollection {
     /// <summary>
     /// Safely add a default parameter to the collection.
     /// </summary>
@@ -29,21 +25,19 @@ public sealed class DefaultParameters : ParametersCollection {
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
     /// <exception cref="ArgumentException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public DefaultParameters AddParameter(Parameter parameter) {
-        lock (_lock) {
-            if (parameter.Type == ParameterType.RequestBody)
-                throw new NotSupportedException(
-                    "Cannot set request body using default parameters. Use Request.AddBody() instead."
-                );
+        if (parameter.Type == ParameterType.RequestBody)
+            throw new NotSupportedException("Cannot set request body using default parameters. Use Request.AddBody() instead.");
 
-            if (!_options.AllowMultipleDefaultParametersWithSameName &&
-                !MultiParameterTypes.Contains(parameter.Type)        &&
-                this.Any(x => x.Name == parameter.Name)) {
-                throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
-            }
-
-            Parameters.Add(parameter);
+        if (!options.AllowMultipleDefaultParametersWithSameName &&
+            parameter.Type != ParameterType.HttpHeader &&
+            !MultiParameterTypes.Contains(parameter.Type) &&
+            this.Any(x => x.Name == parameter.Name)) {
+            throw new ArgumentException("A default parameters with the same name has already been added", nameof(parameter));
         }
+
+        Parameters.Add(parameter);
 
         return this;
     }
@@ -55,10 +49,9 @@ public sealed class DefaultParameters : ParametersCollection {
     /// <param name="type">Parameter type</param>
     /// <returns></returns>
     [PublicAPI]
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public DefaultParameters RemoveParameter(string name, ParameterType type) {
-        lock (_lock) {
-            Parameters.RemoveAll(x => x.Name == name && x.Type == type);
-        }
+        Parameters.RemoveAll(x => x.Name == name && x.Type == type);
 
         return this;
     }
@@ -75,5 +68,5 @@ public sealed class DefaultParameters : ParametersCollection {
             RemoveParameter(Ensure.NotEmptyString(parameter.Name, "Parameter name"), parameter.Type)
                 .AddParameter(parameter);
 
-    static readonly ParameterType[] MultiParameterTypes = { ParameterType.QueryString, ParameterType.GetOrPost };
+    static readonly ParameterType[] MultiParameterTypes = [ParameterType.QueryString, ParameterType.GetOrPost];
 }

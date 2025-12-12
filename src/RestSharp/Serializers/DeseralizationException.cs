@@ -13,12 +13,11 @@
 //   limitations under the License. 
 
 // ReSharper disable once CheckNamespace
+
 namespace RestSharp;
 
-public class DeserializationException : Exception {
-    public DeserializationException(RestResponse response, Exception innerException)
-        : base("Error occured while deserializing the response", innerException)
-        => Response = response;
-
-    public RestResponse Response { get; }
+public class DeserializationException(RestResponse response, Exception innerException)
+    : Exception("Error occured while deserializing the response", innerException) {
+    [PublicAPI]
+    public RestResponse Response { get; } = response;
 }

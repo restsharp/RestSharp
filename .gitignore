@@ -1,4 +1,6 @@
-packages
+packages/
+nuget.config
+
 
 #ignore thumbnails created by windows
 Thumbs.db
@@ -54,3 +56,4 @@ RestSharp.IntegrationTests/config.json
 /docs/.vuepress/dist/
 .vscode/
 .temp/
+*.trx

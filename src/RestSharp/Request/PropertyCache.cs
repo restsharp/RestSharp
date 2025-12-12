@@ -60,7 +60,7 @@ static partial class PropertyCache<T> where T : class {
     /// <returns></returns>
     internal static IEnumerable<Parameter> GetParameters(T entity) => GetParameters(entity, Populators);
 
-    static IEnumerable<Parameter> GetParameters(T entity, IEnumerable<Populator> populators) {
+    static List<Parameter> GetParameters(T entity, IEnumerable<Populator> populators) {
         var parameters = new List<Parameter>(capacity: Populators.Count);
 
         foreach (var populator in populators) {

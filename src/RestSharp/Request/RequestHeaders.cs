@@ -15,24 +15,21 @@
 
 // ReSharper disable InvertIf
 
-using System.Net;
 using RestSharp.Extensions;
 
 namespace RestSharp;
 
-class RequestHeaders {
-    public RequestParameters Parameters { get; } = new();
-
+class RequestHeaders : ParametersCollection<HeaderParameter> {
     public RequestHeaders AddHeaders(ParametersCollection parameters) {
-        Parameters.AddParameters(parameters.GetParameters<HeaderParameter>());
+        Parameters.AddRange(parameters.GetParameters<HeaderParameter>());
         return this;
     }
 
-    // Add Accept header based on registered deserializers if none has been set by the caller.
+    // Add Accept header based on registered deserializers if the caller has set none.
     public RequestHeaders AddAcceptHeader(string[] acceptedContentTypes) {
-        if (Parameters.TryFind(KnownHeaders.Accept) == null) {
+        if (TryFind(KnownHeaders.Accept) == null) {
             var accepts = acceptedContentTypes.JoinToString(", ");
-            Parameters.AddParameter(new HeaderParameter(KnownHeaders.Accept, accepts));
+            Parameters.Add(new(KnownHeaders.Accept, accepts));
         }
 
         return this;
@@ -47,13 +44,13 @@ class RequestHeaders {
         if (string.IsNullOrWhiteSpace(cookies)) return this;
 
         var newCookies = SplitHeader(cookies);
-        var existing   = Parameters.GetParameters<HeaderParameter>().FirstOrDefault(x => x.Name == KnownHeaders.Cookie);
+        var existing   = GetParameters<HeaderParameter>().FirstOrDefault(x => x.Name == KnownHeaders.Cookie);
 
         if (existing?.Value != null) {
-            newCookies = newCookies.Union(SplitHeader(existing.Value.ToString()!));
+            newCookies = newCookies.Union(SplitHeader(existing.Value!));
         }
 
-        Parameters.AddParameter(new HeaderParameter(KnownHeaders.Cookie, string.Join("; ", newCookies)));
+        Parameters.Add(new(KnownHeaders.Cookie, string.Join("; ", newCookies)));
 
         return this;
 

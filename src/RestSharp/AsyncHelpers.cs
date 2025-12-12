@@ -24,7 +24,7 @@ static class AsyncHelpers {
     /// Executes a task synchronously on the calling thread by installing a temporary synchronization context that queues continuations
     /// </summary>
     /// <param name="task">Callback for asynchronous task to run</param>
-    public static void RunSync(Func<Task> task) {
+    static void RunSync(Func<Task> task) {
         var currentContext = SynchronizationContext.Current;
         var customContext  = new CustomSynchronizationContext(task);
 
@@ -80,19 +80,6 @@ static class AsyncHelpers {
         /// Enqueues the function to be executed and executes all resulting continuations until it is completely done
         /// </summary>
         public void Run() {
-            async void PostCallback(object? _) {
-                try {
-                    await _task().ConfigureAwait(false);
-                }
-                catch (Exception exception) {
-                    _caughtException = ExceptionDispatchInfo.Capture(exception);
-                    throw;
-                }
-                finally {
-                    Post(_ => _done = true, null);
-                }
-            }
-
             Post(PostCallback, null);
 
             while (!_done) {
@@ -105,6 +92,21 @@ static class AsyncHelpers {
                 }
                 else {
                     _workItemsWaiting.WaitOne();
+                }
+            }
+
+            return;
+
+            async void PostCallback(object? _) {
+                try {
+                    await _task().ConfigureAwait(false);
+                }
+                catch (Exception exception) {
+                    _caughtException = ExceptionDispatchInfo.Capture(exception);
+                    throw;
+                }
+                finally {
+                    Post(_ => _done = true, null);
                 }
             }
         }

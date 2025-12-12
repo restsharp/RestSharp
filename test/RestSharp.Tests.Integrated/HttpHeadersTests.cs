@@ -1,19 +1,28 @@
-using System.Net;
-using RestSharp.Tests.Integrated.Server;
+namespace RestSharp.Tests.Integrated;
 
-namespace RestSharp.Tests.Integrated; 
+public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<WireMockTestServer>, IDisposable {
+    const string UserAgent = "RestSharp/test";
 
-[Collection(nameof(TestServerCollection))]
-public class HttpHeadersTests {
-    readonly ITestOutputHelper _output;
-    readonly RestClient        _client;
-
-    public HttpHeadersTests(TestServerFixture fixture, ITestOutputHelper output) {
-        _output = output;
-        _client = new RestClient(new RestClientOptions(fixture.Server.Url) { ThrowOnAnyError = true });
-    }
+    readonly RestClient _client = new(new RestClientOptions(server.Url!) { ThrowOnAnyError = true, UserAgent = UserAgent });
 
     [Fact]
+    public async Task Ensure_headers_correctly_set_in_the_interceptor() {
+        const string headerName  = "HeaderName";
+        const string headerValue = "HeaderValue";
+
+        var request = new RestRequest("/headers") {
+            Interceptors = [new HeaderInterceptor(headerName, headerValue)]
+        };
+
+        var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var header = FindHeader(response, headerName);
+        header.Should().NotBeNull();
+        header.Value.Should().Be(headerValue);
+    }
+
+    [Fact, Obsolete("Obsolete")]
     public async Task Ensure_headers_correctly_set_in_the_hook() {
         const string headerName  = "HeaderName";
         const string headerValue = "HeaderValue";
@@ -25,12 +34,11 @@ public class HttpHeadersTests {
             }
         };
 
-        // Run
         var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
 
-        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var header = response.Data!.First(x => x.Name == headerName);
+        response.Data.Should().NotBeNull();
+        var header = FindHeader(response, headerName);
         header.Should().NotBeNull();
         header.Value.Should().Be(headerValue);
     }
@@ -42,19 +50,41 @@ public class HttpHeadersTests {
 
         _client.AddDefaultHeader(defaultHeader.Name, defaultHeader.Value);
 
-        var request = new RestRequest("/headers")
-            .AddHeader(requestHeader.Name, requestHeader.Value);
+        var request = new RestRequest("/headers").AddHeader(requestHeader.Name, requestHeader.Value);
 
         var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
-        CheckHeader(defaultHeader);
-        CheckHeader(requestHeader);
+        CheckHeader(response, defaultHeader);
+        CheckHeader(response, requestHeader);
+    }
 
-        void CheckHeader(Header header) {
-            var h = response.Data!.First(x => x.Name == header.Name);
-            h.Should().NotBeNull();
-            h.Value.Should().Be(header.Value);
+    [Fact]
+    public async Task Should_sent_custom_UserAgent() {
+        var request  = new RestRequest("/headers");
+        var response = await _client.ExecuteAsync<TestServerResponse[]>(request);
+        var h = FindHeader(response, "User-Agent");
+        h.Should().NotBeNull();
+        h.Value.Should().Be(UserAgent);
+
+        response.GetHeaderValue("Server").Should().Be("Kestrel");
+    }
+
+    static void CheckHeader(RestResponse<TestServerResponse[]> response, Header header) {
+        var h = FindHeader(response, header.Name);
+        h.Should().NotBeNull();
+        h.Value.Should().Be(header.Value);
+    }
+
+    static TestServerResponse FindHeader(RestResponse<TestServerResponse[]> response, string headerName)
+        => response.Data!.First(x => x.Name == headerName);
+
+    record Header(string Name, string Value);
+
+    class HeaderInterceptor(string headerName, string headerValue) : Interceptors.Interceptor {
+        public override ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken) {
+            requestMessage.Headers.Add(headerName, headerValue);
+            return default;
         }
     }
 
-    record Header(string Name, string Value);
+    public void Dispose() => _client.Dispose();
 }

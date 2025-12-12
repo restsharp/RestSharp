@@ -20,7 +20,7 @@ public class AddObjectToRequestParametersBenchmarks {
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         var dateTime = DateTime.Parse("01/01/2013 03:03:12");
 
-        _data = new Data(@string, int.MaxValue, strings, ints, dateTime, strings);
+        _data = new(@string, int.MaxValue, strings, ints, dateTime, strings);
     }
 
     [Benchmark(Baseline = true)]

@@ -17,25 +17,27 @@ using System.Collections;
 
 namespace RestSharp;
 
-public abstract class ParametersCollection : IReadOnlyCollection<Parameter> {
-    protected readonly List<Parameter> Parameters = new();
+public abstract class ParametersCollection<T> : IReadOnlyCollection<T> where T : Parameter {
+    protected readonly List<T> Parameters = [];
 
     // public ParametersCollection(IEnumerable<Parameter> parameters) => _parameters.AddRange(parameters);
 
-    static readonly Func<Parameter, string?, bool> SearchPredicate = (p, name)
+    static readonly Func<T, string?, bool> SearchPredicate = (p, name)
         => p.Name != null && p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase);
 
-    public bool Exists(Parameter parameter) => Parameters.Any(p => SearchPredicate(p, parameter.Name) && p.Type == parameter.Type);
+    public bool Exists(T parameter) => Parameters.Any(p => SearchPredicate(p, parameter.Name) && p.Type == parameter.Type);
 
-    public Parameter? TryFind(string parameterName) => Parameters.FirstOrDefault(x => SearchPredicate(x, parameterName));
+    public T? TryFind(string parameterName) => Parameters.FirstOrDefault(x => SearchPredicate(x, parameterName));
 
-    public IEnumerable<Parameter> GetParameters(ParameterType parameterType) => Parameters.Where(x => x.Type == parameterType);
+    public IEnumerable<TParameter> GetParameters<TParameter>() where TParameter : class, T => Parameters.OfType<TParameter>();
 
-    public IEnumerable<T> GetParameters<T>() where T : class => Parameters.OfType<T>();
-
-    public IEnumerator<Parameter> GetEnumerator() => Parameters.GetEnumerator();
+    public IEnumerator<T> GetEnumerator() => Parameters.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public int Count => Parameters.Count;
+}
+
+public abstract class ParametersCollection : ParametersCollection<Parameter> {
+    public IEnumerable<Parameter> GetParameters(ParameterType parameterType) => Parameters.Where(x => x.Type == parameterType);
 }

@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Text.RegularExpressions;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
-public record UrlSegmentParameter : NamedParameter {
+public partial record UrlSegmentParameter : NamedParameter {
+    static readonly Regex RegexPattern = Pattern();
+
     /// <summary>
     /// Instantiates a new query parameter instance that will be added to the request URL by replacing part of the absolute path.
     /// The request resource should have a placeholder {name} that will be replaced with the parameter value when the request is made.
@@ -22,6 +27,19 @@ public record UrlSegmentParameter : NamedParameter {
     /// <param name="name">Parameter name</param>
     /// <param name="value">Parameter value</param>
     /// <param name="encode">Optional: encode the value, default is true</param>
-    public UrlSegmentParameter(string name, string value, bool encode = true)
-        : base(name, Ensure.NotEmpty(value, nameof(value)).Replace("%2F", "/").Replace("%2f", "/"), ParameterType.UrlSegment, encode) { }
+    /// <param name="replaceEncodedSlash">Optional: whether to replace all %2f and %2F in the parameter value with '/', default is true</param>
+    public UrlSegmentParameter(string name, string? value, bool encode = true, bool replaceEncodedSlash = true)
+        : base(
+            name,
+            value.IsEmpty() ? string.Empty : replaceEncodedSlash ? RegexPattern.Replace(value, "/") : value,
+            ParameterType.UrlSegment,
+            encode
+        ) { }
+
+#if NET7_0_OR_GREATER
+    [GeneratedRegex("%2f", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-NO")]
+    private static partial Regex Pattern();
+#else
+    static Regex Pattern() => new("%2f", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+#endif
 }

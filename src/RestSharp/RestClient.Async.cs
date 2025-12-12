@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Net;
 using RestSharp.Extensions;
+
+// ReSharper disable PossiblyMistakenUseOfCancellationToken
 
 namespace RestSharp;
 
 public partial class RestClient {
+    // Default HttpClient timeout 
+    readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(100);
+
     /// <inheritdoc />
     public async Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default) {
         using var internalResponse = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
@@ -26,13 +30,13 @@ public partial class RestClient {
             ? await RestResponse.FromHttpResponse(
                     internalResponse.ResponseMessage!,
                     request,
-                    Options.Encoding,
+                    Options,
                     internalResponse.CookieContainer?.GetCookies(internalResponse.Url),
-                    Options.CalculateResponseStatus,
                     cancellationToken
                 )
                 .ConfigureAwait(false)
             : GetErrorResponse(request, internalResponse.Exception, internalResponse.TimeoutToken);
+        await OnAfterRequest(response, cancellationToken).ConfigureAwait(false);
 
         return Options.ThrowOnAnyError ? response.ThrowIfError() : response;
     }
@@ -40,11 +44,11 @@ public partial class RestClient {
     /// <inheritdoc />
     [PublicAPI]
     public async Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) {
-        // Make sure we only read the headers so we can stream the content body efficiently
+        // Make sure we only read the headers, so we can stream the content body efficiently
         request.CompletionOption = HttpCompletionOption.ResponseHeadersRead;
         var response = await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        var exception = response.Exception ?? response.ResponseMessage?.MaybeException();
+        var exception = response.Exception ?? response.ResponseMessage?.MaybeException(Options.SetErrorExceptionOnUnsuccessfulStatusCode);
 
         if (exception != null) {
             return Options.ThrowOnAnyError ? throw exception : null;
@@ -69,14 +73,34 @@ public partial class RestClient {
         bool TimedOut() => timeoutToken.IsCancellationRequested || exception.Message.Contains("HttpClient.Timeout");
     }
 
+    void CombineInterceptors(RestRequest request) {
+        if (request.Interceptors == null) {
+            if (Options.Interceptors == null) {
+                return;
+            }
+
+            request.Interceptors = Options.Interceptors.ToList();
+            return;
+        }
+
+        if (Options.Interceptors != null) {
+            request.Interceptors.AddRange(Options.Interceptors);
+        }
+    }
+
     async Task<HttpResponse> ExecuteRequestAsync(RestRequest request, CancellationToken cancellationToken) {
         Ensure.NotNull(request, nameof(request));
 
         // Make sure we are not disposed of when someone tries to call us!
+#if NET
+        ObjectDisposedException.ThrowIf(_disposed, this);
+#else
         if (_disposed) {
             throw new ObjectDisposedException(nameof(RestClient));
         }
-
+#endif
+        CombineInterceptors(request);
+        await OnBeforeRequest(request, cancellationToken).ConfigureAwait(false);
         request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
 
@@ -89,31 +113,36 @@ public partial class RestClient {
         var httpMethod = AsHttpMethod(request.Method);
         var url        = this.BuildUri(request);
 
-        using var message    = new HttpRequestMessage(httpMethod, url) { Content = requestContent.BuildContent() };
+        using var message = new HttpRequestMessage(httpMethod, url);
+        message.Content              = requestContent.BuildContent();
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
+        message.Version              = request.Version;
 
-        using var timeoutCts = new CancellationTokenSource(request.Timeout > 0 ? request.Timeout : int.MaxValue);
+        using var timeoutCts = new CancellationTokenSource(request.Timeout ?? Options.Timeout ?? _defaultTimeout);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
 
         var ct = cts.Token;
 
+        HttpResponseMessage? responseMessage;
+        // Make sure we have a cookie container if not provided in the request
+        var cookieContainer = request.CookieContainer ??= new();
+
+        var headers = new RequestHeaders()
+            .AddHeaders(request.Parameters)
+            .AddHeaders(DefaultParameters)
+            .AddAcceptHeader(AcceptedContentTypes)
+            .AddCookieHeaders(url, cookieContainer)
+            .AddCookieHeaders(url, Options.CookieContainer);
+
+        message.AddHeaders(headers);
+#pragma warning disable CS0618 // Type or member is obsolete
+        if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
+        await OnBeforeHttpRequest(request, message, cancellationToken).ConfigureAwait(false);
+
         try {
-            // Make sure we have a cookie container if not provided in the request
-            var cookieContainer = request.CookieContainer ??= new CookieContainer();
-
-            var headers = new RequestHeaders()
-                .AddHeaders(request.Parameters)
-                .AddHeaders(DefaultParameters)
-                .AddAcceptHeader(AcceptedContentTypes)
-                .AddCookieHeaders(url, cookieContainer)
-                .AddCookieHeaders(url, Options.CookieContainer);
-
-            message.AddHeaders(headers);
-
-            if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
-
-            var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
+            responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
 
             // Parse all the cookies from the response and update the cookie jar with cookies
             if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
@@ -122,13 +151,47 @@ public partial class RestClient {
                 // ReSharper disable once PossibleMultipleEnumeration
                 Options.CookieContainer?.AddCookies(url, cookiesHeader);
             }
-
-            if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
-
-            return new HttpResponse(responseMessage, url, cookieContainer, null, timeoutCts.Token);
         }
         catch (Exception ex) {
-            return new HttpResponse(null, url, null, ex, timeoutCts.Token);
+            return new(null, url, null, ex, timeoutCts.Token);
+        }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
+        await OnAfterHttpRequest(request, responseMessage, cancellationToken).ConfigureAwait(false);
+        return new(responseMessage, url, cookieContainer, null, timeoutCts.Token);
+    }
+
+    static async ValueTask OnBeforeRequest(RestRequest request, CancellationToken cancellationToken) {
+        if (request.Interceptors == null) return;
+
+        foreach (var interceptor in request.Interceptors) {
+            await interceptor.BeforeRequest(request, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    static async ValueTask OnBeforeHttpRequest(RestRequest request, HttpRequestMessage requestMessage, CancellationToken cancellationToken) {
+        if (request.Interceptors == null) return;
+
+        foreach (var interceptor in request.Interceptors) {
+            await interceptor.BeforeHttpRequest(requestMessage, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    static async ValueTask OnAfterHttpRequest(RestRequest request, HttpResponseMessage responseMessage, CancellationToken cancellationToken) {
+        if (request.Interceptors == null) return;
+
+        foreach (var interceptor in request.Interceptors) {
+            await interceptor.AfterHttpRequest(responseMessage, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    static async ValueTask OnAfterRequest(RestResponse response, CancellationToken cancellationToken) {
+        if (response.Request.Interceptors == null) return;
+
+        foreach (var interceptor in response.Request.Interceptors) {
+            await interceptor.AfterRequest(response, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -142,7 +205,7 @@ public partial class RestClient {
         public void Dispose() => ResponseMessage?.Dispose();
     }
 
-    static HttpMethod AsHttpMethod(Method method)
+    internal static HttpMethod AsHttpMethod(Method method)
         => method switch {
             Method.Get     => HttpMethod.Get,
             Method.Post    => HttpMethod.Post,
@@ -153,11 +216,11 @@ public partial class RestClient {
 #if NET
             Method.Patch => HttpMethod.Patch,
 #else
-            Method.Patch => new HttpMethod("PATCH"),
+            Method.Patch => new("PATCH"),
 #endif
-            Method.Merge  => new HttpMethod("MERGE"),
-            Method.Copy   => new HttpMethod("COPY"),
-            Method.Search => new HttpMethod("SEARCH"),
+            Method.Merge  => new("MERGE"),
+            Method.Copy   => new("COPY"),
+            Method.Search => new("SEARCH"),
             _             => throw new ArgumentOutOfRangeException(nameof(method))
         };
 }

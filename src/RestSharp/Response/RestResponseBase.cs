@@ -13,14 +13,15 @@
 // limitations under the License.
 
 using System.Diagnostics;
-using System.Net;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace RestSharp;
 
 /// <summary>
 /// Base class for common properties shared by RestResponse and RestResponse[[T]]
 /// </summary>
-[DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)}()}}")]
 public abstract class RestResponseBase {
     /// <summary>
     /// Default constructor
@@ -28,7 +29,7 @@ public abstract class RestResponseBase {
     protected RestResponseBase(RestRequest request) {
         ResponseStatus = ResponseStatus.None;
         Request        = request;
-        Request.IncreaseNumAttempts();
+        Request.IncreaseNumberOfAttempts();
     }
 
     /// <summary>
@@ -65,12 +66,13 @@ public abstract class RestResponseBase {
     public HttpStatusCode StatusCode { get; set; }
 
     /// <summary>
-    /// Whether or not the HTTP response status code indicates success
+    /// Whether the HTTP response status code indicates success
     /// </summary>
     public bool IsSuccessStatusCode { get; set; }
 
     /// <summary>
-    /// Whether or not the HTTP response status code indicates success and no other error occurred (deserialization, timeout, ...)
+    /// Whether the HTTP response status code indicates success and no other error occurred
+    /// (deserialization, timeout, ...)
     /// </summary>
     public bool IsSuccessful => IsSuccessStatusCode && ResponseStatus == ResponseStatus.Completed;
 
@@ -90,7 +92,7 @@ public abstract class RestResponseBase {
     public Uri? ResponseUri { get; set; }
 
     /// <summary>
-    /// HttpWebResponse.Server
+    /// Server header value
     /// </summary>
     public string? Server { get; set; }
 
@@ -116,7 +118,7 @@ public abstract class RestResponseBase {
     public ResponseStatus ResponseStatus { get; set; }
 
     /// <summary>
-    /// Transport or other non-HTTP error generated while attempting request
+    /// Transport or another non-HTTP error generated while attempting request
     /// </summary>
     public string? ErrorMessage { get; set; }
 

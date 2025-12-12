@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <PackageReference Include="CsvHelper" Version="28.0.1"/>
+        <PackageReference Include="CsvHelper"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RestSharp\RestSharp.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Net.Http"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>

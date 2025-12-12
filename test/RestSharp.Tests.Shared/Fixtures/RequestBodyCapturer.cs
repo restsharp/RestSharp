@@ -1,23 +1,29 @@
-using System.Net;
-using RestSharp.Tests.Shared.Extensions;
-
 namespace RestSharp.Tests.Shared.Fixtures;
 
 public class RequestBodyCapturer {
-    public const string Resource = "Capture";
+    public const string Resource = "/capture";
 
-    public static string CapturedContentType   { get; set; }
-    public static bool   CapturedHasEntityBody { get; set; }
-    public static string CapturedEntityBody    { get; set; }
-    public static Uri    CapturedUrl           { get; set; }
+    public string ContentType { get; private set; }
+    public bool   HasBody     { get; private set; }
+    public string Body        { get; private set; }
+    public Uri    Url         { get; private set; }
 
-    // ReSharper disable once UnusedMember.Global
-    public static void Capture(HttpListenerContext context) {
-        var request = context.Request;
+    public bool CaptureBody(string content) {
+        Body    = content;
+        HasBody = !string.IsNullOrWhiteSpace(content);
+        return true;
+    }
 
-        CapturedContentType   = request.ContentType;
-        CapturedHasEntityBody = request.HasEntityBody;
-        CapturedEntityBody    = request.InputStream.StreamToString();
-        CapturedUrl           = request.Url;
+    public bool CaptureHeaders(IDictionary<string, string[]> headers) {
+        if (headers.TryGetValue("Content-Type", out var contentType)) {
+            ContentType = contentType[0];
+        }
+
+        return true;
+    }
+
+    public bool CaptureUrl(string url) {
+        Url = new(url);
+        return true;
     }
 }
