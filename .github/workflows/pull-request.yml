@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Event File
           path: ${{ github.event_path }}
@@ -40,7 +40,7 @@ jobs:
         run: dotnet test -c Debug -f ${{ matrix.dotnet }}
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Test Results Windows ${{ matrix.dotnet }}
           path: |
@@ -68,7 +68,7 @@ jobs:
         run: dotnet test -f ${{ matrix.dotnet }}
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Test Results Ubuntu ${{ matrix.dotnet }}
           path: |
