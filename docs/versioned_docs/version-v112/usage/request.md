@@ -224,7 +224,7 @@ client.AddDefaultUrlSegment("foo", "bar");
 You can add cookies to a request using the `AddCookie` method:
 
 ```csharp
-request.AddCookie("foo", "bar");
+request.AddCookie("name", "value", "path", "domain");
 ```
 
 RestSharp will add cookies from the request as cookie headers and then extract the matching cookies from the response. You can observe and extract response cookies using the `RestResponse.Cookies` properties, which has the `CookieCollection` type.
