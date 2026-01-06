@@ -1076,4 +1076,168 @@ public class XmlDeserializerTests {
 
         Assert.Null(p.ReadOnlyProxy);
     }
+
+    [Fact]
+    public void Deserialize_Nested_List_Should_Not_Include_Deeply_Nested_Items() {
+        // Bug #1 test: HandleListDerivative should use Elements() on containers, not Descendants()
+        const string xml = """
+            <root>
+                <items>
+                    <item>
+                        <id>1</id>
+                        <subitems>
+                            <item><id>2</id></item>
+                            <item><id>3</id></item>
+                        </subitems>
+                    </item>
+                </items>
+            </root>
+            """;
+
+        var deserializer = new XmlDeserializer();
+        var result = deserializer.Deserialize<ItemContainer>(new RestResponse { Content = xml })!;
+
+        // Should only have 1 item (id=1), not 3 (id=1,2,3)
+        Assert.NotNull(result);
+        Assert.NotNull(result.Items);
+        Assert.Single(result.Items);
+        Assert.Equal(1, result.Items[0].Id);
+    }
+
+    [Fact]
+    public void Deserialize_RootElement_Should_Not_Throw_On_Duplicate_Nested_Names() {
+        // Bug #2 test: RootElement selection should handle duplicate names gracefully
+        const string xml = """
+            <root>
+                <items>
+                    <item>
+                        <id>72</id>
+                        <group>
+                            <items>
+                                <item><id>74</id></item>
+                            </items>
+                        </group>
+                    </item>
+                </items>
+            </root>
+            """;
+
+        var deserializer = new XmlDeserializer { RootElement = "items" };
+        
+        // Should not throw InvalidOperationException: Sequence contains more than one element
+        var exception = Record.Exception(() => 
+            deserializer.Deserialize<ItemsResponse>(new RestResponse { Content = xml })
+        );
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void Deserialize_RootElement_Should_Prefer_Shallowest_Match() {
+        // Bug #2 test: When multiple elements match RootElement, prefer the shallowest one
+        const string xml = """
+            <root>
+                <items>
+                    <item>
+                        <id>72</id>
+                        <group>
+                            <items>
+                                <item><id>74</id></item>
+                            </items>
+                        </group>
+                    </item>
+                </items>
+            </root>
+            """;
+
+        var deserializer = new XmlDeserializer { RootElement = "items" };
+        var result = deserializer.Deserialize<ItemsResponse>(new RestResponse { Content = xml })!;
+
+        // Should deserialize from the top-level <items>, not the nested one
+        Assert.NotNull(result);
+        Assert.NotNull(result.Items);
+        Assert.Single(result.Items);
+        Assert.Equal(72, result.Items[0].Id);
+    }
+
+    [Fact]
+    public void Deserialize_RootElement_Should_Try_Direct_Child_First() {
+        // Bug #2 test: Should try Element() before DescendantsAndSelf()
+        const string xml = """
+            <root>
+                <data>
+                    <one>direct</one>
+                </data>
+            </root>
+            """;
+
+        var deserializer = new XmlDeserializer { RootElement = "data" };
+        var result = deserializer.Deserialize<SimpleStruct>(new RestResponse { Content = xml });
+
+        Assert.Equal("direct", result.One);
+    }
+
+    [Fact]
+    public void Deserialize_List_With_Container_Should_Use_Direct_Children_Only() {
+        // Test that container-based list deserialization uses Elements() not Descendants()
+        const string xml = """
+            <root>
+                <items>
+                    <item>
+                        <id>10</id>
+                        <subitems>
+                            <item><id>20</id></item>
+                        </subitems>
+                    </item>
+                    <item>
+                        <id>11</id>
+                    </item>
+                </items>
+            </root>
+            """;
+
+        var deserializer = new XmlDeserializer();
+        var result = deserializer.Deserialize<ItemContainer>(new RestResponse { Content = xml })!;
+
+        Assert.NotNull(result.Items);
+        Assert.Equal(2, result.Items.Count);
+        Assert.Equal(10, result.Items[0].Id);
+        Assert.Equal(11, result.Items[1].Id);
+    }
+
+    [Fact]
+    public void Deserialize_Nested_Items_Should_Also_Use_Direct_Children() {
+        // Test that nested subitems also correctly use direct children
+        const string xml = """
+            <root>
+                <items>
+                    <item>
+                        <id>1</id>
+                        <subitems>
+                            <item><id>2</id></item>
+                            <item>
+                                <id>3</id>
+                                <subitems>
+                                    <item><id>4</id></item>
+                                </subitems>
+                            </item>
+                        </subitems>
+                    </item>
+                </items>
+            </root>
+            """;
+
+        var deserializer = new XmlDeserializer();
+        var result = deserializer.Deserialize<ItemContainer>(new RestResponse { Content = xml })!;
+
+        Assert.NotNull(result.Items);
+        Assert.Single(result.Items);
+        
+        var topItem = result.Items[0];
+        Assert.Equal(1, topItem.Id);
+        Assert.NotNull(topItem.SubItems);
+        Assert.Equal(2, topItem.SubItems.Count);
+        Assert.Equal(2, topItem.SubItems[0].Id);
+        Assert.Equal(3, topItem.SubItems[1].Id);
+    }
 }
