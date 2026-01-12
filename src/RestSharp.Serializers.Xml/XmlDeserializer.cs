@@ -42,7 +42,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
 
         if (rootElement != null && doc.Root != null) {
             var namespacedRoot = rootElement.AsNamespaced(Namespace);
-            // Prefer shallowest match to avoid nested elements with same name
+            // Prefer the shallowest match to avoid nested elements with the same name
             root = namespacedRoot != null 
                 ? doc.Root.Element(namespacedRoot) 
                     ?? doc.Root.DescendantsAndSelf(namespacedRoot)
@@ -89,10 +89,9 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
         }
     }
 
-    static bool IsValidXmlElementName(string name) {
+    static bool IsValidXmlElementName(string name) =>
         // Generic type names contain backtick (e.g., "List`1") which is invalid in XML element names
-        return !name.Contains('`');
-    }
+        !name.Contains('`');
 
     protected virtual object Map(object x, XElement? root) {
         var objType = x.GetType();
@@ -191,12 +190,12 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
                 }
             }
             else if (type.IsEnum) {
-                var converted = type.AsType().FindEnumValue(value.ToString()!, Culture);
+                var converted = type.AsType().FindEnumValue(value.ToString(), Culture);
 
                 prop.SetValue(x, converted, null);
             }
             else if (asType == typeof(Uri)) {
-                var uri = new Uri(value.ToString()!, UriKind.RelativeOrAbsolute);
+                var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
 
                 prop.SetValue(x, uri, null);
             }
@@ -205,8 +204,8 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             }
             else if (asType == typeof(DateTime)) {
                 value = DateFormat.IsNotEmpty()
-                    ? DateTime.ParseExact(value.ToString()!, DateFormat!, Culture)
-                    : DateTime.Parse(value.ToString()!, Culture);
+                    ? DateTime.ParseExact(value.ToString(), DateFormat!, Culture)
+                    : DateTime.Parse(value.ToString(), Culture);
 
                 prop.SetValue(x, value, null);
             }
@@ -233,18 +232,18 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
                 }
             }
             else if (asType == typeof(decimal)) {
-                value = decimal.Parse(value.ToString()!, Culture);
+                value = decimal.Parse(value.ToString(), Culture);
                 prop.SetValue(x, value, null);
             }
             else if (asType == typeof(Guid)) {
                 var raw = value.ToString();
 
-                value = string.IsNullOrEmpty(raw) ? Guid.Empty : new(value.ToString()!);
+                value = string.IsNullOrEmpty(raw) ? Guid.Empty : new(value.ToString());
 
                 prop.SetValue(x, value, null);
             }
             else if (asType == typeof(TimeSpan)) {
-                var timeSpan = XmlConvert.ToTimeSpan(value.ToString()!);
+                var timeSpan = XmlConvert.ToTimeSpan(value.ToString());
 
                 prop.SetValue(x, timeSpan, null);
             }
@@ -261,9 +260,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
                 }
                 
                 // If root is not the container, try to find it as a child element
-                if (container == null) {
-                    container = GetElementByName(root, name);
-                }
+                container ??= GetElementByName(root, name);
 
                 if (container?.HasElements == true) {
                     var first = container.Elements().FirstOrDefault();
@@ -288,7 +285,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             else {
                 //fallback to type converters if possible
 
-                if (TryGetFromString(value.ToString()!, out var result, asType)) {
+                if (TryGetFromString(value.ToString(), out var result, asType)) {
                     prop.SetValue(x, result, null);
                 }
                 else {
@@ -339,83 +336,34 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
         if (attribute != null)
             name = attribute.Name;
 
-        // Try to find a container element first using property name
+        // Try to find a container element first using the property name
         XElement? container = null;
-        
-        // Try property name first (skip if it contains invalid XML name characters like ` in generic types)
+
+        // Try the property name first (skip if it contains invalid XML name characters like ` in generic types)
         if (IsValidXmlElementName(propName)) {
             container = GetElementByName(root, propName.AsNamespaced(Namespace));
         }
-        
+
         // Check if root itself matches the container naming
         if (container == null && IsValidXmlElementName(propName)) {
             var rootName = root.Name.LocalName;
-            var propNameLower = propName.ToLower(Culture);
-            
-            if (rootName.Equals(propName, StringComparison.OrdinalIgnoreCase) ||
-                rootName.Equals(propNameLower, StringComparison.OrdinalIgnoreCase)) {
+
+            if (rootName.Equals(propName, StringComparison.OrdinalIgnoreCase)) {
                 container = root;
             }
         }
-        
+
         IList<XElement> elements;
-        
-        // If we found a container, get only its direct children (Elements)
-        if (container != null && container.HasElements) {
-            // Try to match item elements by name variations
-            var itemName = t.Name.AsNamespaced(Namespace);
-            var directChildren = container.Elements(itemName).ToList();
-            
-            if (!directChildren.Any()) {
-                var lowerName = name?.ToLower(Culture).AsNamespaced(Namespace);
-                directChildren = container.Elements(lowerName).ToList();
-            }
-            
-            if (!directChildren.Any()) {
-                var camelName = name?.ToCamelCase(Culture).AsNamespaced(Namespace);
-                directChildren = container.Elements(camelName).ToList();
-            }
-            
-            if (!directChildren.Any()) {
-                directChildren = container.Elements()
-                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == name)
-                    .ToList();
-            }
-            
-            if (!directChildren.Any()) {
-                var lowerName = name?.ToLower(Culture);
-                directChildren = container.Elements()
-                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
-                    .ToList();
-            }
-            
-            elements = directChildren;
+
+        // If we found a specific container, use Elements() to get only direct children
+        // This prevents nested lists from being incorrectly flattened
+        if (container is { HasElements: true }) {
+            elements = TryFindElementsByNameVariations(container, t.Name, name, useDirectChildrenOnly: true);
         }
         else {
-            // Fallback: No container found, use Descendants for backward compatibility
-            elements = root.Descendants(t.Name.AsNamespaced(Namespace)).ToList();
-
-            if (!elements.Any()) {
-                var lowerName = name?.ToLower(Culture).AsNamespaced(Namespace);
-                elements = root.Descendants(lowerName).ToList();
-            }
-
-            if (!elements.Any()) {
-                var camelName = name?.ToCamelCase(Culture).AsNamespaced(Namespace);
-                elements = root.Descendants(camelName).ToList();
-            }
-
-            if (!elements.Any())
-                elements = root.Descendants()
-                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == name)
-                    .ToList();
-
-            if (!elements.Any()) {
-                var lowerName = name?.ToLower(Culture);
-                elements = root.Descendants()
-                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
-                    .ToList();
-            }
+            // No container found - use Descendants() for backward compatibility
+            // This handles cases where items are nested at varying depths without a clear container
+            elements = TryFindElementsByNameVariations(root, t.Name, name, useDirectChildrenOnly: false);
         }
 
         PopulateListFromElements(t, elements, list);
@@ -426,6 +374,67 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             Map(list, root.Element(propName.AsNamespaced(Namespace)!) ?? root);
 
         return list;
+    }
+
+    IList<XElement> TryFindElementsByNameVariations(XElement source, string typeName, string? itemName, bool useDirectChildrenOnly) {
+        IList<XElement> elements;
+
+        if (useDirectChildrenOnly) {
+            // Use Elements() for direct children only
+            elements = source.Elements(typeName.AsNamespaced(Namespace)).ToList();
+
+            if (!elements.Any()) {
+                var lowerName = itemName?.ToLower(Culture).AsNamespaced(Namespace);
+                elements = source.Elements(lowerName).ToList();
+            }
+
+            if (!elements.Any()) {
+                var camelName = itemName?.ToCamelCase(Culture).AsNamespaced(Namespace);
+                elements = source.Elements(camelName).ToList();
+            }
+
+            if (!elements.Any()) {
+                elements = source.Elements()
+                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == itemName)
+                    .ToList();
+            }
+
+            if (!elements.Any()) {
+                var lowerName = itemName?.ToLower(Culture);
+                elements = source.Elements()
+                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
+                    .ToList();
+            }
+        }
+        else {
+            // Use Descendants() for backward compatibility when no container is found
+            elements = source.Descendants(typeName.AsNamespaced(Namespace)).ToList();
+
+            if (!elements.Any()) {
+                var lowerName = itemName?.ToLower(Culture).AsNamespaced(Namespace);
+                elements = source.Descendants(lowerName).ToList();
+            }
+
+            if (!elements.Any()) {
+                var camelName = itemName?.ToCamelCase(Culture).AsNamespaced(Namespace);
+                elements = source.Descendants(camelName).ToList();
+            }
+
+            if (!elements.Any()) {
+                elements = source.Descendants()
+                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == itemName)
+                    .ToList();
+            }
+
+            if (!elements.Any()) {
+                var lowerName = itemName?.ToLower(Culture);
+                elements = source.Descendants()
+                    .Where(e => e.Name.LocalName.RemoveUnderscoresAndDashes() == lowerName)
+                    .ToList();
+            }
+        }
+
+        return elements;
     }
 
     protected virtual object? CreateAndMap(Type t, XElement element) {
