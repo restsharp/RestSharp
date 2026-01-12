@@ -197,4 +197,18 @@ Use this quick checklist before requesting review:
   - RestSharp.Serializers.CsvHelper
 - License: Apache-2.0
 
+## 17) Working with Issues
+
+- Use issues for bugs and feature requests only. For questions and support, use:
+  - StackOverflow with tag `restsharp`
+- When creating an issue:
+  - Provide clear, concise description and reproduction steps.
+  - Include relevant code snippets or links to repro projects.
+  - Use appropriate labels and templates.
+- When addressing an issue:
+  - Avoid changing the default behavior unless absolutely necessary.
+  - Avoid breaking the existing API.
+  - Leave the existing tests to catch possible regressions.
+  - Add new tests for the fixed cases.
+
 Keep this document up-to-date when build properties, TFMs, CI workflows, or repository conventions change.
