@@ -154,9 +154,16 @@ static class OAuthTools {
         var secure = url is { Scheme: "https", Port: 443 };
         var port   = basic || secure ? "" : $":{url.Port}";
 
-        // Decode the path to avoid double-encoding when the path contains already-encoded characters
-        // For example, if the path contains "%21" (encoded !), we decode it back to "!" here,
-        // and it will be properly encoded again in UrlEncodeRelaxed
+        // Decode the path to avoid double-encoding when the path contains already-encoded characters.
+        // For example, if a URL segment was added with AddUrlSegment("id", "value!"), it gets encoded
+        // to "value%21" in the URL. When we extract url.AbsolutePath, it contains "%21" (encoded).
+        // If we then call UrlEncodeRelaxed on it, Uri.EscapeDataString would encode the "%" to "%25",
+        // resulting in "%2521" (double-encoded). By decoding first, we ensure proper single encoding.
+        // 
+        // Security note: This is safe because:
+        // - The url parameter is a validated Uri object constructed by RestSharp's BuildUri()
+        // - The decoded path is immediately re-encoded by UrlEncodeRelaxed before use
+        // - There is no direct user input involved in this internal OAuth signature calculation
         var decodedPath = Uri.UnescapeDataString(url.AbsolutePath);
 
         return $"{url.Scheme}://{url.Host}{port}{decodedPath}";
