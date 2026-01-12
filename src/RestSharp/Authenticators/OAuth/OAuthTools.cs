@@ -154,7 +154,12 @@ static class OAuthTools {
         var secure = url is { Scheme: "https", Port: 443 };
         var port   = basic || secure ? "" : $":{url.Port}";
 
-        return $"{url.Scheme}://{url.Host}{port}{url.AbsolutePath}";
+        // Decode the path to avoid double-encoding when the path contains already-encoded characters
+        // For example, if the path contains "%21" (encoded !), we decode it back to "!" here,
+        // and it will be properly encoded again in UrlEncodeRelaxed
+        var decodedPath = Uri.UnescapeDataString(url.AbsolutePath);
+
+        return $"{url.Scheme}://{url.Host}{port}{decodedPath}";
     }
 
     /// <summary>
