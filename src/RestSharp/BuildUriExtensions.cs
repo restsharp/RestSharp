@@ -23,19 +23,7 @@ public static class BuildUriExtensions {
         /// </summary>
         /// <param name="request">Request instance</param>
         /// <returns></returns>
-        public Uri BuildUri(RestRequest request) {
-            DoBuildUriValidations(client, request);
-
-            var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
-                request.Resource,
-                client.Options.Encode,
-                request.Parameters,
-                client.DefaultParameters
-            );
-            var mergedUri = uri.MergeBaseUrlAndResource(resource);
-            var query     = client.GetRequestQuery(request);
-            return mergedUri.AddQueryString(query);
-        }
+        public Uri BuildUri(RestRequest request) => new(client.BuildUriString(request));
 
         /// <summary>
         /// Builds the URI string for the request. This method returns a string instead of a Uri object
@@ -45,15 +33,7 @@ public static class BuildUriExtensions {
         /// <returns></returns>
         [PublicAPI]
         public string BuildUriString(RestRequest request) {
-            DoBuildUriValidations(client, request);
-
-            var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
-                request.Resource,
-                client.Options.Encode,
-                request.Parameters,
-                client.DefaultParameters
-            );
-            var mergedUri = uri.MergeBaseUrlAndResource(resource);
+            var mergedUri = client.BuildUriWithoutQueryParameters(request);
             var query     = client.GetRequestQuery(request);
 
             if (query == null) return mergedUri.AbsoluteUri;

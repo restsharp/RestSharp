@@ -64,11 +64,11 @@ public partial class UrlBuilderTests {
     public void GET_with_pipe_character_in_query_parameter_without_encoding() {
         var request = new RestRequest();
         request.AddQueryParameter("ids", "in:001|116", false);
-        var expected = new Uri($"{Base}/{Resource}?ids=in:001|116");
+        const string expected = $"{Base}/{Resource}?ids=in:001|116";
 
         using var client = new RestClient($"{Base}/{Resource}");
 
-        var output = client.BuildUri(request);
+        var output = client.BuildUriString(request);
         Assert.Equal(expected, output);
     }
 
