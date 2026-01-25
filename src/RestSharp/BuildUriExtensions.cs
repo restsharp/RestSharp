@@ -38,6 +38,31 @@ public static class BuildUriExtensions {
         }
 
         /// <summary>
+        /// Builds the URI string for the request. This method returns a string instead of a Uri object
+        /// to preserve unencoded characters when encode=false is specified for query parameters.
+        /// </summary>
+        /// <param name="request">Request instance</param>
+        /// <returns></returns>
+        [PublicAPI]
+        public string BuildUriString(RestRequest request) {
+            DoBuildUriValidations(client, request);
+
+            var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
+                request.Resource,
+                client.Options.Encode,
+                request.Parameters,
+                client.DefaultParameters
+            );
+            var mergedUri = uri.MergeBaseUrlAndResource(resource);
+            var query     = client.GetRequestQuery(request);
+
+            if (query == null) return mergedUri.AbsoluteUri;
+
+            var separator = mergedUri.AbsoluteUri.Contains('?') ? "&" : "?";
+            return $"{mergedUri.AbsoluteUri}{separator}{query}";
+        }
+
+        /// <summary>
         /// Builds the URI for the request without query parameters.
         /// </summary>
         /// <param name="request">Request instance</param>

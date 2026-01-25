@@ -42,9 +42,7 @@ static class UriExtensions {
         if (query == null) return uri;
 
         var builder = new UriBuilder(uri);
-        builder.Query = builder.Query.Length > 1
-            ? builder.Query[1..] + "&" + query
-            : query;
+        builder.Query = builder.Query.Length > 1 ? $"{builder.Query[1..]}&{query}" : query;
 
         return builder.Uri;
     }
