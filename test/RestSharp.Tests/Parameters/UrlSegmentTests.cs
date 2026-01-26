@@ -1,7 +1,8 @@
 namespace RestSharp.Tests.Parameters;
 
 public class UrlSegmentTests {
-    const string BaseUrl = "http://localhost:8888/";
+    const string BaseUrlNoTrail = "http://localhost:8888";
+    const string BaseUrl        = $"{BaseUrlNoTrail}/";
 
     [Fact]
     public void AddUrlSegmentWithInt() {
@@ -22,10 +23,10 @@ public class UrlSegmentTests {
 
         var path     = string.Format(pathTemplate, $"{{{name}}}");
         var request  = new RestRequest(path).AddUrlSegment(name, urlSegmentValue);
-        var expected = string.Format(pathTemplate, urlSegmentValue);
+        var expected = $"{BaseUrlNoTrail}{string.Format(pathTemplate, urlSegmentValue)}";
 
         using var client = new RestClient(BaseUrl);
-        var       actual = client.BuildUri(request).AbsolutePath;
+        var       actual = client.BuildUriString(request);
 
         expected.Should().BeEquivalentTo(actual);
     }
@@ -38,11 +39,11 @@ public class UrlSegmentTests {
 
         var path     = string.Format(pathTemplate, $"{{{name}}}");
         var request  = new RestRequest(path).AddUrlSegment(name, urlSegmentValue);
-        var expected = string.Format(pathTemplate, urlSegmentValue);
+        var expected = $"{BaseUrlNoTrail}{string.Format(pathTemplate, urlSegmentValue)}";
 
         using var client = new RestClient(BaseUrl);
 
-        var actual = client.BuildUri(request).AbsolutePath;
+        var actual = client.BuildUriString(request);
 
         expected.Should().BeEquivalentTo(actual);
     }
@@ -73,14 +74,15 @@ public class UrlSegmentTests {
 
     [Fact]
     public void AddSameUrlSegmentTwice_ShouldReplaceFirst() {
-        var client  = new RestClient();
-        var request = new RestRequest("https://api.example.com/orgs/{segment}/something");
+        const string host    = "https://api.example.com";
+        var          client  = new RestClient();
+        var          request = new RestRequest($"{host}/orgs/{{segment}}/something");
         request.AddUrlSegment("segment", 1);
-        var url1 = client.BuildUri(request);
+        var url1 = client.BuildUriString(request);
         request.AddUrlSegment("segment", 2);
-        var url2 = client.BuildUri(request);
-        
-        url1.AbsolutePath.Should().Be("/orgs/1/something");
-        url2.AbsolutePath.Should().Be("/orgs/2/something");
+        var url2 = client.BuildUriString(request);
+
+        url1.Should().Be($"{host}/orgs/1/something");
+        url2.Should().Be($"{host}/orgs/2/something");
     }
 }

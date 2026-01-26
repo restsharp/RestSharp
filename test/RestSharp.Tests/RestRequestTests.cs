@@ -26,8 +26,8 @@ public class RestRequestTests {
         parameters.Should().BeEquivalentTo(expected, options => options.ExcludingMissingMembers());
         
         using var client = new RestClient(baseUrl);
-        var       actual = client.BuildUri(request);
-        actual.AbsoluteUri.Should().Be($"{baseUrl}{resource}");
+        var       actual = client.BuildUriString(request);
+        actual.Should().Be($"{baseUrl}{resource}");
     }
 
     [Fact]

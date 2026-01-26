@@ -37,7 +37,7 @@ public class OAuth1SignatureTests {
         var requestParameters = _request.Parameters.ToWebParameters().ToArray();
         var parameters        = new WebPairCollection();
         parameters.AddRange(requestParameters);
-        var url = _client.BuildUri(_request).ToString();
+        var url = _client.BuildUriString(_request);
         _workflow.RequestUrl = url;
         var oauthParameters = _workflow.BuildProtectedResourceSignature(method, parameters);
         oauthParameters.Parameters.AddRange(requestParameters);

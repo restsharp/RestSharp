@@ -39,8 +39,7 @@ public class AuthenticationTests {
 
         request = new($"oauth/authorize?oauth_token={oauthToken}");
 
-        var url = client.BuildUri(request)
-            .ToString();
+        var url = client.BuildUriString(request);
 
         Console.WriteLine($"Open this URL in the browser: {url} and complete the authentication.");
         Console.Write("Enter the verifier: ");
