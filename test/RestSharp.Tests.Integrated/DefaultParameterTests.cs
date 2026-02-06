@@ -35,4 +35,17 @@ public sealed class DefaultParameterTests(WireMockTestServer server) : IClassFix
 
         await client.ExecuteAsync(request);
     }
+
+    [Fact]
+    public async Task Should_not_encode_pipe_character_when_encode_is_false() {
+        using var client = new RestClient(server.Url!);
+
+        var request = new RestRequest("capture");
+        request.AddQueryParameter("ids", "in:001|116", false);
+
+        await client.ExecuteAsync(request);
+
+        var query = _capturer.RawUrl.Split('?')[1];
+        query.Should().Contain("ids=in:001|116");
+    }
 }

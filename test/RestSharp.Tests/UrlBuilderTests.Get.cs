@@ -61,6 +61,18 @@ public partial class UrlBuilderTests {
     }
 
     [Fact]
+    public void GET_with_pipe_character_in_query_parameter_without_encoding() {
+        var request = new RestRequest();
+        request.AddQueryParameter("ids", "in:001|116", false);
+        const string expected = $"{Base}/{Resource}?ids=in:001|116";
+
+        using var client = new RestClient($"{Base}/{Resource}");
+
+        var output = client.BuildUriString(request);
+        Assert.Equal(expected, output);
+    }
+
+    [Fact]
     public void GET_with_Invalid_Url_string_throws_exception()
         => Assert.Throws<UriFormatException>(() => { _ = new RestClient("invalid url"); }
         );

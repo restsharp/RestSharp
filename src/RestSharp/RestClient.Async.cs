@@ -111,9 +111,10 @@ public partial class RestClient {
         using var requestContent = new RequestContent(this, request);
 
         var httpMethod = AsHttpMethod(request.Method);
-        var url        = this.BuildUri(request);
+        var urlString  = this.BuildUriString(request);
+        var url        = new Uri(urlString);
 
-        using var message = new HttpRequestMessage(httpMethod, url);
+        using var message = new HttpRequestMessage(httpMethod, urlString);
         message.Content              = requestContent.BuildContent();
         message.Headers.Host         = Options.BaseHost;
         message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;

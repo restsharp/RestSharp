@@ -41,10 +41,10 @@ static class UriExtensions {
     public static Uri AddQueryString(this Uri uri, string? query) {
         if (query == null) return uri;
 
-        var absoluteUri = uri.AbsoluteUri;
-        var separator   = absoluteUri.Contains('?') ? "&" : "?";
+        var builder = new UriBuilder(uri);
+        builder.Query = builder.Query.Length > 1 ? $"{builder.Query[1..]}&{query}" : query;
 
-        return new($"{absoluteUri}{separator}{query}");
+        return builder.Uri;
     }
 
     public static UrlSegmentParamsValues GetUrlSegmentParamsValues(
