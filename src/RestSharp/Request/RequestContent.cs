@@ -24,7 +24,7 @@ namespace RestSharp;
 
 class RequestContent(IRestClient client, RestRequest request) : IDisposable {
     readonly List<Stream>         _streams    = [];
-    readonly ParametersCollection _parameters = new RequestParameters(request.Parameters.Union(client.DefaultParameters));
+    readonly ParametersCollection _parameters = request.Parameters;
 
     HttpContent? Content { get; set; }
 

@@ -100,6 +100,14 @@ public partial class RestClient {
         }
 #endif
         CombineInterceptors(request);
+
+        // Merge default parameters into the request so they are visible in response.Request.Parameters
+        foreach (var defaultParam in DefaultParameters) {
+            if (!request.Parameters.Any(p => p.Name == defaultParam.Name && p.Type == defaultParam.Type)) {
+                request.Parameters.AddParameter(defaultParam);
+            }
+        }
+
         await OnBeforeRequest(request, cancellationToken).ConfigureAwait(false);
         request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
@@ -131,7 +139,6 @@ public partial class RestClient {
 
         var headers = new RequestHeaders()
             .AddHeaders(request.Parameters)
-            .AddHeaders(DefaultParameters)
             .AddAcceptHeader(AcceptedContentTypes)
             .AddCookieHeaders(url, cookieContainer)
             .AddCookieHeaders(url, Options.CookieContainer);

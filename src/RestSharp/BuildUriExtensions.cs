@@ -53,8 +53,7 @@ public static class BuildUriExtensions {
             var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
                 request.Resource,
                 client.Options.Encode,
-                request.Parameters,
-                client.DefaultParameters
+                request.Parameters
             );
             return uri.MergeBaseUrlAndResource(resource);
         }
@@ -66,9 +65,7 @@ public static class BuildUriExtensions {
         /// <returns></returns>
         [PublicAPI]
         public string? GetRequestQuery(RestRequest request) {
-            var parametersCollections = new ParametersCollection[] { request.Parameters, client.DefaultParameters };
-
-            var parameters = parametersCollections.SelectMany(x => x.GetQueryParameters(request.Method)).ToList();
+            var parameters = request.Parameters.GetQueryParameters(request.Method).ToList();
 
             return parameters.Count == 0 ? null : string.Join("&", parameters.Select(EncodeParameter).ToArray());
 

@@ -258,7 +258,6 @@ public class OAuth1Authenticator : IAuthenticator {
                 ? x => BaseQuery(x) && x.Name != null && x.Name.StartsWith("oauth_")
                 : (Func<Parameter, bool>)BaseQuery;
 
-        parameters.AddRange(client.DefaultParameters.Where(query).ToWebParameters());
         parameters.AddRange(request.Parameters.Where(query).ToWebParameters());
 
         workflow.RequestUrl = url;
