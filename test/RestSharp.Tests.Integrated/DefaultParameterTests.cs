@@ -4,7 +4,8 @@ using RestSharp.Tests.Shared.Fixtures;
 namespace RestSharp.Tests.Integrated;
 
 public sealed class DefaultParameterTests(WireMockTestServer server) : IClassFixture<WireMockTestServer> {
-    readonly RequestBodyCapturer _capturer = server.ConfigureBodyCapturer(Method.Get, false);
+    readonly RequestBodyCapturer _capturer       = server.ConfigureBodyCapturer(Method.Get, false);
+    readonly RequestBodyCapturer _capturerOnPath = server.ConfigureBodyCapturer(Method.Get);
 
     [Fact]
     public async Task Should_add_default_and_request_query_get_parameters() {
@@ -47,5 +48,77 @@ public sealed class DefaultParameterTests(WireMockTestServer server) : IClassFix
 
         var query = _capturer.RawUrl.Split('?')[1];
         query.Should().Contain("ids=in:001|116");
+    }
+
+    [Fact]
+    public async Task Should_include_multiple_default_query_params_with_same_name() {
+        using var client = new RestClient(
+            new RestClientOptions(server.Url!) { AllowMultipleDefaultParametersWithSameName = true }
+        );
+        client.AddDefaultParameter("filter", "active", ParameterType.QueryString);
+        client.AddDefaultParameter("filter", "verified", ParameterType.QueryString);
+
+        var request = new RestRequest("capture");
+        await client.GetAsync(request);
+
+        var query = _capturerOnPath.Url!.Query;
+        query.Should().Contain("filter=active");
+        query.Should().Contain("filter=verified");
+    }
+
+    [Fact]
+    public async Task Should_include_default_query_params_in_BuildUriString_without_executing() {
+        using var client = new RestClient(server.Url!);
+        client.AddDefaultParameter("foo", "bar", ParameterType.QueryString);
+
+        var request = new RestRequest("resource");
+        var uri     = client.BuildUriString(request);
+
+        uri.Should().Contain("foo=bar");
+    }
+
+    [Fact]
+    public async Task Should_not_permanently_mutate_request_parameters_after_execute() {
+        using var client = new RestClient(server.Url!);
+        client.AddDefaultParameter("default_key", "default_val", ParameterType.QueryString);
+
+        var request      = new RestRequest("capture");
+        var paramsBefore = request.Parameters.Count;
+
+        await client.GetAsync(request);
+
+        // Request parameters should not have been mutated by the execution.
+        request.Parameters.Count.Should().Be(paramsBefore);
+
+        // Now replace the default parameter with a different value.
+        client.DefaultParameters.ReplaceParameter(new QueryParameter("default_key", "updated_val"));
+
+        await client.GetAsync(request);
+
+        // The second execution should use the updated default value, not the stale one.
+        var query = _capturerOnPath.Url!.Query;
+        query.Should().Contain("default_key=updated_val");
+        query.Should().NotContain("default_key=default_val");
+    }
+
+    [Fact]
+    public async Task Should_include_default_params_in_merged_parameters_on_response() {
+        using var client = new RestClient(server.Url!);
+        client.AddDefaultParameter("default_key", "default_val", ParameterType.QueryString);
+
+        var request  = new RestRequest("capture").AddQueryParameter("req_key", "req_val");
+        var response = await client.ExecuteAsync(request);
+
+        response.MergedParameters.Should().NotBeNull();
+
+        var defaultParam = response.MergedParameters!
+            .FirstOrDefault(p => p.Name == "default_key" && p.Type == ParameterType.QueryString);
+        defaultParam.Should().NotBeNull();
+        defaultParam!.Value.Should().Be("default_val");
+
+        var requestParam = response.MergedParameters!
+            .FirstOrDefault(p => p.Name == "req_key" && p.Type == ParameterType.QueryString);
+        requestParam.Should().NotBeNull();
+        requestParam!.Value.Should().Be("req_val");
     }
 }

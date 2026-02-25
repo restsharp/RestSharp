@@ -69,7 +69,7 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
     }
 
     [Fact]
-    public async Task Default_headers_should_appear_in_response_request_parameters() {
+    public async Task Default_headers_should_appear_in_response_merged_parameters() {
         const string headerName  = "X-Custom-Default";
         const string headerValue = "DefaultValue123";
 
@@ -80,7 +80,8 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var param = response.Request.Parameters
+        response.MergedParameters.Should().NotBeNull();
+        var param = response.MergedParameters!
             .FirstOrDefault(p => p.Name == headerName && p.Type == ParameterType.HttpHeader);
 
         param.Should().NotBeNull();

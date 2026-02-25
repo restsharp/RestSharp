@@ -36,6 +36,7 @@ public partial class RestClient {
                 )
                 .ConfigureAwait(false)
             : GetErrorResponse(request, internalResponse.Exception, internalResponse.TimeoutToken);
+        response.MergedParameters = new RequestParameters(request.Parameters.Union(DefaultParameters));
         await OnAfterRequest(response, cancellationToken).ConfigureAwait(false);
 
         return Options.ThrowOnAnyError ? response.ThrowIfError() : response;
@@ -100,14 +101,6 @@ public partial class RestClient {
         }
 #endif
         CombineInterceptors(request);
-
-        // Merge default parameters into the request so they are visible in response.Request.Parameters
-        foreach (var defaultParam in DefaultParameters) {
-            if (!request.Parameters.Any(p => p.Name == defaultParam.Name && p.Type == defaultParam.Type)) {
-                request.Parameters.AddParameter(defaultParam);
-            }
-        }
-
         await OnBeforeRequest(request, cancellationToken).ConfigureAwait(false);
         request.ValidateParameters();
         var authenticator = request.Authenticator ?? Options.Authenticator;
@@ -139,6 +132,7 @@ public partial class RestClient {
 
         var headers = new RequestHeaders()
             .AddHeaders(request.Parameters)
+            .AddHeaders(DefaultParameters)
             .AddAcceptHeader(AcceptedContentTypes)
             .AddCookieHeaders(url, cookieContainer)
             .AddCookieHeaders(url, Options.CookieContainer);
