@@ -23,18 +23,23 @@ public static class BuildUriExtensions {
         /// </summary>
         /// <param name="request">Request instance</param>
         /// <returns></returns>
-        public Uri BuildUri(RestRequest request) {
-            DoBuildUriValidations(client, request);
+        public Uri BuildUri(RestRequest request) => new(client.BuildUriString(request));
 
-            var (uri, resource) = client.Options.BaseUrl.GetUrlSegmentParamsValues(
-                request.Resource,
-                client.Options.Encode,
-                request.Parameters,
-                client.DefaultParameters
-            );
-            var mergedUri = uri.MergeBaseUrlAndResource(resource);
+        /// <summary>
+        /// Builds the URI string for the request. This method returns a string instead of a Uri object
+        /// to preserve unencoded characters when encode=false is specified for query parameters.
+        /// </summary>
+        /// <param name="request">Request instance</param>
+        /// <returns></returns>
+        [PublicAPI]
+        public string BuildUriString(RestRequest request) {
+            var mergedUri = client.BuildUriWithoutQueryParameters(request);
             var query     = client.GetRequestQuery(request);
-            return mergedUri.AddQueryString(query);
+
+            if (query == null) return mergedUri.AbsoluteUri;
+
+            var separator = mergedUri.AbsoluteUri.Contains('?') ? "&" : "?";
+            return $"{mergedUri.AbsoluteUri}{separator}{query}";
         }
 
         /// <summary>

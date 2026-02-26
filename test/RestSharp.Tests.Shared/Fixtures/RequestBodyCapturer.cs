@@ -7,6 +7,7 @@ public class RequestBodyCapturer {
     public bool   HasBody     { get; private set; }
     public string Body        { get; private set; }
     public Uri    Url         { get; private set; }
+    public string RawUrl      { get; private set; }
 
     public bool CaptureBody(string content) {
         Body    = content;
@@ -23,6 +24,7 @@ public class RequestBodyCapturer {
     }
 
     public bool CaptureUrl(string url) {
+        RawUrl = url;
         Url = new(url);
         return true;
     }

@@ -28,6 +28,19 @@ Response object contains the following properties:
 | `ErrorException`         | `Exception?`                                        | Exception thrown when executing the request, if any.                                     |
 | `Version`                | `Version?`                                          | HTTP protocol version of the request.                                                    |
 | `RootElement`            | `string?`                                           | Root element of the serialized response content, only works if deserializer supports it. |
+| `MergedParameters`       | `ParametersCollection`                              | Combined view of request parameters and client default parameters at execution time.     |
+
+### Merged parameters
+
+The `MergedParameters` property provides a combined view of the request's own parameters and the client's [default parameters](request.md#request-headers) as they were at execution time. This is useful for logging or debugging the full set of parameters that were applied to a request, since `Request.Parameters` only contains the parameters added directly to the request.
+
+```csharp
+var response = await client.ExecuteAsync(request);
+
+foreach (var param in response.MergedParameters) {
+    Console.WriteLine($"{param.Name} = {param.Value} ({param.Type})");
+}
+```
 
 In addition, `RestResponse<T>` has one additional property:
 

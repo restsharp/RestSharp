@@ -68,6 +68,25 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
         response.GetHeaderValue("Server").Should().Be("Kestrel");
     }
 
+    [Fact]
+    public async Task Default_headers_should_appear_in_response_merged_parameters() {
+        const string headerName  = "X-Custom-Default";
+        const string headerValue = "DefaultValue123";
+
+        _client.AddDefaultHeader(headerName, headerValue);
+
+        var request  = new RestRequest("/headers");
+        var response = await _client.ExecuteAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var param = response.MergedParameters
+            .FirstOrDefault(p => p.Name == headerName && p.Type == ParameterType.HttpHeader);
+
+        param.Should().NotBeNull();
+        param!.Value.Should().Be(headerValue);
+    }
+
     static void CheckHeader(RestResponse<TestServerResponse[]> response, Header header) {
         var h = FindHeader(response, header.Name);
         h.Should().NotBeNull();

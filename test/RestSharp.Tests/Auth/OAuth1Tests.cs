@@ -46,7 +46,7 @@ public class OAuth1Tests {
         authenticator.ParameterHandling = OAuthParameterHandling.UrlOrPostParameters;
         await authenticator.Authenticate(client, request);
 
-        var requestUri = client.BuildUri(request);
+        var requestUri = new Uri(client.BuildUriString(request));
         var actual     = requestUri.ParseQuery().Select(x => x.Key).ToList();
 
         actual.Should().BeEquivalentTo(expected);
