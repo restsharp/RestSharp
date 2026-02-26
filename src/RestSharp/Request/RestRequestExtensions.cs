@@ -125,6 +125,15 @@ public static partial class RestRequestExtensions {
         }
 
         /// <summary>
+        /// Adds a cookie to the request. The cookie domain will be inferred from the request URL at execution time.
+        /// </summary>
+        /// <param name="name">Cookie name</param>
+        /// <param name="value">Cookie value</param>
+        /// <returns></returns>
+        public RestRequest AddCookie(string name, string value)
+            => request.AddCookie(new Cookie(name, value));
+
+        /// <summary>
         /// Adds cookie to the <seealso cref="HttpClient"/> cookie container.
         /// </summary>
         /// <param name="name">Cookie name</param>

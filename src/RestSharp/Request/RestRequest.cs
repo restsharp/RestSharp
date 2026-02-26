@@ -72,7 +72,8 @@ public class RestRequest {
     public RestRequest(Uri resource, Method method = Method.Get)
         : this(resource.IsAbsoluteUri ? resource.AbsoluteUri : resource.OriginalString, method) { }
 
-    readonly List<FileParameter> _files = [];
+    readonly List<FileParameter> _files   = [];
+    readonly List<Cookie>        _cookies = [];
 
     /// <summary>
     /// Always send a multipart/form-data request - even when no Files are present.
@@ -263,4 +264,16 @@ public class RestRequest {
     }
 
     internal RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
+
+    internal RestRequest AddCookie(Cookie cookie) => this.With(x => x._cookies.Add(cookie));
+
+    /// <summary>
+    /// Cookies added via the 2-param <c>AddCookie(name, value)</c> overload that have not yet been
+    /// resolved into <see cref="CookieContainer"/>. Domain is inferred from the request URL at
+    /// execution time. Interceptors can inspect this list in <c>BeforeRequest</c> to see cookies
+    /// that will be sent.
+    /// </summary>
+    public IReadOnlyList<Cookie> PendingCookies => _cookies;
+
+    internal void ClearPendingCookies() => _cookies.Clear();
 }
