@@ -161,6 +161,6 @@ public abstract class RestResponseBase {
 
     internal void AddException(Exception exception) {
         ErrorException = exception;
-        ErrorMessage   = exception.Message;
+        ErrorMessage   = exception.GetBaseException().Message;
     }
 }
