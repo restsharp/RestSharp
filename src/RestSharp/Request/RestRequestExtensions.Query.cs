@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Globalization;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
@@ -31,12 +34,14 @@ public static partial class RestRequestExtensions {
         /// <summary>
         /// Adds a query string parameter to the request. The request resource should not contain any placeholders for this parameter.
         /// The parameter will be added to the request URL as a query string using name=value format.
+        /// The value will be converted to string using the specified culture, or <see cref="CultureInfo.InvariantCulture"/> by default.
         /// </summary>
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
         /// <param name="encode">Encode the value or not, default true</param>
+        /// <param name="culture">Culture to use for formatting the value, defaults to <see cref="CultureInfo.InvariantCulture"/></param>
         /// <returns></returns>
-        public RestRequest AddQueryParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddQueryParameter(name, value.ToString(), encode);
+        public RestRequest AddQueryParameter<T>(string name, T value, bool encode = true, CultureInfo? culture = null) where T : struct
+            => request.AddQueryParameter(name, value.ToStringValue(culture), encode);
     }
 }

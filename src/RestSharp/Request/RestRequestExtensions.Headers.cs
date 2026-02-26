@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Globalization;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 public static partial class RestRequestExtensions {
@@ -42,12 +45,14 @@ public static partial class RestRequestExtensions {
 
         /// <summary>
         /// Adds a header to the request. RestSharp will try to separate request and content headers when calling the resource.
+        /// The value will be converted to string using the specified culture, or <see cref="CultureInfo.InvariantCulture"/> by default.
         /// </summary>
         /// <param name="name">Header name</param>
         /// <param name="value">Header value</param>
+        /// <param name="culture">Culture to use for formatting the value, defaults to <see cref="CultureInfo.InvariantCulture"/></param>
         /// <returns></returns>
-        public RestRequest AddHeader<T>(string name, T value) where T : struct
-            => request.AddHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
+        public RestRequest AddHeader<T>(string name, T value, CultureInfo? culture = null) where T : struct
+            => request.AddHeader(name, Ensure.NotNull(value.ToStringValue(culture), nameof(value)));
 
         /// <summary>
         /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
@@ -62,12 +67,14 @@ public static partial class RestRequestExtensions {
         /// <summary>
         /// Adds or updates the request header. RestSharp will try to separate request and content headers when calling the resource.
         /// The existing header with the same name will be replaced.
+        /// The value will be converted to string using the specified culture, or <see cref="CultureInfo.InvariantCulture"/> by default.
         /// </summary>
         /// <param name="name">Header name</param>
         /// <param name="value">Header value</param>
+        /// <param name="culture">Culture to use for formatting the value, defaults to <see cref="CultureInfo.InvariantCulture"/></param>
         /// <returns></returns>
-        public RestRequest AddOrUpdateHeader<T>(string name, T value) where T : struct
-            => request.AddOrUpdateHeader(name, Ensure.NotNull(value.ToString(), nameof(value)));
+        public RestRequest AddOrUpdateHeader<T>(string name, T value, CultureInfo? culture = null) where T : struct
+            => request.AddOrUpdateHeader(name, Ensure.NotNull(value.ToStringValue(culture), nameof(value)));
 
         /// <summary>
         /// Adds multiple headers to the request, using the key-value pairs provided.

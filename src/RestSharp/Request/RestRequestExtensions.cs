@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Globalization;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 [PublicAPI]
@@ -45,14 +48,15 @@ public static partial class RestRequestExtensions {
 
         /// <summary>
         /// Adds a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT).
-        /// The value will be converted to string.
+        /// The value will be converted to string using the specified culture, or <see cref="CultureInfo.InvariantCulture"/> by default.
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
         /// <param name="encode">Encode the value or not, default true</param>
+        /// <param name="culture">Culture to use for formatting the value, defaults to <see cref="CultureInfo.InvariantCulture"/></param>
         /// <returns>This request</returns>
-        public RestRequest AddParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddParameter(name, value.ToString(), encode);
+        public RestRequest AddParameter<T>(string name, T value, bool encode = true, CultureInfo? culture = null) where T : struct
+            => request.AddParameter(name, value.ToStringValue(culture), encode);
 
         /// <summary>
         /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
@@ -65,14 +69,16 @@ public static partial class RestRequestExtensions {
             => request.AddOrUpdateParameter(new GetOrPostParameter(name, value, encode));
 
         /// <summary>
-        /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT)
+        /// Adds or updates a HTTP parameter to the request (QueryString for GET, DELETE, OPTIONS and HEAD; Encoded form for POST and PUT).
+        /// The value will be converted to string using the specified culture, or <see cref="CultureInfo.InvariantCulture"/> by default.
         /// </summary>
         /// <param name="name">Name of the parameter</param>
         /// <param name="value">Value of the parameter</param>
         /// <param name="encode">Encode the value or not, default true</param>
+        /// <param name="culture">Culture to use for formatting the value, defaults to <see cref="CultureInfo.InvariantCulture"/></param>
         /// <returns>This request</returns>
-        public RestRequest AddOrUpdateParameter<T>(string name, T value, bool encode = true) where T : struct
-            => request.AddOrUpdateParameter(name, value.ToString(), encode);
+        public RestRequest AddOrUpdateParameter<T>(string name, T value, bool encode = true, CultureInfo? culture = null) where T : struct
+            => request.AddOrUpdateParameter(name, value.ToStringValue(culture), encode);
 
         RestRequest AddParameters(IEnumerable<Parameter> parameters) {
             request.Parameters.AddParameters(parameters);

@@ -15,6 +15,9 @@
 
 using System.Reflection;
 
+using System.Globalization;
+using RestSharp.Extensions;
+
 namespace RestSharp;
 
 static class ObjectParser {
@@ -72,7 +75,7 @@ static class ObjectParser {
         bool IsAllowedProperty(string propertyName)
             => includedProperties.Length == 0 || includedProperties.Length > 0 && includedProperties.Contains(propertyName);
 
-        string? ParseValue(string? format, object? value) => format == null ? value?.ToString() : string.Format($"{{0:{format}}}", value);
+        string? ParseValue(string? format, object? value) => format == null ? value.ToStringValue() : string.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value);
     }
 }
 

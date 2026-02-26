@@ -1,4 +1,6 @@
 // ReSharper disable PropertyCanBeMadeInitOnly.Local
+using System.Globalization;
+
 namespace RestSharp.Tests;
 
 public class ObjectParserTests {
@@ -17,11 +19,10 @@ public class ObjectParserTests {
 
         var parsed = request.GetProperties().ToDictionary(x => x.Name, x => x.Value);
         parsed["some_data"].Should().Be(request.SomeData);
-        parsed["SomeDate"].Should().Be(request.SomeDate.ToString("d"));
-        parsed["Plain"].Should().Be(request.Plain.ToString());
-        // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-        parsed["PlainArray"].Should().Be(string.Join(",", dates.Select(x => x.ToString())));
-        parsed["dates"].Should().Be(string.Join(",", dates.Select(x => x.ToString("d"))));
+        parsed["SomeDate"].Should().Be(request.SomeDate.ToString("d", CultureInfo.InvariantCulture));
+        parsed["Plain"].Should().Be(request.Plain.ToString(CultureInfo.InvariantCulture));
+        parsed["PlainArray"].Should().Be(string.Join(",", dates.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        parsed["dates"].Should().Be(string.Join(",", dates.Select(x => x.ToString("d", CultureInfo.InvariantCulture))));
     }
 
     [Fact]
