@@ -65,7 +65,7 @@ public partial class RestClient {
             ResponseStatus = exception is OperationCanceledException
                 ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
                 : ResponseStatus.Error,
-            ErrorMessage   = exception.Message,
+            ErrorMessage   = exception.GetBaseException().Message,
             ErrorException = exception
         };
 
