@@ -234,8 +234,8 @@ public partial class RestClient : IRestClient {
         if (!OperatingSystem.IsBrowser()) {
 #endif
         handler.UseCookies             = false;
-        handler.Credentials            = options.Credentials;
-        handler.UseDefaultCredentials  = options.UseDefaultCredentials;
+        handler.UseDefaultCredentials = options.UseDefaultCredentials;
+        if (options.Credentials != null) handler.Credentials = options.Credentials;
         handler.AutomaticDecompression = options.AutomaticDecompression;
         handler.PreAuthenticate        = options.PreAuthenticate;
         if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
