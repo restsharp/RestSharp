@@ -37,7 +37,13 @@ jobs:
             9.0.x
             10.0.x
       - name: Run tests
-        run: dotnet test -c Debug -f ${{ matrix.dotnet }}
+        run: |
+          dotnet test test/RestSharp.Tests -c Debug -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Integrated -c Debug -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Serializers.Json -c Debug -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Serializers.Xml -c Debug -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Serializers.Csv -c Debug -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.DependencyInjection -c Debug -f ${{ matrix.dotnet }}
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v6
@@ -65,7 +71,13 @@ jobs:
             9.0.x
             10.0.x
       - name: Run tests
-        run: dotnet test -f ${{ matrix.dotnet }}
+        run: |
+          dotnet test test/RestSharp.Tests -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Integrated -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Serializers.Json -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Serializers.Xml -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.Serializers.Csv -f ${{ matrix.dotnet }}
+          dotnet test test/RestSharp.Tests.DependencyInjection -f ${{ matrix.dotnet }}
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v6

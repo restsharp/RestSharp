@@ -1,0 +1,65 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug.Appveyor" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="Mixed Platforms" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Perf/">
+    <Project Path="benchmarks/RestSharp.Benchmarks/RestSharp.Benchmarks.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Serializers/">
+    <Project Path="src/RestSharp.Serializers.CsvHelper/RestSharp.Serializers.CsvHelper.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="src/RestSharp.Serializers.NewtonsoftJson/RestSharp.Serializers.NewtonsoftJson.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="src/RestSharp.Serializers.Xml/RestSharp.Serializers.Xml.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/SourceGen/">
+    <Project Path="gen/SourceGenerator/SourceGenerator.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="test/RestSharp.InteractiveTests/RestSharp.InteractiveTests.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests.DependencyInjection/RestSharp.Tests.DependencyInjection.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests.Integrated/RestSharp.Tests.Integrated.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests.Serializers.Csv/RestSharp.Tests.Serializers.Csv.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests.Serializers.Json/RestSharp.Tests.Serializers.Json.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests.Serializers.Xml/RestSharp.Tests.Serializers.Xml.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests.Shared/RestSharp.Tests.Shared.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+    <Project Path="test/RestSharp.Tests/RestSharp.Tests.csproj">
+      <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Project Path="src/RestSharp.Extensions.DependencyInjection/RestSharp.Extensions.DependencyInjection.csproj">
+    <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+  </Project>
+  <Project Path="src/RestSharp/RestSharp.csproj">
+    <BuildType Solution="Debug.Appveyor|*" Project="Debug" />
+  </Project>
+</Solution>

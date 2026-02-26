@@ -36,6 +36,7 @@ public partial class RestClient {
                 )
                 .ConfigureAwait(false)
             : GetErrorResponse(request, internalResponse.Exception, internalResponse.TimeoutToken);
+        response.MergedParameters = new RequestParameters(request.Parameters.Union(DefaultParameters));
         await OnAfterRequest(response, cancellationToken).ConfigureAwait(false);
 
         return Options.ThrowOnAnyError ? response.ThrowIfError() : response;

@@ -133,6 +133,12 @@ public abstract class RestResponseBase {
     public Version? Version { get; set; }
 
     /// <summary>
+    /// Combined view of request parameters and client default parameters as they were at execution time.
+    /// Use this to inspect the full set of parameters that were applied to the request.
+    /// </summary>
+    public ParametersCollection MergedParameters { get; internal set; } = new RequestParameters();
+
+    /// <summary>
     /// Root element of the serialized response content, only works if deserializer supports it 
     /// </summary>
     public string? RootElement { get; set; }
