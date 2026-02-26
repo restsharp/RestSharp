@@ -41,7 +41,7 @@ public sealed class MultipartFormDataTests : IDisposable {
         $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=\"fileName\"; filename=\"TestFile.txt\"" +
         $"{LineBreak}{LineBreak}This is a test file for RestSharp.{LineBreak}" +
         $"--{{0}}{LineBreak}{KnownHeaders.ContentType}: application/json; {CharsetString}" +
-        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=controlName" +
+        $"{LineBreak}{KnownHeaders.ContentDisposition}: form-data; name=\"controlName\"" +
         $"{LineBreak}{LineBreak}test{LineBreak}" +
         $"--{{0}}--{LineBreak}";
 
@@ -199,7 +199,7 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         var expectedBody = new[] {
             ContentTypeString,
-            $"{ContentDispositionString} name={multipartName}",
+            $"{ContentDispositionString} name=\"{multipartName}\"",
             bodyData
         };
 
