@@ -267,5 +267,13 @@ public class RestRequest {
 
     internal RestRequest AddCookie(Cookie cookie) => this.With(x => x._cookies.Add(cookie));
 
-    internal IReadOnlyList<Cookie> PendingCookies => _cookies;
+    /// <summary>
+    /// Cookies added via the 2-param <c>AddCookie(name, value)</c> overload that have not yet been
+    /// resolved into <see cref="CookieContainer"/>. Domain is inferred from the request URL at
+    /// execution time. Interceptors can inspect this list in <c>BeforeRequest</c> to see cookies
+    /// that will be sent.
+    /// </summary>
+    public IReadOnlyList<Cookie> PendingCookies => _cookies;
+
+    internal void ClearPendingCookies() => _cookies.Clear();
 }

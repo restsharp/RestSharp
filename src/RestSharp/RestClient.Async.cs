@@ -131,8 +131,15 @@ public partial class RestClient {
         var cookieContainer = request.CookieContainer ??= new();
 
         foreach (var cookie in request.PendingCookies) {
-            cookieContainer.Add(url, cookie);
+            try {
+                cookieContainer.Add(url, cookie);
+            }
+            catch (CookieException) {
+                // Do not fail request if we cannot parse a cookie
+            }
         }
+
+        request.ClearPendingCookies();
 
         var headers = new RequestHeaders()
             .AddHeaders(request.Parameters)
