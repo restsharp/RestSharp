@@ -61,11 +61,13 @@ public partial class RestClient {
     }
 
     static RestResponse GetErrorResponse(RestRequest request, Exception exception, CancellationToken timeoutToken) {
+        var timedOut = exception is OperationCanceledException && TimedOut();
+
         var response = new RestResponse(request) {
             ResponseStatus = exception is OperationCanceledException
-                ? TimedOut() ? ResponseStatus.TimedOut : ResponseStatus.Aborted
+                ? timedOut ? ResponseStatus.TimedOut : ResponseStatus.Aborted
                 : ResponseStatus.Error,
-            ErrorMessage   = exception.GetBaseException().Message,
+            ErrorMessage   = timedOut ? "The request timed out." : exception.GetBaseException().Message,
             ErrorException = exception
         };
 
