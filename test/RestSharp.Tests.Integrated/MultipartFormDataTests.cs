@@ -31,7 +31,7 @@ public sealed class MultipartFormDataTests : IDisposable {
     const string ContentDispositionString = $"{KnownHeaders.ContentDisposition}: form-data;";
 
     const string Expected =
-        $"--{{0}}{LineBreak}{ContentTypeString}{LineBreak}{ContentDispositionString} name=foo{LineBreak}{LineBreak}bar{LineBreak}" +
+        $"--{{0}}{LineBreak}{ContentTypeString}{LineBreak}{ContentDispositionString} name=\"foo\"{LineBreak}{LineBreak}bar{LineBreak}" +
         $"--{{0}}{LineBreak}{ContentTypeString}{LineBreak}{ContentDispositionString} name=\"a name with spaces\"{LineBreak}{LineBreak}somedata{LineBreak}" +
         $"--{{0}}--{LineBreak}";
 
@@ -228,7 +228,7 @@ public sealed class MultipartFormDataTests : IDisposable {
 
         var actual = capturer.Body!.Replace("\n", string.Empty).Split('\r');
         actual[1].Should().Be("Content-Type: application/json; charset=utf-8");
-        actual[2].Should().Be($"Content-Disposition: form-data; name={parameterName}");
+        actual[2].Should().Be($"Content-Disposition: form-data; name=\"{parameterName}\"");
         actual[4].Should().Be(parameterValue);
     }
 }
