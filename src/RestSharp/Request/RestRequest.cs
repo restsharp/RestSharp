@@ -131,8 +131,16 @@ public class RestRequest {
     public Method Method { get; set; }
 
     /// <summary>
-    /// Custom request timeout
+    /// Custom request timeout. Overrides <see cref="RestClientOptions.Timeout"/> if set.
+    /// If not set, uses the client-level timeout or the default of 100 seconds.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>Set to <see cref="System.Threading.Timeout.InfiniteTimeSpan"/> (or <c>TimeSpan.FromMilliseconds(-1)</c>) for no timeout</description></item>
+    /// <item><description>Set to <see cref="TimeSpan.Zero"/> to cancel the request immediately</description></item>
+    /// <item><description>Negative values (other than -1 millisecond) will throw <see cref="ArgumentOutOfRangeException"/></description></item>
+    /// </list>
+    /// </remarks>
     public TimeSpan? Timeout { get; set; }
 
     /// <summary>
