@@ -143,7 +143,7 @@ class RequestContent(IRestClient client, RestRequest request) : IDisposable {
             if (name.IsEmpty())
                 mpContent.Add(bodyContent);
             else
-                mpContent.Add(bodyContent, name);
+                mpContent.Add(bodyContent, request.MultipartFormQuoteParameters ? $"\"{name}\"" : name);
             Content = mpContent;
         }
         else {

@@ -87,10 +87,9 @@ public class RestRequest {
 
     /// <summary>
     /// When set to true, parameter values in a multipart form data requests will be enclosed in
-    /// quotation marks. Default is false. Enable it if the remote endpoint requires parameters
-    /// to be in quotes (for example, FreshDesk API). 
+    /// quotation marks. Default is true, as per RFC 7578.
     /// </summary>
-    public bool MultipartFormQuoteParameters { get; set; }
+    public bool MultipartFormQuoteParameters { get; set; } = true;
 
     /// <summary>
     /// When set to true, the form boundary part of the content type will be enclosed in
