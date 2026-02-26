@@ -149,6 +149,9 @@ static partial class StringExtensions {
         }
     }
 
+    internal static string? ToStringValue(this object? value, CultureInfo? culture = null)
+        => value is IFormattable f ? f.ToString(null, culture ?? CultureInfo.InvariantCulture) : value?.ToString();
+
     internal static bool IsEmpty([NotNullWhen(false)] this string? value) => string.IsNullOrWhiteSpace(value);
 
     internal static bool IsNotEmpty([NotNullWhen(true)] this string? value) => !string.IsNullOrWhiteSpace(value);
