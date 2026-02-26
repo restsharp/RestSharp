@@ -80,8 +80,7 @@ public sealed class HttpHeadersTests(WireMockTestServer server) : IClassFixture<
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        response.MergedParameters.Should().NotBeNull();
-        var param = response.MergedParameters!
+        var param = response.MergedParameters
             .FirstOrDefault(p => p.Name == headerName && p.Type == ParameterType.HttpHeader);
 
         param.Should().NotBeNull();

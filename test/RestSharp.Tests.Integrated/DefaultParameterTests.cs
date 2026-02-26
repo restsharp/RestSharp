@@ -109,14 +109,12 @@ public sealed class DefaultParameterTests(WireMockTestServer server) : IClassFix
         var request  = new RestRequest("capture").AddQueryParameter("req_key", "req_val");
         var response = await client.ExecuteAsync(request);
 
-        response.MergedParameters.Should().NotBeNull();
-
-        var defaultParam = response.MergedParameters!
+        var defaultParam = response.MergedParameters
             .FirstOrDefault(p => p.Name == "default_key" && p.Type == ParameterType.QueryString);
         defaultParam.Should().NotBeNull();
         defaultParam!.Value.Should().Be("default_val");
 
-        var requestParam = response.MergedParameters!
+        var requestParam = response.MergedParameters
             .FirstOrDefault(p => p.Name == "req_key" && p.Type == ParameterType.QueryString);
         requestParam.Should().NotBeNull();
         requestParam!.Value.Should().Be("req_val");
