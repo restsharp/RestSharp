@@ -68,7 +68,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
                 IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
                 RawBytes            = bytes,
                 ResponseStatus      = options.CalculateResponseStatus(httpResponse),
-                ResponseUri         = httpResponse.RequestMessage?.RequestUri,
+                ResponseUri         = GetResponseUri(httpResponse),
                 RootElement         = request.RootElement,
                 Server              = httpResponse.Headers.Server.ToString(),
                 StatusCode          = httpResponse.StatusCode,
@@ -79,6 +79,19 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
     }
 
     public RestResponse() : this(new()) { }
+
+    static Uri? GetResponseUri(HttpResponseMessage httpResponse) {
+        var requestUri = httpResponse.RequestMessage?.RequestUri;
+
+        if ((int)httpResponse.StatusCode is >= 300 and < 400
+            && httpResponse.Headers.Location is { } location) {
+            return location.IsAbsoluteUri || requestUri == null
+                ? location
+                : new Uri(requestUri, location);
+        }
+
+        return requestUri;
+    }
 }
 
 public delegate ResponseStatus CalculateResponseStatus(HttpResponseMessage httpResponse);
