@@ -230,11 +230,17 @@ You can add cookies to a request using the `AddCookie` method:
 request.AddCookie("foo", "bar");
 ```
 
+The simple two-parameter form defers domain resolution until execution time — the cookie domain is inferred from the request URL. If you need to specify the path and domain explicitly, use the four-parameter overload:
+
+```csharp
+request.AddCookie("foo", "bar", "/path", "example.com");
+```
+
 RestSharp will add cookies from the request as cookie headers and then extract the matching cookies from the response. You can observe and extract response cookies using the `RestResponse.Cookies` properties, which has the `CookieCollection` type.
 
-However, the usage of a default URL segment parameter is questionable as you can just include the parameter value to the base URL of the client. There is, however, a `CookieContainer` instance on the request level. You can either assign the pre-populated container to `request.CookieContainer`, or let the container be created by the request when you call `AddCookie`. Still, the container is only used to extract all the cookies from it and create cookie headers for the request instead of using the container directly. It's because the cookie container is normally configured on the `HttpClientHandler` level and cookies are shared between requests made by the same client. In most of the cases this behaviour can be harmful.
+There is a `CookieContainer` instance on the request level. You can either assign the pre-populated container to `request.CookieContainer`, or let the container be created by the request when you call `AddCookie`. The container is used to extract all the cookies from it and create cookie headers for the request instead of using the container directly. It's because the cookie container is normally configured on the `HttpClientHandler` level and cookies are shared between requests made by the same client. In most of the cases this behaviour can be harmful.
 
-If your use case requires sharing cookies between requests made by the client instance, you can use the client-level `CookieContainer`, which you must provide as the options' property. You can add cookies to the container using the container API. No response cookies, however, would be auto-added to the container, but you can do it in code by getting cookies from the `Cookes` property of the response and adding them to the client-level container available via `IRestClient.Options.CookieContainer` property.
+If your use case requires sharing cookies between requests made by the client instance, you can use the client-level `CookieContainer`, which you must provide as the options' property. You can add cookies to the container using the container API. No response cookies, however, would be auto-added to the container, but you can do it in code by getting cookies from the `Cookies` property of the response and adding them to the client-level container available via `IRestClient.Options.CookieContainer` property.
 
 ### Request Body
 

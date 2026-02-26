@@ -72,7 +72,8 @@ public class RestRequest {
     public RestRequest(Uri resource, Method method = Method.Get)
         : this(resource.IsAbsoluteUri ? resource.AbsoluteUri : resource.OriginalString, method) { }
 
-    readonly List<FileParameter> _files = [];
+    readonly List<FileParameter> _files   = [];
+    readonly List<Cookie>        _cookies = [];
 
     /// <summary>
     /// Always send a multipart/form-data request - even when no Files are present.
@@ -263,4 +264,8 @@ public class RestRequest {
     }
 
     internal RestRequest AddFile(FileParameter file) => this.With(x => x._files.Add(file));
+
+    internal RestRequest AddCookie(Cookie cookie) => this.With(x => x._cookies.Add(cookie));
+
+    internal IReadOnlyList<Cookie> PendingCookies => _cookies;
 }
