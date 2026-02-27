@@ -1,11 +1,11 @@
-﻿//  Copyright (c) .NET Foundation and Contributors
-// 
+//  Copyright (c) .NET Foundation and Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ using RestSharp.Extensions;
 namespace RestSharp;
 
 public partial class RestClient {
-    // Default HttpClient timeout 
+    // Default HttpClient timeout
     readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(100);
 
     /// <inheritdoc />
@@ -111,27 +111,112 @@ public partial class RestClient {
             await authenticator.Authenticate(this, request).ConfigureAwait(false);
         }
 
-        using var requestContent = new RequestContent(this, request);
+        var contentToDispose = new List<RequestContent>();
+        var initialContent   = new RequestContent(this, request);
+        contentToDispose.Add(initialContent);
 
         var httpMethod = AsHttpMethod(request.Method);
-        var urlString  = this.BuildUriString(request);
-        var url        = new Uri(urlString);
-
-        using var message = new HttpRequestMessage(httpMethod, urlString);
-        message.Content              = requestContent.BuildContent();
-        message.Headers.Host         = Options.BaseHost;
-        message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
-        message.Version              = request.Version;
+        var url        = new Uri(this.BuildUriString(request));
 
         using var timeoutCts = new CancellationTokenSource(request.Timeout ?? Options.Timeout ?? _defaultTimeout);
         using var cts        = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
 
         var ct = cts.Token;
 
-        HttpResponseMessage? responseMessage;
         // Make sure we have a cookie container if not provided in the request
         var cookieContainer = request.CookieContainer ??= new();
+        AddPendingCookies(cookieContainer, url, request);
 
+        var headers = new RequestHeaders()
+            .AddHeaders(request.Parameters)
+            .AddHeaders(DefaultParameters)
+            .AddAcceptHeader(AcceptedContentTypes)
+            .AddCookieHeaders(url, cookieContainer)
+            .AddCookieHeaders(url, Options.CookieContainer);
+
+        var message = new HttpRequestMessage(httpMethod, url);
+        message.Content              = initialContent.BuildContent();
+        message.Headers.Host         = Options.BaseHost;
+        message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
+        message.Version              = request.Version;
+        message.AddHeaders(headers);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
+        await OnBeforeHttpRequest(request, message, cancellationToken).ConfigureAwait(false);
+
+        var (responseMessage, finalUrl, error) = await SendWithRedirectsAsync(
+            message, url, httpMethod, request, cookieContainer, contentToDispose, ct
+        ).ConfigureAwait(false);
+
+        DisposeContent(contentToDispose);
+
+        if (error != null) {
+            return new(null, finalUrl, null, error, timeoutCts.Token);
+        }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage!).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
+        await OnAfterHttpRequest(request, responseMessage!, cancellationToken).ConfigureAwait(false);
+        return new(responseMessage, finalUrl, cookieContainer, null, timeoutCts.Token);
+    }
+
+    async Task<(HttpResponseMessage? Response, Uri FinalUrl, Exception? Error)> SendWithRedirectsAsync(
+        HttpRequestMessage message,
+        Uri url,
+        HttpMethod httpMethod,
+        RestRequest request,
+        CookieContainer cookieContainer,
+        List<RequestContent> contentToDispose,
+        CancellationToken ct
+    ) {
+        var redirectOptions = Options.RedirectOptions;
+        var redirectCount   = 0;
+        var originalUrl     = url;
+
+        try {
+            while (true) {
+                var responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
+
+                ParseResponseCookies(responseMessage, url, cookieContainer);
+
+                if (!ShouldFollowRedirect(redirectOptions, responseMessage, redirectCount)) {
+                    return (responseMessage, url, null);
+                }
+
+                var redirectUrl = ResolveRedirectUrl(url, responseMessage, redirectOptions);
+
+                if (redirectUrl == null) {
+                    return (responseMessage, url, null);
+                }
+
+                var newMethod        = GetRedirectMethod(httpMethod, responseMessage.StatusCode);
+                var verbChangedToGet = newMethod == HttpMethod.Get && httpMethod != HttpMethod.Get;
+
+                responseMessage.Dispose();
+
+                var previousMessage = message;
+                url        = redirectUrl;
+                httpMethod = newMethod;
+                redirectCount++;
+
+                message = CreateRedirectMessage(
+                    httpMethod, url, originalUrl, request, redirectOptions, cookieContainer, contentToDispose, verbChangedToGet
+                );
+                previousMessage.Dispose();
+            }
+        }
+        catch (Exception ex) {
+            return (null, url, ex);
+        }
+        finally {
+            message.Dispose();
+        }
+    }
+
+    static void AddPendingCookies(CookieContainer cookieContainer, Uri url, RestRequest request) {
         foreach (var cookie in request.PendingCookies) {
             try {
                 cookieContainer.Add(url, cookie);
@@ -142,40 +227,131 @@ public partial class RestClient {
         }
 
         request.ClearPendingCookies();
+    }
 
-        var headers = new RequestHeaders()
-            .AddHeaders(request.Parameters)
-            .AddHeaders(DefaultParameters)
-            .AddAcceptHeader(AcceptedContentTypes)
-            .AddCookieHeaders(url, cookieContainer)
-            .AddCookieHeaders(url, Options.CookieContainer);
+    void ParseResponseCookies(HttpResponseMessage responseMessage, Uri url, CookieContainer cookieContainer) {
+        if (!responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) return;
 
-        message.AddHeaders(headers);
-#pragma warning disable CS0618 // Type or member is obsolete
-        if (request.OnBeforeRequest != null) await request.OnBeforeRequest(message).ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
-        await OnBeforeHttpRequest(request, message, cancellationToken).ConfigureAwait(false);
+        // ReSharper disable once PossibleMultipleEnumeration
+        cookieContainer.AddCookies(url, cookiesHeader);
+        // ReSharper disable once PossibleMultipleEnumeration
+        Options.CookieContainer?.AddCookies(url, cookiesHeader);
+    }
 
-        try {
-            responseMessage = await HttpClient.SendAsync(message, request.CompletionOption, ct).ConfigureAwait(false);
+    static bool ShouldFollowRedirect(RedirectOptions options, HttpResponseMessage response, int redirectCount)
+        => options.FollowRedirects
+            && options.RedirectStatusCodes.Contains(response.StatusCode)
+            && response.Headers.Location != null
+            && redirectCount < options.MaxRedirects;
 
-            // Parse all the cookies from the response and update the cookie jar with cookies
-            if (responseMessage.Headers.TryGetValues(KnownHeaders.SetCookie, out var cookiesHeader)) {
-                // ReSharper disable once PossibleMultipleEnumeration
-                cookieContainer.AddCookies(url, cookiesHeader);
-                // ReSharper disable once PossibleMultipleEnumeration
-                Options.CookieContainer?.AddCookies(url, cookiesHeader);
+    static Uri? ResolveRedirectUrl(Uri currentUrl, HttpResponseMessage response, RedirectOptions options) {
+        var location    = response.Headers.Location!;
+        var redirectUrl = location.IsAbsoluteUri ? location : new Uri(currentUrl, location);
+
+        if (options.ForwardQuery && string.IsNullOrEmpty(redirectUrl.Query) && !string.IsNullOrEmpty(currentUrl.Query)) {
+            var builder = new UriBuilder(redirectUrl) { Query = currentUrl.Query.TrimStart('?') };
+            redirectUrl = builder.Uri;
+        }
+
+        // Block HTTPS -> HTTP unless explicitly allowed
+        if (currentUrl.Scheme == "https" && redirectUrl.Scheme == "http" && !options.FollowRedirectsToInsecure) {
+            return null;
+        }
+
+        return redirectUrl;
+    }
+
+    HttpRequestMessage CreateRedirectMessage(
+        HttpMethod httpMethod,
+        Uri url,
+        Uri originalUrl,
+        RestRequest request,
+        RedirectOptions redirectOptions,
+        CookieContainer cookieContainer,
+        List<RequestContent> contentToDispose,
+        bool verbChangedToGet
+    ) {
+        var redirectMessage = new HttpRequestMessage(httpMethod, url);
+        redirectMessage.Version              = request.Version;
+        redirectMessage.Headers.Host         = Options.BaseHost;
+        redirectMessage.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
+
+        if (!verbChangedToGet && redirectOptions.ForwardBody) {
+            var redirectContent = new RequestContent(this, request);
+            contentToDispose.Add(redirectContent);
+            redirectMessage.Content = redirectContent.BuildContent();
+        }
+
+        var redirectHeaders = BuildRedirectHeaders(url, originalUrl, redirectOptions, request, cookieContainer);
+        redirectMessage.AddHeaders(redirectHeaders);
+
+        return redirectMessage;
+    }
+
+    RequestHeaders BuildRedirectHeaders(
+        Uri url, Uri originalUrl, RedirectOptions redirectOptions, RestRequest request, CookieContainer cookieContainer
+    ) {
+        var redirectHeaders = new RequestHeaders();
+
+        if (redirectOptions.ForwardHeaders) {
+            redirectHeaders
+                .AddHeaders(request.Parameters)
+                .AddHeaders(DefaultParameters)
+                .AddAcceptHeader(AcceptedContentTypes);
+
+            if (!ShouldForwardAuthorization(url, originalUrl, redirectOptions)) {
+                redirectHeaders.RemoveHeader(KnownHeaders.Authorization);
             }
         }
-        catch (Exception ex) {
-            return new(null, url, null, ex, timeoutCts.Token);
+        else {
+            redirectHeaders.AddAcceptHeader(AcceptedContentTypes);
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        if (request.OnAfterRequest != null) await request.OnAfterRequest(responseMessage).ConfigureAwait(false);
-#pragma warning restore CS0618 // Type or member is obsolete
-        await OnAfterHttpRequest(request, responseMessage, cancellationToken).ConfigureAwait(false);
-        return new(responseMessage, url, cookieContainer, null, timeoutCts.Token);
+        // Always remove existing Cookie headers before adding fresh ones from the container
+        redirectHeaders.RemoveHeader(KnownHeaders.Cookie);
+
+        if (redirectOptions.ForwardCookies) {
+            redirectHeaders
+                .AddCookieHeaders(url, cookieContainer)
+                .AddCookieHeaders(url, Options.CookieContainer);
+        }
+
+        return redirectHeaders;
+    }
+
+    static bool ShouldForwardAuthorization(Uri redirectUrl, Uri originalUrl, RedirectOptions options) {
+        if (!options.ForwardAuthorization) return false;
+
+        // Never forward credentials from HTTPS to HTTP (they would be sent in plaintext)
+        if (originalUrl.Scheme == "https" && redirectUrl.Scheme == "http") return false;
+
+        // Compare full authority (host + port) to match browser same-origin policy
+        var isSameOrigin = string.Equals(redirectUrl.Authority, originalUrl.Authority, StringComparison.OrdinalIgnoreCase);
+
+        return isSameOrigin || options.ForwardAuthorizationToExternalHost;
+    }
+
+    static HttpMethod GetRedirectMethod(HttpMethod originalMethod, HttpStatusCode statusCode) {
+        // 307 and 308: always preserve the original method
+        if (statusCode is HttpStatusCode.TemporaryRedirect or (HttpStatusCode)308) {
+            return originalMethod;
+        }
+
+        // 303: all methods except GET and HEAD become GET
+        if (statusCode == HttpStatusCode.SeeOther) {
+            return originalMethod == HttpMethod.Get || originalMethod == HttpMethod.Head
+                ? originalMethod
+                : HttpMethod.Get;
+        }
+
+        // 301 and 302: POST becomes GET (matches browser/HttpClient behavior), others preserved
+        return originalMethod == HttpMethod.Post ? HttpMethod.Get : originalMethod;
+    }
+
+    static void DisposeContent(List<RequestContent> contentList) {
+        foreach (var content in contentList) {
+            content.Dispose();
+        }
     }
 
     static async ValueTask OnBeforeRequest(RestRequest request, CancellationToken cancellationToken) {

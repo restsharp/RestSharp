@@ -238,8 +238,6 @@ public partial class RestClient : IRestClient {
         if (options.Credentials != null) handler.Credentials = options.Credentials;
         handler.AutomaticDecompression = options.AutomaticDecompression;
         handler.PreAuthenticate        = options.PreAuthenticate;
-        if (options.MaxRedirects.HasValue) handler.MaxAutomaticRedirections = options.MaxRedirects.Value;
-
         if (options.RemoteCertificateValidationCallback != null)
             handler.ServerCertificateCustomValidationCallback =
                 (request, cert, chain, errors) => options.RemoteCertificateValidationCallback(request, cert, chain, errors);
@@ -251,7 +249,7 @@ public partial class RestClient : IRestClient {
 #if NET
         }
 #endif
-        handler.AllowAutoRedirect = options.FollowRedirects;
+        handler.AllowAutoRedirect = false;
 
 #if NET
         // ReSharper disable once InvertIf

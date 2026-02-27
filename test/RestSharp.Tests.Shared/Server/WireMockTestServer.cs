@@ -44,6 +44,32 @@ public class WireMockTestServer : WireMockServer {
 
         Given(Request.Create().WithPath("/headers"))
             .RespondWith(Response.Create().WithCallback(EchoHeaders));
+
+        Given(Request.Create().WithPath("/redirect-countdown"))
+            .RespondWith(Response.Create().WithCallback(RedirectCountdown));
+
+        Given(Request.Create().WithPath("/redirect-with-status"))
+            .RespondWith(Response.Create().WithCallback(RedirectWithStatus));
+
+        Given(Request.Create().WithPath("/echo-request"))
+            .RespondWith(Response.Create().WithCallback(EchoRequest));
+
+        Given(Request.Create().WithPath("/set-cookie-and-redirect").UsingGet())
+            .RespondWith(Response.Create().WithCallback(SetCookieAndRedirect));
+
+        Given(Request.Create().WithPath("/echo-cookies").UsingGet())
+            .RespondWith(Response.Create().WithCallback(EchoCookies));
+
+        Given(Request.Create().WithPath("/redirect-no-query"))
+            .RespondWith(Response.Create().WithCallback(_ => new ResponseMessage {
+                StatusCode = 302,
+                Headers = new Dictionary<string, WireMockList<string>> {
+                    ["Location"] = new("/echo-request")
+                }
+            }));
+
+        Given(Request.Create().WithPath("/redirect-custom-status"))
+            .RespondWith(Response.Create().WithCallback(RedirectCustomStatus));
     }
 
     static ResponseMessage WrapForm(IRequestMessage request) {
@@ -91,6 +117,100 @@ public class WireMockTestServer : WireMockServer {
 
         return new ResponseMessage {
             StatusCode = statusCode
+        };
+    }
+
+    static ResponseMessage RedirectCountdown(IRequestMessage request) {
+        var n = 1;
+
+        if (request.Query != null && request.Query.TryGetValue("n", out var nValues)) {
+            n = int.Parse(nValues[0]);
+        }
+
+        if (n <= 1) {
+            return CreateJson(new SuccessResponse("Done!"));
+        }
+
+        return new ResponseMessage {
+            StatusCode = (int)HttpStatusCode.TemporaryRedirect,
+            Headers = new Dictionary<string, WireMockList<string>> {
+                ["Location"] = new($"/redirect-countdown?n={n - 1}")
+            }
+        };
+    }
+
+    static ResponseMessage RedirectWithStatus(IRequestMessage request) {
+        var status = 302;
+        var url    = "/echo-request";
+
+        if (request.Query != null) {
+            if (request.Query.TryGetValue("status", out var statusValues)) {
+                status = int.Parse(statusValues[0]);
+            }
+
+            if (request.Query.TryGetValue("url", out var urlValues)) {
+                url = urlValues[0];
+            }
+        }
+
+        return new ResponseMessage {
+            StatusCode = status,
+            Headers = new Dictionary<string, WireMockList<string>> {
+                ["Location"] = new(url)
+            }
+        };
+    }
+
+    public static ResponseMessage EchoRequest(IRequestMessage request) {
+        var headers = request.Headers?
+            .ToDictionary(x => x.Key, x => string.Join(", ", x.Value))
+            ?? new Dictionary<string, string>();
+
+        return CreateJson(new {
+            Method  = request.Method,
+            Headers = headers,
+            Body    = request.Body ?? ""
+        });
+    }
+
+    static ResponseMessage SetCookieAndRedirect(IRequestMessage request) {
+        var url = "/echo-cookies";
+        if (request.Query != null && request.Query.TryGetValue("url", out var urlValues))
+            url = urlValues[0];
+
+        return new ResponseMessage {
+            StatusCode = 302,
+            Headers = new Dictionary<string, WireMockList<string>> {
+                ["Location"] = new(url),
+                ["Set-Cookie"] = new("redirectCookie=value1; Path=/")
+            }
+        };
+    }
+
+    static ResponseMessage EchoCookies(IRequestMessage request) {
+        var cookieHeaders = new List<string>();
+        if (request.Headers != null && request.Headers.TryGetValue("Cookie", out var values))
+            cookieHeaders.AddRange(values);
+
+        var parsedCookies = request.Cookies?.Select(x => $"{x.Key}={x.Value}").ToList()
+            ?? new List<string>();
+
+        return CreateJson(new {
+            RawCookieHeaders = cookieHeaders,
+            ParsedCookies    = parsedCookies
+        });
+    }
+
+    static ResponseMessage RedirectCustomStatus(IRequestMessage request) {
+        var status = 399;
+        if (request.Query != null && request.Query.TryGetValue("status", out var statusValues))
+            status = int.Parse(statusValues[0]);
+
+        return new ResponseMessage {
+            StatusCode = status,
+            Headers = new Dictionary<string, WireMockList<string>> {
+                ["Location"] = new("/echo-request")
+            }
         };
     }
 
