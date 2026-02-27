@@ -53,6 +53,7 @@ class RequestHeaders : ParametersCollection<HeaderParameter> {
 
         if (existing?.Value != null) {
             newCookies = newCookies.Union(SplitHeader(existing.Value!));
+            Parameters.Remove(existing);
         }
 
         Parameters.Add(new(KnownHeaders.Cookie, string.Join("; ", newCookies)));

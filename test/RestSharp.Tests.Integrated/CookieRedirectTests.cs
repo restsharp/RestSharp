@@ -569,6 +569,7 @@ public sealed class CookieRedirectTests : IDisposable {
             }));
 
         var options = new RestClientOptions(httpsServer.Url!) {
+            // Cert validation disabled intentionally: local test HTTPS server uses self-signed cert
             RemoteCertificateValidationCallback = (_, _, _, _) => true,
             RedirectOptions = new RedirectOptions { FollowRedirectsToInsecure = false }
         };
@@ -600,6 +601,7 @@ public sealed class CookieRedirectTests : IDisposable {
             }));
 
         var options = new RestClientOptions(httpsServer.Url!) {
+            // Cert validation disabled intentionally: local test HTTPS server uses self-signed cert
             RemoteCertificateValidationCallback = (_, _, _, _) => true,
             RedirectOptions = new RedirectOptions { FollowRedirectsToInsecure = true }
         };
