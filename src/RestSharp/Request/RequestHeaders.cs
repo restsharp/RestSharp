@@ -35,6 +35,11 @@ class RequestHeaders : ParametersCollection<HeaderParameter> {
         return this;
     }
 
+    public RequestHeaders RemoveHeader(string name) {
+        Parameters.RemoveAll(p => string.Equals(p.Name, name, StringComparison.InvariantCultureIgnoreCase));
+        return this;
+    }
+
     // Add Cookie header from the cookie container
     public RequestHeaders AddCookieHeaders(Uri uri, CookieContainer? cookieContainer) {
         if (cookieContainer == null) return this;

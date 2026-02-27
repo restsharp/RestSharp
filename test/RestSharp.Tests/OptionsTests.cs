@@ -2,11 +2,11 @@ namespace RestSharp.Tests;
 
 public class OptionsTests {
     [Fact]
-    public void Ensure_follow_redirect() {
-        var value = false;
+    public void HttpClient_AllowAutoRedirect_Is_Always_False() {
+        var value = true;
         var options = new RestClientOptions { FollowRedirects = true, ConfigureMessageHandler = Configure };
         using var _ = new RestClient(options);
-        value.Should().BeTrue();
+        value.Should().BeFalse("RestSharp handles redirects internally");
         return;
 
         HttpMessageHandler Configure(HttpMessageHandler handler) {
