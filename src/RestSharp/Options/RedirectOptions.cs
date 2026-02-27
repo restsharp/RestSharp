@@ -35,9 +35,18 @@ public class RedirectOptions {
     public bool ForwardHeaders { get; set; } = true;
 
     /// <summary>
-    /// Whether to forward the Authorization header on redirect. Default is false.
+    /// Whether to forward the Authorization header on same-host redirects. Default is false.
+    /// Even when enabled, Authorization is stripped on cross-host redirects unless
+    /// <see cref="ForwardAuthorizationToExternalHost"/> is also set to true.
     /// </summary>
     public bool ForwardAuthorization { get; set; }
+
+    /// <summary>
+    /// Whether to forward the Authorization header when redirecting to a different host. Default is false.
+    /// Only applies when <see cref="ForwardAuthorization"/> is true. Enabling this can expose credentials
+    /// to unintended hosts if a redirect points to a third-party server.
+    /// </summary>
+    public bool ForwardAuthorizationToExternalHost { get; set; }
 
     /// <summary>
     /// Whether to forward cookies on redirect. Default is true.

@@ -184,6 +184,81 @@ public sealed class CookieRedirectTests(WireMockTestServer server) : IClassFixtu
     }
 
     [Fact]
+    public async Task ForwardAuthorization_Should_Strip_Auth_On_Cross_Host_Redirect_By_Default() {
+        // Create a second server (different host/port) that echoes request details
+        using var externalServer = WireMockServer.Start();
+        externalServer
+            .Given(Request.Create().WithPath("/echo-request"))
+            .RespondWith(Response.Create().WithCallback(request => {
+                var headers = request.Headers?
+                    .ToDictionary(x => x.Key, x => string.Join(", ", x.Value))
+                    ?? new Dictionary<string, string>();
+                return WireMockTestServer.CreateJson(new { Method = request.Method, Headers = headers, Body = request.Body ?? "" });
+            }));
+
+        // Configure the main server to redirect to the external server
+        server.Given(Request.Create().WithPath("/redirect-external"))
+            .RespondWith(Response.Create().WithCallback(_ => new ResponseMessage {
+                StatusCode = 302,
+                Headers = new Dictionary<string, WireMockList<string>> {
+                    ["Location"] = new(externalServer.Url + "/echo-request")
+                }
+            }));
+
+        using var client = CreateClient(o =>
+            o.RedirectOptions = new RedirectOptions { ForwardAuthorization = true }
+        );
+
+        var request = new RestRequest("/redirect-external");
+        request.AddHeader("Authorization", "Bearer secret-token");
+
+        var response = await client.ExecuteAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Should().NotContain("Bearer secret-token",
+            "Authorization should be stripped on cross-host redirects by default");
+    }
+
+    [Fact]
+    public async Task ForwardAuthorizationToExternalHost_Allows_Auth_On_Cross_Host_Redirect() {
+        // Create a second server (different host/port) that echoes request details
+        using var externalServer = WireMockServer.Start();
+        externalServer
+            .Given(Request.Create().WithPath("/echo-request"))
+            .RespondWith(Response.Create().WithCallback(request => {
+                var headers = request.Headers?
+                    .ToDictionary(x => x.Key, x => string.Join(", ", x.Value))
+                    ?? new Dictionary<string, string>();
+                return WireMockTestServer.CreateJson(new { Method = request.Method, Headers = headers, Body = request.Body ?? "" });
+            }));
+
+        // Configure the main server to redirect to the external server
+        server.Given(Request.Create().WithPath("/redirect-external-auth"))
+            .RespondWith(Response.Create().WithCallback(_ => new ResponseMessage {
+                StatusCode = 302,
+                Headers = new Dictionary<string, WireMockList<string>> {
+                    ["Location"] = new(externalServer.Url + "/echo-request")
+                }
+            }));
+
+        using var client = CreateClient(o =>
+            o.RedirectOptions = new RedirectOptions {
+                ForwardAuthorization               = true,
+                ForwardAuthorizationToExternalHost = true
+            }
+        );
+
+        var request = new RestRequest("/redirect-external-auth");
+        request.AddHeader("Authorization", "Bearer secret-token");
+
+        var response = await client.ExecuteAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Should().Contain("Bearer secret-token",
+            "Authorization should be forwarded when ForwardAuthorizationToExternalHost is true");
+    }
+
+    [Fact]
     public async Task ForwardCookies_False_Should_Not_Send_Cookies_On_Redirect() {
         var host = new Uri(server.Url!).Host;
         var cookieContainer = new CookieContainer();

@@ -174,6 +174,7 @@ public partial class RestClient {
     ) {
         var redirectOptions = Options.RedirectOptions;
         var redirectCount   = 0;
+        var originalUrl     = url;
 
         try {
             while (true) {
@@ -202,7 +203,7 @@ public partial class RestClient {
                 redirectCount++;
 
                 message = CreateRedirectMessage(
-                    httpMethod, url, request, redirectOptions, cookieContainer, contentToDispose, verbChangedToGet
+                    httpMethod, url, originalUrl, request, redirectOptions, cookieContainer, contentToDispose, verbChangedToGet
                 );
                 previousMessage.Dispose();
             }
@@ -263,6 +264,7 @@ public partial class RestClient {
     HttpRequestMessage CreateRedirectMessage(
         HttpMethod httpMethod,
         Uri url,
+        Uri originalUrl,
         RestRequest request,
         RedirectOptions redirectOptions,
         CookieContainer cookieContainer,
@@ -280,13 +282,15 @@ public partial class RestClient {
             redirectMessage.Content = redirectContent.BuildContent();
         }
 
-        var redirectHeaders = BuildRedirectHeaders(url, redirectOptions, request, cookieContainer);
+        var redirectHeaders = BuildRedirectHeaders(url, originalUrl, redirectOptions, request, cookieContainer);
         redirectMessage.AddHeaders(redirectHeaders);
 
         return redirectMessage;
     }
 
-    RequestHeaders BuildRedirectHeaders(Uri url, RedirectOptions redirectOptions, RestRequest request, CookieContainer cookieContainer) {
+    RequestHeaders BuildRedirectHeaders(
+        Uri url, Uri originalUrl, RedirectOptions redirectOptions, RestRequest request, CookieContainer cookieContainer
+    ) {
         var redirectHeaders = new RequestHeaders();
 
         if (redirectOptions.ForwardHeaders) {
@@ -295,7 +299,7 @@ public partial class RestClient {
                 .AddHeaders(DefaultParameters)
                 .AddAcceptHeader(AcceptedContentTypes);
 
-            if (!redirectOptions.ForwardAuthorization) {
+            if (!ShouldForwardAuthorization(url, originalUrl, redirectOptions)) {
                 redirectHeaders.RemoveHeader(KnownHeaders.Authorization);
             }
         }
@@ -313,6 +317,18 @@ public partial class RestClient {
         }
 
         return redirectHeaders;
+    }
+
+    static bool ShouldForwardAuthorization(Uri redirectUrl, Uri originalUrl, RedirectOptions options) {
+        if (!options.ForwardAuthorization) return false;
+
+        // Never forward credentials from HTTPS to HTTP (they would be sent in plaintext)
+        if (originalUrl.Scheme == "https" && redirectUrl.Scheme == "http") return false;
+
+        // Compare full authority (host + port) to match browser same-origin policy
+        var isSameOrigin = string.Equals(redirectUrl.Authority, originalUrl.Authority, StringComparison.OrdinalIgnoreCase);
+
+        return isSameOrigin || options.ForwardAuthorizationToExternalHost;
     }
 
     static HttpMethod GetRedirectMethod(HttpMethod originalMethod, HttpStatusCode statusCode) {
