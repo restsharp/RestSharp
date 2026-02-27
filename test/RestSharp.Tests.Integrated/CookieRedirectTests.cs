@@ -193,12 +193,7 @@ public sealed class CookieRedirectTests(WireMockTestServer server) : IClassFixtu
         using var externalServer = WireMockServer.Start();
         externalServer
             .Given(Request.Create().WithPath("/echo-request"))
-            .RespondWith(Response.Create().WithCallback(request => {
-                var headers = request.Headers?
-                    .ToDictionary(x => x.Key, x => string.Join(", ", x.Value))
-                    ?? new Dictionary<string, string>();
-                return WireMockTestServer.CreateJson(new { Method = request.Method, Headers = headers, Body = request.Body ?? "" });
-            }));
+            .RespondWith(Response.Create().WithCallback(WireMockTestServer.EchoRequest));
 
         // Main server redirects to the external server
         var redirectPath = $"/redirect-external-{allowExternal}";
@@ -256,38 +251,27 @@ public sealed class CookieRedirectTests(WireMockTestServer server) : IClassFixtu
 
     // ─── ForwardBody ────────────────────────────────────────────────────
 
-    [Fact]
-    public async Task ForwardBody_False_Should_Drop_Body_Even_When_Verb_Preserved() {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ForwardBody_Controls_Body_Forwarding_When_Verb_Preserved(bool forwardBody) {
         using var client = CreateClient(o =>
-            o.RedirectOptions = new RedirectOptions { ForwardBody = false }
+            o.RedirectOptions = new RedirectOptions { ForwardBody = forwardBody }
         );
 
         var request = new RestRequest("/redirect-with-status?status=307", Method.Post);
-        request.AddJsonBody(new { data = "should-be-dropped" });
+        request.AddJsonBody(new { data = "test-body" });
 
         var response = await client.ExecuteAsync(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var doc = JsonDocument.Parse(response.Content!);
         doc.RootElement.GetProperty("Method").GetString().Should().Be("POST");
-        doc.RootElement.GetProperty("Body").GetString().Should().BeEmpty();
-    }
 
-    [Fact]
-    public async Task ForwardBody_True_Should_Forward_Body_When_Verb_Preserved() {
-        using var client = CreateClient(o =>
-            o.RedirectOptions = new RedirectOptions { ForwardBody = true }
-        );
-
-        var request = new RestRequest("/redirect-with-status?status=307", Method.Post);
-        request.AddJsonBody(new { data = "keep-me" });
-
-        var response = await client.ExecuteAsync(request);
-
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var doc = JsonDocument.Parse(response.Content!);
-        doc.RootElement.GetProperty("Method").GetString().Should().Be("POST");
-        doc.RootElement.GetProperty("Body").GetString().Should().Contain("keep-me");
+        if (forwardBody)
+            doc.RootElement.GetProperty("Body").GetString().Should().Contain("test-body");
+        else
+            doc.RootElement.GetProperty("Body").GetString().Should().BeEmpty();
     }
 
     // ─── ForwardQuery ───────────────────────────────────────────────────

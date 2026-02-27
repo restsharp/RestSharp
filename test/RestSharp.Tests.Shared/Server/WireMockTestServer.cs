@@ -161,7 +161,7 @@ public class WireMockTestServer : WireMockServer {
         };
     }
 
-    static ResponseMessage EchoRequest(IRequestMessage request) {
+    public static ResponseMessage EchoRequest(IRequestMessage request) {
         var headers = request.Headers?
             .ToDictionary(x => x.Key, x => string.Join(", ", x.Value))
             ?? new Dictionary<string, string>();
