@@ -26,7 +26,6 @@ public static class ServiceCollectionExtensions {
 
             services
                 .AddHttpClient(name)
-                .ConfigureHttpClient(client => RestClient.ConfigureHttpClient(client, options))
                 .ConfigurePrimaryHttpMessageHandler(() => {
                         var handler = new HttpClientHandler();
                         RestClient.ConfigureHttpMessageHandler(handler, options);

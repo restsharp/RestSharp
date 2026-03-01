@@ -93,7 +93,6 @@ public partial class RestClient : IRestClient {
             ConfigureHttpMessageHandler(handler, options);
             var finalHandler = options.ConfigureMessageHandler?.Invoke(handler) ?? handler;
             var httpClient   = new HttpClient(finalHandler);
-            ConfigureHttpClient(httpClient, options);
 
             // We will use Options.Timeout in ExecuteAsInternalAsync method
             httpClient.Timeout = Timeout.InfiniteTimeSpan;
@@ -188,7 +187,6 @@ public partial class RestClient : IRestClient {
         DefaultParameters = new(Options);
 
         if (options != null) {
-            ConfigureHttpClient(httpClient, options);
             ConfigureDefaultParameters(options);
         }
     }
@@ -223,10 +221,6 @@ public partial class RestClient : IRestClient {
         ConfigureSerialization? configureSerialization = null
     )
         : this(new HttpClient(handler, disposeHandler), true, configureRestClient, configureSerialization) { }
-
-    internal static void ConfigureHttpClient(HttpClient httpClient, RestClientOptions options) {
-        if (options.Expect100Continue != null) httpClient.DefaultRequestHeaders.ExpectContinue = options.Expect100Continue;
-    }
 
     // ReSharper disable once CognitiveComplexity
     internal static void ConfigureHttpMessageHandler(HttpClientHandler handler, RestClientOptions options) {
