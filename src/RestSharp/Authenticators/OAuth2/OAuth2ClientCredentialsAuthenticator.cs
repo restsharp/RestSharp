@@ -12,8 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using System.Text.Json;
-
 namespace RestSharp.Authenticators.OAuth2;
 
 /// <summary>
@@ -23,85 +21,18 @@ namespace RestSharp.Authenticators.OAuth2;
 /// Thread-safe for concurrent request usage.
 /// </summary>
 [PublicAPI]
-public class OAuth2ClientCredentialsAuthenticator : IAuthenticator, IDisposable {
-    readonly OAuth2TokenRequest _request;
-    readonly HttpClient _tokenClient;
-    readonly bool _disposeClient;
-    readonly SemaphoreSlim _lock = new(1, 1);
+public class OAuth2ClientCredentialsAuthenticator(OAuth2TokenRequest request)
+    : OAuth2EndpointAuthenticatorBase(request) {
+    protected override Dictionary<string, string> BuildRequestParameters() {
+        var parameters = new Dictionary<string, string> {
+            ["grant_type"]    = "client_credentials",
+            ["client_id"]     = TokenRequest.ClientId,
+            ["client_secret"] = TokenRequest.ClientSecret
+        };
 
-    string? _accessToken;
-    DateTimeOffset _tokenExpiry = DateTimeOffset.MinValue;
+        if (TokenRequest.Scope != null)
+            parameters["scope"] = TokenRequest.Scope;
 
-    public OAuth2ClientCredentialsAuthenticator(OAuth2TokenRequest request) {
-        _request = request;
-
-        if (request.HttpClient != null) {
-            _tokenClient = request.HttpClient;
-            _disposeClient = false;
-        }
-        else {
-            _tokenClient = new HttpClient();
-            _disposeClient = true;
-        }
-    }
-
-    public async ValueTask Authenticate(IRestClient client, RestRequest request) {
-        var token = await GetOrRefreshTokenAsync().ConfigureAwait(false);
-        request.AddOrUpdateParameter(new HeaderParameter(KnownHeaders.Authorization, $"Bearer {token}"));
-    }
-
-    async Task<string> GetOrRefreshTokenAsync() {
-        if (_accessToken != null && DateTimeOffset.UtcNow < _tokenExpiry)
-            return _accessToken;
-
-        await _lock.WaitAsync().ConfigureAwait(false);
-
-        try {
-            // Double-check after acquiring lock
-            if (_accessToken != null && DateTimeOffset.UtcNow < _tokenExpiry)
-                return _accessToken;
-
-            var parameters = new Dictionary<string, string> {
-                ["grant_type"] = "client_credentials",
-                ["client_id"] = _request.ClientId,
-                ["client_secret"] = _request.ClientSecret
-            };
-
-            if (_request.Scope != null)
-                parameters["scope"] = _request.Scope;
-
-            if (_request.ExtraParameters != null) {
-                foreach (var kvp in _request.ExtraParameters)
-                    parameters[kvp.Key] = kvp.Value;
-            }
-
-            using var content = new FormUrlEncodedContent(parameters);
-            using var response = await _tokenClient.PostAsync(_request.TokenEndpointUrl, content).ConfigureAwait(false);
-
-            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException($"Token request failed with status {response.StatusCode}: {body}");
-
-            var tokenResponse = JsonSerializer.Deserialize<OAuth2TokenResponse>(body);
-
-            if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
-                throw new InvalidOperationException($"Token endpoint returned an invalid response: {body}");
-
-            _accessToken = tokenResponse.AccessToken;
-            _tokenExpiry = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn) - _request.ExpiryBuffer;
-
-            _request.OnTokenRefreshed?.Invoke(tokenResponse);
-
-            return _accessToken;
-        }
-        finally {
-            _lock.Release();
-        }
-    }
-
-    public void Dispose() {
-        if (_disposeClient) _tokenClient.Dispose();
-        _lock.Dispose();
+        return parameters;
     }
 }
