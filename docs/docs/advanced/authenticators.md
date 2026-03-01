@@ -128,7 +128,95 @@ var authenticator = OAuth1Authenticator.ForAccessToken(
 
 ## OAuth2
 
-RestSharp has two very simple authenticators to send the access token as part of the request.
+RestSharp provides OAuth2 authenticators at two levels: **token lifecycle authenticators** that handle the full flow (obtaining, caching, and refreshing tokens automatically), and **simple authenticators** that just stamp a pre-obtained token onto requests.
+
+### Token lifecycle authenticators
+
+These authenticators manage tokens end-to-end. They use their own internal `HttpClient` for token endpoint calls, so there's no circular dependency with the `RestClient` they're attached to. All are thread-safe for concurrent use.
+
+#### Client credentials
+
+Use `OAuth2ClientCredentialsAuthenticator` for machine-to-machine flows. It POSTs `grant_type=client_credentials` to your token endpoint, caches the token, and refreshes it automatically before it expires.
+
+```csharp
+var request = new OAuth2TokenRequest(
+    "https://auth.example.com/oauth2/token",
+    "my-client-id",
+    "my-client-secret"
+) {
+    Scope = "api.read api.write"
+};
+
+var options = new RestClientOptions("https://api.example.com") {
+    Authenticator = new OAuth2ClientCredentialsAuthenticator(request)
+};
+using var client = new RestClient(options);
+```
+
+The authenticator will obtain a token on the first request and reuse it until it expires. The `ExpiryBuffer` property (default 30 seconds) controls how far in advance of actual expiry the token is considered stale.
+
+#### Refresh token
+
+Use `OAuth2RefreshTokenAuthenticator` when you already have an access token and refresh token (e.g., from an authorization code flow). It uses the initial access token until it expires, then automatically refreshes using the `refresh_token` grant type.
+
+```csharp
+var request = new OAuth2TokenRequest(
+    "https://auth.example.com/oauth2/token",
+    "my-client-id",
+    "my-client-secret"
+) {
+    OnTokenRefreshed = response => {
+        // Persist the new tokens to your storage
+        SaveTokens(response.AccessToken, response.RefreshToken);
+    }
+};
+
+var options = new RestClientOptions("https://api.example.com") {
+    Authenticator = new OAuth2RefreshTokenAuthenticator(
+        request,
+        accessToken: "current-access-token",
+        refreshToken: "current-refresh-token",
+        expiresAt: DateTimeOffset.UtcNow.AddMinutes(30)
+    )
+};
+using var client = new RestClient(options);
+```
+
+If the server rotates refresh tokens, the authenticator will automatically use the new refresh token for subsequent refreshes. The `OnTokenRefreshed` callback fires every time a new token is obtained, so you can persist the updated tokens.
+
+#### Custom token provider
+
+Use `OAuth2TokenAuthenticator` when you have a non-standard token flow or want full control over how tokens are obtained. Provide an async delegate that returns an `OAuth2Token`:
+
+```csharp
+var options = new RestClientOptions("https://api.example.com") {
+    Authenticator = new OAuth2TokenAuthenticator(async cancellationToken => {
+        var token = await myCustomTokenService.GetTokenAsync(cancellationToken);
+        return new OAuth2Token(token.Value, token.ExpiresAt);
+    })
+};
+using var client = new RestClient(options);
+```
+
+The authenticator caches the result and re-invokes your delegate when the token expires.
+
+#### Bringing your own HttpClient
+
+By default, the token lifecycle authenticators create their own `HttpClient` for token endpoint calls (and dispose it when the authenticator is disposed). If you need to customize it (e.g., for proxy settings or mTLS), pass your own:
+
+```csharp
+var request = new OAuth2TokenRequest(
+    "https://auth.example.com/oauth2/token",
+    "my-client-id",
+    "my-client-secret"
+) {
+    HttpClient = myCustomHttpClient // not disposed by the authenticator
+};
+```
+
+### Simple authenticators
+
+If you manage tokens yourself and just need to stamp them onto requests, use these simpler authenticators.
 
 `OAuth2UriQueryParameterAuthenticator` accepts the access token as the only constructor argument, and it will send the provided token as a query parameter `oauth_token`.
 
@@ -147,8 +235,6 @@ var client = new RestClient(options);
 ```
 
 The code above will tell RestSharp to send the bearer token with each request as a header. Essentially, the code above does the same as the sample for `JwtAuthenticator` below.
-
-As those authenticators don't do much to get the token itself, you might be interested in looking at our [sample OAuth2 authenticator](../usage/example.md#authenticator), which requests the token on its own.
 
 ## JWT
 
@@ -182,4 +268,4 @@ var client = new RestClient(options);
 The `Authenticate` method is the very first thing called upon calling `RestClient.Execute` or `RestClient.Execute<T>`. 
 It gets the `RestRequest` currently being executed giving you access to every part of the request data (headers, parameters, etc.)
 
-You can find an example of a custom authenticator that fetches and uses an OAuth2 bearer token [here](../usage/example.md#authenticator).
+You can find an example of using the built-in OAuth2 authenticator in a typed API client [here](../usage/example.md#authenticator).

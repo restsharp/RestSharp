@@ -10,15 +10,13 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
-//   limitations under the License. 
+//   limitations under the License.
 
-namespace RestSharp.Authenticators;
+namespace RestSharp.Authenticators.OAuth2;
 
-public abstract class AuthenticatorBase(string token) : IAuthenticator {
-    protected string Token { get; set; } = token;
-
-    protected abstract ValueTask<Parameter> GetAuthenticationParameter(string accessToken);
-
-    public async ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
-        => request.AddOrUpdateParameter(await GetAuthenticationParameter(Token).ConfigureAwait(false));
-}
+/// <summary>
+/// Represents an access token with its expiration time. Used as the return type
+/// for the custom token provider delegate in <see cref="OAuth2TokenAuthenticator"/>.
+/// </summary>
+[PublicAPI]
+public record OAuth2Token(string AccessToken, DateTimeOffset ExpiresAt);

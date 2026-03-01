@@ -45,7 +45,14 @@ public class TwitterClient : ITwitterClient, IDisposable {
     readonly RestClient _client;
 
     public TwitterClient(string apiKey, string apiKeySecret) {
-        var options = new RestClientOptions("https://api.twitter.com/2");
+        var tokenRequest = new OAuth2TokenRequest(
+            "https://api.twitter.com/oauth2/token",
+            apiKey,
+            apiKeySecret
+        );
+        var options = new RestClientOptions("https://api.twitter.com/2") {
+            Authenticator = new OAuth2ClientCredentialsAuthenticator(tokenRequest)
+        };
         _client = new RestClient(options);
     }
 
@@ -79,73 +86,27 @@ public TwitterClient(IOptions<TwitterClientOptions> options) {
 
 Then, you can register and configure the client using ASP.NET Core dependency injection container.
 
-Right now, the client won't really work as Twitter API requires authentication. It's covered in the next section.
+Notice the client constructor already configures the `OAuth2ClientCredentialsAuthenticator`. The authenticator setup is described in the next section.
 
 ## Authenticator
 
-Before we can call the API itself, we need to get a bearer token. Twitter exposes an endpoint `https://api.twitter.com/oauth2/token`. As it follows the OAuth2 conventions, the code can be used to create an authenticator for some other vendors.
-
-First, we need a model for deserializing the token endpoint response. OAuth2 uses snake case for property naming, so we need to decorate model properties with `JsonPropertyName` attribute:
+Before we can call the API itself, we need to get a bearer token. Twitter exposes an endpoint `https://api.twitter.com/oauth2/token`. As it follows the standard OAuth2 client credentials convention, we can use the built-in `OAuth2ClientCredentialsAuthenticator`:
 
 ```csharp
-record TokenResponse {
-    [JsonPropertyName("token_type")]
-    public string TokenType { get; init; }
-    [JsonPropertyName("access_token")]
-    public string AccessToken { get; init; }
-}
+var tokenRequest = new OAuth2TokenRequest(
+    "https://api.twitter.com/oauth2/token",
+    apiKey,
+    apiKeySecret
+);
+
+var options = new RestClientOptions("https://api.twitter.com/2") {
+    Authenticator = new OAuth2ClientCredentialsAuthenticator(tokenRequest)
+};
 ```
 
-Next, we create the authenticator itself. It needs the API key and API key secret to call the token endpoint using basic HTTP authentication. In addition, we can extend the list of parameters with the base URL to convert it to a more generic OAuth2 authenticator.
+The authenticator will automatically obtain a token on the first request, cache it, and refresh it when it expires. It uses its own `HttpClient` internally for token endpoint calls, so there's no circular dependency with the `RestClient`.
 
-The easiest way to create an authenticator is to inherit from the `AuthenticatorBase` base class:
-
-```csharp
-public class TwitterAuthenticator : AuthenticatorBase {
-    readonly string _baseUrl;
-    readonly string _clientId;
-    readonly string _clientSecret;
-
-    public TwitterAuthenticator(string baseUrl, string clientId, string clientSecret) : base("") {
-        _baseUrl      = baseUrl;
-        _clientId     = clientId;
-        _clientSecret = clientSecret;
-    }
-
-    protected override async ValueTask<Parameter> GetAuthenticationParameter(string accessToken) {
-        Token = string.IsNullOrEmpty(Token) ? await GetToken() : Token;
-        return new HeaderParameter(KnownHeaders.Authorization, Token);
-    }
-}
-```
-
-During the first call made by the client using the authenticator, it will find out that the `Token` property is empty. It will then call the `GetToken` function to get the token once and reuse the token going forward.
-
-Now, we need to implement the `GetToken` function in the class:
-
-```csharp
-async Task<string> GetToken() {
-    var options = new RestClientOptions(_baseUrl){
-        Authenticator = new HttpBasicAuthenticator(_clientId, _clientSecret),
-    };
-    using var client = new RestClient(options);
-
-    var request = new RestRequest("oauth2/token")
-        .AddParameter("grant_type", "client_credentials");
-    var response = await client.PostAsync<TokenResponse>(request);
-    return $"{response!.TokenType} {response!.AccessToken}";
-}
-```
-
-As we need to make a call to the token endpoint, we need our own short-lived instance of `RestClient`. Unlike the actual Twitter client, it will use the `HttpBasicAuthenticator` to send the API key and secret as the username and password. The client then gets disposed as we only use it once.
-
-Here we add a POST parameter `grant_type` with `client_credentials` as its value. At the moment, it's the only supported value.
-
-The POST request will use the `application/x-www-form-urlencoded` content type by default.
-
-::: note
-Sample code provided on this page is a production code. For example, the authenticator might produce undesired side effect when multiple requests are made at the same time when the token hasn't been obtained yet. It can be solved rather than simply using semaphores or synchronized invocation.
-:::
+For more details on the available OAuth2 authenticators (including refresh token flows and custom token providers), see [Authenticators](../advanced/authenticators.md#oauth2).
 
 ## Final words
 

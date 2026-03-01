@@ -108,7 +108,7 @@ public partial class RestClient {
         var authenticator = request.Authenticator ?? Options.Authenticator;
 
         if (authenticator != null) {
-            await authenticator.Authenticate(this, request).ConfigureAwait(false);
+            await authenticator.Authenticate(this, request, cancellationToken).ConfigureAwait(false);
         }
 
         var contentToDispose = new List<RequestContent>();
