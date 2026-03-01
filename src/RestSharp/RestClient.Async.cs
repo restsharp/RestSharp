@@ -273,9 +273,10 @@ public partial class RestClient {
         bool verbChangedToGet
     ) {
         var redirectMessage = new HttpRequestMessage(httpMethod, url);
-        redirectMessage.Version              = request.Version;
-        redirectMessage.Headers.Host         = Options.BaseHost;
-        redirectMessage.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
+        redirectMessage.Version                = request.Version;
+        redirectMessage.Headers.Host           = Options.BaseHost;
+        redirectMessage.Headers.CacheControl   = request.CachePolicy ?? Options.CachePolicy;
+        redirectMessage.Headers.ExpectContinue = Options.Expect100Continue;
 
         if (!verbChangedToGet && redirectOptions.ForwardBody) {
             var redirectContent = new RequestContent(this, request);
