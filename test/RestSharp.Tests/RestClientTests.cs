@@ -123,4 +123,29 @@ public class RestClientTests {
 
         Assert.Empty(httpClient.DefaultRequestHeaders.UserAgent);
     }
+
+    [Fact]
+    public void Should_not_set_expect_continue_on_shared_http_client_default_headers() {
+        // arrange
+        var httpClient = new HttpClient();
+        var options    = new RestClientOptions { Expect100Continue = true };
+
+        // act
+        using var restClient = new RestClient(httpClient, options);
+
+        // assert — the shared HttpClient's DefaultRequestHeaders must not be modified
+        httpClient.DefaultRequestHeaders.ExpectContinue.Should().BeNull();
+    }
+
+    [Fact]
+    public void Should_not_set_expect_continue_on_new_http_client_default_headers() {
+        // arrange
+        var options = new RestClientOptions { Expect100Continue = false };
+
+        // act
+        using var restClient = new RestClient(options);
+
+        // assert
+        restClient.HttpClient.DefaultRequestHeaders.ExpectContinue.Should().BeNull();
+    }
 }

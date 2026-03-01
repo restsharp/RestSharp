@@ -135,10 +135,11 @@ public partial class RestClient {
             .AddCookieHeaders(url, Options.CookieContainer);
 
         var message = new HttpRequestMessage(httpMethod, url);
-        message.Content              = initialContent.BuildContent();
-        message.Headers.Host         = Options.BaseHost;
-        message.Headers.CacheControl = request.CachePolicy ?? Options.CachePolicy;
-        message.Version              = request.Version;
+        message.Content                = initialContent.BuildContent();
+        message.Headers.Host           = Options.BaseHost;
+        message.Headers.CacheControl   = request.CachePolicy ?? Options.CachePolicy;
+        message.Headers.ExpectContinue = Options.Expect100Continue;
+        message.Version                = request.Version;
         message.AddHeaders(headers);
 
 #pragma warning disable CS0618 // Type or member is obsolete
