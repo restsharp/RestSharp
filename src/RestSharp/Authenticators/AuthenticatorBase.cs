@@ -19,6 +19,6 @@ public abstract class AuthenticatorBase(string token) : IAuthenticator {
 
     protected abstract ValueTask<Parameter> GetAuthenticationParameter(string accessToken);
 
-    public async ValueTask Authenticate(IRestClient client, RestRequest request)
+    public async ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
         => request.AddOrUpdateParameter(await GetAuthenticationParameter(Token).ConfigureAwait(false));
 }

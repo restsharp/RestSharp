@@ -34,7 +34,7 @@ public class AuthenticatorTests {
     }
 
     class TestAuthenticator(ParameterType type, string name, string value) : IAuthenticator {
-        public ValueTask Authenticate(IRestClient client, RestRequest request) {
+        public ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
             request.AddParameter(name, value, type);
             return default;
         }

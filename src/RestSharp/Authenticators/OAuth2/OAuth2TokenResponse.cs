@@ -28,7 +28,7 @@ public record OAuth2TokenResponse {
     public string TokenType { get; init; } = "";
 
     [JsonPropertyName("expires_in")]
-    public int ExpiresIn { get; init; }
+    public int? ExpiresIn { get; init; }
 
     [JsonPropertyName("refresh_token")]
     public string? RefreshToken { get; init; }

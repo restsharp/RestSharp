@@ -162,6 +162,33 @@ public class OAuth2RefreshTokenAuthenticatorTests : IDisposable {
     }
 
     [Fact]
+    public async Task Should_send_scope_when_configured() {
+        var request2 = new OAuth2TokenRequest(TokenEndpoint, ClientId, ClientSecret) {
+            HttpClient   = new HttpClient(_mockHttp),
+            ExpiryBuffer = TimeSpan.Zero,
+            Scope        = "api.read api.write"
+        };
+
+        _mockHttp.When(HttpMethod.Post, TokenEndpoint)
+            .WithFormData("scope", "api.read api.write")
+            .Respond("application/json", TokenJson());
+
+        using var authenticator = new OAuth2RefreshTokenAuthenticator(
+            request2,
+            InitialAccess,
+            InitialRefresh,
+            DateTimeOffset.MinValue
+        );
+
+        var request = new RestRequest();
+        await authenticator.Authenticate(null!, request);
+
+        var authHeader = request.Parameters.FirstOrDefault(p => p.Name == KnownHeaders.Authorization);
+        authHeader.Should().NotBeNull();
+        authHeader.Value.Should().Be("Bearer new-access-token");
+    }
+
+    [Fact]
     public async Task Should_throw_on_error_response() {
         _mockHttp.When(HttpMethod.Post, TokenEndpoint)
             .Respond(HttpStatusCode.Unauthorized, "application/json", """{"error":"invalid_grant"}""");

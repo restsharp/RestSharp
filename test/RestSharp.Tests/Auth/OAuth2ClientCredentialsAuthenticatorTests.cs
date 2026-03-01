@@ -154,6 +154,33 @@ public class OAuth2ClientCredentialsAuthenticatorTests : IDisposable {
     }
 
     [Fact]
+    public async Task Should_treat_missing_expires_in_as_non_expiring() {
+        var callCount = 0;
+
+        _mockHttp.When(HttpMethod.Post, TokenEndpoint)
+            .Respond(_ => {
+                Interlocked.Increment(ref callCount);
+                return new HttpResponseMessage(HttpStatusCode.OK) {
+                    Content = new StringContent(
+                        """{"access_token":"no-expiry-token","token_type":"Bearer"}""",
+                        System.Text.Encoding.UTF8,
+                        "application/json"
+                    )
+                };
+            });
+
+        using var authenticator = new OAuth2ClientCredentialsAuthenticator(CreateRequest());
+
+        var request1 = new RestRequest();
+        await authenticator.Authenticate(null!, request1);
+
+        var request2 = new RestRequest();
+        await authenticator.Authenticate(null!, request2);
+
+        callCount.Should().Be(1, "token without expires_in should be cached indefinitely");
+    }
+
+    [Fact]
     public async Task Should_send_scope_when_configured() {
         _mockHttp.When(HttpMethod.Post, TokenEndpoint)
             .WithFormData("scope", "read write")

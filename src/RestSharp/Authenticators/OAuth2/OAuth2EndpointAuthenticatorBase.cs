@@ -49,8 +49,8 @@ public abstract class OAuth2EndpointAuthenticatorBase : IAuthenticator, IDisposa
         _tokenExpiry = expiresAt;
     }
 
-    public async ValueTask Authenticate(IRestClient client, RestRequest request) {
-        var token = await GetOrRefreshTokenAsync().ConfigureAwait(false);
+    public async ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var token = await GetOrRefreshTokenAsync(cancellationToken).ConfigureAwait(false);
         request.AddOrUpdateParameter(new HeaderParameter(KnownHeaders.Authorization, $"Bearer {token}"));
     }
 
@@ -65,11 +65,11 @@ public abstract class OAuth2EndpointAuthenticatorBase : IAuthenticator, IDisposa
     /// </summary>
     protected virtual void OnTokenResponse(OAuth2TokenResponse response) { }
 
-    async Task<string> GetOrRefreshTokenAsync() {
+    async Task<string> GetOrRefreshTokenAsync(CancellationToken cancellationToken) {
         if (_accessToken != null && DateTimeOffset.UtcNow < _tokenExpiry)
             return _accessToken;
 
-        await _lock.WaitAsync().ConfigureAwait(false);
+        await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
         try {
             if (_accessToken != null && DateTimeOffset.UtcNow < _tokenExpiry)
@@ -83,7 +83,7 @@ public abstract class OAuth2EndpointAuthenticatorBase : IAuthenticator, IDisposa
             }
 
             using var content = new FormUrlEncodedContent(parameters);
-            using var response = await _tokenClient.PostAsync(TokenRequest.TokenEndpointUrl, content).ConfigureAwait(false);
+            using var response = await _tokenClient.PostAsync(TokenRequest.TokenEndpointUrl, content, cancellationToken).ConfigureAwait(false);
 
             var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -96,7 +96,9 @@ public abstract class OAuth2EndpointAuthenticatorBase : IAuthenticator, IDisposa
                 throw new InvalidOperationException($"Token endpoint returned an invalid response: {body}");
 
             _accessToken = tokenResponse.AccessToken;
-            _tokenExpiry = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn) - TokenRequest.ExpiryBuffer;
+            _tokenExpiry = tokenResponse.ExpiresIn.HasValue
+                ? DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn.Value) - TokenRequest.ExpiryBuffer
+                : DateTimeOffset.MaxValue;
 
             OnTokenResponse(tokenResponse);
             TokenRequest.OnTokenRefreshed?.Invoke(tokenResponse);

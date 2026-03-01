@@ -41,7 +41,7 @@ public class OAuth1Authenticator : IAuthenticator {
     public virtual string?                 ClientUsername     { get; set; }
     public virtual string?                 ClientPassword     { get; set; }
 
-    public ValueTask Authenticate(IRestClient client, RestRequest request) {
+    public ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
         var workflow = new OAuthWorkflow {
             ConsumerKey        = ConsumerKey,
             ConsumerSecret     = ConsumerSecret,

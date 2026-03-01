@@ -36,22 +36,22 @@ public class OAuth2TokenAuthenticator : IAuthenticator, IDisposable {
         _tokenType = tokenType;
     }
 
-    public async ValueTask Authenticate(IRestClient client, RestRequest request) {
-        var token = await GetOrRefreshTokenAsync().ConfigureAwait(false);
+    public async ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default) {
+        var token = await GetOrRefreshTokenAsync(cancellationToken).ConfigureAwait(false);
         request.AddOrUpdateParameter(new HeaderParameter(KnownHeaders.Authorization, $"{_tokenType} {token}"));
     }
 
-    async Task<string> GetOrRefreshTokenAsync() {
+    async Task<string> GetOrRefreshTokenAsync(CancellationToken cancellationToken) {
         if (_accessToken != null && DateTimeOffset.UtcNow < _tokenExpiry)
             return _accessToken;
 
-        await _lock.WaitAsync().ConfigureAwait(false);
+        await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
         try {
             if (_accessToken != null && DateTimeOffset.UtcNow < _tokenExpiry)
                 return _accessToken;
 
-            var result = await _getToken(CancellationToken.None).ConfigureAwait(false);
+            var result = await _getToken(cancellationToken).ConfigureAwait(false);
             _accessToken = result.AccessToken;
             _tokenExpiry = result.ExpiresAt;
 

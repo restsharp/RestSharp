@@ -38,13 +38,19 @@ public class OAuth2RefreshTokenAuthenticator : OAuth2EndpointAuthenticatorBase {
         SetInitialToken(accessToken, expiresAt);
     }
 
-    protected override Dictionary<string, string> BuildRequestParameters()
-        => new() {
+    protected override Dictionary<string, string> BuildRequestParameters() {
+        var parameters = new Dictionary<string, string> {
             ["grant_type"]    = "refresh_token",
             ["client_id"]     = TokenRequest.ClientId,
             ["client_secret"] = TokenRequest.ClientSecret,
             ["refresh_token"] = _refreshToken
         };
+
+        if (TokenRequest.Scope != null)
+            parameters["scope"] = TokenRequest.Scope;
+
+        return parameters;
+    }
 
     protected override void OnTokenResponse(OAuth2TokenResponse response) {
         if (!string.IsNullOrEmpty(response.RefreshToken))

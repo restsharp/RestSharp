@@ -15,5 +15,5 @@
 namespace RestSharp.Authenticators;
 
 public interface IAuthenticator {
-    ValueTask Authenticate(IRestClient client, RestRequest request);
+    ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default);
 }
