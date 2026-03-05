@@ -54,7 +54,7 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
 #endif
 
             var bytes   = stream == null ? null : await stream.ReadAsBytes(cancellationToken).ConfigureAwait(false);
-            var content = bytes == null ? null : await httpResponse.GetResponseString(bytes, options.Encoding);
+            var content = bytes == null ? null : await httpResponse.GetResponseString(bytes, options.Encoding).ConfigureAwait(false);
 
             return new(request) {
                 Content             = content,

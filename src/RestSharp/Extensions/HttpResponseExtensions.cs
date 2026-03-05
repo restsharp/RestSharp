@@ -32,7 +32,7 @@ static class HttpResponseExtensions {
         var encoding       = encodingString != null ? TryGetEncoding(encodingString) : clientEncoding;
 
         using var reader = new StreamReader(new MemoryStream(bytes), encoding);
-        return await reader.ReadToEndAsync();
+        return await reader.ReadToEndAsync().ConfigureAwait(false);
         Encoding TryGetEncoding(string es) {
             try {
                 return Encoding.GetEncoding(es);

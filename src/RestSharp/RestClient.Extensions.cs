@@ -45,7 +45,7 @@ public static partial class RestClientExtensions {
             Ensure.NotNull(request, nameof(request));
 
             var response = await client.ExecuteAsync(request, cancellationToken).ConfigureAwait(false);
-            return await client.Serializers.Deserialize<T>(request, response, client.Options, cancellationToken);
+            return await client.Serializers.Deserialize<T>(request, response, client.Options, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -172,9 +172,9 @@ public static partial class RestClientExtensions {
             using var reader = new StreamReader(stream);
 
 #if NET7_0_OR_GREATER
-            while (await reader.ReadLineAsync(cancellationToken) is { } line && !cancellationToken.IsCancellationRequested) {
+            while (await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) is { } line && !cancellationToken.IsCancellationRequested) {
 #else
-            while (await reader.ReadLineAsync() is { } line && !cancellationToken.IsCancellationRequested) {
+            while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line && !cancellationToken.IsCancellationRequested) {
 #endif
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
