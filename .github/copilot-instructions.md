@@ -24,10 +24,10 @@ RestSharp is a lightweight HTTP API client library for .NET. It wraps `HttpClien
 
 ```bash
 # Build solution
-dotnet build RestSharp.sln -c Debug
+dotnet build RestSharp.slnx -c Debug
 
 # Run all tests
-dotnet test RestSharp.sln -c Debug
+dotnet test RestSharp.slnx -c Debug
 
 # Run tests for specific TFM
 dotnet test test/RestSharp.Tests/RestSharp.Tests.csproj -f net8.0

@@ -9,7 +9,7 @@ This document captures project-specific knowledge to speed up advanced developme
 
 ### Projects and Organization
 
-The solution (`RestSharp.sln`) is organized into the following structure:
+The solution (`RestSharp.slnx`) is organized into the following structure:
 
 **Core Library:**
 - `src/RestSharp/` - Main library targeting multiple frameworks
@@ -294,7 +294,7 @@ These are automatically available in all test files without explicit `using` sta
 
 **All tests for entire solution:**
 ```bash
-dotnet test RestSharp.sln -c Debug
+dotnet test RestSharp.slnx -c Debug
 ```
 
 **Specific test project:**
@@ -575,12 +575,12 @@ using var stream = ...
 
 **Debug build:**
 ```bash
-dotnet build RestSharp.sln -c Debug
+dotnet build RestSharp.slnx -c Debug
 ```
 
 **Release build:**
 ```bash
-dotnet build RestSharp.sln -c Release
+dotnet build RestSharp.slnx -c Release
 ```
 
 ### Working with Source Generator
@@ -634,7 +634,7 @@ dotnet build src/RestSharp/RestSharp.csproj -f net8.0
 
 ```bash
 # Build solution
-dotnet build RestSharp.sln -c Release
+dotnet build RestSharp.slnx -c Release
 
 # Run all tests for a single TFM
 dotnet test test/RestSharp.Tests/RestSharp.Tests.csproj -f net8.0
@@ -657,7 +657,7 @@ dotnet test test/RestSharp.Tests/RestSharp.Tests.csproj -f net8.0 \
 find src/RestSharp/obj/Debug -name "*.g.cs" -o -name "ReadOnly*.cs"
 
 # Clean all build artifacts
-dotnet clean RestSharp.sln
+dotnet clean RestSharp.slnx
 rm -rf src/*/bin src/*/obj test/*/bin test/*/obj gen/*/bin gen/*/obj
 ```
 

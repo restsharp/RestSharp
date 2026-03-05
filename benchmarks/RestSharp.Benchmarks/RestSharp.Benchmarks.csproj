@@ -5,7 +5,7 @@
         <IsPackable>false</IsPackable>
         <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RepoRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'RestSharp.sln'))</RepoRoot>
+        <RepoRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'RestSharp.slnx'))</RepoRoot>
     </PropertyGroup>
 
     <ItemGroup>

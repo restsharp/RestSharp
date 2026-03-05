@@ -18,7 +18,7 @@
 		"vscode-icons-team.vscode-icons",
 		"editorconfig.editorconfig"
 	],
-	"postCreateCommand": "dotnet restore RestSharp.sln && dotnet build RestSharp.sln --configuration Release --no-restore && dotnet test RestSharp.sln --configuration Release --no-build",
+	"postCreateCommand": "dotnet restore RestSharp.slnx && dotnet build RestSharp.slnx --configuration Release --no-restore && dotnet test RestSharp.slnx --configuration Release --no-build",
 	"build": {
 		"dockerfile": "Dockerfile"
 	}

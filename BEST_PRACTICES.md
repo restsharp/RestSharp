@@ -68,7 +68,7 @@ Custom incremental generators live in gen/SourceGenerator and are referenced as 
   - Use descriptive assertions, e.g., result.Should().Be(expected).
   - Scope tests by TFM when API availability differs.
 - Useful commands:
-  - dotnet test RestSharp.sln -c Debug
+  - dotnet test RestSharp.slnx -c Debug
   - dotnet test test/RestSharp.Tests/RestSharp.Tests.csproj -f net8.0
   - dotnet test test/RestSharp.Tests/RestSharp.Tests.csproj --filter "FullyQualifiedName=Namespace.Class.Method" -f net8.0
 - Test results are written to test-results/<TFM>/<ProjectName>.trx.
@@ -172,7 +172,7 @@ Use this quick checklist before requesting review:
 ## 15) Useful Commands (Quick Reference)
 
 - Build solution (Release):
-  - dotnet build RestSharp.sln -c Release
+  - dotnet build RestSharp.slnx -c Release
 - Run tests for a single TFM:
   - dotnet test test/RestSharp.Tests/RestSharp.Tests.csproj -f net8.0
 - Run a single test by fully-qualified name:
@@ -182,7 +182,7 @@ Use this quick checklist before requesting review:
 - View generated source files after build:
   - find src/RestSharp/obj/Debug -name "*.g.cs" -o -name "ReadOnly*.cs"
 - Clean all build artifacts:
-  - dotnet clean RestSharp.sln
+  - dotnet clean RestSharp.slnx
   - rm -rf src/*/bin src/*/obj test/*/bin test/*/obj gen/*/bin gen/*/obj
 
 
