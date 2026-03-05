@@ -97,6 +97,10 @@ Use conditional compilation for TFM-specific APIs: `#if NET`, `#if NET8_0_OR_GRE
 - Guard TFM-specific tests with `#if NET8_0_OR_GREATER`
 - Test results: `test-results/<TFM>/<ProjectName>.trx`
 
+## Documentation
+
+Docusaurus 3 site in `docs/`. Dev server: `cd docs && pnpm start`. See [DOCUMENTATION.md](DOCUMENTATION.md) for full details on structure, versioning, and writing docs.
+
 ## Working with Issues
 
 - Avoid changing default behavior unless absolutely necessary
