@@ -57,3 +57,5 @@ RestSharp.IntegrationTests/config.json
 .vscode/
 .temp/
 *.trx
+.DS_Store
+.grok/
