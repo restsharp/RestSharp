@@ -16,7 +16,7 @@ You can tell RestSharp to use a custom serializer by using the `configureSeriali
 ```csharp
 var client = new RestClient(
     options, 
-    configureSerialization: s => s.UseSerializer(() => new CustomSerializer());
+    configureSerialization: s => s.UseSerializer(() => new CustomSerializer())
 );
 ```
 

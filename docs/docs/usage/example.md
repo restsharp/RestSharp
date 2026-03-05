@@ -76,11 +76,18 @@ public class TwitterClient : ITwitterClient, IDisposable {
 It is also possible to use ASP.NET Core Options for configuring the client, instead of passing the credentials as strings. For example, we can add a class for Twitter client options, and use it in a constructor:
 
 ```csharp
-public class TwitterClientOptions(string ApiKey, string ApiSecret);
+public record TwitterClientOptions(string ApiKey, string ApiSecret);
 
 public TwitterClient(IOptions<TwitterClientOptions> options) {
-    var opt = new RestClientOptions("https://api.twitter.com/2");
-    _client = new RestClient(options);
+    var tokenRequest = new OAuth2TokenRequest(
+        "https://api.twitter.com/oauth2/token",
+        options.Value.ApiKey,
+        options.Value.ApiSecret
+    );
+    var opt = new RestClientOptions("https://api.twitter.com/2") {
+        Authenticator = new OAuth2ClientCredentialsAuthenticator(tokenRequest)
+    };
+    _client = new RestClient(opt);
 }
 ```
 

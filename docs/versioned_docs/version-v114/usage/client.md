@@ -24,7 +24,7 @@ Here's an example of how to create a client using the same base path as in the p
 ```csharp
 // Creates a client using the options object
 var options = new RestClientOptions("https://localhost:5000") {
-    MaxTimeout = 1000
+    Timeout = TimeSpan.FromSeconds(1)
 };
 var client = new RestClient(options);
 ```
@@ -47,7 +47,7 @@ Another way to create the client instance is to use a simple client factory. The
 * `RemoteCertificateValidationCallback`
 * `ClientCertificates`
 * `MaxRedirects`
-* `MaxTimeout`
+* `Timeout`
 * `UserAgent`
 * `Expect100Continue`
 
@@ -66,8 +66,8 @@ RestSharp uses `HttpClient` internally to make HTTP requests. It's possible to r
 
 One way of doing it is to use `RestClient` constructors that accept an instance of `HttpClient` or `HttpMessageHandler` as an argument. Note that in that case not all the options provided via `RestClientOptions` will be used. Here is the list of options that will work:
 
-- `BaseAddress` is be used to set the base address of the `HttpClient` instance if base address is not set there already.
-- `MaxTimeout` is used to cancel the call using the cancellation token source, so
+- `BaseUrl` will be taken from `httpClient.BaseAddress` if not set explicitly.
+- `Timeout` is used to cancel the call using the cancellation token source.
 - `UserAgent` will be added to the `RestClient.DefaultParameters` list as a HTTP header. This will be added to each request made by the `RestClient`, and the `HttpClient` instance will not be modified. This is to allow the `HttpClient` instance to be reused for scenarios where different `User-Agent` headers are required.
 - `Expect100Continue`
 

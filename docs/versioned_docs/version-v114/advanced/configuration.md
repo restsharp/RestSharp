@@ -62,8 +62,8 @@ For example:
 
 ```csharp
 var client = new RestClient(options => {
-    options.BaseUrl = new Url("https://localhost:5000/api"),
-    options.DisableCharset = true
+    options.BaseUrl = new Uri("https://localhost:5000/api");
+    options.DisableCharset = true;
 });
 ```
 
