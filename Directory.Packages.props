@@ -32,7 +32,7 @@
     <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
   </ItemGroup>
   <ItemGroup Label="Testing dependencies">
-    <PackageVersion Include="HttpMultipartParser" Version="8.4.0" />
+    <PackageVersion Include="HttpMultipartParser" Version="10.0.0" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="AutoFixture" Version="4.18.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
