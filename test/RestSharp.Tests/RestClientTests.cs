@@ -125,6 +125,42 @@ public class RestClientTests {
     }
 
     [Fact]
+    public void ConfigureDefaultParameters_sets_user_agent_using_factory_twice() {
+        // arrange
+        const string expectedAgentString = "Agent/1.0";
+
+        var clientOptions = new RestClientOptions
+        {
+            BaseUrl = new Uri("https://localhost:8888"),
+            UserAgent = expectedAgentString
+        };
+
+        // act
+        using var firstRestClient = new RestClient(clientOptions, useClientFactory: true);
+        using var secondRestClient = new RestClient(clientOptions, useClientFactory: true);
+
+        //assert
+        Assert.Single(
+            firstRestClient.DefaultParameters,
+            parameter => parameter is
+            {
+                Type: ParameterType.HttpHeader,
+                Name: KnownHeaders.UserAgent,
+                Value: expectedAgentString
+            }
+        );
+        Assert.Single(
+            secondRestClient.DefaultParameters,
+            parameter => parameter is
+            {
+                Type: ParameterType.HttpHeader,
+                Name: KnownHeaders.UserAgent,
+                Value: expectedAgentString
+            }
+        );
+    }
+
+    [Fact]
     public void Should_not_set_expect_continue_on_shared_http_client_default_headers() {
         // arrange
         var httpClient = new HttpClient();
