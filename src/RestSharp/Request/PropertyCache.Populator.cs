@@ -74,7 +74,15 @@ static partial class PropertyCache<T> where T : class {
 
             var populate = GetPopulate(getObject, property);
 
-            return new(property.Name, populate);
+            // Skip null property values so a DTO with unset optional properties doesn't throw.
+            // This matches the reflection-based AddObject.
+            return new(
+                property.Name,
+                (model, parameters) => {
+                    if (getObject(model) is null) return;
+                    populate(model, parameters);
+                }
+            );
         }
 
         static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IFormattable> getFormattable, RequestProperty requestProperty)
