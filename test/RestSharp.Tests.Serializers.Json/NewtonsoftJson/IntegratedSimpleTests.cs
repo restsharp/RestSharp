@@ -25,6 +25,14 @@ public sealed class IntegratedSimpleTests : IDisposable {
     }
 
     [Fact]
+    public void UseNewtonsoftJson_replaces_default_json_serializer() {
+        using var client = new RestClient(_server.Url!, configureSerialization: cfg => cfg.UseNewtonsoftJson());
+
+        client.Serializers.GetSerializer(DataFormat.Json).Should().BeOfType<JsonNetSerializer>();
+        client.Serializers.Serializers.Should().ContainKey(DataFormat.Xml);
+    }
+
+    [Fact]
     public async Task Should_deserialize_response() {
         var expected = Fixture.Create<TestClass>();
 
