@@ -37,7 +37,23 @@ public class SerializerConfig {
         return this;
     }
 
-    public void UseDefaultSerializers() => UseSerializer<SystemTextJsonSerializer>().UseSerializer<XmlRestSerializer>();
+    public void UseDefaultSerializers() {
+        // Register factories without constructing the default serializers. Instantiating
+        // System.Text.Json here would pull it in even when the caller immediately replaces
+        // JSON with Newtonsoft.Json (or another custom serializer).
+        Serializers[DataFormat.Json] = new(
+            DataFormat.Json,
+            ContentType.JsonAccept,
+            contentType => contentType.Value.EndsWith("json", StringComparison.InvariantCultureIgnoreCase),
+            static () => new SystemTextJsonSerializer()
+        );
+        Serializers[DataFormat.Xml] = new(
+            DataFormat.Xml,
+            ContentType.XmlAccept,
+            contentType => contentType.Value.EndsWith("xml", StringComparison.InvariantCultureIgnoreCase),
+            static () => new XmlRestSerializer()
+        );
+    }
 
     /// <summary>
     /// Replace the default serializer with a custom one
