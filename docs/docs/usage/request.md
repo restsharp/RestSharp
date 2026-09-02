@@ -239,6 +239,10 @@ There is a `CookieContainer` instance on the request level. You can either assig
 
 If your use case requires sharing cookies between requests made by the client instance, you can use the client-level `CookieContainer`, which you must provide as the options' property. You can add cookies to the container using the container API. No response cookies, however, would be auto-added to the container, but you can do it in code by getting cookies from the `Cookies` property of the response and adding them to the client-level container available via `IRestClient.Options.CookieContainer` property.
 
+:::note iOS and Mac Catalyst
+On iOS and Mac Catalyst, `NSURLSession` intercepts `Set-Cookie` headers before .NET can read them, so `RestResponse.Cookies` will be empty even on a successful request. See [iOS / MAUI Cookie Handling](../advanced/ios-maui-cookies.md) for the fix.
+:::
+
 ## Request Body
 
 RestSharp supports multiple ways to add a request body:
