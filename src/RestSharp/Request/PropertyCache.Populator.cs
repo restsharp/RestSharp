@@ -72,73 +72,82 @@ static partial class PropertyCache<T> where T : class {
 
             var getObject = Expression.Lambda<Func<T, object>>(convertGetterReturnToObject, entity).Compile();
 
-            var populate = GetPopulate(getObject, property);
+            var populate = GetPopulate(property);
 
-            return new(property.Name, populate);
+            // Skip null property values so a DTO with unset optional properties doesn't throw.
+            // This matches the reflection-based AddObject.
+            return new(
+                property.Name,
+                (model, parameters) => {
+                    var value = getObject(model);
+                    if (value is null) return;
+                    populate(value, parameters);
+                }
+            );
         }
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IFormattable> getFormattable, RequestProperty requestProperty)
-            => (model, parameters) => Populate(getFormattable(model), requestProperty, parameters);
+        static Action<object, ICollection<Parameter>> GetPopulate(Func<object, IFormattable> getFormattable, RequestProperty requestProperty)
+            => (value, parameters) => Populate(getFormattable(value), requestProperty, parameters);
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IConvertible> getConvertible, RequestProperty requestProperty)
-            => (model, parameters) => Populate(getConvertible(model), requestProperty, parameters);
+        static Action<object, ICollection<Parameter>> GetPopulate(Func<object, IConvertible> getConvertible, RequestProperty requestProperty)
+            => (value, parameters) => Populate(getConvertible(value), requestProperty, parameters);
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IEnumerable<IFormattable>> getFormattables, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulate(Func<object, IEnumerable<IFormattable>> getFormattables, RequestProperty requestProperty)
             => requestProperty.ArrayQueryType switch {
-                RequestArrayQueryType.CommaSeparated => (model, parameters) => PopulateCsv(getFormattables(model), requestProperty, parameters),
+                RequestArrayQueryType.CommaSeparated => (value, parameters) => PopulateCsv(getFormattables(value), requestProperty, parameters),
                 RequestArrayQueryType.ArrayParameters => GetPopulateArray(getFormattables, requestProperty),
                 _ => (_, _) => { }
             }; // Here we avoid the cost of checking if the format is CSV or Array every time by caching the result of this evaluation.
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IEnumerable<IConvertible>> getConvertibles, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulate(Func<object, IEnumerable<IConvertible>> getConvertibles, RequestProperty requestProperty)
             => requestProperty.ArrayQueryType switch {
-                RequestArrayQueryType.CommaSeparated => (entity, parameters) => PopulateCsv(getConvertibles(entity), requestProperty, parameters),
+                RequestArrayQueryType.CommaSeparated => (value, parameters) => PopulateCsv(getConvertibles(value), requestProperty, parameters),
                 RequestArrayQueryType.ArrayParameters => GetPopulateArray(getConvertibles, requestProperty),
                 _ => (_, _) => { }
             }; // Here we avoid the cost of checking if the format is CSV or Array every time by caching the result of this evaluation.
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulate(Func<object, IEnumerable> getEnumerable, RequestProperty requestProperty)
             => requestProperty.ArrayQueryType switch {
-                RequestArrayQueryType.CommaSeparated => (entity, parameters) => PopulateCsv(getEnumerable(entity), requestProperty, parameters),
+                RequestArrayQueryType.CommaSeparated => (value, parameters) => PopulateCsv(getEnumerable(value), requestProperty, parameters),
                 RequestArrayQueryType.ArrayParameters => GetPopulateArray(getEnumerable, requestProperty),
                 _ => (_, _) => { }
             }; // Here we avoid the cost of checking if the format is CSV or Array every time by caching the result of this evaluation.
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, object> getObject, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulate(Func<object, object> getObject, RequestProperty requestProperty)
             => requestProperty.ArrayQueryType switch {
-                RequestArrayQueryType.CommaSeparated => (entity, parameters) => PopulateCsv(getObject(entity), requestProperty, parameters),
-                RequestArrayQueryType.ArrayParameters => (entity, parameters) => PopulateArray(getObject(entity), requestProperty, parameters),
+                RequestArrayQueryType.CommaSeparated => (value, parameters) => PopulateCsv(getObject(value), requestProperty, parameters),
+                RequestArrayQueryType.ArrayParameters => (value, parameters) => PopulateArray(getObject(value), requestProperty, parameters),
                 _ => (_, _) => { }
             }; // Here we avoid the cost of checking if the format is CSV or Array every time by caching the result of this evaluation.
 
-        static Action<T, ICollection<Parameter>> GetPopulate(Func<T, object> getObject, PropertyInfo property) {
+        static Action<object, ICollection<Parameter>> GetPopulate(PropertyInfo property) {
             var requestProperty = RequestProperty.From(property);
 
             // We need to use different conversion mechanisms for each return type. Simply calling `.ToString()`
             // on every returned object would not take into account special cases like custom formatting, enumeration etc.
-            // Unchecked casts here are safe because we know the return type of `getObject` is boxed if needed.
+            // Unchecked casts here are safe because the property value is boxed if needed.
             return property.PropertyType switch {
                 var formattableType when typeof(IFormattable).IsAssignableFrom(formattableType) => GetPopulate(
-                    entity => Unsafe.As<IFormattable>(getObject(entity)),
+                    value => Unsafe.As<IFormattable>(value),
                     requestProperty
                 ),
                 var convertibleType when typeof(IConvertible).IsAssignableFrom(convertibleType) => GetPopulate(
-                    entity => Unsafe.As<IConvertible>(getObject(entity)),
+                    value => Unsafe.As<IConvertible>(value),
                     requestProperty
                 ),
                 var enumerableType when typeof(IEnumerable).IsAssignableFrom(enumerableType) => GetPopulateUnknown(
-                    entity => Unsafe.As<IEnumerable>(getObject(entity)),
+                    value => Unsafe.As<IEnumerable>(value),
                     requestProperty
                 ),
                 // At this point we're not necessarily sure we can just treat this as a bare object
                 // and use its type converter. Even though the property itself returns an object,
                 // the object returned itself may need to be treated in a special way, so we check
                 // it as we go.
-                _ => GetPopulate(getObject, requestProperty)
+                _ => GetPopulate(static value => value, requestProperty)
             };
         }
 
-        static Action<T, ICollection<Parameter>> GetPopulateUnknown(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty) {
+        static Action<object, ICollection<Parameter>> GetPopulateUnknown(Func<object, IEnumerable> getEnumerable, RequestProperty requestProperty) {
             if (GetSingleEnumeratedTypeOrNull(requestProperty.Type) is not { } enumeratedType) {
                 // Means we're dealing with a legacy, untyped enumerable instance.
                 // We can just convert it into an enumerable of objects and delegate
@@ -162,10 +171,10 @@ static partial class PropertyCache<T> where T : class {
             };
         }
 
-        static Action<T, ICollection<Parameter>> GetPopulateKnown(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulateKnown(Func<object, IEnumerable> getEnumerable, RequestProperty requestProperty)
             => requestProperty.ArrayQueryType switch {
-                RequestArrayQueryType.CommaSeparated => (entity, parameters) => PopulateCsvUnknown(
-                    getEnumerable(entity),
+                RequestArrayQueryType.CommaSeparated => (value, parameters) => PopulateCsvUnknown(
+                    getEnumerable(value),
                     requestProperty,
                     parameters
                 ),
@@ -173,26 +182,32 @@ static partial class PropertyCache<T> where T : class {
                 _ => (_, _) => { }
             }; // Here we avoid the cost of checking if the format is CSV or Array every time by caching the result of this evaluation.
 
-        static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable<IFormattable>> getFormattables, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulateArray(
+            Func<object, IEnumerable<IFormattable>> getFormattables,
+            RequestProperty requestProperty
+        )
             => GetPopulateArray(getFormattables, formattable => GetStringValue(formattable, requestProperty), requestProperty);
 
-        static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable<IConvertible>> getConvertibles, RequestProperty requestProperty)
+        static Action<object, ICollection<Parameter>> GetPopulateArray(
+            Func<object, IEnumerable<IConvertible>> getConvertibles,
+            RequestProperty requestProperty
+        )
             => GetPopulateArray(getConvertibles, GetStringValue, requestProperty);
 
-        static Action<T, ICollection<Parameter>> GetPopulateArray<V>(
-            Func<T, IEnumerable<V>> getEnumerable,
+        static Action<object, ICollection<Parameter>> GetPopulateArray<V>(
+            Func<object, IEnumerable<V>> getEnumerable,
             Func<V, string?> toString,
             RequestProperty requestProperty
         ) where V : class {
             // We do this to avoid recreating request property on each iteration.
             var newRequestProperty = requestProperty with { Name = $"{requestProperty.Name}[]" };
-            return (entity, parameters) => PopulateArray(getEnumerable(entity), toString, newRequestProperty, parameters);
+            return (value, parameters) => PopulateArray(getEnumerable(value), toString, newRequestProperty, parameters);
         }
 
-        static Action<T, ICollection<Parameter>> GetPopulateArray(Func<T, IEnumerable> getEnumerable, RequestProperty requestProperty) {
+        static Action<object, ICollection<Parameter>> GetPopulateArray(Func<object, IEnumerable> getEnumerable, RequestProperty requestProperty) {
             // We do this to avoid recreating request property on each iteration.
             var newRequestProperty = requestProperty with { Name = $"{requestProperty.Name}[]" };
-            return (entity, parameters) => PopulateArray(getEnumerable(entity), newRequestProperty, parameters);
+            return (value, parameters) => PopulateArray(getEnumerable(value), newRequestProperty, parameters);
         }
 
         static void Populate(IFormattable formattable, RequestProperty requestProperty, ICollection<Parameter> parameters)
@@ -393,8 +408,8 @@ static partial class PropertyCache<T> where T : class {
                 _ => GetStringValueKnown(@object)
             };
 
-        static Func<T, IEnumerable<V>> GetEnumerableOf<V>(Func<T, IEnumerable> getEnumerable, Type enumeratedType) where V : class
-            => enumeratedType.IsValueType ? entity => getEnumerable(entity).Cast<V>() : entity => Unsafe.As<IEnumerable<V>>(getEnumerable(entity));
+        static Func<object, IEnumerable<V>> GetEnumerableOf<V>(Func<object, IEnumerable> getEnumerable, Type enumeratedType) where V : class
+            => enumeratedType.IsValueType ? value => getEnumerable(value).Cast<V>() : value => Unsafe.As<IEnumerable<V>>(getEnumerable(value));
 
         static Type? GetSingleEnumeratedTypeOrNull(Type enumerableType) {
             // Get all IEnumerable<> interfaces this type implements.
