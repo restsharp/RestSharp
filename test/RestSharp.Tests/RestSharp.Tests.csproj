@@ -29,6 +29,9 @@
         <None Update="SampleData\underscore_prefix.json" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
     <ItemGroup>
+      <Compile Update="Parameters/ObjectParameterTests.NullData.cs">
+        <DependentUpon>ObjectParameterTests.cs</DependentUpon>
+      </Compile>
       <Compile Update="UrlBuilderTests.Get.cs">
         <DependentUpon>UrlBuilderTests.cs</DependentUpon>
       </Compile>

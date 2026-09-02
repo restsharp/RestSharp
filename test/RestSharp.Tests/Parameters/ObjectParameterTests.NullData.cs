@@ -51,11 +51,34 @@ public partial class ObjectParameterTests {
         objStatic.Parameters.Should().BeEquivalentTo(reflection.Parameters);
     }
 
+    [Fact]
+    public void AddObjectStatic_reads_each_property_once() {
+        var data = new ChangingData();
+
+        var request = new RestRequest().AddObjectStatic(data);
+
+        request
+            .Parameters
+            .Should()
+            .ContainSingle()
+            .Which
+            .Should()
+            .BeEquivalentTo(new GetOrPostParameter(nameof(ChangingData.Value), "set"));
+        data.ReadCount.Should().Be(1);
+    }
+
     class NullableData {
         public string Name { get; set; }
         public int? Age { get; set; }
         public Uri Link { get; set; }
         public List<int> Values { get; set; }
         public string Kind { get; set; } = "set";
+    }
+
+    class ChangingData {
+        int _readCount;
+
+        public string Value => ++_readCount == 1 ? "set" : null;
+        internal int ReadCount => _readCount;
     }
 }
