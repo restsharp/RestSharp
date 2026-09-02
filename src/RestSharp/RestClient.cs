@@ -76,6 +76,8 @@ public partial class RestClient : IRestClient {
         ConfigureSerializers(configureSerialization);
         Options           = new(options);
         DefaultParameters = new(Options);
+        // Must run per RestClient instance, not inside GetClient: the factory may return a cached HttpClient without invoking GetClient
+        ConfigureDefaultParameters(options);
 
         if (useClientFactory) {
             _disposeHttpClient = false;
@@ -97,7 +99,6 @@ public partial class RestClient : IRestClient {
             // We will use Options.Timeout in ExecuteAsInternalAsync method
             httpClient.Timeout = Timeout.InfiniteTimeSpan;
 
-            ConfigureDefaultParameters(options);
             configureDefaultHeaders?.Invoke(httpClient.DefaultRequestHeaders);
             return httpClient;
         }
@@ -185,10 +186,7 @@ public partial class RestClient : IRestClient {
         var opt = options ?? new RestClientOptions();
         Options           = new(opt);
         DefaultParameters = new(Options);
-
-        if (options != null) {
-            ConfigureDefaultParameters(options);
-        }
+        ConfigureDefaultParameters(opt);
     }
 
     /// <summary>

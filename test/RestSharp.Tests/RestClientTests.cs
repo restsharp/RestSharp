@@ -125,6 +125,47 @@ public class RestClientTests {
     }
 
     [Fact]
+    public void ConfigureDefaultParameters_sets_user_agent_using_factory_twice() {
+        // arrange
+        const string expectedAgentString = "Agent/1.0";
+
+        // The base URL is unique to this test to keep the process-wide factory cache isolated from other tests
+        var clientOptions = new RestClientOptions { BaseUrl = new Uri("https://localhost:8888"), UserAgent = expectedAgentString };
+
+        // act
+        using var firstRestClient  = new RestClient(clientOptions, useClientFactory: true);
+        using var secondRestClient = new RestClient(clientOptions, useClientFactory: true);
+
+        //assert
+        secondRestClient.HttpClient.Should().BeSameAs(firstRestClient.HttpClient, "the regression only manifests on a factory cache hit");
+        AssertHasUserAgent(firstRestClient);
+        AssertHasUserAgent(secondRestClient);
+        return;
+
+        static void AssertHasUserAgent(RestClient restClient)
+            => Assert.Single(
+                restClient.DefaultParameters,
+                parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent, Value: expectedAgentString }
+            );
+    }
+
+    [Fact]
+    public void ConfigureDefaultParameters_sets_user_agent_given_httpClient_and_null_options() {
+        // arrange
+        var httpClient = new HttpClient();
+
+        // act
+        using var restClient = new RestClient(httpClient, options: null);
+
+        //assert
+        Assert.Single(
+            restClient.DefaultParameters,
+            parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent, Value: string valueAsString } &&
+                valueAsString == new RestClientOptions().UserAgent
+        );
+    }
+
+    [Fact]
     public void Should_not_set_expect_continue_on_shared_http_client_default_headers() {
         // arrange
         var httpClient = new HttpClient();
