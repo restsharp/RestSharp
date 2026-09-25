@@ -37,7 +37,21 @@ public class SerializerConfig {
         return this;
     }
 
-    public void UseDefaultSerializers() => UseSerializer<SystemTextJsonSerializer>().UseSerializer<XmlRestSerializer>();
+    public void UseDefaultSerializers() {
+        // Defer construction so custom serializers can replace defaults without loading their dependencies.
+        Serializers[DataFormat.Json] = new(
+            DataFormat.Json,
+            ContentType.JsonAccept,
+            ContentType.SupportsJson,
+            static () => new SystemTextJsonSerializer()
+        );
+        Serializers[DataFormat.Xml] = new(
+            DataFormat.Xml,
+            ContentType.XmlAccept,
+            ContentType.SupportsXml,
+            static () => new XmlRestSerializer()
+        );
+    }
 
     /// <summary>
     /// Replace the default serializer with a custom one

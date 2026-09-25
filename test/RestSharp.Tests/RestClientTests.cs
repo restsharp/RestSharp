@@ -71,6 +71,21 @@ public class RestClientTests {
         client.Serializers.GetSerializer(DataFormat.Json).Should().NotBeNull();
     }
 
+    [Theory]
+    [InlineData(DataFormat.Json)]
+    [InlineData(DataFormat.Xml)]
+    public void Default_registration_matches_serializer_metadata_and_creates_fresh_instances(DataFormat format) {
+        using var client = new RestClient();
+        var record       = client.Serializers.Serializers[format];
+        var first        = client.Serializers.GetSerializer(format);
+        var second       = client.Serializers.GetSerializer(format);
+
+        record.DataFormat.Should().Be(first.DataFormat);
+        record.AcceptedContentTypes.Should().Equal(first.AcceptedContentTypes);
+        record.SupportsContentType.Should().BeSameAs(first.SupportsContentType);
+        second.Should().NotBeSameAs(first);
+    }
+
     [Fact]
     public void Should_reuse_httpClient_instance() {
         using var client1 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);

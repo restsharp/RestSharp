@@ -42,5 +42,5 @@ public class SystemTextJsonSerializer : IRestSerializer, ISerializer, IDeseriali
     public IDeserializer Deserializer         => this;
     public DataFormat    DataFormat           => DataFormat.Json;
     public string[]      AcceptedContentTypes => ContentType.JsonAccept;
-    public SupportsContentType SupportsContentType  => contentType => contentType.Value.EndsWith("json", StringComparison.InvariantCultureIgnoreCase);
+    public SupportsContentType SupportsContentType => ContentType.SupportsJson;
 }

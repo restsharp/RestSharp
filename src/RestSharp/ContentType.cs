@@ -63,6 +63,9 @@ public class ContentType : IEquatable<ContentType> {
 
     public static readonly string[] XmlAccept = [Xml, "text/xml"];
 
+    internal static readonly SupportsContentType SupportsJson = contentType => contentType.Value.EndsWith("json", StringComparison.InvariantCultureIgnoreCase);
+    internal static readonly SupportsContentType SupportsXml  = contentType => contentType.Value.EndsWith("xml", StringComparison.InvariantCultureIgnoreCase);
+
     readonly string _value;
 
     public bool Equals(ContentType? other) {
