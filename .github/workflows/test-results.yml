@@ -21,7 +21,7 @@ jobs:
     steps:
       -  
         name: Download and Extract Artifacts
-        uses: dawidd6/action-download-artifact@b6e2e70617bc3265edd6dab6c906732b2f1ae151
+        uses: dawidd6/action-download-artifact@634d83b91986fcec9be314054943fa5c976aeb0e
         with:
           run_id: ${{ github.event.workflow_run.id }}
           path: artifacts
