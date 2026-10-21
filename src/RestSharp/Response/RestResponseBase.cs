@@ -112,6 +112,11 @@ public abstract class RestResponseBase {
     public IReadOnlyCollection<HeaderParameter>? ContentHeaders { get; set; }
 
     /// <summary>
+    /// Trailer headers returned by server after the response content
+    /// </summary>
+    public IReadOnlyCollection<HeaderParameter> TrailingHeaders { get; set; } = Array.Empty<HeaderParameter>();
+
+    /// <summary>
     /// Status of the request. Will return Error for transport errors.
     /// HTTP errors will still return ResponseStatus.Completed, check StatusCode instead
     /// </summary>

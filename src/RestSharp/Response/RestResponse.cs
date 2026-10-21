@@ -73,6 +73,9 @@ public class RestResponse(RestRequest request) : RestResponseBase(request) {
                 Server              = httpResponse.Headers.Server.ToString(),
                 StatusCode          = httpResponse.StatusCode,
                 StatusDescription   = httpResponse.ReasonPhrase,
+#if NET
+                TrailingHeaders     = httpResponse.TrailingHeaders.GetHeaderParameters(),
+#endif
                 Version             = httpResponse.RequestMessage?.Version
             };
         }
