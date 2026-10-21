@@ -1,0 +1,62 @@
+---
+sidebar_position: 6
+title: Handling responses
+---
+
+All `Execute{Method}Async` functions return an instance of `RestResponse`. Similarly, `Execute{Method}Async<T>` return a generic instance of `RestResponse<T>` where `T` is the response object type.
+
+Response object contains the following properties:
+
+| Property                 | Type                                                | Description                                                                              |
+|--------------------------|-----------------------------------------------------|------------------------------------------------------------------------------------------|
+| `Request`                | `RestRequest`                                       | Request instance that was used to get the response.                                      |
+| `ContentType`            | `string?`                                           | Response content type. `Null` if response has no content.                                |
+| `ContentLength`          | `long?`                                             | Response content length. `Null` if response has no content.                              |
+| `ContentEncoding`        | `ICollection<string>`                               | Content encoding collection. Empty if response has no content.                           |
+| `Content`                | `string?`                                           | Response content as string. `Null` if response has no content.                           |
+| `IsSuccessfulStatusCode` | `bool`                                              | Indicates if response was successful, so no errors were reported by the server.          |
+| `ResponseStatus`         | `None`, `Completed`, `Error`, `TimedOut`, `Aborted` | Response completion status. Note that completed responses might still return errors.     |
+| `IsSuccessful`           | `bool`                                              | `True` when `IsSuccessfulStatusCode` is `true` and `ResponseStatus` is `Completed`.      |
+| `StatusDescription`      | `string?`                                           | Response status description, if available.                                               |
+| `RawBytes`               | `byte[]?`                                           | Response content as byte array. `Null` if response has no content.                       |
+| `ResponseUri`            | `Uri?`                                              | URI of the response, which might be different from request URI in case of redirects.     |
+| `Server`                 | `string?`                                           | Server header value of the response.                                                     |
+| `Cookies`                | `CookieCollection?`                                 | Collection of cookies received with the response, if any.                                |
+| `Headers`                | Collection of `HeaderParameter`                     | Response headers.                                                                        |
+| `ContentHeaders`         | Collection of `HeaderParameter`                     | Response content headers.                                                                |
+| `TrailingHeaders`        | Collection of `HeaderParameter`                     | Response trailers (headers sent after the body). Populated on .NET 8+ only, empty otherwise. |
+| `ErrorMessage`           | `string?`                                           | Transport or another non-HTTP error generated while attempting request.                  |
+| `ErrorException`         | `Exception?`                                        | Exception thrown when executing the request, if any.                                     |
+| `Version`                | `Version?`                                          | HTTP protocol version of the request.                                                    |
+| `RootElement`            | `string?`                                           | Root element of the serialized response content, only works if deserializer supports it. |
+| `MergedParameters`       | `ParametersCollection`                              | Combined view of request parameters and client default parameters at execution time.     |
+
+### Merged parameters
+
+The `MergedParameters` property provides a combined view of the request's own parameters and the client's [default parameters](request.md#request-headers) as they were at execution time. This is useful for logging or debugging the full set of parameters that were applied to a request, since `Request.Parameters` only contains the parameters added directly to the request.
+
+```csharp
+var response = await client.ExecuteAsync(request);
+
+foreach (var param in response.MergedParameters) {
+    Console.WriteLine($"{param.Name} = {param.Value} ({param.Type})");
+}
+```
+
+### Trailing headers
+
+Some servers send additional header fields after the response body, known as trailers (see [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#name-trailer-fields)). They are typically used for message integrity checks, signatures, or status information that is only known once the body has been generated. RestSharp exposes them via the `TrailingHeaders` property, separately from `Headers` and `ContentHeaders`:
+
+```csharp
+var response = await client.ExecuteAsync(request);
+
+var digest = response.TrailingHeaders.FirstOrDefault(h => h.Name == "Digest")?.Value;
+```
+
+Trailers are populated on .NET 8 and later, after the response content has been fully read. On .NET Framework and .NET Standard targets, `HttpClient` does not expose trailers, so the collection is always empty. Trailers are also not available when streaming the response with `DownloadStreamAsync`, since the body is not read by RestSharp in that case. As with every other response property, `TrailingHeaders` is only filled in by RestSharp's default response processing: if you supply an [`AdvancedResponseWriter`](../advanced/configuration.md), your writer receives the raw `HttpResponseMessage` and must copy its `TrailingHeaders` itself.
+
+In addition, `RestResponse<T>` has one additional property:
+
+| Property | Type | Description                                                                                                                                               |
+|----------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Data`   | `T?` | Deserialized response object. `Null` if there's no content in the response, deserializer failed to understand the response content, or if request failed. |
