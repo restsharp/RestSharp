@@ -53,7 +53,7 @@ var response = await client.ExecuteAsync(request);
 var digest = response.TrailingHeaders.FirstOrDefault(h => h.Name == "Digest")?.Value;
 ```
 
-Trailers are populated on .NET 8 and later, after the response content has been fully read. On .NET Framework and .NET Standard targets, `HttpClient` does not expose trailers, so the collection is always empty. Trailers are also not available when streaming the response with `DownloadStreamAsync`, since the body is not read by RestSharp in that case.
+Trailers are populated on .NET 8 and later, after the response content has been fully read. On .NET Framework and .NET Standard targets, `HttpClient` does not expose trailers, so the collection is always empty. Trailers are also not available when streaming the response with `DownloadStreamAsync`, since the body is not read by RestSharp in that case. As with every other response property, `TrailingHeaders` is only filled in by RestSharp's default response processing: if you supply an [`AdvancedResponseWriter`](../advanced/configuration.md), your writer receives the raw `HttpResponseMessage` and must copy its `TrailingHeaders` itself.
 
 In addition, `RestResponse<T>` has one additional property:
 
