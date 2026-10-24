@@ -200,7 +200,7 @@ If setting these options to non-default values produce no desirable effect, chec
 :::warning
 Brotli (`DecompressionMethods.Brotli`) is excluded from the default `AutomaticDecompression` value because the Brotli decoder bundled with the .NET runtime is affected by [CVE-2026-111497](https://nvd.nist.gov/vuln/detail/CVE-2026-111497), an out-of-bounds write that a malicious server can trigger with a crafted `Content-Encoding: br` response. The decoder is part of the runtime, not of RestSharp, so RestSharp cannot fix it; it can only avoid reaching it.
 
-Servers that support Brotli also support gzip, so responses arrive gzip-encoded instead. If you need Brotli and your runtime includes the fix, opt in explicitly:
+In practice servers that support Brotli also support gzip and honour `Accept-Encoding`, so responses arrive gzip-encoded instead. A server that sends `Content-Encoding: br` regardless of what the client advertised is not decoded by default: `RawBytes` holds the compressed body, `Content` is not meaningful, and `RestResponse.ContentEncoding` reports `br`. If you need Brotli and your runtime includes the fix, opt in explicitly:
 
 ```csharp
 var client = new RestClient(new RestClientOptions("https://api.example.com") {

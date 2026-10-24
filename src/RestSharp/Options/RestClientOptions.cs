@@ -106,6 +106,7 @@ public partial class RestClientOptions {
     /// CVE-2026-111497, an out-of-bounds write reachable from a crafted <c>Content-Encoding: br</c> response,
     /// and no fixed runtime has shipped at the time of this release. Set this property to
     /// <see cref="DecompressionMethods.All"/> to opt in once your runtime is patched.
+    /// A <c>br</c> response from a server that ignores <c>Accept-Encoding</c> is returned undecoded.
     /// </remarks>
 #if NET
     [UnsupportedOSPlatform("browser")]
