@@ -10,6 +10,12 @@ For release notes of previous versions, please check the [Releases page](https:/
 
 Changes between major versions are documented in the documentation for each version on this website.
 
+## v114.2
+
+### Behavior changes
+
+* **Brotli removed from the default `AutomaticDecompression`** — `RestClientOptions.AutomaticDecompression` now defaults to `GZip | Deflate` on .NET (previously `All`). The Brotli decoder bundled with the .NET runtime is affected by [CVE-2026-111497](https://nvd.nist.gov/vuln/detail/CVE-2026-111497), reachable from a crafted `Content-Encoding: br` response, and no patched runtime is available yet. Clients built with default options no longer advertise `br` and no longer route responses through that decoder. Set `AutomaticDecompression = DecompressionMethods.All` to restore the previous behavior. The .NET Framework default (`GZip`) is unchanged. See [Brotli decompression](advanced/configuration.md#brotli-decompression).
+
 ## v114.1
 
 ### New features

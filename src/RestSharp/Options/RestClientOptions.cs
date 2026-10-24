@@ -98,11 +98,18 @@ public partial class RestClientOptions {
     public bool DisableCharset { get; set; }
 
     /// <summary>
-    /// Set the decompression method to use when making requests
+    /// Set the decompression methods the client advertises in <c>Accept-Encoding</c> and applies to responses.
     /// </summary>
+    /// <remarks>
+    /// The default is <c>GZip | Deflate</c> on .NET and <c>GZip</c> on .NET Framework.
+    /// Brotli is not enabled by default: the Brotli decoder bundled with the .NET runtime is affected by
+    /// CVE-2026-111497, an out-of-bounds write reachable from a crafted <c>Content-Encoding: br</c> response,
+    /// and no fixed runtime has shipped at the time of this release. Set this property to
+    /// <see cref="DecompressionMethods.All"/> to opt in once your runtime is patched.
+    /// </remarks>
 #if NET
     [UnsupportedOSPlatform("browser")]
-    public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.All;
+    public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 #else
     public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip;
 #endif
