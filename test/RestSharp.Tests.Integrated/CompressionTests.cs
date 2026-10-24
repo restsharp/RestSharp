@@ -68,4 +68,43 @@ public class CompressionTests {
 
         response.Content.Should().Be(value);
     }
+
+#if NET8_0_OR_GREATER
+    // Brotli is excluded from the default AutomaticDecompression because the Brotli decoder
+    // bundled with the .NET runtime is affected by CVE-2026-111497. See docs/advanced/configuration.md.
+    [Fact]
+    public async Task Default_Client_Does_Not_Advertise_Or_Decode_Brotli() {
+        const string value  = "This is some brotli content";
+        using var    server = WireMockServer.Start();
+
+        var body = await GetBody(s => new BrotliStream(s, CompressionMode.Compress, true), value);
+        ConfigureServer(server, body, "br");
+
+        using var client   = new RestClient(server.Url!);
+        var       request  = new RestRequest("");
+        var       response = await client.ExecuteAsync(request);
+
+        var acceptEncoding = server.LogEntries.Single().RequestMessage.Headers!["Accept-Encoding"].ToString();
+        acceptEncoding.Should().NotContain("br");
+
+        // The body is returned as-is: the Brotli decoder is never invoked
+        response.RawBytes.Should().Equal(body);
+        response.Content.Should().NotBe(value);
+    }
+
+    [Fact]
+    public async Task Can_Handle_Brotli_Compressed_Content_When_Opted_In() {
+        const string value  = "This is some brotli content";
+        using var    server = WireMockServer.Start();
+
+        var body = await GetBody(s => new BrotliStream(s, CompressionMode.Compress, true), value);
+        ConfigureServer(server, body, "br");
+
+        using var client   = new RestClient(server.Url!, options => options.AutomaticDecompression = DecompressionMethods.All);
+        var       request  = new RestRequest("");
+        var       response = await client.ExecuteAsync(request);
+
+        response.Content.Should().Be(value);
+    }
+#endif
 }

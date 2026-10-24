@@ -160,7 +160,7 @@ RestSharp allows configuring `RestClient` using client options, as mentioned at 
 | `Credentials`                                | Instance of `ICredentials` used for NTLM or Kerberos authentication. Not supported in browsers.                                                                                                                                                                                                   |
 | `UseDefaultCredentials`                      | Whether to use default OS credentials for NTLM or Kerberos authentication. Not supported in browsers.                                                                                                                                                                                             |
 | `DisableCharset`                             | When set to `true`, the `Content-Type` header won't have the `charset` portion. Some older web servers don't understand the `charset` portion in the header and fail to process the request.                                                                                                      |
-| `AutomaticDecompression`                     | Allows customizing supported decompression methods. Default is `All` except for .NET Framework that only support `GZip`. Not supported in browsers.                                                                                                                                               |
+| `AutomaticDecompression`                     | Allows customizing supported decompression methods. Default is `GZip \| Deflate` on .NET and `GZip` on .NET Framework. Brotli is not enabled by default, see the [note below](#brotli-decompression). Not supported in browsers.                                                                |
 | `MaxRedirects`                               | The number of redirects to follow. Delegates to `RedirectOptions.MaxRedirects`. Default is 50.                                                                                                                                                                                                    |
 | `ClientCertificates`                         | A collection of X.509 client certificates to be used for authentication. Not supported in browsers.                                                                                                                                                                                               |
 | `Proxy`                                      | Can be used if the client needs to use an explicit, non-default proxy. Not supported in browsers, on iOS and tvOS.                                                                                                                                                                                |
@@ -193,6 +193,20 @@ Some of the options are used by RestSharp code, but some are only used to config
 
 :::note
 If setting these options to non-default values produce no desirable effect, check if your framework and platform supports them. RestSharp doesn't change behaviour based on values of those options.
+:::
+
+### Brotli decompression
+
+:::warning
+Brotli (`DecompressionMethods.Brotli`) is excluded from the default `AutomaticDecompression` value because the Brotli decoder bundled with the .NET runtime is affected by [CVE-2026-111497](https://nvd.nist.gov/vuln/detail/CVE-2026-111497), an out-of-bounds write that a malicious server can trigger with a crafted `Content-Encoding: br` response. The decoder is part of the runtime, not of RestSharp, so RestSharp cannot fix it; it can only avoid reaching it.
+
+In practice servers that support Brotli also support gzip and honour `Accept-Encoding`, so responses arrive gzip-encoded instead. A server that sends `Content-Encoding: br` regardless of what the client advertised is not decoded by default: `RawBytes` holds the compressed body, `Content` is not meaningful, and `RestResponse.ContentEncoding` reports `br`. If you need Brotli and your runtime includes the fix, opt in explicitly:
+
+```csharp
+var client = new RestClient(new RestClientOptions("https://api.example.com") {
+    AutomaticDecompression = DecompressionMethods.All
+});
+```
 :::
 
 The `IRestClient` interface exposes the `Options` property, so any option can be inspected at runtime. However, RestSharp converts the options object provided to the client constructor to an immutable object. Therefore, no client option can be changed after the client is instantiated. It's because changing client options at runtime can produce issues in concurrent environments, effectively rendering the client as not thread-safe. Apart from that, changing the options that are used to create the message handler would require re-creating the handler, and also `HttpClient`, which should not be done at runtime.
