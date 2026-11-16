@@ -10,6 +10,25 @@ For release notes of previous versions, please check the [Releases page](https:/
 
 Changes between major versions are documented in the documentation for each version on this website.
 
+## v114.1
+
+### New features
+
+* **`TrailingHeaders` on `RestResponse`** — HTTP response trailers (RFC 9110 trailer fields) are now exposed as a separate `TrailingHeaders` collection, kept apart from `Headers` and `ContentHeaders`. Trailers are populated on .NET 8 and later after the response content has been read; on .NET Framework and .NET Standard the collection is always empty. ([#2414](https://github.com/restsharp/RestSharp/pull/2414))
+
+### Behavior changes
+
+* **Default serializers are registered lazily** — `RestClient` no longer instantiates the built-in `System.Text.Json` serializer before the `configureSerialization` callback runs. Replacing the JSON serializer (for example with `UseNewtonsoftJson()`) now avoids loading `System.Text.Json` at all, which fixes assembly binding failures in .NET Framework plugin scenarios. ([#2403](https://github.com/restsharp/RestSharp/pull/2403))
+* **Synchronous `Execute` methods run on the thread pool** — the sync-over-async bridge now uses `Task.Run` and `GetAwaiter().GetResult()` instead of a custom synchronization context, preventing deadlocks when calling the synchronous API from a UI or ASP.NET synchronization context. ([#2371](https://github.com/restsharp/RestSharp/pull/2371))
+
+### Bug fixes
+
+* Fix `AddObjectStatic` throwing `NullReferenceException` when any property of the object is `null`. Null properties are now skipped, consistent with `AddObject`. ([#2401](https://github.com/restsharp/RestSharp/pull/2401))
+
+### Dependencies
+
+* `RestSharp.Serializers.CsvHelper` now depends on CsvHelper 33.1.0. ([#2378](https://github.com/restsharp/RestSharp/pull/2378))
+
 ## v114.0
 
 ### Breaking changes

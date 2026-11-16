@@ -24,7 +24,7 @@ pnpm build
   - `docs/docs/advanced/` — Advanced topics (authenticators, configuration, serialization, interceptors, error handling)
   - `docs/docs/intro.md` — Getting started page
   - `docs/docs/changelog.md` — Release changelog
-- `docs/versioned_docs/` — Frozen snapshots for past versions (v110–v113)
+- `docs/versioned_docs/` — Frozen snapshots for past versions (v110–v114.1)
 - `docs/versioned_sidebars/` — Sidebar configs for each frozen version
 - `docs/versions.json` — List of released doc versions
 - `docs/src/pages/` — Standalone pages (migration guide, support)

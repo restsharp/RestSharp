@@ -24,6 +24,7 @@ Response object contains the following properties:
 | `Cookies`                | `CookieCollection?`                                 | Collection of cookies received with the response, if any.                                |
 | `Headers`                | Collection of `HeaderParameter`                     | Response headers.                                                                        |
 | `ContentHeaders`         | Collection of `HeaderParameter`                     | Response content headers.                                                                |
+| `TrailingHeaders`        | Collection of `HeaderParameter`                     | Response trailers (headers sent after the body). Populated on .NET 8+ only, empty otherwise. |
 | `ErrorMessage`           | `string?`                                           | Transport or another non-HTTP error generated while attempting request.                  |
 | `ErrorException`         | `Exception?`                                        | Exception thrown when executing the request, if any.                                     |
 | `Version`                | `Version?`                                          | HTTP protocol version of the request.                                                    |
@@ -41,6 +42,18 @@ foreach (var param in response.MergedParameters) {
     Console.WriteLine($"{param.Name} = {param.Value} ({param.Type})");
 }
 ```
+
+### Trailing headers
+
+Some servers send additional header fields after the response body, known as trailers (see [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#name-trailer-fields)). They are typically used for message integrity checks, signatures, or status information that is only known once the body has been generated. RestSharp exposes them via the `TrailingHeaders` property, separately from `Headers` and `ContentHeaders`:
+
+```csharp
+var response = await client.ExecuteAsync(request);
+
+var digest = response.TrailingHeaders.FirstOrDefault(h => h.Name == "Digest")?.Value;
+```
+
+Trailers are populated on .NET 8 and later, after the response content has been fully read. On .NET Framework and .NET Standard targets, `HttpClient` does not expose trailers, so the collection is always empty. Trailers are also not available when streaming the response with `DownloadStreamAsync`, since the body is not read by RestSharp in that case. As with every other response property, `TrailingHeaders` is only filled in by RestSharp's default response processing: if you supply an [`AdvancedResponseWriter`](../advanced/configuration.md), your writer receives the raw `HttpResponseMessage` and must copy its `TrailingHeaders` itself.
 
 In addition, `RestResponse<T>` has one additional property:
 

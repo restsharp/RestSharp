@@ -72,6 +72,31 @@ public class RestClientTests {
     }
 
     [Fact]
+    public void Default_serializers_are_registered_lazily_and_survive_replacement() {
+        // arrange
+        var baseUrl = new Uri(BaseUrl);
+
+        // act
+        using var client = new RestClient(baseUrl, configureSerialization: cfg => cfg.UseOnlySerializer(() => new JsonNetSerializerStub()));
+
+        // assert
+        client.Serializers.Serializers.Should().HaveCount(1);
+        client.Serializers.GetSerializer(DataFormat.Json).Should().BeOfType<JsonNetSerializerStub>();
+    }
+
+    sealed class JsonNetSerializerStub : IRestSerializer, ISerializer, IDeserializer {
+        public string? Serialize(object? obj)                                             => null;
+        public string? Serialize(Parameter bodyParameter)                                 => null;
+        public T? Deserialize<T>(RestResponse response)                                   => default;
+        public ContentType ContentType { get; set; }                                      = ContentType.Json;
+        public ISerializer Serializer                                                     => this;
+        public IDeserializer Deserializer                                                 => this;
+        public DataFormat DataFormat                                                      => DataFormat.Json;
+        public string[] AcceptedContentTypes                                              => ContentType.JsonAccept;
+        public SupportsContentType SupportsContentType { get; }                           = _ => false;
+    }
+
+    [Fact]
     public void Should_reuse_httpClient_instance() {
         using var client1 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);
         using var client2 = new RestClient(new Uri("https://fake.api"), useClientFactory: true);

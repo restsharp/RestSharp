@@ -20,6 +20,10 @@ var client = new RestClient(
 );
 ```
 
+:::note
+The built-in JSON and XML serializers are registered lazily and are only instantiated when first used. When you replace the JSON serializer in `configureSerialization` (for example with `UseNewtonsoftJson()`), `System.Text.Json` is never loaded. This matters on .NET Framework, where a different `System.Text.Json` version loaded by the host application could otherwise cause assembly binding failures.
+:::
+
 All RestSharp serializers implement the `IRestSerializer` interface. Among other things, the interface requires implementing the `AcceptedContentTypes` property, which must return a collection of content types supported by the serializer. Being configured to use certain serializers, RestSharp populates the `Accept` header accordingly, so it doesn't need to be set manually.
 
 When making a call, RestSharp sets the request content type according to the request body type. For example, when you use `AddJsonBody`, the content type is set to `application/json`. Normally, you won't need to set the `Content-Type` header manually. If you need to set a custom content type for a JSON call, you can use the optional `contentType` argument of `AddJsonBody`, for example:
