@@ -16,4 +16,4 @@ Follow these guidelines, in no particular order, to improve your chances of havi
  * No regions except for license header
  * Code must build for .NET 4.5.2 and .NET Standard 2.0
  * If you didn't write the code you must provide a reference to where you obtained it and preferably the license. 
- * Use autocrlf=true `git config --global core.autocrlf true` http://help.github.com/dealing-with-lineendings/
+ * Use autocrlf=true `git config --global core.autocrlf true` https://docs.github.com/en/get-started/git-basics/configuring-git-to-handle-line-endings
