@@ -1240,4 +1240,51 @@ public class XmlDeserializerTests {
         Assert.Equal(2, topItem.SubItems[0].Id);
         Assert.Equal(3, topItem.SubItems[1].Id);
     }
+
+    [Theory]
+    [InlineData("tr-TR")]
+    [InlineData("de-DE")]
+    [InlineData("fr-FR")]
+    public void Should_deserialize_floating_point_numbers_with_invariant_culture_by_default(string currentCulture) {
+        const string xml = "<Root><Double>1234.5</Double><Float>2.5</Float><Numbers><Number>1.5</Number><Number>2.25</Number></Numbers></Root>";
+
+        var previous = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo(currentCulture);
+
+        try {
+            var result = new XmlDeserializer().Deserialize<FloatingPointValues>(new() { Content = xml })!;
+
+            Assert.Equal(1234.5, result.Double);
+            Assert.Equal(2.5f, result.Float);
+            Assert.Equal(new[] { 1.5, 2.25 }, result.Numbers);
+        }
+        finally {
+            CultureInfo.CurrentCulture = previous;
+        }
+    }
+
+    [Fact]
+    public void Should_deserialize_floating_point_numbers_with_configured_culture() {
+        const string xml = "<Root><Double>1234,5</Double><Float>2,5</Float><Numbers><Number>1,5</Number><Number>2,25</Number></Numbers></Root>";
+
+        var previous = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+        try {
+            var result = new XmlDeserializer { Culture = new CultureInfo("de-DE") }.Deserialize<FloatingPointValues>(new() { Content = xml })!;
+
+            Assert.Equal(1234.5, result.Double);
+            Assert.Equal(2.5f, result.Float);
+            Assert.Equal(new[] { 1.5, 2.25 }, result.Numbers);
+        }
+        finally {
+            CultureInfo.CurrentCulture = previous;
+        }
+    }
+
+    class FloatingPointValues {
+        public double       Double  { get; set; }
+        public float        Float   { get; set; }
+        public List<double> Numbers { get; set; } = [];
+    }
 }
