@@ -48,10 +48,11 @@ Another way to create the client instance is to use a simple client factory. The
 * `ClientCertificates`
 * `MaxRedirects`
 * `Timeout`
-* `UserAgent`
 * `Expect100Continue`
 
 Constructor parameters to configure the `HttpMessageHandler` and default `HttpClient` headers configuration are also ignored for the cached instance as the factory only configures the handler once.
+
+The `UserAgent` option is not affected by caching: it is added to each `RestClient` instance's default parameters and applied per request, so every client gets its own `User-Agent` header even when the underlying `HttpClient` is reused.
 
 You need to set the `useClientFactory` parameter to `true` in the `RestClient` constructor to enable the factory.
 
