@@ -179,7 +179,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             }
             else if (type.IsPrimitive) {
                 try {
-                    prop.SetValue(x, value.ChangeType(asType), null);
+                    prop.SetValue(x, value.ChangeType(asType, Culture), null);
                 }
                 catch (FormatException ex) {
                     throw new FormatException(
@@ -444,7 +444,7 @@ public class XmlDeserializer : IXmlDeserializer, IWithRootElement, IWithDateForm
             item = element.Value;
         }
         else if (t.GetTypeInfo().IsPrimitive) {
-            item = element.Value.ChangeType(t);
+            item = element.Value.ChangeType(t, Culture);
         }
         else {
             item = Activator.CreateInstance(t)!;

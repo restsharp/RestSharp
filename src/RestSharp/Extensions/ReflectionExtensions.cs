@@ -57,7 +57,7 @@ public static class ReflectionExtensions {
         return false;
     }
 
-    internal static object? ChangeType(this object? source, Type newType) => Convert.ChangeType(source, newType);
+    internal static object? ChangeType(this object? source, Type newType, IFormatProvider provider) => Convert.ChangeType(source, newType, provider);
 
     /// <summary>
     /// Find a value from a System.Enum by trying several possible variants
