@@ -1,5 +1,6 @@
 using RestSharp.Serializers;
 using RestSharp.Serializers.Json;
+using RichardSzalay.MockHttp;
 
 namespace RestSharp.Tests;
 
@@ -147,6 +148,46 @@ public class RestClientTests {
         );
 
         Assert.Empty(httpClient.DefaultRequestHeaders.UserAgent);
+    }
+
+    [Fact]
+    public void ConfigureDefaultParameters_sets_user_agent_using_factory_twice() {
+        // arrange
+        const string expectedAgentString = "Agent/1.0";
+
+        // The base URL is unique to this test to keep the process-wide factory cache isolated from other tests
+        var clientOptions = new RestClientOptions { BaseUrl = new Uri("https://localhost:8888"), UserAgent = expectedAgentString };
+
+        // act
+        using var firstRestClient  = new RestClient(clientOptions, useClientFactory: true);
+        using var secondRestClient = new RestClient(clientOptions, useClientFactory: true);
+
+        //assert
+        secondRestClient.HttpClient.Should().BeSameAs(firstRestClient.HttpClient, "the regression only manifests on a factory cache hit");
+        AssertHasUserAgent(firstRestClient);
+        AssertHasUserAgent(secondRestClient);
+        return;
+
+        static void AssertHasUserAgent(RestClient restClient)
+            => Assert.Single(
+                restClient.DefaultParameters,
+                parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent, Value: expectedAgentString }
+            );
+    }
+
+    [Fact]
+    public async Task Should_send_supplied_http_client_user_agent_when_options_are_null() {
+        using var handler = new MockHttpMessageHandler();
+        handler.When(BaseUrl).Respond(request => new HttpResponseMessage {
+            Content = new StringContent(request.Headers.UserAgent.ToString()),
+        });
+        using var httpClient = handler.ToHttpClient();
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Caller/1.0");
+        using var restClient = new RestClient(httpClient, options: null);
+
+        var response = await restClient.ExecuteAsync(new RestRequest(BaseUrl));
+
+        response.Content.Should().Be("Caller/1.0");
     }
 
     [Fact]
