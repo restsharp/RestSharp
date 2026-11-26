@@ -1,5 +1,6 @@
 using RestSharp.Serializers;
 using RestSharp.Serializers.Json;
+using RichardSzalay.MockHttp;
 
 namespace RestSharp.Tests;
 
@@ -150,19 +151,18 @@ public class RestClientTests {
     }
 
     [Fact]
-    public void ConfigureDefaultParameters_sets_user_agent_given_httpClient_and_null_options() {
-        // arrange
-        var httpClient = new HttpClient();
-
-        // act
+    public async Task Should_send_supplied_http_client_user_agent_when_options_are_null() {
+        using var handler = new MockHttpMessageHandler();
+        handler.When(BaseUrl).Respond(request => new HttpResponseMessage {
+            Content = new StringContent(request.Headers.UserAgent.ToString()),
+        });
+        using var httpClient = handler.ToHttpClient();
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Caller/1.0");
         using var restClient = new RestClient(httpClient, options: null);
 
-        //assert
-        Assert.Single(
-            restClient.DefaultParameters,
-            parameter => parameter is { Type: ParameterType.HttpHeader, Name: KnownHeaders.UserAgent, Value: string valueAsString } &&
-                valueAsString == new RestClientOptions().UserAgent
-        );
+        var response = await restClient.ExecuteAsync(new RestRequest(BaseUrl));
+
+        response.Content.Should().Be("Caller/1.0");
     }
 
     [Fact]

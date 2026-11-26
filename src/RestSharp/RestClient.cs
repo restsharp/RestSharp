@@ -186,7 +186,10 @@ public partial class RestClient : IRestClient {
         var opt = options ?? new RestClientOptions();
         Options           = new(opt);
         DefaultParameters = new(Options);
-        ConfigureDefaultParameters(opt);
+
+        if (options != null) {
+            ConfigureDefaultParameters(options);
+        }
     }
 
     /// <summary>
